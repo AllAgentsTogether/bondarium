@@ -2,15 +2,15 @@ name: Kurse nachholen (falls der 10-Uhr-Lauf den Vortag verpasst hat)
 
 # Seit 29.09.2026. Die Tagesdateien der Deutschen Börse (MiFIR-Delayed-Data) liegen nur etwa einen Börsentag
 # online – fällt der 10-Uhr-Lauf aus oder scheitert der Kurs-Schritt, wäre der Tag sonst für immer verloren.
-# Dieser Workflow prüft um 13:40 und 17:40 Uhr (Berlin, Di–Sa), ob der letzte Börsentag im Kursverlauf fehlt
+# Dieser Workflow prüft um 13:40 und 17:40 Uhr (Berlin, Mo–Fr), ob der letzte Börsentag im Kursverlauf fehlt
 # (scripts/kurs_luecken.py --fehlt-neu). Nur dann holt er die Kurse (update_kurse.py verarbeitet jede gelistete
 # Tagesdatei, die jünger ist als der Stand), rechnet die Top 10 neu, committet und stößt einen
 # Veröffentlichungs-Lauf („schnell“, ohne Abruf) von update-data.yml an. Sonst endet er nach Sekunden.
 on:
   schedule:
-    - cron: "40 13 * * 2-6"
+    - cron: "40 13 * * 1-5"
       timezone: "Europe/Berlin"
-    - cron: "40 17 * * 2-6"
+    - cron: "40 17 * * 1-5"
       timezone: "Europe/Berlin"
   workflow_dispatch:
 

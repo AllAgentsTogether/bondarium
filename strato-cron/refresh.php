@@ -5,7 +5,7 @@
  * veröffentlicht. Ein Dispatch startet binnen Sekunden – GitHubs eigener
  * Zeitplan lief 09/2026 täglich rund 4–5 Stunden zu spät.
  *
- * Aufruf durch einen externen Cron (z. B. cron-job.org: Di–Sa 10:00 Uhr,
+ * Aufruf durch einen externen Cron (z. B. cron-job.org: Mo–Fr 10:00 Uhr,
  * Zeitzone Europe/Berlin) – zwei Varianten werden unterstützt:
  *   1) als URL:     https://www.bondarium.de/trigger/refresh.php?key=GEHEIM&mode=voll
  *   2) per PHP-CLI: php refresh.php voll

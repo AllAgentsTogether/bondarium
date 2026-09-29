@@ -183,6 +183,7 @@ html { scroll-padding-top: 100px; }   /* Sprungziele nicht unter der festen Kopf
    Voraussetzung: Tabelle/SVG selbst ohne eigenen Hintergrund (transparent) – erfüllt. */
 .table-scroll, .chart-scroll {
   overflow-x: auto; -webkit-overflow-scrolling: touch;
+  position: relative;   /* Bezugsrahmen für absolut positionierte Kinder (z. B. .sr-only in Tabellen) – sonst entkommen sie dem Scroll-Container und machen die ganze Seite am Handy breiter (30.09.2026) */
   background:
     linear-gradient(90deg, var(--bg) 30%, transparent),
     linear-gradient(90deg, transparent, var(--bg) 70%) 100% 0,

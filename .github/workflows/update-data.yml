@@ -3,7 +3,7 @@ name: Daten aktualisieren & auf Strato veröffentlichen
 # ===== Datenabruf: höchstens EINMAL am Tag, um 10:00 Uhr Berlin (seit 23.09.2026) =====
 #
 # * 10-Uhr-Lauf: Ein externer Cron (z. B. cron-job.org, Zeitzone Europe/Berlin,
-#   Di–Sa 10:00) ruft /trigger/refresh.php?key=…&mode=voll auf. refresh.php
+#   Mo–Fr 10:00) ruft /trigger/refresh.php?key=…&mode=voll auf. refresh.php
 #   startet diesen Workflow per workflow_dispatch – der beginnt binnen Sekunden.
 #   GitHubs eigener Zeitplan ist dafür zu unpünktlich: 09/2026 lief der auf
 #   07:17 gestellte Lauf täglich erst zwischen 11:30 und 12:15 Uhr.
@@ -17,16 +17,16 @@ name: Daten aktualisieren & auf Strato veröffentlichen
 # * Push-Deploys und 'schnell' fragen KEINE Quelle ab: Sie veröffentlichen nur
 #   den Repo-Stand von main. Der enthält die Daten des letzten Abrufs, weil
 #   jeder Abruf-Lauf seine JSONs committet.
-# * Dienstag–Samstag: dann liegen die Renditen und Kurse des Vortags vor
-#   (Bundesbank abends, U.S. Treasury nach US-Handelsschluss); Samstag holt den
-#   Freitag, Sonntag/Montag gäbe es nichts Neues.
+# * Montag–Freitag (seit 30.09.2026, Nutzerwunsch): Jeder Lauf holt den letzten
+#   verfügbaren Börsentag (Bundesbank abends, U.S. Treasury nach US-Handelsschluss);
+#   montags also den Freitag. Die Freitagsdaten kommen erst am Montag.
 # * Seit 23.09.2026 nur noch Anleihen: Der Aktien-Teil (Kurse, Sentiment,
 #   Bewertung, Einflussfaktoren, Verlierer) liegt im Ordner
 #   website_aktien_archiv und wird nicht mehr abgefragt.
 on:
   schedule:
     # Reserve (siehe oben). Zeitzone Berlin: Sommer-/Winterzeit automatisch.
-    - cron: "15 10 * * 2-6"
+    - cron: "15 10 * * 1-5"
       timezone: "Europe/Berlin"
   push:
     branches: [ main ]        # bei Änderungen (z. B. Design): nur Veröffentlichung, kein Datenabruf
