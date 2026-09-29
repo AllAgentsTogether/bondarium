@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anleihen einfach erklärt in sechs Schritten – METALCONCRETE</title>
+<meta name="description" content="Anleihen einfach erklärt: was eine Anleihe ist, wie Kurs und Rendite zusammenhängen, warum der Kurs schwankt, wie sicher sie ist.">
+<link rel="canonical" href="https://www.metalconcrete.de/grundlagen.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/grundlagen.html">
+<meta property="og:title" content="Anleihen einfach erklärt in sechs Schritten – METALCONCRETE">
+<meta property="og:description" content="Anleihen einfach erklärt: was eine Anleihe ist, wie Kurs und Rendite zusammenhängen, warum der Kurs schwankt, wie sicher sie ist.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Anleihen einfach erklärt in sechs Schritten – METALCONCRETE">
+<meta name="twitter:description" content="Anleihen einfach erklärt: was eine Anleihe ist, wie Kurs und Rendite zusammenhängen, warum der Kurs schwankt, wie sicher sie ist.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Grundlagen – neu 24.09.2026: „Anleihen einfach erklärt“. Sechs Erklärkarten im Look der Anlegerprofile: links Text und Merksatz,
+     rechts ein Schaubild. Große, ruhige Schrift; Schaubilder mit Text als HTML (bleibt am Handy lesbar),
+     Zeichnungen als SVG. Am Handy stehen Text und Schaubild untereinander. */
+  /* Sprungmenü */
+
+  /* Erklärkarte: Text links, Schaubild rechts */
+  /* Merksatz */
+  /* Schaubild-Kasten */
+
+  /* 2 – Steckbrief */
+  .pass { background: var(--ap-soft); border-radius: 12px; padding: 14px 18px 12px; }
+  .pass-k { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .pass-k span { color: var(--ap-text); letter-spacing: 0.04em; font-weight: 600; }
+  .pass dl div { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 12px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--green-line); }
+  .pass dt { font-size: 14px; line-height: 1.35; color: var(--ap-text); }
+  .pass dt a { display: block; font-size: 15px; font-weight: 600; text-decoration: none; margin-top: 1px; }
+  .pass dt a:hover { text-decoration: underline; }
+  .pass dd { font-size: 19px; font-weight: 600; text-align: right; color: var(--ap-ink); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .pass-f { font-size: 14px; line-height: 1.5; color: var(--ap-text); margin-top: 10px; }
+
+  /* 3 – Kurs und Rendite */
+  .kurse { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .kt { display: flex; flex-direction: column; align-items: center; text-align: center; background: var(--ap-soft); border-radius: 12px; padding: 12px 8px 12px; }
+  .kt:nth-child(2) { background: var(--green); color: var(--ink); }
+  .kt-k { font-size: 14px; font-weight: 600; }
+  .kt-z { font-size: 12.5px; color: var(--ap-text); margin-top: 2px; }
+  .kt:nth-child(2) .kt-z, .kt:nth-child(2) .kt-l { color: rgba(26,26,25,0.78); }
+  .kt-r { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; margin-top: 10px; color: var(--green-text); font-variant-numeric: tabular-nums; }
+  .kt:nth-child(2) .kt-r { color: var(--ink); }
+  .kt-l { font-size: 12px; color: var(--ap-text); margin-top: 2px; }
+
+  /* 4 – Wippe und Laufzeit-Hebel */
+  /* Karte 4: die Regel als zwei Zeilen (Zinsen blau, Kurs orange), Pfeile als Dreiecke */
+  .regel { display: grid; grid-template-columns: auto 26px auto; justify-content: center; align-items: center; gap: 10px 6px; margin: 6px 0 18px; font-size: 16px; font-weight: 600; line-height: 1.3; }
+  .regel .rz { color: var(--blue); text-align: right; }
+  .regel .rk { color: var(--orange-text); }
+  .regel .rp { color: var(--text); text-align: center; font-weight: 400; }
+  .regel i { display: inline-block; width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; vertical-align: middle; margin: 0 0 3px 5px; }
+  .regel i.up { border-bottom: 11px solid currentColor; }
+  .regel i.dn { border-top: 11px solid currentColor; }
+  .hebel .hb { display: grid; grid-template-columns: 72px minmax(0, 1fr); align-items: center; gap: 10px; }
+  .hebel .hb + .hb { margin-top: 8px; }
+  .hb-l { font-size: 14px; font-weight: 600; color: var(--ap-ink); }
+  .hb-bar { display: block; height: 30px; width: var(--w); min-width: 62px; background: var(--down); border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; }
+  .hb-bar b { color: #fff; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* 5 – Rating */
+  .skala { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; }
+  .skala span { display: block; text-align: center; font-size: 14px; font-weight: 600; color: #fff; padding: 11px 0; border-radius: 6px; }
+  .skala .s1 { background: #1F7A5E; } .skala .s2 { background: #35805A; } .skala .s3 { background: #A3651A; } .skala .s4 { background: #993C1D; }
+  .marker { position: relative; height: 30px; }
+  .marker span { position: absolute; left: var(--p); transform: translateX(calc(-1 * var(--a, 50%))); font-size: 12.5px; font-weight: 600; color: var(--ap-ink); white-space: nowrap; padding-top: 10px; }
+  .marker span::before { content: ''; position: absolute; left: var(--a, 50%); top: 0; width: 0; height: 0; border: 5px solid transparent; border-bottom-color: var(--ap-ink); transform: translate(-50%, -2px); }
+  .zonen { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; font-size: 13px; color: var(--ap-text); }
+  .zonen span { border-top: 2px solid rgba(44,44,42,0.25); padding-top: 6px; text-align: center; }
+  .treppe .tb { display: grid; grid-template-columns: 118px minmax(0, 1fr); align-items: center; gap: 10px; }
+  .treppe .tb + .tb { margin-top: 8px; }
+  .rt-ax { margin-top: 6px; text-align: right; }
+  .tb-l { font-size: 14px; font-weight: 600; color: var(--ap-ink); line-height: 1.2; }
+  .tb-l small { display: block; font-size: 12px; font-weight: 600; color: var(--ap-text); }
+  .tb-bar { display: flex; align-items: center; padding-left: 10px; height: 30px; width: var(--w); min-width: 66px; white-space: nowrap; border-radius: 6px; color: #fff; font-size: 14px; font-weight: 600; }
+  .tb-bar.s1 { background: #1F7A5E; } .tb-bar.s2 { background: #A3651A; } .tb-bar.s3 { background: #993C1D; }
+
+  /* 6 – Vergleich */
+  .vgl { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 1.4; }
+  .vgl th, .vgl td { text-align: left; vertical-align: top; padding: 9px 8px; border-bottom: 1px solid rgba(44,44,42,0.10); }
+  .vgl thead th { font-size: 14.5px; font-weight: 600; color: var(--ap-ink); border-bottom: 2px solid rgba(44,44,42,0.16); }
+  .vgl thead th:nth-child(2) { color: var(--green-text); }
+  .vgl tbody th { font-weight: 600; color: var(--ap-text); font-size: 13px; width: 24%; }
+  .vgl td:nth-child(2) { font-weight: 600; color: var(--ap-ink); background: var(--ap-soft); }
+  .vgl tbody tr:last-child th, .vgl tbody tr:last-child td { border-bottom: 0; }
+
+  /* Knöpfe, Fuß */
+
+  @media (max-width: 600px) {
+    .kurse { gap: 6px; } .kt-r { font-size: 24px; } .kt-k { font-size: 13px; } .kt-z { font-size: 12px; }
+    .skala span { font-size: 12px; padding: 9px 0; }
+    .zonen { font-size: 12px; } .treppe .tb { grid-template-columns: 96px minmax(0, 1fr); } .tb-l { font-size: 13px; }
+    /* Vergleichstabelle am Handy: je Zeile ein Block, die Spaltennamen stehen vor den Werten */
+    .vgl, .vgl tbody, .vgl tr, .vgl th, .vgl td { display: block; width: auto; }
+    .vgl thead { display: none; }
+    .vgl tr { padding: 10px 0; border-bottom: 1px solid rgba(44,44,42,0.10); }
+    .vgl tr:last-child { border-bottom: 0; }
+    .vgl th, .vgl td { border: 0; padding: 2px 0; }
+    .vgl tbody th { width: auto; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+    .vgl td { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 8px; font-size: 14px; }
+    .vgl td::before { content: attr(data-l); font-weight: 600; color: var(--ap-text); }
+    .vgl td:nth-child(2) { background: none; } .vgl td:nth-child(2)::before { color: var(--green-text); }
+  }
+  .sb-go { margin-top: 14px; align-self: flex-start; font-size: 14px; padding: 10px 16px; }
+  @media (max-width: 600px) { .sb-go { align-self: stretch; text-align: center; } }
+  /* Schaubild 1: eigene Handy-Fassung (schmalere viewBox, Schrift effektiv ≥ 11 px) */
+  .sb-m { display: none; }
+  @media (max-width: 600px) { .sb-d { display: none; } .sb-m { display: block; } }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Anleihen einfach erklärt – die Grundlagen in sechs Schritten","description":"Anleihen einfach erklärt: was eine Anleihe ist, wie Kurs und Rendite zusammenhängen, warum der Kurs schwankt, wie sicher sie ist.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-25","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/grundlagen.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Verstehen","item":"https://www.metalconcrete.de/wissen.html"},{"@type":"ListItem","position":3,"name":"Anleihen einfach erklärt","item":"https://www.metalconcrete.de/grundlagen.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="verstehen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn current" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe current">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>Anleihen einfach erklärt</h1>
+    <p class="sub">Sechs kurze Schritte, jeder mit Schaubild. Lesezeit: etwa 5 Minuten.</p>
+    <nav class="lands" aria-label="Zum Schritt springen">
+      <a class="lbtn" href="#was"><span class="n">1</span>Was ist eine Anleihe?</a>
+      <a class="lbtn" href="#steckbrief"><span class="n">2</span>Steckbrief</a>
+      <a class="lbtn" href="#kurs"><span class="n">3</span>Kurs und Rendite</a>
+      <a class="lbtn" href="#schwankung"><span class="n">4</span>Schwankung</a>
+      <a class="lbtn" href="#sicherheit"><span class="n">5</span>Sicherheit</a>
+      <a class="lbtn" href="#vergleich"><span class="n">6</span>Vergleich</a>
+    </nav>
+
+    <section class="kap" id="was" aria-labelledby="h-was">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">1</span>
+        <h2 id="h-was">Was ist eine Anleihe?</h2>
+        <p>Eine Anleihe ist ein Kredit. <strong>Nur leihst du das Geld – nicht die Bank.</strong> Du gibst es einem Staat oder einem Unternehmen. Dafür bekommst du jedes Jahr Zinsen. Am Ende bekommst du dein Geld zurück.</p><p>Staaten wie Deutschland oder die USA geben Anleihen aus. Unternehmen wie Volkswagen oder Coca-Cola auch.</p>
+      </div>
+      <div class="k-bild"><svg class="sb sb-d" viewBox="0 0 480 258" role="img" aria-labelledby="sb1t"><title id="sb1t">Du gibst heute 1.000 Euro. Jedes Jahr kommen 30 Euro Zinsen zurück. Nach fünf Jahren kommen die 1.000 Euro zurück.</title>
+<defs><marker id="pfb" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1DA300"/></marker>
+<marker id="pfg" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1F7A5E"/></marker></defs>
+<circle cx="62" cy="150" r="46" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.5"/>
+<circle cx="62" cy="134" r="13" fill="#1DA300"/><path d="M36 184 a26 26 0 0 1 52 0z" fill="#1DA300"/>
+<text x="62" y="224" text-anchor="middle" font-size="18" font-weight="600" fill="#1A1A19">Du</text>
+<rect x="374" y="106" width="94" height="88" rx="12" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.5"/>
+<path d="M390 176 v-32 h16 v-14 h16 v14 h16 v-24 h16 v56z" fill="#1DA300"/>
+<text x="421" y="224" text-anchor="middle" font-size="16" font-weight="600" fill="#1A1A19">Staat oder</text><text x="421" y="244" text-anchor="middle" font-size="16" font-weight="600" fill="#1A1A19">Unternehmen</text>
+<path d="M118 88 H362" stroke="#1DA300" stroke-width="4" stroke-linecap="round" marker-end="url(#pfb)"/><text x="240" y="62" text-anchor="middle" font-size="18" font-weight="600" fill="#157C00">1.000&nbsp;€</text><text x="240" y="80" text-anchor="middle" font-size="14" fill="#55544F">Du gibst das Geld – heute</text>
+<path d="M362 158 H118" stroke="#1F7A5E" stroke-width="4" stroke-linecap="round" marker-end="url(#pfg)"/><text x="240" y="132" text-anchor="middle" font-size="18" font-weight="600" fill="#1F7A5E">30&nbsp;€ Zinsen</text><text x="240" y="150" text-anchor="middle" font-size="14" fill="#55544F">jedes Jahr</text>
+<path d="M362 228 H118" stroke="#1F7A5E" stroke-width="4" stroke-linecap="round" marker-end="url(#pfg)"/><text x="240" y="202" text-anchor="middle" font-size="18" font-weight="600" fill="#1F7A5E">1.000&nbsp;€ zurück</text><text x="240" y="220" text-anchor="middle" font-size="14" fill="#55544F">nach 5 Jahren</text>
+</svg><svg class="sb sb-m" viewBox="0 0 330 222" role="img" aria-labelledby="sb1tm"><title id="sb1tm">Du gibst heute 1.000 Euro. Jedes Jahr kommen 30 Euro Zinsen zurück. Nach fünf Jahren kommen die 1.000 Euro zurück.</title>
+<defs><marker id="pfbm" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1DA300"/></marker>
+<marker id="pfgm" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1F7A5E"/></marker></defs>
+<circle cx="34" cy="138" r="30" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.5"/>
+<circle cx="34" cy="128" r="9" fill="#1DA300"/><path d="M17 160 a17 17 0 0 1 34 0z" fill="#1DA300"/>
+<text x="34" y="190" text-anchor="middle" font-size="15" font-weight="600" fill="#1A1A19">Du</text>
+<rect x="266" y="109" width="58" height="58" rx="10" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.5"/>
+<path d="M275 157 v-20 h10 v-9 h10 v9 h10 v-15 h10 v35z" fill="#1DA300"/>
+<text x="328" y="187" text-anchor="end" font-size="13" font-weight="600" fill="#1A1A19">Staat oder</text><text x="328" y="203" text-anchor="end" font-size="13" font-weight="600" fill="#1A1A19">Unternehmen</text>
+<path d="M70 72 H256" stroke="#1DA300" stroke-width="4" stroke-linecap="round" marker-end="url(#pfbm)"/><text x="163" y="44" text-anchor="middle" font-size="15" font-weight="600" fill="#157C00">1.000&nbsp;€</text><text x="163" y="62" text-anchor="middle" font-size="14" fill="#55544F">Du gibst das Geld – heute</text>
+<path d="M256 136 H70" stroke="#1F7A5E" stroke-width="4" stroke-linecap="round" marker-end="url(#pfgm)"/><text x="163" y="108" text-anchor="middle" font-size="15" font-weight="600" fill="#1F7A5E">30&nbsp;€ Zinsen</text><text x="163" y="126" text-anchor="middle" font-size="14" fill="#55544F">jedes Jahr</text>
+<path d="M256 212 H70" stroke="#1F7A5E" stroke-width="4" stroke-linecap="round" marker-end="url(#pfgm)"/><text x="163" y="184" text-anchor="middle" font-size="15" font-weight="600" fill="#1F7A5E">1.000&nbsp;€ zurück</text><text x="163" y="202" text-anchor="middle" font-size="14" fill="#55544F">nach 5 Jahren</text>
+</svg></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Du bist der Kreditgeber. Der Staat oder das Unternehmen ist dein Schuldner.</span></p>
+    </section>
+    <section class="kap kap-b" id="steckbrief" aria-labelledby="h-steckbrief">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">2</span>
+        <h2 id="h-steckbrief">Was auf einer Anleihe steht</h2>
+        <p>Fünf Angaben sagen dir alles Wichtige: <strong>Wer</strong> sich das Geld leiht, <strong>wie viel</strong> zurückgezahlt wird, <strong>wie viel Zins</strong> es gibt, <strong>wann</strong> das Geld zurückkommt und <strong>was</strong> die Anleihe gerade kostet.</p><p>Der Zins heißt Kupon. Er ist meist fest. Der Betrag, der am Ende zurückkommt, heißt Nennwert.</p>
+      </div>
+      <div class="k-bild"><div class="pass"><p class="pass-k">Steckbrief einer Anleihe <span>Beispiel</span></p><dl><div><dt>Wer leiht sich das Geld?<a href="begriffe.html#emittent">Emittent</a></dt><dd>ein Staat, Rating AAA</dd></div><div><dt>Wie viel wird zurückgezahlt?<a href="begriffe.html#nennwert">Nennwert</a></dt><dd>1.000&nbsp;€</dd></div><div><dt>Wie viel Zins gibt es?<a href="begriffe.html#kupon">Kupon</a></dt><dd>3&nbsp;% im Jahr</dd></div><div><dt>Wann gibt es das Geld zurück?<a href="begriffe.html#faelligkeit">Fälligkeit</a></dt><dd>2031</dd></div><div><dt>Was kostet sie gerade?<a href="begriffe.html#kurs">Kurs</a></dt><dd>98,50&nbsp;%</dd></div></dl>
+<p class="pass-f">Jede Anleihe hat außerdem eine Kennnummer, die <a href="begriffe.html#isin">ISIN</a> – zwölf Zeichen, wie ein Kfz-Kennzeichen.</p></div></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Kupon, Nennwert, Fälligkeit, Kurs – mehr brauchst du am Anfang nicht.</span></p>
+    </section>
+    <section class="kap" id="kurs" aria-labelledby="h-kurs">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">3</span>
+        <h2 id="h-kurs">Kurs und Rendite</h2>
+        <p>Der Kurs ist der Preis. Er steht in Prozent vom Nennwert. <strong>100&nbsp;% heißt: Du zahlst genau den Nennwert.</strong> Unter 100&nbsp;% ist die Anleihe günstiger, über 100&nbsp;% teurer.</p><p>Am Ende bekommst du den Nennwert zurück. Kaufst du günstiger, verdienst du mehr als den Kupon. Kaufst du teurer, verdienst du weniger. Was du wirklich im Jahr bekommst, heißt <strong>Rendite</strong>.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">So hängen Kurs und Rendite zusammen</p><div class="kurse" role="img" aria-label="Drei Beispiele: Kurs 96 Prozent, du zahlst 960 Euro, Rendite 3,9 Prozent. Kurs 100 Prozent, du zahlst 1.000 Euro, Rendite 3,0 Prozent. Kurs 104 Prozent, du zahlst 1.040 Euro, Rendite 2,1 Prozent."><div class="kt"><span class="kt-k">Kurs 96&nbsp;%</span><span class="kt-z">Du zahlst 960&nbsp;€</span><span class="kt-r">3,9&nbsp;%</span><span class="kt-l">Rendite im Jahr</span></div><div class="kt"><span class="kt-k">Kurs 100&nbsp;%</span><span class="kt-z">Du zahlst 1.000&nbsp;€</span><span class="kt-r">3,0&nbsp;%</span><span class="kt-l">Rendite im Jahr</span></div><div class="kt"><span class="kt-k">Kurs 104&nbsp;%</span><span class="kt-z">Du zahlst 1.040&nbsp;€</span><span class="kt-r">2,1&nbsp;%</span><span class="kt-l">Rendite im Jahr</span></div></div>
+<p class="sb-f">Dieselbe Anleihe: 1.000&nbsp;€ Nennwert, 3&nbsp;% Kupon, noch 5 Jahre. Am Ende gibt es 1.000&nbsp;€ zurück – deshalb hängt die Rendite vom Kurs ab.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Vergleiche Anleihen mit der Rendite, nicht mit dem Kupon.</span></p>
+    </section>
+    <section class="kap kap-b" id="schwankung" aria-labelledby="h-schwankung">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">4</span>
+        <h2 id="h-schwankung">Warum der Kurs schwankt</h2>
+        <p>Der Zins deiner Anleihe steht fest. Das <a href="zinsniveau.html">allgemeine Zinsniveau</a> ändert sich aber. <strong>Steigt es, fällt der Kurs deiner Anleihe</strong> – denn neue Anleihen bringen jetzt mehr. Sinkt das Zinsniveau, steigt ihr Kurs.</p><p>Das zählt nur, wenn du vorher verkaufst. Wer bis zur Fälligkeit hält, bekommt 100&nbsp;% zurück.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Die Regel</p><div class="regel" role="img" aria-label="Steigt das allgemeine Zinsniveau, fällt der Kurs. Sinkt es, steigt der Kurs."><span class="rz">Zinsniveau steigt<i class="up"></i></span><span class="rp">→</span><span class="rk">Kurs fällt<i class="dn"></i></span><span class="rz">Zinsniveau sinkt<i class="dn"></i></span><span class="rp">→</span><span class="rk">Kurs steigt<i class="up"></i></span></div>
+<p class="sb-k">Beispiel: Zinsniveau steigt von 3&nbsp;% auf 4&nbsp;%</p>
+<div class="hebel" role="img" aria-label="Steigt das allgemeine Zinsniveau von 3 auf 4 Prozent, fällt der Kurs bei 2 Jahren Restlaufzeit um 1,9 Prozent, bei 10 Jahren um 8,1 Prozent und bei 30 Jahren um 17,3 Prozent."><div class="hb ax-row"><span class="ax-t">Restlaufzeit</span><span class="ax-t">Kursverlust in % →</span></div><div class="hb"><span class="hb-l">2 Jahre</span><span class="hb-bar" style="--w:11%"><b>−1,9&nbsp;%</b></span></div><div class="hb"><span class="hb-l">10 Jahre</span><span class="hb-bar" style="--w:47%"><b>−8,1&nbsp;%</b></span></div><div class="hb"><span class="hb-l">30 Jahre</span><span class="hb-bar" style="--w:100%"><b>−17,3&nbsp;%</b></span></div></div>
+<p class="sb-f">Je länger die Restlaufzeit, desto stärker schwankt der Kurs. Bei Fälligkeit gibt es trotzdem 100&nbsp;%.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Zinsniveau rauf, Kurs runter – und umgekehrt. Bei Fälligkeit gibt es 100&nbsp;%.</span></p>
+    </section>
+    <section class="kap" id="sicherheit" aria-labelledby="h-sicherheit">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">5</span>
+        <h2 id="h-sicherheit">Wie sicher ist eine Anleihe?</h2>
+        <p>Eine Anleihe ist so sicher wie ihr Schuldner. <strong>Zahlt er nicht, geht oft ein großer Teil deines Geldes verloren.</strong> Rating-Agenturen benoten die Schuldner: AAA ist die beste Note, D heißt Ausfall.</p><p>Je schlechter die Note, desto mehr Zins muss der Schuldner bieten. Mehr Zins gibt es also fast nur für mehr Risiko.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Die Noten für Schuldner</p><div class="rating" role="img" aria-label="Rating-Skala von AAA (sehr sicher) bis D (ausgefallen). AAA bis BBB gilt als gute Bonität, BB und schlechter als spekulativ. Deutschland hat AAA, Italien BBB+. Je weiter rechts, desto mehr Zins muss der Schuldner bieten.">
+<div class="skala"><span class="s1">AAA</span><span class="s1">AA</span><span class="s2">A</span><span class="s2">BBB</span><span class="s3">BB</span><span class="s3">B</span><span class="s4">CCC</span><span class="s4">D</span></div>
+<div class="marker"><span style="--p:6.25%;--a:14%">Deutschland</span><span style="--p:43.75%">Italien</span></div>
+<div class="zonen"><span>gute Bonität</span><span>spekulativ</span></div>
+<p class="ax-t rt-ax">Rating: je weiter rechts, desto unsicherer →</p>
+</div>
+<p class="sb-k" style="margin-top:16px">Mehr Risiko, mehr Zins (schematisch)</p>
+<div class="treppe" role="img" aria-label="Deutschland mit AAA muss wenig Zins bieten, Italien mit BBB+ mehr, ein Unternehmen mit B viel mehr.">
+<div class="tb ax-row"><span class="ax-t">Schuldner · Rating</span><span class="ax-t">Zins, den er bieten muss →</span></div>
+<div class="tb"><span class="tb-l">Deutschland <small>AAA</small></span><span class="tb-bar s1" style="--w:26%">wenig</span></div>
+<div class="tb"><span class="tb-l">Italien <small>BBB+</small></span><span class="tb-bar s2" style="--w:44%">mehr</span></div>
+<div class="tb"><span class="tb-l">Unternehmen <small>B</small></span><span class="tb-bar s3" style="--w:100%">viel mehr</span></div>
+</div><a class="go leise sb-go" href="bonitaet.html">Bonität und Ratings genauer →</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Mehr Zins heißt mehr Risiko. Die Note zeigt, wie sicher der Schuldner ist.</span></p>
+    </section>
+    <section class="kap kap-b" id="vergleich" aria-labelledby="h-vergleich">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">6</span>
+        <h2 id="h-vergleich">Anleihe, Aktie oder Sparbuch?</h2>
+        <p>Mit einer <strong>Aktie</strong> gehört dir ein Stück der Firma. Mit einer <strong>Anleihe</strong> leihst du der Firma Geld. Ein <strong>Sparbuch</strong> ist auch ein Kredit – an deine Bank.</p><p>Anleihen liegen dazwischen: sicherer als Aktien, oft mehr Zins als das Sparbuch.</p>
+        
+      </div>
+      <div class="k-bild"><p class="sb-k">Im Vergleich</p><table class="vgl"><thead><tr><th scope="col"><span class="sr-only">Merkmal</span></th><th scope="col">Anleihe</th><th scope="col">Aktie</th><th scope="col">Sparbuch</th></tr></thead><tbody><tr><th scope="row">Du bist …</th><td data-l="Anleihe">Kreditgeber</td><td data-l="Aktie">Miteigentümer</td><td data-l="Sparbuch">Kreditgeber der Bank</td></tr><tr><th scope="row">Ertrag</th><td data-l="Anleihe">fester Zins</td><td data-l="Aktie">Dividende und Kurs – beides unsicher</td><td data-l="Sparbuch">Zins, oft niedrig</td></tr><tr><th scope="row">Kurs schwankt?</th><td data-l="Anleihe">ja, meist wenig</td><td data-l="Aktie">ja, oft stark</td><td data-l="Sparbuch">nein</td></tr><tr><th scope="row">Ende</th><td data-l="Anleihe">festes Datum, 100&nbsp;% zurück</td><td data-l="Aktie">kein Ende – du verkaufst</td><td data-l="Sparbuch">jederzeit abhebbar</td></tr><tr><th scope="row">Firma pleite?</th><td data-l="Anleihe">Anleihen werden vor Aktien bedient</td><td data-l="Aktie">meist Totalverlust</td><td data-l="Sparbuch">abgesichert bis 100.000&nbsp;€</td></tr></tbody></table></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Anleihe = fester Zins, festes Ende, Nennwert zurück.</span></p>
+    </section>
+
+    <div class="weiter">
+      <a class="go" href="erste-anleihe.html">Deine erste Anleihe kaufen →</a>
+      <a class="go leise" href="fortgeschrittene.html">Weiter für Fortgeschrittene →</a>
+      <a class="go leise" href="anlegerprofile.html">Sind Anleihen etwas für dich? →</a>
+      <a class="go leise" href="begriffe.html">Alle Begriffe im Glossar →</a>
+    </div>
+    <p class="klein">Diese Seite erklärt, wie Anleihen funktionieren. Sie empfiehlt keine Anlage. Die Zahlen sind gerundet.</p>
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="anleihe-arten.html">Welche Anleihe-Arten gibt es?</a></li>
+        <li><a href="risiko.html">Risiko kennen – was schiefgehen kann</a></li>
+        <li><a href="anlageziele.html">Anlageziele – welche Anleihe wozu passt</a></li>
+        <li><a href="anleihen-suche.html">Anleihen-Suche</a></li>
+      </ul>
+    </nav>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+# Zugriff auf die Konfigurationsdatei (enthält den GitHub-Token) sperren
+<Files "refresh-config.php">
+  Require all denied
+</Files>

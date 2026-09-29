@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+tmp/
+__pycache__/
+*.pyc
+anleihen-kurse 2.json
+refresh-config.php
+.env*

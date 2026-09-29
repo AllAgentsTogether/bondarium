@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rendite ist nicht gleich Rendite: Renditearten richtig lesen – METALCONCRETE</title>
+<meta name="description" content="Kupon, laufende Rendite, Rendite bis Fälligkeit, bis zur Kündigung, Yield to Worst, nach Steuern: Welche Zahl was bedeutet, wo sie herkommt und welche für dich zählt.">
+<link rel="canonical" href="https://www.metalconcrete.de/rendite-lesen.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/rendite-lesen.html">
+<meta property="og:title" content="Rendite ist nicht gleich Rendite: Renditearten richtig lesen – METALCONCRETE">
+<meta property="og:description" content="Kupon, laufende Rendite, Rendite bis Fälligkeit, bis zur Kündigung, Yield to Worst, nach Steuern: Welche Zahl was bedeutet, wo sie herkommt und welche für dich zählt.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rendite ist nicht gleich Rendite: Renditearten richtig lesen – METALCONCRETE">
+<meta name="twitter:description" content="Kupon, laufende Rendite, Rendite bis Fälligkeit, bis zur Kündigung, Yield to Worst, nach Steuern: Welche Zahl was bedeutet, wo sie herkommt und welche für dich zählt.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Rendite richtig lesen – neu 27.09.2026 (Menü Verstehen, Profi): sechs Karten im Look von „Laufzeit“ und „Duration“.
+     Schaubilder als HTML-Kacheln, Balken und eine kleine Tabelle. Grundregeln in base.css. */
+
+  /* Kacheln mit einer Zahl (1, 4) */
+  .drei { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .dk { display: flex; flex-direction: column; background: var(--ap-soft); border-radius: 12px; padding: 12px 10px; }
+  .dk-k { font-size: 13.5px; font-weight: 600; line-height: 1.25; }
+  .dk-r { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; margin-top: 8px; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .dk-w { font-size: 12.5px; line-height: 1.4; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(26,26,25,0.10); color: var(--text); }
+  .dk.hl { background: #fff; border: 1.5px solid var(--green-line); }
+  .dk.hl .dk-r { color: var(--green-text); }
+
+  /* Zerlegung (2) */
+  .stapel { display: flex; height: 40px; border-radius: 8px; overflow: hidden; }
+  .stapel span { display: grid; place-items: center; color: #fff; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; width: var(--w); }
+  .stapel .a { background: #1F7A5E; } .stapel .b { background: #1DA300; }
+  .st-leg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; font-size: 13px; line-height: 1.4; color: var(--text); }
+  .st-leg b { display: block; color: var(--ink); font-weight: 600; }
+  .st-sum { margin-top: 10px; padding: 9px 12px; border-radius: 10px; background: #fff; border: 1.5px solid var(--green-line); font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .st-sum b { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; color: var(--green-text); }
+
+  /* Balken (3, 5) */
+  .balken .hb { display: grid; grid-template-columns: 150px minmax(0, 1fr); align-items: center; gap: 10px; }
+  .balken .hb + .hb { margin-top: 7px; }
+  .hb-l { font-size: 13.5px; font-weight: 600; color: var(--ap-ink); line-height: 1.25; }
+  .hb-l small { display: block; font-size: 12px; font-weight: 400; color: var(--text); }
+  .hb-bar { display: flex; align-items: center; justify-content: flex-end; height: 28px; width: var(--w); min-width: max-content; padding: 0 8px 0 10px; border-radius: 6px; background: #1F7A5E; }
+  .hb-bar.o { background: #A3651A; } .hb-bar.r { background: var(--down); } .hb-bar.n { background: #8E8D86; }
+  .hb-bar b { color: #fff; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .worst { margin-top: 10px; padding: 9px 12px; border-radius: 10px; background: var(--ink); color: #fff; font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .worst b { color: var(--green); font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+
+  /* Mini-Tabelle (6) */
+  .qt { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .qt th { text-align: left; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); padding: 0 8px 6px 0; border-bottom: 1.5px solid rgba(26,26,25,0.22); font-weight: 600; }
+  .qt td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; line-height: 1.4; }
+  .qt td:first-child { font-weight: 600; white-space: nowrap; }
+  .qt tr:last-child td { border-bottom: 0; }
+
+  .sb-f { font-size: 12.5px; color: var(--text); margin-top: 10px; line-height: 1.45; }
+  .sb-go { margin-top: 14px; align-self: flex-start; font-size: 14px; padding: 10px 16px; }
+  @media (max-width: 600px) {
+    .dk { padding: 10px 8px; } .dk-r { font-size: 20px; } .dk-k { font-size: 12.5px; } .dk-w { font-size: 12px; }
+    .balken .hb { grid-template-columns: 108px minmax(0, 1fr); } .hb-l { font-size: 12.5px; }
+    .qt { font-size: 12.5px; } .qt td:first-child { white-space: normal; }
+    .sb-go { align-self: stretch; text-align: center; }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Rendite ist nicht gleich Rendite: Renditearten richtig lesen","description":"Kupon, laufende Rendite, Rendite bis Fälligkeit, bis zur Kündigung, Yield to Worst, nach Steuern: Welche Zahl was bedeutet, wo sie herkommt und welche für dich zählt.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-27","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/rendite-lesen.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Verstehen","item":"https://www.metalconcrete.de/wissen.html"},{"@type":"ListItem","position":3,"name":"Rendite richtig lesen","item":"https://www.metalconcrete.de/rendite-lesen.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="verstehen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn current" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe current">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>Rendite ist nicht gleich Rendite</h1>
+    <p class="sub">Dieselbe Anleihe, fünf verschiedene „Renditen“ – je nachdem, wer rechnet und was er einrechnet. Hier lernst du, welche Zahl was bedeutet und welche für dich zählt. Sechs Karten, jede mit Schaubild. Lesezeit: etwa 6 Minuten.</p>
+    <nav class="lands" aria-label="Zum Thema springen">
+      <a class="lbtn" href="#kupon"><span class="n">1</span>Kupon ist nicht Rendite</a>
+      <a class="lbtn" href="#ytm"><span class="n">2</span>Rendite bis Fälligkeit</a>
+      <a class="lbtn" href="#worst"><span class="n">3</span>Kündbar: Yield to Worst</a>
+      <a class="lbtn" href="#konvention"><span class="n">4</span>Die Konvention</a>
+      <a class="lbtn" href="#netto"><span class="n">5</span>Nach Steuern</a>
+      <a class="lbtn" href="#lesen"><span class="n">6</span>Wo welche Zahl steht</a>
+    </nav>
+
+    <section class="kap" id="kupon" aria-labelledby="h-kupon">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">1</span>
+        <h2 id="h-kupon">Kupon ist nicht Rendite</h2>
+        <p>Der <a href="begriffe.html#kupon">Kupon</a> ist der Zins auf den Nennwert – 3&nbsp;% auf 100. Du zahlst aber nicht 100, sondern den Kurs. <strong>Bei Kurs 96 bringen die 3&nbsp;€ Zins auf 96&nbsp;€ Einsatz schon 3,1&nbsp;%</strong> – die laufende Rendite.</p><p>Und am Ende bekommst du 100 zurück, obwohl du 96 bezahlt hast. Dieser Kursgewinn kommt obendrauf: Über fünf Jahre ergibt das <strong>3,9&nbsp;% pro Jahr</strong> – die <a href="begriffe.html#rendite">Rendite bis Fälligkeit</a>. Drei Zahlen, eine Anleihe.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Eine Anleihe: 3&nbsp;% Kupon, Kurs 96, noch 5 Jahre</p><div class="drei" role="img" aria-label="Kupon 3,0 Prozent auf den Nennwert. Laufende Rendite 3,1 Prozent, Kupon geteilt durch Kurs. Rendite bis Fälligkeit 3,9 Prozent, mit Kursgewinn bis 100."><div class="dk"><span class="dk-k">Kupon</span><span class="dk-r">3,0&nbsp;%</span><span class="dk-w">Zins auf den Nennwert 100</span></div><div class="dk"><span class="dk-k">Laufende Rendite</span><span class="dk-r">3,1&nbsp;%</span><span class="dk-w">3 ÷ 96 – Zins auf deinen Einsatz</span></div><div class="dk hl"><span class="dk-k">Rendite bis Fälligkeit</span><span class="dk-r">3,9&nbsp;%</span><span class="dk-w">plus Kursgewinn 96 → 100</span></div></div><p class="sb-f">Bei Kurs über 100 dreht sich das Bild: Dann liegt die Rendite bis Fälligkeit unter dem Kupon.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Kupon = Zins auf 100. Rendite = was du auf deinen Kurs bekommst, inklusive Kursgewinn oder -verlust bis zur Rückzahlung.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="ytm" aria-labelledby="h-ytm">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">2</span>
+        <h2 id="h-ytm">Rendite bis Fälligkeit: die Standardzahl</h2>
+        <p>Wenn irgendwo nur „Rendite“ steht, ist fast immer die <strong>Rendite bis Fälligkeit</strong> gemeint (englisch Yield to Maturity). Sie packt alles in eine Jahreszahl: die Kupons, den Kursgewinn oder -verlust bis 100 und die Restlaufzeit.</p><p>Zwei Annahmen stecken drin: <strong>Du hältst bis zum Ende, und du legst jeden Kupon zum selben Zins wieder an.</strong> Verkaufst du früher oder liegt der Kupon auf dem Konto, weicht dein echtes Ergebnis ab – meist nur leicht.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Woraus die 3,9&nbsp;% bestehen</p><div role="img" aria-label="Rendite bis Fälligkeit 3,9 Prozent, zerlegt: 3,1 Prozent laufende Rendite aus dem Kupon und 0,8 Prozent pro Jahr aus dem Kursgewinn von 96 auf 100 über fünf Jahre."><div class="stapel"><span class="a" style="--w:79%">3,1&nbsp;%</span><span class="b" style="--w:21%">0,8&nbsp;%</span></div><div class="st-leg"><span><b>Kupon</b>3&nbsp;€ pro Jahr auf 96&nbsp;€ Einsatz</span><span><b>Kursgewinn</b>4 Punkte, verteilt auf 5 Jahre</span></div><div class="st-sum"><span>Rendite bis Fälligkeit, pro Jahr</span><b>3,9&nbsp;%</b></div></div><p class="sb-f">Die exakte Rechnung zinst jede Zahlung ab (Barwert), deshalb sind es 3,9 und nicht genau 3,1 + 0,8. Der <a href="rechner.html#rendite">Rechner</a> macht das taggenau.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> „Rendite“ heißt fast immer Rendite bis Fälligkeit: Kupon plus Kursdifferenz bis 100, auf ein Jahr gerechnet – gültig, wenn du bis zum Ende hältst.</span></p>
+    </section>
+
+    <section class="kap" id="worst" aria-labelledby="h-worst">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">3</span>
+        <h2 id="h-worst">Kündbar: Rendite bis Kündigung und Yield to Worst</h2>
+        <p>Darf der Emittent vorzeitig kündigen, gibt es eine zweite Rendite: <strong>bis zum Kündigungstermin</strong> (Yield to Call). Hast du über 100 gekauft, ist sie deutlich niedriger – der Kursverlust auf 100 fällt dann in wenige Jahre.</p><p>Profis rechnen beide und nehmen die schlechtere: die <strong>Yield to Worst</strong>. Mit ihr planst du, denn der Emittent kündigt genau dann, wenn es für ihn günstig ist – also für dich ungünstig. Warum und wann, steht bei den <a href="kuendbare-anleihen.html">kündbaren Anleihen</a>.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">5&nbsp;% Kupon, Kurs 104, fällig in 6 Jahren, kündbar in 2</p><div class="balken" role="img" aria-label="Rendite bis Fälligkeit in 6 Jahren: 4,2 Prozent. Rendite bis Kündigung in 2 Jahren: 2,9 Prozent. Yield to Worst: 2,9 Prozent."><div class="hb"><span class="hb-l">Bis Fälligkeit<small>6 Jahre, Verlust 104 → 100 verteilt</small></span><span class="hb-bar" style="--w:100%"><b>4,2&nbsp;%</b></span></div><div class="hb"><span class="hb-l">Bis Kündigung<small>2 Jahre, Verlust 104 → 100 sofort</small></span><span class="hb-bar r" style="--w:69%"><b>2,9&nbsp;%</b></span></div></div><div class="worst"><span>Yield to Worst – damit rechnest du</span><b>2,9&nbsp;%</b></div><p class="sb-f">Unter 100 gekauft? Dann ist meist die Rendite bis Fälligkeit die schlechtere – und die Kündigung wäre ein Gewinn.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Kündbar heißt zwei Renditen. Rechne mit der schlechteren – Yield to Worst.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="konvention" aria-labelledby="h-konvention">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">4</span>
+        <h2 id="h-konvention">Dieselbe Anleihe, drei Zahlen</h2>
+        <p>Selbst die Rendite bis Fälligkeit ist nicht eindeutig. <strong>Zu welchem Kurs?</strong> Der letzte Umsatz ist Vergangenheit; kaufen kannst du nur zum Briefkurs, und der liegt höher. <strong>Mit welcher Zinsformel?</strong> Europa rechnet jährlich (ISMA), die USA halbjährlich – bei 4&nbsp;% macht das 0,04 Punkte aus.</p><p>Bei langen Laufzeiten sind das Nachkommastellen. <strong>Bei wenigen Monaten Restlaufzeit wird es spürbar:</strong> Da entscheiden Briefkurs, Stückzinsen und der genaue Valutatag über einen halben Prozentpunkt – und eine veraltete Taxe zeigt oft eine Rendite, die es gar nicht gibt.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">3&nbsp;% Kupon, noch 5 Jahre – je nach Kurs und Formel</p><div class="drei" role="img" aria-label="Zum letzten Kurs 96,00: 3,90 Prozent. Zum Briefkurs 96,40: 3,80 Prozent. Halbjährliche Formel bei 4 Prozent jährlich: 3,96 Prozent."><div class="dk"><span class="dk-k">Letzter Kurs 96,00</span><span class="dk-r">3,90&nbsp;%</span><span class="dk-w">so zeigt es die Kursliste</span></div><div class="dk hl"><span class="dk-k">Briefkurs 96,40</span><span class="dk-r">3,80&nbsp;%</span><span class="dk-w">das bekommst du wirklich</span></div><div class="dk"><span class="dk-k">US-Formel<br>(halbjährlich)</span><span class="dk-r">3,96&nbsp;%</span><span class="dk-w">statt 4,00&nbsp;% jährlich – gleiche Zahlung</span></div></div><p class="sb-f">Die Anleihen-Suche dieser Website rechnet zum letzten Frankfurter Schlusskurs (ISMA, jährlich) und markiert kurz laufende Anleihen mit unplausibel hoher Rendite als „wahrscheinlich zu hoch“.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Deine Rendite ist die zum Briefkurs, mit Stückzinsen, am Tag der Order. Alles andere ist eine Schätzung.</span></p>
+    </section>
+
+    <section class="kap" id="netto" aria-labelledby="h-netto">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">5</span>
+        <h2 id="h-netto">Nach Steuern und Inflation</h2>
+        <p>Von den 3,9&nbsp;% nimmt der Staat 26,375&nbsp;% (Abgeltungsteuer mit Soli, ohne Kirchensteuer) – und zwar <strong>auf den Kupon und auf den Kursgewinn</strong> bis 100, sobald er realisiert ist. Bleiben 2,9&nbsp;% netto, oberhalb des <a href="begriffe.html#sparerpauschbetrag">Sparerpauschbetrags</a>.</p><p>Dann die Inflation: Bei 2&nbsp;% Preissteigerung bleibt <strong>real knapp 0,9&nbsp;%</strong>. Das ist die Zahl, die deine Kaufkraft beschreibt – und die auf Broker-Seiten nirgends steht. Wie sie sich seit 1970 entwickelt hat, zeigt der <a href="realzins.html">Realzins</a>.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Von brutto zu real</p><div class="balken" role="img" aria-label="Rendite bis Fälligkeit 3,9 Prozent. Nach Abgeltungsteuer 2,9 Prozent. Nach 2 Prozent Inflation real 0,9 Prozent."><div class="hb"><span class="hb-l">Brutto<small>Rendite bis Fälligkeit</small></span><span class="hb-bar" style="--w:100%"><b>3,9&nbsp;%</b></span></div><div class="hb"><span class="hb-l">Nach Steuern<small>−26,375&nbsp;%</small></span><span class="hb-bar o" style="--w:74%"><b>2,9&nbsp;%</b></span></div><div class="hb"><span class="hb-l">Real<small>−2,0 Punkte Inflation</small></span><span class="hb-bar r" style="--w:23%"><b>0,9&nbsp;%</b></span></div></div><p class="sb-f">Faustregel: Zins × 0,74 = netto. Damit netto die Inflation schlägt, braucht es Inflation ÷ 0,74 brutto – bei 2&nbsp;% also 2,7&nbsp;%.</p><a class="go sb-go" href="rechner.html#netto">Rechner: Zinsen netto nach Steuer →</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Brutto × 0,74 = netto. Netto minus Inflation = real. Nur die letzte Zahl ist dein Ertrag.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="lesen" aria-labelledby="h-lesen">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">6</span>
+        <h2 id="h-lesen">Wo welche Zahl steht</h2>
+        <p>Jede Quelle zeigt eine andere Rendite – und sagt selten, welche. <strong>Broker</strong> nennen meist die Rendite bis Fälligkeit zum letzten Kurs, manchmal nur die laufende. <strong>ETF-Factsheets</strong> zeigen die Durchschnittsrendite des Korbs vor Kosten – zieh die TER ab. <strong>Floater und Stufenzins</strong> haben gar keine sinnvolle Rendite bis Fälligkeit, weil der Kupon nicht feststeht.</p><p>Die Frage, die du dir bei jeder Zahl stellst: <strong>Bis wann, zu welchem Kurs, und was ist schon abgezogen?</strong></p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Renditeangaben lesen</p><table class="qt" aria-label="Quelle, was sie zeigt, worauf zu achten ist"><thead><tr><th scope="col">Quelle</th><th scope="col">Zeigt meist</th><th scope="col">Achte auf</th></tr></thead><tbody><tr><td>Broker-App</td><td>Rendite bis Fälligkeit zum letzten Kurs</td><td>Briefkurs, kündbar?</td></tr><tr><td>Börsenseite</td><td>Rendite bis Fälligkeit, manchmal laufende</td><td>Welche von beiden?</td></tr><tr><td>ETF-Factsheet</td><td>Rendite des Korbs vor Kosten</td><td>TER abziehen</td></tr><tr><td>Diese Website</td><td>Rendite bis Fälligkeit, ISMA, Schlusskurs</td><td>„–“ bei Floatern und kündbar</td></tr></tbody></table><p class="sb-f">Kein Wert bei Floatern, Stufenzins und Wandelanleihen – dort wäre jede Rendite bis Fälligkeit geraten.</p><a class="go sb-go" href="anleihen-suche.html?zins=0&amp;kue=n,m,p&amp;w=EUR">Suche: fester Kupon, ohne nachteilige Kündigung →</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Drei Fragen an jede Rendite: bis wann, zu welchem Kurs, was ist abgezogen?</span></p>
+    </section>
+
+    <div class="weiter">
+      <a class="go" href="rechner.html#rendite">Rechner: Rendite aus Kurs und Kupon →</a>
+      <a class="go leise" href="kuendbare-anleihen.html">Kündbare Anleihen →</a>
+      <a class="go leise" href="realzins.html">Realzins seit 1970 →</a>
+    </div>
+    <p class="klein">Diese Seite erklärt Renditebegriffe. Sie empfiehlt keine Anlage und ist keine Steuerberatung. Die Zahlen sind gerundet.</p>
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="duration.html">Duration und Konvexität – den Hebel rechnen</a></li>
+        <li><a href="grundlagen.html#kurs">Grundlagen: Kurs und Rendite</a></li>
+        <li><a href="anleihen-suche.html">Anleihen-Suche – Rendite je Anleihe</a></li>
+        <li><a href="anleihen-etf-erklaert.html">Anleihen-ETF – Vor- und Nachteile</a></li>
+      </ul>
+    </nav>
+    <details class="quellen" id="quellen">
+      <summary>Datenquellen und Methodik</summary>
+      <div class="quellen-body">
+        <p><strong>Rechnung.</strong> Rendite bis Fälligkeit nach ISMA (jährliche Verzinsung, glatte Jahre, ohne Stückzinsen): 3&nbsp;% Kupon, Kurs 96, 5 Jahre → 3,896&nbsp;%; Kurs 96,40 → 3,804&nbsp;%; laufende Rendite 3 ÷ 96 = 3,125&nbsp;%. Kündbare Anleihe (Karte 3): 5&nbsp;% Kupon, Kurs 104, Fälligkeit in 6 Jahren → 4,23&nbsp;%; Kündigung zu 100 in 2 Jahren → 2,91&nbsp;%. Halbjährliche Konvention (Karte 4): 2 × (√1,04 − 1) = 3,96&nbsp;% entspricht 4,00&nbsp;% jährlich. Die Zerlegung in Karte 2 (3,1 + 0,8) ist eine Näherung; die exakte Rendite berücksichtigt die Abzinsung.</p>
+        <p><strong>Steuern.</strong> Abgeltungsteuer 25&nbsp;% plus Solidaritätszuschlag 5,5&nbsp;% darauf = 26,375&nbsp;%; mit Kirchensteuer 27,82&nbsp;% (8&nbsp;%) bzw. 27,99&nbsp;% (9&nbsp;%). Kursgewinne bis zur Rückzahlung sind steuerpflichtig, Verluste verrechenbar; Sparerpauschbetrag 1.000&nbsp;€ (Einzelveranlagung) bzw. 2.000&nbsp;€ (Zusammenveranlagung). Allgemeine Information, keine Steuerberatung; Stand September 2026.</p>
+        <p><strong>Website.</strong> Die Anleihen-Suche rechnet die Rendite bis Fälligkeit aus dem letzten Schlusskurs der Börse Frankfurt (Bundeswertpapiere: Bundesbank), ISMA, nur bei festem Kupon und Rückzahlung am Ende; Anleihen mit unter einem Jahr Restlaufzeit und Rendite deutlich über Bund sind als „wahrscheinlich zu hoch“ gekennzeichnet (Methodik dort im Aufklapper).</p>
+      </div>
+    </details>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt: die Seite rendert auch ohne Menü-Skript.
+window.MC = window.MC || { navInit: function () {} };
+MC.navInit();
+</script>
+</body>
+</html>

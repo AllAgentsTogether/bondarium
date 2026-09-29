@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sind Anleihen etwas für dich? – METALCONCRETE</title>
+<meta name="description" content="Warum eine Unternehmerin und ein Privatanleger Anleihen kaufen: Liquidität planen, Ertrag festschreiben, Risiko streuen – und für wen sie nicht passen.">
+<link rel="canonical" href="https://www.metalconcrete.de/anlegerprofile.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/anlegerprofile.html">
+<meta property="og:title" content="Sind Anleihen etwas für dich? – METALCONCRETE">
+<meta property="og:description" content="Warum eine Unternehmerin und ein Privatanleger Anleihen kaufen: Liquidität planen, Ertrag festschreiben, Risiko streuen – und für wen sie nicht passen.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sind Anleihen etwas für dich? – METALCONCRETE">
+<meta name="twitter:description" content="Warum eine Unternehmerin und ein Privatanleger Anleihen kaufen: Liquidität planen, Ertrag festschreiben, Risiko streuen – und für wen sie nicht passen.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Seit 24.09.2026 nach dem Entwurf: Fotos, Namen als Titel (seit 27.09.2026 Manrope statt Schreibschrift), Symbole in Kreisen, Hinweis-Kasten mit Knopf */
+  h1 .hl { position: relative; display: inline-block; color: var(--green-text); white-space: nowrap; }
+  .hl-line { position: absolute; left: -2%; bottom: -0.2em; width: 106%; height: 0.24em; }
+
+  /* Profil-Karten: Foto und Inhalt nebeneinander; das Foto läuft zum Text hin weich aus */
+  .ap-card { position: relative; display: grid; border-radius: 16px; overflow: hidden; border: 1px solid rgba(44,44,42,0.07);
+    box-shadow: 0 1px 2px rgba(44,44,42,0.04), 0 10px 28px rgba(44,44,42,0.05); }
+  .ap-card + .ap-card { margin-top: 14px; }
+  .ap-u { grid-template-columns: 326px minmax(0, 1fr);
+    background: radial-gradient(90% 110% at 100% 45%, #DFFFD9 0%, rgba(223,255,217,0) 70%), linear-gradient(100deg, #EFFFEC 0%, #F7FFF5 40%, #EBFFE6 100%); }
+  .ap-p { grid-template-columns: minmax(0, 1fr) 340px;
+    background: radial-gradient(70% 120% at 0% 0%, #F9FFF7 0%, rgba(249,255,247,0) 70%), linear-gradient(100deg, #F7FFF5 0%, #EFFFEC 60%, #E4FDDD 100%); }   /* seit 26.09.2026 grün statt beige */
+  /* Fotobox: --ar Seitenverhältnis, --oxn/--oyn Bildausschnitt (0…1), --bx/--by Lage des Kreis-Symbols im Bild (0…1).
+     Das Symbol folgt dem Bild auch bei object-fit: cover (Containereinheiten) und deckt die Stelle ab, an der es im Entwurf saß. */
+  .ap-photo { position: relative; container-type: size; min-height: 303px; }
+  .ap-u .ap-photo { --ar: 1.0767; --oxn: 0.3; --oyn: 0; --bx: 0.202; --by: 0.236; }
+  .ap-p .ap-photo { --ar: 1.1774; --oxn: 0.85; --oyn: 0.3; --bx: 0.819; --by: 0.194; }
+  .ap-photo img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover;
+    object-position: calc(var(--oxn) * 100%) calc(var(--oyn) * 100%); }
+  .ap-u .ap-photo img { -webkit-mask-image: linear-gradient(to right, #000 80%, transparent); mask-image: linear-gradient(to right, #000 80%, transparent); }
+  .ap-p .ap-photo img { -webkit-mask-image: linear-gradient(to left, #000 78%, transparent); mask-image: linear-gradient(to left, #000 78%, transparent); }
+  .ap-badge { --wr: max(100cqw, 100cqh * var(--ar)); --hr: calc(var(--wr) / var(--ar));
+    position: absolute; left: calc((100cqw - var(--wr)) * var(--oxn) + var(--wr) * var(--bx)); top: calc((100cqh - var(--hr)) * var(--oyn) + var(--hr) * var(--by));
+    width: clamp(58px, calc(var(--wr) * 0.205), 78px); aspect-ratio: 1; transform: translate(-50%, -50%);
+    border-radius: 50%; background: #fff; display: grid; place-items: center; box-shadow: 0 6px 22px rgba(30,45,80,0.16); }
+  .ap-badge svg { width: 48%; height: 48%; }
+  .ap-u .ap-badge { color: var(--green-text); }
+
+  .ap-body { position: relative; padding: 20px 30px 24px 10px; }
+  .ap-p .ap-body { padding: 20px 12px 24px 52px; }
+  .ap-name { position: relative; display: inline-block; margin: 0 0 21px; font-family: var(--sans); font-weight: 700;
+    font-size: 30px; line-height: 1.1; letter-spacing: -0.025em; color: var(--green-text); }   /* seit 27.09.2026 Manrope statt Handschrift, ohne Drehung */
+  .ap-p .ap-name { color: var(--green-text); }
+  .ap-swoosh { display: none; }   /* handgezeichnete Unterstreichung seit 27.09.2026 ausgeblendet (passte nur zur Handschrift) */
+  .ap-tag { font-size: 17px; font-weight: 600; line-height: 1.35; color: var(--ap-ink); margin-bottom: 17px; }
+  .ap-args { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 26px; }
+  .ap-args li { display: grid; grid-template-columns: 52px minmax(0, 1fr); column-gap: 16px; align-items: start; font-size: 14px; line-height: 1.5; color: var(--ap-text); }
+  .ap-args strong { display: block; font-size: 14.5px; font-weight: 600; color: var(--ap-ink); margin: 4px 0 3px; }
+  .ap-ic { width: 52px; height: 52px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--green-text); box-shadow: 0 4px 14px rgba(30,45,80,0.10); }
+  .ap-p .ap-ic { color: var(--green-text); }
+  .ap-ic svg { width: 24px; height: 24px; }
+
+  /* Hinweis „Nicht für jeden“ und Knopf zu den Anlagezielen in einer Zeile */
+  .ap-foot { display: flex; align-items: center; gap: 30px; margin-top: 22px; }
+  .ap-note { flex: 1; display: flex; align-items: center; gap: 16px; background: #DFFFD9; border-radius: 12px; padding: 14px 20px; font-size: 12.5px; line-height: 1.6; color: var(--ap-text); }
+  .ap-note svg { flex: none; width: 28px; height: 28px; color: var(--green-text); }
+  .ap-go { flex: none; display: inline-block; background: var(--green); color: var(--ink); font-size: 14px; font-weight: 600; text-decoration: none; padding: 11px 20px; border-radius: 8px; box-shadow: 0 6px 16px rgba(57,255,20,0.30); transition: background-color .15s ease; }
+  .ap-go:hover { background: var(--green-hover); }
+  .ap-guide { margin-top: 18px; font-size: 14.5px; line-height: 1.5; }
+  .ap-guide a { color: var(--green-text); font-weight: 600; text-decoration: none; }
+  .ap-guide a:hover { text-decoration: underline; }
+  .ap-go:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+  /* Schmaler: Argumente untereinander, Foto-Spalte anteilig */
+  @media (max-width: 940px) {
+    .ap-u { grid-template-columns: 36% minmax(0, 1fr); }
+    .ap-p { grid-template-columns: minmax(0, 1fr) 36%; }
+    .ap-args { grid-template-columns: 1fr; gap: 14px; }
+    .ap-foot { flex-direction: column; align-items: flex-start; gap: 16px; }
+    /* Karten werden hier höher als das Foto: Foto in natürlicher Größe oben halten und nach unten auslaufen lassen, statt es aufzublasen */
+    .ap-photo { min-height: 0; aspect-ratio: var(--ar); align-self: start; }
+    .ap-u .ap-photo img { -webkit-mask-image: linear-gradient(to right, #000 80%, transparent), linear-gradient(to bottom, #000 72%, transparent); -webkit-mask-composite: source-in;
+      mask-image: linear-gradient(to right, #000 80%, transparent), linear-gradient(to bottom, #000 72%, transparent); mask-composite: intersect; }
+    .ap-p .ap-photo img { -webkit-mask-image: linear-gradient(to left, #000 78%, transparent), linear-gradient(to bottom, #000 72%, transparent); -webkit-mask-composite: source-in;
+      mask-image: linear-gradient(to left, #000 78%, transparent), linear-gradient(to bottom, #000 72%, transparent); mask-composite: intersect; }
+  }
+  @media (max-width: 760px) {  .ap-p .ap-body { padding-left: 28px; } }
+  /* Handy: Foto oben (läuft nach unten aus), Inhalt darunter */
+  @media (max-width: 540px) {
+    .ap-u, .ap-p { grid-template-columns: minmax(0, 1fr); }
+    .ap-photo { min-height: 0; aspect-ratio: var(--ar); }
+    .ap-p .ap-photo { order: -1; }
+    .ap-u .ap-photo img, .ap-p .ap-photo img { -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent); mask-image: linear-gradient(to bottom, #000 80%, transparent); }
+    .ap-body, .ap-p .ap-body { padding: 0 18px 22px; margin-top: -14px; }
+    .ap-name { font-size: 27px; }
+    .ap-tag { font-size: 16px; }
+    .ap-note { padding: 14px 16px; }
+    .ap-go { align-self: stretch; text-align: center; }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Sind Anleihen etwas für dich? Zwei Anlegerprofile","description":"Warum eine Unternehmerin und ein Privatanleger Anleihen kaufen: Liquidität planen, Ertrag festschreiben, Risiko streuen – und für wen sie nicht passen.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-25","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/anlegerprofile.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Entscheiden","item":"https://www.metalconcrete.de/entscheiden.html"},{"@type":"ListItem","position":3,"name":"Sind Anleihen etwas für dich?","item":"https://www.metalconcrete.de/anlegerprofile.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="entscheiden">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn current" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe current">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>Sind Anleihen etwas für <span class="hl">dich?<svg class="hl-line" viewBox="0 0 200 22" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M2.1 17.7 L5.2 17.7 L8.3 17.7 L11.4 17.6 L14.7 17.6 L17.9 17.5 L21.3 17.5 L24.6 17.4 L28 17.3 L31.5 17.2 L35 17 L38.6 16.9 L42.2 16.7 L45.8 16.5 L49.5 16.3 L53.3 16 L57.1 15.8 L60.9 15.5 L64.8 15.3 L68.7 15 L72.6 14.8 L76.6 14.5 L80.7 14.3 L84.8 14.1 L88.9 13.8 L93.1 13.6 L97.3 13.4 L101.5 13.1 L105.8 12.9 L110.1 12.7 L114.4 12.5 L118.8 12.3 L123.2 12.1 L127.7 11.8 L132.2 11.6 L136.7 11.4 L141.2 11.2 L145.8 11.1 L150.4 10.9 L155.1 10.7 L159.7 10.5 L164.4 10.3 L169.2 10.2 L173.9 10 L178.7 9.8 L183.5 9.6 L188.3 9.5 L193.1 9.3 L198 9.2 L198 8.8 L193.1 8.6 L188.3 8.3 L183.5 8.1 L178.7 7.9 L173.9 7.7 L169.2 7.5 L164.4 7.3 L159.7 7.2 L155 7 L150.4 6.9 L145.8 6.8 L141.2 6.7 L136.6 6.7 L132.1 6.6 L127.6 6.6 L123.1 6.5 L118.7 6.5 L114.3 6.5 L109.9 6.6 L105.6 6.6 L101.3 6.7 L97 6.7 L92.8 6.8 L88.6 6.9 L84.5 7 L80.4 7.2 L76.3 7.3 L72.3 7.5 L68.3 7.7 L64.3 7.9 L60.4 8.1 L56.6 8.3 L52.8 8.5 L49 8.8 L45.3 9.1 L41.6 9.4 L38 9.8 L34.5 10.3 L30.9 10.7 L27.5 11.2 L24.1 11.8 L20.8 12.3 L17.5 12.9 L14.2 13.6 L11.1 14.2 L8 14.9 L4.9 15.6 L1.9 16.3Z" fill="#1DA300"/></svg></span></h1>
+    <p class="sub">Zwei typische Anleger – und warum sie Anleihen kaufen.</p>
+
+    <article class="ap-card ap-u" aria-labelledby="h-u">
+      <div class="ap-photo">
+        <img src="anlegerprofil-unternehmerin.webp" width="351" height="326" alt="Unternehmerin mit Sonnenbrille im dunkelblauen Blazer, im Hintergrund Palmen am Meer" decoding="async" fetchpriority="high">
+        <span class="ap-badge" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2.5" y="3.5" width="19" height="13" rx="2"/><path d="M8.5 20.5h7M12 16.5v4"/><path d="M6 13l3.3-3.3 2.7 2.5 5-5"/><path d="M14.3 7.2H17v2.7"/></svg></span>
+      </div>
+      <div class="ap-body">
+        <h2 class="ap-name" id="h-u">Die Unternehmerin<svg class="ap-swoosh" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M2.1 15.8 L4.9 15.7 L7.7 15.6 L10.6 15.5 L13.6 15.4 L16.7 15.3 L19.8 15.2 L23 15 L26.3 14.9 L29.6 14.8 L33 14.6 L36.5 14.4 L40.1 14.2 L43.7 14 L47.3 13.7 L51 13.4 L54.8 13.2 L58.7 12.9 L62.6 12.6 L66.5 12.3 L70.5 12.1 L74.6 11.8 L78.7 11.5 L82.8 11.3 L87 11 L91.3 10.7 L95.6 10.4 L99.9 10.2 L104.3 9.9 L108.7 9.6 L113.2 9.3 L117.6 9.1 L122.2 8.8 L126.7 8.5 L131.3 8.2 L135.9 8 L140.6 7.7 L145.3 7.4 L150 7.1 L154.7 6.8 L159.4 6.5 L164.2 6.3 L169 6 L173.8 5.7 L178.6 5.4 L183.4 5.1 L188.3 4.7 L193.1 4.4 L198 4.2 L198 3.8 L193.1 3.8 L188.3 3.8 L183.4 3.7 L178.6 3.7 L173.7 3.7 L168.9 3.6 L164.1 3.6 L159.3 3.6 L154.6 3.7 L149.8 3.7 L145.1 3.7 L140.4 3.8 L135.8 3.8 L131.2 3.9 L126.6 3.9 L122 4 L117.4 4.1 L112.9 4.2 L108.5 4.3 L104 4.4 L99.6 4.6 L95.3 4.7 L91 4.9 L86.7 5 L82.5 5.2 L78.3 5.4 L74.2 5.6 L70.1 5.8 L66.1 6 L62.1 6.2 L58.2 6.4 L54.4 6.7 L50.6 7 L46.8 7.2 L43.2 7.5 L39.5 7.9 L36 8.3 L32.5 8.7 L29.1 9.1 L25.8 9.6 L22.5 10.1 L19.3 10.6 L16.2 11.2 L13.2 11.7 L10.2 12.3 L7.4 12.9 L4.6 13.6 L1.9 14.2Z" fill="currentColor"/></svg></h2>
+        <p class="ap-tag">Plant voraus. Entscheidet klar. Denkt in Chancen.</p>
+        <ul class="ap-args">
+          <li><span class="ap-ic"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M11 3.2A9 9 0 1 0 20.8 13H11z"/><path d="M13 1.2V11h9.8A9.9 9.9 0 0 0 13 1.2z"/></svg></span><div><strong>Liquidität planen</strong> Fälligkeit auf Steuertermine oder Investitionen abstimmen – die Rückzahlung erfolgt zum Nennwert.</div></li>
+          <li><span class="ap-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 17.5l6-6 4 4 8-8"/><path d="M14.5 7.5H21V14"/></svg></span><div><strong>Ertrag festschreiben</strong> Kupon und Rendite bis Fälligkeit stehen beim Kauf fest.</div></li>
+          <li><span class="ap-ic"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 2.2l8.2 3.1v6.1c0 5.1-3.5 8.9-8.2 10.4-4.7-1.5-8.2-5.3-8.2-10.4V5.3z"/><path d="M8.3 12.1l2.6 2.6 4.9-5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><strong>Risiko streuen</strong> Die Einlagensicherung endet bei 100.000&nbsp;€ je Bank; Anleihen im Depot bleiben Eigentum des Unternehmens.</div></li>
+          <li><span class="ap-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 6.5h10M17.5 6.5H21M3 12h3.5M11 12h10M3 17.5h12M19.5 17.5H21"/><circle cx="15.3" cy="6.5" r="2.2"/><circle cx="8.8" cy="12" r="2.2"/><circle cx="17.3" cy="17.5" r="2.2"/></svg></span><div><strong>Flexibel bleiben</strong> Börsentäglich verkäuflich – vor Fälligkeit zum Marktkurs.</div></li>
+        </ul>
+        <p class="ap-guide"><a href="guide.html#michael">So bekommt Michael, Unternehmer, Zinsen über Jahrzehnte&nbsp;→</a></p>
+      </div>
+    </article>
+
+    <article class="ap-card ap-p" aria-labelledby="h-p">
+      <div class="ap-body">
+        <h2 class="ap-name" id="h-p">Der Privatanleger<svg class="ap-swoosh" viewBox="0 0 200 20" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M2.1 15.8 L4.9 15.7 L7.7 15.6 L10.6 15.5 L13.6 15.4 L16.7 15.3 L19.8 15.2 L23 15 L26.3 14.9 L29.6 14.8 L33 14.6 L36.5 14.4 L40.1 14.2 L43.7 14 L47.3 13.7 L51 13.4 L54.8 13.2 L58.7 12.9 L62.6 12.6 L66.5 12.3 L70.5 12.1 L74.6 11.8 L78.7 11.5 L82.8 11.3 L87 11 L91.3 10.7 L95.6 10.4 L99.9 10.2 L104.3 9.9 L108.7 9.6 L113.2 9.3 L117.6 9.1 L122.2 8.8 L126.7 8.5 L131.3 8.2 L135.9 8 L140.6 7.7 L145.3 7.4 L150 7.1 L154.7 6.8 L159.4 6.5 L164.2 6.3 L169 6 L173.8 5.7 L178.6 5.4 L183.4 5.1 L188.3 4.7 L193.1 4.4 L198 4.2 L198 3.8 L193.1 3.8 L188.3 3.8 L183.4 3.7 L178.6 3.7 L173.7 3.7 L168.9 3.6 L164.1 3.6 L159.3 3.6 L154.6 3.7 L149.8 3.7 L145.1 3.7 L140.4 3.8 L135.8 3.8 L131.2 3.9 L126.6 3.9 L122 4 L117.4 4.1 L112.9 4.2 L108.5 4.3 L104 4.4 L99.6 4.6 L95.3 4.7 L91 4.9 L86.7 5 L82.5 5.2 L78.3 5.4 L74.2 5.6 L70.1 5.8 L66.1 6 L62.1 6.2 L58.2 6.4 L54.4 6.7 L50.6 7 L46.8 7.2 L43.2 7.5 L39.5 7.9 L36 8.3 L32.5 8.7 L29.1 9.1 L25.8 9.6 L22.5 10.1 L19.3 10.6 L16.2 11.2 L13.2 11.7 L10.2 12.3 L7.4 12.9 L4.6 13.6 L1.9 14.2Z" fill="currentColor"/></svg></h2>
+        <p class="ap-tag">Legt Wert auf Sicherheit. Denkt an morgen. Bleibt gelassen.</p>
+        <ul class="ap-args">
+          <li><span class="ap-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><g fill="currentColor" stroke="none"><circle cx="8" cy="13.6" r="1"/><circle cx="12" cy="13.6" r="1"/><circle cx="16" cy="13.6" r="1"/><circle cx="8" cy="17.2" r="1"/><circle cx="12" cy="17.2" r="1"/></g></svg></span><div><strong>Regelmäßige Erträge</strong> Zinszahlungen jährlich oder halbjährlich, unabhängig von der Börsenlage.</div></li>
+          <li><span class="ap-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18.5 5.5l-13 13"/><circle cx="7" cy="7" r="2.6"/><circle cx="17" cy="17" r="2.6"/></svg></span><div><strong>Zins sichern</strong> Die Rendite beim Kauf gilt bis zur Fälligkeit, auch wenn das allgemeine Zinsniveau fällt.</div></li>
+          <li><span class="ap-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.2l8.2 3.1v6.1c0 5.1-3.5 8.9-8.2 10.4-4.7-1.5-8.2-5.3-8.2-10.4V5.3z"/><path d="M8.3 12.1l2.6 2.6 4.9-5"/></svg></span><div><strong>Depot stabilisieren</strong> Anleihen guter Bonität schwanken deutlich weniger als Aktien.</div></li>
+          <li><span class="ap-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="13" r="8.5"/><circle cx="11" cy="13" r="4.6"/><circle cx="11" cy="13" r="1.1" fill="currentColor"/><path d="M11 13l9-9"/><path d="M16.8 3.4l3.2.6.6 3.2"/></svg></span><div><strong>Ziele terminieren</strong> Die Fälligkeit lässt sich auf das Sparziel abstimmen – Ausbildung, Immobilie, Ruhestand.</div></li>
+        </ul>
+        <p class="ap-guide"><a href="guide.html#tobias">So spart Tobias auf ein Datum&nbsp;→</a> · <a href="guide.html#nadine">So parkt Nadine Geld für zwölf Monate&nbsp;→</a></p>
+      </div>
+      <div class="ap-photo">
+        <img src="anlegerprofil-privatanleger.webp" width="365" height="310" alt="Privatanleger mit Kaffeetasse, entspannt im Wohnzimmer" decoding="async">
+        <span class="ap-badge" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><defs><linearGradient id="ap-bar" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#74FF5B"/><stop offset="1" stop-color="#1DA300"/></linearGradient></defs><g fill="url(#ap-bar)"><rect x="3.5" y="9" width="3.4" height="12" rx=".7"/><rect x="8.4" y="13" width="3.4" height="8" rx=".7"/><rect x="13.3" y="4" width="3.4" height="17" rx=".7"/><rect x="18.2" y="11" width="3.4" height="10" rx=".7"/></g></svg></span>
+      </div>
+    </article>
+
+    <div class="ap-foot">
+      <p class="ap-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg><span>Nicht für jeden: Wer jederzeit ohne Kursrisiko an sein Geld muss, ist mit Tagesgeld besser bedient; wer über Jahrzehnte die höchste Rendite sucht, landet eher bei Aktien. Beispiele typischer Motive, keine Anlageberatung.</span></p>
+      <a class="ap-go" href="guide.html">Zu den vier Anleitungen: Schritt für Schritt zur Anleihe&nbsp;→</a>
+    </div>
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="grundlagen.html">Anleihen einfach erklärt</a></li>
+        <li><a href="anlageziele.html">Anlageziele – welche Anleihe wozu passt</a></li>
+      </ul>
+    </nav>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+</script>
+</body>
+</html>

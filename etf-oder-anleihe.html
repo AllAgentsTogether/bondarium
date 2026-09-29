@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ETF oder Anleihe? Was besser zu dir passt – METALCONCRETE</title>
+<meta name="description" content="ETF oder einzelne Anleihe? Nur die Anleihe hat ein festes Ende, der ETF läuft ohne Pflege weiter. Die Unterschiede, die entscheiden – mit Tabelle.">
+<link rel="canonical" href="https://www.metalconcrete.de/etf-oder-anleihe.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/etf-oder-anleihe.html">
+<meta property="og:title" content="ETF oder Anleihe? Was besser zu dir passt – METALCONCRETE">
+<meta property="og:description" content="ETF oder einzelne Anleihe? Nur die Anleihe hat ein festes Ende, der ETF läuft ohne Pflege weiter. Die Unterschiede, die entscheiden – mit Tabelle.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ETF oder Anleihe? Was besser zu dir passt – METALCONCRETE">
+<meta name="twitter:description" content="ETF oder einzelne Anleihe? Nur die Anleihe hat ein festes Ende, der ETF läuft ohne Pflege weiter. Die Unterschiede, die entscheiden – mit Tabelle.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* ETF oder Anleihe (25.09.2026, Korrekturen 26.09.2026): vier Erklärkarten nach dem Gestaltungssystem (base.css); hier nur die eigenen Bausteine. */
+  .sb-go { margin-top: 14px; align-self: flex-start; font-size: 14px; padding: 10px 16px; }
+  /* Gegenüberstellung in zwei Spalten */
+  .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .vs > div { border-radius: 12px; padding: 12px 14px; background: var(--ap-soft); }
+  .vs > div.e { background: #FBEADB; }
+  .vs .vk { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; color: var(--green-text); }
+  .vs .e .vk { color: var(--orange-text); }
+  .vs p { font-size: 14px; line-height: 1.45; color: var(--ap-ink); }
+  .vs p + p { margin-top: 6px; }
+  /* Zeitstrahl (Aufwand) */
+  .zs { display: grid; gap: 12px; }
+  .zs .zr { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 10px; align-items: center; }
+  .zs .zl { font-size: 14px; font-weight: 600; color: var(--ap-ink); }
+  .zs .zb { position: relative; height: 34px; border-radius: 8px; background: var(--ap-soft); }
+  .zs .zb.e { background: #FBEADB; }
+  .zs .zb i { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 22px; height: 22px; border-radius: 50%; background: var(--orange); color: #fff; font-style: normal; font-size: 12px; font-weight: 600; display: grid; place-items: center; }
+  .zs .zb span { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; font-weight: 600; color: var(--ap-ink); }
+  .zs .ax { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 10px; }
+  .zs .ax div { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; color: var(--text); }
+  .zs .zs-axt { margin-top: -6px; text-align: right; font-size: 12px; font-weight: 600; color: var(--text); }
+  .sb-f strong { font-weight: 600; }
+  /* Schaubild 1: eigene Handy-Fassung (schmalere viewBox), damit die Beschriftung bei 360–390 px mindestens 11 px groß bleibt */
+  .sb-m { display: none; }
+  @media (max-width: 600px) { .sb.sb-d { display: none; } .sb.sb-m { display: block; } }
+  /* Steckbrief vs. ETF-Kennzahlen */
+  .sbx dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; font-size: 14px; }
+  .sbx dt { color: var(--ap-text); }
+  .sbx dd { font-weight: 600; color: var(--ap-ink); font-variant-numeric: tabular-nums; }
+  .sbx .fr { font-size: 13px; color: var(--ap-text); margin-top: 8px; }
+  /* Entscheidungstabelle */
+  .wahl { border-collapse: collapse; width: 100%; font-size: 15px; }
+  .wahl th, .wahl td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+  .wahl thead th { font-size: 12.5px; font-weight: 600; color: var(--text); letter-spacing: 0.08em; text-transform: uppercase; }
+  .wahl thead th:last-child { white-space: nowrap; }
+  .wahl tbody th { font-weight: 600; color: var(--ink); }
+  .wahl tbody tr:last-child th, .wahl tbody tr:last-child td { border-bottom: 0; }
+  .pick { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+  .pick.anleihe { background: var(--green-tint-2); color: var(--ink); }
+  .pick.etf { background: #FBEADB; color: var(--orange-text); }
+  .pick.beides { background: rgba(26,26,25,0.07); color: var(--ink); }
+  @media (max-width: 600px) {
+    .vs { grid-template-columns: 1fr; }
+    .zs .zr, .zs .ax { grid-template-columns: 60px minmax(0, 1fr); } .zs .zl { font-size: 13px; }
+    .wahl { font-size: 14px; } .wahl th, .wahl td { padding: 8px 6px; }
+    .sb-go { align-self: stretch; text-align: center; }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"ETF oder Anleihe? Was besser zu dir passt","description":"ETF oder einzelne Anleihe? Nur die Anleihe hat ein festes Ende, der ETF läuft ohne Pflege weiter. Die Unterschiede, die entscheiden – mit Tabelle.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-26","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/etf-oder-anleihe.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Entscheiden","item":"https://www.metalconcrete.de/entscheiden.html"},{"@type":"ListItem","position":3,"name":"ETF oder Anleihe?","item":"https://www.metalconcrete.de/etf-oder-anleihe.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="entscheiden">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn current" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe current">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>ETF oder Anleihe?</h1>
+    <p class="sub">Drei Unterschiede, die die Entscheidung ausmachen – kurz und knapp, dazu die Entscheidungstabelle. Lesezeit: etwa 3 Minuten.</p>
+    <nav class="lands" aria-label="Zum Punkt springen">
+      <a class="lbtn" href="#ende"><span class="n">1</span>Endfälligkeit</a>
+      <a class="lbtn" href="#aufwand"><span class="n">2</span>Aufwand</a>
+      <a class="lbtn" href="#transparenz"><span class="n">3</span>Transparenz</a>
+      <a class="lbtn" href="#entscheidung"><span class="n">4</span>Entscheidung</a>
+    </nav>
+
+    <section class="kap" id="ende" aria-labelledby="h-ende">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">1</span>
+        <h2 id="h-ende">Nur die Anleihe hat ein Ende</h2>
+        <p>Eine Anleihe hat einen Fälligkeitstag. <strong>An diesem Tag bekommst du 100&nbsp;% zurück</strong> – egal, wie der Kurs vorher stand; die einzige Bedingung: Der Schuldner zahlt. Damit kannst du planen: Steuer im Mai, Auto in drei Jahren, Studium 2031.</p><p>Ein Anleihen-ETF hat keine Endfälligkeit. Er hält immer Anleihen, tauscht fällige gegen neue und läuft weiter. <strong>Wann du dein Geld zurückbekommst, entscheidet der Kurs am Tag deines Verkaufs</strong> – der kann über oder unter deinem Einstieg liegen.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Nur die Anleihe hat ein Ende</p><svg class="sb sb-d" viewBox="0 0 480 230" role="img" aria-labelledby="s1t"><title id="s1t">Zwei Kurven über die Jahre 2026 bis 2034. Die Anleihe schwankt, endet aber 2031 sicher bei 100 Prozent mit einer Fahne „Fällig: 100 Prozent zurück“. Der ETF schwankt um 100 Prozent weiter bis 2034, ohne Endpunkt.</title><text class="axt" x="8" y="17" font-size="13" font-weight="600" fill="#55544F">↑ Wert in %</text><line x1="58" y1="30" x2="58" y2="182" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/><line x1="58" y1="182" x2="462" y2="182" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/><line x1="58" y1="80" x2="462" y2="80" stroke="#1A1A19" stroke-opacity="0.18" stroke-dasharray="5 4"/><text x="50" y="84" text-anchor="end" font-size="13" fill="#55544F">100</text><text x="50" y="135" text-anchor="end" font-size="13" fill="#55544F">90</text><text x="50" y="186" text-anchor="end" font-size="13" fill="#55544F">80</text><text x="58" y="204" text-anchor="middle" font-size="13" fill="#55544F">2026</text><text x="108" y="204" text-anchor="middle" font-size="13" fill="#55544F">2027</text><text x="159" y="204" text-anchor="middle" font-size="13" fill="#55544F">2028</text><text x="210" y="204" text-anchor="middle" font-size="13" fill="#55544F">2029</text><text x="260" y="204" text-anchor="middle" font-size="13" fill="#55544F">2030</text><text x="310" y="204" text-anchor="middle" font-size="13" fill="#55544F">2031</text><text x="361" y="204" text-anchor="middle" font-size="13" fill="#55544F">2032</text><text x="412" y="204" text-anchor="middle" font-size="13" fill="#55544F">2033</text><text x="462" y="204" text-anchor="middle" font-size="13" fill="#55544F">2034</text><text class="axt" x="462" y="224" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Jahr&nbsp;→</text><path d="M58 84 L90 94 L120 70 L150 98 L180 74 L210 94 L240 68 L270 90 L300 72 L330 96 L360 70 L390 92 L420 76 L462 88" fill="none" stroke="#CF7430" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><text x="458" y="124" text-anchor="end" font-size="14" font-weight="600" fill="#A2561C">ETF: kein Ende, Kurs offen</text><path d="M58 82 L90 92 L120 86 L150 104 L180 98 L210 110 L240 100 L270 94 L300 84 L310 80" fill="none" stroke="#1DA300" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="310" cy="80" r="5" fill="#1DA300"/><path d="M310 80 V44" stroke="#1DA300" stroke-width="2"/><path d="M310 42 H458 V66 H310 Z" fill="#DFFFD9" stroke="#1DA300" stroke-width="1.5"/><text x="384" y="58" text-anchor="middle" font-size="13" font-weight="600" fill="#157C00">Fällig: 100&nbsp;% zurück</text><text x="62" y="62" font-size="14" font-weight="600" fill="#157C00">Anleihe</text></svg><svg class="sb sb-m" viewBox="0 0 310 230" role="img" aria-labelledby="s1tm"><title id="s1tm">Zwei Kurven über die Jahre 2026 bis 2034. Die Anleihe schwankt, endet aber 2031 sicher bei 100 Prozent mit einer Fahne „Fällig: 100 Prozent zurück“. Der ETF schwankt um 100 Prozent weiter bis 2034, ohne Endpunkt.</title><text class="axt" x="4" y="17" font-size="13" font-weight="600" fill="#55544F">↑ Wert in %</text><line x1="44" y1="30" x2="44" y2="182" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/><line x1="44" y1="182" x2="296" y2="182" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/><line x1="44" y1="80" x2="296" y2="80" stroke="#1A1A19" stroke-opacity="0.18" stroke-dasharray="5 4"/><text x="38" y="84" text-anchor="end" font-size="13" fill="#55544F">100</text><text x="38" y="135" text-anchor="end" font-size="13" fill="#55544F">90</text><text x="38" y="186" text-anchor="end" font-size="13" fill="#55544F">80</text><text x="44.0" y="204" text-anchor="middle" font-size="13" fill="#55544F">2026</text><text x="107.0" y="204" text-anchor="middle" font-size="13" fill="#55544F">2028</text><text x="170.0" y="204" text-anchor="middle" font-size="13" fill="#55544F">2030</text><text x="233.0" y="204" text-anchor="middle" font-size="13" fill="#55544F">2032</text><text x="307" y="204" text-anchor="end" font-size="13" fill="#55544F">2034</text><text class="axt" x="306" y="224" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Jahr&nbsp;→</text><path d="M 44.0 84.0 L 64.0 94.0 L 82.7 70.0 L 101.4 98.0 L 120.1 74.0 L 138.8 94.0 L 157.5 68.0 L 176.2 90.0 L 195.0 72.0 L 213.7 96.0 L 232.4 70.0 L 251.1 92.0 L 269.8 76.0 L 296.0 88.0" fill="none" stroke="#CF7430" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><text x="296" y="124" text-anchor="end" font-size="13" font-weight="600" fill="#A2561C">ETF: kein Ende, Kurs offen</text><path d="M 44.0 82.0 L 64.0 92.0 L 82.7 86.0 L 101.4 104.0 L 120.1 98.0 L 138.8 110.0 L 157.5 100.0 L 176.2 94.0 L 195.0 84.0 L 201.2 80.0" fill="none" stroke="#1DA300" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/><circle cx="201.2" cy="80" r="5" fill="#1DA300"/><path d="M201.2 80 V56" stroke="#1DA300" stroke-width="2"/><path d="M150 32 H302 V56 H150 Z" fill="#DFFFD9" stroke="#1DA300" stroke-width="1.5"/><text x="226" y="48" text-anchor="middle" font-size="13" font-weight="600" fill="#157C00">Fällig: 100&nbsp;% zurück</text><text x="48" y="62" font-size="13" font-weight="600" fill="#157C00">Anleihe</text></svg><p class="sb-f">Bis zur Fälligkeit schwankt auch die Anleihe – aber ihr Endpunkt steht fest.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Fester Termin, feste Summe&nbsp;→ Anleihe. Der ETF kennt keinen Endpunkt.</span></p>
+    </section>
+    <section class="kap kap-b" id="aufwand" aria-labelledby="h-aufwand">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">2</span>
+        <h2 id="h-aufwand">Über lange Zeiträume hat der ETF weniger Aufwand</h2>
+        <p>Die Fälligkeit ist Stärke und Pflicht zugleich: <strong>Ist die Anleihe fällig, musst du dich kümmern.</strong> Neue Anleihe suchen, Kurs und Spanne prüfen, Order aufgeben, Stückzinsen zahlen – alle paar Jahre von vorn. Wer eine Leiter baut, jedes Jahr.</p><p>Der ETF nimmt dir das ab. Fällige Anleihen werden im Fonds automatisch ersetzt, Zinsen fließen weiter oder werden wieder angelegt. <strong>Für 20 oder 30 Jahre ohne Pflege ist das der einfachere Weg</strong> – wenn du am Ende mit einem offenen Kurs leben kannst.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">20 Jahre anlegen – wie oft musst du ran?</p><div class="zs" role="img" aria-label="Zeitstrahl über 20 Jahre: Mit fünfjährigen Anleihen legst du nach 5, 10 und 15 Jahren neu an und bekommst nach 20 Jahren das Geld zurück – vier Termine. Der ETF läuft die ganze Zeit ohne Eingriff weiter."><div class="zr"><span class="zl">Anleihe<br><small style="font-size:12px;font-weight:500;color:var(--ap-text)">5 Jahre</small></span><span class="zb"><i style="left:25%">1</i><i style="left:50%">2</i><i style="left:75%">3</i><i style="left:100%">4</i></span></div><div class="zr"><span class="zl">ETF</span><span class="zb e"><span>läuft durch – kein Eingriff</span></span></div><div class="ax"><span></span><div><span>heute</span><span>5&nbsp;J.</span><span>10&nbsp;J.</span><span>15&nbsp;J.</span><span>20&nbsp;J.</span></div></div><p class="zs-axt">Jahre&nbsp;→</p></div><p class="sb-f">Punkte 1 bis 3: Geld kommt zurück, du suchst eine neue Anleihe, gibst eine Order auf, zahlst Stückzinsen. Punkt 4: Geld kommt zurück – Ziel erreicht. Im ETF passiert das Nachkaufen automatisch.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Kurzer Zeitraum oder fester Termin&nbsp;→ Anleihe. Jahrzehnte ohne Aufwand&nbsp;→ ETF.</span></p>
+    </section>
+    <section class="kap" id="transparenz" aria-labelledby="h-transparenz">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">3</span>
+        <h2 id="h-transparenz">Die Anleihe zeigst du auf einem Blatt – der ETF nicht</h2>
+        <p>Bei einer Anleihe weißt du alles: <strong>wer dir das Geld schuldet, welchen Zins du bekommst, wann es zurückkommt, welche Rendite bis zum Ende feststeht.</strong> Fällt der Kurs, weißt du, warum – und dass es dich nicht trifft, wenn du bis zum Ende hältst.</p><p>Ein ETF enthält Hunderte oder Tausende Anleihen. Du siehst Durchschnitte: Ø&nbsp;Rendite, Ø&nbsp;Laufzeit, Ø&nbsp;Bonität. <strong>Die Effekte verwischen</strong> – ob ein Kursrutsch vom allgemeinen Zinsniveau, von Risikoaufschlägen oder von einer Währung kommt, erkennst du nicht. Halten bis zum Ende, Fälligkeiten staffeln, gezielt einen Schuldner wählen: Solche Entscheidungen kannst du im ETF nicht treffen.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Was du in der Hand hast</p><div class="vs sbx" role="img" aria-label="Links der Steckbrief einer Anleihe: Schuldner, Kupon, Fälligkeit, Rendite – alles exakt. Rechts die Kennzahlen eines ETF: 1.200 Anleihen, Durchschnittsrendite, Durchschnittsduration, Index – alles Durchschnitte."><div><span class="vk">Anleihe</span><dl><dt>Schuldner</dt><dd>ein Staat, AAA</dd><dt>Kupon</dt><dd>2,50&nbsp;% fest</dd><dt>Fälligkeit</dt><dd>15.05.2031</dd><dt>Rendite</dt><dd>3,20&nbsp;% sicher*</dd></dl><p class="fr">* bis zum Ende gehalten – und der Schuldner zahlt</p></div><div class="e"><span class="vk">ETF</span><dl><dt>Anleihen</dt><dd>rund 1.200</dd><dt>Rendite</dt><dd>Ø&nbsp;3,6&nbsp;%, ändert sich</dd><dt>Laufzeit</dt><dd>Ø&nbsp;7 Jahre, bleibt so</dd><dt>Wer wählt?</dt><dd>der Index</dd></dl><p class="fr">Fällt der Kurs: allgemeines Zinsniveau? Risikoaufschläge? Währung? Du siehst es nicht.</p></div></div></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Wer verstehen und selbst steuern will, nimmt die Anleihe. Wer es einfach haben will, den ETF.</span></p>
+    </section>
+    <section class="kap kap-b" id="entscheidung" aria-labelledby="h-entscheidung">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">4</span>
+        <h2 id="h-entscheidung">So entscheidest du</h2>
+        <p>Drei Fragen in dieser Reihenfolge – die erste, die du mit Ja beantwortest, entscheidet: <strong>Brauchst du das Geld an einem festen Tag?</strong> Dann Anleihe. <strong>Willst du dich 20 Jahre nicht kümmern?</strong> Dann ETF. <strong>Willst du genau wissen, was du hast?</strong> Dann Anleihe.</p><p>Dazu Kosten und Streuung: Der ETF kostet 0,05 bis 0,2&nbsp;% im Jahr, die Anleihe nur Order und Spanne beim Kauf – danach nichts mehr. Dafür streut der ETF über Hunderte Schuldner – bei Unternehmensanleihen ein echter Vorteil, bei einer Bundesanleihe mit AAA unnötig.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Was wozu passt</p><table class="wahl"><thead><tr><th scope="col">Du willst …</th><th scope="col">Passt besser</th></tr></thead><tbody><tr><th scope="row">Geld an einem festen Tag zurück</th><td><span class="pick anleihe">Anleihe</span></td></tr><tr><th scope="row">Den heutigen Zins für Jahre sichern</th><td><span class="pick anleihe">Anleihe</span></td></tr><tr><th scope="row">Genau wissen, was du hast, und selbst entscheiden</th><td><span class="pick anleihe">Anleihe</span></td></tr><tr><th scope="row">Große Beträge in beste Bonität, ohne laufende Kosten</th><td><span class="pick anleihe">Anleihe</span></td></tr><tr><th scope="row">20 Jahre anlegen, ohne dich zu kümmern</th><td><span class="pick etf">ETF</span></td></tr><tr><th scope="row">Sparplan, kleine Beträge</th><td><span class="pick etf">ETF</span></td></tr><tr><th scope="row">Unternehmensanleihen – über viele Schuldner streuen</th><td><span class="pick etf">ETF</span></td></tr><tr><th scope="row">Ruhiger Baustein neben Aktien</th><td><span class="pick beides">beides</span></td></tr></tbody></table><p class="sb-f"><strong>Mischform:</strong> Laufzeit-ETFs (auch Fälligkeits-ETFs genannt) halten nur Anleihen eines Fälligkeitsjahrs und lösen sich dann auf – ein Enddatum wie die Anleihe, die Streuung wie der ETF. Nur die Summe steht nicht fest: Ausgezahlt wird, was die Anleihen bis dahin gebracht haben.</p><a class="go leise sb-go" href="anleihen-etf.html">Zu den Anleihen-ETFs&nbsp;→</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Fester Termin oder Durchblick&nbsp;→ Anleihe. Jahrzehnte, Sparplan oder breite Streuung&nbsp;→ ETF.</span></p>
+    </section>
+
+    <div class="weiter">
+      <a class="go" href="erste-anleihe.html">Deine erste Anleihe kaufen&nbsp;→</a>
+      <a class="go leise" href="anleihen-etf-erklaert.html">Anleihen-ETF: Vor- und Nachteile&nbsp;→</a>
+      <a class="go leise" href="guide.html">Vier Anleitungen nach Ziel&nbsp;→</a>
+    </div>
+    <p class="klein">Diese Seite hilft bei der Entscheidung zwischen ETF und Anleihe. Sie empfiehlt kein Produkt. Die Zahlen sind gerundet.</p>
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="anlageziele.html">Anlageziele – welche Anleihe wozu passt</a></li>
+        <li><a href="anleihen-etf.html">Die meistgehandelten Anleihen-ETFs</a></li>
+        <li><a href="anleihen-suche.html">Anleihen-Suche</a></li>
+      </ul>
+    </nav>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+</script>
+</body>
+</html>

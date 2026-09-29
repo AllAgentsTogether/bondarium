@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Die beliebtesten Anleihen-ETFs im Überblick – METALCONCRETE</title>
+<meta name="description" content="Die zehn meistgehandelten Anleihen-ETFs in sieben Kategorien – von ruhig bis riskant – mit Kosten, Rendite, Schwankung, Größe und Ausschüttung.">
+<link rel="canonical" href="https://www.metalconcrete.de/anleihen-etf.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/anleihen-etf.html">
+<meta property="og:title" content="Die beliebtesten Anleihen-ETFs im Überblick – METALCONCRETE">
+<meta property="og:description" content="Die zehn meistgehandelten Anleihen-ETFs in sieben Kategorien – von ruhig bis riskant – mit Kosten, Rendite, Schwankung, Größe und Ausschüttung.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Die beliebtesten Anleihen-ETFs im Überblick – METALCONCRETE">
+<meta name="twitter:description" content="Die zehn meistgehandelten Anleihen-ETFs in sieben Kategorien – von ruhig bis riskant – mit Kosten, Rendite, Schwankung, Größe und Ausschüttung.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<script>document.documentElement.classList.add("js");</script>
+<style>
+  /* Anleihen-ETFs (neu 24.09.2026): Kategorie-Karten als Reiter, eine Klartext-Tabelle je Kategorie */
+  .sub { max-width: 720px; }
+  h3 { font-size: 16px; font-weight: 600; color: var(--ink); }
+
+  /* Kategorie-Wahl */
+  .wahl { margin-top: 32px; }   /* 29.09.2026: „Drei Zahlen genügen“ entfernt, Abstand zum Untertitel */
+  .wahl h2 { margin-bottom: 4px; }
+  .wsub { font-size: 15.5px; color: var(--text); margin-bottom: 16px; }
+  .kats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .kat { display: flex; flex-direction: column; gap: 10px; text-align: left; background: #fff; border: 1.5px solid rgba(26,26,25,0.12); border-radius: 14px; padding: 14px 15px 12px; color: var(--ink); text-decoration: none; font: inherit; transition: border-color .15s ease, background-color .15s ease; }
+  .kat:hover { border-color: var(--green-text); }
+  .kat[aria-selected="true"] { border-color: var(--green-text); background: var(--soft); box-shadow: inset 0 0 0 1px var(--green-text); }
+  .kat:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  .kat .kt { display: flex; flex-direction: column; gap: 3px; }
+  .kat .kn { font-size: 15.5px; font-weight: 600; line-height: 1.25; }
+  .kat .ku { font-size: 13px; line-height: 1.4; color: var(--text); }
+  .kat .km { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text); }
+  .kat .km b { color: var(--ink); font-weight: 600; }
+  .dots { display: inline-flex; gap: 3px; }
+  .dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(26,26,25,0.13); }
+  .r1 .dots i.on { background: var(--up); }
+  .r2 .dots i.on { background: var(--blue); }
+  .r3 .dots i.on { background: var(--orange); }
+  .r4 .dots i.on { background: var(--down); }
+  .wahl .merk { margin-top: 16px; }
+
+  /* Kategorie-Panel */
+  .panel { margin-top: 24px; background: #fff; border: 1px solid rgba(26,26,25,0.08); border-radius: var(--radius); box-shadow: var(--shadow); padding: 26px 28px 22px; scroll-margin-top: 84px; }
+  .pk { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 8px; }
+  .panel h2 { font-size: 25px; margin-bottom: 0; }
+  .risk { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; color: var(--text); }
+  .pe { font-size: 16px; line-height: 1.55; color: var(--ink); max-width: 760px; }
+  .pm { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); margin-top: 18px; }
+
+  /* Tabelle */
+  table.etf { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14.5px; }
+  .etf th, .etf td { text-align: left; padding: 12px 10px 12px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  .etf thead th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); font-weight: 600; padding-top: 6px; padding-bottom: 8px; white-space: nowrap; }
+  .etf tbody tr:last-child th, .etf tbody tr:last-child td { border-bottom: 0; }
+  .etf td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .etf td.rk { color: var(--text); width: 28px; }
+  .etf .zbtn { font: inherit; font-weight: 600; color: var(--ink); background: none; border: 0; padding: 0; text-align: left; cursor: pointer; line-height: 1.35; }
+  .etf .zbtn::after { content: ""; display: inline-block; width: 6px; height: 6px; margin: 0 0 2px 7px; border-right: 1.5px solid var(--green-text); border-bottom: 1.5px solid var(--green-text); transform: rotate(45deg); }
+  .etf .zbtn[aria-expanded="true"]::after { transform: rotate(-135deg); margin-bottom: -1px; }
+  .etf .zbtn:hover { color: var(--green-text); }
+  .etf .zbtn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 2px; }
+  .etf tr.zdet > td { padding: 0 0 12px; }
+  .etf td small { display: block; font-size: 12px; color: var(--text); }
+  .etf th[scope=row] { font-weight: 600; line-height: 1.35; padding-right: 16px; }
+  .etf th[scope=row] small { display: block; font-weight: 400; color: var(--text); font-size: 12.5px; margin-top: 2px; }
+  .etf .isin { display: inline-block; font-weight: 400; font-size: 12px; color: var(--text); letter-spacing: 0.04em; margin-top: 5px; font-variant-numeric: tabular-nums; }
+  .tag { display: inline-block; font-size: 12px; font-weight: 600; line-height: 1.3; padding: 2px 8px; border-radius: 999px; margin: 4px 0 0 8px; vertical-align: 1px; }
+  .tag.h { background: var(--soft); color: var(--green-text); }
+  .tag.w { background: #FBEBDD; color: var(--orange-text); }
+  .etf td.y { font-weight: 600; }
+  .dur { display: inline-flex; align-items: center; gap: 8px; }
+  .dur .bar { width: 52px; height: 6px; border-radius: 3px; background: rgba(26,26,25,0.10); overflow: hidden; flex: none; }
+  .dur .bar i { display: block; height: 100%; background: var(--blue); border-radius: 3px; }
+  .dur.l1 .bar i, .dur.l2 .bar i { background: var(--up); }
+  .dur.l4 .bar i, .dur.l5 .bar i { background: var(--orange); }
+  .dur small { color: var(--text); font-size: 12px; }
+  .etf td.use { white-space: nowrap; }
+  .etf td.use small { display: block; color: var(--text); font-size: 12px; font-weight: 400; }
+  .etf thead th .sortbtn { font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+  .etf thead th .sortbtn::after { content: "↕"; font-size: 12px; opacity: 0.5; }
+  .etf thead th .sortbtn:hover, .etf thead th[aria-sort] .sortbtn { color: var(--ink); }
+  .etf thead th[aria-sort="ascending"] .sortbtn::after { content: "↑"; opacity: 1; }
+  .etf thead th[aria-sort="descending"] .sortbtn::after { content: "↓"; opacity: 1; }
+  .etf thead th .sortbtn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  .gut { margin-top: 18px; font-size: 14.5px; line-height: 1.55; color: var(--text); }
+  .gut .gk { display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--orange-text); margin-right: 6px; }
+  .gut b { color: var(--ink); font-weight: 600; }
+  .legende { margin-top: 26px; font-size: 13px; line-height: 1.6; color: var(--text); max-width: 900px; }
+  .legende b { color: var(--ink); font-weight: 600; }
+  .crossnav { margin-top: 32px; }
+
+  @media (prefers-reduced-motion: reduce) { .kat { transition: none; } }
+  @media (max-width: 860px) {
+    .kats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .panel { padding: 22px 20px 18px; }
+  }
+  @media (max-width: 900px) {
+    /* Tabelle wird zu Karten: Name oben, Kennzahlen 2 × 2 mit Beschriftung */
+    .etf thead { display: none; }
+    .etf, .etf tbody, .etf tr, .etf th, .etf td { display: block; }
+    .etf tr { position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px 14px; padding: 14px 0 14px 34px; border-bottom: 1px solid var(--rule); }
+    .etf tbody tr:last-child { border-bottom: 0; }
+    .etf th, .etf td { padding: 0; border: 0; }
+    .etf tr.zdet { padding: 0; }  .etf tr.zdet > td { grid-column: 1 / -1; padding: 0; }  .etf .det { position: static; width: auto; }
+    .etf th[scope=row] { grid-column: 1 / -1; }
+    .etf td.rk { position: absolute; left: 0; top: 14px; width: 24px; height: 24px; border-radius: 50%; background: var(--soft); color: var(--green-text); font-size: 12px; font-weight: 600; display: grid; place-items: center; }
+    .etf td[data-l]::before { content: attr(data-l); display: block; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-bottom: 2px; }
+    .etf td.use small { display: inline; margin-left: 4px; }
+    .etf td.use small::before { content: "· "; }
+  }
+  @media (max-width: 600px) {
+    .kats { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    .kat { flex-direction: row; align-items: center; justify-content: space-between; padding: 12px 14px; }
+    .kat .km { margin-top: 0; flex-direction: column; align-items: flex-end; gap: 4px; flex: none; }
+    .panel { padding: 18px 16px 16px; border-radius: 12px; }
+    .panel h2 { font-size: 22px; }
+    .pe { font-size: 15.5px; }
+    .etf tr { grid-template-columns: 1fr 1fr; gap: 10px 10px; }
+    .dur .bar { width: 44px; }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Anleihen-ETFs: die beliebtesten auf einen Blick","description":"Die zehn meistgehandelten Anleihen-ETFs in sieben Kategorien – von ruhig bis riskant – mit Kosten, Rendite, Schwankung, Größe und Ausschüttung.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-25","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/anleihen-etf.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.metalconcrete.de/anleihen.html"},{"@type":"ListItem","position":3,"name":"Anleihen-ETFs","item":"https://www.metalconcrete.de/anleihen-etf.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="anleihen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn current" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html" class="current">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+    <main id="main">
+    <h1>Anleihen-ETFs: die beliebtesten auf einen Blick</h1>
+    <p class="sub">Ein Anleihen-ETF kauft für dich Hunderte Anleihen auf einmal – ein Kauf, breit gestreut, jederzeit handelbar. Wähle eine Kategorie und sieh dir die zehn meistgehandelten ETFs dazu an.</p>
+
+
+    <section class="wahl" aria-labelledby="h-wahl">
+      <h2 id="h-wahl">Was suchst du?</h2>
+      <p class="wsub">Sieben Kategorien, von ruhig bis riskant. Klicke eine an.</p>
+      <div class="kats" role="tablist" aria-label="Kategorie wählen">
+                <a class="kat r1" id="t-kurze-laufzeiten" href="#kurze-laufzeiten" role="tab" aria-selected="false" aria-controls="kurze-laufzeiten" data-k="kurze-laufzeiten"><span class="kt"><span class="kn">Kurze Laufzeiten</span><span class="ku">Bis 3 Jahre: kaum Schwankung – aber anders als Tagesgeld ohne Einlagensicherung.</span></span><span class="km"><span>Ø&nbsp;Rendite <b>3,1&nbsp;%</b></span><span class="kr" title="Risiko niedrig"><span class="dots"><i class="on"></i><i class=""></i><i class=""></i><i class=""></i></span><span class="sr-only">Risiko niedrig</span></span></span></a>
+        <a class="kat r2" id="t-euro-staatsanleihen" href="#euro-staatsanleihen" role="tab" aria-selected="false" aria-controls="euro-staatsanleihen" data-k="euro-staatsanleihen"><span class="kt"><span class="kn">Euro-Staatsanleihen</span><span class="ku">Staaten des Euroraums: Deutschland, Frankreich, Italien &amp; Co.</span></span><span class="km"><span>Ø&nbsp;Rendite <b>3,7&nbsp;%</b></span><span class="kr" title="Risiko mittel"><span class="dots"><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span><span class="sr-only">Risiko mittel</span></span></span></a>
+        <a class="kat r2" id="t-breit-gestreut" href="#breit-gestreut" role="tab" aria-selected="false" aria-controls="breit-gestreut" data-k="breit-gestreut"><span class="kt"><span class="kn">Breit gestreut</span><span class="ku">Staaten und Firmen weltweit in einem ETF.</span></span><span class="km"><span>Ø&nbsp;Rendite <b>4,2&nbsp;%</b></span><span class="kr" title="Risiko mittel"><span class="dots"><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span><span class="sr-only">Risiko mittel</span></span></span></a>
+        <a class="kat r2" id="t-unternehmensanleihen" href="#unternehmensanleihen" role="tab" aria-selected="false" aria-controls="unternehmensanleihen" data-k="unternehmensanleihen"><span class="kt"><span class="kn">Unternehmensanleihen</span><span class="ku">Solide Firmen: etwas mehr Zins als Staaten.</span></span><span class="km"><span>Ø&nbsp;Rendite <b>4,0&nbsp;%</b></span><span class="kr" title="Risiko mittel"><span class="dots"><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span><span class="sr-only">Risiko mittel</span></span></span></a>
+        <a class="kat r3" id="t-staatsanleihen-weltweit" href="#staatsanleihen-weltweit" role="tab" aria-selected="false" aria-controls="staatsanleihen-weltweit" data-k="staatsanleihen-weltweit"><span class="kt"><span class="kn">Staatsanleihen weltweit</span><span class="ku">Vor allem USA – meist gegen den Dollar abgesichert.</span></span><span class="km"><span>Ø&nbsp;Rendite <b>4,3&nbsp;%</b></span><span class="kr" title="Risiko erhöht"><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i></span><span class="sr-only">Risiko erhöht</span></span></span></a>
+        <a class="kat r4" id="t-hochzinsanleihen" href="#hochzinsanleihen" role="tab" aria-selected="false" aria-controls="hochzinsanleihen" data-k="hochzinsanleihen"><span class="kt"><span class="kn">Hochzinsanleihen</span><span class="ku">Schwächere Firmen: hoher Zins, höheres Ausfallrisiko.</span></span><span class="km"><span>Ø&nbsp;Rendite <b>6,4&nbsp;%</b></span><span class="kr" title="Risiko hoch"><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="sr-only">Risiko hoch</span></span></span></a>
+        <a class="kat r4" id="t-schwellenlaender" href="#schwellenlaender" role="tab" aria-selected="false" aria-controls="schwellenlaender" data-k="schwellenlaender"><span class="kt"><span class="kn">Schwellenländer</span><span class="ku">Brasilien, Mexiko &amp; Co.: höchster Zins, höchstes Risiko.</span></span><span class="km"><span>Ø&nbsp;Rendite <b>6,5&nbsp;%</b></span><span class="kr" title="Risiko hoch"><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="sr-only">Risiko hoch</span></span></span></a>
+      </div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.3 1 2.2V16h6v-.3c0-.9.4-1.6 1-2.2A6 6 0 0 0 12 3z"/></svg></span><span><strong>Faustregel:</strong> Je höher die Rendite einer Kategorie, desto höher ihr Risiko. Geld ruhig parken → Kurze Laufzeiten. Solide Basis fürs Depot → Euro-Staatsanleihen oder Breit gestreut. Mehr Zins mit mehr Risiko → Hochzins und Schwellenländer.</span></p>
+    </section>
+
+    <section class="panel" id="kurze-laufzeiten" role="tabpanel" aria-labelledby="t-kurze-laufzeiten">
+      <div class="pk"><h2 id="h-kurze-laufzeiten">Kurze Laufzeiten</h2><span class="risk r1" title="Vereinfachte Einschätzung"><span class="dots"><i class="on"></i><i class=""></i><i class=""></i><i class=""></i></span>Risiko niedrig</span></div>
+      <p class="pe">Anleihen, die in höchstens drei Jahren zurückgezahlt werden – von Euro-Staaten und soliden Firmen. Der Kurs bewegt sich kaum, dafür ist die Rendite etwas niedriger.</p>
+      <p class="pm">Rang 1–10 nach Handelsumsatz auf Xetra, 12 Monate</p>
+      <table class="etf" data-gruppe="kurze-laufzeiten">
+        <caption class="sr-only">Kurze Laufzeiten: die zehn meistgehandelten Anleihen-ETFs</caption>
+        <thead><tr>
+          <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" title="Rang nach Handelsumsatz">#</button></th>
+          <th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">ETF</button></th>
+          <th scope="col" data-col="y"><button type="button" class="sortbtn" data-col="y" title="Rendite des Anleihebestands laut Anbieter, vor Kosten">Rendite</button></th>
+          <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs" title="Schlusskurs auf Xetra in Euro je Anteil (Deutsche Börse, 15 Minuten verzögert), täglich aktualisiert">Kurs</button></th>
+          <th scope="col" data-col="ter"><button type="button" class="sortbtn" data-col="ter" title="Laufende Kosten pro Jahr (TER)">Kosten p. a.</button></th>
+          <th scope="col" data-col="d"><button type="button" class="sortbtn" data-col="d" title="Duration in Jahren: Zinsniveau +1 Prozentpunkt → Kurs etwa −Duration in %">Schwankung</button></th>
+          <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Vermögen des gesamten Fonds in Euro">Größe</button></th>
+          <th scope="col" data-col="use"><button type="button" class="sortbtn" data-col="use" title="ja = ausschüttend, nein = thesaurierend">Zinsen aufs Konto?</button></th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="num rk">1</td><th scope="row">iShares € Ultrashort Bond<small>kurzlaufende Euro-Anleihen, Investment Grade</small><span class="isin">IE000RHYOR04</span></th><td class="num y" data-l="Rendite">3,10&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,09&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l1"><span class="bar"><i style="width:2%"></i></span>0,4 <small>kaum</small></span></td><td class="num" data-l="Größe">6,3 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">2</td><th scope="row">iShares € Ultrashort Bond<small>kurzlaufende Euro-Anleihen, Investment Grade</small><span class="isin">IE00BCRY6557</span></th><td class="num y" data-l="Rendite">3,10&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,09&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l1"><span class="bar"><i style="width:2%"></i></span>0,4 <small>kaum</small></span></td><td class="num" data-l="Größe">6,3 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">3</td><th scope="row">iShares eb.rexx Government Germany 0-1yr<small>Bundeswertpapiere bis 1 Jahr</small><span class="isin">DE000A0Q4RZ9</span></th><td class="num y" data-l="Rendite">2,72&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,13&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l1"><span class="bar"><i style="width:3%"></i></span>0,5 <small>kaum</small></span></td><td class="num" data-l="Größe">1,9 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">4</td><th scope="row">Xtrackers Eurozone Government Bond 1-3<small>Euro-Staaten, 1 bis 3 Jahre</small><span class="isin">LU0290356871</span></th><td class="num y" data-l="Rendite">3,32&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,10&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:12%"></i></span>1,7 <small>gering</small></span></td><td class="num" data-l="Größe">3,8 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">5</td><th scope="row">iShares € Corp Bond 0-3yr ESG SRI<small>Unternehmensanleihen bis 3 Jahre</small><span class="isin">IE00BYZTVV78</span></th><td class="num y" data-l="Rendite">3,52&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,12&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l1"><span class="bar"><i style="width:9%"></i></span>1,4 <small>kaum</small></span></td><td class="num" data-l="Größe">4,4 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">6</td><th scope="row">Amundi Prime Euro Government Bond 0-1Y<small>Euro-Staaten bis 1 Jahr</small><span class="isin">LU2233156582</span></th><td class="num y" data-l="Rendite">2,63&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,05&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l1"><span class="bar"><i style="width:3%"></i></span>0,5 <small>kaum</small></span></td><td class="num" data-l="Größe">772 Mio. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">7</td><th scope="row">iShares iBonds Dec 2028 Term € Corp<small>Laufzeit-ETF: endet im Dezember 2028</small><span class="isin">IE000264WWY0</span></th><td class="num y" data-l="Rendite">3,65&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,12&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:11%"></i></span>1,7 <small>gering</small></span></td><td class="num" data-l="Größe">2,2 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">8</td><th scope="row">Xtrackers Germany Government Bond 0-1<small>Bundeswertpapiere bis 1 Jahr</small><span class="isin">LU2641054551</span></th><td class="num y" data-l="Rendite">2,74&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,07&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l1"><span class="bar"><i style="width:3%"></i></span>0,5 <small>kaum</small></span></td><td class="num" data-l="Größe">481 Mio. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">9</td><th scope="row">iShares € Ultrashort Bond ESG SRI<small>kurzlaufende Euro-Anleihen, nachhaltig gefiltert</small><span class="isin">IE00BJP26D89</span></th><td class="num y" data-l="Rendite">3,08&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,09&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l1"><span class="bar"><i style="width:2%"></i></span>0,4 <small>kaum</small></span></td><td class="num" data-l="Größe">1,5 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">10</td><th scope="row">Deka Deutsche Börse EUROGOV Germany Money Market<small>Bundeswertpapiere bis 1 Jahr</small><span class="isin">DE000ETFL227</span></th><td class="num y" data-l="Rendite">2,70&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,12&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l1"><span class="bar"><i style="width:3%"></i></span>0,4 <small>kaum</small></span></td><td class="num" data-l="Größe">469 Mio. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+        </tbody>
+      </table>
+      <p class="gut"><span class="gk">Gut zu wissen</span> <b>Die Duration liegt bei allen zehn unter 2 Jahren</b> – ein steigendes allgemeines Zinsniveau tut hier kaum weh. Der iBonds-ETF endet wie eine Anleihe im Dezember 2028 und zahlt dann aus. Der iShares € Ultrashort steht zweimal: einmal thesaurierend, einmal ausschüttend.</p>
+    </section>
+    <section class="panel" id="euro-staatsanleihen" role="tabpanel" aria-labelledby="t-euro-staatsanleihen">
+      <div class="pk"><h2 id="h-euro-staatsanleihen">Euro-Staatsanleihen</h2><span class="risk r2" title="Vereinfachte Einschätzung"><span class="dots"><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span>Risiko mittel</span></div>
+      <p class="pe">Anleihen der Euro-Staaten. Kein Wechselkursrisiko, Ausfallrisiko sehr gering – der Kurs schwankt nur mit dem allgemeinen Zinsniveau.</p>
+      <p class="pm">Rang 1–10 nach Handelsumsatz auf Xetra, 12 Monate</p>
+      <table class="etf" data-gruppe="euro-staatsanleihen">
+        <caption class="sr-only">Euro-Staatsanleihen: die zehn meistgehandelten Anleihen-ETFs</caption>
+        <thead><tr>
+          <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" title="Rang nach Handelsumsatz">#</button></th>
+          <th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">ETF</button></th>
+          <th scope="col" data-col="y"><button type="button" class="sortbtn" data-col="y" title="Rendite des Anleihebestands laut Anbieter, vor Kosten">Rendite</button></th>
+          <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs" title="Schlusskurs auf Xetra in Euro je Anteil (Deutsche Börse, 15 Minuten verzögert), täglich aktualisiert">Kurs</button></th>
+          <th scope="col" data-col="ter"><button type="button" class="sortbtn" data-col="ter" title="Laufende Kosten pro Jahr (TER)">Kosten p. a.</button></th>
+          <th scope="col" data-col="d"><button type="button" class="sortbtn" data-col="d" title="Duration in Jahren: Zinsniveau +1 Prozentpunkt → Kurs etwa −Duration in %">Schwankung</button></th>
+          <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Vermögen des gesamten Fonds in Euro">Größe</button></th>
+          <th scope="col" data-col="use"><button type="button" class="sortbtn" data-col="use" title="ja = ausschüttend, nein = thesaurierend">Zinsen aufs Konto?</button></th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="num rk">1</td><th scope="row">iShares Core € Govt Bond<small>Euro-Staaten, alle Laufzeiten</small><span class="isin">IE00B4WXJJ64</span></th><td class="num y" data-l="Rendite">3,76&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,07&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:45%"></i></span>6,7 <small>mittel</small></span></td><td class="num" data-l="Größe">6,1 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">2</td><th scope="row">iShares € Govt Bond Climate<small>Euro-Staaten, nach Klimarisiko gewichtet</small><span class="isin">IE00BLDGH553</span></th><td class="num y" data-l="Rendite">3,78&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,09&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:45%"></i></span>6,7 <small>mittel</small></span></td><td class="num" data-l="Größe">2,8 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">3</td><th scope="row">Vanguard EUR Eurozone Government Bond<small>Euro-Staaten, alle Laufzeiten</small><span class="isin">IE00BH04GL39</span></th><td class="num y" data-l="Rendite">3,54&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,07&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:45%"></i></span>6,8 <small>mittel</small></span></td><td class="num" data-l="Größe">5,5 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">4</td><th scope="row">Xtrackers Eurozone Government Bond Yield Plus<small>die fünf Euro-Staaten mit der höchsten Rendite</small><span class="isin">LU0524480265</span></th><td class="num y" data-l="Rendite">4,02&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,15&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:42%"></i></span>6,3 <small>mittel</small></span></td><td class="num" data-l="Größe">1,3 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">5</td><th scope="row">Xtrackers Germany Government Bond<small>Bundesanleihen, alle Laufzeiten</small><span class="isin">LU0643975161</span></th><td class="num y" data-l="Rendite">3,37&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,15&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:45%"></i></span>6,8 <small>mittel</small></span></td><td class="num" data-l="Größe">1,0 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">6</td><th scope="row">iShares € Govt Bond 7-10yr<small>Euro-Staaten, 7 bis 10 Jahre</small><span class="isin">IE00B3VTN290</span></th><td class="num y" data-l="Rendite">3,90&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,15&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:48%"></i></span>7,2 <small>mittel</small></span></td><td class="num" data-l="Größe">838 Mio. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">7</td><th scope="row">Xtrackers Eurozone Government Bond 5-7<small>Euro-Staaten, 5 bis 7 Jahre</small><span class="isin">LU0290357176</span></th><td class="num y" data-l="Rendite">3,72&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,15&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:37%"></i></span>5,5 <small>mittel</small></span></td><td class="num" data-l="Größe">743 Mio. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">8</td><th scope="row">Xtrackers Eurozone Government Bond<small>Euro-Staaten, alle Laufzeiten</small><span class="isin">LU0290355717</span></th><td class="num y" data-l="Rendite">3,77&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,07&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:45%"></i></span>6,7 <small>mittel</small></span></td><td class="num" data-l="Größe">3,0 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">9</td><th scope="row">iShares eb.rexx Government Germany 5.5-10.5yr<small>Bundesanleihen, 5,5 bis 10,5 Jahre</small><span class="isin">DE0006289499</span></th><td class="num y" data-l="Rendite">3,38&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,16&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:47%"></i></span>7,1 <small>mittel</small></span></td><td class="num" data-l="Größe">398 Mio. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">10</td><th scope="row">iShares € Govt Bond 3-5yr<small>Euro-Staaten, 3 bis 5 Jahre</small><span class="isin">IE00B1FZS681</span></th><td class="num y" data-l="Rendite">3,53&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,15&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:24%"></i></span>3,7 <small>gering</small></span></td><td class="num" data-l="Größe">2,0 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+        </tbody>
+      </table>
+      <p class="gut"><span class="gk">Gut zu wissen</span> Die meisten kaufen alle Laufzeiten (Duration rund 6 bis 7). <b>Der Xtrackers Yield Plus kauft nur die fünf Euro-Staaten mit der höchsten Rendite</b>, zwei ETFs nur Bundesanleihen.</p>
+    </section>
+    <section class="panel" id="breit-gestreut" role="tabpanel" aria-labelledby="t-breit-gestreut">
+      <div class="pk"><h2 id="h-breit-gestreut">Breit gestreut</h2><span class="risk r2" title="Vereinfachte Einschätzung"><span class="dots"><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span>Risiko mittel</span></div>
+      <p class="pe">Staats- und Unternehmensanleihen aus aller Welt in einem einzigen ETF („Aggregate“) – die Rundum-Lösung für alle, die sich nicht entscheiden wollen.</p>
+      <p class="pm">Rang 1–10 nach Handelsumsatz auf Xetra, 12 Monate</p>
+      <table class="etf" data-gruppe="breit-gestreut">
+        <caption class="sr-only">Breit gestreut: die zehn meistgehandelten Anleihen-ETFs</caption>
+        <thead><tr>
+          <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" title="Rang nach Handelsumsatz">#</button></th>
+          <th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">ETF</button></th>
+          <th scope="col" data-col="y"><button type="button" class="sortbtn" data-col="y" title="Rendite des Anleihebestands laut Anbieter, vor Kosten">Rendite</button></th>
+          <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs" title="Schlusskurs auf Xetra in Euro je Anteil (Deutsche Börse, 15 Minuten verzögert), täglich aktualisiert">Kurs</button></th>
+          <th scope="col" data-col="ter"><button type="button" class="sortbtn" data-col="ter" title="Laufende Kosten pro Jahr (TER)">Kosten p. a.</button></th>
+          <th scope="col" data-col="d"><button type="button" class="sortbtn" data-col="d" title="Duration in Jahren: Zinsniveau +1 Prozentpunkt → Kurs etwa −Duration in %">Schwankung</button></th>
+          <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Vermögen des gesamten Fonds in Euro">Größe</button></th>
+          <th scope="col" data-col="use"><button type="button" class="sortbtn" data-col="use" title="ja = ausschüttend, nein = thesaurierend">Zinsen aufs Konto?</button></th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="num rk">1</td><th scope="row">Vanguard Global Aggregate Bond<small>Staats- und Unternehmensanleihen weltweit</small><span class="isin">IE00BG47KH54</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">4,45&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,08&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:40%"></i></span>6,1 <small>mittel</small></span></td><td class="num" data-l="Größe">5,6 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">2</td><th scope="row">iShares Core Global Aggregate Bond<small>Staats- und Unternehmensanleihen weltweit</small><span class="isin">IE00BDBRDM35</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">4,28&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,10&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:40%"></i></span>6,0 <small>mittel</small></span></td><td class="num" data-l="Größe">12,5 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">3</td><th scope="row">iShares Global Aggregate Bond ESG SRI<small>weltweit, nachhaltig gefiltert</small><span class="isin">IE000APK27S2</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">4,26&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,10&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:40%"></i></span>6,0 <small>mittel</small></span></td><td class="num" data-l="Größe">4,2 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">4</td><th scope="row">iShares € Aggregate Bond ESG SRI<small>Euro-Anleihen aller Art, nachhaltig gefiltert</small><span class="isin">IE00B3DKXQ41</span></th><td class="num y" data-l="Rendite">3,83&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,16&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:40%"></i></span>6,0 <small>mittel</small></span></td><td class="num" data-l="Größe">1,6 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">5</td><th scope="row">SPDR Bloomberg Global Aggregate Bond<small>Staats- und Unternehmensanleihen weltweit</small><span class="isin">IE00BF1QPL78</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">4,27&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,10&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:41%"></i></span>6,1 <small>mittel</small></span></td><td class="num" data-l="Größe">4,3 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">6</td><th scope="row">Vanguard Global Aggregate Bond<small>Staats- und Unternehmensanleihen weltweit</small><span class="isin">IE00BG47KB92</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">4,45&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,08&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:40%"></i></span>6,1 <small>mittel</small></span></td><td class="num" data-l="Größe">5,6 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">7</td><th scope="row">SPDR Bloomberg Global Aggregate Bond<small>Staats- und Unternehmensanleihen weltweit</small><span class="isin">IE000AQ7A2X6</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">4,27&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,10&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:41%"></i></span>6,1 <small>mittel</small></span></td><td class="num" data-l="Größe">4,3 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">8</td><th scope="row">iShares Core Global Aggregate Bond<small>Staats- und Unternehmensanleihen weltweit</small><span class="isin">IE00B3F81409</span><span class="tag w" title="Nicht abgesichert: Du trägst das Wechselkursrisiko">mehrere Währungen</span></th><td class="num y" data-l="Rendite">4,28&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,10&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:40%"></i></span>6,0 <small>mittel</small></span></td><td class="num" data-l="Größe">12,5 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">9</td><th scope="row">Amundi Global Aggregate Bond ESG<small>weltweit, nachhaltig gefiltert</small><span class="isin">LU2439733507</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">4,19&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,16&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:41%"></i></span>6,1 <small>mittel</small></span></td><td class="num" data-l="Größe">334 Mio. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">10</td><th scope="row">Amundi Euro Aggregate Bond ESG<small>Euro-Anleihen aller Art, nachhaltig gefiltert</small><span class="isin">LU2182388236</span></th><td class="num y" data-l="Rendite">3,56&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,16&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:39%"></i></span>5,9 <small>mittel</small></span></td><td class="num" data-l="Größe">1,3 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+        </tbody>
+      </table>
+      <p class="gut"><span class="gk">Gut zu wissen</span> <b>Acht der zehn streuen weltweit</b>, sieben davon gegen Wechselkursschwankungen abgesichert; zwei kaufen nur Euro-Anleihen. Mehrere Einträge sind Anteilsklassen desselben Fonds (ausschüttend/thesaurierend).</p>
+    </section>
+    <section class="panel" id="unternehmensanleihen" role="tabpanel" aria-labelledby="t-unternehmensanleihen">
+      <div class="pk"><h2 id="h-unternehmensanleihen">Unternehmensanleihen</h2><span class="risk r2" title="Vereinfachte Einschätzung"><span class="dots"><i class="on"></i><i class="on"></i><i class=""></i><i class=""></i></span>Risiko mittel</span></div>
+      <p class="pe">Anleihen von Firmen mit guter Bonität (Investment Grade, Rating ab BBB−): etwas mehr Zins als Staatsanleihen, dafür etwas mehr Risiko.</p>
+      <p class="pm">Rang 1–10 nach Handelsumsatz auf Xetra, 12 Monate</p>
+      <table class="etf" data-gruppe="unternehmensanleihen">
+        <caption class="sr-only">Unternehmensanleihen: die zehn meistgehandelten Anleihen-ETFs</caption>
+        <thead><tr>
+          <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" title="Rang nach Handelsumsatz">#</button></th>
+          <th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">ETF</button></th>
+          <th scope="col" data-col="y"><button type="button" class="sortbtn" data-col="y" title="Rendite des Anleihebestands laut Anbieter, vor Kosten">Rendite</button></th>
+          <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs" title="Schlusskurs auf Xetra in Euro je Anteil (Deutsche Börse, 15 Minuten verzögert), täglich aktualisiert">Kurs</button></th>
+          <th scope="col" data-col="ter"><button type="button" class="sortbtn" data-col="ter" title="Laufende Kosten pro Jahr (TER)">Kosten p. a.</button></th>
+          <th scope="col" data-col="d"><button type="button" class="sortbtn" data-col="d" title="Duration in Jahren: Zinsniveau +1 Prozentpunkt → Kurs etwa −Duration in %">Schwankung</button></th>
+          <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Vermögen des gesamten Fonds in Euro">Größe</button></th>
+          <th scope="col" data-col="use"><button type="button" class="sortbtn" data-col="use" title="ja = ausschüttend, nein = thesaurierend">Zinsen aufs Konto?</button></th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="num rk">1</td><th scope="row">iShares Core € Corp Bond<small>Euro-Unternehmensanleihen, Investment Grade</small><span class="isin">IE00B3F81R35</span></th><td class="num y" data-l="Rendite">4,14&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,09&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:29%"></i></span>4,4 <small>mittel</small></span></td><td class="num" data-l="Größe">13,2 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">2</td><th scope="row">iShares € Corp Bond ESG SRI<small>Euro-Unternehmensanleihen, nachhaltig gefiltert</small><span class="isin">IE00BYZTVT56</span></th><td class="num y" data-l="Rendite">4,11&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,14&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:29%"></i></span>4,3 <small>mittel</small></span></td><td class="num" data-l="Größe">5,8 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">3</td><th scope="row">Xtrackers EUR Corporate Bond<small>Euro-Unternehmensanleihen, Investment Grade</small><span class="isin">LU0478205379</span></th><td class="num y" data-l="Rendite">4,14&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,09&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:29%"></i></span>4,4 <small>mittel</small></span></td><td class="num" data-l="Größe">4,6 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">4</td><th scope="row">Vanguard EUR Corporate Bond<small>Euro-Unternehmensanleihen, Investment Grade</small><span class="isin">IE00BGYWT403</span></th><td class="num y" data-l="Rendite">3,85&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,07&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:29%"></i></span>4,4 <small>mittel</small></span></td><td class="num" data-l="Größe">6,1 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">5</td><th scope="row">iShares iBonds Dec 2030 Term € Corp<small>Laufzeit-ETF: endet im Dezember 2030</small><span class="isin">IE000LX17BP9</span></th><td class="num y" data-l="Rendite">4,00&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,12&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:23%"></i></span>3,5 <small>gering</small></span></td><td class="num" data-l="Größe">1,2 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">6</td><th scope="row">Vanguard EUR Corporate Bond<small>Euro-Unternehmensanleihen, Investment Grade</small><span class="isin">IE00BZ163G84</span></th><td class="num y" data-l="Rendite">3,85&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,07&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:29%"></i></span>4,4 <small>mittel</small></span></td><td class="num" data-l="Größe">6,1 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">7</td><th scope="row">iShares € Corp Bond ex-Financials 1-5yr ESG SRI<small>ohne Banken, 1 bis 5 Jahre</small><span class="isin">IE00B4L5ZY03</span></th><td class="num y" data-l="Rendite">3,81&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,20&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:18%"></i></span>2,7 <small>gering</small></span></td><td class="num" data-l="Größe">1,3 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">8</td><th scope="row">iShares € Corp Bond 1-5yr<small>Euro-Unternehmensanleihen, 1 bis 5 Jahre</small><span class="isin">IE000F6G1DE0</span></th><td class="num y" data-l="Rendite">3,94&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,20&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:18%"></i></span>2,7 <small>gering</small></span></td><td class="num" data-l="Größe">4,1 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">9</td><th scope="row">iShares € Floating Rate Bond Advanced<small>variabel verzinste Unternehmensanleihen</small><span class="isin">IE00BF5GB717</span></th><td class="num y" data-l="Rendite">2,99&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,10&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l1"><span class="bar"><i style="width:1%"></i></span>0,1 <small>kaum</small></span></td><td class="num" data-l="Größe">1,7 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">10</td><th scope="row">iShares Global Corp Bond<small>Unternehmensanleihen weltweit</small><span class="isin">IE00B9M6SJ31</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">5,31&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,25&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:38%"></i></span>5,7 <small>mittel</small></span></td><td class="num" data-l="Größe">1,1 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+        </tbody>
+      </table>
+      <p class="gut"><span class="gk">Gut zu wissen</span> Neun der zehn kaufen Euro-Unternehmensanleihen. <b>Der iBonds-ETF endet wie eine Anleihe im Dezember 2030</b> und zahlt dann aus; der Floating-Rate-ETF reagiert kaum auf Änderungen des allgemeinen Zinsniveaus.</p>
+    </section>
+    <section class="panel" id="staatsanleihen-weltweit" role="tabpanel" aria-labelledby="t-staatsanleihen-weltweit">
+      <div class="pk"><h2 id="h-staatsanleihen-weltweit">Staatsanleihen weltweit</h2><span class="risk r3" title="Vereinfachte Einschätzung"><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class=""></i></span>Risiko erhöht</span></div>
+      <p class="pe">Staatsanleihen außerhalb des Euroraums, vor allem aus den USA. Die meisten sind „€ abgesichert“: Der Wechselkurs spielt dann keine Rolle, die Absicherung kostet aber etwas Rendite.</p>
+      <p class="pm">Rang 1–10 nach Handelsumsatz auf Xetra, 12 Monate</p>
+      <table class="etf" data-gruppe="staatsanleihen-weltweit">
+        <caption class="sr-only">Staatsanleihen weltweit: die zehn meistgehandelten Anleihen-ETFs</caption>
+        <thead><tr>
+          <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" title="Rang nach Handelsumsatz">#</button></th>
+          <th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">ETF</button></th>
+          <th scope="col" data-col="y"><button type="button" class="sortbtn" data-col="y" title="Rendite des Anleihebestands laut Anbieter, vor Kosten">Rendite</button></th>
+          <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs" title="Schlusskurs auf Xetra in Euro je Anteil (Deutsche Börse, 15 Minuten verzögert), täglich aktualisiert">Kurs</button></th>
+          <th scope="col" data-col="ter"><button type="button" class="sortbtn" data-col="ter" title="Laufende Kosten pro Jahr (TER)">Kosten p. a.</button></th>
+          <th scope="col" data-col="d"><button type="button" class="sortbtn" data-col="d" title="Duration in Jahren: Zinsniveau +1 Prozentpunkt → Kurs etwa −Duration in %">Schwankung</button></th>
+          <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Vermögen des gesamten Fonds in Euro">Größe</button></th>
+          <th scope="col" data-col="use"><button type="button" class="sortbtn" data-col="use" title="ja = ausschüttend, nein = thesaurierend">Zinsen aufs Konto?</button></th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="num rk">1</td><th scope="row">iShares $ Treasury Bond 7-10yr<small>US-Staatsanleihen, 7 bis 10 Jahre</small><span class="isin">IE00BGPP6697</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">4,93&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,10&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:46%"></i></span>6,9 <small>mittel</small></span></td><td class="num" data-l="Größe">6,6 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">2</td><th scope="row">iShares $ Treasury Bond 20+yr<small>US-Staatsanleihen, über 20 Jahre</small><span class="isin">IE00BSKRJZ44</span><span class="tag w" title="Nicht abgesichert: Du trägst das Wechselkursrisiko">in Dollar</span></th><td class="num y" data-l="Rendite">5,35&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,07&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l5"><span class="bar"><i style="width:100%"></i></span>15,0 <small>sehr hoch</small></span></td><td class="num" data-l="Größe">5,4 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">3</td><th scope="row">iShares $ Treasury Bond 20+yr<small>US-Staatsanleihen, über 20 Jahre</small><span class="isin">IE00BD8PGZ49</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">5,35&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,10&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l5"><span class="bar"><i style="width:100%"></i></span>15,0 <small>sehr hoch</small></span></td><td class="num" data-l="Größe">5,4 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">4</td><th scope="row">iShares $ Treasury Bond 3-7yr<small>US-Staatsanleihen, 3 bis 7 Jahre</small><span class="isin">IE00BGPP6473</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">4,84&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,10&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:28%"></i></span>4,2 <small>mittel</small></span></td><td class="num" data-l="Größe">9,2 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">5</td><th scope="row">Invesco US Treasury Bond<small>US-Staatsanleihen, alle Laufzeiten</small><span class="isin">IE00BF2GFK56</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">4,91&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,10&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:37%"></i></span>5,5 <small>mittel</small></span></td><td class="num" data-l="Größe">556 Mio. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">6</td><th scope="row">iShares $ TIPS<small>inflationsgeschützte US-Staatsanleihen</small><span class="isin">IE00BDZVH966</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">2,67&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,12&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:43%"></i></span>6,5 <small>mittel</small></span></td><td class="num" data-l="Größe">5,5 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">7</td><th scope="row">iShares Global Inflation Linked Govt Bond<small>inflationsgeschützte Staatsanleihen weltweit</small><span class="isin">IE00BKPT2S34</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">2,21&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,20&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l4"><span class="bar"><i style="width:54%"></i></span>8,1 <small>hoch</small></span></td><td class="num" data-l="Größe">1,3 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">8</td><th scope="row">iShares $ Treasury Bond<small>US-Staatsanleihen, alle Laufzeiten</small><span class="isin">IE00BK95B138</span><span class="tag w" title="Nicht abgesichert: Du trägst das Wechselkursrisiko">in Dollar</span></th><td class="num y" data-l="Rendite">4,90&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,07&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:37%"></i></span>5,5 <small>mittel</small></span></td><td class="num" data-l="Größe">591 Mio. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">9</td><th scope="row">Xtrackers Japan Government Bond<small>japanische Staatsanleihen</small><span class="isin">LU0952581584</span><span class="tag w" title="Nicht abgesichert: Du trägst das Wechselkursrisiko">in Yen</span></th><td class="num y" data-l="Rendite">3,24&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,15&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l4"><span class="bar"><i style="width:62%"></i></span>9,3 <small>hoch</small></span></td><td class="num" data-l="Größe">706 Mio. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">10</td><th scope="row">Amundi US Treasury Bond 7-10Y<small>US-Staatsanleihen, 7 bis 10 Jahre</small><span class="isin">LU1407888137</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">4,78&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,10&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:47%"></i></span>7,0 <small>mittel</small></span></td><td class="num" data-l="Größe">1,7 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+        </tbody>
+      </table>
+      <p class="gut"><span class="gk">Gut zu wissen</span> Acht der zehn kaufen US-Staatsanleihen, sechs davon abgesichert. <b>Die 20+-Jahre-ETFs schwanken sehr stark (Duration 15).</b> Dazu inflationsgeschützte Anleihen und japanische Staatsanleihen ohne Absicherung.</p>
+    </section>
+    <section class="panel" id="hochzinsanleihen" role="tabpanel" aria-labelledby="t-hochzinsanleihen">
+      <div class="pk"><h2 id="h-hochzinsanleihen">Hochzinsanleihen</h2><span class="risk r4" title="Vereinfachte Einschätzung"><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>Risiko hoch</span></div>
+      <p class="pe">Anleihen von Firmen mit schwächerer Bonität (Rating unter BBB−): deutlich mehr Zins – dafür fallen in Krisen mehr Schuldner aus, und die Kurse rutschen mit den Aktien.</p>
+      <p class="pm">Rang 1–10 nach Handelsumsatz auf Xetra, 12 Monate</p>
+      <table class="etf" data-gruppe="hochzinsanleihen">
+        <caption class="sr-only">Hochzinsanleihen: die zehn meistgehandelten Anleihen-ETFs</caption>
+        <thead><tr>
+          <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" title="Rang nach Handelsumsatz">#</button></th>
+          <th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">ETF</button></th>
+          <th scope="col" data-col="y"><button type="button" class="sortbtn" data-col="y" title="Rendite des Anleihebestands laut Anbieter, vor Kosten">Rendite</button></th>
+          <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs" title="Schlusskurs auf Xetra in Euro je Anteil (Deutsche Börse, 15 Minuten verzögert), täglich aktualisiert">Kurs</button></th>
+          <th scope="col" data-col="ter"><button type="button" class="sortbtn" data-col="ter" title="Laufende Kosten pro Jahr (TER)">Kosten p. a.</button></th>
+          <th scope="col" data-col="d"><button type="button" class="sortbtn" data-col="d" title="Duration in Jahren: Zinsniveau +1 Prozentpunkt → Kurs etwa −Duration in %">Schwankung</button></th>
+          <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Vermögen des gesamten Fonds in Euro">Größe</button></th>
+          <th scope="col" data-col="use"><button type="button" class="sortbtn" data-col="use" title="ja = ausschüttend, nein = thesaurierend">Zinsen aufs Konto?</button></th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="num rk">1</td><th scope="row">iShares € High Yield Corp Bond<small>Euro-Hochzinsanleihen</small><span class="isin">IE00B66F4759</span></th><td class="num y" data-l="Rendite">6,13&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,50&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:17%"></i></span>2,5 <small>gering</small></span></td><td class="num" data-l="Größe">6,7 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">2</td><th scope="row">Xtrackers EUR High Yield Corporate Bond<small>Euro-Hochzinsanleihen</small><span class="isin">LU1109943388</span></th><td class="num y" data-l="Rendite">6,30&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,20&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:17%"></i></span>2,5 <small>gering</small></span></td><td class="num" data-l="Größe">2,8 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">3</td><th scope="row">iShares $ High Yield Corp Bond ESG SRI<small>US-Hochzinsanleihen, nachhaltig gefiltert</small><span class="isin">IE00BMDFDY08</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">7,15&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,27&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:22%"></i></span>3,3 <small>gering</small></span></td><td class="num" data-l="Größe">1,7 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">4</td><th scope="row">Xtrackers EUR High Yield Corporate Bond<small>Euro-Hochzinsanleihen</small><span class="isin">LU1109942653</span></th><td class="num y" data-l="Rendite">6,30&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,20&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:17%"></i></span>2,5 <small>gering</small></span></td><td class="num" data-l="Größe">2,8 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">5</td><th scope="row">iShares € High Yield Corp Bond ESG SRI<small>Euro-Hochzinsanleihen, nachhaltig gefiltert</small><span class="isin">IE00BJK55C48</span></th><td class="num y" data-l="Rendite">5,67&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,25&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:21%"></i></span>3,1 <small>gering</small></span></td><td class="num" data-l="Größe">3,8 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">6</td><th scope="row">SPDR Bloomberg Euro High Yield Bond<small>Euro-Hochzinsanleihen</small><span class="isin">IE00B6YX5M31</span></th><td class="num y" data-l="Rendite">6,19&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,40&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:18%"></i></span>2,8 <small>gering</small></span></td><td class="num" data-l="Größe">465 Mio. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">7</td><th scope="row">iShares Global High Yield Corp Bond<small>Hochzinsanleihen weltweit</small><span class="isin">IE00BJSFR200</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">6,84&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,55&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:20%"></i></span>3,0 <small>gering</small></span></td><td class="num" data-l="Größe">2,7 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">8</td><th scope="row">PIMCO Euro Short-Term High Yield Corporate Bond<small>Euro-Hochzinsanleihen bis 5 Jahre, aktiv</small><span class="isin">IE00BD8D5G25</span></th><td class="num y" data-l="Rendite">5,91&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,45&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:15%"></i></span>2,3 <small>gering</small></span></td><td class="num" data-l="Größe">679 Mio. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">9</td><th scope="row">iShares Broad € High Yield Corp Bond<small>Euro-Hochzinsanleihen, breit</small><span class="isin">IE00BG0J4B71</span></th><td class="num y" data-l="Rendite">5,95&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,20&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:20%"></i></span>3,0 <small>gering</small></span></td><td class="num" data-l="Größe">1,0 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">10</td><th scope="row">iShares $ High Yield Corp Bond<small>US-Hochzinsanleihen</small><span class="isin">IE00B4PY7Y77</span><span class="tag w" title="Nicht abgesichert: Du trägst das Wechselkursrisiko">in Dollar</span></th><td class="num y" data-l="Rendite">7,08&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,50&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:21%"></i></span>3,1 <small>gering</small></span></td><td class="num" data-l="Größe">5,2 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+        </tbody>
+      </table>
+      <p class="gut"><span class="gk">Gut zu wissen</span> Sieben der zehn kaufen Euro-Anleihen. <b>Die Kosten sind mit 0,20 bis 0,55&nbsp;% höher</b> als in den anderen Kategorien.</p>
+    </section>
+    <section class="panel" id="schwellenlaender" role="tabpanel" aria-labelledby="t-schwellenlaender">
+      <div class="pk"><h2 id="h-schwellenlaender">Schwellenländer</h2><span class="risk r4" title="Vereinfachte Einschätzung"><span class="dots"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>Risiko hoch</span></div>
+      <p class="pe">Anleihen von Staaten wie Brasilien, Mexiko oder Indonesien – meist in Dollar. Die höchsten Zinsen dieser Seite, aber auch die stärksten Rückschläge in Krisen.</p>
+      <p class="pm">Rang 1–10 nach Handelsumsatz auf Xetra, 12 Monate</p>
+      <table class="etf" data-gruppe="schwellenlaender">
+        <caption class="sr-only">Schwellenländer: die zehn meistgehandelten Anleihen-ETFs</caption>
+        <thead><tr>
+          <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" title="Rang nach Handelsumsatz">#</button></th>
+          <th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">ETF</button></th>
+          <th scope="col" data-col="y"><button type="button" class="sortbtn" data-col="y" title="Rendite des Anleihebestands laut Anbieter, vor Kosten">Rendite</button></th>
+          <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs" title="Schlusskurs auf Xetra in Euro je Anteil (Deutsche Börse, 15 Minuten verzögert), täglich aktualisiert">Kurs</button></th>
+          <th scope="col" data-col="ter"><button type="button" class="sortbtn" data-col="ter" title="Laufende Kosten pro Jahr (TER)">Kosten p. a.</button></th>
+          <th scope="col" data-col="d"><button type="button" class="sortbtn" data-col="d" title="Duration in Jahren: Zinsniveau +1 Prozentpunkt → Kurs etwa −Duration in %">Schwankung</button></th>
+          <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Vermögen des gesamten Fonds in Euro">Größe</button></th>
+          <th scope="col" data-col="use"><button type="button" class="sortbtn" data-col="use" title="ja = ausschüttend, nein = thesaurierend">Zinsen aufs Konto?</button></th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="num rk">1</td><th scope="row">iShares J.P. Morgan $ EM Bond<small>Staatsanleihen in Dollar</small><span class="isin">IE00BJ5JPH63</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">6,69&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,50&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:43%"></i></span>6,4 <small>mittel</small></span></td><td class="num" data-l="Größe">7,3 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">2</td><th scope="row">iShares J.P. Morgan $ EM Bond EUR Hedged<small>Staatsanleihen in Dollar</small><span class="isin">IE00B9M6RS56</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">6,79&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,50&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:44%"></i></span>6,6 <small>mittel</small></span></td><td class="num" data-l="Größe">2,1 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">3</td><th scope="row">iShares J.P. Morgan $ EM Bond<small>Staatsanleihen in Dollar</small><span class="isin">IE00B2NPKV68</span><span class="tag w" title="Nicht abgesichert: Du trägst das Wechselkursrisiko">in Dollar</span></th><td class="num y" data-l="Rendite">6,69&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,45&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:43%"></i></span>6,4 <small>mittel</small></span></td><td class="num" data-l="Größe">7,3 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">4</td><th scope="row">iShares J.P. Morgan EM Local Govt Bond<small>Staatsanleihen in Landeswährung</small><span class="isin">IE00B5M4WH52</span><span class="tag w" title="Nicht abgesichert: Du trägst das Wechselkursrisiko">Landeswährungen</span></th><td class="num y" data-l="Rendite">6,81&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,50&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:35%"></i></span>5,2 <small>mittel</small></span></td><td class="num" data-l="Größe">4,7 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">ja<small>ausschüttend</small></td></tr>
+          <tr><td class="num rk">5</td><th scope="row">iShares J.P. Morgan Advanced $ EM Bond<small>Staatsanleihen in Dollar, nachhaltig gefiltert</small><span class="isin">IE00BKP5L730</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">6,54&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,50&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:42%"></i></span>6,4 <small>mittel</small></span></td><td class="num" data-l="Größe">3,1 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">6</td><th scope="row">iShares J.P. Morgan $ EM Corp Bond<small>Unternehmensanleihen in Dollar</small><span class="isin">IE00BKT1CS59</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">6,44&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,53&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:28%"></i></span>4,1 <small>mittel</small></span></td><td class="num" data-l="Größe">2,8 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">7</td><th scope="row">L&amp;G Emerging Markets Government Bond (USD) 0-5 Year<small>Staatsanleihen in Dollar, bis 5 Jahre</small><span class="isin">IE000MINO564</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">5,82&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,28&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l2"><span class="bar"><i style="width:16%"></i></span>2,4 <small>gering</small></span></td><td class="num" data-l="Größe">895 Mio. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">8</td><th scope="row">BNP Paribas Easy JPM Screened EMBI Global Diversified<small>Staatsanleihen in Dollar, gefiltert</small><span class="isin">LU1547515137</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">6,25&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,25&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:42%"></i></span>6,4 <small>mittel</small></span></td><td class="num" data-l="Größe">1,1 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">9</td><th scope="row">Xtrackers J.P. Morgan USD Emerging Markets Bond<small>Staatsanleihen in Dollar</small><span class="isin">LU0321462953</span><span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span></th><td class="num y" data-l="Rendite">6,66&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,40&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:40%"></i></span>6,0 <small>mittel</small></span></td><td class="num" data-l="Größe">403 Mio. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+          <tr><td class="num rk">10</td><th scope="row">iShares J.P. Morgan $ EM Bond<small>Staatsanleihen in Dollar</small><span class="isin">IE00BYXYYK40</span><span class="tag w" title="Nicht abgesichert: Du trägst das Wechselkursrisiko">in Dollar</span></th><td class="num y" data-l="Rendite">6,69&nbsp;%</td><td class="num" data-l="Kurs">–</td><td class="num" data-l="Kosten p. a.">0,45&nbsp;%</td><td class="num" data-l="Schwankung"><span class="dur l3"><span class="bar"><i style="width:43%"></i></span>6,4 <small>mittel</small></span></td><td class="num" data-l="Größe">7,3 Mrd. €</td><td class="use" data-l="Zinsen aufs Konto?">nein<small>thesaurierend</small></td></tr>
+        </tbody>
+      </table>
+      <p class="gut"><span class="gk">Gut zu wissen</span> Neun der zehn kaufen Dollar-Anleihen; <b>nur der iShares EM Local Govt kauft in Landeswährung</b> – mit vollem Wechselkursrisiko. Rang 1, 3 und 10 sind Anteilsklassen desselben Fonds (abgesichert, in Dollar).</p>
+    </section>
+
+    <p class="legende"><b>So liest du die Tabelle.</b> Kosten: laufende Kosten pro Jahr (TER). Rendite: Rendite des Anleihebestands laut Anbieter, vor Kosten – bei abgesicherten ETFs mindert die Absicherung den Ertrag in Euro. Schwankung: Duration in Jahren. Größe: Vermögen des gesamten Fonds. Zinsen aufs Konto: ja = ausschüttend, nein = thesaurierend, die Zinsen bleiben im ETF und erhöhen den Kurs. „€ abgesichert“: gegen Wechselkursschwankungen abgesichert; „in Dollar“ und andere: Du trägst das Wechselkursrisiko. Die Risiko-Punkte sind eine vereinfachte Einschätzung der Redaktion. Klick auf einen Spaltentitel sortiert. Kurse täglich; Kosten, Rendite, Schwankung und Größe laut Anbieter – Stichtage je Anbieter unter „Datenquellen und Methodik“.</p>
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="anleihen-etf-erklaert.html">Anleihen-ETF: Vor- und Nachteile</a></li>
+        <li><a href="anlageziele.html">Welche Anleihe wozu passt</a></li>
+        <li><a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a></li>
+        <li><a href="begriffe.html#duration">Was die Duration bedeutet</a></li>
+      </ul>
+    </nav>
+    <details class="quellen" id="quellen">
+      <summary>Datenquellen und Methodik</summary>
+      <div class="quellen-body">
+        <p><strong>Beliebt heißt hier: meistgehandelt.</strong> Gezählt wird der Umsatz auf Xetra vom 23.09.2025 bis 22.09.2026 (tägliche Umsätze, onvista); vorn steht der ETF mit dem höchsten Umsatz. Berücksichtigt sind nur ETFs, die an mindestens 90&nbsp;% der Börsentage gehandelt wurden – alle hier gezeigten wurden an nahezu jedem Börsentag gehandelt. Ausgangspunkt sind die ETF-Liste und die Monatsstatistik der Deutschen Börse. Jede Anteilsklasse zählt für sich, denn sie hat eine eigene ISIN: ausschüttend oder thesaurierend, mit oder ohne Währungsabsicherung. Nicht berücksichtigt sind Geldmarkt-ETFs, die nur den Tageszins über Swaps abbilden, sowie ETFs mit Wandelanleihen, Nachranganleihen von Banken und Unternehmen, Pfandbriefen oder Anleihen von Entwicklungsbanken.</p>
+        <p><strong>Kategorien.</strong> Euro-Staatsanleihen: Staaten des Euroraums, auch einzelne Länder wie Deutschland. Staatsanleihen weltweit: Staaten außerhalb des Euroraums und weltweite Indizes, auch inflationsgeschützte Anleihen. Unternehmensanleihen: Investment Grade, also Rating ab BBB−. Breit gestreut: Staats- und Unternehmensanleihen gemischt. Kurze Laufzeiten: Anleihen mit höchstens drei Jahren Restlaufzeit, auch Laufzeit-ETFs, die bis Ende 2028 enden. Hochzinsanleihen: Rating unter BBB−. Schwellenländer: Staats- und Unternehmensanleihen aus Schwellenländern. Jeder ETF steht nur in einer Tabelle.</p>
+        <p><strong>Kurs</strong>: Schlusskurs auf Xetra in Euro je Anteil – die Nachhandelsdaten, die jeder Handelsplatz nach der EU-Finanzmarktverordnung MiFIR 15 Minuten verzögert kostenlos veröffentlichen muss (Deutsche Börse); täglich aktualisiert, Stand am Ende dieses Abschnitts. Ein Klick auf den Namen öffnet Kennzahlen und den seit 24.09.2026 gesammelten Kursverlauf.</p>
+        <p><strong>Kennzahlen</strong> laut Anbieter. <strong>TER</strong>: laufende Kosten pro Jahr. <strong>Fondsvolumen</strong>: Vermögen des gesamten Fonds mit allen Anteilsklassen; Dollar-Angaben zum EZB-Referenzkurs vom 22.09.2026 (1,1463 $ je €) in Euro umgerechnet. <strong>Rendite</strong>: die Rendite des Anleihebestands vor Kosten – bei iShares, Xtrackers und Vanguard als „Yield to Worst“ (bei kündbaren Anleihen bis zum ungünstigsten Kündigungstermin), sonst als Rendite bis Fälligkeit; Deka: durchschnittliche Rendite. Bei währungsgesicherten Anteilsklassen ist es die Rendite in der Währung der Anleihen; die Kosten der Absicherung – etwa der Zinsabstand zwischen Dollar und Euro – mindern den Ertrag in Euro. <strong>Duration</strong>: optionsbereinigte oder effektive Duration (iShares, Xtrackers, SPDR, Invesco, PIMCO), sonst modifizierte oder durchschnittliche Duration; sie zeigt grob, um wie viel Prozent der Kurs fällt, wenn das allgemeine Zinsniveau um einen Prozentpunkt steigt.</p>
+        <p><strong>Stand</strong>: iShares, Xtrackers, SPDR und Invesco 21. und 22.09.2026; Vanguard, Amundi, BNP Paribas, L&amp;G und PIMCO Monatsende 31.08.2026 (Fondsvolumen bei Amundi, BNP Paribas, L&amp;G und PIMCO 22.09.2026); Deka laut Website am 23.09.2026. Die Auswahl ist eine Momentaufnahme und wird manuell gepflegt.</p>
+        <p id="datastand">Daten-Stand: Kennzahlen 31.08. bis 23.09.2026 (je Anbieter, siehe oben)</p>
+      </div>
+    </details>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+window.MC.minus = window.MC.minus || function (s) { return String(s).replace(/^-/, "−"); };
+
+// ---------- Daten: je Kategorie die zehn meistgehandelten Anleihen-ETFs (manuell gepflegt, Stand 22.09.2026) ----------
+// gruppen[<Anker>] = Liste in Rangfolge (Xetra-Umsatz 23.09.2025–22.09.2026); je ETF: isin, name, fokus (Schwerpunkt),
+// ter (% p. a.), vol (Fondsvolumen, alle Anteilsklassen, Mio. €), y (Rendite des Anleihebestands in %, laut Anbieter),
+// d (Duration in Jahren, laut Anbieter), aus (true = ausschüttend), hedge (Währungsabsicherung: ja / nein · Währung / entfällt).
+// Quellen und Stichtage: siehe „Datenquellen und Methodik“ unten auf der Seite.
+const ETFS = {
+  date: "2026-09-22",
+  gruppen: {
+    "euro-staatsanleihen": [
+      { isin: "IE00B4WXJJ64", name: "iShares Core € Govt Bond", fokus: "Euro-Staaten, alle Laufzeiten", ter: 0.07, vol: 6122.4, y: 3.76, d: 6.7, aus: true, hedge: "entfällt" },
+      { isin: "IE00BLDGH553", name: "iShares € Govt Bond Climate", fokus: "Euro-Staaten, nach Klimarisiko gewichtet", ter: 0.09, vol: 2786.5, y: 3.78, d: 6.7, aus: false, hedge: "entfällt" },
+      { isin: "IE00BH04GL39", name: "Vanguard EUR Eurozone Government Bond", fokus: "Euro-Staaten, alle Laufzeiten", ter: 0.07, vol: 5471, y: 3.54, d: 6.78, aus: false, hedge: "entfällt" },
+      { isin: "LU0524480265", name: "Xtrackers Eurozone Government Bond Yield Plus", fokus: "die fünf Euro-Staaten mit der höchsten Rendite", ter: 0.15, vol: 1340.0, y: 4.02, d: 6.33, aus: false, hedge: "entfällt" },
+      { isin: "LU0643975161", name: "Xtrackers Germany Government Bond", fokus: "Bundesanleihen, alle Laufzeiten", ter: 0.15, vol: 1010.0, y: 3.37, d: 6.81, aus: false, hedge: "entfällt" },
+      { isin: "IE00B3VTN290", name: "iShares € Govt Bond 7-10yr", fokus: "Euro-Staaten, 7 bis 10 Jahre", ter: 0.15, vol: 838.0, y: 3.9, d: 7.22, aus: false, hedge: "entfällt" },
+      { isin: "LU0290357176", name: "Xtrackers Eurozone Government Bond 5-7", fokus: "Euro-Staaten, 5 bis 7 Jahre", ter: 0.15, vol: 742.6, y: 3.72, d: 5.51, aus: false, hedge: "entfällt" },
+      { isin: "LU0290355717", name: "Xtrackers Eurozone Government Bond", fokus: "Euro-Staaten, alle Laufzeiten", ter: 0.07, vol: 3010.0, y: 3.77, d: 6.7, aus: false, hedge: "entfällt" },
+      { isin: "DE0006289499", name: "iShares eb.rexx Government Germany 5.5-10.5yr", fokus: "Bundesanleihen, 5,5 bis 10,5 Jahre", ter: 0.16, vol: 397.6, y: 3.38, d: 7.12, aus: true, hedge: "entfällt" },
+      { isin: "IE00B1FZS681", name: "iShares € Govt Bond 3-5yr", fokus: "Euro-Staaten, 3 bis 5 Jahre", ter: 0.15, vol: 2045.0, y: 3.53, d: 3.66, aus: true, hedge: "entfällt" }
+    ],
+    "staatsanleihen-weltweit": [
+      { isin: "IE00BGPP6697", name: "iShares $ Treasury Bond 7-10yr", fokus: "US-Staatsanleihen, 7 bis 10 Jahre", ter: 0.1, vol: 6571.1, y: 4.93, d: 6.9, aus: true, hedge: "ja" },
+      { isin: "IE00BSKRJZ44", name: "iShares $ Treasury Bond 20+yr", fokus: "US-Staatsanleihen, über 20 Jahre", ter: 0.07, vol: 5397.1, y: 5.35, d: 15.04, aus: true, hedge: "nein · USD" },
+      { isin: "IE00BD8PGZ49", name: "iShares $ Treasury Bond 20+yr", fokus: "US-Staatsanleihen, über 20 Jahre", ter: 0.1, vol: 5397.1, y: 5.35, d: 15.04, aus: true, hedge: "ja" },
+      { isin: "IE00BGPP6473", name: "iShares $ Treasury Bond 3-7yr", fokus: "US-Staatsanleihen, 3 bis 7 Jahre", ter: 0.1, vol: 9204.9, y: 4.84, d: 4.22, aus: true, hedge: "ja" },
+      { isin: "IE00BF2GFK56", name: "Invesco US Treasury Bond", fokus: "US-Staatsanleihen, alle Laufzeiten", ter: 0.1, vol: 555.9, y: 4.91, d: 5.54, aus: true, hedge: "ja" },
+      { isin: "IE00BDZVH966", name: "iShares $ TIPS", fokus: "inflationsgeschützte US-Staatsanleihen", ter: 0.12, vol: 5516.4, y: 2.67, d: 6.5, aus: false, hedge: "ja" },
+      { isin: "IE00BKPT2S34", name: "iShares Global Inflation Linked Govt Bond", fokus: "inflationsgeschützte Staatsanleihen weltweit", ter: 0.2, vol: 1337.3, y: 2.21, d: 8.11, aus: false, hedge: "ja" },
+      { isin: "IE00BK95B138", name: "iShares $ Treasury Bond", fokus: "US-Staatsanleihen, alle Laufzeiten", ter: 0.07, vol: 590.6, y: 4.9, d: 5.54, aus: true, hedge: "nein · USD" },
+      { isin: "LU0952581584", name: "Xtrackers Japan Government Bond", fokus: "japanische Staatsanleihen", ter: 0.15, vol: 705.5, y: 3.24, d: 9.32, aus: false, hedge: "nein · JPY" },
+      { isin: "LU1407888137", name: "Amundi US Treasury Bond 7-10Y", fokus: "US-Staatsanleihen, 7 bis 10 Jahre", ter: 0.1, vol: 1708.8, y: 4.78, d: 6.98, aus: false, hedge: "ja" }
+    ],
+    "unternehmensanleihen": [
+      { isin: "IE00B3F81R35", name: "iShares Core € Corp Bond", fokus: "Euro-Unternehmensanleihen, Investment Grade", ter: 0.09, vol: 13209.6, y: 4.14, d: 4.35, aus: true, hedge: "entfällt" },
+      { isin: "IE00BYZTVT56", name: "iShares € Corp Bond ESG SRI", fokus: "Euro-Unternehmensanleihen, nachhaltig gefiltert", ter: 0.14, vol: 5830.9, y: 4.11, d: 4.34, aus: true, hedge: "entfällt" },
+      { isin: "LU0478205379", name: "Xtrackers EUR Corporate Bond", fokus: "Euro-Unternehmensanleihen, Investment Grade", ter: 0.09, vol: 4630.0, y: 4.14, d: 4.37, aus: false, hedge: "entfällt" },
+      { isin: "IE00BGYWT403", name: "Vanguard EUR Corporate Bond", fokus: "Euro-Unternehmensanleihen, Investment Grade", ter: 0.07, vol: 6082, y: 3.85, d: 4.4, aus: false, hedge: "entfällt" },
+      { isin: "IE000LX17BP9", name: "iShares iBonds Dec 2030 Term € Corp", fokus: "Laufzeit-ETF: endet im Dezember 2030", ter: 0.12, vol: 1201.1, y: 4.0, d: 3.46, aus: true, hedge: "entfällt" },
+      { isin: "IE00BZ163G84", name: "Vanguard EUR Corporate Bond", fokus: "Euro-Unternehmensanleihen, Investment Grade", ter: 0.07, vol: 6082, y: 3.85, d: 4.4, aus: true, hedge: "entfällt" },
+      { isin: "IE00B4L5ZY03", name: "iShares € Corp Bond ex-Financials 1-5yr ESG SRI", fokus: "ohne Banken, 1 bis 5 Jahre", ter: 0.2, vol: 1328.5, y: 3.81, d: 2.71, aus: true, hedge: "entfällt" },
+      { isin: "IE000F6G1DE0", name: "iShares € Corp Bond 1-5yr", fokus: "Euro-Unternehmensanleihen, 1 bis 5 Jahre", ter: 0.2, vol: 4146.7, y: 3.94, d: 2.7, aus: false, hedge: "entfällt" },
+      { isin: "IE00BF5GB717", name: "iShares € Floating Rate Bond Advanced", fokus: "variabel verzinste Unternehmensanleihen", ter: 0.1, vol: 1669.0, y: 2.99, d: 0.14, aus: true, hedge: "entfällt" },
+      { isin: "IE00B9M6SJ31", name: "iShares Global Corp Bond", fokus: "Unternehmensanleihen weltweit", ter: 0.25, vol: 1110.9, y: 5.31, d: 5.67, aus: true, hedge: "ja" }
+    ],
+    "breit-gestreut": [
+      { isin: "IE00BG47KH54", name: "Vanguard Global Aggregate Bond", fokus: "Staats- und Unternehmensanleihen weltweit", ter: 0.08, vol: 5636, y: 4.45, d: 6.05, aus: false, hedge: "ja" },
+      { isin: "IE00BDBRDM35", name: "iShares Core Global Aggregate Bond", fokus: "Staats- und Unternehmensanleihen weltweit", ter: 0.1, vol: 12462.4, y: 4.28, d: 6.01, aus: false, hedge: "ja" },
+      { isin: "IE000APK27S2", name: "iShares Global Aggregate Bond ESG SRI", fokus: "weltweit, nachhaltig gefiltert", ter: 0.1, vol: 4231.4, y: 4.26, d: 6.03, aus: false, hedge: "ja" },
+      { isin: "IE00B3DKXQ41", name: "iShares € Aggregate Bond ESG SRI", fokus: "Euro-Anleihen aller Art, nachhaltig gefiltert", ter: 0.16, vol: 1639.5, y: 3.83, d: 5.97, aus: true, hedge: "entfällt" },
+      { isin: "IE00BF1QPL78", name: "SPDR Bloomberg Global Aggregate Bond", fokus: "Staats- und Unternehmensanleihen weltweit", ter: 0.1, vol: 4329.5, y: 4.27, d: 6.09, aus: true, hedge: "ja" },
+      { isin: "IE00BG47KB92", name: "Vanguard Global Aggregate Bond", fokus: "Staats- und Unternehmensanleihen weltweit", ter: 0.08, vol: 5636, y: 4.45, d: 6.05, aus: true, hedge: "ja" },
+      { isin: "IE000AQ7A2X6", name: "SPDR Bloomberg Global Aggregate Bond", fokus: "Staats- und Unternehmensanleihen weltweit", ter: 0.1, vol: 4329.5, y: 4.27, d: 6.09, aus: false, hedge: "ja" },
+      { isin: "IE00B3F81409", name: "iShares Core Global Aggregate Bond", fokus: "Staats- und Unternehmensanleihen weltweit", ter: 0.1, vol: 12462.4, y: 4.28, d: 6.01, aus: true, hedge: "nein · mehrere" },
+      { isin: "LU2439733507", name: "Amundi Global Aggregate Bond ESG", fokus: "weltweit, nachhaltig gefiltert", ter: 0.16, vol: 334.0, y: 4.19, d: 6.14, aus: false, hedge: "ja" },
+      { isin: "LU2182388236", name: "Amundi Euro Aggregate Bond ESG", fokus: "Euro-Anleihen aller Art, nachhaltig gefiltert", ter: 0.16, vol: 1287.3, y: 3.56, d: 5.88, aus: false, hedge: "entfällt" }
+    ],
+    "kurze-laufzeiten": [
+      { isin: "IE000RHYOR04", name: "iShares € Ultrashort Bond", fokus: "kurzlaufende Euro-Anleihen, Investment Grade", ter: 0.09, vol: 6251.1, y: 3.1, d: 0.36, aus: false, hedge: "entfällt" },
+      { isin: "IE00BCRY6557", name: "iShares € Ultrashort Bond", fokus: "kurzlaufende Euro-Anleihen, Investment Grade", ter: 0.09, vol: 6251.1, y: 3.1, d: 0.36, aus: true, hedge: "entfällt" },
+      { isin: "DE000A0Q4RZ9", name: "iShares eb.rexx Government Germany 0-1yr", fokus: "Bundeswertpapiere bis 1 Jahr", ter: 0.13, vol: 1852.2, y: 2.72, d: 0.5, aus: true, hedge: "entfällt" },
+      { isin: "LU0290356871", name: "Xtrackers Eurozone Government Bond 1-3", fokus: "Euro-Staaten, 1 bis 3 Jahre", ter: 0.1, vol: 3820.0, y: 3.32, d: 1.73, aus: false, hedge: "entfällt" },
+      { isin: "IE00BYZTVV78", name: "iShares € Corp Bond 0-3yr ESG SRI", fokus: "Unternehmensanleihen bis 3 Jahre", ter: 0.12, vol: 4382.2, y: 3.52, d: 1.39, aus: true, hedge: "entfällt" },
+      { isin: "LU2233156582", name: "Amundi Prime Euro Government Bond 0-1Y", fokus: "Euro-Staaten bis 1 Jahr", ter: 0.05, vol: 772.2, y: 2.63, d: 0.49, aus: false, hedge: "entfällt" },
+      { isin: "IE000264WWY0", name: "iShares iBonds Dec 2028 Term € Corp", fokus: "Laufzeit-ETF: endet im Dezember 2028", ter: 0.12, vol: 2190.1, y: 3.65, d: 1.7, aus: true, hedge: "entfällt" },
+      { isin: "LU2641054551", name: "Xtrackers Germany Government Bond 0-1", fokus: "Bundeswertpapiere bis 1 Jahr", ter: 0.07, vol: 480.5, y: 2.74, d: 0.47, aus: false, hedge: "entfällt" },
+      { isin: "IE00BJP26D89", name: "iShares € Ultrashort Bond ESG SRI", fokus: "kurzlaufende Euro-Anleihen, nachhaltig gefiltert", ter: 0.09, vol: 1536.3, y: 3.08, d: 0.36, aus: true, hedge: "entfällt" },
+      { isin: "DE000ETFL227", name: "Deka Deutsche Börse EUROGOV Germany Money Market", fokus: "Bundeswertpapiere bis 1 Jahr", ter: 0.12, vol: 469.3, y: 2.7, d: 0.44, aus: true, hedge: "entfällt" }
+    ],
+    "hochzinsanleihen": [
+      { isin: "IE00B66F4759", name: "iShares € High Yield Corp Bond", fokus: "Euro-Hochzinsanleihen", ter: 0.5, vol: 6660.6, y: 6.13, d: 2.48, aus: true, hedge: "entfällt" },
+      { isin: "LU1109943388", name: "Xtrackers EUR High Yield Corporate Bond", fokus: "Euro-Hochzinsanleihen", ter: 0.2, vol: 2750.0, y: 6.3, d: 2.49, aus: false, hedge: "entfällt" },
+      { isin: "IE00BMDFDY08", name: "iShares $ High Yield Corp Bond ESG SRI", fokus: "US-Hochzinsanleihen, nachhaltig gefiltert", ter: 0.27, vol: 1700.3, y: 7.15, d: 3.25, aus: false, hedge: "ja" },
+      { isin: "LU1109942653", name: "Xtrackers EUR High Yield Corporate Bond", fokus: "Euro-Hochzinsanleihen", ter: 0.2, vol: 2750.0, y: 6.3, d: 2.49, aus: true, hedge: "entfällt" },
+      { isin: "IE00BJK55C48", name: "iShares € High Yield Corp Bond ESG SRI", fokus: "Euro-Hochzinsanleihen, nachhaltig gefiltert", ter: 0.25, vol: 3839.8, y: 5.67, d: 3.1, aus: false, hedge: "entfällt" },
+      { isin: "IE00B6YX5M31", name: "SPDR Bloomberg Euro High Yield Bond", fokus: "Euro-Hochzinsanleihen", ter: 0.4, vol: 465.2, y: 6.19, d: 2.75, aus: true, hedge: "entfällt" },
+      { isin: "IE00BJSFR200", name: "iShares Global High Yield Corp Bond", fokus: "Hochzinsanleihen weltweit", ter: 0.55, vol: 2726.8, y: 6.84, d: 3.0, aus: true, hedge: "ja" },
+      { isin: "IE00BD8D5G25", name: "PIMCO Euro Short-Term High Yield Corporate Bond", fokus: "Euro-Hochzinsanleihen bis 5 Jahre, aktiv", ter: 0.45, vol: 678.6, y: 5.91, d: 2.27, aus: false, hedge: "entfällt" },
+      { isin: "IE00BG0J4B71", name: "iShares Broad € High Yield Corp Bond", fokus: "Euro-Hochzinsanleihen, breit", ter: 0.2, vol: 1012.8, y: 5.95, d: 2.99, aus: true, hedge: "entfällt" },
+      { isin: "IE00B4PY7Y77", name: "iShares $ High Yield Corp Bond", fokus: "US-Hochzinsanleihen", ter: 0.5, vol: 5195.0, y: 7.08, d: 3.13, aus: true, hedge: "nein · USD" }
+    ],
+    "schwellenlaender": [
+      { isin: "IE00BJ5JPH63", name: "iShares J.P. Morgan $ EM Bond", fokus: "Staatsanleihen in Dollar", ter: 0.5, vol: 7340.7, y: 6.69, d: 6.44, aus: false, hedge: "ja" },
+      { isin: "IE00B9M6RS56", name: "iShares J.P. Morgan $ EM Bond EUR Hedged", fokus: "Staatsanleihen in Dollar", ter: 0.5, vol: 2124.2, y: 6.79, d: 6.55, aus: true, hedge: "ja" },
+      { isin: "IE00B2NPKV68", name: "iShares J.P. Morgan $ EM Bond", fokus: "Staatsanleihen in Dollar", ter: 0.45, vol: 7340.7, y: 6.69, d: 6.44, aus: true, hedge: "nein · USD" },
+      { isin: "IE00B5M4WH52", name: "iShares J.P. Morgan EM Local Govt Bond", fokus: "Staatsanleihen in Landeswährung", ter: 0.5, vol: 4721.2, y: 6.81, d: 5.21, aus: true, hedge: "nein · Landeswährungen" },
+      { isin: "IE00BKP5L730", name: "iShares J.P. Morgan Advanced $ EM Bond", fokus: "Staatsanleihen in Dollar, nachhaltig gefiltert", ter: 0.5, vol: 3131.0, y: 6.54, d: 6.37, aus: false, hedge: "ja" },
+      { isin: "IE00BKT1CS59", name: "iShares J.P. Morgan $ EM Corp Bond", fokus: "Unternehmensanleihen in Dollar", ter: 0.53, vol: 2838.7, y: 6.44, d: 4.14, aus: false, hedge: "ja" },
+      { isin: "IE000MINO564", name: "L&G Emerging Markets Government Bond (USD) 0-5 Year", fokus: "Staatsanleihen in Dollar, bis 5 Jahre", ter: 0.28, vol: 894.9, y: 5.82, d: 2.44, aus: false, hedge: "ja" },
+      { isin: "LU1547515137", name: "BNP Paribas Easy JPM Screened EMBI Global Diversified", fokus: "Staatsanleihen in Dollar, gefiltert", ter: 0.25, vol: 1126.2, y: 6.25, d: 6.37, aus: false, hedge: "ja" },
+      { isin: "LU0321462953", name: "Xtrackers J.P. Morgan USD Emerging Markets Bond", fokus: "Staatsanleihen in Dollar", ter: 0.4, vol: 402.7, y: 6.66, d: 6.04, aus: false, hedge: "ja" },
+      { isin: "IE00BYXYYK40", name: "iShares J.P. Morgan $ EM Bond", fokus: "Staatsanleihen in Dollar", ter: 0.45, vol: 7340.7, y: 6.69, d: 6.44, aus: false, hedge: "nein · USD" }
+    ]
+  }
+};
+
+// ---------- Formatierung (identisch zur statischen Ausgabe im HTML) ----------
+function fmt(v, dec = 0) {
+  if (typeof v !== "number" || !isFinite(v)) return "–";
+  return MC.minus(v.toLocaleString("de-DE", { minimumFractionDigits: dec, maximumFractionDigits: dec }));
+}
+const fmtVol = v => v >= 1000 ? `${fmt(v / 1000, 1)} Mrd. €` : `${fmt(v, 0)} Mio. €`;
+const durLevel = d => d < 1.5 ? 1 : d < 4 ? 2 : d < 8 ? 3 : d < 12 ? 4 : 5;
+const DUR_WORD = { 1: "kaum", 2: "gering", 3: "mittel", 4: "hoch", 5: "sehr hoch" };
+const HEDGE_LABEL = { USD: "in Dollar", JPY: "in Yen", mehrere: "mehrere Währungen", "Landeswährungen": "Landeswährungen" };
+function hedgeTag(h) {
+  if (h === "entfällt") return "";
+  if (h === "ja") return '<span class="tag h" title="Gegen Wechselkursschwankungen zum Euro abgesichert">€ abgesichert</span>';
+  const w = h.split("·").pop().trim();
+  return `<span class="tag w" title="Nicht abgesichert: Du trägst das Wechselkursrisiko">${MC.esc(HEDGE_LABEL[w] || w)}</span>`;
+}
+function rowHtml(r) {
+  const lvl = durLevel(r.d), w = Math.round(Math.min(r.d, 15) / 15 * 100);
+  const use = r.aus ? "ja<small>ausschüttend</small>" : "nein<small>thesaurierend</small>";
+  return `<tr><td class="num rk">${r.rank}</td>` +
+    `<th scope="row"><button type="button" class="zbtn" aria-expanded="${S_OFFEN.has(r.isin)}" aria-controls="det-${MC.esc(r.isin)}">${MC.esc(r.name)}</button><small>${MC.esc(r.fokus)}</small><span class="isin">${MC.esc(r.isin)}</span>${hedgeTag(r.hedge)}</th>` +
+    `<td class="num y" data-l="Rendite">${fmt(r.y, 2)}\u00a0%</td>` +
+    `<td class="num" data-l="Kurs">${kursZelle(r)}</td>` +
+    `<td class="num" data-l="Kosten p. a.">${fmt(r.ter, 2)}\u00a0%</td>` +
+    `<td class="num" data-l="Schwankung"><span class="dur l${lvl}"><span class="bar"><i style="width:${w}%"></i></span>${fmt(r.d, 1)} <small>${DUR_WORD[lvl]}</small></span></td>` +
+    `<td class="num" data-l="Größe">${fmtVol(r.vol)}</td>` +
+    `<td class="use" data-l="Zinsen aufs Konto?">${use}</td></tr>` + (S_OFFEN.has(r.isin) ? detailZeile(r) : "");
+}
+// Tageskurse (kurse-auswahl.json, scripts/update_kurse.py – Xetra, Deutsche Börse; seit 25.09.2026):
+// {stand, tage: [Datum …], kurse: {ISIN: [kurs in €, null, tag, "X", umsatz in €]}}
+let KURSE = {}, KTAGE = [], KSTAND = "";
+const S_OFFEN = new Set();
+const fmtDatum = iso => iso ? `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}` : "–";
+function kursZelle(r) {
+  const k = KURSE[r.isin];
+  if (!k) return "–";
+  const alt = KTAGE[k[2]] !== KSTAND ? `<small>${fmtDatum(KTAGE[k[2]])}</small>` : "";
+  return `<span title="Schlusskurs Xetra ${fmtDatum(KTAGE[k[2]])}${k[4] ? `, Umsatz ${fmt(k[4], 0)}\u00a0€` : ""}">${fmt(k[0], 2)}\u00a0€</span>${alt}`;
+}
+// gerundet 0 → „0,00“ ohne Vorzeichen (nicht „−0,00“)
+const vz2 = x => { const g = Math.round(x * 100) / 100 || 0; return (g > 0 ? "+" : "") + fmt(g, 2); };
+function detailZeile(r) {
+  const k = KURSE[r.isin];
+  const td = k && Array.isArray(k[5]) && k[5].length > 1 ? k[5] : null;
+  const vor = k && typeof k[6] === "number" ? k[6] : null, dif = vor != null ? k[0] - vor : null;
+  const je = td ? [["X", "Xetra", td[7]], ["T", "Tradegate", td[6]], ["F", "Frankfurt", td[5]]].filter(x => x[2] > 0).map(x => `${x[1]} ${fmt(x[2] / 1e6, 2)} Mio. €`).join(" · ") : "";
+  const kpi = [
+    ["Kurs", k ? `${fmt(k[0], 2)}\u00a0€` : "–", k ? `Xetra · ${fmtDatum(KTAGE[k[2]])}` : "kein aktueller Kurs"],
+    ["Veränderung zum Vortag", dif == null ? "–" : `${vz2(dif)}\u00a0€`, dif == null ? "kein Vortageskurs" : `${vz2(dif / vor * 100)}\u00a0% · Vortag ${fmt(vor, 2)}\u00a0€`],
+    ["Kursspanne des Tags", td ? `${fmt(td[1], 2)} / ${fmt(td[2], 2)}\u00a0€` : "–", td ? `Hoch / Tief · Eröffnung ${fmt(td[0], 2)}\u00a0€ · ${td[4]} Abschlüsse` : ""],
+    ["Umsatz an diesem Tag", k && k[4] ? `${fmt(k[4] / 1e6, 1)} Mio. €` : "–", je ? `${je} · Stück × Kurs` : "Stück × Kurs"],
+    ["Rendite des Bestands", `${fmt(r.y, 2)}\u00a0%`, "laut Anbieter, vor Kosten"],
+    ["Kosten p. a.", `${fmt(r.ter, 2)}\u00a0%`, "TER"],
+  ].map(([a, b, c]) => `<div><dt>${a}</dt><dd>${b}<small>${c}</small></dd></div>`).join("");
+  return `<tr class="zdet" id="det-${MC.esc(r.isin)}"><td colspan="8"><div class="det">` +
+    `<div class="det-kopf"><b>${MC.esc(r.name)}</b><span class="det-id">ISIN <b>${MC.esc(r.isin)}</b><button type="button" class="kopie" data-isin="${MC.esc(r.isin)}">ISIN kopieren</button></span></div>` +
+    `<dl class="det-kpi">${kpi}</dl>` +
+    `<div class="kv" data-kv="${MC.esc(r.isin)}"><p class="kv-leer">Kursverlauf wird geladen …</p></div>` +
+    `<p class="det-note">Der Kursverlauf wird seit dem 24.09.2026 Tag für Tag gesammelt. Kaufen kannst du den ETF bei jedem Broker – ISIN eingeben.</p>` +
+    `</div></td></tr>`;
+}
+function verlaeufeLaden() {
+  if (!MC.verlauf) return;
+  for (const el of document.querySelectorAll("table.etf .kv[data-kv]:not([data-geladen])")) {
+    el.dataset.geladen = "1";
+    const isin = el.dataset.kv, r = Object.values(ETFS.gruppen).flat().find(x => x.isin === isin);
+    MC.verlauf(isin).then(v => MC.kursChart(el, v, { einheit: "€", name: r ? r.name : isin, waehrung: "€" }))
+      .catch(() => { el.innerHTML = '<p class="kv-leer">Der Kursverlauf ist gerade nicht erreichbar.</p>'; });
+  }
+}
+
+// ---------- Tabellen: eine je Kategorie, jede für sich sortierbar ----------
+const SORT = {};
+function rows(key) {
+  return ETFS.gruppen[key].map((r, i) => ({ rank: i + 1, ...r, use: r.aus ? 0 : 1, kurs: KURSE[r.isin] ? KURSE[r.isin][0] : -1 }));
+}
+function renderTable(key) {
+  const s = SORT[key] || (SORT[key] = { col: "rank", dir: 1 });
+  const cmp = (a, b) => {
+    const x = a[s.col], y = b[s.col];
+    const r = typeof x === "string" ? x.localeCompare(y, "de", { numeric: true }) : x - y;
+    return (r || a.rank - b.rank) * s.dir;
+  };
+  const table = document.querySelector(`table.etf[data-gruppe="${key}"]`);
+  table.tBodies[0].innerHTML = rows(key).sort(cmp).map(rowHtml).join("");
+  verlaeufeLaden();
+  for (const th of table.tHead.querySelectorAll("th[data-col]")) {
+    if (th.dataset.col === s.col) th.setAttribute("aria-sort", s.dir > 0 ? "ascending" : "descending");
+    else th.removeAttribute("aria-sort");
+  }
+}
+function initSort() {
+  for (const table of document.querySelectorAll("table.etf[data-gruppe]")) {
+    // Klick auf den Namen: Detail-Feld mit Kursverlauf auf- und zuklappen
+    table.tBodies[0].addEventListener("click", e => {
+      const kb = e.target.closest(".kopie");
+      if (kb && navigator.clipboard) { navigator.clipboard.writeText(kb.dataset.isin).then(() => { kb.textContent = "kopiert ✓"; setTimeout(() => { kb.textContent = "ISIN kopieren"; }, 1800); }); return; }
+      const b = e.target.closest(".zbtn"); if (!b) return;
+      const isin = b.getAttribute("aria-controls").slice(4);
+      if (S_OFFEN.has(isin)) S_OFFEN.delete(isin); else S_OFFEN.add(isin);
+      renderTable(table.dataset.gruppe);
+      const nb = table.querySelector(`.zbtn[aria-controls="det-${isin}"]`); if (nb) nb.focus();
+    });
+    table.tHead.addEventListener("click", e => {
+      const b = e.target.closest(".sortbtn");
+      if (!b) return;
+      const key = table.dataset.gruppe, s = SORT[key], col = b.dataset.col;
+      if (s.col === col) s.dir = -s.dir; else { s.col = col; s.dir = 1; }
+      renderTable(key);
+    });
+  }
+}
+
+// ---------- Kategorie-Karten als Reiter: nur eine Kategorie sichtbar, Anker (#kurze-laufzeiten …) bleiben gültig ----------
+const TABS = [...document.querySelectorAll(".kat")], PANELS = [...document.querySelectorAll(".panel")];
+function select(id, opt) {
+  opt = opt || {};
+  TABS.forEach(t => { const on = t.dataset.k === id; t.setAttribute("aria-selected", on ? "true" : "false"); t.tabIndex = on ? 0 : -1; });
+  PANELS.forEach(p => { p.hidden = p.id !== id; });
+  if (opt.hash !== false) history.replaceState(null, "", "#" + id);
+  if (opt.scroll) document.getElementById(id).scrollIntoView({ behavior: opt.smooth ? "smooth" : "auto", block: "start" });
+  if (opt.focus) document.getElementById(id).focus({ preventScroll: true });
+}
+function initTabs() {
+  const list = document.querySelector(".kats");
+  list.addEventListener("click", e => {
+    const t = e.target.closest(".kat"); if (!t) return;
+    e.preventDefault();
+    select(t.dataset.k, { scroll: window.innerWidth <= 600, smooth: true });
+  });
+  list.addEventListener("keydown", e => {
+    const i = TABS.findIndex(t => t === document.activeElement); if (i < 0) return;
+    const n = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: TABS.length - 1 }[e.key];
+    if (n === undefined) return;
+    e.preventDefault();
+    const t = TABS[(n + TABS.length) % TABS.length]; t.focus(); select(t.dataset.k);
+  });
+  window.addEventListener("hashchange", () => { const id = location.hash.slice(1); if (PANELS.some(p => p.id === id)) select(id, { hash: false, scroll: true }); });
+  const h = location.hash.slice(1), known = PANELS.some(p => p.id === h);
+  select(known ? h : PANELS[0].id, { hash: false, scroll: known });
+}
+(function () {
+  try { Object.keys(ETFS.gruppen).forEach(renderTable); initSort(); initTabs(); } catch (e) { console.warn("Render fehlgeschlagen:", e); }
+  // „Ø Rendite“ der Kategorie-Karten: Mittelwert der zehn Renditen der Tabelle (bis 26.09.2026 stand dort der Median)
+  for (const kat of document.querySelectorAll(".kat[data-k]")) {
+    const g = ETFS.gruppen[kat.dataset.k], b = kat.querySelector(".km b");
+    if (g && g.length && b) b.textContent = `${fmt(g.reduce((a, r) => a + r.y, 0) / g.length, 1)}\u00a0%`;
+  }
+  if (!MC.load) return;
+  MC.load("kurse-auswahl.json").then(d => {
+    KURSE = d.kurse || {}; KTAGE = d.tage || []; KSTAND = d.stand || "";
+    Object.keys(ETFS.gruppen).forEach(renderTable);
+    const el = document.getElementById("datastand");
+    if (el && KSTAND) el.textContent = `Daten-Stand: Kurse ${fmtDatum(KSTAND)} · Kennzahlen 31.08. bis 23.09.2026 (je Anbieter, siehe oben)`;
+  }).catch(e => console.warn("Tageskurse nicht geladen:", e));
+})();
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+</script>
+</body>
+</html>

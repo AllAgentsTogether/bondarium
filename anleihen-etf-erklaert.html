@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anleihen-ETF: Vor- und Nachteile – METALCONCRETE</title>
+<meta name="description" content="Anleihen-ETF einfach erklärt: breite Streuung, kleine Beträge, keine Pflege – aber kein festes Ende und keine feste Rendite. Und wann ein ETF besser passt.">
+<link rel="canonical" href="https://www.metalconcrete.de/anleihen-etf-erklaert.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/anleihen-etf-erklaert.html">
+<meta property="og:title" content="Anleihen-ETF: Vor- und Nachteile – METALCONCRETE">
+<meta property="og:description" content="Anleihen-ETF einfach erklärt: breite Streuung, kleine Beträge, keine Pflege – aber kein festes Ende und keine feste Rendite. Und wann ein ETF besser passt.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Anleihen-ETF: Vor- und Nachteile – METALCONCRETE">
+<meta name="twitter:description" content="Anleihen-ETF einfach erklärt: breite Streuung, kleine Beträge, keine Pflege – aber kein festes Ende und keine feste Rendite. Und wann ein ETF besser passt.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Anleihen-ETF (24.09.2026): fünf Erklärkarten nach dem Gestaltungssystem (base.css); hier nur die eigenen Schaubilder. */
+  .sb-go { margin-top: 14px; align-self: flex-start; font-size: 14px; padding: 10px 16px; }
+  /* Listen mit Symbol (Vorteile, Nachteile, Auswahl) */
+  .pl { list-style: none; display: grid; gap: 10px; margin-top: 14px; }
+  .pl li { display: grid; grid-template-columns: 38px minmax(0, 1fr); column-gap: 12px; align-items: start; font-size: 15px; line-height: 1.5; color: var(--text); }
+  .pl strong { display: block; font-size: 15.5px; font-weight: 600; color: var(--ink); }
+  .pi { width: 38px; height: 38px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--green-text); box-shadow: 0 3px 10px rgba(30,45,80,0.10); margin-top: 2px; }
+  .pi svg { width: 19px; height: 19px; }
+  #nachteile .pi { color: var(--orange-text); }
+  /* 1 – Korb */
+  .korb { border: 2px solid var(--green-text); border-radius: 14px; padding: 12px; background: var(--soft); }
+  .korb-k { font-size: 13px; font-weight: 600; color: var(--green-text); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+  .korb-t { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .korb-t span { display: block; background: #fff; border-radius: 8px; padding: 8px 6px; font-size: 12.5px; font-weight: 600; text-align: center; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .korb-t .mehr { grid-column: 1 / -1; background: var(--green); color: var(--ink); }
+  /* 2 – Ausfall */
+  .dp { display: grid; grid-template-columns: 150px minmax(0, 1fr); align-items: center; gap: 12px; }
+  .dp + .dp { margin-top: 12px; }
+  .dp-ax { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 12px; margin-bottom: 6px; }
+  .dp-l b { display: block; font-size: 14.5px; font-weight: 600; color: var(--ink); }
+  .dp-l span { font-size: 12px; color: var(--text); }
+  .dp-bar i { display: flex; align-items: center; justify-content: flex-end; height: 34px; width: var(--w); min-width: 74px; border-radius: 7px; background: var(--down); padding-right: 10px; }
+  .dp-bar i.klein { background: var(--up); justify-content: center; padding: 0; }
+  .dp-bar span { color: #fff; font-size: 14px; font-weight: 600; white-space: nowrap; }
+  /* 4 – Wahl */
+  .wahl { border-collapse: collapse; width: 100%; font-size: 15px; }
+  .wahl th, .wahl td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+  .wahl thead th { font-size: 12.5px; font-weight: 600; color: var(--text); letter-spacing: 0.08em; text-transform: uppercase; }
+  .wahl tbody th { font-weight: 600; color: var(--ink); }
+  .wahl tbody tr:last-child th, .wahl tbody tr:last-child td { border-bottom: 0; }
+  .pick { display: inline-block; font-size: 13px; font-weight: 600; padding: 5px 11px; border-radius: 999px; color: var(--ink); background: var(--green); }
+  .pick.anleihe { background: var(--up); color: #fff; } .pick.beides { background: var(--text); color: #fff; }
+  /* 5 – Steckbrief */
+  .pass { background: var(--soft); border-radius: 12px; padding: 14px 18px 12px; }
+  .pass-k { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .pass-k span { color: var(--text); letter-spacing: 0.04em; font-weight: 600; }
+  .pass dl div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--green-line); }
+  .pass dt { font-size: 14px; color: var(--text); }
+  .pass dd { font-size: 15.5px; font-weight: 600; text-align: right; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .pass-f { font-size: 13px; line-height: 1.5; color: var(--text); margin-top: 10px; }
+  @media (max-width: 600px) {
+    .korb-t { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .korb-t span { padding: 8px 3px; font-size: 12px; }
+    .dp { grid-template-columns: 1fr; gap: 4px; }
+    .dp-ax { grid-template-columns: 1fr; } .dp-ax .ax-k { display: none; }
+    .sb-go { align-self: stretch; text-align: center; }
+  }
+  /* Zeitverlauf (3): eigene Handy-Fassung (schmalere viewBox, Schrift effektiv ≥ 11 px) */
+  .sb-m { display: none; }
+  @media (max-width: 600px) { .sb-d { display: none; } .sb-m { display: block; } }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Anleihen-ETF: Vor- und Nachteile","description":"Anleihen-ETF einfach erklärt: breite Streuung, kleine Beträge, keine Pflege – aber kein festes Ende und keine feste Rendite. Und wann ein ETF besser passt.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-25","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/anleihen-etf-erklaert.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Verstehen","item":"https://www.metalconcrete.de/wissen.html"},{"@type":"ListItem","position":3,"name":"Anleihen-ETF: Vor- und Nachteile","item":"https://www.metalconcrete.de/anleihen-etf-erklaert.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="verstehen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn current" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe current">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>Anleihen-ETF: Vor- und Nachteile</h1>
+    <p class="sub">Viele Anleihen in einem Papier – einfach und breit gestreut, aber ohne festes Ende. Fünf kurze Schritte mit Schaubildern. Lesezeit: etwa 5 Minuten.</p>
+    <nav class="lands" aria-label="Zum Schritt springen">
+      <a class="lbtn" href="#was"><span class="n">1</span>Was ist das?</a>
+      <a class="lbtn" href="#vorteile"><span class="n">2</span>Vorteile</a>
+      <a class="lbtn" href="#nachteile"><span class="n">3</span>Nachteile</a>
+      <a class="lbtn" href="#wahl"><span class="n">4</span>ETF oder Anleihe?</a>
+      <a class="lbtn" href="#auswahl"><span class="n">5</span>Auswählen</a>
+    </nav>
+
+    <section class="kap" id="was" aria-labelledby="h-was">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">1</span>
+        <h2 id="h-was">Was ist ein Anleihen-ETF?</h2>
+        <p>Ein Anleihen-ETF ist ein Fonds, der <strong>Hunderte Anleihen in einem Papier bündelt</strong> – zum Beispiel alle Staatsanleihen des Euroraums. Er wird wie eine Aktie an der Börse gehandelt.</p><p>Der ETF folgt einem Index. Niemand wählt die Anleihen aus, der Index bestimmt, was drin ist. Deshalb ist er günstig. Wird eine Anleihe fällig, kauft der Fonds automatisch eine neue.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Was in einem Anteil steckt</p><div class="korb" role="img" aria-label="Ein ETF-Anteil enthält viele Anleihen: Deutschland, Frankreich, Italien, Spanien, Niederlande und weitere Euro-Staaten mit verschiedenen Fälligkeiten – Hunderte in einem Papier.">
+<div class="korb-k">1 ETF-Anteil</div>
+<div class="korb-t"><span>Deutschland 2031</span><span>Frankreich 2029</span><span>Italien 2034</span><span>Spanien 2030</span><span>Niederlande 2033</span><span>Belgien 2028</span><span>Österreich 2035</span><span>Finnland 2032</span><span>Irland 2029</span><span>Portugal 2031</span><span>Deutschland 2040</span><span>Frankreich 2036</span><span class="mehr">+ Hunderte weitere</span></div>
+</div>
+<p class="sb-f">Ein Kauf – und du bist an allen Anleihen darin beteiligt. Die Zinsen werden gesammelt und ausgeschüttet oder wieder angelegt.</p><a class="go leise sb-go" href="anleihen-etf.html">Die meistgehandelten Anleihen-ETFs →</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Ein Papier, Hunderte Anleihen.</span></p>
+    </section>
+    <section class="kap kap-b" id="vorteile" aria-labelledby="h-vorteile">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">2</span>
+        <h2 id="h-vorteile">Die Vorteile</h2>
+        <p>Der ETF nimmt dir ab, was bei einzelnen Anleihen Arbeit macht – und er streut dein Geld so breit, wie es allein kaum geht.</p><ul class="pl"><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg></span><div><strong>Breit gestreut</strong>Fällt ein Schuldner aus, trifft es nur einen kleinen Teil.</div></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5c0-1.1 1.1-2 2.5-2s2.5.9 2.5 2-1.1 1.6-2.5 2-2.5.9-2.5 2 1.1 2 2.5 2 2.5-.9 2.5-2M12 6v1.5M12 16.5V18"/></svg></span><div><strong>Auch mit kleinen Beträgen</strong>Ein Anteil reicht. Sparpläne gehen schon mit wenigen Euro im Monat.</div></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 12.5V4.5h8l9 9-8 8z"/><circle cx="7.5" cy="8.5" r="1.3" fill="currentColor"/></svg></span><div><strong>Günstig</strong>Laufende Kosten meist nur 0,05 bis 0,2&nbsp;% im Jahr.</div></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 3.5v4.5h-4.5"/></svg></span><div><strong>Keine Pflege</strong>Wird eine Anleihe fällig, kauft der Fonds von selbst nach.</div></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg></span><div><strong>Jederzeit handelbar</strong>An der Börse kaufen und verkaufen wie eine Aktie.</div></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="8" cy="14" r="4.5"/><path d="M11.5 11.5 20 3M17 6l2.5 2.5M14 9l2.5 2.5"/></svg></span><div><strong>Öffnet die Profi-Welt</strong>Unternehmensanleihen mit 100.000&nbsp;€ Stückelung sind im ETF für jeden erreichbar.</div></li></ul>
+      </div>
+      <div class="k-bild"><p class="sb-k">Wenn ein Schuldner ausfällt</p><div class="ax-row dp-ax" aria-hidden="true"><span class="ax-t ax-k">Anlage</span><span class="ax-t">Verlust, wenn ein Schuldner ausfällt →</span></div><div class="depot" role="img" aria-label="Geht ein Schuldner pleite: Mit einer einzelnen Anleihe dieses Schuldners geht oft ein großer Teil verloren. Im ETF mit 200 Anleihen verlierst du höchstens rund 0,5 Prozent.">
+<div class="dp"><div class="dp-l"><b>Eine einzelne Anleihe</b><span>alles bei einem Schuldner</span></div><div class="dp-bar"><i style="--w:100%"><span>oft ein großer Teil weg</span></i></div></div>
+<div class="dp"><div class="dp-l"><b>ETF mit 200 Anleihen</b><span>jeder Schuldner ≈ 0,5&nbsp;%</span></div><div class="dp-bar"><i class="klein" style="--w:9%"><span>−0,5&nbsp;%</span></i></div></div>
+</div>
+<p class="sb-f">Fällt im ETF ein Schuldner aus, trifft es nur seinen kleinen Anteil. Die übrigen Anleihen zahlen weiter.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Streuung nimmt dem Ausfall den Schrecken.</span></p>
+    </section>
+    <section class="kap" id="nachteile" aria-labelledby="h-nachteile">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">3</span>
+        <h2 id="h-nachteile">Die Nachteile</h2>
+        <p>Der größte Unterschied: <strong>Ein ETF hat kein Ende.</strong> Eine Anleihe zahlt am Tag der Fälligkeit 100&nbsp;% zurück – der ETF nicht. Er kauft ständig neue Anleihen nach, sein Kurs schwankt deshalb dauerhaft mit dem allgemeinen Zinsniveau.</p><ul class="pl"><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8.5 15.5l2.3 2.3 4.7-4.8"/></svg></span><div><strong>Kein festes Datum, keine feste Rendite</strong>Du kannst den heutigen Zins nicht für Jahre festschreiben. Steigt das allgemeine Zinsniveau, fällt der ETF – ohne Termin, an dem der Verlust sicher aufgeholt ist. Hältst du länger als die Duration, gleichen die höheren Kupons der nachgekauften Anleihen den Verlust aber meist aus (<a href="fortgeschrittene.html#duration">Duration als Zeithorizont</a>).</div></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18.5 5.5l-13 13"/><circle cx="7" cy="7" r="2.6"/><circle cx="17" cy="17" r="2.6"/></svg></span><div><strong>Laufende Kosten</strong>Klein, aber jedes Jahr – dazu die Spanne zwischen Kauf- und Verkaufskurs.</div></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg></span><div><strong>Der Index entscheidet</strong>Du weißt nicht im Detail, was drin ist. Manche ETFs enthalten Anleihen schwacher Bonität.</div></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18"/></svg></span><div><strong>Währung</strong>ETFs auf US-Anleihen schwanken mit dem Dollar – außer sie sind abgesichert („hedged“).</div></li></ul>
+      </div>
+      <div class="k-bild"><p class="sb-k">Anleihe und ETF im Zeitverlauf</p><svg class="sb sb-d" viewBox="0 0 480 222" role="img" aria-labelledby="sbe"><title id="sbe">Zwei Kurven: Der Kurs der Anleihe schwankt zur Fälligkeit hin immer weniger und endet bei 100&nbsp;Prozent. Der ETF hat kein Ende – sein Kurs schwankt gleichmäßig weiter.</title>
+<rect x="60" y="46" width="320" height="120" rx="10" fill="#DFFFD9"/>
+<rect x="380" y="46" width="82" height="120" rx="10" fill="#FBEFE4"/>
+<line x1="60" y1="106" x2="462" y2="106" stroke="#1DA300" stroke-width="1.5" stroke-dasharray="6 6"/>
+<text x="52" y="111" text-anchor="end" font-size="14" fill="#55544F">100&nbsp;%</text>
+<polyline points="60.0,106.0 62.0,103.2 64.0,100.4 66.0,97.6 68.0,94.9 70.0,92.2 71.9,89.7 73.9,87.3 75.9,85.0 77.9,82.8 79.9,80.8 81.9,79.0 83.9,77.4 85.9,76.0 87.9,74.7 89.9,73.7 91.8,73.0 93.8,72.4 95.8,72.1 97.8,72.0 99.8,72.2 101.8,72.5 103.8,73.2 105.8,74.0 107.8,75.1 109.8,76.4 111.7,77.9 113.7,79.6 115.7,81.4 117.7,83.5 119.7,85.7 121.7,88.0 123.7,90.5 125.7,93.1 127.7,95.7 129.7,98.4 131.6,101.2 133.6,104.1 135.6,106.9 137.6,109.7 139.6,112.5 141.6,115.3 143.6,118.0 145.6,120.6 147.6,123.1 149.6,125.5 151.5,127.7 153.5,129.8 155.5,131.8 157.5,133.5 159.5,135.1 161.5,136.5 163.5,137.6 165.5,138.5 167.5,139.2 169.5,139.7 171.4,140.0 173.4,140.0 175.4,139.7 177.4,139.3 179.4,138.6 181.4,137.7 183.4,136.5 185.4,135.2 187.4,133.6 189.4,131.9 191.3,129.9 193.3,127.9 195.3,125.6 197.3,123.2 199.3,120.7 201.3,118.1 203.3,115.4 205.3,112.7 207.3,109.9 209.3,107.1 211.2,104.2 213.2,101.4 215.2,98.6 217.2,95.9 219.2,93.2 221.2,90.6 223.2,88.2 225.2,85.8 227.2,83.6 229.2,81.6 231.1,79.7 233.1,78.0 235.1,76.5 237.1,75.2 239.1,74.1 241.1,73.2 243.1,72.6 245.1,72.2 247.1,72.0 249.1,72.1 251.0,72.4 253.0,72.9 255.0,73.7 257.0,74.7 259.0,75.9 261.0,77.3 263.0,78.9 265.0,80.7 267.0,82.7 269.0,84.8 271.0,87.1 272.9,89.5 274.9,92.1 276.9,94.7 278.9,97.4 280.9,100.2 282.9,103.0 284.9,105.8 286.9,108.7 288.9,111.5 290.9,114.3 292.8,117.0 294.8,119.6 296.8,122.2 298.8,124.6 300.8,126.9 302.8,129.1 304.8,131.1 306.8,132.9 308.8,134.5 310.8,136.0 312.7,137.2 314.7,138.2 316.7,139.0 318.7,139.6 320.7,139.9 322.7,140.0 324.7,139.9 326.7,139.5 328.7,138.9 330.7,138.0 332.6,137.0 334.6,135.7 336.6,134.2 338.6,132.5 340.6,130.7 342.6,128.7 344.6,126.5 346.6,124.1 348.6,121.7 350.6,119.1 352.5,116.4 354.5,113.7 356.5,110.9 358.5,108.1 360.5,105.3 362.5,102.5 364.5,99.6 366.5,96.9 368.5,94.2 370.5,91.6 372.4,89.1 374.4,86.7 376.4,84.4 378.4,82.3 380.4,80.3 382.4,78.6 384.4,77.0 386.4,75.6 388.4,74.5 390.4,73.5 392.3,72.8 394.3,72.3 396.3,72.0 398.3,72.0 400.3,72.2 402.3,72.7 404.3,73.4 406.3,74.3 408.3,75.4 410.3,76.7 412.2,78.3 414.2,80.0 416.2,81.9 418.2,84.0 420.2,86.3 422.2,88.6 424.2,91.1 426.2,93.7 428.2,96.4 430.2,99.2 432.1,101.9 434.1,104.8 436.1,107.6 438.1,110.4 440.1,113.2 442.1,116.0 444.1,118.6 446.1,121.2 448.1,123.7 450.1,126.1 452.0,128.3 454.0,130.3 456.0,132.2 458.0,133.9 460.0,135.5 462.0,136.8" fill="none" stroke="#CF7430" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="60.0,106.0 62.0,103.2 64.0,100.4 66.0,97.8 68.0,95.2 69.9,92.7 71.9,90.3 73.9,88.1 75.9,86.0 77.9,84.1 79.9,82.4 81.9,80.9 83.9,79.5 85.8,78.4 87.8,77.5 89.8,76.8 91.8,76.2 93.8,76.0 95.8,75.9 97.8,76.0 99.8,76.4 101.7,76.9 103.7,77.6 105.7,78.6 107.7,79.7 109.7,80.9 111.7,82.4 113.7,83.9 115.7,85.6 117.6,87.5 119.6,89.4 121.6,91.4 123.6,93.5 125.6,95.6 127.6,97.8 129.6,100.0 131.6,102.2 133.5,104.4 135.5,106.6 137.5,108.7 139.5,110.8 141.5,112.8 143.5,114.7 145.5,116.6 147.5,118.3 149.4,119.9 151.4,121.4 153.4,122.8 155.4,124.0 157.4,125.1 159.4,126.0 161.4,126.7 163.4,127.3 165.3,127.8 167.3,128.1 169.3,128.2 171.3,128.1 173.3,128.0 175.3,127.6 177.3,127.1 179.3,126.5 181.2,125.7 183.2,124.8 185.2,123.8 187.2,122.7 189.2,121.5 191.2,120.2 193.2,118.9 195.2,117.4 197.1,116.0 199.1,114.5 201.1,112.9 203.1,111.4 205.1,109.8 207.1,108.2 209.1,106.7 211.1,105.2 213.0,103.7 215.0,102.3 217.0,101.0 219.0,99.7 221.0,98.5 223.0,97.4 225.0,96.3 227.0,95.4 228.9,94.6 230.9,93.8 232.9,93.2 234.9,92.7 236.9,92.3 238.9,92.0 240.9,91.8 242.9,91.7 244.8,91.7 246.8,91.9 248.8,92.1 250.8,92.4 252.8,92.8 254.8,93.3 256.8,93.9 258.8,94.5 260.7,95.2 262.7,96.0 264.7,96.8 266.7,97.7 268.7,98.5 270.7,99.4 272.7,100.4 274.7,101.3 276.6,102.2 278.6,103.2 280.6,104.1 282.6,105.0 284.6,105.8 286.6,106.7 288.6,107.4 290.6,108.2 292.5,108.9 294.5,109.5 296.5,110.1 298.5,110.6 300.5,111.1 302.5,111.5 304.5,111.8 306.5,112.1 308.4,112.3 310.4,112.5 312.4,112.5 314.4,112.6 316.4,112.5 318.4,112.4 320.4,112.3 322.4,112.1 324.3,111.9 326.3,111.6 328.3,111.3 330.3,111.0 332.3,110.6 334.3,110.3 336.3,109.9 338.3,109.5 340.2,109.1 342.2,108.7 344.2,108.3 346.2,108.0 348.2,107.6 350.2,107.3 352.2,107.0 354.2,106.7 356.1,106.4 358.1,106.2 360.1,106.0 362.1,105.8 364.1,105.7 366.1,105.6 368.1,105.6 370.1,105.6 372.0,105.6 374.0,105.6 376.0,105.7 378.0,105.9 380.0,106.0" fill="none" stroke="#1F7A5E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="380" cy="106" r="7" fill="#1F7A5E" stroke="#fff" stroke-width="3"/>
+<line x1="380" y1="46" x2="380" y2="166" stroke="#1F7A5E" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text x="386" y="34" text-anchor="end" font-size="15" font-weight="600" fill="#1F7A5E">Anleihe: Fälligkeit, 100&nbsp;% zurück</text>
+<text x="462" y="186" text-anchor="end" font-size="15" font-weight="600" fill="#CF7430">ETF: kein Ende</text>
+<text x="60" y="186" font-size="14" fill="#55544F">Kauf</text>
+<text class="axt" x="4" y="34" font-size="13" font-weight="600" fill="#55544F">↑ Kurs in %</text>
+<text class="axt" x="462" y="212" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Zeit →</text>
+</svg><svg class="sb sb-m" viewBox="0 0 330 214" role="img" aria-labelledby="sbem"><title id="sbem">Zwei Kurven: Der Kurs der Anleihe schwankt zur Fälligkeit hin immer weniger und endet bei 100&nbsp;Prozent. Der ETF hat kein Ende – sein Kurs schwankt gleichmäßig weiter.</title>
+<rect x="48" y="50" width="218" height="112" rx="10" fill="#DFFFD9"/>
+<rect x="266" y="50" width="56" height="112" rx="10" fill="#FBEFE4"/>
+<line x1="48" y1="106" x2="322" y2="106" stroke="#1DA300" stroke-width="1.5" stroke-dasharray="6 6"/>
+<text x="42" y="111" text-anchor="end" font-size="13" fill="#55544F">100&nbsp;%</text>
+<polyline points="48.0,106.0 50.0,102.7 52.0,99.4 54.0,96.2 55.9,93.1 57.9,90.1 59.9,87.4 61.9,84.9 63.9,82.7 65.9,80.7 67.9,79.1 69.8,77.8 71.8,76.8 73.8,76.2 75.8,76.0 77.8,76.1 79.8,76.7 81.8,77.5 83.7,78.8 85.7,80.4 87.7,82.2 89.7,84.4 91.7,86.9 93.7,89.6 95.7,92.5 97.6,95.5 99.6,98.7 101.6,102.0 103.6,105.3 105.6,108.7 107.6,112.0 109.6,115.2 111.5,118.3 113.5,121.3 115.5,124.0 117.5,126.6 119.5,128.9 121.5,130.9 123.4,132.6 125.4,134.0 127.4,135.0 129.4,135.7 131.4,136.0 133.4,135.9 135.4,135.5 137.3,134.7 139.3,133.5 141.3,132.0 143.3,130.2 145.3,128.0 147.3,125.6 149.3,123.0 151.2,120.1 153.2,117.1 155.2,114.0 157.2,110.7 159.2,107.4 161.2,104.0 163.2,100.7 165.1,97.5 167.1,94.3 169.1,91.3 171.1,88.5 173.1,85.9 175.1,83.5 177.1,81.5 179.0,79.7 181.0,78.3 183.0,77.2 185.0,76.4 187.0,76.0 189.0,76.0 191.0,76.4 192.9,77.1 194.9,78.2 196.9,79.7 198.9,81.4 200.9,83.5 202.9,85.8 204.9,88.4 206.8,91.3 208.8,94.2 210.8,97.4 212.8,100.6 214.8,104.0 216.8,107.3 218.8,110.6 220.7,113.9 222.7,117.1 224.7,120.1 226.7,122.9 228.7,125.6 230.7,128.0 232.7,130.1 234.6,132.0 236.6,133.5 238.6,134.6 240.6,135.5 242.6,135.9 244.6,136.0 246.6,135.7 248.5,135.0 250.5,134.0 252.5,132.6 254.5,131.0 256.5,128.9 258.5,126.7 260.4,124.1 262.4,121.3 264.4,118.4 266.4,115.3 268.4,112.0 270.4,108.7 272.4,105.4 274.3,102.1 276.3,98.8 278.3,95.6 280.3,92.5 282.3,89.6 284.3,86.9 286.3,84.5 288.2,82.3 290.2,80.4 292.2,78.8 294.2,77.6 296.2,76.7 298.2,76.2 300.2,76.0 302.1,76.2 304.1,76.8 306.1,77.7 308.1,79.0 310.1,80.7 312.1,82.6 314.1,84.9 316.0,87.4 318.0,90.1 320.0,93.0 322.0,96.1" fill="none" stroke="#CF7430" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+<polyline points="48.0,106.0 50.0,102.7 52.0,99.5 53.9,96.4 55.9,93.6 57.9,90.9 59.9,88.5 61.9,86.3 63.9,84.4 65.8,82.8 67.8,81.6 69.8,80.6 71.8,80.0 73.8,79.8 75.7,79.8 77.7,80.2 79.7,80.9 81.7,81.9 83.7,83.2 85.7,84.7 87.6,86.5 89.6,88.5 91.6,90.6 93.6,92.9 95.6,95.3 97.5,97.8 99.5,100.3 101.5,102.8 103.5,105.4 105.5,107.8 107.5,110.2 109.4,112.5 111.4,114.6 113.4,116.6 115.4,118.4 117.4,119.9 119.3,121.3 121.3,122.4 123.3,123.3 125.3,124.0 127.3,124.4 129.3,124.6 131.2,124.5 133.2,124.2 135.2,123.7 137.2,123.0 139.2,122.1 141.1,121.0 143.1,119.7 145.1,118.3 147.1,116.8 149.1,115.3 151.1,113.6 153.0,111.9 155.0,110.2 157.0,108.5 159.0,106.8 161.0,105.2 162.9,103.7 164.9,102.2 166.9,100.8 168.9,99.6 170.9,98.5 172.9,97.5 174.8,96.7 176.8,96.1 178.8,95.6 180.8,95.2 182.8,95.0 184.7,95.0 186.7,95.1 188.7,95.4 190.7,95.8 192.7,96.3 194.7,96.9 196.6,97.6 198.6,98.3 200.6,99.2 202.6,100.0 204.6,100.9 206.5,101.9 208.5,102.8 210.5,103.7 212.5,104.6 214.5,105.4 216.5,106.2 218.4,106.9 220.4,107.5 222.4,108.1 224.4,108.6 226.4,109.0 228.3,109.3 230.3,109.5 232.3,109.7 234.3,109.7 236.3,109.7 238.3,109.6 240.2,109.5 242.2,109.3 244.2,109.0 246.2,108.7 248.2,108.4 250.1,108.1 252.1,107.7 254.1,107.4 256.1,107.1 258.1,106.8 260.1,106.5 262.0,106.3 264.0,106.1 266.0,106.0" fill="none" stroke="#1F7A5E" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="266" cy="106" r="6" fill="#1F7A5E" stroke="#fff" stroke-width="2.5"/>
+<line x1="266" y1="50" x2="266" y2="162" stroke="#1F7A5E" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text x="272" y="40" text-anchor="end" font-size="14" font-weight="600" fill="#1F7A5E">Anleihe: Fälligkeit, 100&nbsp;% zurück</text>
+<text x="322" y="182" text-anchor="end" font-size="14" font-weight="600" fill="#CF7430">ETF: kein Ende</text>
+<text x="48" y="182" font-size="13" fill="#55544F">Kauf</text>
+<text x="0" y="14" font-size="13" font-weight="600" fill="#55544F">↑ Kurs in %</text>
+<text x="322" y="206" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Zeit →</text>
+</svg><p class="sb-f">Die Anleihe schwankt zur Fälligkeit hin immer weniger, weil ihr Kurs auf 100&nbsp;% zuläuft. Der ETF kauft laufend nach und schwankt gleichmäßig weiter.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Ein ETF hat kein Fälligkeitsdatum – der Kurs schwankt weiter.</span></p>
+    </section>
+    <section class="kap kap-b" id="wahl" aria-labelledby="h-wahl">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">4</span>
+        <h2 id="h-wahl">ETF oder einzelne Anleihe?</h2>
+        <p>Beides hat seinen Platz. Die entscheidende Frage: <strong>Brauchst du das Geld an einem festen Tag?</strong> Dann zählt die Fälligkeit – die hat nur die Anleihe.</p><p>Geht es ums Sparen, Streuen oder um einen ruhigen Baustein im Depot, ist der ETF der einfachere Weg.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Was wozu passt</p><table class="wahl"><thead><tr><th scope="col">Du willst …</th><th scope="col">Passt besser</th></tr></thead><tbody><tr><th scope="row">Geld an einem festen Tag zurück</th><td><span class="pick anleihe">Anleihe</span></td></tr><tr><th scope="row">Den heutigen Zins für Jahre sichern</th><td><span class="pick anleihe">Anleihe</span></td></tr><tr><th scope="row">Kleine Beträge, Sparplan</th><td><span class="pick etf">ETF</span></td></tr><tr><th scope="row">Über viele Unternehmen streuen</th><td><span class="pick etf">ETF</span></td></tr><tr><th scope="row">Baustein fürs Depot, ohne Pflege</th><td><span class="pick etf">ETF</span></td></tr><tr><th scope="row">Große Beträge in beste Bonität</th><td><span class="pick beides">beides</span></td></tr></tbody></table>
+<p class="sb-f">Neu gibt es auch <strong>ETFs mit festem Enddatum</strong> („Laufzeit-ETFs“): Sie halten nur Anleihen, die in einem bestimmten Jahr fällig werden, und zahlen dann aus – eine Mischung aus beidem.</p><a class="go leise sb-go" href="anlageziele.html">Welche Anleihe wozu passt →</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Fester Termin → Anleihe. Sparen und streuen → ETF.</span></p>
+    </section>
+    <section class="kap" id="auswahl" aria-labelledby="h-auswahl">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">5</span>
+        <h2 id="h-auswahl">Worauf du beim Auswählen achtest</h2>
+        <p>Drei Dinge entscheiden fast alles: <strong>Laufzeit, Bonität und Kosten.</strong> Der Rest ist Feinschliff.</p><ul class="pl"><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span><div><strong>Laufzeit (Duration)</strong>Kurz (1–3 Jahre) schwankt wenig, lang (über 7 Jahre) stark. Duration 7 heißt: allgemeines Zinsniveau +1 Prozentpunkt, Kurs rund −7&nbsp;%.</div></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.2l8.2 3.1v6.1c0 5.1-3.5 8.9-8.2 10.4-4.7-1.5-8.2-5.3-8.2-10.4V5.3z"/><path d="M8.3 12.1l2.6 2.6 4.9-5"/></svg></span><div><strong>Bonität</strong>Staatsanleihen mit AAA und AA sind ruhig. Hochzins bringt mehr Zins – bei mehr Risiko.</div></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 12.5V4.5h8l9 9-8 8z"/><circle cx="7.5" cy="8.5" r="1.3" fill="currentColor"/></svg></span><div><strong>Kosten (TER)</strong>0,05 bis 0,2&nbsp;% im Jahr sind normal. Mehr muss nicht sein.</div></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4v16M4 12h16"/><circle cx="12" cy="12" r="9"/></svg></span><div><strong>Ausschüttend oder thesaurierend</strong>Zinsen aufs Konto – oder wieder angelegt.</div></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18"/></svg></span><div><strong>Währung</strong>Euro-ETF oder „hedged“. Sonst schwankt der Dollar mit.</div></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></span><div><strong>Größe</strong>Große Fonds (über 1&nbsp;Mrd. €) handeln enger und günstiger.</div></li></ul>
+        
+      </div>
+      <div class="k-bild"><div class="pass"><p class="pass-k">Steckbrief eines Anleihen-ETF <span>Beispiel</span></p><dl><div><dt>Was ist drin?</dt><dd>Euro-Staatsanleihen, alle Laufzeiten</dd></div><div><dt>Kosten (TER)</dt><dd>0,07&nbsp;% im Jahr</dd></div><div><dt>Rendite</dt><dd>rund 3,8&nbsp;%</dd></div><div><dt>Duration</dt><dd>rund 7</dd></div><div><dt>Zinsen</dt><dd>ausschüttend</dd></div><div><dt>Fondsvolumen</dt><dd>über 5&nbsp;Mrd. €</dd></div></dl>
+<p class="pass-f">Typische Werte eines großen ETF auf Euro-Staatsanleihen, gerundet. So liest du einen Steckbrief – welcher ETF zu dir passt, entscheiden die Kriterien links.</p></div><a class="go leise sb-go" href="anleihen-etf.html">Alle Anleihen-ETFs im Vergleich →</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Laufzeit, Bonität, Kosten – mehr entscheidet nicht.</span></p>
+    </section>
+
+    <div class="weiter">
+      <a class="go" href="anleihen-etf.html">Anleihen-ETFs im Vergleich →</a>
+      <a class="go leise" href="grundlagen.html">Anleihen einfach erklärt →</a>
+    </div>
+    <p class="klein">Diese Seite erklärt, wie Anleihen-ETFs funktionieren. Sie empfiehlt keine Anlage. Die Zahlen sind gerundet.</p>
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="etf-oder-anleihe.html">ETF oder Anleihe?</a></li>
+        <li><a href="anlageziele.html">Anlageziele – welche Anleihe wozu passt</a></li>
+        <li><a href="begriffe.html">Glossar: Begriffe kurz erklärt</a></li>
+      </ul>
+    </nav>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+</script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anleihe-Arten: 13 Arten einfach erklärt – METALCONCRETE</title>
+<meta name="description" content="13 Anleihe-Arten einfach erklärt – von Staatsanleihe, Pfandbrief und Nachranganleihe bis Floater und Nullkupon. Je Art: Zins, Risiko und für wen sie passt.">
+<link rel="canonical" href="https://www.metalconcrete.de/anleihe-arten.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/anleihe-arten.html">
+<meta property="og:title" content="Anleihe-Arten: 13 Arten einfach erklärt – METALCONCRETE">
+<meta property="og:description" content="13 Anleihe-Arten einfach erklärt – von Staatsanleihe, Pfandbrief und Nachranganleihe bis Floater und Nullkupon. Je Art: Zins, Risiko und für wen sie passt.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Anleihe-Arten: 13 Arten einfach erklärt – METALCONCRETE">
+<meta name="twitter:description" content="13 Anleihe-Arten einfach erklärt – von Staatsanleihe, Pfandbrief und Nachranganleihe bis Floater und Nullkupon. Je Art: Zins, Risiko und für wen sie passt.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Anleihe-Arten (25.09.2026): Katalog in drei Gruppen (seit 26.09.2026) – wer leiht sich das Geld, wie wird verzinst, wie kommt das Geld zurück. Karten .typ im 2er-Raster,
+     die Karte „variabel“ über beide Spalten mit Schaubild. Grundregeln in base.css. */
+  .gruppe { margin-top: 34px; }
+  .gruppe h2 { font-size: 26px; margin-bottom: 4px; }
+  .gruppe .gsub { font-size: 16px; color: var(--text); margin-bottom: 16px; }
+  .typen { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .typ { background: #fff; border: 1px solid rgba(26,26,25,0.09); border-radius: 14px; padding: 18px 20px 18px; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(26,26,25,0.03), 0 6px 18px rgba(26,26,25,0.035); }
+  .typ.wide { grid-column: 1 / -1; background: linear-gradient(160deg, rgba(57,255,20,0.14) 0%, #fff 60%); border-color: var(--green-line); }
+  .typ .tk { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .typ .ti { flex: none; width: 44px; height: 44px; border-radius: 50%; background: var(--soft); color: var(--green-text); display: grid; place-items: center; }
+  .typ .ti svg { width: 24px; height: 24px; }
+  .typ h3 { font-size: 19px; line-height: 1.2; letter-spacing: -0.01em; }
+  .typ .def { font-size: 15.5px; line-height: 1.55; color: var(--ink); }
+  .typ .def + .def { margin-top: 8px; }
+  .typ dl { margin-top: 12px; display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: 6px 10px; font-size: 14px; line-height: 1.45; }
+  .typ dt { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); padding-top: 3px; }
+  .typ dd { color: var(--text); }
+  .typ dd strong { color: var(--ink); font-weight: 600; }
+  .typ .tl { margin-top: auto; padding-top: 14px; }
+  .typ .tl a { display: inline-block; font-size: 14px; font-weight: 600; text-decoration: none; background: var(--soft); color: var(--green-text); padding: 7px 12px; border-radius: 999px; }
+  .typ .tl a:hover { background: var(--green); color: var(--ink); }
+  .typ .tl a + a { margin-left: 6px; }
+  /* Karte variabel: Text links, Schaubild rechts */
+  .wide .inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 28px; align-items: start; }
+  .wide .k-bild { align-self: stretch; }
+  /* Merkmale-Kasten */
+  .merkmale { margin-top: 26px; background: var(--soft); border-radius: var(--radius); padding: 22px 26px; }
+  .merkmale h2 { font-size: 22px; margin-bottom: 8px; }
+  .merkmale ul { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 24px; }
+  .merkmale li { font-size: 15px; line-height: 1.5; color: var(--text); padding-left: 18px; position: relative; }
+  .merkmale li::before { content: ''; position: absolute; left: 0; top: 10px; width: 8px; height: 8px; border-radius: 50%; background: var(--green-text); }
+  .merkmale li strong { color: var(--ink); }
+  .merkmale li a { color: var(--blue); }
+  @media (max-width: 860px) { .wide .inner { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 760px) { .typen { grid-template-columns: minmax(0, 1fr); } .merkmale ul { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 600px) { .typ { padding: 16px 16px; } .typ dl { grid-template-columns: 72px minmax(0, 1fr); } .gruppe h2 { font-size: 23px; } .merkmale { padding: 18px 16px; } }
+  /* Floater-Schaubild: eigene Handy-Fassung (schmalere viewBox, Schrift effektiv ≥ 11 px) */
+  .sb-m { display: none; }
+  @media (max-width: 600px) { .sb-d { display: none; } .sb-m { display: block; } }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Welche Anleihe-Arten gibt es? Dreizehn Arten einfach erklärt","description":"13 Anleihe-Arten einfach erklärt – von Staatsanleihe, Pfandbrief und Nachranganleihe bis Floater und Nullkupon. Je Art: Zins, Risiko und für wen sie passt.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-27","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/anleihe-arten.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Verstehen","item":"https://www.metalconcrete.de/wissen.html"},{"@type":"ListItem","position":3,"name":"Anleihe-Arten","item":"https://www.metalconcrete.de/anleihe-arten.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="verstehen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn current" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe current">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>Welche Anleihe-Arten gibt es?</h1>
+    <p class="sub">Drei Fragen sortieren alle Anleihen: <strong>Wer leiht sich das Geld?</strong> <strong>Wie wird verzinst?</strong> Und: <strong>Wie kommt das Geld zurück?</strong> Dreizehn Arten, jede mit dem passenden Filter in der Suche. Lesezeit: etwa 7 Minuten.</p>
+    <nav class="lands" aria-label="Zur Gruppe springen">
+      <a class="lbtn" href="#schuldner"><span class="n">1</span>Wer leiht sich das Geld?</a>
+      <a class="lbtn" href="#zins"><span class="n">2</span>Wie wird verzinst?</a>
+      <a class="lbtn" href="#rueckzahlung"><span class="n">3</span>Wie kommt das Geld zurück?</a>
+    </nav>
+
+    <section class="gruppe" id="schuldner" aria-labelledby="h-schuldner">
+      <h2 id="h-schuldner">1 · Wer leiht sich das Geld?</h2>
+      <p class="gsub">Der Schuldner bestimmt die Sicherheit – und damit, wie viel Zins es gibt.</p>
+      <div class="typen">
+      <article class="typ" id="staatsanleihe"><div class="tk"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10M9 21V10M15 21V10M19 21V10M2 10l10-6 10 6z"/></svg></span><h3>Staatsanleihe</h3></div><p class="def">Ein Zentralstaat leiht sich Geld: Deutschland, die USA, Italien. Bundesanleihen sind der Maßstab, an dem sich alle anderen messen.</p><dl><dt>Zins</dt><dd>fest, meist einmal im Jahr</dd><dt>Für wen</dt><dd>Parken, auf ein Datum sparen, Zins sichern – die Basis für fast jedes Ziel</dd><dt>Risiko</dt><dd>Bei AAA/AA praktisch nur die Kursschwankung mit dem Zinsniveau; bei schwächeren Staaten (BBB und darunter) auch der Ausfall</dd></dl><p class="tl"><a href="anleihen-suche.html?art=0">Staatsanleihen in der Suche →</a><a href="anleihen-laender.html">Je Land die Top 10 →</a></p></article>
+      <article class="typ" id="oeffentlich"><div class="tk"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M4 21V9l6-4v16M10 21V13h6v8M16 21V9l4-3v15"/><path d="M6.5 10h1M6.5 13.5h1M6.5 17h1"/></svg></span><h3>Öffentliche Anleihe</h3></div><p class="def">Bundesländer, Städte, Förderbanken wie die KfW und Institutionen wie die EU oder die Weltbank. Fast so sicher wie der Staat – oft mit etwas mehr Zins.</p><dl><dt>Zins</dt><dd>fest, meist jährlich</dd><dt>Für wen</dt><dd>Wer Bund-Sicherheit will, aber ein paar Zehntel mehr Zins sucht</dd><dt>Risiko</dt><dd>Sehr gering: Bundesländer stehen unter dem Schutz des Bundes, die KfW hat eine Bundesgarantie; manche Stückelung 100.000&nbsp;€</dd></dl><p class="tl"><a href="anleihen-suche.html?art=1&amp;w=EUR">Öffentliche Anleihen in Euro →</a></p></article>
+      <article class="typ" id="pfandbrief"><div class="tk"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v11h14V10"/><path d="M12 12l3.5 1.5v2.6c0 2-1.5 3.4-3.5 4-2-.6-3.5-2-3.5-4v-2.6z"/></svg></span><h3>Pfandbrief</h3></div><p class="def">Eine Bank leiht sich Geld – und hinterlegt dafür Immobilienkredite oder Kredite an Staaten als Sicherheit. Geht die Bank pleite, gehört diese <a href="begriffe.html#deckungsmasse">Deckungsmasse</a> den Pfandbrief-Gläubigern. Seit über 100 Jahren ohne Ausfall.</p><dl><dt>Zins</dt><dd>fest, jährlich</dd><dt>Für wen</dt><dd>Fast so sicher wie der Staat, ein bisschen mehr Zins – das Bankrisiko fängt die Deckungsmasse weitgehend auf</dd><dt>Risiko</dt><dd>Sehr gering; Nachteil: viele Pfandbriefe haben 100.000&nbsp;€ Stückelung</dd></dl><p class="tl"><a href="anleihen-suche.html?q=Pfandbr&amp;w=EUR">Pfandbriefe in der Suche →</a></p></article>
+      <article class="typ" id="unternehmensanleihe"><div class="tk"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5.5L12 3v18M12 8.5l8 2.5V21M2.5 21h19"/><path d="M7 8h2M7 11.5h2M7 15h2M15 13.5h2M15 17h2"/></svg></span><h3>Unternehmensanleihe</h3></div><p class="def">Ein Konzern leiht sich Geld: Mercedes-Benz, Siemens, Nestlé. Mehr Zins als der Staat – weil ein Unternehmen eher in Schieflage gerät. Ab BB+ heißt es „Hochzins“.</p><dl><dt>Zins</dt><dd>fest, jährlich; Stückelung 1.000&nbsp;€ oder 100.000&nbsp;€</dd><dt>Für wen</dt><dd>Zinseinkommen mit etwas mehr Ertrag, auf mehrere Schuldner verteilt</dd><dt>Risiko</dt><dd>Ausfall des Unternehmens – das Rating zeigt, wie wahrscheinlich; in Krisen fallen die Kurse stärker</dd></dl><p class="tl"><a href="anleihen-suche.html?art=2&amp;w=EUR&amp;stk=a">Unternehmensanleihen ab 1.000&nbsp;€ →</a><a href="unternehmensanleihen-laufzeit.html">Top 10 nach Laufzeit →</a></p></article>
+      <article class="typ" id="nachrang"><div class="tk"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 11h16M4 16h16"/><path d="M12 16v5M9.5 18.5L12 21l2.5-2.5"/></svg></span><h3>Nachrang- und Hybridanleihe</h3></div><p class="def">Meist Banken und Versicherer. Im Pleitefall werden diese Anleihen erst bedient, wenn alle anderen Gläubiger ihr Geld haben – bei Banken können Aufseher sie sogar ohne Pleite auf null setzen. Dafür deutlich mehr Zins.</p><dl><dt>Zins</dt><dd>fest oder variabel, oft mit Kündigungsrecht des Schuldners</dd><dt>Für wen</dt><dd>Nur für Profis, die das Aktienrisiko dahinter verstehen</dd><dt>Risiko</dt><dd>Hoch: Totalverlust möglich (Credit Suisse 2023), lange oder ewige Laufzeit</dd></dl><p class="tl"><a href="risiko.html#nachrang">Risiko: Nachrang →</a><a href="anleihen-suche.html?q=Nachrang">Nachranganleihen in der Suche →</a></p></article>
+      <article class="typ" id="wandelanleihe"><div class="tk"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg></span><h3>Wandelanleihe</h3></div><p class="def">Eine Unternehmensanleihe mit Extra: Du darfst sie zu einem festgelegten Kurs in Aktien des Unternehmens tauschen. Steigt die Aktie, machst du mit; fällt sie, behältst du die Anleihe. Der Zins ist dafür niedrig.</p><dl><dt>Zins</dt><dd>fest, niedriger als bei normalen Anleihen</dd><dt>Für wen</dt><dd>Wer Aktienchancen mit einem Boden will – eher über einen Fonds</dd><dt>Risiko</dt><dd>Wie Unternehmensanleihe plus Aktienschwankung; meist 100.000&nbsp;€ Stückelung, selten an deutschen Börsen für Privatanleger</dd></dl><p class="tl"><a href="begriffe.html#wandelanleihe">Glossar: Wandelanleihe →</a></p></article>
+      </div>
+    </section>
+
+    <section class="gruppe" id="zins" aria-labelledby="h-zins">
+      <h2 id="h-zins">2 · Wie wird verzinst?</h2>
+      <p class="gsub">Dieselbe Frage, fünf Antworten – von „steht fest“ bis „hängt an der Inflation“.</p>
+      <div class="typen">
+      <article class="typ wide" id="variabel"><div class="inner"><div><div class="tk"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13c2.5-5 4.5-5 7 0s4.5 5 7 0 3-4 4-2"/></svg></span><h3>Variabler Zins (Floater)</h3></div><p class="def">Der Kupon steht <strong>nicht</strong> fest. Er wird alle drei Monate neu berechnet: <strong>Referenzzins + fester Aufschlag.</strong> Der Referenzzins ist meist der 3-Monats-Euribor – der Zins, zu dem sich Banken im Euroraum untereinander Geld leihen; er wird täglich veröffentlicht und folgt dem allgemeinen Zinsniveau. Der Aufschlag ist der Preis für die Bonität des Schuldners und ändert sich nie.</p><p class="def">Steigt das allgemeine Zinsniveau, steigt dein Kupon im nächsten Quartal mit. Fällt es, fällt der Kupon. Weil sich der Zins immer wieder anpasst, <strong>bleibt der Kurs nahe 100&nbsp;%</strong> – das Zinsänderungsrisiko ist fast weg. Dafür weißt du nie im Voraus, was du bekommst, und kannst dir keinen Zins sichern.</p><dl><dt>Zins</dt><dd><strong>Euribor + Aufschlag</strong>, alle 3 Monate neu, Zahlung meist vierteljährlich; manche mit Untergrenze (Floor) oder Obergrenze (Cap)</dd><dt>Für wen</dt><dd>Wer ein steigendes Zinsniveau erwartet oder Kursschwankungen vermeiden will – Geld parken, ohne sich festzulegen</dd><dt>Risiko</dt><dd>Fällt das Zinsniveau, sinkt dein Ertrag; die Bonität des Schuldners bleibt wie bei jeder Anleihe; viele Floater stammen von Banken</dd></dl><p class="tl"><a href="anleihen-suche.html?zins=1&amp;w=EUR">Variabel verzinste Anleihen in Euro →</a><a href="begriffe.html#floater">Glossar: Floater →</a></p></div><div class="k-bild"><p class="sb-k">Ein Jahr, vier Quartale: Floater gegen festen Kupon</p><svg class="sb sb-d" viewBox="0 0 480 256" role="img" aria-labelledby="svt"><title id="svt">Vier Quartale. Der Euribor steht bei 2,0, 2,5, 3,0 und wieder 2,0&nbsp;Prozent. Der Floater zahlt jeweils Euribor plus 0,6 Prozentpunkte: 2,6, 3,1, 3,6 und 2,6&nbsp;Prozent. Die festverzinsliche Anleihe zahlt in jedem Quartal 3,0&nbsp;Prozent.</title><text class="axt" x="8" y="17" font-size="13" font-weight="600" fill="#55544F">↑ Kupon in %</text><line x1="60" y1="190.0" x2="470" y2="190.0" stroke="#1A1A19" stroke-opacity="0.09"/><text x="52" y="194.0" text-anchor="end" font-size="13" fill="#55544F">0</text><line x1="60" y1="152.5" x2="470" y2="152.5" stroke="#1A1A19" stroke-opacity="0.09"/><text x="52" y="156.5" text-anchor="end" font-size="13" fill="#55544F">1</text><line x1="60" y1="115.0" x2="470" y2="115.0" stroke="#1A1A19" stroke-opacity="0.09"/><text x="52" y="119.0" text-anchor="end" font-size="13" fill="#55544F">2</text><line x1="60" y1="77.5" x2="470" y2="77.5" stroke="#1A1A19" stroke-opacity="0.09"/><text x="52" y="81.5" text-anchor="end" font-size="13" fill="#55544F">3</text><line x1="60" y1="40.0" x2="470" y2="40.0" stroke="#1A1A19" stroke-opacity="0.09"/><text x="52" y="44.0" text-anchor="end" font-size="13" fill="#55544F">4</text><line x1="60" y1="190" x2="470" y2="190" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/><rect x="80" y="92.5" width="34" height="97.5" rx="4" fill="#CF7430"/><text x="97" y="86.5" text-anchor="middle" font-size="13" font-weight="600" fill="#CF7430">2,6&nbsp;%</text><rect x="120" y="77.5" width="34" height="112.5" rx="4" fill="#1DA300"/><text x="137" y="71.5" text-anchor="middle" font-size="13" font-weight="600" fill="#157C00">3,0&nbsp;%</text><text x="117" y="210" text-anchor="middle" font-size="13" fill="#55544F">Q1</text><text x="117" y="226" text-anchor="middle" font-size="12" fill="#8E8D86">Euribor 2,0&nbsp;%</text><rect x="180" y="73.8" width="34" height="116.2" rx="4" fill="#CF7430"/><text x="197" y="67.8" text-anchor="middle" font-size="13" font-weight="600" fill="#CF7430">3,1&nbsp;%</text><rect x="220" y="77.5" width="34" height="112.5" rx="4" fill="#1DA300"/><text x="237" y="71.5" text-anchor="middle" font-size="13" font-weight="600" fill="#157C00">3,0&nbsp;%</text><text x="217" y="210" text-anchor="middle" font-size="13" fill="#55544F">Q2</text><text x="217" y="226" text-anchor="middle" font-size="12" fill="#8E8D86">Euribor 2,5&nbsp;%</text><rect x="280" y="55.0" width="34" height="135.0" rx="4" fill="#CF7430"/><text x="297" y="49.0" text-anchor="middle" font-size="13" font-weight="600" fill="#CF7430">3,6&nbsp;%</text><rect x="320" y="77.5" width="34" height="112.5" rx="4" fill="#1DA300"/><text x="337" y="71.5" text-anchor="middle" font-size="13" font-weight="600" fill="#157C00">3,0&nbsp;%</text><text x="317" y="210" text-anchor="middle" font-size="13" fill="#55544F">Q3</text><text x="317" y="226" text-anchor="middle" font-size="12" fill="#8E8D86">Euribor 3,0&nbsp;%</text><rect x="380" y="92.5" width="34" height="97.5" rx="4" fill="#CF7430"/><text x="397" y="86.5" text-anchor="middle" font-size="13" font-weight="600" fill="#CF7430">2,6&nbsp;%</text><rect x="420" y="77.5" width="34" height="112.5" rx="4" fill="#1DA300"/><text x="437" y="71.5" text-anchor="middle" font-size="13" font-weight="600" fill="#157C00">3,0&nbsp;%</text><text x="417" y="210" text-anchor="middle" font-size="13" fill="#55544F">Q4</text><text x="417" y="226" text-anchor="middle" font-size="12" fill="#8E8D86">Euribor 2,0&nbsp;%</text><rect x="226" y="6" width="12" height="12" rx="3" fill="#CF7430"/><text x="243" y="17" font-size="13" fill="#55544F">Floater (Euribor + 0,6)</text><rect x="418" y="6" width="12" height="12" rx="3" fill="#1DA300"/><text x="435" y="17" font-size="13" fill="#55544F">fest</text><text class="axt" x="470" y="253" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Quartal →</text></svg><svg class="sb sb-m" viewBox="0 0 330 254" role="img" aria-labelledby="svtm"><title id="svtm">Vier Quartale. Der Euribor steht bei 2,0, 2,5, 3,0 und wieder 2,0&nbsp;Prozent. Der Floater zahlt jeweils Euribor plus 0,6 Prozentpunkte: 2,6, 3,1, 3,6 und 2,6&nbsp;Prozent. Die festverzinsliche Anleihe zahlt in jedem Quartal 3,0&nbsp;Prozent.</title><text x="0" y="15" font-size="13" font-weight="600" fill="#55544F">↑ Kupon in %</text><rect x="0" y="27" width="12" height="12" rx="3" fill="#CF7430"/><text x="17" y="38" font-size="13" fill="#55544F">Floater (Euribor + 0,6)</text><rect x="186" y="27" width="12" height="12" rx="3" fill="#1DA300"/><text x="203" y="38" font-size="13" fill="#55544F">fest</text><line x1="34" y1="196" x2="326" y2="196" stroke="#1A1A19" stroke-opacity="0.09"/><text x="26" y="200" text-anchor="end" font-size="13" fill="#55544F">0</text><line x1="34" y1="161" x2="326" y2="161" stroke="#1A1A19" stroke-opacity="0.09"/><text x="26" y="165" text-anchor="end" font-size="13" fill="#55544F">1</text><line x1="34" y1="126" x2="326" y2="126" stroke="#1A1A19" stroke-opacity="0.09"/><text x="26" y="130" text-anchor="end" font-size="13" fill="#55544F">2</text><line x1="34" y1="91" x2="326" y2="91" stroke="#1A1A19" stroke-opacity="0.09"/><text x="26" y="95" text-anchor="end" font-size="13" fill="#55544F">3</text><line x1="34" y1="56" x2="326" y2="56" stroke="#1A1A19" stroke-opacity="0.09"/><text x="26" y="60" text-anchor="end" font-size="13" fill="#55544F">4</text><line x1="34" y1="196" x2="326" y2="196" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/><rect x="44.5" y="105.0" width="24" height="91.0" rx="4" fill="#CF7430"/><text x="56.5" y="99.0" text-anchor="middle" font-size="13" font-weight="600" fill="#CF7430">2,6</text><rect x="72.5" y="91.0" width="24" height="105.0" rx="4" fill="#1DA300"/><text x="84.5" y="85.0" text-anchor="middle" font-size="13" font-weight="600" fill="#157C00">3,0</text><text x="70.5" y="214" text-anchor="middle" font-size="13" fill="#55544F">Q1</text><text x="70.5" y="232" text-anchor="middle" font-size="13" fill="#8E8D86">2,0&nbsp;%</text><rect x="117.5" y="87.5" width="24" height="108.5" rx="4" fill="#CF7430"/><text x="129.5" y="81.5" text-anchor="middle" font-size="13" font-weight="600" fill="#CF7430">3,1</text><rect x="145.5" y="91.0" width="24" height="105.0" rx="4" fill="#1DA300"/><text x="157.5" y="85.0" text-anchor="middle" font-size="13" font-weight="600" fill="#157C00">3,0</text><text x="143.5" y="214" text-anchor="middle" font-size="13" fill="#55544F">Q2</text><text x="143.5" y="232" text-anchor="middle" font-size="13" fill="#8E8D86">2,5&nbsp;%</text><rect x="190.5" y="70.0" width="24" height="126.0" rx="4" fill="#CF7430"/><text x="202.5" y="64.0" text-anchor="middle" font-size="13" font-weight="600" fill="#CF7430">3,6</text><rect x="218.5" y="91.0" width="24" height="105.0" rx="4" fill="#1DA300"/><text x="230.5" y="85.0" text-anchor="middle" font-size="13" font-weight="600" fill="#157C00">3,0</text><text x="216.5" y="214" text-anchor="middle" font-size="13" fill="#55544F">Q3</text><text x="216.5" y="232" text-anchor="middle" font-size="13" fill="#8E8D86">3,0&nbsp;%</text><rect x="263.5" y="105.0" width="24" height="91.0" rx="4" fill="#CF7430"/><text x="275.5" y="99.0" text-anchor="middle" font-size="13" font-weight="600" fill="#CF7430">2,6</text><rect x="291.5" y="91.0" width="24" height="105.0" rx="4" fill="#1DA300"/><text x="303.5" y="85.0" text-anchor="middle" font-size="13" font-weight="600" fill="#157C00">3,0</text><text x="289.5" y="214" text-anchor="middle" font-size="13" fill="#55544F">Q4</text><text x="289.5" y="232" text-anchor="middle" font-size="13" fill="#8E8D86">2,0&nbsp;%</text><text x="0" y="232" font-size="13" fill="#8E8D86">Euribor</text><text x="326" y="251" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Quartal →</text></svg><p class="sb-f">Der Kupon eines Quartals richtet sich nach dem Euribor zu Quartalsbeginn. So folgt der Floater dem allgemeinen Zinsniveau – nach oben wie nach unten. Sein Kurs bleibt dabei nahe 100&nbsp;%.</p></div></div></article>
+      <article class="typ" id="fest"><div class="tk"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"/><path d="M6 8v8M12 8v8M18 8v8"/></svg></span><h3>Fester Zins</h3></div><p class="def">Der Normalfall: Der Kupon steht bei Ausgabe fest und ändert sich bis zur Fälligkeit nicht. Du kennst jede Zahlung im Voraus – deshalb kannst du dir mit einer langen Laufzeit den heutigen Zins sichern.</p><dl><dt>Zins</dt><dd>fester Prozentsatz vom Nennwert, meist einmal im Jahr</dd><dt>Für wen</dt><dd>Fast jeden – planbar wie ein Sparbrief, aber jederzeit verkäuflich</dd><dt>Risiko</dt><dd>Der Kurs schwankt mit dem allgemeinen Zinsniveau; wer bis zum Ende hält, merkt davon nichts</dd></dl><p class="tl"><a href="anleihen-suche.html?zins=0&amp;w=EUR">Festverzinsliche in Euro →</a><a href="grundlagen.html#schwankung">Warum der Kurs schwankt →</a></p></article>
+      <article class="typ" id="nullkupon"><div class="tk"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><text x="12" y="16" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="8.5" font-weight="800" fill="currentColor" stroke="none">0&#160;%</text></svg></span><h3>Nullkupon-Anleihe</h3></div><p class="def">Zahlt keine Zinsen. Stattdessen kaufst du sie unter 100&nbsp;% und bekommst am Ende 100&nbsp;% – der Unterschied ist dein Ertrag. Der ganze Zins steckt im Kurs.</p><dl><dt>Zins</dt><dd>kein Kupon; Ertrag = Kaufkurs bis 100&nbsp;%</dd><dt>Für wen</dt><dd>Wer auf ein Datum spart und keine Zinsen wieder anlegen will; steuerlich alles am Ende</dd><dt>Risiko</dt><dd>Reagiert am stärksten auf das Zinsniveau (kein Kupon federt ab) – bei langen Laufzeiten extrem</dd></dl><p class="tl"><a href="anleihen-suche.html?zins=2&amp;w=EUR">Nullkupon-Anleihen in Euro →</a><a href="risiko.html#kurs">Risiko: Langläufer →</a></p></article>
+      <article class="typ" id="inflationsindexiert"><div class="tk"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg></span><h3>Inflationsindexierte Anleihe</h3></div><p class="def">Nennwert und Zins wachsen mit den Verbraucherpreisen. Steigt die Inflation, bekommst du mehr Zinsen und am Ende mehr als 100&nbsp;% zurück. Der Kupon ist dafür niedrig – du kaufst einen Realzins.</p><dl><dt>Zins</dt><dd>niedriger fester Kupon auf einen Nennwert, der mit der Inflation steigt</dd><dt>Für wen</dt><dd>Wer Kaufkraft sichern will, besonders über lange Zeit</dd><dt>Risiko</dt><dd>Bleibt die Inflation niedrig, gibt es wenig; der Kurs schwankt mit dem realen Zinsniveau</dd></dl><p class="tl"><a href="anleihen-suche.html?q=Inflation&amp;art=0">Inflationsindexierte Staatsanleihen →</a><a href="risiko.html#inflation">Risiko: Inflation →</a></p></article>
+      <article class="typ" id="stufenzins"><div class="tk"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h5v-5h5v-5h5V5h3"/></svg></span><h3>Stufenzins-Anleihe</h3></div><p class="def">Der Kupon steigt nach einem festen Plan: erst 2&nbsp;%, dann 2,5&nbsp;%, dann 3&nbsp;%. Meist von Banken, fast immer mit Kündigungsrecht der Bank – sie zahlt vorzeitig zurück, wenn ihr die Stufen zu teuer werden.</p><dl><dt>Zins</dt><dd>fest, aber steigend nach Plan („Step-up“)</dd><dt>Für wen</dt><dd>Wer eine Bank als Schuldner akzeptiert und mit Kündigung leben kann</dd><dt>Risiko</dt><dd>Kündigung, wenn das Zinsniveau fällt (dann fehlt dir der hohe Zins); Bankbonität; keine Einlagensicherung</dd></dl><p class="tl"><a href="anleihen-suche.html?q=Step+Up">Stufenzins-Anleihen in der Suche →</a><a href="risiko.html#kuendigung">Risiko: Kündigung →</a></p></article>
+      </div>
+    </section>
+
+    <section class="gruppe" id="rueckzahlung" aria-labelledby="h-rueckzahlung">
+      <h2 id="h-rueckzahlung">3 · Wie kommt das Geld zurück?</h2>
+      <p class="gsub">Wann und in welcher Währung – zwei Vereinbarungen, die den Ertrag verändern, ohne am Kupon zu drehen.</p>
+      <div class="typen">
+      <article class="typ" id="kuendbar"><div class="tk"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h11"/><path d="M11 8l4 4-4 4"/><rect x="17" y="6" width="4" height="12" rx="1.5"/></svg></span><h3>Kündbare Anleihe</h3></div><p class="def">Der Schuldner darf sie vorzeitig zu 100&nbsp;% zurückzahlen – meist ab einem festen Datum. Er tut es, wenn das allgemeine Zinsniveau gefallen ist und er sich billiger neu verschulden kann. Dafür zahlt er etwas mehr Zins.</p><dl><dt>Zins</dt><dd>fest, meist etwas höher als ohne Kündigungsrecht</dd><dt>Für wen</dt><dd>Wer den Aufschlag mitnimmt und damit leben kann, das Geld früher zurückzubekommen</dd><dt>Risiko</dt><dd>Kündigung, wenn du den hohen Zins am liebsten behalten würdest; keine Kündigung, wenn das Zinsniveau steigt</dd></dl><p class="tl"><a href="kuendbare-anleihen.html">Sechs Kündigungsarten →</a><a href="risiko.html#kuendigung">Risiko: Kündigung →</a></p></article>
+      <article class="typ" id="fremdwaehrung"><div class="tk"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5a2.5 2.5 0 0 0-2.5-1.5c-1.5 0-2.5 1-2.5 2s1 1.6 2.5 2 2.5 1 2.5 2-1 2-2.5 2a2.5 2.5 0 0 1-2.5-1.5M12 6.5v11"/></svg></span><h3>Fremdwährungsanleihe</h3></div><p class="def">Zinsen und Rückzahlung kommen in Dollar, Kronen oder Lira. Der Zins ist oft höher als in Euro – der Wechselkurs entscheidet mit, was davon ankommt.</p><dl><dt>Zins</dt><dd>fest, in der Fremdwährung</dd><dt>Für wen</dt><dd>Wer bewusst auf eine Währung setzt oder dort Ausgaben hat</dd><dt>Risiko</dt><dd>Wechselkurs: 10&nbsp;% Kursverlust der Währung fressen zwei Jahre Zins; dazu Umtauschkosten beim Broker</dd></dl><p class="tl"><a href="anleihen-suche.html?w=USD&amp;art=0">Staatsanleihen in US-Dollar →</a><a href="risiko.html#waehrung">Risiko: Währung →</a></p></article>
+      </div>
+    </section>
+
+    <section class="merkmale" aria-labelledby="h-merkmale">
+      <h2 id="h-merkmale">Merkmale, die dazukommen können</h2>
+      <ul>
+        <li><strong>Ewig (Perpetual):</strong> Keine Fälligkeit; Rückzahlung nur, wenn der Schuldner kündigt. Fast immer Nachrang.</li>
+        <li><strong>Stückelung:</strong> Kleinster handelbarer Betrag – 0,01&nbsp;€ beim Bund, 1.000&nbsp;€ oder 100.000&nbsp;€ bei Unternehmen. <a href="begriffe.html#stueckelung">Mehr →</a></li>
+        <li><strong>Besichert oder nicht:</strong> Pfandbriefe haben Sicherheiten, die meisten Anleihen nur das Versprechen des Schuldners.</li>
+        <li><strong>Rang:</strong> Senior (normal) vor Nachrang – bestimmt, wer im Pleitefall zuerst Geld bekommt. <a href="risiko.html#nachrang">Mehr →</a></li>
+        <li><strong>Zinstermin:</strong> Jährlich (Euro üblich), halbjährlich (USA, Großbritannien) oder vierteljährlich (Floater).</li>
+      </ul>
+    </section>
+
+    <div class="weiter">
+      <a class="go" href="anleihen-suche.html">Zur Anleihen-Suche →</a>
+      <a class="go leise" href="risiko.html">Risiko kennen →</a>
+      <a class="go leise" href="grundlagen.html">Anleihen einfach erklärt →</a>
+    </div>
+    <p class="klein">Diese Seite erklärt Anleihe-Arten. Sie empfiehlt keine Anlage. Die Zahlen sind gerundet.</p>
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="anlageziele.html">Anlageziele – welche Anleihe wozu passt</a></li>
+        <li><a href="begriffe.html">Glossar</a></li>
+      </ul>
+    </nav>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+</script>
+</body>
+</html>

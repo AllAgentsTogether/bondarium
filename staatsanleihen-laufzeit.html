@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staatsanleihen nach Laufzeit: die Top 10 – METALCONCRETE</title>
+<meta name="description" content="Die meistgehandelten Staatsanleihen in fünf Laufzeitgruppen, von unter 1 bis über 30 Jahre – mit ISIN, Kurs, Kupon, Rendite und Volumen.">
+<link rel="canonical" href="https://www.metalconcrete.de/staatsanleihen-laufzeit.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/staatsanleihen-laufzeit.html">
+<meta property="og:title" content="Staatsanleihen nach Laufzeit: die Top 10 – METALCONCRETE">
+<meta property="og:description" content="Die meistgehandelten Staatsanleihen in fünf Laufzeitgruppen, von unter 1 bis über 30 Jahre – mit ISIN, Kurs, Kupon, Rendite und Volumen.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Staatsanleihen nach Laufzeit: die Top 10 – METALCONCRETE">
+<meta name="twitter:description" content="Die meistgehandelten Staatsanleihen in fünf Laufzeitgruppen, von unter 1 bis über 30 Jahre – mit ISIN, Kurs, Kupon, Rendite und Volumen.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  .more .prose { font-size: 15px; margin-top: 16px; }
+
+  /* Sprungmenü: Knöpfe wie auf den Länderseiten, hier als Links zu den fünf Tabellen */
+  .lbtn { font-size: 13px; line-height: 1; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.18); border-radius: 999px; padding: 7px 13px; cursor: pointer; transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease; }
+  .lbtn:hover, .lbtn.hot { border-color: var(--green-text); color: var(--green-text); }
+  .lbtn[aria-pressed="true"] { background: var(--green); border-color: var(--green); color: var(--ink); }
+  .lbtn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+
+  /* Tabelle (wie Kennzahlen-Tabelle der Langläufer-Seite) */
+  .lzjump { margin-top: 4px; }
+  .lbtn .rng { font-size: 12px; color: var(--muted); }
+  .lbtn:hover .rng { color: inherit; }
+  .lznote { margin-top: 16px; }
+  .kpis td.leer { text-align: left; color: var(--text); font-style: italic; padding: 14px 8px; white-space: normal; }
+  .lzsec { margin-top: 40px; border-top: 1px solid var(--rule); padding-top: 26px; scroll-margin-top: 12px; }
+  .lzsec table { margin-top: 6px; }
+  table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  thead th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .kpis { min-width: 1000px; font-size: 13px; }   /* Ausnahme von der 14-px-Stufe: 11–13 Spalten müssen in 1000 px passen (Typografie-Konzept 26.09.2026; Inter läuft breiter als die Systemschrift) */
+  .kpis thead th:nth-child(2) { width: 18.5%; }   /* feste Breite: Spalten springen beim Länderwechsel nicht */
+  .kpis td.rk { color: var(--muted); padding-right: 6px; }
+  .kpis td.isin { font-variant-numeric: tabular-nums; white-space: nowrap; letter-spacing: 0.01em; }
+  .kpis td.txt { white-space: nowrap; }
+  .kpis td.art { padding-right: 10px; }   /* Abstand zur ISIN („Unternehmen“ ist die breiteste Angabe) */
+  .kpis td.txt small { display: block; color: var(--muted); font-size: 12px; }
+  /* Tabellenkopf: Klick auf den Spaltentitel sortiert (auf-/absteigend) */
+  .kpis thead th { vertical-align: top; font-size: 12px; letter-spacing: 0; }
+  .kpis thead th .sortbtn { font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+  .kpis thead th .sortbtn::after { content: "↕"; font-size: 12px; opacity: 0.45; }
+  .kpis thead th .sortbtn:hover, .kpis thead th[aria-sort] .sortbtn { color: var(--ink); }
+  .kpis thead th[aria-sort="ascending"] .sortbtn::after { content: "↑"; opacity: 1; }
+  .kpis thead th[aria-sort="descending"] .sortbtn::after { content: "↓"; opacity: 1; }
+  .kpis thead th .sortbtn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .kpis th, .kpis td { padding: 9px 4px 9px 0; }   /* 13 Spalten: knapper Abstand, damit die Tabelle in 1000 px passt */
+  .kpis th[scope=row] { font-weight: 400; white-space: nowrap; line-height: 1.4; }
+  .kpis td.num { font-size: 14px; }
+  .more summary { cursor: pointer; font-size: 19px; font-weight: 600; color: var(--ink); list-style: none; display: flex; align-items: center; gap: 10px; }
+  .more summary::-webkit-details-marker { display: none; }
+  .more summary::before { content: ''; width: 8px; height: 8px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(-45deg); transition: transform .15s; }
+  .more[open] summary::before { transform: rotate(45deg); }
+  .more summary:hover { color: var(--line); }
+  .more summary:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 3px; }
+  @media (prefers-reduced-motion: reduce) {  .lbtn { transition: none; } }
+  @media (prefers-reduced-motion: no-preference) {  html { scroll-behavior: smooth; } }
+  @media (max-width: 600px) {
+    .lzsec { margin-top: 32px; padding-top: 20px; }
+    .lbtn { font-size: 12.5px; padding: 7px 11px; }
+  }
+  @media (max-width: 900px) {
+    .table-scroll table { min-width: 720px; }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Staatsanleihen nach Laufzeit: die zehn meistgehandelten je Restlaufzeit","description":"Die meistgehandelten Staatsanleihen in fünf Laufzeitgruppen, von unter 1 bis über 30 Jahre – mit ISIN, Kurs, Kupon, Rendite und Volumen.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-26","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/staatsanleihen-laufzeit.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.metalconcrete.de/anleihen.html"},{"@type":"ListItem","position":3,"name":"Staatsanleihen nach Laufzeit","item":"https://www.metalconcrete.de/staatsanleihen-laufzeit.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="anleihen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn current" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html" class="current">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>Staatsanleihen nach Laufzeit: die meistgehandelten je Restlaufzeit</h1>
+    <p class="sub">Welche Staatsanleihen handeln Anleger am häufigsten – von Bundesschatzanweisungen, die in wenigen Monaten fällig werden, bis zur 100-jährigen Anleihe Österreichs? Fünf Tabellen mit den meistgehandelten Anleihen je Restlaufzeit, Staaten aus aller Welt – mit Kurs, Kupon, Rendite, Volumen und Stückelung.</p>
+    <nav class="lands lzjump" aria-label="Zur Laufzeit springen">
+      <a class="lbtn" href="#sehr-kurzfristig">Sehr kurzfristig <span class="rng">bis 1 J.</span></a>
+      <a class="lbtn" href="#kurzfristig">Kurzfristig <span class="rng">1–3 J.</span></a>
+      <a class="lbtn" href="#mittelfristig">Mittelfristig <span class="rng">3–7 J.</span></a>
+      <a class="lbtn" href="#langfristig">Langfristig <span class="rng">7–30 J.</span></a>
+      <a class="lbtn" href="#sehr-langfristig">Sehr langfristig <span class="rng">über 30 J.</span></a>
+    </nav>
+    <p class="note lznote" id="lznote">Kurs in Prozent des Nennwerts, Rendite bis Fälligkeit, beides in der Währung der Anleihe; Volumen: umlaufender Betrag; Stückelung = kleinster Nennwert (Mindestanlage). Klick auf einen Spaltentitel sortiert die jeweilige Tabelle.</p>
+    <p class="note uebergang" id="uebergang">Übergangsweise zeigen die Tabellen eine Auswahl vom 22.09.2026. Ab etwa Ende Oktober 2026 wird sie jeden Börsentag neu aus dem Handel der letzten drei Monate berechnet. Kurs und Rendite sind schon heute tagesaktuell.</p>
+
+    <section class="lzsec" id="sehr-kurzfristig" aria-labelledby="h-sehr-kurzfristig">
+      <h2 id="h-sehr-kurzfristig">Sehr kurzfristig: bis 1 Jahr Restlaufzeit</h2>
+      <div class="table-scroll">
+      <table class="kpis" data-gruppe="sehr-kurzfristig">
+        <caption class="sr-only">Sehr kurzfristig (bis 1 Jahr Restlaufzeit): die zehn meistgehandelten Staatsanleihen</caption>
+        <thead class="kpi-head"><tr>
+          <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" aria-label="Rang" title="Rang nach Beliebtheit">#</button></th>
+          <th scope="col" data-col="emittent"><button type="button" class="sortbtn" data-col="emittent">Emittent</button></th>
+          <th scope="col" data-col="yld"><button type="button" class="sortbtn" data-col="yld">Rendite</button></th>
+          <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs">Kurs</button></th>
+          <th scope="col" data-col="kupon"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
+          <th scope="col" data-col="faellig"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th>
+          <th scope="col" data-col="years"><button type="button" class="sortbtn" data-col="years">Restlaufzeit</button></th>
+          <th scope="col" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th>
+          <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th>
+          <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Umlaufender Betrag – in der Währung der Anleihe">Volumen</button></th>
+          <th scope="col" data-col="stk"><button type="button" class="sortbtn" data-col="stk" title="Kleinster Nennwert (zugleich Mindestanlage) in der Währung der Anleihe">Stückelung</button></th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="num rk">1</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE000BU22072</td><td class="txt">EUR</td><td class="num">99,88</td><td class="num">2,00&nbsp;%</td><td class="num">2,57&nbsp;%</td><td class="num">10.12.2026</td><td class="num">0,2 Jahre</td><td class="num">19 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">2</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE000BU22080</td><td class="txt">EUR</td><td class="num">99,75</td><td class="num">2,20&nbsp;%</td><td class="num">2,74&nbsp;%</td><td class="num">11.03.2027</td><td class="num">0,5 Jahre</td><td class="num">18,5 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">3</td><th scope="row">Vereinigte Staaten</th><td class="txt art">Staat</td><td class="isin">US912828V988</td><td class="txt">USD</td><td class="num">99,24</td><td class="num">2,25&nbsp;%</td><td class="num">4,23&nbsp;%</td><td class="num">15.02.2027</td><td class="num">0,4 Jahre</td><td class="num">64,5 Mrd.</td><td class="num">100</td></tr>
+          <tr><td class="num rk">4</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE0001102424</td><td class="txt">EUR</td><td class="num">97,83</td><td class="num">0,50&nbsp;%</td><td class="num">3,01&nbsp;%</td><td class="num">15.08.2027</td><td class="num">0,9 Jahre</td><td class="num">32,5 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">5</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE000BU22098</td><td class="txt">EUR</td><td class="num">99,15</td><td class="num">1,70&nbsp;%</td><td class="num">2,92&nbsp;%</td><td class="num">10.06.2027</td><td class="num">0,7 Jahre</td><td class="num">18 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">6</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE0001102416</td><td class="txt">EUR</td><td class="num">99,04</td><td class="num">0,25&nbsp;%</td><td class="num">2,73&nbsp;%</td><td class="num">15.02.2027</td><td class="num">0,4 Jahre</td><td class="num">30,5 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">7</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE000BU22106</td><td class="txt">EUR</td><td class="num">98,91</td><td class="num">1,90&nbsp;%</td><td class="num">3,05&nbsp;%</td><td class="num">16.09.2027</td><td class="num">1,0 Jahre</td><td class="num">19 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">8</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE0001141851</td><td class="txt">EUR</td><td class="num">98,44</td><td class="num">0,00&nbsp;%</td><td class="num">2,86&nbsp;%</td><td class="num">16.04.2027</td><td class="num">0,6 Jahre</td><td class="num">22 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">9</td><th scope="row">Königreich Belgien</th><td class="txt art">Staat</td><td class="isin">BE0000341504</td><td class="txt">EUR</td><td class="num">98,42</td><td class="num">0,80&nbsp;%</td><td class="num">2,98&nbsp;%</td><td class="num">22.06.2027</td><td class="num">0,7 Jahre</td><td class="num">16,5 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">10</td><th scope="row">Königreich Norwegen</th><td class="txt art">Staat</td><td class="isin">NO0010786288</td><td class="txt">NOK</td><td class="num">98,86</td><td class="num">1,75&nbsp;%</td><td class="num">4,67&nbsp;%</td><td class="num">17.02.2027</td><td class="num">0,4 Jahre</td><td class="num">55 Mrd.</td><td class="num">1.000</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note">Sieben der zehn kommen vom Bund – vier Bundesschatzanweisungen, zwei Bundesanleihen und eine Bundesobligation; dazu eine US-Treasury-Note, eine belgische und eine norwegische Anleihe in Kronen.</p>
+    </section>
+
+    <section class="lzsec" id="kurzfristig" aria-labelledby="h-kurzfristig">
+      <h2 id="h-kurzfristig">Kurzfristig: 1 bis 3 Jahre Restlaufzeit</h2>
+      <div class="table-scroll">
+      <table class="kpis" data-gruppe="kurzfristig">
+        <caption class="sr-only">Kurzfristig (1 bis 3 Jahre Restlaufzeit): die zehn meistgehandelten Staatsanleihen</caption>
+        <thead class="kpi-head"><tr>
+          <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" aria-label="Rang" title="Rang nach Beliebtheit">#</button></th>
+          <th scope="col" data-col="emittent"><button type="button" class="sortbtn" data-col="emittent">Emittent</button></th>
+          <th scope="col" data-col="yld"><button type="button" class="sortbtn" data-col="yld">Rendite</button></th>
+          <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs">Kurs</button></th>
+          <th scope="col" data-col="kupon"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
+          <th scope="col" data-col="faellig"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th>
+          <th scope="col" data-col="years"><button type="button" class="sortbtn" data-col="years">Restlaufzeit</button></th>
+          <th scope="col" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th>
+          <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th>
+          <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Umlaufender Betrag – in der Währung der Anleihe">Volumen</button></th>
+          <th scope="col" data-col="stk"><button type="button" class="sortbtn" data-col="stk" title="Kleinster Nennwert (zugleich Mindestanlage) in der Währung der Anleihe">Stückelung</button></th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="num rk">1</td><th scope="row">Republik Frankreich</th><td class="txt art">Staat</td><td class="isin">FR0013407236</td><td class="txt">EUR</td><td class="num">92,32</td><td class="num">0,50&nbsp;%</td><td class="num">3,57&nbsp;%</td><td class="num">25.05.2029</td><td class="num">2,7 Jahre</td><td class="num">58,8 Mrd.</td><td class="num">1</td></tr>
+          <tr><td class="num rk">2</td><th scope="row">Republik Österreich</th><td class="txt art">Staat</td><td class="isin">AT0000A1ZGE4</td><td class="txt">EUR</td><td class="num">96,76</td><td class="num">0,75&nbsp;%</td><td class="num">3,14&nbsp;%</td><td class="num">20.02.2028</td><td class="num">1,4 Jahre</td><td class="num">14,7 Mrd.</td><td class="num">1.000</td></tr>
+          <tr><td class="num rk">3</td><th scope="row">Königreich Spanien</th><td class="txt art">Staat</td><td class="isin">ES0000012A89</td><td class="txt">EUR</td><td class="num">98,21</td><td class="num">1,45&nbsp;%</td><td class="num">3,13&nbsp;%</td><td class="num">31.10.2027</td><td class="num">1,1 Jahre</td><td class="num">25,2 Mrd.</td><td class="num">1.000</td></tr>
+          <tr><td class="num rk">4</td><th scope="row">Republik Österreich</th><td class="txt art">Staat</td><td class="isin">AT0000A269M8</td><td class="txt">EUR</td><td class="num">93,68</td><td class="num">0,50&nbsp;%</td><td class="num">3,27&nbsp;%</td><td class="num">20.02.2029</td><td class="num">2,4 Jahre</td><td class="num">15,7 Mrd.</td><td class="num">1.000</td></tr>
+          <tr><td class="num rk">5</td><th scope="row">Irland</th><td class="txt art">Staat</td><td class="isin">IE00BH3SQ895</td><td class="txt">EUR</td><td class="num">94,84</td><td class="num">1,10&nbsp;%</td><td class="num">3,17&nbsp;%</td><td class="num">15.05.2029</td><td class="num">2,6 Jahre</td><td class="num">10,2 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">6</td><th scope="row">Königreich Norwegen</th><td class="txt art">Staat</td><td class="isin">NO0010821598</td><td class="txt">NOK</td><td class="num">95,84</td><td class="num">2,00&nbsp;%</td><td class="num">4,77&nbsp;%</td><td class="num">26.04.2028</td><td class="num">1,6 Jahre</td><td class="num">57 Mrd.</td><td class="num">1.000</td></tr>
+          <tr><td class="num rk">7</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE000BU22114</td><td class="txt">EUR</td><td class="num">98,66</td><td class="num">2,00&nbsp;%</td><td class="num">3,13&nbsp;%</td><td class="num">16.12.2027</td><td class="num">1,2 Jahre</td><td class="num">21 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">8</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE0001102440</td><td class="txt">EUR</td><td class="num">96,45</td><td class="num">0,50&nbsp;%</td><td class="num">3,14&nbsp;%</td><td class="num">15.02.2028</td><td class="num">1,4 Jahre</td><td class="num">28,5 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">9</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE000BU25018</td><td class="txt">EUR</td><td class="num">98,39</td><td class="num">2,40&nbsp;%</td><td class="num">3,21&nbsp;%</td><td class="num">19.10.2028</td><td class="num">2,1 Jahre</td><td class="num">29,5 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">10</td><th scope="row">Königreich Belgien</th><td class="txt art">Staat</td><td class="isin">BE0000347568</td><td class="txt">EUR</td><td class="num">93,60</td><td class="num">0,90&nbsp;%</td><td class="num">3,38&nbsp;%</td><td class="num">22.06.2029</td><td class="num">2,7 Jahre</td><td class="num">20,3 Mrd.</td><td class="num">0,01</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note">Vorn liegt eine Anleihe Frankreichs; dazu zwei österreichische, je eine spanische, irische und belgische, drei Bundeswertpapiere und eine norwegische Anleihe in Kronen.</p>
+    </section>
+
+    <section class="lzsec" id="mittelfristig" aria-labelledby="h-mittelfristig">
+      <h2 id="h-mittelfristig">Mittelfristig: 3 bis 7 Jahre Restlaufzeit</h2>
+      <div class="table-scroll">
+      <table class="kpis" data-gruppe="mittelfristig">
+        <caption class="sr-only">Mittelfristig (3 bis 7 Jahre Restlaufzeit): die zehn meistgehandelten Staatsanleihen</caption>
+        <thead class="kpi-head"><tr>
+          <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" aria-label="Rang" title="Rang nach Beliebtheit">#</button></th>
+          <th scope="col" data-col="emittent"><button type="button" class="sortbtn" data-col="emittent">Emittent</button></th>
+          <th scope="col" data-col="yld"><button type="button" class="sortbtn" data-col="yld">Rendite</button></th>
+          <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs">Kurs</button></th>
+          <th scope="col" data-col="kupon"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
+          <th scope="col" data-col="faellig"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th>
+          <th scope="col" data-col="years"><button type="button" class="sortbtn" data-col="years">Restlaufzeit</button></th>
+          <th scope="col" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th>
+          <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th>
+          <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Umlaufender Betrag – in der Währung der Anleihe">Volumen</button></th>
+          <th scope="col" data-col="stk"><button type="button" class="sortbtn" data-col="stk" title="Kleinster Nennwert (zugleich Mindestanlage) in der Währung der Anleihe">Stückelung</button></th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="num rk">1</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE0001102606</td><td class="txt">EUR</td><td class="num">91,56</td><td class="num">1,70&nbsp;%</td><td class="num">3,30&nbsp;%</td><td class="num">15.08.2032</td><td class="num">5,9 Jahre</td><td class="num">28 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">2</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE000BU2Z015</td><td class="txt">EUR</td><td class="num">95,40</td><td class="num">2,60&nbsp;%</td><td class="num">3,36&nbsp;%</td><td class="num">15.08.2033</td><td class="num">6,9 Jahre</td><td class="num">30,5 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">3</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE000BU2Z007</td><td class="txt">EUR</td><td class="num">94,10</td><td class="num">2,30&nbsp;%</td><td class="num">3,34&nbsp;%</td><td class="num">15.02.2033</td><td class="num">6,4 Jahre</td><td class="num">38,3 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">4</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE000BU25059</td><td class="txt">EUR</td><td class="num">96,00</td><td class="num">2,20&nbsp;%</td><td class="num">3,27&nbsp;%</td><td class="num">10.10.2030</td><td class="num">4,0 Jahre</td><td class="num">31 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">5</td><th scope="row">Vereinigte Staaten</th><td class="txt art">Staat</td><td class="isin">US91282CHT18</td><td class="txt">USD</td><td class="num">93,99</td><td class="num">3,875&nbsp;%</td><td class="num">4,97&nbsp;%</td><td class="num">15.08.2033</td><td class="num">6,9 Jahre</td><td class="num">122 Mrd.</td><td class="num">100</td></tr>
+          <tr><td class="num rk">6</td><th scope="row">Republik Österreich</th><td class="txt art">Staat</td><td class="isin">AT0000A2WSC8</td><td class="txt">EUR</td><td class="num">87,64</td><td class="num">0,90&nbsp;%</td><td class="num">3,44&nbsp;%</td><td class="num">20.02.2032</td><td class="num">5,4 Jahre</td><td class="num">14 Mrd.</td><td class="num">1.000</td></tr>
+          <tr><td class="num rk">7</td><th scope="row">Vereinigte Staaten</th><td class="txt art">Staat</td><td class="isin">US91282CCS89</td><td class="txt">USD</td><td class="num">84,42</td><td class="num">1,25&nbsp;%</td><td class="num">4,93&nbsp;%</td><td class="num">15.08.2031</td><td class="num">4,9 Jahre</td><td class="num">141 Mrd.</td><td class="num">100</td></tr>
+          <tr><td class="num rk">8</td><th scope="row">Königreich Spanien</th><td class="txt art">Staat</td><td class="isin">ES00000128Q6</td><td class="txt">EUR</td><td class="num">92,23</td><td class="num">2,35&nbsp;%</td><td class="num">3,65&nbsp;%</td><td class="num">30.07.2033</td><td class="num">6,8 Jahre</td><td class="num">22,6 Mrd.</td><td class="num">1.000</td></tr>
+          <tr><td class="num rk">9</td><th scope="row">Königreich Spanien</th><td class="txt art">Staat</td><td class="isin">ES0000012I32</td><td class="txt">EUR</td><td class="num">86,21</td><td class="num">0,50&nbsp;%</td><td class="num">3,50&nbsp;%</td><td class="num">31.10.2031</td><td class="num">5,1 Jahre</td><td class="num">26 Mrd.</td><td class="num">1.000</td></tr>
+          <tr><td class="num rk">10</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE000BU27006</td><td class="txt">EUR</td><td class="num">96,67</td><td class="num">2,40&nbsp;%</td><td class="num">3,27&nbsp;%</td><td class="num">15.11.2030</td><td class="num">4,1 Jahre</td><td class="num">28 Mrd.</td><td class="num">0,01</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note">Fünf Bundeswertpapiere, zwei US-Treasury-Notes, zwei spanische und eine österreichische Anleihe – alle an fast jedem Börsentag gehandelt.</p>
+    </section>
+
+    <section class="lzsec" id="langfristig" aria-labelledby="h-langfristig">
+      <h2 id="h-langfristig">Langfristig: 7 bis 30 Jahre Restlaufzeit</h2>
+      <div class="table-scroll">
+      <table class="kpis" data-gruppe="langfristig">
+        <caption class="sr-only">Langfristig (7 bis 30 Jahre Restlaufzeit): die zehn meistgehandelten Staatsanleihen</caption>
+        <thead class="kpi-head"><tr>
+          <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" aria-label="Rang" title="Rang nach Beliebtheit">#</button></th>
+          <th scope="col" data-col="emittent"><button type="button" class="sortbtn" data-col="emittent">Emittent</button></th>
+          <th scope="col" data-col="yld"><button type="button" class="sortbtn" data-col="yld">Rendite</button></th>
+          <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs">Kurs</button></th>
+          <th scope="col" data-col="kupon"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
+          <th scope="col" data-col="faellig"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th>
+          <th scope="col" data-col="years"><button type="button" class="sortbtn" data-col="years">Restlaufzeit</button></th>
+          <th scope="col" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th>
+          <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th>
+          <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Umlaufender Betrag – in der Währung der Anleihe">Volumen</button></th>
+          <th scope="col" data-col="stk"><button type="button" class="sortbtn" data-col="stk" title="Kleinster Nennwert (zugleich Mindestanlage) in der Währung der Anleihe">Stückelung</button></th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="num rk">1</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE000BU2Z023</td><td class="txt">EUR</td><td class="num">92,38</td><td class="num">2,20&nbsp;%</td><td class="num">3,38&nbsp;%</td><td class="num">15.02.2034</td><td class="num">7,4 Jahre</td><td class="num">35 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">2</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE000BU2Z049</td><td class="txt">EUR</td><td class="num">93,47</td><td class="num">2,50&nbsp;%</td><td class="num">3,41&nbsp;%</td><td class="num">15.02.2035</td><td class="num">8,4 Jahre</td><td class="num">35 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">3</td><th scope="row">Republik Frankreich</th><td class="txt art">Staat</td><td class="isin">FR001400QMF9</td><td class="txt">EUR</td><td class="num">91,23</td><td class="num">3,00&nbsp;%</td><td class="num">4,29&nbsp;%</td><td class="num">25.11.2034</td><td class="num">8,2 Jahre</td><td class="num">52,3 Mrd.</td><td class="num">1</td></tr>
+          <tr><td class="num rk">4</td><th scope="row">Königreich Spanien</th><td class="txt art">Staat</td><td class="isin">ES0000012P33</td><td class="txt">EUR</td><td class="num">95,14</td><td class="num">3,20&nbsp;%</td><td class="num">3,84&nbsp;%</td><td class="num">31.10.2035</td><td class="num">9,1 Jahre</td><td class="num">28,4 Mrd.</td><td class="num">1.000</td></tr>
+          <tr><td class="num rk">5</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE0001102598</td><td class="txt">EUR</td><td class="num">75,81</td><td class="num">1,00&nbsp;%</td><td class="num">3,58&nbsp;%</td><td class="num">15.05.2038</td><td class="num">11,6 Jahre</td><td class="num">33,3 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">6</td><th scope="row">Republik Polen</th><td class="txt art">Staat</td><td class="isin">XS2975276143</td><td class="txt">EUR</td><td class="num">97,33</td><td class="num">3,625&nbsp;%</td><td class="num">4,01&nbsp;%</td><td class="num">16.01.2035</td><td class="num">8,3 Jahre</td><td class="num">1,5 Mrd.</td><td class="num">1.000</td></tr>
+          <tr><td class="num rk">7</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE000BU2Z056</td><td class="txt">EUR</td><td class="num">93,77</td><td class="num">2,60&nbsp;%</td><td class="num">3,42&nbsp;%</td><td class="num">15.08.2035</td><td class="num">8,9 Jahre</td><td class="num">33,5 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">8</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE000BU2D012</td><td class="txt">EUR</td><td class="num">83,93</td><td class="num">2,90&nbsp;%</td><td class="num">3,81&nbsp;%</td><td class="num">15.08.2056</td><td class="num">29,9 Jahre</td><td class="num">35 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">9</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE0001135432</td><td class="txt">EUR</td><td class="num">94,74</td><td class="num">3,25&nbsp;%</td><td class="num">3,70&nbsp;%</td><td class="num">04.07.2042</td><td class="num">15,8 Jahre</td><td class="num">23 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">10</td><th scope="row">Bundesrepublik Deutschland</th><td class="txt art">Staat</td><td class="isin">DE0001135275</td><td class="txt">EUR</td><td class="num">104,51</td><td class="num">4,00&nbsp;%</td><td class="num">3,47&nbsp;%</td><td class="num">04.01.2037</td><td class="num">10,3 Jahre</td><td class="num">29,3 Mrd.</td><td class="num">0,01</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note">Sieben Bundesanleihen mit Fälligkeiten von 2034 bis 2056, dazu Frankreich, Spanien und eine Euro-Anleihe Polens.</p>
+    </section>
+
+    <section class="lzsec" id="sehr-langfristig" aria-labelledby="h-sehr-langfristig">
+      <h2 id="h-sehr-langfristig">Sehr langfristig: über 30 Jahre Restlaufzeit</h2>
+      <div class="table-scroll">
+      <table class="kpis" data-gruppe="sehr-langfristig">
+        <caption class="sr-only">Sehr langfristig (über 30 Jahre Restlaufzeit): die neun meistgehandelten Staatsanleihen</caption>
+        <thead class="kpi-head"><tr>
+          <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" aria-label="Rang" title="Rang nach Beliebtheit">#</button></th>
+          <th scope="col" data-col="emittent"><button type="button" class="sortbtn" data-col="emittent">Emittent</button></th>
+          <th scope="col" data-col="yld"><button type="button" class="sortbtn" data-col="yld">Rendite</button></th>
+          <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs">Kurs</button></th>
+          <th scope="col" data-col="kupon"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
+          <th scope="col" data-col="faellig"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th>
+          <th scope="col" data-col="years"><button type="button" class="sortbtn" data-col="years">Restlaufzeit</button></th>
+          <th scope="col" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th>
+          <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th>
+          <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Umlaufender Betrag – in der Währung der Anleihe">Volumen</button></th>
+          <th scope="col" data-col="stk"><button type="button" class="sortbtn" data-col="stk" title="Kleinster Nennwert (zugleich Mindestanlage) in der Währung der Anleihe">Stückelung</button></th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="num rk">1</td><th scope="row">Republik Österreich</th><td class="txt art">Staat</td><td class="isin">AT0000A1XML2</td><td class="txt">EUR</td><td class="num">56,25</td><td class="num">2,10&nbsp;%</td><td class="num">3,83&nbsp;%</td><td class="num">20.09.2117</td><td class="num">91,0 Jahre</td><td class="num">6 Mrd.</td><td class="num">1.000</td></tr>
+          <tr><td class="num rk">2</td><th scope="row">Republik Österreich</th><td class="txt art">Staat</td><td class="isin">AT0000A2HLC4</td><td class="txt">EUR</td><td class="num">30,47</td><td class="num">0,85&nbsp;%</td><td class="num">3,19&nbsp;%</td><td class="num">30.06.2120</td><td class="num">93,8 Jahre</td><td class="num">6,3 Mrd.</td><td class="num">1.000</td></tr>
+          <tr><td class="num rk">3</td><th scope="row">Republik Frankreich</th><td class="txt art">Staat</td><td class="isin">FR0010870956</td><td class="txt">EUR</td><td class="num">81,80</td><td class="num">4,00&nbsp;%</td><td class="num">5,15&nbsp;%</td><td class="num">25.04.2060</td><td class="num">33,6 Jahre</td><td class="num">22,8 Mrd.</td><td class="num">1</td></tr>
+          <tr><td class="num rk">4</td><th scope="row">Republik Frankreich</th><td class="txt art">Staat</td><td class="isin">FR0014001NN8</td><td class="txt">EUR</td><td class="num">21,86</td><td class="num">0,50&nbsp;%</td><td class="num">4,66&nbsp;%</td><td class="num">25.05.2072</td><td class="num">45,7 Jahre</td><td class="num">14,5 Mrd.</td><td class="num">1</td></tr>
+          <tr><td class="num rk">5</td><th scope="row">Republik Österreich</th><td class="txt art">Staat</td><td class="isin">AT0000A0U299</td><td class="txt">EUR</td><td class="num">96,60</td><td class="num">3,80&nbsp;%</td><td class="num">3,98&nbsp;%</td><td class="num">26.01.2062</td><td class="num">35,3 Jahre</td><td class="num">4,57 Mrd.</td><td class="num">1.000</td></tr>
+          <tr><td class="num rk">6</td><th scope="row">Vereinigtes Königreich</th><td class="txt art">Staat</td><td class="isin">GB00BMBL1D50</td><td class="txt">GBP</td><td class="num">22,81</td><td class="num">0,50&nbsp;%</td><td class="num">5,55&nbsp;%</td><td class="num">22.10.2061</td><td class="num">35,1 Jahre</td><td class="num">26,5 Mrd.</td><td class="num">0,01</td></tr>
+          <tr><td class="num rk">7</td><th scope="row">Republik Frankreich</th><td class="txt art">Staat</td><td class="isin">FR0014016CV2</td><td class="txt">EUR</td><td class="num">88,80</td><td class="num">4,40&nbsp;%</td><td class="num">5,13&nbsp;%</td><td class="num">25.05.2057</td><td class="num">30,7 Jahre</td><td class="num">11 Mrd.</td><td class="num">1</td></tr>
+          <tr><td class="num rk">8</td><th scope="row">Königreich Spanien</th><td class="txt art">Staat</td><td class="isin">ES00000128E2</td><td class="txt">EUR</td><td class="num">81,62</td><td class="num">3,45&nbsp;%</td><td class="num">4,44&nbsp;%</td><td class="num">30.07.2066</td><td class="num">39,8 Jahre</td><td class="num">15,9 Mrd.</td><td class="num">1.000</td></tr>
+          <tr><td class="num rk">9</td><th scope="row">Republik Österreich</th><td class="txt art">Staat</td><td class="isin">AT0000A2QQB6</td><td class="txt">EUR</td><td class="num">32,76</td><td class="num">0,70&nbsp;%</td><td class="num">3,91&nbsp;%</td><td class="num">20.04.2071</td><td class="num">44,6 Jahre</td><td class="num">6,59 Mrd.</td><td class="num">1.000</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="note">Sehr lange Laufzeiten werden in Deutschland selten gehandelt: nur Österreichs Anleihe von 2117 an den meisten Börsentagen, ab Rang 4 an rund 50 Börsentagen im Jahr oder weniger – die Kurse sind hier meist Geldkurse ohne Umsatz. Nur neun Anleihen: Tschechiens Kronen-Anleihe 2057 hat an deutschen Börsen keinen Kurs und fehlt deshalb.</p>
+    </section>
+
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a></li>
+        <li><a href="anleihen-laender.html">Staatsanleihen nach Ländern</a></li>
+      </ul>
+    </nav>
+    <details class="quellen" id="quellen">
+      <summary>Datenquellen und Methodik</summary>
+      <div class="quellen-body">
+        <p id="m-rang"><strong>Beliebt heißt hier: meistgehandelt.</strong> Gezählt wird der Handel an der Börse Stuttgart vom 23.09.2025 bis 22.09.2026: Vorn steht die Anleihe, die an den meisten Börsentagen umgesetzt wurde, bei Gleichstand die mit dem höheren Umsatz. Durchsucht wurden alle an deutschen Börsen notierten Staatsanleihen der Zentralstaaten aller Länder mit festem Kupon oder Nullkupon – rund 3.200 Anleihen. Nicht berücksichtigt sind inflationsgeschützte und variabel verzinste Anleihen sowie Anleihen von Bundesländern, Kommunen, Förderbanken und supranationalen Einrichtungen.</p>
+        <p id="m-rest"><strong>Restlaufzeit</strong> ist die Zeit bis zur Fälligkeit, gerechnet ab dem Valutatag (Kursdatum plus ein bis zwei Börsentage). Die fünf Tabellen teilen danach ein: sehr kurzfristig bis 1 Jahr, kurzfristig 1 bis 3 Jahre, mittelfristig 3 bis 7 Jahre, langfristig 7 bis 30 Jahre, sehr langfristig über 30 Jahre. Eine Anleihe landet in der Gruppe, zu der ihre angezeigte, auf ein Zehntel gerundete Restlaufzeit gehört.</p>
+        <p>Kurse: Schlusskurs des letzten Börsentags an der Börse Frankfurt – die Nachhandelsdaten, die jeder Handelsplatz nach der EU-Finanzmarktverordnung MiFIR 15 Minuten verzögert kostenlos veröffentlichen muss (Deutsche Börse); Bundeswertpapiere: Deutsche Bundesbank. Täglich aktualisiert, Stand am Ende dieses Abschnitts. Ohne Umsatz ist der Kurs die Feststellung des Spezialisten und kann bei selten gehandelten Anleihen vom Marktniveau abweichen. Ein Klick auf die ISIN öffnet den Steckbrief der Anleihe mit Kursverlauf, Handel und Stammdaten. <strong>Rendite</strong> bis Fälligkeit, aus Kurs, Kupon und Zinsterminen berechnet (jährliche Verzinsung wie auf der Langläufer-Seite; Bundeswertpapiere: Rendite der Bundesbank), in der Währung der Anleihe bis zum Ende der Laufzeit.</p>
+        <p id="m-vol"><strong>Volumen und Stückelung</strong> aus den Stammdaten der Deutschen Börse (Stand 23.09.2026). Volumen ist der umlaufende Betrag nach Aufstockungen und Rückkäufen – die Anleihen-Suche und der Steckbrief zeigen dagegen den ausgegebenen Betrag laut ESMA-Register, deshalb können die Zahlen abweichen. Stückelung ist der kleinste Nennwert und damit die Mindestanlage. Die Auswahl der Anleihen ist eine Momentaufnahme und wird manuell gepflegt; Ratings zeigt die Seite nicht, weil sie sich nicht automatisch aktuell halten lassen – wie du die Bonität eines Staates einschätzt, steht unter <a href="bonitaet.html">Bonität und Ratings</a>.</p>
+        <p id="datastand">Daten-Stand: 22.09.2026</p>
+      </div>
+    </details>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+window.MC.minus = window.MC.minus || function (s) { return String(s).replace(/^-/, "−"); };
+
+// ---------- Daten: je Laufzeitgruppe die zehn beliebtesten Staatsanleihen (manuell gepflegt, Stand 22.09.2026) ----------
+// gruppen[<Anker>] = Liste; je Anleihe: isin, emittent, art (Staat/Unternehmen), cur (Währung), kupon (% p. a.), zins (Zinszahlungen je Jahr), faellig (Fälligkeit),
+// kurs (Schlusskurs Stuttgart in % des Nennwerts), vol (Volumen), stk (Stückelung) – beide in der Währung der Anleihe.
+// Reihenfolge = Rang (Beliebtheit). Rendite und Restlaufzeit rechnet die Seite aus Kurs, Kupon und Datum
+// (Valuta: Dollar und Pfund einen, sonst zwei Börsentage nach dem Kursdatum).
+// Auswahl, Quellen und Vorgehen: siehe „Datenquellen und Methodik“ unten auf der Seite.
+const ANLEIHEN = {
+  date: "2026-09-22",
+  gruppen: {
+    "sehr-kurzfristig": [
+      { isin: "DE000BU22072", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 2, zins: 1, faellig: "2026-12-10", kurs: 99.877, vol: 19000000000, stk: 0.01 },
+      { isin: "DE000BU22080", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 2.2, zins: 1, faellig: "2027-03-11", kurs: 99.748, vol: 18500000000, stk: 0.01 },
+      { isin: "US912828V988", emittent: "Vereinigte Staaten", art: "Staat", cur: "USD", kupon: 2.25, zins: 2, faellig: "2027-02-15", kurs: 99.238, vol: 64537868400, stk: 100 },
+      { isin: "DE0001102424", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 0.5, zins: 1, faellig: "2027-08-15", kurs: 97.828, vol: 32500000000, stk: 0.01 },
+      { isin: "DE000BU22098", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 1.7, zins: 1, faellig: "2027-06-10", kurs: 99.15, vol: 18000000000, stk: 0.01 },
+      { isin: "DE0001102416", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 0.25, zins: 1, faellig: "2027-02-15", kurs: 99.04, vol: 30500000000, stk: 0.01 },
+      { isin: "DE000BU22106", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 1.9, zins: 1, faellig: "2027-09-16", kurs: 98.911, vol: 19000000000, stk: 0.01 },
+      { isin: "DE0001141851", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 0, zins: 1, faellig: "2027-04-16", kurs: 98.439, vol: 22000000000, stk: 0.01 },
+      { isin: "BE0000341504", emittent: "Königreich Belgien", art: "Staat", cur: "EUR", kupon: 0.8, zins: 1, faellig: "2027-06-22", kurs: 98.419, vol: 16485000000, stk: 0.01 },
+      { isin: "NO0010786288", emittent: "Königreich Norwegen", art: "Staat", cur: "NOK", kupon: 1.75, zins: 1, faellig: "2027-02-17", kurs: 98.859, vol: 54975000000, stk: 1000 }
+    ],
+    "kurzfristig": [
+      { isin: "FR0013407236", emittent: "Republik Frankreich", art: "Staat", cur: "EUR", kupon: 0.5, zins: 1, faellig: "2029-05-25", kurs: 92.32, vol: 58805000000, stk: 1 },
+      { isin: "AT0000A1ZGE4", emittent: "Republik Österreich", art: "Staat", cur: "EUR", kupon: 0.75, zins: 1, faellig: "2028-02-20", kurs: 96.76, vol: 14699317000, stk: 1000 },
+      { isin: "ES0000012A89", emittent: "Königreich Spanien", art: "Staat", cur: "EUR", kupon: 1.45, zins: 1, faellig: "2027-10-31", kurs: 98.214, vol: 25155832000, stk: 1000 },
+      { isin: "AT0000A269M8", emittent: "Republik Österreich", art: "Staat", cur: "EUR", kupon: 0.5, zins: 1, faellig: "2029-02-20", kurs: 93.676, vol: 15741577000, stk: 1000 },
+      { isin: "IE00BH3SQ895", emittent: "Irland", art: "Staat", cur: "EUR", kupon: 1.1, zins: 1, faellig: "2029-05-15", kurs: 94.84, vol: 10227700000, stk: 0.01 },
+      { isin: "NO0010821598", emittent: "Königreich Norwegen", art: "Staat", cur: "NOK", kupon: 2, zins: 1, faellig: "2028-04-26", kurs: 95.838, vol: 57000000000, stk: 1000 },
+      { isin: "DE000BU22114", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 2, zins: 1, faellig: "2027-12-16", kurs: 98.657, vol: 21000000000, stk: 0.01 },
+      { isin: "DE0001102440", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 0.5, zins: 1, faellig: "2028-02-15", kurs: 96.447, vol: 28500000000, stk: 0.01 },
+      { isin: "DE000BU25018", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 2.4, zins: 1, faellig: "2028-10-19", kurs: 98.393, vol: 29500000000, stk: 0.01 },
+      { isin: "BE0000347568", emittent: "Königreich Belgien", art: "Staat", cur: "EUR", kupon: 0.9, zins: 1, faellig: "2029-06-22", kurs: 93.595, vol: 20304000000, stk: 0.01 }
+    ],
+    "mittelfristig": [
+      { isin: "DE0001102606", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 1.7, zins: 1, faellig: "2032-08-15", kurs: 91.555, vol: 28000000000, stk: 0.01 },
+      { isin: "DE000BU2Z015", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 2.6, zins: 1, faellig: "2033-08-15", kurs: 95.401, vol: 30500000000, stk: 0.01 },
+      { isin: "DE000BU2Z007", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 2.3, zins: 1, faellig: "2033-02-15", kurs: 94.098, vol: 38250000000, stk: 0.01 },
+      { isin: "DE000BU25059", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 2.2, zins: 1, faellig: "2030-10-10", kurs: 95.998, vol: 31000000000, stk: 0.01 },
+      { isin: "US91282CHT18", emittent: "Vereinigte Staaten", art: "Staat", cur: "USD", kupon: 3.875, zins: 2, faellig: "2033-08-15", kurs: 93.986, vol: 122099798800, stk: 100 },
+      { isin: "AT0000A2WSC8", emittent: "Republik Österreich", art: "Staat", cur: "EUR", kupon: 0.9, zins: 1, faellig: "2032-02-20", kurs: 87.641, vol: 13974429000, stk: 1000 },
+      { isin: "US91282CCS89", emittent: "Vereinigte Staaten", art: "Staat", cur: "USD", kupon: 1.25, zins: 2, faellig: "2031-08-15", kurs: 84.418, vol: 141395457200, stk: 100 },
+      { isin: "ES00000128Q6", emittent: "Königreich Spanien", art: "Staat", cur: "EUR", kupon: 2.35, zins: 1, faellig: "2033-07-30", kurs: 92.227, vol: 22621526000, stk: 1000 },
+      { isin: "ES0000012I32", emittent: "Königreich Spanien", art: "Staat", cur: "EUR", kupon: 0.5, zins: 1, faellig: "2031-10-31", kurs: 86.213, vol: 25958143000, stk: 1000 },
+      { isin: "DE000BU27006", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 2.4, zins: 1, faellig: "2030-11-15", kurs: 96.672, vol: 28000000000, stk: 0.01 }
+    ],
+    "langfristig": [
+      { isin: "DE000BU2Z023", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 2.2, zins: 1, faellig: "2034-02-15", kurs: 92.379, vol: 35000000000, stk: 0.01 },
+      { isin: "DE000BU2Z049", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 2.5, zins: 1, faellig: "2035-02-15", kurs: 93.474, vol: 35000000000, stk: 0.01 },
+      { isin: "FR001400QMF9", emittent: "Republik Frankreich", art: "Staat", cur: "EUR", kupon: 3, zins: 1, faellig: "2034-11-25", kurs: 91.229, vol: 52348000000, stk: 1 },
+      { isin: "ES0000012P33", emittent: "Königreich Spanien", art: "Staat", cur: "EUR", kupon: 3.2, zins: 1, faellig: "2035-10-31", kurs: 95.142, vol: 28446015000, stk: 1000 },
+      { isin: "DE0001102598", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 1, zins: 1, faellig: "2038-05-15", kurs: 75.812, vol: 33250000000, stk: 0.01 },
+      { isin: "XS2975276143", emittent: "Republik Polen", art: "Staat", cur: "EUR", kupon: 3.625, zins: 1, faellig: "2035-01-16", kurs: 97.328, vol: 1500000000, stk: 1000 },
+      { isin: "DE000BU2Z056", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 2.6, zins: 1, faellig: "2035-08-15", kurs: 93.772, vol: 33500000000, stk: 0.01 },
+      { isin: "DE000BU2D012", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 2.9, zins: 1, faellig: "2056-08-15", kurs: 83.931, vol: 35000000000, stk: 0.01 },
+      { isin: "DE0001135432", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 3.25, zins: 1, faellig: "2042-07-04", kurs: 94.74, vol: 23000000000, stk: 0.01 },
+      { isin: "DE0001135275", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", kupon: 4, zins: 1, faellig: "2037-01-04", kurs: 104.512, vol: 29250000000, stk: 0.01 }
+    ],
+    "sehr-langfristig": [
+      { isin: "AT0000A1XML2", emittent: "Republik Österreich", art: "Staat", cur: "EUR", kupon: 2.1, zins: 1, faellig: "2117-09-20", kurs: 56.25, vol: 6000000000, stk: 1000 },
+      { isin: "AT0000A2HLC4", emittent: "Republik Österreich", art: "Staat", cur: "EUR", kupon: 0.85, zins: 1, faellig: "2120-06-30", kurs: 30.471, vol: 6300000000, stk: 1000 },
+      { isin: "FR0010870956", emittent: "Republik Frankreich", art: "Staat", cur: "EUR", kupon: 4, zins: 1, faellig: "2060-04-25", kurs: 81.8, vol: 22843000000, stk: 1 },
+      { isin: "FR0014001NN8", emittent: "Republik Frankreich", art: "Staat", cur: "EUR", kupon: 0.5, zins: 1, faellig: "2072-05-25", kurs: 21.86, vol: 14472000000, stk: 1 },
+      { isin: "AT0000A0U299", emittent: "Republik Österreich", art: "Staat", cur: "EUR", kupon: 3.8, zins: 1, faellig: "2062-01-26", kurs: 96.602, vol: 4573666000, stk: 1000 },
+      { isin: "GB00BMBL1D50", emittent: "Vereinigtes Königreich", art: "Staat", cur: "GBP", kupon: 0.5, zins: 2, faellig: "2061-10-22", kurs: 22.81, vol: 26493249000, stk: 0.01 },
+      { isin: "FR0014016CV2", emittent: "Republik Frankreich", art: "Staat", cur: "EUR", kupon: 4.4, zins: 1, faellig: "2057-05-25", kurs: 88.8, vol: 11001000000, stk: 1 },
+      { isin: "ES00000128E2", emittent: "Königreich Spanien", art: "Staat", cur: "EUR", kupon: 3.45, zins: 1, faellig: "2066-07-30", kurs: 81.618, vol: 15926558000, stk: 1000 },
+      { isin: "AT0000A2QQB6", emittent: "Republik Österreich", art: "Staat", cur: "EUR", kupon: 0.7, zins: 1, faellig: "2071-04-20", kurs: 32.755, vol: 6590000000, stk: 1000 }
+    ]
+  }
+};
+
+// Automatische Top 10 (seit 26.09.2026, scripts/update_top10.py): laufzeit.js lädt die Datei; ist sie „aktiv“
+// (mindestens 20 Börsentage erfasst), ersetzt sie die Handauswahl oben und TOP10_AKTIV passt die Texte an.
+const TOP10 = "top10-staatsanleihen-laufzeit.json";
+function TOP10_AKTIV(d) {
+  const f = d.fenster, dat = iso => iso.split("-").reverse().join(".");
+  const set = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+  set("m-rang", `<strong>Meistgehandelt</strong> heißt: an den meisten Börsentagen umgesetzt. Gezählt wird der Handel an der Börse Frankfurt und bei Tradegate in den letzten ${f.tage} Börsentagen (${dat(f.von)} bis ${dat(f.bis)}); bei Gleichstand zählt der höhere Umsatz. Die Listen werden jeden Börsentag neu berechnet – eine Gruppe hat weniger als zehn Anleihen, wenn nicht mehr gehandelt wurden. Durchsucht werden alle Staatsanleihen der Zentralstaaten aller Länder mit festem Kupon oder Nullkupon und aktuellem Kurs; nicht berücksichtigt sind inflationsgeschützte und variabel verzinste Anleihen, Strips sowie Anleihen von Bundesländern, Kommunen, Förderbanken und supranationalen Einrichtungen.`);
+  // Übergangshinweis und die Notizen unter den Tabellen beschreiben die Handauswahl – mit der automatischen Liste ausblenden
+  const ue = document.getElementById("uebergang"); if (ue) ue.hidden = true;
+  document.querySelectorAll(".lzsec > p.note").forEach(p => { p.hidden = true; });
+  set("m-vol", `<strong>Volumen und Stückelung</strong> aus dem ESMA-Register (FIRDS), wöchentlich aktualisiert. Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage. Ratings zeigt die Seite nicht, weil sie sich nicht automatisch aktuell halten lassen – wie du die Bonität eines Staates einschätzt, steht unter <a href="bonitaet.html">Bonität und Ratings</a>.`);
+  const n = document.getElementById("lznote"); if (n) n.textContent = n.textContent.replace(/Volumen: [^;]+;/, "Volumen: ausgegebener Nennbetrag;");
+}
+// Tabellen rendert laufzeit.js (gemeinsamer Code beider Laufzeit-Seiten) aus ANLEIHEN.
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+</script>
+<!-- laufzeit.js ruft MC.load("kurse-auswahl.json") und MC.load("top10-staatsanleihen-laufzeit.json") – der Kommentar sorgt dafür, dass inline_data.py beide Dateien beim Deploy hier einbettet -->
+<script src="laufzeit.js"></script>
+</body>
+</html>

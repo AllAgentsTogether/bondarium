@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>METALCONCRETE – Anleihen verstehen und finden</title>
+<meta name="description" content="Anleihen verstehen und finden: Wissen in kurzen Schritten, Renditen seit 1970, die meistgehandelten Anleihen und eine Suche über rund 33.000 Anleihen.">
+<link rel="canonical" href="https://www.metalconcrete.de/">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/">
+<meta property="og:title" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta property="og:description" content="Anleihen verstehen und finden: Wissen in kurzen Schritten, Renditen seit 1970, die meistgehandelten Anleihen und eine Suche über rund 33.000 Anleihen.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:description" content="Anleihen verstehen und finden: Wissen in kurzen Schritten, Renditen seit 1970, die meistgehandelten Anleihen und eine Suche über rund 33.000 Anleihen.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" as="image" href="startseite-hero.webp" media="(min-width: 761px)">
+<style>
+  /* Startseite (neu 24.09.2026 spät nach Entwurf des Nutzers): Hero mit Foto, weiße Fläche mit Tageszahlen, Bund-Kurve,
+     vier Türen „Der Weg“ (seit 25.09.2026 spät, Konzept B; vorher vier Balken direkt unter dem Hero; „Heute“ und Bund-Kurve am selben Tag entfernt), Beispiel-Leiste, Anlageziele/ETF/Dazu, sechs Datenkarten. Grundregeln in base.css. */
+  /* 29.09.2026 (UX-Review, Nutzerwunsch Nr. 7, 9, 10, 11, 12, 14): Personen-Karten mit Ergebnis und Knopf, Tabelle mit Art/Stand/Link,
+     Akademie als Lernpfad inkl. „Vertiefen“ (ehemals „Lerne alles über Anleihen“), Top-10 als eine Reihe, vierspaltige Fußzeile. */
+  /* Hero (29.09.2026): Titel „Finde Anleihen, die zu deinem Leben passen“ beschreibt die ganze Startseite, Dachzeile „Anleihen-Finder“ entfernt;
+     rechts wieder das Foto (startseite-hero.webp) statt der Beton-Kacheln vom Nachmittag (Nutzerwunsch). */
+  .hero { --g: 24px; position: relative; min-height: 440px; margin: 0 calc(-1 * var(--g)); padding: 26px var(--g) 70px; overflow: hidden; }   /* Anschnitt bis an den Rand, ohne seitliches Scrollen */
+  .hero-t { position: relative; z-index: 2; max-width: 560px; }
+  .hero h1 { font-size: 56px; letter-spacing: -0.04em; line-height: 1.02; margin-bottom: 20px; }
+  .hero h1 em { font-style: normal; color: var(--green-text); }
+  .hero .sub { font-size: 19px; line-height: 1.5; max-width: 500px; margin-bottom: 0; }
+  .hero-img { position: absolute; right: 0; top: -6px; width: 600px; height: calc(100% + 6px); object-fit: cover; object-position: 74% 30%; z-index: 0;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 34%, #000 94%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 9%, #000 calc(100% - 44px), transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to right, transparent 0, #000 34%, #000 94%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 9%, #000 calc(100% - 44px), transparent 100%);
+    mask-composite: intersect; }
+  /* Weiße Fläche mit allen Blöcken */
+  .sheet { position: relative; z-index: 2; margin-top: -28px; background: #fff; border: 1px solid rgba(26,26,25,0.07); border-radius: 22px; padding: 22px 22px 24px;
+    box-shadow: 0 1px 2px rgba(26,26,25,0.04), 0 20px 50px rgba(26,26,25,0.07); }
+  .box { background: #fff; border: 1px solid rgba(26,26,25,0.09); border-radius: 14px; box-shadow: 0 1px 2px rgba(26,26,25,0.03), 0 6px 18px rgba(26,26,25,0.035); }
+  a.box { text-decoration: none; color: var(--ink); transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease; }
+  a.box:hover { border-color: var(--green-line); transform: translateY(-2px); }
+  a.box:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  .kicker { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); }
+  .rund { display: inline-grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; }
+  .rund svg { width: 16px; height: 16px; }
+  /* Beispiel-Leiste */
+  /* Suchfeld über die volle Breite (25.09.2026, Nutzerwunsch) – schickt q an die Anleihen-Suche; darunter Beispiel-Suchen als Pillen */
+  /* Suche als dunkles Band (25.09.2026 spät, Nutzerwunsch „muss viel besser herausstechen“): Tinte-Fläche, Neon-Knopf, Beispiele als helle Chips */
+  .suchband { margin-top: 0;   /* seit 29.09.2026 ganz oben im Blatt, direkt unter dem Hero (Entwurf des Nutzers) */ padding: 22px 24px 22px; border-radius: 18px; background: var(--ink); color: #fff; }
+  .suche { display: flex; align-items: center; gap: 10px; margin-top: 0; padding: 7px 7px 7px 16px; background: #fff; border: 2px solid var(--green); border-radius: 14px; box-shadow: 0 0 0 4px rgba(57,255,20,0.22); }
+  .suche:focus-within { box-shadow: 0 0 0 6px rgba(57,255,20,0.45); }
+  .suche .hs-ico { flex: none; width: 22px; height: 22px; color: var(--green-text); }
+  .suche .hs-ico svg { width: 22px; height: 22px; display: block; }
+  .suche input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 17px; color: var(--ink); padding: 10px 0; }
+  .suche input::placeholder { color: #8E8D86; }
+  .suche input::-webkit-search-cancel-button { -webkit-appearance: none; }
+  .suche .go { flex: none; padding: 11px 20px; border: 0; cursor: pointer; font: inherit; font-size: 14.5px; font-weight: 600; }
+  .bsp-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 16px; font-size: 14px; color: rgba(255,255,255,0.72); }
+  .bsp-bar .bb-k { margin-right: 2px; }
+  .bsp-bar a { display: inline-flex; align-items: center; gap: 9px; color: #fff; text-decoration: none; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.26); border-radius: 999px; padding: 7px 16px 7px 12px; font-size: 14.5px; line-height: 1.2; }
+  .bsp-bar a svg { width: 18px; height: 18px; flex: none; color: var(--green); }
+  .bsp-bar a:hover { background: var(--green); border-color: var(--green); color: var(--ink); }
+  .bsp-bar a:hover svg { color: var(--ink); }
+  .bsp-bar a:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+  /* Lernen: drei Kacheln */
+  /* Drei Vorteile unter der Suche (29.09.2026, Entwurf des Nutzers): Symbol im hellgrünen Kreis, zweizeilige Beschriftung, Haarlinien dazwischen */
+  /* Lern-Kacheln seit 25.09.2026 direkt unter dem Hero, vor „Heute“ – als drei breite Balken untereinander
+     (Nutzerwunsch: „zuerst … darunter … darunter … alle horizontal verteilt“): Kicker + Titel links, Kurztext in der Mitte,
+     Pfeil und Illustration rechts. Ab 761 px; darunter gilt die Kachel-Form der Handy-Regeln. */
+  /* Interessante Anleihen (seit 25.09.2026, seit dem Abend als Tabelle statt Kacheln – Nutzerwunsch „mit allen wichtigen Kennzahlen“) */
+  /* Tabelle „Interessante Anleihen“ (25.09.2026 spät neu geordnet, Rating-Spalte am 26.09.2026 entfernt – Handpflege): Name · Kupon · Rendite · Kurs · Fälligkeit · Währung · Stückelung · ISIN –
+     erst die Zahlen, die man vergleicht, zum Schluss die Stammdaten; Zahlen rechtsbündig, einheitliche Abstände. */
+  .itab { width: 100%; border-collapse: collapse; font-size: 15px; }
+  .itab th, .itab td { text-align: left; padding: 13px 14px; border-bottom: 1px solid var(--rule); vertical-align: middle; white-space: nowrap; }
+  .itab th:first-child, .itab td:first-child { padding-left: 2px; }
+  .itab th:last-child, .itab td:last-child { padding-right: 2px; }
+  .itab thead th { padding-top: 6px; padding-bottom: 9px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); font-weight: 600; border-bottom: 1.5px solid rgba(26,26,25,0.22); }
+  .itab td.num, .itab th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .itab td.c, .itab th.c { text-align: center; }
+  .itab td.ren { font-weight: 600; color: var(--ink); }   /* Farbe/Stärke seit 29.09.2026 weiter unten */
+  /* Tabellenkopf: Klick auf den Spaltentitel sortiert (auf-/absteigend) – wie auf den Datenseiten (26.09.2026) */
+  .itab thead th .sortbtn { font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+  .itab thead th .sortbtn::after { content: "↕"; font-size: 12px; opacity: 0.45; }
+  .itab thead th .sortbtn:hover, .itab thead th[aria-sort] .sortbtn { color: var(--ink); }
+  .itab thead th[aria-sort="ascending"] .sortbtn::after { content: "↑"; opacity: 1; }
+  .itab thead th[aria-sort="descending"] .sortbtn::after { content: "↓"; opacity: 1; }
+  .itab thead th .sortbtn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .itab tbody tr:last-child td { border-bottom: 0; }
+  .itab td.nm { width: 30%; }
+  @media (max-width: 600px) { .itab td.nm, .itab th[data-col="name"] { position: sticky; left: 0; z-index: 1; background: var(--bg); white-space: normal; min-width: 128px; max-width: 150px; box-shadow: 6px 0 8px -8px rgba(26,26,25,0.35); } .itab td.nm a { line-height: 1.3; } }   /* Handy: Name bleibt stehen, Kupon und Rendite sofort sichtbar */
+  .itab td.nm a { font-weight: 600; color: var(--ink); text-decoration: none; }
+  .itab td.nm a:hover { color: var(--green-text); text-decoration: underline; text-underline-offset: 3px; }
+  /* seit 29.09.2026 (UX-Review Nr. 9): ISIN klein unter dem Namen statt eigener Spalte, Art als Badge (bei den Stammdaten vor der Währung, damit am Handy die Rendite gleich neben dem Namen bleibt), Rendite grün, Pfeil am Zeilenende */
+  .itab td.nm small { display: block; margin-top: 2px; font-size: 12px; font-weight: 500; color: #8E8D86; letter-spacing: 0.02em; }
+  .itab .art { display: inline-block; font-size: 12px; font-weight: 600; line-height: 1.3; border-radius: 6px; padding: 3px 8px; background: #E8F0FF; color: #1E4FA8; }
+  .itab .art.u { background: #FFF1E0; color: #A2561C; }
+  .itab td.ren { color: var(--green-text); font-weight: 700; }
+  @media (min-width: 941px) { .itab th, .itab td { padding-left: 9px; padding-right: 9px; } .itab td.nm { width: 26%; } }   /* neun Spalten passen ohne Wischen in die Fläche */
+  .itab td.go-z { width: 24px; text-align: right; padding-left: 4px; }
+  .itab td.go-z a { display: inline-grid; place-items: center; color: var(--green-text); }
+  .itab td.go-z svg { width: 16px; height: 16px; }
+  @media (min-width: 941px) { .itab tbody tr:hover > td { background-color: rgba(57,255,20,0.07); } }   /* darunter ist die Namensspalte fest (weißer Grund) */
+  .bt.mit-link { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px 20px; flex-wrap: wrap; }
+  .bt .bsub { font-size: 15px; line-height: 1.45; color: var(--text); margin: 6px 0 0; }
+  .bt .more { flex: none; display: inline-flex; align-items: center; gap: 6px; font-size: 15px; font-weight: 600; color: var(--green-text); text-decoration: none; padding-bottom: 2px; }
+  .bt .more svg { width: 16px; height: 16px; }
+  .bt .more:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .itab-note { font-size: 13px; line-height: 1.5; color: var(--text); margin: 12px 0 0; }
+  .itab-note a { color: var(--green-text); font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .itab-note a:hover { text-decoration: underline; text-underline-offset: 3px; }
+  /* Risiko nur auf Nachfrage (25.09.2026, Nutzerwunsch): kleines i neben dem Namen, Text als Hinweisfeld bei Maus, Tastatur-Fokus oder Tipp */
+  @media (max-width: 940px) {
+    .itab { min-width: 820px; }
+    .itab td.nm { width: auto; }
+    .itab th:first-child, .itab td:first-child { position: sticky; left: 0; z-index: 1; background: #fff; box-shadow: 1px 0 0 var(--rule); }   /* Name bleibt beim Wischen stehen */
+    .itab tbody tr:hover > td:first-child { background-image: linear-gradient(rgba(57,255,20,0.10), rgba(57,255,20,0.10)); }
+  }
+  @media (max-width: 600px) { .itab th:first-child, .itab td:first-child { background-color: var(--bg); } }
+  /* Vertiefen (29.09.2026, UX-Review Nr. 11): „Lerne alles über Anleihen“ ist in die Akademie gewandert – unter dem Lernpfad
+     zwei kompakte Karten (Bild links, Titel rechts) und die weiteren Themen als Pillen. Ersetzt .row2/.c2/.dazu. */
+  .vertiefen { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+  .vk { display: flex; align-items: center; gap: 14px; padding: 10px 16px 10px 10px; min-width: 0; overflow: hidden; }
+  .vk img { flex: none; width: 108px; height: 86px; object-fit: cover; border-radius: 10px; display: block; }
+  .vk .vk-t { flex: 1; min-width: 0; }
+  .vk b { display: block; font-size: 16.5px; font-weight: 600; line-height: 1.25; margin-top: 4px; letter-spacing: -0.01em; }
+  .vk .desc { display: block; font-size: 13.5px; line-height: 1.4; color: var(--text); margin-top: 4px; }
+  .vk:hover b { color: var(--green-text); }
+  .vt { display: flex; flex-wrap: wrap; align-content: center; gap: 6px; padding: 12px 14px; background: var(--green-tint); border: 1px solid var(--green-line); border-radius: 14px; }
+  .vt .vt-k { flex-basis: 100%; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); margin: 0 0 2px; }
+  .vt a { display: inline-flex; align-items: center; gap: 5px; font-size: 13.5px; font-weight: 600; line-height: 1.2; color: var(--ink); background: #fff; border-radius: 999px; padding: 6px 11px; text-decoration: none; }
+  .vt a svg { width: 13px; height: 13px; color: var(--green-text); }
+  .vt a:hover { color: var(--green-text); }
+  .vt a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  @media (max-width: 940px) { .vertiefen { grid-template-columns: repeat(2, minmax(0, 1fr)); } .vt { grid-column: 1 / -1; } }
+  @media (max-width: 600px) { .vertiefen { grid-template-columns: minmax(0, 1fr); } .vk img { width: 92px; height: 74px; } }
+  /* Finden: sechs Datenkarten */
+  /* Wer bist du? – seit 28.09.2026 vier Menschen aus den Anleitungen (vorher sechs) (seit 25.09.2026 abends, aus Startseiten-Konzept A „Das Herz der Seite“):
+     Sprechblase in Handschrift mit dem Ziel in einem Satz, Foto im Farbring, Name; Klick führt zur Person im Guide. */
+  /* Blockköpfe (25.09.2026 spät, Nutzerwunsch „man weiß nicht, wann eins aufhört und anfängt“): jeder Abschnitt beginnt mit
+     einer Handschrift-Überschrift plus Unterzeile, dazwischen Luft und eine Linie. Das Suchband ist dunkel und trennt von selbst. */
+  /* Abschnittsüberschriften auf der Startseite entfernt (26.09.2026); einzig die Tabelle trägt seitdem wieder eine (Nutzerwunsch „Beliebte Anleihen“). */
+  .bt { margin: 0 0 14px; }
+  .bt h2 { font-size: 32px; line-height: 1.15; margin: 0; }   /* Manrope 700 aus base.css (seit 27.09.2026 keine Handschrift mehr, auch nicht in den Sprechblasen) */
+  @media (max-width: 600px) { .bt h2 { font-size: 26px; } }
+  .sheet > section + section { margin-top: 40px; }
+  .sheet > section + section:not(.suchband):not(.beispiele) { padding-top: 34px; border-top: 1px solid var(--rule); }
+  .sheet > .suchband + section { padding-top: 0; border-top: 0; }
+  .ppl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }   /* seit 28.09.2026 vier Ziele (vorher sechs) */
+  .ppl a { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 14px 10px 16px; }
+  .ppl .bub { position: relative; width: 100%; min-height: 84px; flex: 1 1 auto;   /* füllt die Karte: alle Blasen einer Reihe gleich hoch, Fotos und Namen auf einer Linie */
+    display: grid; place-items: center; padding: 8px 10px; border-radius: 14px; background: #DFFFD9; color: var(--ink); font-family: var(--sans); font-weight: 600; font-size: 15px; line-height: 1.3; letter-spacing: -0.01em; }
+  .ppl .bub::after { content: ""; position: absolute; left: 50%; bottom: -7px; width: 14px; height: 14px; border-radius: 2px; background: inherit; transform: translateX(-50%) rotate(45deg); }
+  .ppl a:nth-child(2n) .bub { background: #EDFFE9; }   /* seit 26.09.2026 nur Grüntöne (vorher grün · orange · mint wie die Stufenfarben) */
+  .ppl img { width: 92px; height: 92px; border-radius: 50%; object-fit: cover; margin: 18px 0 10px; box-shadow: 0 0 0 4px #fff, 0 0 0 6px var(--green-line); }
+  .ppl b { font-size: 15.5px; font-weight: 600; }
+  /* seit 29.09.2026 (UX-Review Nr. 7): unter dem Namen, was man bekommt, und ein sichtbarer Knopf */
+  .ppl .res { display: inline-block; margin: 8px 0 12px; font-size: 12.5px; font-weight: 600; line-height: 1.3; color: var(--text); background: #F3F2EE; border-radius: 6px; padding: 4px 8px; }
+  .ppl .cta { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; margin-top: auto; padding: 9px 8px; border-radius: 9px; background: var(--green); color: var(--ink); font-size: 14px; font-weight: 600; line-height: 1.2; transition: background-color .15s ease; }
+  .ppl .cta svg { width: 15px; height: 15px; flex: none; }
+  .ppl a:hover .cta { background: var(--green-hover); }
+  .beispiele .alle { margin: 14px 0 0; font-size: 14px; color: var(--ink); }
+  .beispiele .alle a { color: var(--green-text); font-weight: 600; text-decoration: none; } .beispiele .alle a:hover { text-decoration: underline; }
+  @media (max-width: 940px) { .ppl { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) {
+    .suchband { padding: 16px 16px 14px; border-radius: 14px; }
+    .ppl { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; margin: 0 -16px; padding: 4px 16px 10px; scrollbar-width: none; }   /* Wisch-Reihe, die dritte Karte schaut an */
+    .ppl::-webkit-scrollbar { display: none; }
+    .ppl a { flex: 0 0 150px; scroll-snap-align: start; }
+    .ppl .bub { font-size: 14px; min-height: 64px; }
+    .ppl img { width: 76px; height: 76px; }
+    .ppl .res { display: flex; align-items: center; justify-content: center; min-height: 40px; font-size: 12px; margin: 6px 0 10px; }   /* zwei Zeilen Platz: Namen und Knöpfe bleiben auf einer Linie */
+    .ppl .cta { font-size: 13px; padding: 8px 6px; }
+    .ppl .cta svg { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { a.box { transition: none; } a.box:hover { transform: none; } }
+  @media (max-width: 940px) {
+    .hero { min-height: 360px; }
+    .hero-t { max-width: 470px; }
+    .hero h1 { font-size: 46px; }
+    .hero-img { width: 470px; }
+  }
+  @media (max-width: 760px) {
+    .hero { --g: 20px; min-height: 0; padding-top: 4px; padding-bottom: 8px; }
+    .hero-t { max-width: none; }
+    .hero-img { display: none; }   /* am Handy wie vor dem Kachel-Entwurf ohne Foto, Text über die volle Breite */
+    .sheet { margin-top: 26px; }
+  }
+  @media (max-width: 600px) {
+    .hero { --g: 16px; }
+    .hero h1 { font-size: 34px; margin-bottom: 14px; }
+    .hero .sub { font-size: 17px; }
+    .suchband { padding-left: 14px; padding-right: 14px; }
+    .bsp-bar { gap: 8px; }
+    .bsp-bar a { font-size: 12.5px; gap: 6px; padding: 6px 10px 6px 8px; }
+    .bsp-bar a svg { width: 16px; height: 16px; }
+    .sheet { background: none; border: 0; box-shadow: none; border-radius: 0; padding: 0; margin-top: 30px; }
+    .suche { padding: 6px 6px 6px 12px; gap: 8px; }
+    .suche input { font-size: 16px; padding: 9px 0; }
+    .suche .go { width: auto; padding: 10px 14px; font-size: 14px; }
+    .bsp-bar .bb-k { flex-basis: 100%; }
+  }
+  @media (max-width: 380px) {
+    .hero h1 { font-size: 30px; }
+  }
+
+  /* Der Weg: „Vier Türen“ (Konzept B, 25.09.2026 spät) – vier Kacheln in den Stufenfarben, Verb groß, Illustration unten rechts,
+     Pfeil unten links; am Handy Wischreihe wie „Wer bist du?“. Ersetzt die vier Balken. */
+  /* .weg-b: seit 28.09.2026 unter „Was willst du erreichen?“ mit Überschrift „Unsere Akademie“; Abstand/Linie kommen aus den .sheet-Abschnittsregeln */
+  /* Vier Türen „Dein Weg“ (26.09.2026, dritte Fassung „komprimieren, Logos und Schrift ausrichten“): flache Zeilen-Karten.
+     Links Titel mit kleinem Pfeil direkt dahinter, darunter die Zeile; rechts das Bild, vertikal mittig. Oben drei Karten,
+     darunter Einordnen über die volle Breite mit breiter Kurve. Unter 880 px eine Spalte (alle vier untereinander). */
+  /* Blockart seit 27.09.2026 (Bildvorlage des Nutzers): vier gleich breite Spalten randlos oben in der weißen Fläche, Haarlinien statt
+     Kacheln, Inhalt unverändert (Verb, Zeile, Illustration rechts; Pfeilkreise am 27.09.2026 entfernt). Beim Überfahren wird die Spalte grün und bekommt oben eine Neonkante. */
+  /* Top Picks der Redaktion (28.09.2026, Nutzerwunsch): hell oranges Band oben im weißen Blatt, wo bis dahin die vier Stufen standen. */
+  /* Anleihen-Beispiele der Redaktion (seit 29.09.2026 nach Entwurf des Nutzers): hell oranger Kasten unter den Vorteilen,
+     Titel mit Pfeil führt zu den Anleitungen, darin die vier Personen (vorher eigener Abschnitt „Was willst du erreichen?“) */
+  .beispiele { margin-top: 32px; padding: 22px 22px 18px; border-radius: 18px; background: #FFF1E0; border: 1px solid #F5D5B0; overflow: hidden; }
+  .bsp-kopf { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px; margin: 0 0 16px; }
+  .bsp-kopf h2 { font-size: 26px; line-height: 1.2; letter-spacing: -0.02em; margin: 0; }
+  .bsp-kopf h2 a { display: inline-flex; align-items: center; gap: 6px; color: var(--ink); text-decoration: none; }
+  .bsp-kopf h2 a:hover { color: #A2561C; }
+  .bsp-kopf h2 a:focus-visible { outline: 2px solid #D9740A; outline-offset: 3px; border-radius: 4px; }
+  .bsp-kopf .chev { width: 24px; height: 24px; color: #1A1A19; flex: none; }
+  .bsp-kopf p { margin: 0; font-size: 15px; color: #6B4A22; }
+  .bsp-kopf p b { color: var(--ink); font-weight: 600; }   /* 29.09.2026: die Frage aus dem früheren Abschnittstitel leitet die Personen ein */
+  @media (max-width: 600px) {
+    .beispiele { margin-top: 30px; padding: 18px 16px 14px; border-radius: 16px; }
+    .bsp-kopf { margin-bottom: 12px; }
+    .bsp-kopf h2 { font-size: 18.5px; letter-spacing: -0.03em; }
+    .bsp-kopf .chev { width: 22px; height: 22px; }
+    .bsp-kopf h2 a { display: flex; justify-content: space-between; width: 100%; }
+    .bsp-kopf p { flex-basis: 100%; font-size: 15px; }
+    .bsp-kopf .bsp-lang { display: none; }   /* am Handy nur die Frage unter dem Titel */
+  }
+  /* Kacheln der Stufen (.tueren, seit 29.09.2026 drei): Regeln in base.css – sie stehen auch oben auf den drei Übersichten */
+  /* Lernpfad (29.09.2026, UX-Review Nr. 10): nur hier auf der Startseite (.pfad) – Schrittnummer vor dem Verb, eine Zeile Inhalt,
+     Pfeil-Kreis auf der Trennlinie zwischen den Schritten. Die Übersichten behalten die schlichten Kacheln aus base.css. */
+  .tueren.pfad { overflow: visible; }
+  .tueren.pfad a { align-items: flex-start; }
+  @media (min-width: 601px) { .tueren.pfad a { padding-top: 20px; padding-bottom: 20px; } }
+  .tueren.pfad a:first-child { border-radius: 15px 0 0 15px; }
+  .tueren.pfad a:last-child { border-radius: 0 15px 15px 0; }
+  .tueren.pfad .nr { display: inline-grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--green); color: var(--ink); font-size: 15px; font-weight: 700; line-height: 1; }
+  .tueren.pfad .mehr { font-size: 13px; line-height: 1.4; color: var(--text); margin-top: 4px; }
+  .tueren.pfad a + a::after { content: ""; position: absolute; z-index: 2; left: -13px; top: 50%; width: 26px; height: 26px; margin-top: -13px; border-radius: 50%; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23157C00' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h13M13 6.5l5.5 5.5-5.5 5.5'/%3E%3C/svg%3E") center / 14px no-repeat; box-shadow: 0 0 0 1px var(--rule); }
+  @media (max-width: 600px) {
+    .tueren.pfad a:first-child, .tueren.pfad a:last-child { border-radius: 0; }
+    .tueren.pfad a + a::after { display: none; }   /* untereinander zeigen die Nummern die Reihenfolge */
+  }
+  /* "Und jetzt konkret": zwei Regale (Finden / Beobachten) mit echten Zahlen; JS unten überschreibt Werte und Kurven aus den JSON-Dateien */
+  .konkret { margin-top: 30px; }
+  /* seit 29.09.2026 (UX-Review Nr. 12): eine Überschrift, darunter schlichte Zwischentitel statt Pille + Spaltentitel;
+     die fünf Top-10-Listen als eine Reihe gleich großer Kacheln (Dachzeile, Titel, Zahl unten links, Bild unten rechts) */
+  .k-lab { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; font-size: 17px; font-weight: 600; color: var(--ink); letter-spacing: -0.005em; margin: 0 0 10px; }
+  .k-lab small { font-size: 14px; font-weight: 500; color: var(--text); letter-spacing: 0; }
+  .kgrid { display: grid; gap: 12px; }
+  .k5 { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 0 0 28px; }
+  .k2 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .kc { position: relative; display: flex; flex-direction: column; min-height: 132px; padding: 14px 12px 14px 14px; min-width: 0; }
+  .kc .kicker { font-size: 10.5px; letter-spacing: 0.07em; }
+  .kw .kicker { font-size: 12px; letter-spacing: 0.08em; }
+  .kc b { display: block; font-size: 16px; font-weight: 600; line-height: 1.25; margin-top: 4px; letter-spacing: -0.01em; }
+  .kw b { display: block; font-size: 18px; font-weight: 600; line-height: 1.25; margin-top: 4px; letter-spacing: -0.01em; }
+  .kz { display: flex; flex-direction: column; gap: 3px; margin-top: auto; padding-top: 12px; font-size: 24px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .kz small { font-size: 12.5px; font-weight: 500; color: var(--text); letter-spacing: 0; }
+  .kc .kimg { position: absolute; right: 10px; bottom: 12px; width: 52px; height: 44px; }
+  .kc:hover b, .kw:hover b { color: var(--green-text); }
+  .kw { display: flex; flex-direction: column; padding: 16px 16px 14px 18px; min-width: 0; }
+  .kwz { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 4px; }
+  /* seit 29.09.2026 ohne Zahl: die Mini-Kurve füllt die Kachelbreite (Seitenverhältnis bleibt) */
+  .kw .kwz { display: block; margin-top: 12px; }
+  .spk { display: block; width: 100%; height: 48px; }
+  @media (max-width: 1000px) { .k2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .k5 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 760px) { .k5 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .k5, .k2 { grid-template-columns: minmax(0, 1fr); gap: 8px; } .kc { min-height: 0; } .kc .kicker { font-size: 11.5px; } }
+
+  /* Fußzeile der Startseite (29.09.2026, UX-Review Nr. 14): vier Spalten mit den wichtigsten Zielen, darunter der Hinweis.
+     Nur auf der Startseite; die übrigen Seiten behalten die einzeilige Fußzeile aus base.css. */
+  footer.fuss { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px 24px; padding-top: 26px; font-size: 14px; }
+  .fuss nav { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .fuss .fuss-k { font-size: 14px; font-weight: 700; letter-spacing: 0; line-height: 1.3; color: var(--ink); margin: 0 0 4px; }
+  .fuss nav a { color: var(--text); text-decoration: none; }
+  .fuss nav a:hover { color: var(--green-text); text-decoration: underline; text-underline-offset: 3px; }
+  .fuss .fuss-hw { grid-column: 1 / -1; margin: 0; padding-top: 14px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--text); }
+  .fuss .fuss-hw a { color: var(--blue); }
+  @media (max-width: 760px) { footer.fuss { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Anleihen verstehen und finden", "headline": "Anleihen verstehen und finden", "description": "Anleihen verstehen und finden: Wissen in kurzen Schritten, Renditen seit 1970, die meistgehandelten Anleihen und eine Suche über rund 33.000 Anleihen.", "inLanguage": "de", "isAccessibleForFree": true, "dateModified": "2026-09-29", "publisher": {"@type": "Organization", "name": "METALCONCRETE", "url": "https://www.metalconcrete.de/"}, "mainEntityOfPage": "https://www.metalconcrete.de/"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"METALCONCRETE","alternateName":"metalconcrete.de","url":"https://www.metalconcrete.de/","description":"Anleihen in Perspektive: Staats- und Unternehmensanleihen weltweit, Langläufer, die meistgehandelten Anleihen je Land und Restlaufzeit und eine Suche über alle Anleihen an deutschen Börsen.","inLanguage":"de"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"METALCONCRETE","alternateName":"metalconcrete.de","url":"https://www.metalconcrete.de/","logo":"https://www.metalconcrete.de/apple-touch-icon.png"}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="start">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+
+    <section class="hero" aria-labelledby="h-hero">
+      <div class="hero-t">
+        <h1 id="h-hero">Finde Anleihen,<br> die zu deinem<br> <em>Leben</em> passen</h1>
+        <p class="sub">Hier hast du alles dafür: Wissen in kurzen Schritten, Beispiele zum Nachmachen, Renditen seit 1970 und eine Suche über rund 33.000 Anleihen.</p>
+      </div>
+      <img class="hero-img" src="startseite-hero.webp" width="1004" height="684" alt="" fetchpriority="high" decoding="async">   <!-- 29.09.2026: Foto wieder statt der Kacheln (Nutzerwunsch) -->
+    </section>
+
+    <div class="sheet">
+      <section class="suchband" aria-label="Anleihe finden">
+      <form class="suche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen suchen">
+        <label for="hs-q" class="sr-only">Anleihe suchen</label>
+        <span class="hs-ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></span>
+        <input id="hs-q" name="q" type="search" placeholder="Anleihe suchen – Name, ISIN, WKN, Kupon oder Jahr, z. B. „Bund 2033“" data-ph-kurz="Name, ISIN oder WKN" autocomplete="off" spellcheck="false">
+        <button type="submit" class="go">Suchen</button>
+      </form>
+      <p class="bsp-bar"><span class="bb-k">Beliebte Suchen:</span> <a href="anleihen-suche.html?rest=a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>Kurzläufer</a><a href="anleihen-suche.html?zins=0&amp;kupon=g,d,e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6L6 18"/><circle cx="7.5" cy="7.5" r="2.2"/><circle cx="16.5" cy="16.5" r="2.2"/></svg>&gt;&nbsp;4&nbsp;% Kupon</a><a href="anleihen-suche.html?art=2&amp;w=EUR"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 9.5L12 4.5l8.5 5"/><path d="M5 20h14M4 17.5h16"/><path d="M6.5 10.5v6M10 10.5v6M14 10.5v6M17.5 10.5v6"/></svg>EUR-Unternehmensanleihen</a><a href="anleihen-suche.html?rest=e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 19v-5M12 19V9M18 19V5"/></svg>Langläufer</a></p>
+      </section>
+
+      <section class="beispiele" aria-labelledby="h-bsp">   <!-- seit 29.09.2026 (Entwurf des Nutzers): oranger Kasten mit den vier Personen; ersetzt Band oben + „Was willst du erreichen?“ -->
+        <div class="bsp-kopf"><h2 id="h-bsp"><a href="guide.html">Anleihen-Beispiele der Redaktion<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg></a></h2><p><b>Was willst du erreichen?</b> <span class="bsp-lang">Vier Ziele, je drei konkrete Anleihen – Schritt für Schritt erklärt.</span></p></div>
+        <div class="ppl">   <!-- seit 28.09.2026 (Nutzerwunsch) nur noch vier Ziele (Renate und Aylin sind auch auf guide.html entfallen) -->
+          <a class="box" href="guide.html#nadine"><span class="bub">„18.000&nbsp;€ parken – für zwölf Monate.“</span><img src="guide-nadine.webp" width="248" height="248" alt="" loading="lazy" decoding="async"><b>Nadine, 41</b><span class="res">Laufzeit bis 1&nbsp;Jahr</span><span class="cta">Beispiele ansehen<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
+          <a class="box" href="guide.html#tobias"><span class="bub">„30.000&nbsp;€ anlegen – für zehn Jahre.“</span><img src="guide-tobias.webp" width="248" height="248" alt="" loading="lazy" decoding="async"><b>Tobias, 39</b><span class="res">Laufzeit rund 10&nbsp;Jahre</span><span class="cta">Beispiele ansehen<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
+          <a class="box" href="guide.html#michael"><span class="bub">„100.000&nbsp;€ anlegen – für Zinsen über Jahrzehnte.“</span><img src="guide-michael.webp" width="248" height="248" alt="" loading="lazy" decoding="async"><b>Michael, 55</b><span class="res">Laufzeit 14 bis 19&nbsp;Jahre</span><span class="cta">Beispiele ansehen<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
+          <a class="box" href="guide.html#jonas"><span class="bub">„300&nbsp;€ im Monat – ruhig angelegt.“</span><img src="guide-jonas.webp" width="248" height="248" alt="" loading="lazy" decoding="async"><b>Jonas, 29</b><span class="res">Anleihen-ETF-Sparplan</span><span class="cta">Beispiele ansehen<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
+        </div>
+        <p class="alle">Niemand dabei? <a href="anlageziele.html">Alle Ziele →</a></p>
+      </section>
+
+      <section class="weg-b" id="akademie" aria-labelledby="h-akademie">   <!-- seit 28.09.2026 (Nutzerwunsch) unter „Was willst du erreichen?“ mit Überschrift „Unsere Akademie“; vorher direkt unter dem Hero -->
+        <div class="bt"><h2 id="h-akademie">Akademie: in drei Schritten zur ersten Anleihe</h2><p class="bsub">Verstehen, entscheiden, kaufen – ein Weg statt vieler Einzelseiten.</p></div>   <!-- seit 29.09.2026 (UX-Review Nr. 10) als Lernpfad; darunter „Vertiefen“ (vorher eigener Abschnitt „Lerne alles über Anleihen“, Nr. 11) -->
+        <div class="tueren pfad">
+          <a href="wissen.html" style="--c:#39FF14;--ci:#1A1A19;--ct:#157C00;--tint:#DFFFD9"><span class="txt"><span class="kopf"><span class="nr" aria-hidden="true">1</span><span class="verb">Verstehen</span></span><span class="sub"><b>Vom Einstieg bis zum&nbsp;Profi.</b></span><span class="mehr">Was ist eine Anleihe, was Rendite, was Risiko?</span></span><svg class="ill" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+  <ellipse cx="60" cy="92" rx="44" ry="4" fill="#1DA300" fill-opacity="0.10"/>
+  <path d="M60 24 C50 16 34 14 16 16 V80 C34 78 50 80 60 88 Z" fill="#fff" stroke="#1DA300" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M60 24 C70 16 86 14 104 16 V80 C86 78 70 80 60 88 Z" fill="#fff" stroke="#1DA300" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M60 24 V88" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round"/>
+  <rect x="24" y="27" width="28" height="19" rx="5" fill="#DFFFD9"/>
+  <text x="38" y="41" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="800" fill="#157C00">5&#160;%</text>
+  <path d="M24 56 H52 M24 63 H44 M24 70 H50" stroke="#B0FFA1" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M68 30 H96 M68 37 H86" stroke="#1DA300" stroke-width="2.4" stroke-linecap="round"/>
+  <rect x="69" y="56" width="7" height="16" rx="2" fill="#B0FFA1"/>
+  <rect x="80" y="46" width="7" height="26" rx="2" fill="#1DA300"/>
+  <rect x="91" y="51" width="7" height="21" rx="2" fill="#74FF5B"/>
+  <path d="M67 75 H100" stroke="#1DA300" stroke-width="1.6" stroke-linecap="round" stroke-opacity="0.45"/>
+</svg></a>
+          <a href="entscheiden.html" style="--c:#39FF14;--ci:#1A1A19;--ct:#157C00;--tint:#DFFFD9"><span class="txt"><span class="kopf"><span class="nr" aria-hidden="true">2</span><span class="verb">Entscheiden</span></span><span class="sub"><b>Welche Anleihe passt zu&nbsp;dir?</b></span><span class="mehr">Ziel, Laufzeit, Staat oder Unternehmen.</span></span><svg class="ill" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+  <ellipse cx="60" cy="92" rx="44" ry="4" fill="#1DA300" fill-opacity="0.10"/>
+  <path d="M44 6 h32 a8 8 0 0 1 8 8 v12 a8 8 0 0 1 -8 8 h-11 l-5 6 l-5 -6 h-11 a8 8 0 0 1 -8 -8 v-12 a8 8 0 0 1 8 -8 z" fill="#fff" stroke="#1DA300" stroke-width="2.2" stroke-linejoin="round"/>
+  <text x="60" y="27" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="17" font-weight="800" fill="#157C00">?</text>
+  <circle cx="36" cy="50" r="12" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2"/>
+  <path d="M14 88 C14 72 24 66 36 66 C48 66 58 72 58 88 Z" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2" stroke-linejoin="round"/>
+  <circle cx="84" cy="50" r="12" fill="#1DA300"/>
+  <path d="M62 88 C62 72 72 66 84 66 C96 66 106 72 106 88 Z" fill="#1DA300"/>
+</svg></a>
+          <a href="kaufen.html" style="--c:#39FF14;--ci:#1A1A19;--ct:#157C00;--tint:#DFFFD9"><span class="txt"><span class="kopf"><span class="nr" aria-hidden="true">3</span><span class="verb">Kaufen</span></span><span class="sub"><b>Broker wählen, Order&nbsp;aufgeben.</b></span><span class="mehr">Handelsplatz, Limit, Kosten – Schritt für Schritt.</span></span><svg class="ill" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+  <ellipse cx="58" cy="92" rx="44" ry="4" fill="#1DA300" fill-opacity="0.10"/>
+  <rect x="12" y="8" width="88" height="76" rx="10" fill="#fff" stroke="#1DA300" stroke-width="2.2"/>
+  <circle cx="26" cy="23" r="4.5" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2"/>
+  <path d="M36 23 H74" stroke="#1DA300" stroke-width="2.8" stroke-linecap="round"/>
+  <rect x="22" y="38" width="68" height="14" rx="4" fill="#DFFFD9"/>
+  <path d="M29 45 H50" stroke="#1DA300" stroke-width="2.4" stroke-linecap="round"/>
+  <text x="84" y="49" text-anchor="end" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="800" fill="#157C00">€</text>
+  <rect x="22" y="58" width="68" height="14" rx="4" fill="#DFFFD9"/>
+  <path d="M29 65 H42" stroke="#1DA300" stroke-width="2.4" stroke-linecap="round"/>
+  <text x="84" y="69" text-anchor="end" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="800" fill="#157C00">%</text>
+  <circle cx="96" cy="76" r="15" fill="#1DA300" stroke="#fff" stroke-width="3"/>
+  <path d="M89 76.5 l5 5 9-10" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg></a>
+        </div>
+        <div class="vertiefen">
+          <a class="vk box" href="anlageziele.html"><img src="lernen-anlageziele.webp" width="1372" height="706" alt="" loading="lazy" decoding="async"><span class="vk-t"><span class="kicker">Anlageziele</span><b>Welche Anleihe passt zu welchem Ziel?</b><span class="desc">Sechs Ziele – vom Parken bis zum Depot.</span></span></a>
+          <a class="vk box" href="anleihen-etf-erklaert.html"><img src="lernen-anleihen-etf.webp" width="1374" height="714" alt="" loading="lazy" decoding="async"><span class="vk-t"><span class="kicker">Anleihen-ETF</span><b>ETF oder Einzelanleihe?</b><span class="desc">Vor- und Nachteile im Vergleich.</span></span></a>
+          <div class="vt"><p class="vt-k">Vertiefen</p><a href="fortgeschrittene.html">Für Fortgeschrittene<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="risiko.html">Risiko kennen<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="langlaeufer.html">Langläufer<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="anlegerprofile.html">Anlegerprofile<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="begriffe.html">Glossar · 67 Begriffe<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></div>
+        </div>
+      </section>
+
+      <section class="interessant" aria-labelledby="h-int">
+        <div class="bt mit-link"><div><h2 id="h-int">Beliebte Anleihen</h2><p class="bsub">Sechs Beispiele aus Staats- und Unternehmensanleihen · Kurse und Renditen vom <span id="itab-stand">25.09.2026</span></p></div><a class="more" href="anleihen-suche.html">Zur Anleihen-Suche<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></div>
+        <div class="table-scroll">
+          <table class="itab">
+          <thead id="itab-head"><tr><th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Anleihe</button></th><th scope="col" class="num" data-col="rend"><button type="button" class="sortbtn" data-col="rend">Rendite p.a.</button></th><th scope="col" class="num" data-col="kupon"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th><th scope="col" class="num" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs">Kurs</button></th><th scope="col" class="num" data-col="faellig"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th><th scope="col" data-col="art"><button type="button" class="sortbtn" data-col="art">Art</button></th><th scope="col" class="c" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th><th scope="col" class="num" data-col="stk"><button type="button" class="sortbtn" data-col="stk">Mindestanlage</button></th><th scope="col" class="go-z"><span class="sr-only">Steckbrief</span></th></tr></thead>
+          <tbody>
+            <tr data-isin="DE000BU2Z015"><td class="nm"><a href="anleihe.html?isin=DE000BU2Z015">Bundesanleihe</a><small>DE000BU2Z015</small></td><td class="num ren rend">3,47&nbsp;%</td><td class="num">2,60&nbsp;%</td><td class="num kurs">94,76</td><td class="num">15.08.2033</td><td><span class="art">Staat</span></td><td class="c">EUR</td><td class="num">0,01&nbsp;€</td><td class="go-z"><a href="anleihe.html?isin=DE000BU2Z015" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></td></tr>
+            <tr data-isin="AT0000A2HLC4"><td class="nm"><a href="anleihe.html?isin=AT0000A2HLC4">Staatsanleihe Österreich</a><small>AT0000A2HLC4</small></td><td class="num ren rend">3,34&nbsp;%</td><td class="num">0,85&nbsp;%</td><td class="num kurs">28,83</td><td class="num">30.06.2120</td><td><span class="art">Staat</span></td><td class="c">EUR</td><td class="num">1.000&nbsp;€</td><td class="go-z"><a href="anleihe.html?isin=AT0000A2HLC4" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></td></tr>
+            <tr data-isin="US912810TV08"><td class="nm"><a href="anleihe.html?isin=US912810TV08">Staatsanleihe USA</a><small>US912810TV08</small></td><td class="num ren rend">5,42&nbsp;%</td><td class="num">4,75&nbsp;%</td><td class="num kurs">91,52</td><td class="num">15.11.2053</td><td><span class="art">Staat</span></td><td class="c">USD</td><td class="num">100 $</td><td class="go-z"><a href="anleihe.html?isin=US912810TV08" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></td></tr>
+            <tr data-isin="IT0005647265"><td class="nm"><a href="anleihe.html?isin=IT0005647265">Staatsanleihe Italien</a><small>IT0005647265</small></td><td class="num ren rend">3,93&nbsp;%</td><td class="num">3,25&nbsp;%</td><td class="num kurs">96,55</td><td class="num">15.07.2032</td><td><span class="art">Staat</span></td><td class="c">EUR</td><td class="num">1.000&nbsp;€</td><td class="go-z"><a href="anleihe.html?isin=IT0005647265" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></td></tr>
+            <tr data-isin="DE000A3LH6U5"><td class="nm"><a href="anleihe.html?isin=DE000A3LH6U5">Mercedes-Benz</a><small>DE000A3LH6U5</small></td><td class="num ren rend">3,97&nbsp;%</td><td class="num">3,70&nbsp;%</td><td class="num kurs">98,86</td><td class="num">30.05.2031</td><td><span class="art u">Unternehmen</span></td><td class="c">EUR</td><td class="num">1.000&nbsp;€</td><td class="go-z"><a href="anleihe.html?isin=DE000A3LH6U5" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></td></tr>
+            <tr data-isin="XS2383886947"><td class="nm"><a href="anleihe.html?isin=XS2383886947">Lanxess</a><small>XS2383886947</small></td><td class="num ren rend">4,34&nbsp;%</td><td class="num">0&nbsp;%</td><td class="num kurs">96,07</td><td class="num">08.09.2027</td><td><span class="art u">Unternehmen</span></td><td class="c">EUR</td><td class="num">1.000&nbsp;€</td><td class="go-z"><a href="anleihe.html?isin=XS2383886947" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></td></tr>
+          </tbody>
+          </table>
+        </div>
+        <p class="itab-note">Rendite p.a. = jährliche Rendite bis zur Fälligkeit beim Kauf zum aktuellen Kurs. Mindestanlage = kleinster handelbarer Betrag. <a href="begriffe.html#rendite">Mehr im Glossar →</a></p>
+      </section>
+
+      <section class="konkret" aria-labelledby="h-konkret">
+        <div class="bt"><h2 id="h-konkret">Märkte und Top-10-Listen</h2></div>
+        <h3 class="k-lab">Top 10 meistgehandelt <small>je Kategorie</small></h3>
+        <div class="kgrid k5">
+          <a class="kc box" href="staatsanleihen-laufzeit.html"><span class="kt"><span class="kicker">Staatsanleihen</span><b>nach Laufzeit</b><span class="kz">50<small>in 5 Laufzeiten</small></span></span><svg class="kimg" viewBox="0 0 120 100" aria-hidden="true" focusable="false"><rect x="14" y="18" width="24" height="10" rx="5" fill="#B0FFA1"/><rect x="14" y="32" width="40" height="10" rx="5" fill="#74FF5B"/><rect x="14" y="46" width="56" height="10" rx="5" fill="#1DA300"/><rect x="14" y="60" width="72" height="10" rx="5" fill="#74FF5B"/><rect x="14" y="74" width="72" height="10" rx="5" fill="#B0FFA1"/><text x="110" y="27" text-anchor="end" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="600" fill="#157C00">1&#160;J.</text><text x="110" y="83" text-anchor="end" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="600" fill="#157C00">30+</text><path d="M96 40 V48 L92 46 L88 48 V40 Z" fill="#DFFFD9" stroke="#1DA300" stroke-width="1.6" stroke-linejoin="round"/><path d="M86 40 H98 M86 36 L92 32 L98 36 M87 40 V49 M97 40 V49 M92 40 V49" fill="none" stroke="#1DA300" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+          <a class="kc box" href="unternehmensanleihen-laufzeit.html"><span class="kt"><span class="kicker">Unternehmensanleihen</span><b>nach Laufzeit</b><span class="kz">50<small>in 5 Laufzeiten</small></span></span><svg class="kimg" viewBox="0 0 120 100" aria-hidden="true" focusable="false"><rect x="12" y="22" width="22" height="62" rx="4" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2" stroke-linejoin="round"/><path d="M18 30 H28 M18 38 H28 M18 46 H28 M18 54 H28 M18 62 H28" stroke="#1DA300" stroke-width="2" stroke-linecap="round"/><path d="M20 84 V74 H26 V84" fill="#fff" stroke="#1DA300" stroke-width="1.8" stroke-linejoin="round"/><rect x="42" y="18" width="20" height="10" rx="5" fill="#B0FFA1"/><rect x="42" y="32" width="32" height="10" rx="5" fill="#74FF5B"/><rect x="42" y="46" width="44" height="10" rx="5" fill="#1DA300"/><rect x="42" y="60" width="50" height="10" rx="5" fill="#74FF5B"/><rect x="42" y="74" width="52" height="10" rx="5" fill="#B0FFA1"/><text x="112" y="27" text-anchor="end" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="600" fill="#157C00">1&#160;J.</text><text x="112" y="83" text-anchor="end" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="600" fill="#157C00">30+</text></svg></a>
+          <a class="kc box" href="anleihen-laender.html"><span class="kt"><span class="kicker">Staatsanleihen</span><b>nach Ländern</b><span class="kz">13<small>Länder · je 10</small></span></span><svg class="kimg" viewBox="0 0 120 100" aria-hidden="true" focusable="false"><circle cx="54" cy="52" r="34" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2"/><path d="M20 52 H88 M54 18 C40 30 40 74 54 86 M54 18 C68 30 68 74 54 86 M27 34 C40 40 68 40 81 34 M27 70 C40 64 68 64 81 70" fill="none" stroke="#1DA300" stroke-width="1.6" stroke-opacity="0.6"/><path d="M92 16 C82 16 75 24 75 33 C75 46 92 62 92 62 S109 46 109 33 C109 24 102 16 92 16 Z" fill="#1DA300" stroke="#fff" stroke-width="2"/><circle cx="92" cy="33" r="6" fill="#fff"/></svg></a>
+          <a class="kc box" href="unternehmensanleihen-laender.html"><span class="kt"><span class="kicker">Unternehmensanleihen</span><b>nach Ländern</b><span class="kz">6<small>Länder · je 10</small></span></span><svg class="kimg" viewBox="0 0 120 100" aria-hidden="true" focusable="false"><circle cx="58" cy="52" r="34" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2"/><path d="M24 52 H92 M58 18 C44 30 44 74 58 86 M58 18 C72 30 72 74 58 86 M31 34 C44 40 72 40 85 34 M31 70 C44 64 72 64 85 70" fill="none" stroke="#1DA300" stroke-width="1.6" stroke-opacity="0.6"/><path d="M94 16 C84 16 77 24 77 33 C77 46 94 62 94 62 S111 46 111 33 C111 24 104 16 94 16 Z" fill="#1DA300" stroke="#fff" stroke-width="2"/><circle cx="94" cy="33" r="6" fill="#fff"/><rect x="8" y="42" width="20" height="44" rx="3" fill="#fff" stroke="#1DA300" stroke-width="2.2" stroke-linejoin="round"/><path d="M13 50 H23 M13 57 H23 M13 64 H23 M13 71 H23" stroke="#1DA300" stroke-width="1.8" stroke-linecap="round"/></svg></a>
+          <a class="kc box" href="anleihen-etf.html"><span class="kt"><span class="kicker">Anleihen-ETFs</span><b>nach Kategorie</b><span class="kz">70<small>in 7 Kategorien</small></span></span><svg class="kimg" viewBox="0 0 120 100" aria-hidden="true" focusable="false"><rect x="18" y="12" width="84" height="76" rx="9" fill="#fff" stroke="#1DA300" stroke-width="2.2" stroke-linejoin="round"/><path d="M18 21 A9 9 0 0 1 27 12 H93 A9 9 0 0 1 102 21 V32 H18 Z" fill="#1DA300"/><text x="60" y="26.5" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="800" fill="#fff">ETF</text><rect x="26" y="40" width="20" height="12" rx="3" fill="#B0FFA1"/><rect x="50" y="40" width="20" height="12" rx="3" fill="#DFFFD9"/><rect x="74" y="40" width="20" height="12" rx="3" fill="#74FF5B"/><rect x="26" y="56" width="20" height="12" rx="3" fill="#DFFFD9"/><rect x="50" y="56" width="20" height="12" rx="3" fill="#1DA300"/><rect x="74" y="56" width="20" height="12" rx="3" fill="#DFFFD9"/><rect x="26" y="72" width="20" height="10" rx="3" fill="#74FF5B"/><rect x="50" y="72" width="20" height="10" rx="3" fill="#DFFFD9"/><rect x="74" y="72" width="20" height="10" rx="3" fill="#B0FFA1"/></svg></a>
+        </div>
+
+        <h3 class="k-lab">Zinsen <small>Wo der Markt heute steht – und wo er herkommt</small></h3>
+        <div class="kgrid k2">
+          <a class="kw box" href="renditen.html"><span class="kicker">Staatsanleihen</span><b>Renditen seit 1970</b><span class="kwz"><svg class="spk" id="spk-rend" viewBox="0 0 110 34" aria-hidden="true"><path class="spk-a" d="M2.0 7.8 L3.9 8.2 L5.8 8.3 L7.7 4.7 L9.6 2.0 L11.5 5.7 L13.4 8.5 L15.2 12.0 L17.1 13.3 L19.0 9.9 L20.9 6.5 L22.8 3.0 L24.7 5.8 L26.6 8.0 L28.5 8.8 L30.4 10.7 L32.3 13.5 L34.2 13.0 L36.1 12.4 L38.0 10.7 L39.9 7.0 L41.8 6.6 L43.6 9.0 L45.5 12.5 L47.4 11.9 L49.3 11.5 L51.2 13.3 L53.1 14.9 L55.0 18.1 L56.9 18.0 L58.8 16.0 L60.7 17.3 L62.6 17.3 L64.5 19.5 L66.4 19.6 L68.2 21.2 L70.1 20.4 L72.0 18.7 L73.9 20.0 L75.8 21.6 L77.7 22.9 L79.6 23.4 L81.5 26.3 L83.4 26.3 L85.3 27.4 L87.2 29.4 L89.1 30.3 L91.0 29.7 L92.9 29.5 L94.8 31.4 L96.6 32.0 L98.5 31.8 L100.4 27.8 L102.3 23.8 L104.2 24.1 L106.1 23.4 L108.0 22.4 L108.0 34 L2.0 34 Z" fill="#1DA300" fill-opacity="0.12"/><path class="spk-l" d="M2.0 7.8 L3.9 8.2 L5.8 8.3 L7.7 4.7 L9.6 2.0 L11.5 5.7 L13.4 8.5 L15.2 12.0 L17.1 13.3 L19.0 9.9 L20.9 6.5 L22.8 3.0 L24.7 5.8 L26.6 8.0 L28.5 8.8 L30.4 10.7 L32.3 13.5 L34.2 13.0 L36.1 12.4 L38.0 10.7 L39.9 7.0 L41.8 6.6 L43.6 9.0 L45.5 12.5 L47.4 11.9 L49.3 11.5 L51.2 13.3 L53.1 14.9 L55.0 18.1 L56.9 18.0 L58.8 16.0 L60.7 17.3 L62.6 17.3 L64.5 19.5 L66.4 19.6 L68.2 21.2 L70.1 20.4 L72.0 18.7 L73.9 20.0 L75.8 21.6 L77.7 22.9 L79.6 23.4 L81.5 26.3 L83.4 26.3 L85.3 27.4 L87.2 29.4 L89.1 30.3 L91.0 29.7 L92.9 29.5 L94.8 31.4 L96.6 32.0 L98.5 31.8 L100.4 27.8 L102.3 23.8 L104.2 24.1 L106.1 23.4 L108.0 22.4" fill="none" stroke="#1DA300" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle class="spk-p" cx="108.0" cy="22.4" r="3" fill="#1DA300" stroke="#fff" stroke-width="1.5"/></svg></span></a>
+          <a class="kw box" href="zinskurve.html"><span class="kicker">Zinskurve</span><b>Zinsabstand seit 1972</b><span class="kwz"><svg class="spk" id="spk-zins" viewBox="0 0 110 34" aria-hidden="true"><path class="spk-a" d="M2.0 15.4 L4.0 19.3 L5.9 14.4 L7.9 4.7 L9.9 5.3 L11.8 9.8 L13.8 10.6 L15.7 19.2 L17.7 24.4 L19.7 32.0 L21.6 22.3 L23.6 14.3 L25.6 13.1 L27.5 13.5 L29.5 12.7 L31.4 7.0 L33.4 8.7 L35.4 23.5 L37.3 22.7 L39.3 27.0 L41.3 28.8 L43.2 18.6 L45.2 12.2 L47.1 6.8 L49.1 2.0 L51.1 7.2 L53.0 15.2 L55.0 12.5 L57.0 18.9 L58.9 15.3 L60.9 13.2 L62.9 9.2 L64.8 9.8 L66.8 15.0 L68.7 19.7 L70.7 21.2 L72.7 17.4 L74.6 5.8 L76.6 6.3 L78.6 9.6 L80.5 10.6 L82.5 10.7 L84.4 13.4 L86.4 16.6 L88.4 17.4 L90.3 14.1 L92.3 14.5 L94.3 19.4 L96.2 21.2 L98.2 19.6 L100.1 19.2 L102.1 25.7 L104.1 23.7 L106.0 17.1 L108.0 18.7 L108.0 34 L2.0 34 Z" fill="#1DA300" fill-opacity="0.12"/><path class="spk-l" d="M2.0 15.4 L4.0 19.3 L5.9 14.4 L7.9 4.7 L9.9 5.3 L11.8 9.8 L13.8 10.6 L15.7 19.2 L17.7 24.4 L19.7 32.0 L21.6 22.3 L23.6 14.3 L25.6 13.1 L27.5 13.5 L29.5 12.7 L31.4 7.0 L33.4 8.7 L35.4 23.5 L37.3 22.7 L39.3 27.0 L41.3 28.8 L43.2 18.6 L45.2 12.2 L47.1 6.8 L49.1 2.0 L51.1 7.2 L53.0 15.2 L55.0 12.5 L57.0 18.9 L58.9 15.3 L60.9 13.2 L62.9 9.2 L64.8 9.8 L66.8 15.0 L68.7 19.7 L70.7 21.2 L72.7 17.4 L74.6 5.8 L76.6 6.3 L78.6 9.6 L80.5 10.6 L82.5 10.7 L84.4 13.4 L86.4 16.6 L88.4 17.4 L90.3 14.1 L92.3 14.5 L94.3 19.4 L96.2 21.2 L98.2 19.6 L100.1 19.2 L102.1 25.7 L104.1 23.7 L106.0 17.1 L108.0 18.7" fill="none" stroke="#1DA300" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle class="spk-p" cx="108.0" cy="18.7" r="3" fill="#1DA300" stroke="#fff" stroke-width="1.5"/></svg></span></a>
+          <a class="kw box" href="unternehmensanleihen.html"><span class="kicker">Unternehmensanleihen</span><b>Renditen seit 1970</b><span class="kwz"><svg class="spk" id="spk-unt" viewBox="0 0 110 34" aria-hidden="true"><path class="spk-a" d="M2.0 18.5 L3.9 19.8 L5.9 20.8 L7.8 20.6 L9.7 17.6 L11.6 15.0 L13.6 17.0 L15.5 18.8 L17.4 17.6 L19.3 14.8 L21.3 7.8 L23.2 2.2 L25.1 2.0 L27.1 8.0 L29.0 6.5 L30.9 10.0 L32.8 15.5 L34.8 15.0 L36.7 14.5 L38.6 16.0 L40.5 15.6 L42.5 16.9 L44.4 18.8 L46.3 21.3 L48.3 19.7 L50.2 20.7 L52.1 21.0 L54.0 21.5 L56.0 23.0 L57.9 21.4 L59.8 20.3 L61.7 21.2 L63.7 21.6 L65.6 24.0 L67.5 24.9 L69.5 25.7 L71.4 24.7 L73.3 24.7 L75.2 22.4 L77.2 22.8 L79.1 25.8 L81.0 26.6 L82.9 28.4 L84.9 28.0 L86.8 28.6 L88.7 28.2 L90.7 28.9 L92.6 29.5 L94.5 28.7 L96.4 29.7 L98.4 31.5 L100.3 32.0 L102.2 28.0 L104.1 26.2 L106.1 26.4 L108.0 25.8 L108.0 34 L2.0 34 Z" fill="#1DA300" fill-opacity="0.12"/><path class="spk-l" d="M2.0 18.5 L3.9 19.8 L5.9 20.8 L7.8 20.6 L9.7 17.6 L11.6 15.0 L13.6 17.0 L15.5 18.8 L17.4 17.6 L19.3 14.8 L21.3 7.8 L23.2 2.2 L25.1 2.0 L27.1 8.0 L29.0 6.5 L30.9 10.0 L32.8 15.5 L34.8 15.0 L36.7 14.5 L38.6 16.0 L40.5 15.6 L42.5 16.9 L44.4 18.8 L46.3 21.3 L48.3 19.7 L50.2 20.7 L52.1 21.0 L54.0 21.5 L56.0 23.0 L57.9 21.4 L59.8 20.3 L61.7 21.2 L63.7 21.6 L65.6 24.0 L67.5 24.9 L69.5 25.7 L71.4 24.7 L73.3 24.7 L75.2 22.4 L77.2 22.8 L79.1 25.8 L81.0 26.6 L82.9 28.4 L84.9 28.0 L86.8 28.6 L88.7 28.2 L90.7 28.9 L92.6 29.5 L94.5 28.7 L96.4 29.7 L98.4 31.5 L100.3 32.0 L102.2 28.0 L104.1 26.2 L106.1 26.4 L108.0 25.8" fill="none" stroke="#1DA300" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle class="spk-p" cx="108.0" cy="25.8" r="3" fill="#1DA300" stroke="#fff" stroke-width="1.5"/></svg></span></a>
+          <a class="kw box" href="langlaeufer.html"><span class="kicker">Langläufer</span><b>Kurse seit 2019</b><span class="kwz"><svg class="spk" id="spk-lang" viewBox="0 0 110 34" aria-hidden="true"><path class="spk-a" d="M2.0 5.0 L3.2 6.0 L4.3 7.7 L5.5 8.2 L6.6 9.5 L7.8 10.0 L8.9 7.7 L10.1 2.0 L11.2 5.0 L12.4 4.6 L13.5 6.2 L14.7 5.4 L15.8 5.2 L17.0 4.8 L18.1 5.3 L19.3 3.1 L20.4 4.4 L21.6 2.9 L22.7 4.1 L23.9 6.0 L25.0 8.7 L26.2 9.0 L27.3 9.5 L28.5 10.7 L29.7 9.7 L30.8 6.8 L32.0 5.3 L33.1 8.4 L34.3 9.0 L35.4 6.4 L36.6 5.2 L37.7 8.7 L38.9 9.4 L40.0 8.6 L41.2 13.6 L42.3 16.7 L43.5 18.7 L44.6 22.2 L45.8 18.9 L46.9 19.6 L48.1 22.4 L49.2 26.0 L50.4 24.5 L51.5 21.4 L52.7 25.4 L53.8 24.9 L55.0 27.7 L56.2 26.1 L57.3 26.4 L58.5 27.8 L59.6 26.1 L60.8 26.7 L61.9 27.9 L63.1 28.3 L64.2 29.1 L65.4 29.2 L66.5 26.3 L67.7 25.9 L68.8 25.9 L70.0 26.8 L71.1 26.3 L72.3 27.9 L73.4 27.7 L74.6 26.8 L75.7 27.1 L76.9 26.1 L78.0 25.9 L79.2 26.7 L80.3 27.0 L81.5 24.9 L82.7 26.7 L83.8 27.3 L85.0 26.9 L86.1 29.0 L87.3 28.0 L88.4 29.1 L89.6 28.3 L90.7 29.4 L91.9 29.9 L93.0 29.7 L94.2 29.7 L95.3 29.7 L96.5 30.4 L97.6 30.8 L98.8 30.8 L99.9 30.1 L101.1 30.7 L102.2 30.8 L103.4 30.8 L104.5 30.5 L105.7 31.1 L106.8 31.1 L108.0 32.0 L108.0 34 L2.0 34 Z" fill="#1DA300" fill-opacity="0.12"/><path class="spk-l" d="M2.0 5.0 L3.2 6.0 L4.3 7.7 L5.5 8.2 L6.6 9.5 L7.8 10.0 L8.9 7.7 L10.1 2.0 L11.2 5.0 L12.4 4.6 L13.5 6.2 L14.7 5.4 L15.8 5.2 L17.0 4.8 L18.1 5.3 L19.3 3.1 L20.4 4.4 L21.6 2.9 L22.7 4.1 L23.9 6.0 L25.0 8.7 L26.2 9.0 L27.3 9.5 L28.5 10.7 L29.7 9.7 L30.8 6.8 L32.0 5.3 L33.1 8.4 L34.3 9.0 L35.4 6.4 L36.6 5.2 L37.7 8.7 L38.9 9.4 L40.0 8.6 L41.2 13.6 L42.3 16.7 L43.5 18.7 L44.6 22.2 L45.8 18.9 L46.9 19.6 L48.1 22.4 L49.2 26.0 L50.4 24.5 L51.5 21.4 L52.7 25.4 L53.8 24.9 L55.0 27.7 L56.2 26.1 L57.3 26.4 L58.5 27.8 L59.6 26.1 L60.8 26.7 L61.9 27.9 L63.1 28.3 L64.2 29.1 L65.4 29.2 L66.5 26.3 L67.7 25.9 L68.8 25.9 L70.0 26.8 L71.1 26.3 L72.3 27.9 L73.4 27.7 L74.6 26.8 L75.7 27.1 L76.9 26.1 L78.0 25.9 L79.2 26.7 L80.3 27.0 L81.5 24.9 L82.7 26.7 L83.8 27.3 L85.0 26.9 L86.1 29.0 L87.3 28.0 L88.4 29.1 L89.6 28.3 L90.7 29.4 L91.9 29.9 L93.0 29.7 L94.2 29.7 L95.3 29.7 L96.5 30.4 L97.6 30.8 L98.8 30.8 L99.9 30.1 L101.1 30.7 L102.2 30.8 L103.4 30.8 L104.5 30.5 L105.7 31.1 L106.8 31.1 L108.0 32.0" fill="none" stroke="#1DA300" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle class="spk-p" cx="108.0" cy="32.0" r="3" fill="#1DA300" stroke="#fff" stroke-width="1.5"/></svg></span></a>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer class="fuss">   <!-- seit 29.09.2026 (UX-Review Nr. 14) vierspaltig, nur auf der Startseite -->
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-mc"><p class="fuss-k" id="f-mc">METALCONCRETE</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
+    <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
+  </footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+
+
+
+// Tageskurse der sechs Beispiele (kurse-auswahl.json, scripts/update_kurse.py – Deutsche Börse / Bundesbank, seit 25.09.2026)
+if (MC.load) MC.load("kurse-auswahl.json").then(function (d) {
+  var st = document.getElementById("itab-stand"), m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d.stand || "");
+  if (st && m) st.textContent = m[3] + "." + m[2] + "." + m[1];   // Datum im Abschnittskopf (29.09.2026)
+  var K = d.kurse || {}, fmt = function (v, dec) { return MC.minus(v.toLocaleString("de-DE", { minimumFractionDigits: dec, maximumFractionDigits: dec })); };
+  document.querySelectorAll(".itab tr[data-isin]").forEach(function (tr) {
+    var k = K[tr.getAttribute("data-isin")]; if (!k) return;
+    tr.querySelector(".kurs").textContent = fmt(k[0], 2);
+    tr.querySelector(".rend").textContent = typeof k[1] === "number" ? fmt(k[1], 2) + "\u00a0%" : "–";
+  });
+}).catch(function (e) { console.warn("Tageskurse nicht geladen:", e); });
+
+// Sortieren per Klick auf den Spaltentitel (wie auf den Datenseiten): liest die Zellen der Zeile, auch die täglich
+// eingetragenen Kurse und Renditen; bei Gleichstand bleibt die Ausgangsreihenfolge (data-rank)
+(function () {
+  var head = document.getElementById("itab-head"), body = document.querySelector(".itab tbody");
+  if (!head || !body) return;
+  var COLS = ["name", "rend", "kupon", "kurs", "faellig", "art", "cur", "stk"], col = null, dir = 1;
+  var rows = Array.prototype.slice.call(body.querySelectorAll("tr"));
+  rows.forEach(function (tr, i) { tr.setAttribute("data-rank", i); });
+  function val(tr, c) {
+    var td = tr.children[COLS.indexOf(c)], t = (c === "name" ? tr.querySelector("td.nm a") : td).textContent.trim();
+    if (c === "name" || c === "art" || c === "cur") return t;
+    if (c === "faellig") { var m = t.match(/(\d{2})\.(\d{2})\.(\d{4})/); return m ? +(m[3] + m[2] + m[1]) : Infinity; }
+    var n = parseFloat(t.replace(/\./g, "").replace(",", ".").replace("−", "-")); return isNaN(n) ? Infinity : n;
+  }
+  function render() {
+    rows.slice().sort(function (a, b) {
+      var x = val(a, col), y = val(b, col);
+      var r = typeof x === "string" ? x.localeCompare(y, "de", { numeric: true }) : x - y;
+      return (r || a.getAttribute("data-rank") - b.getAttribute("data-rank")) * dir;
+    }).forEach(function (tr) { body.appendChild(tr); });
+    head.querySelectorAll("th[data-col]").forEach(function (th) {
+      if (th.getAttribute("data-col") === col) th.setAttribute("aria-sort", dir > 0 ? "ascending" : "descending"); else th.removeAttribute("aria-sort");
+    });
+  }
+  head.addEventListener("click", function (e) {
+    var b = e.target.closest(".sortbtn"); if (!b) return;
+    var c = b.getAttribute("data-col");
+    if (col === c) dir = -dir; else { col = c; dir = 1; }
+    render();
+  });
+})();
+
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+
+// Handy: kürzerer Platzhalter im großen Suchfeld (der lange wäre abgeschnitten)
+(function () {
+  var q = document.getElementById("hs-q"), mq = window.matchMedia && window.matchMedia("(max-width: 600px)");
+  if (!q || !mq) return;
+  var lang = q.getAttribute("placeholder"), kurz = q.getAttribute("data-ph-kurz");
+  var setz = function () { q.setAttribute("placeholder", mq.matches ? kurz : lang); };
+  setz();
+  if (mq.addEventListener) mq.addEventListener("change", setz);
+})();
+
+
+// "Und jetzt konkret": Mini-Kurven aus den JSON-Dateien (statische Kurven im HTML sind der Rückfall; Zahlen seit 29.09.2026 entfernt)
+(function () {
+  if (!MC.load) return;
+  // Kurve in der tatsächlichen Breite zeichnen (viewBox = Pixel), damit Linie und Punkt bei jeder Kachelbreite gleich dick bleiben
+  var KURVEN = {};
+  function kurve(id, vals) {
+    var svg = document.getElementById(id); if (!svg || vals.length < 2) return;
+    KURVEN[id] = vals;
+    var w = Math.round(svg.getBoundingClientRect().width) || 110, h = Math.round(svg.getBoundingClientRect().height) || 34, p = 4;
+    svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+    var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals), r = (hi - lo) || 1, pts = [];
+    for (var i = 0; i < vals.length; i++) pts.push([(p + i * (w - 2 * p) / (vals.length - 1)).toFixed(1), (p + (h - 2 * p) * (1 - (vals[i] - lo) / r)).toFixed(1)]);
+    var d = "M" + pts.map(function (q) { return q[0] + " " + q[1]; }).join(" L"), e = pts[pts.length - 1];
+    svg.querySelector(".spk-l").setAttribute("d", d);
+    svg.querySelector(".spk-a").setAttribute("d", d + " L" + e[0] + " " + h + " L" + pts[0][0] + " " + h + " Z");
+    var c = svg.querySelector(".spk-p"); c.setAttribute("cx", e[0]); c.setAttribute("cy", e[1]);
+  }
+  var zeit = 0;
+  window.addEventListener("resize", function () { clearTimeout(zeit); zeit = setTimeout(function () { Object.keys(KURVEN).forEach(function (id) { kurve(id, KURVEN[id]); }); }, 150); });
+  MC.load("renditen.json").then(function (d) {
+    var c = d.countries && d.countries.de; if (!c) return;
+    kurve("spk-rend", Object.keys(c.range).sort().map(function (y) { return (c.range[y][0] + c.range[y][1]) / 2; }));
+  }).catch(function () {});
+  MC.load("zinskurve.json").then(function (d) {
+    var h = d.heute && d.heute.DE, s = h ? h[2] - h[1] : null; if (s === null) return;
+    var j = {}; (d.monate.DE || []).forEach(function (m) { var y = m[0].slice(0, 4); (j[y] = j[y] || []).push(m[2] - m[1]); });
+    kurve("spk-zins", Object.keys(j).sort().map(function (y) { return j[y].reduce(function (a, b) { return a + b; }, 0) / j[y].length; }));
+  }).catch(function () {});
+  MC.load("unternehmen.json").then(function (d) {
+    var s = d.series && d.series.us_baa; if (!s) return;
+    kurve("spk-unt", Object.keys(s.annual).sort().filter(function (y) { return s.annual[y] !== null; }).map(function (y) { return s.annual[y]; }));
+  }).catch(function () {});
+  MC.load("langlaeufer.json").then(function (d) {
+    var b = d.bonds && d.bonds.bund2050; if (!b) return;
+    kurve("spk-lang", b.weekly.filter(function (_, i) { return i % 4 === 0; }).map(function (x) { return x[1]; }));
+  }).catch(function () {});
+})();
+</script>
+</body>
+</html>

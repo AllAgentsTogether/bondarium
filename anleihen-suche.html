@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anleihen-Suche für alle deutschen Börsen – METALCONCRETE</title>
+<meta name="description" content="Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen: Suche nach Name, ISIN oder WKN, Filter nach Land, Währung, Laufzeit, Rendite.">
+<link rel="canonical" href="https://www.metalconcrete.de/anleihen-suche.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/anleihen-suche.html">
+<meta property="og:title" content="Anleihen-Suche für alle deutschen Börsen – METALCONCRETE">
+<meta property="og:description" content="Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen: Suche nach Name, ISIN oder WKN, Filter nach Land, Währung, Laufzeit, Rendite.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Anleihen-Suche für alle deutschen Börsen – METALCONCRETE">
+<meta name="twitter:description" content="Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen: Suche nach Name, ISIN oder WKN, Filter nach Land, Währung, Laufzeit, Rendite.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  .more .prose { font-size: 15px; margin-top: 16px; }
+
+  /* Tabelle (wie Kennzahlen-Tabelle der Langläufer-Seite) */
+  table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  thead th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .kpis { min-width: 1000px; font-size: 13px; }   /* Ausnahme von der 14-px-Stufe: 11–13 Spalten müssen in 1000 px passen (Typografie-Konzept 26.09.2026; Inter läuft breiter als die Systemschrift) */
+  .kpis thead th:first-child { width: 25%; }   /* Anleihename darf umbrechen, die übrigen Spalten nicht */
+  .kpis td.isin { font-variant-numeric: tabular-nums; white-space: nowrap; letter-spacing: 0.01em; }
+  .kpis td.txt { white-space: nowrap; }
+  .kpis td.art { padding-right: 10px; }   /* Abstand zur ISIN („Unternehmen“ ist die breiteste Angabe) */
+  /* Tabellenkopf: Klick auf den Spaltentitel sortiert (auf-/absteigend) */
+  /* UX 29.09.2026: Spaltentitel in normaler Schreibung (Versalien liefen ~15 % breiter) und Sortierpfeil nur an der sortierten Spalte
+     bzw. beim Überfahren – so passt die Tabelle ab 1048 px ohne Querwischen in 1000 px, und der Kopf kann beim Scrollen stehen bleiben */
+  .kpis thead th { vertical-align: bottom; font-size: 12.5px; letter-spacing: 0; text-transform: none; font-weight: 600; color: var(--text); }
+  .kpis thead th .sortbtn { position: relative; font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+  .kpis thead th .sortbtn::after { content: "↕"; font-size: 12px; opacity: 0; position: absolute; left: 100%; margin-left: 2px; transition: opacity .12s; }
+  .kpis thead th .sortbtn:hover::after, .kpis thead th .sortbtn:focus-visible::after { opacity: 0.5; }
+  .kpis thead th[aria-sort] .sortbtn::after { position: static; margin-left: 0; }
+  .kpis thead th .sortbtn:hover, .kpis thead th[aria-sort] .sortbtn { color: var(--ink); }
+  .kpis thead th[aria-sort="ascending"] .sortbtn::after { content: "↑"; opacity: 1; }
+  .kpis thead th[aria-sort="descending"] .sortbtn::after { content: "↓"; opacity: 1; }
+  .kpis thead th .sortbtn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .kpis th, .kpis td { padding: 9px 7px 9px 0; }
+  .kpis th[scope=row] { font-weight: 400; line-height: 1.4; }
+  .kpis td.num { font-size: 14px; }
+  /* Suchfeld und Status */
+  /* Suchfeld mit Lupe (UX 29.09.2026) */
+  .suche { position: relative; max-width: 760px; margin: 4px 0 0; scroll-margin-top: calc(var(--kopf, 90px) + 16px); }
+  .suche svg { position: absolute; left: 18px; top: 50%; width: 19px; height: 19px; transform: translateY(-50%); color: var(--green-text); pointer-events: none; }
+  .suche input[type=search] { width: 100%; font-family: var(--sans); font-size: 17px; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.25); border-radius: 999px; padding: 14px 20px 14px 48px; box-shadow: 0 1px 2px rgba(26,26,25,0.04); transition: border-color .15s, box-shadow .15s; }
+  .suche input[type=search]::placeholder { color: #8E8D86; opacity: 1; }
+  .suche input[type=search]:hover { border-color: rgba(44,44,42,0.4); }
+  .suche input[type=search]:focus-visible { outline: 0; border-color: var(--green-text); box-shadow: 0 0 0 3px var(--green-tint-2); }
+  /* Statuszeile: Trefferzahl fett, beim Laden ein ruhiger Kreis */
+  .status { margin-top: 16px; font-size: 14px; color: var(--text); }
+  .status strong { color: var(--ink); font-weight: 600; }
+  .status.laedt::before { content: ""; display: inline-block; width: 12px; height: 12px; margin: 0 8px -1px 0; border: 2px solid var(--green-tint-2); border-top-color: var(--green-text); border-radius: 50%; animation: dreh .8s linear infinite; }
+  @keyframes dreh { to { transform: rotate(360deg); } }
+  /* Beispiele als Schnellstart-Chips (vorher Fließtext im Hinweiskasten) */
+  .bsp { margin-top: 20px; background: none; border: 0; border-radius: 0; padding: 0; }   /* ohne den orangen Hinweiskasten aus base.css – es ist kein Warnhinweis */
+  .bsp-t { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-bottom: 8px; }
+  .bsp-l { display: flex; flex-wrap: wrap; gap: 8px; }
+  .bsp-l a { font-size: 13.5px; line-height: 1.2; color: var(--green-text); background: var(--green-tint); border: 1px solid transparent; border-radius: 999px; padding: 8px 13px; text-decoration: none; }
+  .bsp-l a:hover { border-color: var(--green-text); color: var(--ink); }
+  .bsp-l a:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  #treffer { margin-top: 6px; }
+  /* Unter der Liste: Trefferhinweis wiederholen, Rückweg zu Suche und Filtern */
+  .status-unten { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin-top: 14px; font-size: 14px; color: var(--text); }
+  .status-unten a { font-weight: 600; color: var(--green-text); text-decoration: none; white-space: nowrap; }
+  .status-unten a:hover { text-decoration: underline; }
+  /* Name öffnet die Kurzansicht (vier Kennzahlen, seit 25.09.2026 statt Link zur Börse); „Alle Details“ führt zum Steckbrief anleihe.html */
+  .kpis .zbtn { font: inherit; font-weight: 400; color: var(--ink); background: none; border: 0; padding: 0; text-align: left; cursor: pointer; line-height: 1.4; }
+  .kpis .zbtn::after { content: ""; display: inline-block; width: 6px; height: 6px; margin: 0 0 2px 7px; border-right: 1.5px solid var(--green-text); border-bottom: 1.5px solid var(--green-text); transform: rotate(45deg); transition: transform .15s; }
+  .kpis .zbtn[aria-expanded="true"]::after { transform: rotate(-135deg); margin-bottom: -1px; }
+  .kpis .zbtn:hover { color: var(--green-text); }
+  .kpis .zbtn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 2px; }
+  .kpis tbody tr.zeile { cursor: pointer; }
+  .kpis tbody tr.offen > * { background: rgba(57,255,20,0.10); border-bottom-color: transparent; }
+  .kpis tr.zdet > td { padding: 0 0 10px; }
+  .kpis td small.alt { display: block; font-size: 12px; color: var(--text); }
+  .kpis td .fraglich { color: var(--muted); border-bottom: 1px dotted currentColor; cursor: help; }   /* Rendite aus Taxe ohne Umsatz, wahrscheinlich zu hoch (seit 27.09.2026) */
+  .kpis td .fraglich sup { font-size: 10px; line-height: 0; margin-left: 1px; }
+  .kpis th .pruef { display: inline-block; font-size: 11px; line-height: 1.2; color: var(--orange-text); border: 1px solid var(--orange); border-radius: 3px; padding: 0 4px; margin-left: 6px; vertical-align: 1px; white-space: nowrap; cursor: help; }   /* Datenprüfung: Widerspruch im Register (seit 27.09.2026) */
+  /* Filterleiste: Pillen wie die Knöpfe der Länder-/Laufzeit-Seiten, darunter je ein Auswahlfeld */
+  .filter { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; max-width: 1000px; position: relative; }
+  .fgrp { position: relative; }
+  .fbtn { font: inherit; font-size: 13px; line-height: 1; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.18); border-radius: 999px; padding: 8px 12px 8px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .fbtn::after { content: ""; width: 7px; height: 4px; background: currentColor; clip-path: polygon(0 0, 100% 0, 50% 100%); opacity: 0.55; transition: transform .15s; }
+  .fbtn:hover:not(:disabled), .fgrp.offen .fbtn { border-color: var(--green-text); color: var(--green-text); }
+  .fgrp.offen .fbtn::after { transform: rotate(180deg); }
+  .fbtn:disabled { opacity: 0.5; cursor: default; }
+  .fbtn:focus-visible, .fclear:focus-visible, .freset:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .fbtn.on { background: var(--green); border-color: var(--green); color: var(--ink); }
+  .fgrp.offen .fbtn.on, .fbtn.on:hover:not(:disabled) { color: #fff; box-shadow: 0 0 0 3px rgba(29,95,160,0.18); }
+  .fbtn.on::after { opacity: 0.85; }
+  .fval:empty { display: none; }
+  .fval { font-weight: 600; max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
+  .fval::before { content: "· "; font-weight: 400; opacity: 0.75; }
+  .fclear { font: inherit; font-size: 13px; color: var(--line); background: none; border: 0; padding: 8px 4px; cursor: pointer; }
+  .fclear:hover { text-decoration: underline; }
+  /* Weitere Filter (UX 29.09.2026): die sechs wichtigsten Filter immer sichtbar, fünf seltener gebrauchte hinter einem Schalter –
+     gleiche Filter, gleiche Wirkung; aktive Filter aus der Adresse öffnen den Bereich von selbst */
+  .filter:not(.alle) .fgrp.neben { display: none; }
+  .fmehr { font: inherit; font-size: 13px; line-height: 1; color: var(--text); background: none; border: 1px dashed rgba(44,44,42,0.32); border-radius: 999px; padding: 8px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .fmehr::before { content: "+"; font-size: 15px; line-height: 0; font-weight: 600; }
+  .filter.alle .fmehr::before { content: "−"; }
+  .fmehr:hover:not(:disabled) { border-color: var(--green-text); color: var(--green-text); }
+  .fmehr:disabled { opacity: 0.5; cursor: default; }
+  .fmehr:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .fmehr .fanz:empty { display: none; }
+  .fmehr .fanz { min-width: 18px; padding: 2px 5px; border-radius: 999px; background: var(--green); color: var(--ink); font-size: 12px; font-weight: 600; text-align: center; }
+  .fpanel { position: absolute; top: calc(100% + 6px); left: 0; z-index: 40; min-width: 240px; width: max-content; max-width: 330px; background: #fff; border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 6px 24px rgba(44,44,42,0.13); padding: 6px 0 0; font-size: 14px; }
+  .fpanel.rechts { left: auto; right: 0; }
+  .fpanel fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .fopts { max-height: 300px; overflow-y: auto; overscroll-behavior: contain; }
+  .fopt { display: flex; align-items: center; gap: 10px; padding: 7px 14px; cursor: pointer; line-height: 1.35; }
+  .fopt:hover { background: rgba(44,44,42,0.04); }
+  .fopt input { accent-color: var(--line); width: 15px; height: 15px; margin: 0; flex: none; cursor: pointer; }
+  .fopt .ftxt { flex: 1; }
+  .fopt[hidden] { display: none; }
+  .fopt .fnum { color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  .fopt .ftxt small { display: block; font-size: 12px; line-height: 1.35; color: var(--muted); margin-top: 1px; }   /* Erläuterung je Option (Filter Kündigung, seit 27.09.2026) */
+  .fhint a { color: var(--blue); }
+  #fp-kue .fopts { max-height: 460px; }   /* sieben Optionen mit Erläuterung ohne inneres Scrollen */
+  .det-kpi dd.warn { color: var(--orange-text); }   /* Kündigung ab festem Termin oder ewig */
+  .fopt.leer { color: var(--muted); }
+  .fopt.leer .ftxt { opacity: 0.6; }
+  .fsuche { display: block; width: calc(100% - 24px); margin: 4px 12px 6px; font: inherit; font-size: 14px; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 6px; padding: 7px 10px; }
+  .fsuche:focus-visible { outline: 2px solid var(--line); outline-offset: 1px; }
+  .ffoot { border-top: 1px solid var(--rule); margin-top: 6px; padding: 8px 14px 10px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .fhint { font-size: 12px; line-height: 1.5; color: var(--muted); margin: 0; }
+  .freset { font: inherit; font-size: 13px; color: var(--line); background: none; border: 0; padding: 0; cursor: pointer; }
+  .freset:hover { text-decoration: underline; }
+  .kpis td.num[title] { cursor: help; }
+  @media (max-width: 600px) {
+    .fgrp { position: static; }
+    .fpanel, .fpanel.rechts { left: 0; right: 0; max-width: none; width: auto; }
+  }
+  .more summary { cursor: pointer; font-size: 19px; font-weight: 600; color: var(--ink); list-style: none; display: flex; align-items: center; gap: 10px; }
+  .more summary::-webkit-details-marker { display: none; }
+  .more summary::before { content: ''; width: 8px; height: 8px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(-45deg); transition: transform .15s; }
+  .more[open] summary::before { transform: rotate(45deg); }
+  .more summary:hover { color: var(--line); }
+  .more summary:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 3px; }
+  @media (prefers-reduced-motion: no-preference) {  html { scroll-behavior: smooth; } }
+  @media (hover: hover) { .kpis tbody tr.zeile:hover > * { background: rgba(57,255,20,0.07); } }   /* nur mit Maus – am Handy blieb die Zeile nach dem Tipp grün (28.09.2026) */
+  /* Ab 1048 px passt die Tabelle in die Spalte: kein Scroll-Container mehr, der Tabellenkopf bleibt beim Scrollen unter der Kopfzeile stehen */
+  @media (min-width: 1048px) {
+    #treffer.table-scroll { overflow: visible; background: none; }
+    .kpis thead th:first-child { width: auto; }   /* Name nimmt den Rest der Breite (bricht um), die übrigen Spalten ihre Mindestbreite */
+    .kpis tbody th[scope="row"], .kpis .zbtn { overflow-wrap: anywhere; }   /* einzelne Namen ohne Leerzeichen („C.N.d.Reas.Mut.Agrico.Group.SAEO-Notes“) hielten die Spalte sonst 220 px breit */
+    .kpis thead th { position: sticky; top: var(--kopf, 90px); z-index: 3; background: var(--bg); box-shadow: inset 0 -1px 0 rgba(26,26,25,0.18); padding-top: 12px; }
+  }
+  @media (max-width: 900px) {
+    .table-scroll table { min-width: 720px; }
+    .kpis tbody th[scope="row"], .kpis thead th[data-col="name"] { position: sticky; left: 0; z-index: 1; background: var(--bg); box-shadow: 6px 0 8px -8px rgba(26,26,25,0.35); max-width: 180px; white-space: normal; }   /* Name bleibt beim Querwischen stehen */
+  }
+
+  /* Handy (28.09.2026, Nutzerbefund iPhone: Tabelle ließ sich nicht querwischen): bis 600 px werden die Treffer als Karten gezeigt –
+     dieselben Zellen, per CSS umgebrochen (Name oben, darunter drei Spalten mit Beschriftung), Sortierknöpfe als Chips über der Liste,
+     Kurzansicht hängt unter ihrer Karte. Kein Scroll-Container, kein Querwischen. Ab 601 px weiter die Tabelle mit Querwischen. */
+  @media (max-width: 600px) {
+    #treffer.table-scroll { overflow: visible; background: none; }
+    #treffer.table-scroll::before { content: none; }
+    #treffer table.kpis { display: block; min-width: 0; width: 100%; margin-top: 12px; font-size: 14px; }
+    .kpis thead { display: block; margin-bottom: 12px; }
+    .kpis thead::before { content: "Sortieren nach"; display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-bottom: 6px; }
+    .kpis thead tr { display: flex; flex-wrap: wrap; gap: 6px; }
+    .kpis thead th, .kpis thead th[data-col="name"] { display: block; position: static; width: auto; max-width: none; padding: 0; border: 0; background: none; box-shadow: none; }
+    .kpis thead th .sortbtn { padding: 7px 11px; border: 1px solid rgba(26,26,25,0.16); border-radius: 999px; background: #fff; font-size: 13px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--text); }
+    .kpis thead th:not([aria-sort]) .sortbtn::after { display: none; }
+    .kpis thead th[data-col="art"], .kpis thead th[data-col="isin"], .kpis thead th[data-col="cur"], .kpis thead th[data-col="vol"], .kpis thead th[data-col="stk"] { display: none; }   /* am Handy nur die sechs sinnvollen Sortierungen */
+    .kpis thead th[aria-sort] .sortbtn { border-color: var(--green-text); background: var(--green-tint); color: var(--ink); }
+    .kpis tbody { display: grid; gap: 10px; }
+    .kpis tbody tr.zeile { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px 10px; padding: 12px 12px 13px; background: #fff; border: 1px solid rgba(26,26,25,0.10); border-radius: 12px; box-shadow: var(--shadow); }
+    .kpis tbody tr.zeile > th, .kpis tbody tr.zeile > td, .kpis tbody th[scope="row"] { display: block; position: static; padding: 0; border: 0; background: none; box-shadow: none; max-width: none; white-space: normal; text-align: left; min-width: 0; overflow-wrap: anywhere; }
+    .kpis tbody tr.zeile > th { grid-column: 1 / -1; font-size: 15px; font-weight: 600; line-height: 1.35; }
+    .kpis tbody tr.zeile > th .zbtn { font-weight: 600; }
+    .kpis tbody tr.zeile > td::before { display: block; font-size: 12px; font-weight: 500; letter-spacing: 0; color: var(--text); margin-bottom: 1px; }
+    /* Karte (UX 29.09.2026): oben groß Rendite · Kurs · Kupon, darunter kleiner die übrigen Angaben, durch eine Linie getrennt */
+    .kpis tbody tr.zeile > td { font-size: 13.5px; color: var(--ink); }
+    .kpis tbody tr.zeile > td:nth-child(n+5) { font-size: 13.5px !important; }
+    .kpis tbody tr.zeile > td:nth-child(-n+4) { font-size: 17px !important; font-weight: 600; }
+    .kpis tbody tr.zeile { column-gap: 0 !important; }
+    .kpis tbody tr.zeile > td { padding-right: 10px !important; }   /* Abstand in der Zelle statt Spaltenlücke – so läuft die Trennlinie durch */
+    .kpis tbody tr.zeile > td:nth-child(5), .kpis tbody tr.zeile > td:nth-child(6), .kpis tbody tr.zeile > td:nth-child(7) { border-top: 1px solid var(--rule); padding-top: 9px; }
+    .kpis tbody tr.zeile > td:nth-child(2)::before { content: "Rendite"; }
+    .kpis tbody tr.zeile > td:nth-child(3)::before { content: "Kurs"; }
+    .kpis tbody tr.zeile > td:nth-child(4)::before { content: "Kupon"; }
+    .kpis tbody tr.zeile > td:nth-child(5)::before { content: "Fälligkeit"; }
+    .kpis tbody tr.zeile > td:nth-child(6)::before { content: "Restlaufzeit"; }
+    .kpis tbody tr.zeile > td:nth-child(7)::before { content: "Art"; }
+    .kpis tbody tr.zeile > td:nth-child(8)::before { content: "ISIN"; }
+    .kpis tbody tr.zeile > td:nth-child(9)::before { content: "Währung"; }
+    .kpis tbody tr.zeile > td:nth-child(10)::before { content: "Volumen"; }
+    .kpis tbody tr.zeile > td:nth-child(11)::before { content: "Stückelung"; }
+    .kpis tbody tr.zeile > td.isin { grid-column: span 2; }
+    .kpis tbody tr.zeile.offen { border-color: var(--green-line); border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+    .kpis tbody tr.zeile.offen > * { background: none; }
+    .kpis tbody tr.zdet { display: block; margin-top: -10px; }
+    .kpis tr.zdet > td { display: block; padding: 0; }
+    .kpis tr.zdet .det { position: static; width: auto; max-width: none; margin: 0; border-radius: 0 0 12px 12px; border-top: 0; box-shadow: var(--shadow); }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Anleihen-Suche","description":"Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen: Suche nach Name, ISIN oder WKN, Filter nach Land, Währung, Laufzeit, Rendite.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-27","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/anleihen-suche.html","isBasedOn":{"@type":"Dataset","name":"Financial Instruments Reference Data System (FIRDS)","creator":{"@type":"Organization","name":"European Securities and Markets Authority (ESMA)"},"url":"https://registers.esma.europa.eu/publication/searchRegister?core=esma_registers_firds"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.metalconcrete.de/anleihen.html"},{"@type":"ListItem","position":3,"name":"Anleihen-Suche","item":"https://www.metalconcrete.de/anleihen-suche.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="anleihen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn current" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl current">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>Anleihen-Suche</h1>
+    <p class="sub">Alle Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen. Suche nach Name, Emittent, ISIN oder WKN – oder stöbere nur mit den Filtern.</p>
+    <form class="suche" role="search" action="anleihen-suche.html" method="get">
+      <label class="sr-only" for="q">Anleihe suchen</label>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>
+      <input type="search" id="q" name="q" placeholder="Name, Emittent, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search">
+    </form>
+
+    <div class="filter" id="filter" role="group" aria-label="Filter">
+      <div class="fgrp" data-f="art"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-art" disabled><span class="flab">Art</span><span class="fval"></span></button><div class="fpanel" id="fp-art" hidden></div></div>
+      <div class="fgrp" data-f="land"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-land" disabled><span class="flab">Land</span><span class="fval"></span></button><div class="fpanel" id="fp-land" hidden></div></div>
+      <div class="fgrp" data-f="w"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-w" disabled><span class="flab">Währung</span><span class="fval"></span></button><div class="fpanel" id="fp-w" hidden></div></div>
+      <div class="fgrp" data-f="rest"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-rest" disabled><span class="flab">Restlaufzeit</span><span class="fval"></span></button><div class="fpanel" id="fp-rest" hidden></div></div>
+      <div class="fgrp" data-f="rendite"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-rendite" disabled><span class="flab">Rendite</span><span class="fval"></span></button><div class="fpanel" id="fp-rendite" hidden></div></div>
+      <div class="fgrp" data-f="kupon"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-kupon" disabled><span class="flab">Kupon</span><span class="fval"></span></button><div class="fpanel" id="fp-kupon" hidden></div></div>
+      <div class="fgrp neben" data-f="zins"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-zins" disabled><span class="flab">Zinsart</span><span class="fval"></span></button><div class="fpanel" id="fp-zins" hidden></div></div>
+      <div class="fgrp neben" data-f="kue"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-kue" disabled><span class="flab">Kündigung</span><span class="fval"></span></button><div class="fpanel" id="fp-kue" hidden></div></div>
+      <div class="fgrp neben" data-f="vol"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-vol" disabled><span class="flab">Volumen</span><span class="fval"></span></button><div class="fpanel" id="fp-vol" hidden></div></div>
+      <div class="fgrp neben" data-f="stk"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-stk" disabled><span class="flab">Mindestanlage</span><span class="fval"></span></button><div class="fpanel" id="fp-stk" hidden></div></div>
+      <div class="fgrp neben" data-f="pruef"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-pruef" disabled><span class="flab">Datenprüfung</span><span class="fval"></span></button><div class="fpanel" id="fp-pruef" hidden></div></div>
+      <button type="button" class="fmehr" id="fmehr" aria-expanded="false" disabled><span class="fmehr-t">Weitere Filter</span><span class="fanz"></span></button>
+      <button type="button" class="fclear" id="fclear" hidden>Alle Filter zurücksetzen</button>
+    </div>
+
+    <p class="note status laedt" id="status" aria-live="polite">Die Suche wird geladen …</p>
+    <noscript><p class="note">Die Suche braucht JavaScript.</p></noscript>
+    <div class="bsp" id="bsp"><p class="bsp-t">Beispiele zum Loslegen</p><p class="bsp-l"><a href="?art=0&amp;w=EUR&amp;zins=0&amp;rest=a">Staatsanleihen in Euro, unter 1 Jahr</a><a href="?art=2&amp;w=EUR&amp;rest=b">Unternehmensanleihen in Euro, 1–3 Jahre</a><a href="?zins=0&amp;kupon=g,d,e">Fester Kupon über 4&nbsp;%</a><a href="?rest=e">Über 30 Jahre</a><a href="?zins=2">Nullkupon-Anleihen</a></p></div>
+
+    <div class="table-scroll" id="treffer" hidden>
+    <table class="kpis">
+      <caption class="sr-only">Gefundene Anleihen</caption>
+      <thead><tr>
+        <th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Anleihe</button></th>
+        <th scope="col" data-col="rendite"><button type="button" class="sortbtn" data-col="rendite" title="Rendite bis Fälligkeit in % p. a. – von uns aus dem Schlusskurs berechnet (Bundeswertpapiere: Rendite der Deutschen Bundesbank)">Rendite</button></th>
+        <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs" title="Schlusskurs in % des Nennwerts – Börse Frankfurt (Deutsche Börse), Bundeswertpapiere: Deutsche Bundesbank">Kurs</button></th>
+        <th scope="col" data-col="kupon"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
+        <th scope="col" data-col="faellig"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th>
+        <th scope="col" data-col="rest" aria-sort="descending"><button type="button" class="sortbtn" data-col="rest">Restlaufzeit</button></th>
+        <th scope="col" data-col="art"><button type="button" class="sortbtn" data-col="art" title="Staat: Zentralstaat · Öffentlich: Bundesländer, Regionen, Städte, Förderbanken, supranationale Institutionen · Unternehmen: alle übrigen einschließlich Banken">Art</button></th>
+        <th scope="col" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th>
+        <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th>
+        <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe">Volumen</button></th>
+        <th scope="col" data-col="stk"><button type="button" class="sortbtn" data-col="stk" title="Kleinster Nennwert (zugleich Mindestanlage) in der Währung der Anleihe">Stückelung</button></th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+    </div>
+    <p class="status-unten" id="status2" hidden></p>
+
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="rechner.html">Rendite und Stückzinsen nachrechnen</a></li>
+        <li><a href="anleihe-arten.html">Welche Anleihe-Arten gibt es?</a></li>
+        <li><a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a></li>
+        <li><a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a></li>
+        <li><a href="anleihen-laender.html">Staatsanleihen nach Ländern</a></li>
+        <li><a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a></li>
+        <li><a href="anleihen-etf.html">Anleihen-ETFs</a></li>
+        <li><a href="broker-vergleich.html">Broker im Vergleich</a></li>
+        <li><a href="begriffe.html#stueckelung">Glossar: von Kupon bis Stückelung</a></li>
+      </ul>
+    </nav>
+    <details class="quellen" id="quellen">
+      <summary>Datenquellen und Methodik</summary>
+      <div class="quellen-body">
+        <p><strong>Quelle.</strong> ESMA, Financial Instruments Reference Data System (FIRDS) – für diese Seite auf Anleihen an deutschen Börsen gefiltert und aufbereitet, die Werte selbst unverändert (Datenprüfung: Kupon und Fälligkeit jeder Anleihe werden gegen den Kurznamen im Register und gegen ihren Namen geprüft; bei Abweichung steht „Daten?“ am Namen, der Widerspruch in der Kurzansicht, und es gibt keine Rendite); die ESMA steht in keiner Verbindung zu dieser Seite und prüft sie nicht. Art und Land nach dem LEI-Register (GLEIF). Kurse: Deutsche Börse (Börse Frankfurt, Tradegate) – die Nachhandelsdaten, die jeder Handelsplatz nach der EU-Finanzmarktverordnung MiFIR 15 Minuten verzögert kostenlos veröffentlichen muss; Bundeswertpapiere: Deutsche Bundesbank. Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert – beide in der Währung der Anleihe. Der Filter „Volumen“ trennt bei 100 Mio.: Darunter stellt die Börse oft nur kleine Stückzahlen, ein Verkauf vor der Fälligkeit kann dauern – das Volumen ist ein Anhaltspunkt für die Handelbarkeit, keine Garantie.</p>
+        <p><strong>Alle Anleihen mit Kurs an deutschen Börsen.</strong> Grundlage ist das Register der europäischen Wertpapieraufsicht ESMA, in dem jeder Handelsplatz der EU seine Wertpapiere meldet. Aufgenommen ist jede Anleihe, die in Stuttgart, Frankfurt, auf Xetra, in München (auch gettex), Berlin, Düsseldorf, Hamburg, Hannover oder bei Tradegate gehandelt wird, weder fällig noch vom Handel genommen ist und in den letzten zwei Wochen einen Kurs hatte – Staats-, Kommunal- und Unternehmensanleihen einschließlich Medium-Term-Notes. Nicht enthalten sind Zertifikate und andere strukturierte Produkte, Wandelanleihen, verbriefte Anleihen (ABS/MBS) und Geldmarktpapiere. Das Register wird wöchentlich übernommen.</p>
+        <p><strong>Suche und Filter.</strong> Jedes Wort muss im Namen, im Emittenten, in der ISIN, der Währung, im Kupon oder im Fälligkeitsjahr vorkommen – „Bund 2050“ findet die Bundesanleihen mit Fälligkeit 2050. Bei deutschen ISINs ist die WKN Teil der ISIN und damit ebenfalls suchbar. Innerhalb eines Filters gilt „oder“, zwischen den Filtern „und“; die Zahl neben jeder Auswahl zeigt, wie viele Anleihen sie mit den übrigen Einstellungen ergibt. Suchbegriff und Filter stehen in der Adresszeile – so lässt sich jede Auswahl als Link teilen. Angezeigt werden höchstens 200 Treffer.</p>
+        <p><strong>Kündigung.</strong> Von uns eingeordnet aus dem Namen – die Klammer „Ausgabejahr(erstes Kündigungsjahr/Fälligkeitsjahr)“, „Und.“ für unbefristet – und der Rückzahlungsart im ESMA-Register; der Name hat Vorrang, weil das Register die Rückzahlungsart oft ungenau meldet. Kündigungsjahr gleich Ausgabejahr: Make-Whole (bei Fix-to-Float-Anleihen „FLR“ dagegen Termin unklar – der erste echte Kündigungstermin ist meist der erste Zinsanpassungstermin); im letzten Jahr vor der Fälligkeit: kurz vor Fälligkeit; früher: ab festem Termin; ohne Jahr im Namen, aber laut Register kündbar: Termin unklar. Hat der Anleger laut Register ein Kündigungsrecht, steht die Anleihe zusätzlich unter „du kannst kündigen“. Verbindlich sind nur die Anleihebedingungen; die Arten erklärt die Seite <a href="kuendbare-anleihen.html">Kündbare Anleihen</a>.</p>
+        <p><strong>Art und Land.</strong> „Staat“ sind Anleihen eines Zentralstaats, „Öffentlich“ solche von Bundesländern, Regionen und Städten, Förderbanken wie der KfW, staatlich garantierten Emittenten und supranationalen Institutionen wie der Europäischen Investitionsbank; alle übrigen – auch Banken und Versicherer – sind „Unternehmen“. Das Land ist der Sitz des Konzerns laut LEI-Register der GLEIF: Anleihen einer Finanzierungstochter zählen zum Land der Konzernmutter – die Mercedes-Benz International Finance B.V. also zu Deutschland, nicht zu den Niederlanden. Supranationale Institutionen stehen unter „International“.</p>
+        <p><strong>Kurs.</strong> Der Schlusskurs des letzten Börsentags in Prozent des Nennwerts, jeden Morgen übernommen. Für rund drei Viertel aller Anleihen stellt die Börse Frankfurt täglich einen Kurs fest – meist durch den Spezialisten, auch wenn an diesem Tag niemand gehandelt hat („ohne Umsatz“); gab es Abschlüsse, steht der Umsatz auf dem Steckbrief der Anleihe. Bundeswertpapiere zeigen den Kurs der Deutschen Bundesbank. Ohne Kurs in den letzten zwei Wochen erscheint eine Anleihe nicht in der Suche – das betrifft vor allem Anleihen mit 100.000er-Stückelung und Fremdwährungsanleihen, die an deutschen Börsen kaum gehandelt werden. Sobald die Börse wieder einen Kurs feststellt, ist die Anleihe am nächsten Morgen wieder dabei.</p>
+        <p><strong>Rendite.</strong> Rendite bis Fälligkeit in % pro Jahr, aus Kurs, Kupon und Fälligkeit berechnet: jährliche Verzinsung, Zeit taggenau, Stückzinsen eingerechnet, Valuta zwei Börsentage nach dem Handelstag; Zinstermine am Jahrestag der Fälligkeit, bei Dollar-, Pfund- und einigen weiteren Anleihen sowie italienischen Staatsanleihen halbjährlich. Bei Bundeswertpapieren gilt die Rendite der Bundesbank (die eigene Rechnung weicht davon um höchstens 0,005 Prozentpunkte ab), bei inflationsindexierten Bundesanleihen ist es die Realrendite. Keine Rendite gibt es, wo die Rechnung nicht passt: bei variablem oder später wechselndem Kupon („FLR“ im Namen), Stufenzins-, Wandel- und Tilgungsanleihen, unbefristeten und anderen inflationsindexierten Anleihen, unplausiblen Registerangaben und Restlaufzeiten unter zwei Wochen. Fast alle Kurse sind Taxen des Spezialisten ohne Umsatz; das ist bei normalen Anleihen unproblematisch. Liegt eine solche Rendite aber bei unter einem Jahr Restlaufzeit zu weit über Bund (Staaten mehr als 2, Länder und Förderbanken mehr als 1,5, Unternehmen mehr als 3 Punkte), steht sie grau mit Fragezeichen: So günstig verkauft niemand eine Anleihe, die bald zu 100 zurückgezahlt wird – die Taxe ist meist veraltet, der Briefkurs beim Broker höher. Kündbare Anleihen können vor der Fälligkeit zurückgezahlt werden – dann fällt die Rendite anders aus.</p>
+        <p><strong>Was die Börse liefert und was wir rechnen.</strong> Von der Börse (Deutsche Börse, MiFIR-Nachhandelsdaten) kommen Kurs, Zeitpunkt, Stückzahl und Handelsplatz jeder Kursfeststellung – daraus stammen Schlusskurs, Eröffnung, Hoch, Tief, die Zahl der Feststellungen und der Abschlüsse. Aus dem ESMA-Register kommen Rang (erstrangig, nachrangig, tief nachrangig), Besicherung oder Garantie, die Rückzahlungsart (feste Fälligkeit, Kündigungsrechte, Tilgung in Raten, unbefristet), der erste Handelstag und bei variabel verzinsten Anleihen die Zinsformel (Referenzzins, Aufschlag, Zinsperiode) – so, wie der Handelsplatz sie gemeldet hat; fehlt eine Angabe, steht „nicht gemeldet“. Selbst aus diesen Daten gerechnet haben wir: die Rendite, die Restlaufzeit, die Veränderung zum Vortag (gegen unseren gespeicherten Schlusskurs), den Umsatz in Geld (Stück × Kurs je Abschluss) und – auf dem Steckbrief – den Aufschlag zu Bund, die Differenz zur Rendite der Bundesanleihe mit gleicher Restlaufzeit, linear zwischen den beiden nächstliegenden Bundeswertpapieren der Bundesbank interpoliert; nur für Euro-Anleihen mit Rendite und Restlaufzeit bis 30 Jahre. Der Hinweis „kündbar ab …“ ist aus dem Namen gelesen (WM-Kurzbezeichnung „2024(27/33)“).</p>
+        <p><strong>Steckbrief und Kursverlauf.</strong> Ein Klick auf den Namen öffnet die Kurzansicht mit vier Kennzahlen – Kurs, Rendite, Kupon, Fälligkeit (die Veränderung zum Vortag steht als +/− hinter dem Kurs); „Alle Details“ führt zum Steckbrief der Anleihe (anleihe.html?isin=…) mit Kursverlauf, Handel des Tages, Stammdaten, Einordnung und einer Kaufrechnung. Die Börse stellt ihre Tagesdateien nur einen Börsentag lang bereit; die Seite sammelt die Schlusskurse deshalb selbst – seit dem 24.09.2026, jeden Börsentag ein Wert. Für Bundeswertpapiere reicht der Verlauf der Bundesbank bis zur Ausgabe zurück (davor zwei Jahre täglich, älter ein Wert je Woche). Die Mindestanlage ist die Stückelung in der Währung der Anleihe.</p>
+        <p><strong>Grenzen.</strong> Das Volumen ist der ausgegebene Betrag, spätere Rückkäufe sind nicht abgezogen, und Aufstockungen erscheinen mitunter mit Verzögerung. Bei italienischen, britischen und irischen Staatsanleihen meldet das Register nicht die kleinste Stückelung (Italien etwa den Mindestschluss im Großhandel von 2 Mio. €); hier steht der kleinste Nennwert laut Emittent.</p>
+        <p id="datastand">Daten-Stand: wird geladen</p>
+      </div>
+    </details>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+window.MC.minus = window.MC.minus || function (s) { return String(s).replace(/^-/, "−"); };
+window.MC.load = window.MC.load || function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); };
+
+// ---------- Texte ----------
+const T = {
+  years: "Jahre", bn: "Mrd.", perp: "unbefristet", var: "variabel",
+  ready: n => `<strong>${n} Anleihen</strong> mit aktuellem Kurs an deutschen Börsen – Suchbegriff eingeben oder Filter wählen.`,
+  hits: n => n === 1 ? "<strong>1 Treffer</strong>" : `<strong>${n} Treffer</strong>`,
+  unten: (n, max) => n > max ? `Das waren die ersten ${max} von ${n.toLocaleString("de-DE")} Treffern – mit Suchbegriff oder Filtern eingrenzen.` : `${n.toLocaleString("de-DE")} Treffer.`,
+  hoch: "↑ Zur Suche und den Filtern",
+  mehr: "Weitere Filter", weniger: "Weniger Filter",
+  capped: max => ` – die ersten ${max} werden angezeigt. Mit Suchbegriff oder Filtern eingrenzen.`,
+  none: "Keine Anleihe gefunden. Tipp: weniger Wörter oder Filter lockern.",
+  error: "Die Anleihe-Daten sind gerade nicht erreichbar. Bitte später erneut versuchen.",
+  errorKurse: "Die Kurse sind gerade nicht erreichbar – ohne aktuellen Kurs zeigt die Suche keine Anleihe. Bitte später erneut versuchen.",
+  eyebrow: (n, d) => `Anleihen-Suche · ${n} Anleihen mit Kurs an deutschen Börsen · Stand: ${d}`,
+  stand: (d, k) => `Daten-Stand: ${d} (ESMA-Register)` + (k ? ` · Kurse: ${k} (Deutsche Börse, Bundesbank)` : ""),
+  clear: "Auswahl löschen", landSuche: "Land suchen …", intl: "International (supranational)",
+  real: "Realrendite (inflationsindexierte Bundesanleihe)",
+  kursTitle: (d, b, u) => `Schlusskurs ${d}, ${b}` + (u ? `, Umsatz ${u}` : ", ohne Umsatz"),
+  fraglichT: a => `Aus einer Taxe ohne Umsatz, ${a} Punkte über Bund bei kurzer Restlaufzeit – wahrscheinlich zu hoch: Meist ist die Taxe veraltet und der Briefkurs höher, sonst zweifelt der Markt an der Rückzahlung. Beim Broker prüfen.`,
+  fraglichKurz: "aus Taxe ohne Umsatz – wahrscheinlich zu hoch, Briefkurs prüfen",
+  pruefBadge: "Daten?", pruefT: w => `Widerspruch im ESMA-Register: ${w}. Registerwerte unverändert gezeigt, keine Rendite.`,
+  pruefRendite: "Registerangaben widersprüchlich – keine Rendite", pruefUnklar: "unklar",
+  det: {
+    kurs: "Kurs", rendite: "Rendite bis Fälligkeit", umsatz: d => `Umsatz am ${d}`, kupon: "Kupon", faellig: "Fälligkeit",
+    stk: "Mindestanlage", vol: "Volumen", emi: "Emittent", keinKurs: "kein aktueller Kurs",
+    veraendT: (p, v) => `Veränderung zum Vortag (${p}\u00a0%, Vortag ${v}) – berechnet gegen unseren gespeicherten Schlusskurs`, keinVortag: "kein Vortageskurs",
+    tag: "Kursspanne des Tags", eroeff: "Eröffnung", hoch: "Hoch", tief: "Tief", fest: n => `${n} ${n === 1 ? "Kursfeststellung" : "Kursfeststellungen"}`,
+    alleGleich: "alle zum selben Kurs", abschl: n => `${n} ${n === 1 ? "Abschluss" : "Abschlüsse"}`,
+    umsatzJe: { F: "Frankfurt", T: "Tradegate", X: "Xetra" }, stueckKurs: "Stück × Kurs",
+    rueck: "Rückzahlung", rang: "Rang", ausgabe: "Erster Handelstag", esma: "laut ESMA-Register", unbekannt: "nicht gemeldet",
+    zinsFormel: "Zinsformel", anpassung: (n, e) => `Zinsanpassung alle ${n} ${e}`, refNein: "Referenzzins nicht gemeldet",
+    ref: { EURI: "Euribor", ESTR: "€STR", SOFR: "SOFR", SONI: "SONIA", SOFI: "SOFR", LIBO: "Libor", FORMULA: "Formel laut Prospekt", SWAP: "Swapsatz" },
+    einheit: { D: ["Tag", "Tage"], W: ["Woche", "Wochen"], M: ["Monat", "Monate"], Y: ["Jahr", "Jahre"] },
+    keinUmsatz: "kein Umsatz", spez: "Kurs vom Spezialisten festgestellt", pa: "pro Jahr", paFaellig: "pro Jahr, bis zur Fälligkeit", rest: y => `Restlaufzeit ${y}`,
+    keineRendite: "–", keineRenditeWarum: "nicht berechenbar", kuendbar: (ab, ueber) => `kündbar ${ab}` + (ueber ? " – Rendite bis dahin niedriger" : ""), kue: "Kündigung", kueMehr: "Was heißt das?", keinEnde: "kein Endtermin", stufe: "Kupon ändert sich später, Rendite näherungsweise", stkK: "Stückelung", volK: "ausgegebener Betrag",
+    varRendite: "variabler Zins – keine feste Rendite", fixFloat: "Kupon ändert sich später – keine feste Rendite", renditeKurz: "Rendite",
+    alle: "Alle Details →",
+    kopie: "ISIN kopieren", kopiert: "kopiert ✓",
+  },
+  zins: ["fest", "variabel", "Nullkupon"],
+  hint: {
+    rendite: d => `Rendite bis Fälligkeit aus dem Schlusskurs vom ${d} (Börse Frankfurt, Bundeswertpapiere: Bundesbank). Ohne Rendite: variabel oder später variabel verzinste, Stufenzins-, Wandel-, Tilgungs-, unbefristete und inflationsindexierte Anleihen (inflationsindexierte Bundeswertpapiere: Realrendite, mit * gekennzeichnet) sowie Kurse ohne Umsatz mit unplausibler Rendite. Grau mit Fragezeichen: Rendite aus einer Taxe ohne Umsatz, die bei unter einem Jahr Restlaufzeit zu weit über Bund liegt (Staat 2, Öffentlich 1,5, Unternehmen 3 Punkte) – meist ist die Taxe veraltet.`,
+    stk: "Stückelung in der Währung der Anleihe.",
+    pruef: "Jede Anleihe wird gegen den Kurznamen im ESMA-Register (Kupon und Fälligkeit nach ISO 18774) und gegen ihren Namen geprüft. Weicht etwas ab, bleiben die Registerwerte stehen, der Widerspruch steht daneben („Daten?“) und es gibt keine Rendite – die Quelle wird nicht verändert.",
+    vol: "Ausgegebener Nennbetrag in der Währung der Anleihe – 100 Mio. Yen sind also weniger als 100 Mio. Euro. Unter 100 Mio. stellt die Börse oft nur kleine Stückzahlen; wer vor der Fälligkeit verkaufen will, braucht Geduld oder nimmt Abschläge in Kauf. Ein Anhaltspunkt für die Handelbarkeit, keine Garantie.",
+    land: "Sitz des Konzerns laut LEI-Register.",
+    kue: 'Abgeleitet aus dem Namen – „2024(27/34)“ heißt kündbar ab 2027 – und dem ESMA-Register. Verbindlich sind die Anleihebedingungen. <a href="kuendbare-anleihen.html">Kündigungsarten erklärt →</a>',
+  },
+};
+function L(k) { return T[k] != null ? T[k] : k; }
+
+// ---------- Datenbasis ----------
+// anleihen-index.json (scripts/update_anleihen_index.py, wöchentlich aus der ESMA-Gesamtdatei):
+// rows[i] = [isin, name, art (0 Staat · 1 Öffentlich · 2 Unternehmen), waehrung, kupon ("var" = variabel),
+//            faellig ("" = unbefristet), volumen, stueckelung, boerse (0 – · 1 Stuttgart · 2 Frankfurt),
+//            emittent (Index in emittenten, nur für die Suche), zinsart (0 fest · 1 variabel · 2 null),
+//            land (ISO-Code des Konzernsitzes, "INT" = supranational), extra? (Suchwörter)]
+// Bewusst per fetch geladen (nicht MC.load): Die Datei ist zu groß, um sie in die Seite einzubetten.
+// anleihen-kurse.json (scripts/update_kurse.py, täglich; Deutsche Börse und Bundesbank):
+// {stand, tage: [Datum …], boersen: {F: "Börse Frankfurt", …}, kurse: {ISIN: [kurs, rendite|null, tag (Index in tage), boerse, umsatz]}}
+// – ~1,4 MB, deshalb per fetch geladen (nicht eingebettet). Kursverlauf: MC.verlauf (site.js).
+const MAX = 200;
+const AKTUELL_TAGE = 14;   // Kurs höchstens so alt (Kalendertage vor dem Stand) – ältere Anleihen stehen nicht in der Suche (Nutzerregel 26.09.2026: nur, was täglich aktuell gehalten werden kann)
+let IDX = null, HAY = null, KEYS = null, EMI = [], IDXMETA = null, ART = ["Staat", "Öffentlich", "Unternehmen"], KURSE = {}, KTAGE = [], KSTAND = "", BOERSEN = {};
+const S = { q: "", col: "rest", dir: -1, f: {}, offen: new Set() };   // Standard seit 29.09.2026: längste Restlaufzeit zuerst
+
+// ---------- Formatierung ----------
+function fmt(v, dec = 0) {
+  if (typeof v !== "number" || !isFinite(v)) return "–";
+  return MC.minus(v.toLocaleString("de-DE", { minimumFractionDigits: dec, maximumFractionDigits: dec }));
+}
+function fmtDate(iso) { if (!iso) return L("perp"); const d = new Date(iso + "T12:00:00"); return isNaN(d) ? "–" : d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }); }
+const fmtCoupon = c => c === "var" ? L("var") : typeof c === "number" ? `${fmt(c, Math.round(c * 1000) % 10 ? 3 : 2)}\u00a0%` : "–";
+// Volumen immer in Mrd., höchstens drei gültige Ziffern (0,5 Mrd. · 1,25 Mrd. · 30,5 Mrd. · 122 Mrd.)
+const fmtVol = v => typeof v === "number" ? `${(v / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 })} ${L("bn")}` : "–";
+const fmtStk = v => typeof v === "number" ? v.toLocaleString("de-DE", { maximumFractionDigits: 3 }) : "–";
+const norm = s => String(s).normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase();
+// Satzzeichen außer Komma/Punkt trennen Wörter („Mercedes-Benz“ → „mercedes benz“, „(2050)“ → „2050“)
+const woerter = s => norm(s).replace(/[^\p{L}\p{N},.]+/gu, " ").trim();
+const HEUTE = Date.now();
+const jahre = iso => iso ? (new Date(iso + "T12:00:00Z").getTime() - HEUTE) / (365.25 * 86400000) : Infinity;
+// Restlaufzeit lesbar (Tage / Monate / Jahre, site.js); Rückfall: Jahre mit einer Nachkommastelle
+const RL = y => MC.restlaufzeit ? MC.restlaufzeit(y) : `${fmt(Math.max(0, y), 1)} ${L("years")}`;
+const NAMEN = (() => { try { return { land: new Intl.DisplayNames(["de"], { type: "region" }), w: new Intl.DisplayNames(["de"], { type: "currency" }) }; } catch (e) { return {}; } })();
+const landName = c => c === "INT" ? L("intl") : ((NAMEN.land && (() => { try { return NAMEN.land.of(c); } catch (e) { return ""; } })()) || c);
+const wName = c => { try { const n = NAMEN.w && NAMEN.w.of(c); return n && n !== c ? `${c} · ${n}` : c; } catch (e) { return c; } };
+
+// ---------- Filter ----------
+// Jeder Filter ordnet einer Anleihe einen Schlüssel zu (oder null = nicht einstufbar; Kündigung: auch zwei).
+// Innerhalb eines Filters gilt „oder“, zwischen den Filtern „und“.
+const bucket = (x, grenzen) => { for (const [g, k] of grenzen) if (x <= g) return k; return null; };
+// Kündigung je Anleihe (Regel in site.js); ohne site.js null = nicht einstufbar
+const kueVon = r => MC.kuendigung ? MC.kuendigung(r[1], Array.isArray(r[13]) && r[13][0] ? r[13][0][1] : "-", r[5], Array.isArray(r[13]) ? r[13][1] : "") : null;
+// Schlüssel sind meist ein Wert, beim Filter Kündigung auch ein Array (trifft, wenn einer der Werte gewählt ist)
+const trifft = (sel, v) => Array.isArray(v) ? v.some(x => sel.has(x)) : sel.has(v);
+const zaehle = (m, v) => { if (Array.isArray(v)) { for (const x of v) m.set(x, (m.get(x) || 0) + 1); } else m.set(v, (m.get(v) || 0) + 1); };
+const FILTER = [
+  { k: "art", opts: () => ART.map((t, i) => [String(i), t]), key: r => String(r[2]) },
+  { k: "land", liste: true, key: r => r[11] || null, name: landName },
+  { k: "w", liste: true, key: r => r[3] || null, name: wName, kurz: c => c },
+  { k: "kupon", opts: () => [["a", "bis 1\u00a0%"], ["b", "über 1 bis 3\u00a0%"], ["c", "über 3 bis 4\u00a0%"], ["g", "über 4 bis 5\u00a0%"], ["d", "über 5 bis 7\u00a0%"], ["e", "über 7\u00a0%"], ["v", "variabel"]],
+    key: r => r[4] === "var" ? "v" : typeof r[4] === "number" ? bucket(r[4], [[1, "a"], [3, "b"], [4, "c"], [5, "g"], [7, "d"], [Infinity, "e"]]) : null },
+  { k: "zins", opts: () => L("zins").map((t, i) => [String(i), t]), key: r => r[10] == null ? null : String(r[10]) },
+  { k: "rest", opts: () => [["a", "bis 1 Jahr"], ["b", "1 bis 3 Jahre"], ["c", "3 bis 7 Jahre"], ["d", "7 bis 30 Jahre"], ["e", "über 30 Jahre"], ["u", "unbefristet"]],
+    key: r => r[5] ? bucket(Math.max(0, jahre(r[5])), [[1, "a"], [3, "b"], [7, "c"], [30, "d"], [Infinity, "e"]]) : "u" },
+  // Kündigung (seit 27.09.2026, erklärt auf kuendbare-anleihen.html): Art des Kündigungsrechts des Emittenten, dazu „a“ =
+  // Kündigungsrecht des Anlegers (Put). Eine Anleihe kann zwei Schlüssel haben (z. B. Make-Whole und Put) – daher Array.
+  { k: "kue", opts: () => [["n", "nicht kündbar", "feste Laufzeit"], ["m", "Make-Whole", "zum Barwert – harmlos"],
+      ["p", "kurz vor Fälligkeit", "höchstens ein Jahr früher – harmlos"], ["t", "ab festem Termin", "zu 100\u00a0%, Jahre vor Fälligkeit – beachten"],
+      ["e", "ewig, mit Kündigungstermin", "läuft weiter, wenn nicht gekündigt"], ["u", "Termin unklar", "laut Register oder Fix-to-Float – Bedingungen prüfen"],
+      ["a", "du kannst kündigen (Put)", "ein Vorteil für dich"]],
+    kurz: v => ({ n: "nein", m: "Make-Whole", p: "kurz vor Ende", t: "fester Termin", e: "ewig", u: "unklar", a: "Put" })[v] || v,
+    key: r => { const o = kueVon(r); return o ? (o.put ? [o.k, "a"] : o.k) : null; }, hintHtml: () => L("hint").kue },
+  { k: "rendite", opts: () => [["a", "unter 1\u00a0%"], ["b", "1 bis unter 2\u00a0%"], ["c", "2 bis unter 3\u00a0%"], ["d", "3 bis unter 4\u00a0%"], ["e", "4\u00a0% und mehr"]],
+    key: r => { const y = rendite(r); return y != null ? bucket(y, [[0.999999, "a"], [1.999999, "b"], [2.999999, "c"], [3.999999, "d"], [Infinity, "e"]]) : null; },   // wie angezeigt (Anzeige-Schutz)
+    hint: () => L("hint").rendite(KSTAND ? fmtDate(KSTAND) : "–") },
+  // Volumen (seit 27.09.2026): ausgegebener Nennbetrag in der Währung der Anleihe – Näherung für die Handelbarkeit;
+  // eine Grenze genügt: unter 100 Mio. ist an deutschen Börsen selten ein belastbarer Markt, darüber ändert sich bis 1 Mrd. wenig
+  { k: "vol", opts: () => [["a", "unter 100 Mio.", "kleine Emission – Verkauf vor Fälligkeit kann dauern"], ["b", "100 Mio. und mehr", "mit einem Markt dahinter"]],
+    kurz: v => ({ a: "unter 100 Mio.", b: "ab 100 Mio." })[v] || v,
+    key: r => typeof r[6] === "number" ? (r[6] < 1e8 ? "a" : "b") : null, hint: () => L("hint").vol },
+  // Datenprüfung (seit 27.09.2026): Feld pruef aus dem Indexskript – Widersprüche Kurzname/Name gegen Register
+  { k: "pruef", opts: () => [["a", "ohne Befund"], ["b", "Widerspruch im Register", "Kupon oder Fälligkeit laut Kurzname oder Name anders"]],
+    kurz: v => ({ a: "ohne Befund", b: "Widerspruch" })[v] || v,
+    key: r => befund(r) ? "b" : "a", hint: () => L("hint").pruef },
+  { k: "stk", opts: () => [["a", "bis 1.000"], ["b", "über 1.000 bis unter 100.000"], ["c", "100.000 und mehr"]],
+    key: r => typeof r[7] === "number" ? (r[7] <= 1000 ? "a" : r[7] < 100000 ? "b" : "c") : null, hint: () => L("hint").stk },
+];
+FILTER.forEach((f, i) => { f.i = i; S.f[f.k] = new Set(); f.label = document.querySelector(`.fgrp[data-f="${f.k}"] .flab`).textContent; });
+FILTER.find(f => f.k === "land").hint = () => L("hint").land;
+const aktiv = () => FILTER.filter(f => S.f[f.k].size);
+
+// ---------- Suche ----------
+function suchtext(r) {
+  // ohne toLocaleString (bei 43.000 Anleihen zu langsam): Kupon „4,75“ und „4.75“, Datum „15.08.2050“
+  const k = typeof r[4] === "number" ? `${r[4].toFixed(2)} ${r[4].toFixed(3)} ${r[4]}` : r[4] === "var" ? "variabel floater" : "";
+  const d = r[5] ? `${r[5].slice(8, 10)}.${r[5].slice(5, 7)}.${r[5].slice(0, 4)}` : "unbefristet";
+  return " " + woerter([r[1], r[0], r[3], k, k.replace(/\./g, ","), d, ART[r[2]], EMI[r[9]] || "", r[12] || ""].join(" ")) + " ";
+}
+// Ein Durchlauf: Treffer (alle Filter erfüllt) und Zählungen je Filteroption – gezählt wird
+// jeweils mit allen ÜBRIGEN Filtern, damit die Zahl zeigt, was diese Auswahl ergäbe.
+function auswerten() {
+  // Wörter ab 4 Zeichen: irgendwo enthalten (auch in der ISIN, z. B. WKN „110248“);
+  // kürzere nur am Wortanfang – sonst träfe „VW“ jede ISIN mit „VW“.
+  const toks = woerter(S.q).split(" ").filter(Boolean).map(t => t.length >= 4 ? t : " " + t);
+  const akt = aktiv().map(f => [f.i, S.f[f.k]]);
+  const zahl = FILTER.map(() => new Map()), hits = [];
+  for (let i = 0; i < IDX.length; i++) {
+    if (toks.length) { const h = HAY[i]; if (!toks.every(t => h.includes(t))) continue; }
+    const ks = KEYS[i];
+    let fehl = -1, n = 0;
+    for (const [fi, sel] of akt) if (!trifft(sel, ks[fi])) { fehl = fi; if (++n > 1) break; }
+    if (n > 1) continue;
+    if (n === 1) { zaehle(zahl[fehl], ks[fehl]); continue; }
+    for (let fi = 0; fi < FILTER.length; fi++) zaehle(zahl[fi], ks[fi]);
+    hits.push(IDX[i]);
+  }
+  return { hits, zahl, suche: toks.length > 0 };
+}
+// Anzeige-Schutz (27.09.2026): Kurs ohne Umsatz (Taxe des Spezialisten) mit unplausibler Rendite → keine Rendite (gleiche Regel im Steckbrief)
+const unsicher = r => { const k = KURSE[r[0]]; if (!k || k[4] || k[3] === "B" || typeof k[1] !== "number") return false;
+  const y = k[1], a = typeof k[7] === "number" ? k[7] : null, t = r[5] ? (new Date(r[5] + "T12:00:00Z") - Date.now()) / (365.25 * 864e5) : 99;
+  return y < 0 || y > 15 || (a != null && a < -1) || (t < 0.25 && y > 8); };
+// Datenprüfung (27.09.2026): r[14] = Befunde des Indexskripts ({} = keiner) – bei Befund keine Rendite, Kennzeichen „Daten?“
+const pruefVon = r => r[14] && typeof r[14] === "object" ? r[14] : {};
+const befund = r => Object.keys(pruefVon(r)).length > 0;
+const widerspruch = r => { const p = pruefVon(r); return [p.kuponFisn != null ? `Kupon laut Kurzname ${fmtCoupon(p.kuponFisn)}` : "", p.zinsName ? "Name: variabel (FLR), Register: Nullkupon" : "", p.kuponHoch ? "Kupon unplausibel hoch" : "",
+  p.faelligFisn ? `Fälligkeit laut Kurzname ${fmtDate(p.faelligFisn)}` : "", p.faelligName ? `Fälligkeit laut Name ${p.faelligName}${!r[5] ? " – vermutlich fällig, nicht zurückgezahlt" : ""}` : ""].filter(Boolean).join("; "); };
+const rendite = r => { const k = KURSE[r[0]]; return k && typeof k[1] === "number" && !unsicher(r) && !befund(r) ? k[1] : null; };
+// Kennzeichnung (27.09.2026): Rendite aus einer Taxe ohne Umsatz, die bei unter einem Jahr Restlaufzeit zu weit über Bund liegt –
+// so günstig verkauft niemand eine Anleihe, die bald zu 100 zurückgezahlt wird; die Taxe ist meist veraltet, der Briefkurs beim
+// Broker höher. Grenze je Art: Staat 2, Öffentlich (Länder, Förderbanken) 1,5, Unternehmen 3 Punkte (Land Hessen stand mit 2,1 Punkten
+// über Bund – bei einem deutschen Bundesland unmöglich). Die Rendite bleibt stehen (grau, mit Fragezeichen), damit niemand ein echtes Angebot verpasst.
+const FRAGLICH_AB = [2, 1.5, 3];
+const fraglich = r => { const k = KURSE[r[0]]; return !!(k && !k[4] && k[3] !== "B" && rendite(r) != null && r[5] && jahre(r[5]) < 1 && typeof k[7] === "number" && k[7] > (FRAGLICH_AB[r[2]] ?? 3)); };
+const KEY = {
+  name: r => r[1], art: r => r[2], isin: r => r[0], cur: r => r[3],
+  kupon: r => typeof r[4] === "number" ? r[4] : null,
+  faellig: r => r[5] || "9999", rest: r => r[5] || null,   // Restlaufzeit: unbefristet ohne Wert („–“) → immer ans Ende
+  vol: r => typeof r[6] === "number" ? r[6] : null, stk: r => typeof r[7] === "number" ? r[7] : null,
+  rendite, kurs: r => KURSE[r[0]] ? KURSE[r[0]][0] : null,
+};
+function sortiere(list) {
+  const key = KEY[S.col] || KEY.faellig;
+  return list.sort((a, b) => {
+    const x = key(a), y = key(b);
+    if (x == null || y == null) { if (x != null) return -1; if (y != null) return 1; }   // ohne Wert immer ans Ende
+    const c = x == null ? 0 : typeof x === "string" ? x.localeCompare(y, "de", { numeric: true }) : x - y;
+    return c * S.dir || a[5].localeCompare(b[5]) || a[0].localeCompare(b[0]);
+  });
+}
+const kDatum = k => KTAGE[k[2]] || "";
+const fmtUmsatz = (u, w) => `${fmt(u, 0)} ${w}`;
+const istReal = (r, k) => k && k[3] === "B" && /inflation|infl\./i.test(r[1]);
+function zeile(r) {
+  const k = KURSE[r[0]], rd = rendite(r), real = rd != null && istReal(r, k), offen = S.offen.has(r[0]);
+  const alt = k && kDatum(k) !== KSTAND ? `<small class="alt">${fmtDate(kDatum(k)).slice(0, 6)}</small>` : "";
+  const kurs = k ? `<span title="${MC.esc(L("kursTitle")(fmtDate(kDatum(k)), BOERSEN[k[3]] || "", k[4] ? fmtUmsatz(k[4], r[3]) : ""))}">${fmt(k[0], 2)}</span>${alt}` : "–";
+  return `<tr class="zeile${offen ? " offen" : ""}" data-isin="${MC.esc(r[0])}"><th scope="row"><button type="button" class="zbtn" aria-expanded="${offen}" aria-controls="det-${MC.esc(r[0])}">${MC.esc(r[1])}</button>${befund(r) ? `<span class="pruef" title="${MC.esc(L("pruefT")(widerspruch(r)))}">${L("pruefBadge")}</span>` : ""}</th>` +
+    `<td class="num"${real ? ` title="${L("real")}"` : ""}>${rd != null ? (fraglich(r) ? `<span class="fraglich" title="${MC.esc(L("fraglichT")(fmt(k[7], 1)))}">${fmt(rd, 2)}\u00a0%<sup>?</sup></span>` : `${fmt(rd, 2)}\u00a0%${real ? "*" : ""}`) : "–"}</td>` +
+    `<td class="num">${kurs}</td>` +
+    `<td class="num">${fmtCoupon(r[4])}</td><td class="num">${!r[5] && pruefVon(r).faelligName ? L("pruefUnklar") : fmtDate(r[5])}</td>` +
+    `<td class="num">${r[5] ? RL(jahre(r[5])) : "–"}</td>` +
+    `<td class="txt art">${MC.esc(ART[r[2]])}</td><td class="isin">${MC.esc(r[0])}</td><td class="txt">${MC.esc(r[3])}</td>` +
+    `<td class="num">${fmtVol(r[6])}</td><td class="num">${fmtStk(r[7])}</td></tr>` + (offen ? detailZeile(r) : "");
+}
+// Kurzansicht (seit 26.09.2026): vier Kennzahlen zum Einordnen – alles Weitere (Kursverlauf, Handel, Aufschlag zu Bund, Rang,
+// Rückzahlung, Zinsformel, Kaufrechnung) steht auf dem Steckbrief anleihe.html?isin=…
+// Die Veränderung zum Vortag steht seit 26.09.2026 als +/− direkt hinter dem Kurs (eigene Kachel und Kurzlegende entfallen).
+function detailZeile(r) {
+  const D = L("det"), k = KURSE[r[0]], rd = rendite(r), real = rd != null && istReal(r, k), pw = pruefVon(r);
+  const wkn = /^DE/.test(r[0]) ? ` · WKN <b>${r[0].slice(5, 11)}</b>` : "";
+  const kv = (dt, dd, klein, cls) => `<div><dt>${dt}</dt><dd${cls ? ` class="${cls}"` : ""}>${dd}${klein ? `<small>${klein}</small>` : ""}</dd></div>`;
+  const zinsart = L("zins")[r[10]] || "";
+  // Kündigung (seit 27.09.2026): Art aus dem Namen „2024(27/34)“ und der Rückzahlungsart im Register – gemeinsame Regel in site.js
+  const kue = kueVon(r), kueF = kue && MC.kuendigungFeld ? MC.kuendigungFeld(kue, k ? k[0] : null) : null;
+  const kueAb = kue && kue.jahr ? `${kue.jahr <= new Date().getFullYear() ? "seit" : "ab"} ${kue.jahr}` : "";
+  const spaeter = /Stufenzins|Step[- ]?up|FLR\b|Fix[- ]to[- ]Float/i.test(r[1]);   // Kupon ändert sich später (Stufenzins, Fix-to-Float)
+  const hinweis = befund(r) ? L("pruefRendite") : r[10] === 1 ? D.varRendite : [rd != null ? (real ? L("real") : fraglich(r) ? L("fraglichKurz") : D.paFaellig) : (k ? (unsicher(r) ? "Kurs ohne Umsatz – Rendite nicht aussagekräftig" : spaeter ? D.fixFloat : D.keineRenditeWarum) : ""),
+    kue && kue.k === "t" ? D.kuendbar(kueAb, k && k[0] > 100) : "", rd != null && spaeter ? D.stufe : ""].filter(Boolean).join(" · ");
+  const vor = k && typeof k[6] === "number" ? k[6] : null;
+  const dif = vor != null && k ? k[0] - vor : null;
+  // Veränderung zum Vortag in Punkten, direkt hinter dem Kurs: grün (+), rot (−), grau (±0,00); Prozent und Vortag im Tooltip
+  const vz = dif == null ? "" : dif > 0 ? "+" : dif < 0 ? "−" : "±";
+  const veraend = dif == null ? "" : ` <span class="kv-ver ${dif > 0 ? "plus" : dif < 0 ? "minus" : "null"}" title="${MC.esc(D.veraendT(`${vz}${fmt(Math.abs(dif / vor * 100), 2)}`, fmt(vor, 2)))}">${vz}${fmt(Math.abs(dif), 2)}</span>`;
+  const kpi = [
+    kv(D.kurs, k ? `${fmt(k[0], 2)}\u00a0%${veraend}` : "–", k ? `${MC.esc(BOERSEN[k[3]] || "")} · ${fmtDate(kDatum(k))}${k[4] ? "" : " · " + D.keinUmsatz}${dif == null ? " · " + D.keinVortag : ""}` : D.keinKurs),
+    kv(D.renditeKurz, rd != null ? `${fmt(rd, 2)}\u00a0%${real ? "*" : fraglich(r) ? "<sup>?</sup>" : ""}` : D.keineRendite, hinweis),
+    kv(D.kupon, fmtCoupon(r[4]), [zinsart, pw.kuponFisn != null ? `Kurzname: ${fmtCoupon(pw.kuponFisn)} – widersprüchlich` : "", pw.zinsName ? "Name: variabel (FLR) – widersprüchlich" : "", pw.kuponHoch ? "unplausibel hoch" : ""].filter(Boolean).join(" · "), pw.kuponFisn != null || pw.zinsName || pw.kuponHoch ? "warn" : ""),
+    kv(D.faellig, fmtDate(r[5]), [r[5] ? D.rest(RL(jahre(r[5]))) : D.keinEnde, pw.faelligFisn ? `Kurzname: ${fmtDate(pw.faelligFisn)} – widersprüchlich` : "", pw.faelligName ? `Name: ${pw.faelligName}${!r[5] ? " – vermutlich fällig, nicht zurückgezahlt" : " – widersprüchlich"}` : ""].filter(Boolean).join(" · "), pw.faelligFisn || pw.faelligName ? "warn" : ""),
+    kueF ? kv(D.kue, kueF.wert, kueF.klein + (kueF.anker ? ` · <a href="kuendbare-anleihen.html#${kueF.anker}">${D.kueMehr}</a>` : ""), kueF.warn ? "warn" : "") : "",
+  ].join("");
+  const href = `anleihe.html?isin=${encodeURIComponent(r[0])}`;
+  return `<tr class="zdet" id="det-${MC.esc(r[0])}"><td colspan="11"><div class="det">` +
+    `<div class="det-kopf"><b>${MC.esc(r[1])}</b>${EMI[r[9]] ? `<span class="det-emi">${MC.esc(EMI[r[9]])}</span>` : ""}` +
+    `<span class="det-id">ISIN <b>${MC.esc(r[0])}</b>${wkn}<button type="button" class="kopie" data-isin="${MC.esc(r[0])}">${D.kopie}</button></span></div>` +
+    `<dl class="det-kpi${kueF ? " fuenf" : ""}">${kpi}</dl>` +
+    `<p class="det-mehr"><a class="det-link" href="${href}">${D.alle}</a></p>` +
+    `</div></td></tr>`;
+}
+
+// ISIN in die Zwischenablage (Kopierknopf der Kurzansicht, seit 28.09.2026)
+function kopieren(b) {
+  const D = L("det");
+  if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.isin).then(() => { b.textContent = D.kopiert; setTimeout(() => { b.textContent = D.kopie; }, 1800); });
+}
+
+// ---------- Filterleiste ----------
+function panelBauen(f) {
+  const p = document.getElementById("fp-" + f.k);
+  let opts;
+  if (f.liste) {   // Land/Währung: alle vorkommenden Werte, häufigste zuerst
+    const n = new Map();
+    for (const ks of KEYS) { const v = ks[f.i]; if (v != null) n.set(v, (n.get(v) || 0) + 1); }
+    opts = [...n.keys()].sort((a, b) => n.get(b) - n.get(a) || f.name(a).localeCompare(f.name(b), "de")).map(v => [v, f.name(v)]);
+  } else opts = f.opts();
+  f.namen = new Map(opts.map(o => [o[0], o[1]]));
+  p.innerHTML =
+    (f.k === "land" ? `<input type="search" class="fsuche" placeholder="${L("landSuche")}" aria-label="${L("landSuche")}">` : "") +
+    `<fieldset><legend class="sr-only">${MC.esc(f.label)}</legend><div class="fopts">` +
+    opts.map(([v, t, d]) => `<label class="fopt" data-v="${MC.esc(v)}" data-n="${MC.esc(norm(t))}"><input type="checkbox" value="${MC.esc(v)}"><span class="ftxt">${MC.esc(t)}${d ? `<small>${MC.esc(d)}</small>` : ""}</span><span class="fnum"></span></label>`).join("") +
+    `</div></fieldset>` +
+    `<div class="ffoot">${f.hint ? `<p class="fhint">${MC.esc(f.hint())}</p>` : f.hintHtml ? `<p class="fhint">${f.hintHtml()}</p>` : ""}<button type="button" class="freset">${L("clear")}</button></div>`;
+}
+function filterZeigen(zahl) {
+  for (const f of FILTER) {
+    const g = document.querySelector(`.fgrp[data-f="${f.k}"]`), sel = S.f[f.k], m = zahl[f.i];
+    for (const o of g.querySelectorAll(".fopt")) {
+      const v = o.dataset.v, n = m.get(v) || 0, box = o.firstElementChild;
+      box.checked = sel.has(v);
+      o.querySelector(".fnum").textContent = n.toLocaleString("de-DE");
+      o.classList.toggle("leer", n === 0 && !sel.has(v));
+    }
+    const b = g.querySelector(".fbtn"), val = g.querySelector(".fval");
+    b.classList.toggle("on", sel.size > 0);
+    val.textContent = sel.size === 1 ? ((f.kurz || (v => f.namen.get(v) || v))([...sel][0])) : sel.size > 1 ? `${sel.size}` : "";
+  }
+  document.getElementById("fclear").hidden = !aktiv().length;
+  // Schalter „Weitere Filter“: Zahl der aktiven Filter im ausgeblendeten Teil
+  const nNeben = FILTER.filter(f => S.f[f.k].size && document.querySelector(`.fgrp[data-f="${f.k}"]`).classList.contains("neben")).length;
+  document.querySelector("#fmehr .fanz").textContent = nNeben ? String(nNeben) : "";
+}
+function mehrFilter(auf) {
+  const leiste = document.getElementById("filter"), b = document.getElementById("fmehr");
+  leiste.classList.toggle("alle", auf);
+  b.setAttribute("aria-expanded", String(auf));
+  b.querySelector(".fmehr-t").textContent = L(auf ? "weniger" : "mehr");
+  if (!auf && offen && document.querySelector(`.fgrp[data-f="${offen}"]`).classList.contains("neben")) panel(offen, false);
+}
+let offen = null;
+function panel(f, auf) {
+  const g = document.querySelector(`.fgrp[data-f="${f}"]`); if (!g) return;
+  const b = g.querySelector(".fbtn"), p = g.querySelector(".fpanel");
+  if (auf && offen && offen !== f) panel(offen, false);
+  p.hidden = !auf; b.setAttribute("aria-expanded", String(auf)); g.classList.toggle("offen", auf);
+  offen = auf ? f : (offen === f ? null : offen);
+  if (auf) {
+    p.classList.remove("rechts");
+    const r = p.getBoundingClientRect();
+    if (r.right > document.documentElement.clientWidth - 8 && window.innerWidth > 600) p.classList.add("rechts");
+    const s = p.querySelector(".fsuche"); if (s) s.focus();
+  }
+}
+
+// ---------- Anzeige ----------
+function zeige() {
+  merkeURL();
+  if (!IDX) return;
+  const box = document.getElementById("treffer"), status = document.getElementById("status");
+  const AUS = auswerten(), { hits, zahl, suche } = AUS;
+  filterZeigen(zahl);
+  const aus = suche || aktiv().length > 0;
+  document.getElementById("bsp").hidden = aus;
+  const unten = document.getElementById("status2");
+  if (!aus) { box.hidden = true; unten.hidden = true; status.innerHTML = L("ready")(IDX.length.toLocaleString("de-DE")); return; }
+  box.hidden = hits.length === 0;
+  sortiere(hits);
+  // Genau ein Treffer für eine ISIN (Link von einer anderen Seite): Kurzansicht gleich öffnen
+  if (hits.length === 1 && /^[A-Z]{2}[A-Z0-9]{9}\d$/i.test(S.q.trim()) && !S.zu) S.offen.add(hits[0][0]);
+  box.querySelector("tbody").innerHTML = hits.slice(0, MAX).map(zeile).join("");
+  status.innerHTML = hits.length ? L("hits")(hits.length.toLocaleString("de-DE")) + (hits.length > MAX ? L("capped")(MAX) : "") : L("none");
+  // Unter langen Listen: Hinweis wiederholen und Rückweg nach oben
+  unten.hidden = hits.length <= 10;
+  if (!unten.hidden) unten.innerHTML = `<span>${L("unten")(hits.length, MAX)}</span><a href="#q" class="hoch">${L("hoch")}</a>`;
+  for (const th of box.querySelectorAll("thead th[data-col]")) {
+    if (th.dataset.col === S.col) th.setAttribute("aria-sort", S.dir > 0 ? "ascending" : "descending");
+    else th.removeAttribute("aria-sort");
+  }
+}
+function merkeURL() {
+  const p = new URLSearchParams();
+  if (S.q.trim()) p.set("q", S.q.trim());
+  for (const f of FILTER) if (S.f[f.k].size) p.set(f.k, [...S.f[f.k]].join(","));
+  const qs = p.toString().replace(/%2C/g, ",");
+  const neu = location.pathname + (qs ? "?" + qs : "");
+  if (neu !== location.pathname + location.search) history.replaceState(null, "", neu);
+}
+
+// ---------- Start ----------
+(function () {
+  const p = new URLSearchParams(location.search);
+  S.q = p.get("q") || "";
+  for (const f of FILTER) (p.get(f.k) || "").split(",").map(v => v.trim()).filter(Boolean).forEach(v => S.f[f.k].add(f.k === "w" || f.k === "land" ? v.toUpperCase() : v));
+  const input = document.getElementById("q");
+  input.value = S.q;
+  let t = 0;
+  input.addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => { S.q = input.value; zeige(); }, 120); });
+  input.form.addEventListener("submit", e => { e.preventDefault(); S.q = input.value; zeige(); input.blur(); });
+
+  // Höhe der klebenden Kopfzeile für den klebenden Tabellenkopf
+  const kopf = document.querySelector(".topbar");
+  const kopfHoehe = () => { if (kopf) document.documentElement.style.setProperty("--kopf", kopf.offsetHeight + "px"); };
+  kopfHoehe(); window.addEventListener("resize", kopfHoehe);
+
+  const leiste = document.getElementById("filter");
+  // Weitere Filter von Anfang an zeigen, wenn einer davon aus der Adresse aktiv ist
+  if (FILTER.some(f => S.f[f.k].size && document.querySelector(`.fgrp[data-f="${f.k}"]`).classList.contains("neben"))) mehrFilter(true);
+  leiste.addEventListener("click", e => {
+    if (e.target.closest("#fmehr")) { mehrFilter(!leiste.classList.contains("alle")); return; }
+    const b = e.target.closest(".fbtn");
+    if (b) { const f = b.parentElement.dataset.f; panel(f, b.getAttribute("aria-expanded") !== "true"); return; }
+    const r = e.target.closest(".freset");
+    if (r) { S.f[r.closest(".fgrp").dataset.f].clear(); zeige(); return; }
+    if (e.target.closest("#fclear")) { FILTER.forEach(f => S.f[f.k].clear()); if (offen) panel(offen, false); zeige(); }
+  });
+  leiste.addEventListener("change", e => {
+    const c = e.target.closest(".fopt input"); if (!c) return;
+    const sel = S.f[c.closest(".fgrp").dataset.f];
+    if (c.checked) sel.add(c.value); else sel.delete(c.value);
+    zeige();
+  });
+  leiste.addEventListener("input", e => {
+    const s = e.target.closest(".fsuche"); if (!s) return;
+    const q = norm(s.value.trim());
+    for (const o of s.parentElement.querySelectorAll(".fopt")) o.hidden = q !== "" && !o.dataset.n.includes(q) && !o.dataset.v.toLowerCase().includes(q);
+  });
+  document.addEventListener("click", e => { if (offen && !e.target.closest(".fgrp")) panel(offen, false); });
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Escape" || !offen) return;
+    const f = offen; panel(f, false); document.querySelector(`.fgrp[data-f="${f}"] .fbtn`).focus();
+  });
+
+  document.getElementById("status2").addEventListener("click", e => {
+    if (!e.target.closest(".hoch")) return;
+    e.preventDefault(); document.querySelector(".suche").scrollIntoView({ block: "start" });
+  });
+
+  const box = document.getElementById("treffer");
+  box.querySelector("thead").addEventListener("click", e => {
+    const b = e.target.closest(".sortbtn");
+    if (!b) return;
+    if (S.col === b.dataset.col) S.dir = -S.dir; else { S.col = b.dataset.col; S.dir = b.dataset.col === "vol" || b.dataset.col === "rendite" ? -1 : 1; }
+    zeige();
+  });
+  // Klick auf Name oder Zeile: Kurzansicht auf- und zuklappen
+  box.querySelector("tbody").addEventListener("click", e => {
+    const kb = e.target.closest(".kopie");
+    if (kb) { kopieren(kb); return; }
+    if (e.target.closest(".zdet")) return;
+    const tr = e.target.closest("tr.zeile"); if (!tr) return;
+    if (!e.target.closest(".zbtn") && window.getSelection && String(window.getSelection()).length) return;   // Text markiert
+    const isin = tr.dataset.isin, r = IDX.find(x => x[0] === isin), btn = tr.querySelector(".zbtn");
+    if (S.offen.has(isin)) {
+      S.offen.delete(isin); S.zu = true;
+      const d = tr.nextElementSibling; if (d && d.classList.contains("zdet")) d.remove();
+      tr.classList.remove("offen"); btn.setAttribute("aria-expanded", "false");
+    } else {
+      S.offen.add(isin);
+      tr.insertAdjacentHTML("afterend", detailZeile(r));
+      tr.classList.add("offen"); btn.setAttribute("aria-expanded", "true");
+    }
+  });
+
+  const kurse = fetch("anleihen-kurse.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(d => { KURSE = d.kurse || {}; KTAGE = d.tage || []; KSTAND = d.stand || ""; BOERSEN = d.boersen || {}; })
+    .catch(e => console.warn("Kurse nicht geladen:", e));
+  const index = fetch("anleihen-index.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
+  Promise.all([index, kurse]).then(([d]) => {
+    // Bereits fällige Anleihen (Fälligkeit heute oder früher) ausblenden – die ESMA-Datei kommt wöchentlich, deshalb
+    // stehen abgelaufene Papiere noch einige Tage darin; kaufen kann man sie nicht mehr (Nutzerbefund 25.09.2026)
+    const heute = new Date(HEUTE).toISOString().slice(0, 10);
+    // Nur Anleihen mit aktuellem Kurs (höchstens AKTUELL_TAGE alt) – ohne Kursdatei bleibt die Suche leer, statt Veraltetes zu zeigen
+    if (!KSTAND) { const st = document.getElementById("status"); st.classList.remove("laedt"); st.textContent = L("errorKurse"); return; }
+    const grenze = new Date(Date.parse(KSTAND + "T12:00:00Z") - AKTUELL_TAGE * 86400000).toISOString().slice(0, 10);
+    IDX = d.rows.filter(r => (!r[5] || r[5] > heute) && KURSE[r[0]] && kDatum(KURSE[r[0]]) >= grenze); ART = d.art || ART; EMI = d.emittenten || [];
+    IDXMETA = { rang: d.rang || {}, rueckzahlung: d.rueckzahlung || {}, garantie: d.garantie || {} };
+    HAY = IDX.map(suchtext);
+    KEYS = IDX.map(r => FILTER.map(f => f.key(r)));
+    FILTER.forEach(panelBauen);
+    for (const b of leiste.querySelectorAll(".fbtn, .fmehr")) b.disabled = false;
+    document.getElementById("status").classList.remove("laedt");
+    // Filterwerte aus der Adresse, die es nicht (mehr) gibt, verwerfen
+    for (const f of FILTER) for (const v of [...S.f[f.k]]) if (!f.namen.has(v)) S.f[f.k].delete(v);
+    const stand = fmtDate(d.stand);
+    document.getElementById("datastand").textContent = L("stand")(stand, KSTAND ? fmtDate(KSTAND) : "");
+    zeige();
+  }).catch(e => { console.warn("Anleihe-Index nicht geladen:", e); const st = document.getElementById("status"); st.classList.remove("laedt"); st.textContent = L("error"); });
+})();
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+</script>
+</body>
+</html>

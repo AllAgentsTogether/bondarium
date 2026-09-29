@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anleihen-Broker: 19 Anbieter im Vergleich – METALCONCRETE</title>
+<meta name="description" content="Welcher Broker kann Anleihen? 19 Anbieter im Vergleich: welche Anleihen es gibt, wo gehandelt wird und was ein Kauf für 5.000 € kostet – von 0 bis 55 €.">
+<link rel="canonical" href="https://www.metalconcrete.de/broker-vergleich.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/broker-vergleich.html">
+<meta property="og:title" content="Anleihen-Broker: 19 Anbieter im Vergleich – METALCONCRETE">
+<meta property="og:description" content="Welcher Broker kann Anleihen? 19 Anbieter im Vergleich: welche Anleihen es gibt, wo gehandelt wird und was ein Kauf für 5.000 € kostet – von 0 bis 55 €.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Anleihen-Broker: 19 Anbieter im Vergleich – METALCONCRETE">
+<meta name="twitter:description" content="Welcher Broker kann Anleihen? 19 Anbieter im Vergleich: welche Anleihen es gibt, wo gehandelt wird und was ein Kauf für 5.000 € kostet – von 0 bis 55 €.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Broker im Vergleich (27.09.2026): Kurzfassung, Tabelle (Handy: Karten), Kostenbalken, Prüfliste. Grundregeln aus base.css. */
+  .bv-stand { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text); margin: -8px 0 20px; }
+  .bv-stand::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--up); flex: none; }
+  .bv-stand b { color: var(--ink); font-weight: 600; }
+  .bv-in { font-size: 16.5px; line-height: 1.6; color: var(--text); max-width: 720px; margin-bottom: 16px; }
+  .bv-in strong { color: var(--ink); font-weight: 600; }
+  /* Kennzeichen: ja / Auswahl / nein */
+  .bdg { display: inline-block; flex: none; font-size: 12px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; line-height: 1.3; border-radius: 999px; padding: 3px 9px; }
+  .bdg.ja { background: #E3F1EC; color: #1B6B52; }
+  .bdg.aw { background: #FBEADB; color: #8E4A17; }
+  .bdg.nein { background: #F7E4DE; color: #8A3519; }
+  .bv-leg { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0 0 16px; font-size: 14px; color: var(--text); }
+  .bv-leg li { display: inline-flex; align-items: center; gap: 8px; }
+  /* Tabelle (ab 901 px) */
+  .bv-t { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border: 1px solid rgba(26,26,25,0.10); border-radius: 14px; box-shadow: var(--shadow); font-size: 14px; line-height: 1.45; }
+  .bv-t thead th { text-align: left; vertical-align: bottom; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); padding: 13px 12px 10px; border-bottom: 1px solid rgba(26,26,25,0.14); }
+  .bv-t thead th:nth-child(1) { width: 15%; }
+  .bv-t thead th:nth-child(2) { width: 17%; }
+  .bv-t thead th:nth-child(3) { width: 17%; }
+  .bv-t thead th:nth-child(4) { width: 22%; }
+  .bv-t thead th:nth-child(5) { width: 10%; }
+  .bv-t thead th:nth-child(6) { width: 10%; }
+  .bv-t thead th:nth-child(7) { width: 9%; }
+  .bv-t .r { text-align: right; }
+  .bv-t tbody th, .bv-t tbody td { text-align: left; vertical-align: top; font-weight: 400; color: var(--ink); padding: 12px; border-bottom: 1px solid var(--rule); }
+  .bv-t tbody:last-child tr:last-child > * { border-bottom: 0; }
+  .bv-t tr.grp th { background: #EFFFEC; padding: 10px 12px; font-size: 14px; font-weight: 600; }
+  .bv-t tr.grp th .bdg { margin-right: 10px; vertical-align: 1px; }
+  .bv-t tr.grp th span.n { font-weight: 400; color: var(--text); }
+  .bv-t tr.grp:hover th { background: #EFFFEC; }
+  .bv-t .an b { display: block; font-size: 15px; font-weight: 600; }
+  .typ { display: block; font-size: 12.5px; color: var(--text); margin-top: 1px; }
+  .hin { display: block; margin-top: 6px; font-size: 12.5px; font-weight: 600; line-height: 1.35; color: var(--blue); }
+  .hin.warn { color: var(--orange-text); }
+  .bv-t td small, .bvc dd small { display: block; font-size: 12.5px; line-height: 1.4; color: var(--text); margin-top: 3px; }
+  .bv-t td.k { text-align: right; white-space: nowrap; }
+  .bv-t td.k b, .bvc-k b { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .bv-t td.k small { white-space: normal; }
+  .bv-t tbody.g-nein td { color: var(--text); }
+  /* Karten (bis 900 px, 601–900 px zweispaltig) */
+  .bv-cards { display: none; }
+  .bv-ch { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 600; margin: 24px 0 10px; }
+  .bv-ch:first-child { margin-top: 4px; }
+  .bv-ch span.n { font-weight: 400; color: var(--text); }
+  .bvc-l { list-style: none; display: grid; gap: 10px; }
+  .bvc { background: #fff; border: 1px solid rgba(26,26,25,0.10); border-radius: 12px; box-shadow: var(--shadow); padding: 14px 14px 13px; }
+  .bvc-h { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .bvc-h > span > b { display: block; font-size: 16.5px; font-weight: 600; color: var(--ink); }
+  .bvc-k { flex: none; text-align: right; }
+  .bvc-k small { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); }
+  .bvc-k em { display: block; font-style: normal; font-size: 12px; color: var(--text); }
+  .bvc dl { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 6px 10px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--rule); font-size: 14px; line-height: 1.45; }
+  .bvc dt { font-size: 12.5px; font-weight: 600; color: var(--text); padding-top: 1px; }
+  .bvc dd { color: var(--ink); }
+  /* Kostenbalken: Achse 0–80 €, Gitter alle 10 € (= 12,5 %) */
+  .bv-chart { background: #fff; border: 1px solid rgba(26,26,25,0.08); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 24px 18px; }
+  .bar-ax, .bar, .bar-tk { display: grid; grid-template-columns: 172px minmax(0, 1fr); gap: 14px; }
+  .bar-ax-x { margin-top: 2px; } .bar-ax-x .ax-t { text-align: right; }
+  .bars { list-style: none; display: grid; gap: 6px; margin-top: 6px; }
+  .bar { align-items: center; }
+  .bar-l { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.25; }
+  .bar-l small { display: block; font-size: 12px; font-weight: 400; color: var(--text); }
+  .bar-v { display: flex; align-items: center; gap: 8px; min-height: 28px; background: repeating-linear-gradient(to right, rgba(26,26,25,0.09) 0 1px, transparent 1px 12.5%); }
+  .bar-v i { display: block; flex: none; height: 20px; min-width: 3px; border-radius: 0 5px 5px 0; background: var(--blue); }
+  .bar.aw .bar-v i { background: var(--orange); }
+  .bar-v b { font-size: 14px; font-weight: 600; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .bar-tk { margin-top: 4px; }
+  .tk { position: relative; height: 16px; font-size: 12px; color: var(--text); font-variant-numeric: tabular-nums; }
+  .tk i { position: absolute; top: 0; font-style: normal; transform: translateX(-50%); }
+  .tk i:first-child { transform: none; }
+  .bv-leg2 { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 12px; font-size: 13px; color: var(--text); }
+  .bv-leg2 span { display: inline-flex; align-items: center; gap: 7px; }
+  .bv-leg2 span::before { content: ""; width: 14px; height: 10px; border-radius: 0 3px 3px 0; background: var(--blue); }
+  .bv-leg2 span.aw::before { background: var(--orange); }
+  /* So prüfst du deinen Broker */
+  .bv-steps { list-style: none; counter-reset: st; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }
+  .bv-steps li { counter-increment: st; position: relative; background: #fff; border: 1px solid rgba(26,26,25,0.08); border-radius: 14px; box-shadow: var(--shadow); padding: 16px 18px 17px 62px; }
+  .bv-steps li::before { content: counter(st); position: absolute; left: 18px; top: 15px; width: 30px; height: 30px; border-radius: 50%; background: var(--green); color: var(--ink); font-size: 14px; font-weight: 600; display: grid; place-items: center; }
+  .bv-steps h3 { font-size: 16.5px; font-weight: 600; margin-bottom: 4px; }
+  .bv-steps p { font-size: 14.5px; line-height: 1.55; color: var(--text); }
+  .bv-steps p b { color: var(--ink); font-weight: 600; }
+  @media (max-width: 940px) {
+  }
+  @media (max-width: 900px) {
+    .bv-t { display: none; }
+    .bv-cards { display: block; }
+  }
+  @media (min-width: 601px) and (max-width: 900px) {
+    .bvc-l { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 760px) {
+    .bv-steps { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 600px) {
+    .bv-in { font-size: 16px; }
+    .bv-chart { padding: 16px 14px 14px; }
+    .bar-ax, .bar, .bar-tk { grid-template-columns: 102px minmax(0, 1fr); gap: 10px; }
+    .bar-l { font-size: 13px; }
+    .bar-l small { font-size: 12px; }
+    .bar-v b { font-size: 12.5px; }
+    .bv-steps li { padding: 14px 14px 15px 56px; }
+    .bv-steps li::before { left: 14px; }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Welcher Broker kann Anleihen? 19 Anbieter im Vergleich","description":"Welcher Broker kann Anleihen? 19 Anbieter im Vergleich: welche Anleihen es gibt, wo gehandelt wird und was ein Kauf für 5.000 € kostet – von 0 bis 55 €.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-27","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/broker-vergleich.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Kaufen","item":"https://www.metalconcrete.de/kaufen.html"},{"@type":"ListItem","position":3,"name":"Broker im Vergleich","item":"https://www.metalconcrete.de/broker-vergleich.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="kaufen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn current" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe current">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>Welcher Broker kann Anleihen?</h1>
+    <p class="sub">Nicht jede Trading-App hat normale Anleihen im Angebot. 19 Anbieter im Check: welche Anleihen du dort bekommst, wo gehandelt wird und was ein Kauf für 5.000&nbsp;€ oder 100.000&nbsp;€ kostet.</p>
+    <p class="bv-stand"><span><b>Stand 27.09.2026</b> · geprüft nur auf den Seiten und in den Preisverzeichnissen der Anbieter</span></p>
+    <nav class="lands" aria-label="Zum Abschnitt springen">
+      <a class="lbtn" href="#tabelle"><span class="n">1</span>Die Tabelle</a>
+      <a class="lbtn" href="#kosten"><span class="n">2</span>Kosten im Bild</a>
+      <a class="lbtn" href="#pruefen"><span class="n">3</span>So prüfst du</a>
+    </nav>
+
+
+    <section class="section" id="tabelle" aria-labelledby="h-tabelle">
+      <h2 id="h-tabelle">19 Anbieter im Vergleich</h2>
+      <p class="bv-in">Was bekommst du bei welchem Anbieter, wo wird gehandelt und was kostet ein Kauf für 5.000&nbsp;€ und für 100.000&nbsp;€ – beim günstigsten Weg <strong>mit Limit</strong>. Bei 100.000&nbsp;€ greift bei vielen Banken der Höchstpreis je Order; Commerzbank und Sparkasse haben keinen. Die Spanne zwischen Geld- und Briefkurs kommt überall dazu.</p>
+      <ul class="bv-leg" aria-label="Zeichenerklärung"><li><span class="bdg ja">ja</span>Staats- und Unternehmensanleihen, mehrere Handelsplätze</li><li><span class="bdg aw">Auswahl</span>ein Teil der Anleihen, ein Handelsweg</li><li><span class="bdg nein">nein</span>keine Staatsanleihen, höchstens einzelne Sonderprodukte</li></ul>
+<table class="bv-t">
+<caption class="sr-only">Broker für Anleihen im Vergleich, Stand 27. September 2026</caption>
+<thead><tr><th scope="col">Anbieter</th><th scope="col">Anleihen</th><th scope="col">Handelsplätze</th><th scope="col">Gebühr je Kauf</th><th scope="col" class="r">Kauf für 5.000&nbsp;€</th><th scope="col" class="r">Kauf für 100.000&nbsp;€</th><th scope="col">Depot</th></tr></thead>
+<tbody class="g-ja">
+<tr class="grp"><th colspan="7" scope="rowgroup"><span class="bdg ja">ja</span>Fast alle Anleihen <span class="n">· 14 Anbieter, nach Kosten für 5.000&nbsp;€ sortiert</span></th></tr>
+<tr><th scope="row" class="an"><b>Smartbroker+</b><span class="typ">Online-Broker</span></th><td>rund 40.000, auch in Fremdwährung</td><td>29 Handelsplätze im In- und Ausland, darunter gettex</td><td>gettex: 0&nbsp;€ ab 500&nbsp;€, darunter 1 bis 4&nbsp;€<small>andere Plätze: 4&nbsp;€ + Börsenentgelt</small></td><td class="k"><b>0,00&nbsp;€</b><small>über gettex</small></td><td class="k"><b>0,00&nbsp;€</b><small>über gettex</small></td><td>0&nbsp;€</td></tr>
+<tr><th scope="row" class="an"><b>Traders Place</b><span class="typ">Online-Broker, Depot bei der Baader Bank</span></th><td>rund 40.000, deutsche und internationale</td><td>über 40 Handelsplätze: gettex, Baader-Direkthandel, deutsche Börsen</td><td>gettex und Direkthandel: 0&nbsp;€ ab 500&nbsp;€, darunter 0,95&nbsp;€<small>andere deutsche Börsen: ab 5&nbsp;€</small></td><td class="k"><b>0,00&nbsp;€</b><small>gettex oder Direkthandel</small></td><td class="k"><b>0,00&nbsp;€</b><small>gettex oder Direkthandel</small></td><td>0&nbsp;€</td></tr>
+<tr><th scope="row" class="an"><b>DEGIRO</b><span class="typ">Broker aus den Niederlanden</span><span class="hin warn">Steuer selbst erklären</span></th><td>Staats- und Unternehmensanleihen</td><td>Börse Frankfurt, Euronext (Amsterdam, Brüssel, Lissabon, Paris)</td><td>3,90&nbsp;€ + 1&nbsp;€ Bearbeitung</td><td class="k"><b>4,90&nbsp;€</b><small>Börse Frankfurt</small></td><td class="k"><b>4,90&nbsp;€</b><small>Börse Frankfurt</small></td><td>0&nbsp;€</td></tr>
+<tr><th scope="row" class="an"><b>Interactive Brokers</b><span class="typ">Broker aus Irland</span><span class="hin warn">Steuer selbst erklären</span></th><td>über 1 Million weltweit, auch Fremdwährung</td><td>weltweit, außerbörslich und an Börsen wie Euronext</td><td>0,1&nbsp;% vom Kurswert, über 10.000&nbsp;€ 0,025&nbsp;%<small>Euronext: 0,1&nbsp;%, mind. 2&nbsp;€, dazu Börsengebühren</small></td><td class="k"><b>5,00&nbsp;€</b><small>außerbörslich</small></td><td class="k"><b>32,50&nbsp;€</b><small>10&nbsp;€ + 0,025&nbsp;% über 10.000&nbsp;€</small></td><td>0&nbsp;€</td></tr>
+<tr><th scope="row" class="an"><b>flatex</b><span class="typ">Online-Broker</span></th><td>über 35.000, auch Pfandbriefe</td><td>deutsche Börsen und Direkthandel, u.&nbsp;a. gettex, Tradegate</td><td>5,90&nbsp;€ + fremde Kosten<small>gettex, Tradegate, Baader, Lang &amp; Schwarz: 2&nbsp;€ Pauschale</small><small>Neukunden: 20 Orders ohne Ordergebühr</small></td><td class="k"><b>7,90&nbsp;€</b><small>gettex oder Tradegate</small></td><td class="k"><b>7,90&nbsp;€</b><small>gettex oder Tradegate</small></td><td>0&nbsp;€</td></tr>
+<tr><th scope="row" class="an"><b>DKB</b><span class="typ">Direktbank</span></th><td>Staats- und Unternehmensanleihen</td><td>9 deutsche Börsen (u.&nbsp;a. Xetra, Tradegate, gettex, Quotrix), Auslandsbörsen, außerbörslich</td><td>10&nbsp;€ bis 5.000&nbsp;€, 15&nbsp;€ bis 20.000&nbsp;€, darüber 30&nbsp;€<small>Xetra und Parkett: + 2,50&nbsp;€</small></td><td class="k"><b>10,00&nbsp;€</b><small>Tradegate, gettex oder außerbörslich</small></td><td class="k"><b>30,00&nbsp;€</b><small>Tradegate, gettex oder außerbörslich</small></td><td>0&nbsp;€</td></tr>
+<tr><th scope="row" class="an"><b>maxblue</b><span class="typ">Online-Depot der Deutschen Bank</span></th><td>Staats- und Unternehmensanleihen</td><td>40 Börsenplätze; Direct Trade für Anleihen mit Baader, Lang &amp; Schwarz, Société Générale, Tradegate</td><td>0,25&nbsp;% (mind. 8,90&nbsp;€, max. 58,90&nbsp;€)<small>Direct Trade ohne Zusatzentgelt; Börse: dazu Börsengebühren und Fremdspesen je Platz</small></td><td class="k"><b>12,50&nbsp;€</b><small>Direct Trade</small></td><td class="k"><b>58,90&nbsp;€</b><small>Höchstpreis, Direct Trade</small></td><td>0&nbsp;€</td></tr>
+<tr><th scope="row" class="an"><b>S Broker</b><span class="typ">Online-Broker der Sparkassen</span></th><td>Staats- und Unternehmensanleihen</td><td>alle deutschen Börsen, 29 Auslandsbörsen, Direkthandel</td><td>0,95&nbsp;€ + 0,25&nbsp;% (max. 54,99&nbsp;€)<small>Börse: + 2,45&nbsp;€, Direkthandel frei</small><small>Sofortorder in der App: 0,95&nbsp;€, den Handelsplatz wählt der Broker (Best Execution)</small></td><td class="k"><b>13,45&nbsp;€</b><small>Direkthandel</small></td><td class="k"><b>54,99&nbsp;€</b><small>Höchstpreis, Direkthandel</small></td><td>0&nbsp;€</td></tr>
+<tr><th scope="row" class="an"><b>1822direkt</b><span class="typ">Direktbank</span></th><td>Staats- und Unternehmensanleihen</td><td>deutsche und ausländische Börsen, Direkthandel</td><td>4,90&nbsp;€ + 0,25&nbsp;% (9,90 bis 54,90&nbsp;€)<small>Börse: + 2,95&nbsp;€, Direkthandel frei</small></td><td class="k"><b>17,40&nbsp;€</b><small>Direkthandel</small></td><td class="k"><b>54,90&nbsp;€</b><small>Höchstpreis, Direkthandel</small></td><td>0&nbsp;€</td></tr>
+<tr><th scope="row" class="an"><b>comdirect</b><span class="typ">Direktbank</span></th><td>über 60.000, Laufzeiten und Währungen wählbar</td><td>Börsen und LiveTrading (außerbörslich)</td><td>4,90&nbsp;€ + 0,25&nbsp;% (9,90 bis 59,90&nbsp;€)<small>dazu fremde Kosten je Börse</small><small>Neukunden: 3 Jahre lang 3,90&nbsp;€ je Order (Angebot bis 01.11.2026)</small></td><td class="k"><b>17,40&nbsp;€</b><small>LiveTrading</small></td><td class="k"><b>59,90&nbsp;€</b><small>Höchstpreis, LiveTrading; Neukunden 3,90&nbsp;€</small></td><td>0&nbsp;€</td></tr>
+<tr><th scope="row" class="an"><b>Commerzbank</b><span class="typ">Filialbank, Order online</span></th><td>Staats- und Unternehmensanleihen</td><td>64 Handelsplätze, auch Direkthandel Commerzbank</td><td>4,90&nbsp;€ + 0,25&nbsp;% (mind. 9,90&nbsp;€)<small>dazu fremde Kosten</small></td><td class="k"><b>ab 17,40&nbsp;€</b><small>plus fremde Kosten</small></td><td class="k"><b>ab 254,90&nbsp;€</b><small>kein Höchstpreis, plus fremde Kosten</small></td><td>0,175&nbsp;% im Jahr, mind. 4,95&nbsp;€ je Quartal<small>bei 5.000&nbsp;€: 19,80&nbsp;€ im Jahr; 0&nbsp;€ mit mindestens einer Order im Quartal</small></td></tr>
+<tr><th scope="row" class="an"><b>ING</b><span class="typ">Direktbank</span></th><td>über 9.000, auch Pfandbriefe</td><td>Börsen; Direkthandel für Anleihen über Tradegate und gettex</td><td>4,90&nbsp;€ + 0,25&nbsp;% (max. 69,90&nbsp;€)<small>Börse: + 1,90 bis 2,90&nbsp;€, Direkthandel (Tradegate, gettex) frei</small></td><td class="k"><b>17,40&nbsp;€</b><small>Direkthandel</small></td><td class="k"><b>69,90&nbsp;€</b><small>Höchstpreis, Direkthandel</small></td><td>0&nbsp;€</td></tr>
+<tr><th scope="row" class="an"><b>Consorsbank</b><span class="typ">Direktbank</span></th><td>Staats- und Unternehmensanleihen</td><td>Tradegate, gettex, LSX, Xetra, Parkettbörsen, außerbörslich</td><td>4,95&nbsp;€ + 0,25&nbsp;% (9,95 bis 69&nbsp;€)<small>Handelsplatz: + 0,95&nbsp;€ (Tradegate), 1,95&nbsp;€ (gettex, LSX, Xetra) bis 2,95&nbsp;€ (Parkett)</small><small>ab 26 Orders im Jahr günstiger</small></td><td class="k"><b>18,40&nbsp;€</b><small>Tradegate</small></td><td class="k"><b>69,95&nbsp;€</b><small>Höchstpreis 69&nbsp;€ + Tradegate 0,95&nbsp;€</small></td><td>0&nbsp;€</td></tr>
+<tr><th scope="row" class="an"><b>Sparkasse</b><span class="typ">Filialbank, Beispiel Sparkasse Siegen</span></th><td>Staats- und Unternehmensanleihen</td><td>deutsche Börsen</td><td>online: 14,90&nbsp;€ + 0,5&nbsp;%<small>über den Berater: 19,90&nbsp;€ + 0,7&nbsp;%</small><small>dazu fremde Kosten; Preise je Sparkasse verschieden</small></td><td class="k"><b>39,90&nbsp;€</b><small>online; über den Berater 54,90&nbsp;€</small></td><td class="k"><b>514,90&nbsp;€</b><small>online, kein Höchstpreis; über den Berater 719,90&nbsp;€</small></td><td>rund 48&nbsp;€ im Jahr<small>8,93&nbsp;€ je Quartal + 0,0595&nbsp;% vom Kurswert je Quartal</small></td></tr>
+</tbody>
+<tbody class="g-aw">
+<tr class="grp"><th colspan="7" scope="rowgroup"><span class="bdg aw">Auswahl</span>Nur eine Auswahl <span class="n">· 2 Anbieter, nach Kosten für 5.000&nbsp;€ sortiert</span></th></tr>
+<tr><th scope="row" class="an"><b>Trade Republic</b><span class="typ">Neobroker</span></th><td>Auswahl an Staats- und Unternehmensanleihen in Euro, seit Oktober 2025 auch in US-Dollar<small>ab 1&nbsp;€; zum Start 2023 waren es 500</small></td><td>nur LS Exchange<small>Limit-Order nur ohne Bruchteile</small></td><td>1&nbsp;€</td><td class="k"><b>1,00&nbsp;€</b><small>LS Exchange</small></td><td class="k"><b>1,00&nbsp;€</b><small>LS Exchange</small></td><td>0&nbsp;€</td></tr>
+<tr><th scope="row" class="an"><b>Revolut</b><span class="typ">Neobank; Wertpapiere über Revolut Securities Europe (Litauen)</span><span class="hin warn">kein Limit möglich</span><span class="hin warn">Steuer selbst erklären</span></th><td>Staats- und Unternehmensanleihen in Euro und US-Dollar<small>ab 2&nbsp;€</small></td><td>in der App, nur Market-Order; Handel 11–20 Uhr Golfzeit (MESZ 9–18 Uhr)</td><td>0,25&nbsp;%, mind. 1&nbsp;€</td><td class="k"><b>12,50&nbsp;€</b><small>ohne Limit</small></td><td class="k"><b>250,00&nbsp;€</b><small>ohne Limit; Trading Pro 120&nbsp;€</small></td><td>0&nbsp;€</td></tr>
+</tbody>
+<tbody class="g-nein">
+<tr class="grp"><th colspan="7" scope="rowgroup"><span class="bdg nein">nein</span>Keine normalen Anleihen <span class="n">· 3 Anbieter</span></th></tr>
+<tr><th scope="row" class="an"><b>Scalable Capital</b><span class="typ">Neobroker</span></th><td colspan="6">nur zwei Festzinsanleihen von Goldman Sachs (3 und 5 Jahre, ab 100&nbsp;€), sonst keine – auch keine Staatsanleihen<small>Anleihen-ETFs: ja</small></td></tr>
+<tr><th scope="row" class="an"><b>finanzen.net zero</b><span class="typ">Neobroker</span></th><td colspan="6">keine einzelnen Anleihen<small>Anleihen-ETFs: ja</small></td></tr>
+<tr><th scope="row" class="an"><b>N26</b><span class="typ">Neobank</span></th><td colspan="6">keine Anleihen – nur Aktien, ETFs, Fonds und Krypto</td></tr>
+</tbody>
+</table>
+<div class="bv-cards">
+<h3 class="bv-ch"><span class="bdg ja">ja</span>Fast alle Anleihen <span class="n">· 14</span></h3>
+<ul class="bvc-l"><li class="bvc"><p class="bvc-h"><span><b>Smartbroker+</b><span class="typ">Online-Broker</span></span><span class="bvc-k"><small>5.000&nbsp;€ kaufen</small><b>0,00&nbsp;€</b><em>über gettex</em></span></p><dl><dt>Anleihen</dt><dd>rund 40.000, auch in Fremdwährung</dd><dt>Handel</dt><dd>29 Handelsplätze im In- und Ausland, darunter gettex</dd><dt>Gebühr</dt><dd>gettex: 0&nbsp;€ ab 500&nbsp;€, darunter 1 bis 4&nbsp;€<small>andere Plätze: 4&nbsp;€ + Börsenentgelt</small></dd><dt>100.000&nbsp;€</dt><dd>0,00&nbsp;€<small>über gettex</small></dd><dt>Depot</dt><dd>0&nbsp;€</dd></dl></li><li class="bvc"><p class="bvc-h"><span><b>Traders Place</b><span class="typ">Online-Broker, Depot bei der Baader Bank</span></span><span class="bvc-k"><small>5.000&nbsp;€ kaufen</small><b>0,00&nbsp;€</b><em>gettex oder Direkthandel</em></span></p><dl><dt>Anleihen</dt><dd>rund 40.000, deutsche und internationale</dd><dt>Handel</dt><dd>über 40 Handelsplätze: gettex, Baader-Direkthandel, deutsche Börsen</dd><dt>Gebühr</dt><dd>gettex und Direkthandel: 0&nbsp;€ ab 500&nbsp;€, darunter 0,95&nbsp;€<small>andere deutsche Börsen: ab 5&nbsp;€</small></dd><dt>100.000&nbsp;€</dt><dd>0,00&nbsp;€<small>gettex oder Direkthandel</small></dd><dt>Depot</dt><dd>0&nbsp;€</dd></dl></li><li class="bvc"><p class="bvc-h"><span><b>DEGIRO</b><span class="typ">Broker aus den Niederlanden</span></span><span class="bvc-k"><small>5.000&nbsp;€ kaufen</small><b>4,90&nbsp;€</b><em>Börse Frankfurt</em></span></p><dl><dt>Anleihen</dt><dd>Staats- und Unternehmensanleihen</dd><dt>Handel</dt><dd>Börse Frankfurt, Euronext (Amsterdam, Brüssel, Lissabon, Paris)</dd><dt>Gebühr</dt><dd>3,90&nbsp;€ + 1&nbsp;€ Bearbeitung</dd><dt>100.000&nbsp;€</dt><dd>4,90&nbsp;€<small>Börse Frankfurt</small></dd><dt>Depot</dt><dd>0&nbsp;€</dd></dl><span class="hin warn">Steuer selbst erklären</span></li><li class="bvc"><p class="bvc-h"><span><b>Interactive Brokers</b><span class="typ">Broker aus Irland</span></span><span class="bvc-k"><small>5.000&nbsp;€ kaufen</small><b>5,00&nbsp;€</b><em>außerbörslich</em></span></p><dl><dt>Anleihen</dt><dd>über 1 Million weltweit, auch Fremdwährung</dd><dt>Handel</dt><dd>weltweit, außerbörslich und an Börsen wie Euronext</dd><dt>Gebühr</dt><dd>0,1&nbsp;% vom Kurswert, über 10.000&nbsp;€ 0,025&nbsp;%<small>Euronext: 0,1&nbsp;%, mind. 2&nbsp;€, dazu Börsengebühren</small></dd><dt>100.000&nbsp;€</dt><dd>32,50&nbsp;€<small>10&nbsp;€ + 0,025&nbsp;% über 10.000&nbsp;€</small></dd><dt>Depot</dt><dd>0&nbsp;€</dd></dl><span class="hin warn">Steuer selbst erklären</span></li><li class="bvc"><p class="bvc-h"><span><b>flatex</b><span class="typ">Online-Broker</span></span><span class="bvc-k"><small>5.000&nbsp;€ kaufen</small><b>7,90&nbsp;€</b><em>gettex oder Tradegate</em></span></p><dl><dt>Anleihen</dt><dd>über 35.000, auch Pfandbriefe</dd><dt>Handel</dt><dd>deutsche Börsen und Direkthandel, u.&nbsp;a. gettex, Tradegate</dd><dt>Gebühr</dt><dd>5,90&nbsp;€ + fremde Kosten<small>gettex, Tradegate, Baader, Lang &amp; Schwarz: 2&nbsp;€ Pauschale</small><small>Neukunden: 20 Orders ohne Ordergebühr</small></dd><dt>100.000&nbsp;€</dt><dd>7,90&nbsp;€<small>gettex oder Tradegate</small></dd><dt>Depot</dt><dd>0&nbsp;€</dd></dl></li><li class="bvc"><p class="bvc-h"><span><b>DKB</b><span class="typ">Direktbank</span></span><span class="bvc-k"><small>5.000&nbsp;€ kaufen</small><b>10,00&nbsp;€</b><em>Tradegate, gettex oder außerbörslich</em></span></p><dl><dt>Anleihen</dt><dd>Staats- und Unternehmensanleihen</dd><dt>Handel</dt><dd>9 deutsche Börsen (u.&nbsp;a. Xetra, Tradegate, gettex, Quotrix), Auslandsbörsen, außerbörslich</dd><dt>Gebühr</dt><dd>10&nbsp;€ bis 5.000&nbsp;€, 15&nbsp;€ bis 20.000&nbsp;€, darüber 30&nbsp;€<small>Xetra und Parkett: + 2,50&nbsp;€</small></dd><dt>100.000&nbsp;€</dt><dd>30,00&nbsp;€<small>Tradegate, gettex oder außerbörslich</small></dd><dt>Depot</dt><dd>0&nbsp;€</dd></dl></li><li class="bvc"><p class="bvc-h"><span><b>maxblue</b><span class="typ">Online-Depot der Deutschen Bank</span></span><span class="bvc-k"><small>5.000&nbsp;€ kaufen</small><b>12,50&nbsp;€</b><em>Direct Trade</em></span></p><dl><dt>Anleihen</dt><dd>Staats- und Unternehmensanleihen</dd><dt>Handel</dt><dd>40 Börsenplätze; Direct Trade für Anleihen mit Baader, Lang &amp; Schwarz, Société Générale, Tradegate</dd><dt>Gebühr</dt><dd>0,25&nbsp;% (mind. 8,90&nbsp;€, max. 58,90&nbsp;€)<small>Direct Trade ohne Zusatzentgelt; Börse: dazu Börsengebühren und Fremdspesen je Platz</small></dd><dt>100.000&nbsp;€</dt><dd>58,90&nbsp;€<small>Höchstpreis, Direct Trade</small></dd><dt>Depot</dt><dd>0&nbsp;€</dd></dl></li><li class="bvc"><p class="bvc-h"><span><b>S Broker</b><span class="typ">Online-Broker der Sparkassen</span></span><span class="bvc-k"><small>5.000&nbsp;€ kaufen</small><b>13,45&nbsp;€</b><em>Direkthandel</em></span></p><dl><dt>Anleihen</dt><dd>Staats- und Unternehmensanleihen</dd><dt>Handel</dt><dd>alle deutschen Börsen, 29 Auslandsbörsen, Direkthandel</dd><dt>Gebühr</dt><dd>0,95&nbsp;€ + 0,25&nbsp;% (max. 54,99&nbsp;€)<small>Börse: + 2,45&nbsp;€, Direkthandel frei</small><small>Sofortorder in der App: 0,95&nbsp;€, den Handelsplatz wählt der Broker (Best Execution)</small></dd><dt>100.000&nbsp;€</dt><dd>54,99&nbsp;€<small>Höchstpreis, Direkthandel</small></dd><dt>Depot</dt><dd>0&nbsp;€</dd></dl></li><li class="bvc"><p class="bvc-h"><span><b>1822direkt</b><span class="typ">Direktbank</span></span><span class="bvc-k"><small>5.000&nbsp;€ kaufen</small><b>17,40&nbsp;€</b><em>Direkthandel</em></span></p><dl><dt>Anleihen</dt><dd>Staats- und Unternehmensanleihen</dd><dt>Handel</dt><dd>deutsche und ausländische Börsen, Direkthandel</dd><dt>Gebühr</dt><dd>4,90&nbsp;€ + 0,25&nbsp;% (9,90 bis 54,90&nbsp;€)<small>Börse: + 2,95&nbsp;€, Direkthandel frei</small></dd><dt>100.000&nbsp;€</dt><dd>54,90&nbsp;€<small>Höchstpreis, Direkthandel</small></dd><dt>Depot</dt><dd>0&nbsp;€</dd></dl></li><li class="bvc"><p class="bvc-h"><span><b>comdirect</b><span class="typ">Direktbank</span></span><span class="bvc-k"><small>5.000&nbsp;€ kaufen</small><b>17,40&nbsp;€</b><em>LiveTrading</em></span></p><dl><dt>Anleihen</dt><dd>über 60.000, Laufzeiten und Währungen wählbar</dd><dt>Handel</dt><dd>Börsen und LiveTrading (außerbörslich)</dd><dt>Gebühr</dt><dd>4,90&nbsp;€ + 0,25&nbsp;% (9,90 bis 59,90&nbsp;€)<small>dazu fremde Kosten je Börse</small><small>Neukunden: 3 Jahre lang 3,90&nbsp;€ je Order (Angebot bis 01.11.2026)</small></dd><dt>100.000&nbsp;€</dt><dd>59,90&nbsp;€<small>Höchstpreis, LiveTrading; Neukunden 3,90&nbsp;€</small></dd><dt>Depot</dt><dd>0&nbsp;€</dd></dl></li><li class="bvc"><p class="bvc-h"><span><b>Commerzbank</b><span class="typ">Filialbank, Order online</span></span><span class="bvc-k"><small>5.000&nbsp;€ kaufen</small><b>ab 17,40&nbsp;€</b><em>plus fremde Kosten</em></span></p><dl><dt>Anleihen</dt><dd>Staats- und Unternehmensanleihen</dd><dt>Handel</dt><dd>64 Handelsplätze, auch Direkthandel Commerzbank</dd><dt>Gebühr</dt><dd>4,90&nbsp;€ + 0,25&nbsp;% (mind. 9,90&nbsp;€)<small>dazu fremde Kosten</small></dd><dt>100.000&nbsp;€</dt><dd>ab 254,90&nbsp;€<small>kein Höchstpreis, plus fremde Kosten</small></dd><dt>Depot</dt><dd>0,175&nbsp;% im Jahr, mind. 4,95&nbsp;€ je Quartal<small>bei 5.000&nbsp;€: 19,80&nbsp;€ im Jahr; 0&nbsp;€ mit mindestens einer Order im Quartal</small></dd></dl></li><li class="bvc"><p class="bvc-h"><span><b>ING</b><span class="typ">Direktbank</span></span><span class="bvc-k"><small>5.000&nbsp;€ kaufen</small><b>17,40&nbsp;€</b><em>Direkthandel</em></span></p><dl><dt>Anleihen</dt><dd>über 9.000, auch Pfandbriefe</dd><dt>Handel</dt><dd>Börsen; Direkthandel für Anleihen über Tradegate und gettex</dd><dt>Gebühr</dt><dd>4,90&nbsp;€ + 0,25&nbsp;% (max. 69,90&nbsp;€)<small>Börse: + 1,90 bis 2,90&nbsp;€, Direkthandel (Tradegate, gettex) frei</small></dd><dt>100.000&nbsp;€</dt><dd>69,90&nbsp;€<small>Höchstpreis, Direkthandel</small></dd><dt>Depot</dt><dd>0&nbsp;€</dd></dl></li><li class="bvc"><p class="bvc-h"><span><b>Consorsbank</b><span class="typ">Direktbank</span></span><span class="bvc-k"><small>5.000&nbsp;€ kaufen</small><b>18,40&nbsp;€</b><em>Tradegate</em></span></p><dl><dt>Anleihen</dt><dd>Staats- und Unternehmensanleihen</dd><dt>Handel</dt><dd>Tradegate, gettex, LSX, Xetra, Parkettbörsen, außerbörslich</dd><dt>Gebühr</dt><dd>4,95&nbsp;€ + 0,25&nbsp;% (9,95 bis 69&nbsp;€)<small>Handelsplatz: + 0,95&nbsp;€ (Tradegate), 1,95&nbsp;€ (gettex, LSX, Xetra) bis 2,95&nbsp;€ (Parkett)</small><small>ab 26 Orders im Jahr günstiger</small></dd><dt>100.000&nbsp;€</dt><dd>69,95&nbsp;€<small>Höchstpreis 69&nbsp;€ + Tradegate 0,95&nbsp;€</small></dd><dt>Depot</dt><dd>0&nbsp;€</dd></dl></li><li class="bvc"><p class="bvc-h"><span><b>Sparkasse</b><span class="typ">Filialbank, Beispiel Sparkasse Siegen</span></span><span class="bvc-k"><small>5.000&nbsp;€ kaufen</small><b>39,90&nbsp;€</b><em>online; über den Berater 54,90&nbsp;€</em></span></p><dl><dt>Anleihen</dt><dd>Staats- und Unternehmensanleihen</dd><dt>Handel</dt><dd>deutsche Börsen</dd><dt>Gebühr</dt><dd>online: 14,90&nbsp;€ + 0,5&nbsp;%<small>über den Berater: 19,90&nbsp;€ + 0,7&nbsp;%</small><small>dazu fremde Kosten; Preise je Sparkasse verschieden</small></dd><dt>100.000&nbsp;€</dt><dd>514,90&nbsp;€<small>online, kein Höchstpreis; über den Berater 719,90&nbsp;€</small></dd><dt>Depot</dt><dd>rund 48&nbsp;€ im Jahr<small>8,93&nbsp;€ je Quartal + 0,0595&nbsp;% vom Kurswert je Quartal</small></dd></dl></li></ul>
+<h3 class="bv-ch"><span class="bdg aw">Auswahl</span>Nur eine Auswahl <span class="n">· 2</span></h3>
+<ul class="bvc-l"><li class="bvc"><p class="bvc-h"><span><b>Trade Republic</b><span class="typ">Neobroker</span></span><span class="bvc-k"><small>5.000&nbsp;€ kaufen</small><b>1,00&nbsp;€</b><em>LS Exchange</em></span></p><dl><dt>Anleihen</dt><dd>Auswahl an Staats- und Unternehmensanleihen in Euro, seit Oktober 2025 auch in US-Dollar<small>ab 1&nbsp;€; zum Start 2023 waren es 500</small></dd><dt>Handel</dt><dd>nur LS Exchange<small>Limit-Order nur ohne Bruchteile</small></dd><dt>Gebühr</dt><dd>1&nbsp;€</dd><dt>100.000&nbsp;€</dt><dd>1,00&nbsp;€<small>LS Exchange</small></dd><dt>Depot</dt><dd>0&nbsp;€</dd></dl></li><li class="bvc"><p class="bvc-h"><span><b>Revolut</b><span class="typ">Neobank; Wertpapiere über Revolut Securities Europe (Litauen)</span></span><span class="bvc-k"><small>5.000&nbsp;€ kaufen</small><b>12,50&nbsp;€</b><em>ohne Limit</em></span></p><dl><dt>Anleihen</dt><dd>Staats- und Unternehmensanleihen in Euro und US-Dollar<small>ab 2&nbsp;€</small></dd><dt>Handel</dt><dd>in der App, nur Market-Order; Handel 11–20 Uhr Golfzeit (MESZ 9–18 Uhr)</dd><dt>Gebühr</dt><dd>0,25&nbsp;%, mind. 1&nbsp;€</dd><dt>100.000&nbsp;€</dt><dd>250,00&nbsp;€<small>ohne Limit; Trading Pro 120&nbsp;€</small></dd><dt>Depot</dt><dd>0&nbsp;€</dd></dl><span class="hin warn">kein Limit möglich</span><span class="hin warn">Steuer selbst erklären</span></li></ul>
+<h3 class="bv-ch"><span class="bdg nein">nein</span>Keine normalen Anleihen <span class="n">· 3</span></h3>
+<ul class="bvc-l"><li class="bvc"><p class="bvc-h"><span><b>Scalable Capital</b><span class="typ">Neobroker</span></span></p><dl><dt>Anleihen</dt><dd>nur zwei Festzinsanleihen von Goldman Sachs (3 und 5 Jahre, ab 100&nbsp;€), sonst keine – auch keine Staatsanleihen<small>Anleihen-ETFs: ja</small></dd></dl></li><li class="bvc"><p class="bvc-h"><span><b>finanzen.net zero</b><span class="typ">Neobroker</span></span></p><dl><dt>Anleihen</dt><dd>keine einzelnen Anleihen<small>Anleihen-ETFs: ja</small></dd></dl></li><li class="bvc"><p class="bvc-h"><span><b>N26</b><span class="typ">Neobank</span></span></p><dl><dt>Anleihen</dt><dd>keine Anleihen – nur Aktien, ETFs, Fonds und Krypto</dd></dl></li></ul>
+</div>
+      <p class="klein">Kosten: Kauf von Anleihen mit 5.000&nbsp;€ Kurswert, mit Limit, über den günstigsten Weg, den der Anbieter nennt (klein darunter). Fremde Kosten wie Maklercourtage sind nur eingerechnet, wo der Anbieter sie beziffert. Nicht mehr dabei: die onvista bank – sie hat ihren Geschäftsbetrieb Ende 2025 eingestellt.</p>
+    </section>
+
+    <section class="section" id="kosten" aria-labelledby="h-kosten">
+      <h2 id="h-kosten">Was ein Kauf für 5.000&nbsp;€ kostet</h2>
+      <p class="bv-in">Gleicher Betrag, gleiche Anleihe – je nach Anbieter zahlst du 0 bis 55&nbsp;€. Das zählt, weil Anleihen nur ein paar Prozent im Jahr bringen.</p>
+<div class="bv-chart">
+<div class="ax-row bar-ax" aria-hidden="true"><span class="ax-t">Anbieter</span><span></span></div>
+<ul class="bars" aria-label="Kosten für einen Kauf von Anleihen für 5.000 Euro, günstigster Weg mit Limit">
+<li class="bar"><span class="bar-l">Smartbroker+</span><span class="bar-v"><i style="width: 0.00%"></i><b>0,00&nbsp;€</b></span></li>
+<li class="bar"><span class="bar-l">Traders Place</span><span class="bar-v"><i style="width: 0.00%"></i><b>0,00&nbsp;€</b></span></li>
+<li class="bar aw"><span class="bar-l">Trade Republic</span><span class="bar-v"><i style="width: 1.25%"></i><b>1,00&nbsp;€</b></span></li>
+<li class="bar"><span class="bar-l">DEGIRO</span><span class="bar-v"><i style="width: 6.13%"></i><b>4,90&nbsp;€</b></span></li>
+<li class="bar"><span class="bar-l">Interactive Brokers</span><span class="bar-v"><i style="width: 6.25%"></i><b>5,00&nbsp;€</b></span></li>
+<li class="bar"><span class="bar-l">flatex</span><span class="bar-v"><i style="width: 9.88%"></i><b>7,90&nbsp;€</b></span></li>
+<li class="bar"><span class="bar-l">DKB</span><span class="bar-v"><i style="width: 12.50%"></i><b>10,00&nbsp;€</b></span></li>
+<li class="bar"><span class="bar-l">maxblue</span><span class="bar-v"><i style="width: 15.62%"></i><b>12,50&nbsp;€</b></span></li>
+<li class="bar aw"><span class="bar-l">Revolut<small>ohne Limit</small></span><span class="bar-v"><i style="width: 15.62%"></i><b>12,50&nbsp;€</b></span></li>
+<li class="bar"><span class="bar-l">S Broker</span><span class="bar-v"><i style="width: 16.81%"></i><b>13,45&nbsp;€</b></span></li>
+<li class="bar"><span class="bar-l">1822direkt</span><span class="bar-v"><i style="width: 21.75%"></i><b>17,40&nbsp;€</b></span></li>
+<li class="bar"><span class="bar-l">comdirect<small>Neukunden 3,90&nbsp;€</small></span><span class="bar-v"><i style="width: 21.75%"></i><b>17,40&nbsp;€</b></span></li>
+<li class="bar"><span class="bar-l">Commerzbank<small>plus fremde Kosten</small></span><span class="bar-v"><i style="width: 21.75%"></i><b>ab 17,40&nbsp;€</b></span></li>
+<li class="bar"><span class="bar-l">ING</span><span class="bar-v"><i style="width: 21.75%"></i><b>17,40&nbsp;€</b></span></li>
+<li class="bar"><span class="bar-l">Consorsbank</span><span class="bar-v"><i style="width: 23.00%"></i><b>18,40&nbsp;€</b></span></li>
+<li class="bar"><span class="bar-l">Sparkasse<small>online</small></span><span class="bar-v"><i style="width: 49.88%"></i><b>39,90&nbsp;€</b></span></li>
+<li class="bar"><span class="bar-l">Sparkasse<small>über den Berater</small></span><span class="bar-v"><i style="width: 68.62%"></i><b>54,90&nbsp;€</b></span></li>
+</ul>
+<div class="bar-tk" aria-hidden="true"><span></span><span class="tk"><i style="left: 0.0%">0</i><i style="left: 12.5%">10</i><i style="left: 25.0%">20</i><i style="left: 37.5%">30</i><i style="left: 50.0%">40</i><i style="left: 62.5%">50</i><i style="left: 75.0%">60</i><i style="left: 87.5%">70</i></span></div>
+<div class="ax-row bar-ax bar-ax-x" aria-hidden="true"><span></span><span class="ax-t">Kosten für 5.000&nbsp;€ in&nbsp;€&nbsp;→</span></div>
+<p class="bv-leg2"><span>fast alle Anleihen</span><span class="aw">nur eine Auswahl</span></p>
+</div>
+    </section>
+
+    <section class="section" id="pruefen" aria-labelledby="h-pruefen">
+      <h2 id="h-pruefen">So prüfst du deinen Broker</h2>
+      <p class="bv-in">Sechs Fragen, bevor du ein Depot eröffnest – oder bevor du bei deinem jetzigen Broker kaufst.</p>
+      <ol class="bv-steps"><li><h3>Gibt es deine Anleihe?</h3><p>Gib die <b>ISIN</b> der Anleihe, die dich interessiert, in die Suche deines Brokers ein. Findet er sie nicht, kannst du sie dort nicht kaufen.</p></li><li><h3>Kannst du den Handelsplatz wählen?</h3><p>Gut ist eine Auswahl: Börse Stuttgart oder Frankfurt, gettex, Tradegate, Direkthandel. Wo viel gehandelt wird, ist die Spanne klein.</p></li><li><h3>Geht eine Order mit Limit?</h3><p>Nur mit Limit zahlst du nie mehr als geplant. Revolut nimmt bei Anleihen bisher nur Market-Orders an; bei Trade Republic geht ein Limit nur für ganze Nennwert-Stücke, nicht für Bruchteile.</p></li><li><h3>Was kostet dein Betrag?</h3><p>Fester Betrag plus Prozent plus Börsenentgelt. <b>0,25&nbsp;%</b> sind bei 10.000&nbsp;€ schon 25&nbsp;€ – bei jedem Kauf und jedem Verkauf.</p></li><li><h3>Kostet das Depot etwas?</h3><p>Online-Depots sind meist kostenlos. In der Filiale zahlst du oft jedes Jahr – bei der Beispiel-Sparkasse rund 48&nbsp;€ für 5.000&nbsp;€.</p></li><li><h3>Wer kümmert sich um die Steuer?</h3><p>Deutsche Banken und Broker führen die Steuer ab und nehmen deinen Freistellungsauftrag. Bei Brokern im Ausland erklärst du die Zinsen selbst.</p></li></ol>
+    </section>
+
+    <div class="weiter">
+      <a class="go" href="erste-anleihe.html#order">Weiter: die Order richtig eingeben&nbsp;→</a>
+      <a class="go leise" href="anleihen-suche.html">Zur Anleihen-Suche&nbsp;→</a>
+      <a class="go leise" href="anleihen-etf.html">Lieber ein Anleihen-ETF?&nbsp;→</a>
+    </div>
+    <p class="klein">Die Übersicht vergleicht Angebot und Preise. Sie ist keine Empfehlung für einen Anbieter und keine Anlageberatung. Preise, Aktionen und Auswahl ändern sich – schau vor dem Kauf ins aktuelle Preisverzeichnis deines Anbieters.</p>
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="erste-anleihe.html">Deine erste Anleihe in neun Schritten</a></li>
+        <li><a href="handelsplaetze.html">Handelsplätze verstehen</a></li>
+        <li><a href="fortgeschrittene.html#handel">Handel ohne Renditeverlust</a></li>
+        <li><a href="begriffe.html">Glossar: Begriffe kurz erklärt</a></li>
+      </ul>
+    </nav>
+    <details class="quellen" id="quellen">
+      <summary>Datenquellen und Methodik</summary>
+      <div class="quellen-body">
+        <p><strong>Methodik.</strong> Alle Angaben am 27.09.2026 ausschließlich auf den Webseiten, in den Hilfe-Centern und in den Preisverzeichnissen der Anbieter selbst geprüft – keine Vergleichsportale, Tests oder Presseberichte Dritter. Was ein Anbieter auf seinen Seiten nicht nennt, steht auch hier nicht. Kosten = Kauf von Anleihen mit 5.000&nbsp;€ bzw. 100.000&nbsp;€ Kurswert, mit Limit, über den günstigsten Handelsweg, den der Anbieter für Anleihen nennt. Nicht eingerechnet: die Spanne zwischen Geld- und Briefkurs, Stückzinsen (die du beim nächsten Zinstermin zurückbekommst) und Maklercourtage, wo der Anbieter sie nicht beziffert. Einordnung „fast alle Anleihen“: Staats- und Unternehmensanleihen an mehreren Handelsplätzen. „Auswahl“: nur ein Teil der Anleihen oder nur ein Handelsweg. „Keine“: weder Staatsanleihen noch andere normale Anleihen.</p>
+        <p><strong>Sonderfälle.</strong> Smartbroker+: Für gettex-Orders unter 500&nbsp;€ nennt die Anleihen-Seite 4&nbsp;€, die allgemeine Konditionenseite 1&nbsp;€ – für 5.000&nbsp;€ spielt das keine Rolle. DEGIRO: Für Euronext-Börsen fällt eine Anschlussgebühr von 0,25&nbsp;% des Depotwerts an, höchstens 2,50&nbsp;€ je Börse und Jahr – nicht für die Börse Frankfurt. Interactive Brokers: Als Jahressteuerunterlagen für Kunden außerhalb der USA nennt IBKR nur US-Formulare; eine deutsche Steuerbescheinigung gibt es nicht. maxblue: Die Börsengebühren je Platz stehen nur im Preis- und Leistungsverzeichnis der Deutschen Bank (Kapitel C1, Nr. 4), das online nicht frei abrufbar ist – deshalb hier ohne Zahl. S Broker: Die Preisliste beschreibt die Sofortorder nur mit „Handelsplatzauswahl über Best Execution Policy“; ob sie für Anleihen und mit Limit möglich ist, sagt S Broker nicht. Commerzbank: Das Depotentgelt von 0,175&nbsp;% im Jahr hat ein Minimum von 4,95&nbsp;€ je Quartal – bei 5.000&nbsp;€ greift das Minimum (19,80&nbsp;€ im Jahr). Trade Republic: Die Zahl der Anleihen nennt Trade Republic nicht mehr (zum Start am 15.09.2023: 500); US-Dollar-Anleihen laut Pressemitteilung vom 15.10.2025; Limit-Orders nur für ganze Nennwert-Stücke, keine Sparpläne. Revolut: Anleihen kauft man über Revolut Securities Europe UAB (Litauen), nur als Market-Order; Revolut „berät nicht in Steuerfragen“ und verweist auf die Steuerpflichten am Wohnsitz. Scalable Capital: zwei Festzinsanleihen von Goldman Sachs (3 und 5 Jahre), laut Scalable wird das Angebot „nach und nach erweitert“. finanzen.net zero: Produktseite und Handelszeiten nennen Aktien, ETFs, Fonds, Derivate und Kryptowährungen – keine Anleihen; nur eine Vergleichsseite von finanzen.net listet „Anleihen“, das deckt sich nicht mit den Produktseiten. Sparkasse: Preisaushang der Sparkasse Siegen, Depot 8,93&nbsp;€ je Quartal plus 0,0595&nbsp;% vom Kurswert je Quartal (mind. 1,79&nbsp;€ je Posten) – bei 5.000&nbsp;€ rund 48&nbsp;€ im Jahr.</p>
+        <p><strong>Quellen je Anbieter</strong> (nur eigene Seiten der Anbieter). Smartbroker+: <a href="https://www.smartbrokerplus.de/de-de/anleihen-kaufen/">Anleihen kaufen</a>, <a href="https://www.smartbrokerplus.de/de-de/konditionen/">Konditionen</a> · Traders Place: <a href="https://www.tradersplace.de/angebot/uebersicht/anleihen">Anleihen</a>, <a href="https://www.tradersplace.de/">Startseite (Depot 0&nbsp;€, Baader Bank, über 40 Handelsplätze)</a> · DEGIRO: <a href="https://www.degiro.de/data/pdf/de/Preisverzeichnis.pdf">Preisverzeichnis, gültig ab 01.01.2026</a>, <a href="https://www.degiro.de/helpdesk/steuer/kann-degiro-eine-steuerbescheinigung-ausstellen">Helpdesk: Steuerbescheinigung</a> · Interactive Brokers: <a href="https://www.interactivebrokers.ie/de/pricing/commissions-bonds-europe.php?re=europe">Provisionen Anleihen Europa</a>, <a href="https://www.interactivebrokers.ie/de/trading/products-bonds.php">Anleihen-Marktplatz</a>, <a href="https://www.interactivebrokers.ie/en/support/tax-nonus-forms.php">Steuerformulare für Kunden außerhalb der USA</a> · flatex: <a href="https://www.flatex.de/produkte-handel/produkte/anleihen/">Anleihen</a>, <a href="https://www.flatex.de/preise/">Preise, Stand 16.12.2025</a> · DKB: <a href="https://www.dkb.de/privatkunden/investieren/depot">Depot</a> · maxblue: <a href="https://www.maxblue.de/wertpapierhandel/handeln/direct-trade.html">Direct Trade</a>, <a href="https://www.maxblue.de/wertpapierhandel/handeln/depot.html">Depot (40 Börsenplätze, Depot 0&nbsp;€)</a>, <a href="https://www.maxblue.de/service-kontakt/informationen/preise-leistungen.html">Preise &amp; Leistungen, Stand 03.03.2026</a> · S Broker: <a href="https://www.sbroker.de/pdf/preismodell.pdf">Preis- und Leistungsübersicht, gültig ab 01.07.2026</a>, <a href="https://www.sbroker.de/wertpapiere/anleihen.html">Anleihen</a>, <a href="https://www.sbroker.de/rocken-statt-zocken">Sofortorder</a> · 1822direkt: <a href="https://www.1822direkt.de/anlegen-depot/leistungen-und-konditionen/">Leistungen und Konditionen</a> · comdirect: <a href="https://www.comdirect.de/depot/">Depot</a>, <a href="https://www.comdirect.de/wertpapierhandel/anleihen-informationen.html">Anleihen</a> · Commerzbank: <a href="https://www.commerzbank.de/privatkunden/investieren/depot/depot-eroeffnen/">DirektDepot, Konditionen vom 21.01.2026</a> · ING: <a href="https://www.ing.de/sparen-anlegen/direkt-depot/konditionen/">Konditionen</a>, <a href="https://www.ing.de/wertpapiere/anleihen/">Anleihen</a>, <a href="https://www.ing.de/sparen-anlegen/direkt-depot/handelsplaetze/handelspartner/">Direkthandelspartner</a> · Consorsbank: <a href="https://www.consorsbank.de/web/Wertpapierhandel/Preismodell">Preismodell</a>, <a href="https://www.consorsbank.de/web/Service/Preise-Zinsen/Preise-Zinsen-Wertpapiere">Preise Wertpapiere</a> · Sparkasse Siegen: <a href="https://www.sparkasse-siegen.de/content/dam/myif/spk-siegen/work/dokumente/pdf/preise-leistungen/preisaushang.pdf">Preisaushang vom 03.08.2026</a> · Trade Republic: <a href="https://support.traderepublic.com/de-de/1614">Wie kann ich in Anleihen investieren?</a>, <a href="https://support.traderepublic.com/de-de/809-Was-ist-die-Ex_Post-Kosteninformation">Ein Euro Fremdkostenpauschale</a>, <a href="https://assets.traderepublic.com/assets/files/230915_TradeRepublic_Pressemitteilung_Anleihen_DE_DE.pdf">Pressemitteilung zum Start, 15.09.2023</a>, <a href="https://assets.traderepublic.com/assets/files/251015_TradeRepublic_PressRelease_Fixed_Income_AT_DE.pdf">Pressemitteilung US-Dollar-Anleihen, 15.10.2025</a> · Revolut: <a href="https://help.revolut.com/de-DE/help/wealth/stocks/bonds/bonds-fees/">Gebühren für Anleihen</a>, <a href="https://help.revolut.com/de-DE/help/wealth/stocks/bonds/buy-bonds-in-the-revolut-app/">Anleihen kaufen (nur Market-Orders, Handelszeiten)</a>, <a href="https://www.revolut.com/de-DE/bonds/">Anleihen (ab 2&nbsp;€, Revolut Securities Europe UAB)</a>, <a href="https://help.revolut.com/de-DE/help/wealth/stocks/licences-regulations/tax-information-for-stocks/reporting-taxes-on-my-investments/">Steuern auf Trading</a> · Scalable Capital: <a href="https://de.scalable.capital/anleihen">Anleihen</a>, <a href="https://help.scalable.capital/handeln-1541d52f/in-welche-finanzprodukte-kann-ich-investieren-65438ba9">Hilfe: Finanzprodukte</a> · finanzen.net zero: <a href="https://www.finanzen.net/zero/">Produktseite</a>, <a href="https://www.finanzen.net/zero/handelszeiten/">Handelszeiten</a>, <a href="https://www.finanzen.net/online-broker-vergleich/finanzen-net-zero">Vergleichsseite von finanzen.net</a> · N26: <a href="https://n26.com/de-de/anlagemoeglichkeiten">Anlagemöglichkeiten</a> · onvista bank: <a href="https://hilfe.onvista.de/de/warum-wird-der-geschaeftsbetrieb-der-onvista-bank-eingestellt">Einstellung des Geschäftsbetriebs</a>.</p>
+      </div>
+    </details>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+</script>
+</body>
+</html>

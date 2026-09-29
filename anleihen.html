@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anleihen: Suche, Top 10, ETFs und Beispiele – METALCONCRETE</title>
+<meta name="description" content="Konkrete Anleihen: die Suche über rund 33.000 Anleihen an deutschen Börsen, die zehn meistgehandelten je Laufzeit und Land, 70 Anleihen-ETFs und Beispiele der Redaktion für vier Ziele.">
+<link rel="canonical" href="https://www.metalconcrete.de/anleihen.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/anleihen.html">
+<meta property="og:title" content="Anleihen: Suche, Top 10, ETFs und Beispiele – METALCONCRETE">
+<meta property="og:description" content="Konkrete Anleihen: die Suche über rund 33.000 Anleihen an deutschen Börsen, die zehn meistgehandelten je Laufzeit und Land, 70 Anleihen-ETFs und Beispiele der Redaktion für vier Ziele.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Anleihen: Suche, Top 10, ETFs und Beispiele – METALCONCRETE">
+<meta name="twitter:description" content="Konkrete Anleihen: die Suche über rund 33.000 Anleihen an deutschen Börsen, die zehn meistgehandelten je Laufzeit und Land, 70 Anleihen-ETFs und Beispiele der Redaktion für vier Ziele.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  .more .prose { font-size: 15px; margin-top: 16px; }
+  /* anleihen.html seit 29.09.2026 (Übersicht des Menüs „Anleihen“, Vorlage kaufen.html). Kacheln wie wissen.html: Illustration oben, Thema als H2, eine Zeile Untertitel. */
+  .hub { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }   /* seit 28.09.2026 vier Kacheln nebeneinander (Nutzerwunsch), vorher 3 */
+  .hub-card { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 14px 14px 14px; text-decoration: none; color: var(--ink); box-shadow: var(--shadow); transition: transform .15s ease, border-color .15s ease; }
+  .hub-card:hover { border-color: var(--green-line); transform: translateY(-2px); }
+  .hub-card:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .hub-img { width: 100%; height: 92px; display: block; margin-bottom: 6px; }
+  .hub-card h2 { font-family: var(--sans); font-weight: 600; font-size: 17.5px; line-height: 1.25; margin-bottom: 0; overflow-wrap: anywhere; }   /* lange Wörter (Unternehmens&shy;anleihen) brechen am Handy */
+  .hub-card .desc { font-size: 13px; line-height: 1.4; color: var(--muted); }
+  /* seit 29.09.2026 (Nutzerwunsch): „Top 10 meistgehandelt“ direkt auf den Listen-Kacheln */
+  .hub-tag { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); background: var(--green); border-radius: 6px; padding: 3px 8px; margin-bottom: 2px; }
+  .hub-card:hover h2 { color: var(--green-text); }
+  /* Kachel „Nächste Stufe“ in der Farbe der Folgestufe (Übersichtsseiten seit 25.09.2026, Muster wissen.html) */
+  .hub-card.next { background: linear-gradient(160deg, rgba(57,255,20,0.14) 0%, rgba(57,255,20,0.04) 100%); border-color: rgba(57,255,20,0.55); }
+  .hub-card.next:hover { border-color: var(--blue); }
+  .hub-card.next:hover h2 { color: var(--green-text); }
+  /* Seit 28.09.2026 (Nutzerwunsch): vier Kacheln nebeneinander, deshalb kleiner; „Nächste Stufe“ als breites Band (Bild links, Text rechts) */
+  .hub-card.next { grid-column: 1 / -1; display: grid; grid-template-columns: 150px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 22px; row-gap: 4px; align-items: center; padding: 16px 20px; }
+  .hub-card.next .hub-img { grid-row: 1 / 3; width: 150px; height: 96px; margin: 0; }
+  .hub-card.next h2 { align-self: end; }
+  .hub-card.next .desc { align-self: start; }
+  .crossnav b { color: var(--ink); font-weight: 600; }
+  .crossnav { line-height: 1.9; }
+  @media (prefers-reduced-motion: reduce) {  .hub-card { transition: none; }  .hub-card:hover { transform: none; } }
+  @media (max-width: 940px) {  .hub { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) {  .hub-card.next { grid-template-columns: 96px minmax(0, 1fr); column-gap: 14px; }  .hub-card.next .hub-img { width: 96px; height: 72px; }  .hub { gap: 10px; }  .hub-card { padding: 14px 14px 14px; }  .hub-img { height: 84px; margin-bottom: 4px; }  .hub-card h2 { font-size: 17px; }  .hub-card .desc { font-size: 12.5px; } }
+  .more summary { cursor: pointer; font-size: 19px; font-weight: 600; color: var(--ink); list-style: none; display: flex; align-items: center; gap: 10px; }
+  .more summary::-webkit-details-marker { display: none; }
+  .more summary::before { content: ''; width: 8px; height: 8px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(-45deg); transition: transform .15s; }
+  .more[open] summary::before { transform: rotate(45deg); }
+  .more summary:hover { color: var(--line); }
+  .more summary:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 3px; }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","headline":"Anleihen – Suche, Top 10 nach Laufzeit und Land, Anleihen-ETFs und Beispiele der Redaktion","description":"Konkrete Anleihen: die Suche über rund 33.000 Anleihen an deutschen Börsen, die zehn meistgehandelten je Laufzeit und Land, 70 Anleihen-ETFs und Beispiele der Redaktion für vier Ziele.","inLanguage":"de","isAccessibleForFree":true,"url":"https://www.metalconcrete.de/anleihen.html","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.metalconcrete.de/anleihen.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="anleihen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn current" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov current">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+
+  <h1>Anleihen</h1>
+  <p class="sub">Konkrete Anleihen statt Theorie: die Suche, die zehn meistgehandelten je Laufzeit und Land, Anleihen-ETFs und Beispiele der Redaktion.</p>
+
+  <div class="hub">
+    <a class="hub-card" href="anleihen-suche.html">
+      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+<ellipse cx="60" cy="93" rx="46" ry="4" fill="#1DA300" fill-opacity="0.08"/>
+  <rect x="12" y="14" width="96" height="20" rx="10" fill="#fff" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="24" cy="24" r="4.5" fill="none" stroke="#1DA300" stroke-width="2.2"/><path d="M27.5 27.5 L31 31" stroke="#1DA300" stroke-width="2.4" stroke-linecap="round"/>
+  <text x="38" y="27.5" text-anchor="start" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="8.5" font-weight="500" fill="#6E6D68">ISIN oder Name</text>
+  <rect x="12" y="42" width="96" height="12" rx="6" fill="#DFFFD9"/>
+  <rect x="12" y="58" width="96" height="12" rx="6" fill="#74FF5B" stroke="#1DA300" stroke-width="1.6"/>
+  <rect x="12" y="74" width="96" height="12" rx="6" fill="#DFFFD9"/>
+  <path d="M20 48 H56 M84 48 H100 M20 64 H62 M84 64 H100 M20 80 H50 M84 80 H100" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round" stroke-opacity="0.55"/>
+</svg>
+      <h2>Anleihen-Suche</h2>
+      <p class="desc">Rund 33.000 Anleihen mit aktuellem Kurs an deutschen Börsen</p>
+    </a>
+    <a class="hub-card" href="staatsanleihen-laufzeit.html">
+      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+<ellipse cx="60" cy="93" rx="46" ry="4" fill="#1DA300" fill-opacity="0.08"/>
+  <rect x="14" y="18" width="24" height="10" rx="5" fill="#B0FFA1"/>
+  <rect x="14" y="32" width="40" height="10" rx="5" fill="#74FF5B"/>
+  <rect x="14" y="46" width="56" height="10" rx="5" fill="#1DA300"/>
+  <rect x="14" y="60" width="72" height="10" rx="5" fill="#74FF5B"/>
+  <rect x="14" y="74" width="72" height="10" rx="5" fill="#B0FFA1"/>
+  <text x="110" y="27" text-anchor="end" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9" font-weight="600" fill="#157C00">1&#160;J.</text><text x="110" y="83" text-anchor="end" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9" font-weight="600" fill="#157C00">30+</text>
+  <path d="M96 40 V48 L92 46 L88 48 V40 Z" fill="#DFFFD9" stroke="#1DA300" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M86 40 H98 M86 36 L92 32 L98 36 M87 40 V49 M97 40 V49 M92 40 V49" fill="none" stroke="#1DA300" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+      <span class="hub-tag">Top 10 meistgehandelt</span>
+      <h2>Staatsanleihen nach Laufzeit</h2>
+      <p class="desc">Fünf Restlaufzeiten von bis 1 Jahr bis über 30 Jahre</p>
+    </a>
+    <a class="hub-card" href="unternehmensanleihen-laufzeit.html">
+      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+<ellipse cx="60" cy="93" rx="46" ry="4" fill="#1DA300" fill-opacity="0.08"/>
+  <rect x="12" y="22" width="22" height="62" rx="4" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M18 30 H28 M18 38 H28 M18 46 H28 M18 54 H28 M18 62 H28" stroke="#1DA300" stroke-width="2" stroke-linecap="round"/>
+  <path d="M20 84 V74 H26 V84" fill="#fff" stroke="#1DA300" stroke-width="1.8" stroke-linejoin="round"/>
+  <rect x="42" y="18" width="20" height="10" rx="5" fill="#B0FFA1"/>
+  <rect x="42" y="32" width="32" height="10" rx="5" fill="#74FF5B"/>
+  <rect x="42" y="46" width="44" height="10" rx="5" fill="#1DA300"/>
+  <rect x="42" y="60" width="50" height="10" rx="5" fill="#74FF5B"/>
+  <rect x="42" y="74" width="52" height="10" rx="5" fill="#B0FFA1"/>
+  <text x="112" y="27" text-anchor="end" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9" font-weight="600" fill="#157C00">1&#160;J.</text><text x="112" y="83" text-anchor="end" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9" font-weight="600" fill="#157C00">30+</text>
+</svg>
+      <span class="hub-tag">Top 10 meistgehandelt</span>
+      <h2>Unternehmens&shy;anleihen nach Laufzeit</h2>
+      <p class="desc">Fünf Restlaufzeiten von bis 1 Jahr bis über 30 Jahre</p>
+    </a>
+    <a class="hub-card" href="anleihen-laender.html">
+      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+<ellipse cx="60" cy="93" rx="46" ry="4" fill="#1DA300" fill-opacity="0.08"/>
+  <circle cx="54" cy="52" r="34" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M20 52 H88 M54 18 C40 30 40 74 54 86 M54 18 C68 30 68 74 54 86 M27 34 C40 40 68 40 81 34 M27 70 C40 64 68 64 81 70" fill="none" stroke="#1DA300" stroke-width="1.6" stroke-opacity="0.6"/>
+  <path d="M92 16 C82 16 75 24 75 33 C75 46 92 62 92 62 S109 46 109 33 C109 24 102 16 92 16 Z" fill="#1DA300" stroke="#fff" stroke-width="2"/>
+  <circle cx="92" cy="33" r="6" fill="#fff"/>
+  <rect x="62" y="70" width="52" height="16" rx="8" fill="#fff" stroke="#1DA300" stroke-width="1.8"/>
+  <text x="88" y="81.5" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9.5" font-weight="700" fill="#157C00">13 Länder</text>
+</svg>
+      <span class="hub-tag">Top 10 meistgehandelt</span>
+      <h2>Staatsanleihen nach Ländern</h2>
+      <p class="desc">13 Länder auf der Karte</p>
+    </a>
+    <a class="hub-card" href="unternehmensanleihen-laender.html">
+      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+<ellipse cx="60" cy="93" rx="46" ry="4" fill="#1DA300" fill-opacity="0.08"/>
+  <circle cx="58" cy="52" r="34" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M24 52 H92 M58 18 C44 30 44 74 58 86 M58 18 C72 30 72 74 58 86 M31 34 C44 40 72 40 85 34 M31 70 C44 64 72 64 85 70" fill="none" stroke="#1DA300" stroke-width="1.6" stroke-opacity="0.6"/>
+  <path d="M94 16 C84 16 77 24 77 33 C77 46 94 62 94 62 S111 46 111 33 C111 24 104 16 94 16 Z" fill="#1DA300" stroke="#fff" stroke-width="2"/>
+  <circle cx="94" cy="33" r="6" fill="#fff"/>
+  <rect x="8" y="42" width="20" height="44" rx="3" fill="#fff" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13 50 H23 M13 57 H23 M13 64 H23 M13 71 H23" stroke="#1DA300" stroke-width="1.8" stroke-linecap="round"/>
+  <rect x="64" y="70" width="50" height="16" rx="8" fill="#fff" stroke="#1DA300" stroke-width="1.8"/>
+  <text x="89" y="81.5" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9.5" font-weight="700" fill="#157C00">6 Länder</text>
+</svg>
+      <span class="hub-tag">Top 10 meistgehandelt</span>
+      <h2>Unternehmens&shy;anleihen nach Ländern</h2>
+      <p class="desc">Sechs Länder auf der Karte</p>
+    </a>
+    <a class="hub-card" href="anleihen-etf.html">
+      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+<ellipse cx="60" cy="93" rx="46" ry="4" fill="#1DA300" fill-opacity="0.08"/>
+  <rect x="18" y="12" width="84" height="76" rx="9" fill="#fff" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M18 21 A9 9 0 0 1 27 12 H93 A9 9 0 0 1 102 21 V32 H18 Z" fill="#1DA300"/>
+  <text x="60" y="26.5" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="800" fill="#fff">ETF</text>
+  <rect x="26" y="40" width="20" height="12" rx="3" fill="#B0FFA1"/><rect x="50" y="40" width="20" height="12" rx="3" fill="#DFFFD9"/><rect x="74" y="40" width="20" height="12" rx="3" fill="#74FF5B"/>
+  <rect x="26" y="56" width="20" height="12" rx="3" fill="#DFFFD9"/><rect x="50" y="56" width="20" height="12" rx="3" fill="#1DA300"/><rect x="74" y="56" width="20" height="12" rx="3" fill="#DFFFD9"/>
+  <rect x="26" y="72" width="20" height="10" rx="3" fill="#74FF5B"/><rect x="50" y="72" width="20" height="10" rx="3" fill="#DFFFD9"/><rect x="74" y="72" width="20" height="10" rx="3" fill="#B0FFA1"/>
+</svg>
+      <span class="hub-tag">Top 10 meistgehandelt</span>
+      <h2>Anleihen-ETFs</h2>
+      <p class="desc">Sieben Kategorien, von ruhig bis riskant</p>
+    </a>
+    <a class="hub-card" href="guide.html">
+      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+<ellipse cx="60" cy="93" rx="46" ry="4" fill="#1DA300" fill-opacity="0.08"/>
+  <g>
+    <circle cx="30" cy="36" r="13" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2"/><circle cx="30" cy="32" r="4.5" fill="#1DA300"/><path d="M22 45 C22 39 38 39 38 45" fill="#1DA300"/>
+    <circle cx="60" cy="36" r="13" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2"/><circle cx="60" cy="32" r="4.5" fill="#1DA300"/><path d="M52 45 C52 39 68 39 68 45" fill="#1DA300"/>
+    <circle cx="90" cy="36" r="13" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2"/><circle cx="90" cy="32" r="4.5" fill="#1DA300"/><path d="M82 45 C82 39 98 39 98 45" fill="#1DA300"/>
+    <circle cx="30" cy="68" r="13" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2"/><circle cx="30" cy="64" r="4.5" fill="#1DA300"/><path d="M22 77 C22 71 38 71 38 77" fill="#1DA300"/>
+    <circle cx="60" cy="68" r="13" fill="#1DA300" stroke="#1DA300" stroke-width="2.2"/><circle cx="60" cy="64" r="4.5" fill="#fff"/><path d="M52 77 C52 71 68 71 68 77" fill="#fff"/>
+    <circle cx="60" cy="68" r="17" fill="none" stroke="#74FF5B" stroke-width="2.6"/>
+    <circle cx="90" cy="68" r="13" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2"/><circle cx="90" cy="64" r="4.5" fill="#1DA300"/><path d="M82 77 C82 71 98 71 98 77" fill="#1DA300"/>
+  </g>
+</svg>
+      <h2>Anleihen-Beispiele nach Ziel</h2>
+      <p class="desc">Vier Ziele, je drei konkrete Anleihen</p>
+    </a>
+    <a class="hub-card next" href="wissen.html">
+      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
+  <ellipse cx="60" cy="92" rx="44" ry="4" fill="#1DA300" fill-opacity="0.10"/>
+  <path d="M60 24 C50 16 34 14 16 16 V80 C34 78 50 80 60 88 Z" fill="#fff" stroke="#1DA300" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M60 24 C70 16 86 14 104 16 V80 C86 78 70 80 60 88 Z" fill="#fff" stroke="#1DA300" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M60 24 V88" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round"/>
+  <rect x="24" y="27" width="28" height="19" rx="5" fill="#DFFFD9"/>
+  <text x="38" y="41" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="800" fill="#157C00">5&#160;%</text>
+  <path d="M24 56 H52 M24 63 H44 M24 70 H50" stroke="#B0FFA1" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M68 30 H96 M68 37 H86" stroke="#1DA300" stroke-width="2.4" stroke-linecap="round"/>
+  <rect x="69" y="56" width="7" height="16" rx="2" fill="#B0FFA1"/>
+  <rect x="80" y="46" width="7" height="26" rx="2" fill="#1DA300"/>
+  <rect x="91" y="51" width="7" height="21" rx="2" fill="#74FF5B"/>
+  <path d="M67 75 H100" stroke="#1DA300" stroke-width="1.6" stroke-linecap="round" stroke-opacity="0.45"/>
+</svg>
+      <h2>Erst verstehen? Zur Akademie</h2>
+      <p class="desc">Vom Einstieg bis zum Profi – in drei Stufen: Verstehen, Entscheiden, Kaufen</p>
+    </a>
+  </div>
+
+  <nav class="crossnav crossnav-gruppen" aria-label="Akademie">
+    <p class="crossnav-t">Akademie</p>
+    <div class="crossnav-gs">
+      <div class="crossnav-g"><p class="crossnav-gt">Verstehen</p><ul class="crossnav-l">
+        <li><a href="grundlagen.html">Anleihen einfach erklärt</a></li>
+        <li><a href="bonitaet.html">Bonität und Ratings</a></li>
+        <li><a href="risiko.html">Risiko kennen</a></li>
+      </ul></div>
+      <div class="crossnav-g"><p class="crossnav-gt">Entscheiden</p><ul class="crossnav-l">
+        <li><a href="anlegerprofile.html">Sind Anleihen etwas für dich?</a></li>
+        <li><a href="anlageziele.html">Welche Anleihe wozu?</a></li>
+        <li><a href="rechner.html">Rechner</a></li>
+      </ul></div>
+      <div class="crossnav-g"><p class="crossnav-gt">Kaufen</p><ul class="crossnav-l">
+        <li><a href="erste-anleihe.html">Deine erste Anleihe</a></li>
+        <li><a href="broker-vergleich.html">Broker im Vergleich</a></li>
+      </ul></div>
+    </div>
+  </nav>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+</script>
+</body>
+</html>

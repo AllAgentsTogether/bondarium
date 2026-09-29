@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laufzeit kurz oder lang: Risiko und Chance – METALCONCRETE</title>
+<meta name="description" content="Laufzeit einfach erklärt: was kurz, mittel und lang bedeutet, warum lange Anleihen bei steigendem Zinsniveau fallen – und wo die Chance liegt.">
+<link rel="canonical" href="https://www.metalconcrete.de/laufzeit.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/laufzeit.html">
+<meta property="og:title" content="Laufzeit kurz oder lang: Risiko und Chance – METALCONCRETE">
+<meta property="og:description" content="Laufzeit einfach erklärt: was kurz, mittel und lang bedeutet, warum lange Anleihen bei steigendem Zinsniveau fallen – und wo die Chance liegt.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Laufzeit kurz oder lang: Risiko und Chance – METALCONCRETE">
+<meta name="twitter:description" content="Laufzeit einfach erklärt: was kurz, mittel und lang bedeutet, warum lange Anleihen bei steigendem Zinsniveau fallen – und wo die Chance liegt.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Laufzeit – neu 25.09.2026 spät (Menü Verstehen, Einstieg): sechs Karten im Look von „Risiko kennen“.
+     Schaubilder als HTML-Balken (am Handy lesbar) und ein Zeitstrahl als SVG. Grundregeln in base.css. */
+
+  /* Zeitstrahl (1) */
+  .zs .axt { font-size: 13px; font-weight: 600; fill: #55544F; }
+
+  /* HTML-Balken (3, 4, 6) */
+  .balken .hb { display: grid; grid-template-columns: 72px minmax(0, 1fr); align-items: center; gap: 10px; }
+  .balken .hb + .hb { margin-top: 7px; }
+  .hb-l { font-size: 14px; font-weight: 600; color: var(--ap-ink); }
+  .hb-bar { display: flex; align-items: center; justify-content: flex-end; height: 28px; width: var(--w); min-width: 60px; padding-right: 8px; border-radius: 6px; background: var(--down); }
+  .hb-bar.g { background: #1F7A5E; } .hb-bar.o { background: #A3651A; } .hb-bar.n { background: #55544F; }
+  .hb-bar b { color: #fff; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .sb-f { font-size: 12.5px; color: var(--text); margin-top: 10px; line-height: 1.45; }
+
+  /* Drei Kacheln (2) */
+  .drei { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  .dk { display: flex; flex-direction: column; background: var(--ap-soft); border-radius: 12px; padding: 12px 12px 12px; }
+  .dk-k { font-size: 14px; font-weight: 600; }
+  .dk-z { font-size: 12.5px; color: var(--ap-text); margin-top: 1px; }
+  .dk-r { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; margin-top: 10px; font-variant-numeric: tabular-nums; color: var(--down); }
+  .dk:first-child .dk-r { color: var(--up); } .dk:nth-child(2) .dk-r { color: var(--orange-text); }
+  .dk-l { font-size: 12px; color: var(--ap-text); margin-top: 2px; }
+  .dk-w { font-size: 13px; line-height: 1.4; margin-top: 10px; padding-top: 8px; border-top: 1px solid rgba(26,26,25,0.10); }
+
+  /* Wiederanlage-Treppe (5) */
+  .ax2 { display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; align-items: end; }
+  .tr-s { display: flex; flex-direction: column; justify-content: flex-end; border-radius: 8px 8px 4px 4px; padding: 8px 8px 6px; color: #fff; text-align: center; height: var(--h); background: #1F7A5E; }
+  .tr-s.s2 { background: #A3651A; } .tr-s.s3 { background: var(--down); }
+  .tr-s b { font-size: 18px; font-weight: 600; } .tr-s small { font-size: 12px; line-height: 1.3; }
+  .tr-x { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 6px; font-size: 12.5px; font-weight: 600; color: var(--text); text-align: center; }
+  .ax3 { display: flex; justify-content: flex-end; margin-top: 4px; }
+
+  /* Leiter (6) */
+  .lt .hb { grid-template-columns: 58px minmax(0, 1fr) 68px; }
+  .lt .hb-bar { background: #1F7A5E; justify-content: flex-start; padding-left: 10px; }
+  .lt .hb-bar.f { background: var(--green); } .lt .hb-bar.f b { color: var(--ink); }
+  .lt .hb-r { font-size: 12.5px; color: var(--text); text-align: right; }
+
+  .sb-go { margin-top: 14px; align-self: flex-start; font-size: 14px; padding: 10px 16px; }
+  @media (max-width: 600px) {
+    .balken .hb { grid-template-columns: 56px minmax(0, 1fr); } .hb-l { font-size: 13px; }
+    .drei { gap: 6px; } .dk { padding: 10px 8px; } .dk-r { font-size: 20px; } .dk-k { font-size: 13px; } .dk-w { font-size: 12px; }
+    .lt .hb { grid-template-columns: 48px minmax(0, 1fr) 60px; }
+    .sb-go { align-self: stretch; text-align: center; }
+  }
+  /* Zeitstrahl (1): eigene Handy-Fassung (schmalere viewBox, Schrift effektiv ≥ 11 px) */
+  .sb-m { display: none; }
+  @media (max-width: 600px) { .sb-d { display: none; } .sb-m { display: block; } }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Laufzeit kurz oder lang: Risiko und Chance","description":"Laufzeit einfach erklärt: was kurz, mittel und lang bedeutet, warum lange Anleihen bei steigendem Zinsniveau fallen – und wo die Chance liegt.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-25","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/laufzeit.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Verstehen","item":"https://www.metalconcrete.de/wissen.html"},{"@type":"ListItem","position":3,"name":"Laufzeit","item":"https://www.metalconcrete.de/laufzeit.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="verstehen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn current" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe current">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>Laufzeit: kurz oder lang?</h1>
+    <p class="sub">Die Laufzeit entscheidet, wie stark deine Anleihe auf das <a href="zinsniveau.html">allgemeine Zinsniveau</a> reagiert – als Risiko und als Chance. Sechs Karten, jede mit Schaubild. Lesezeit: etwa 5 Minuten.</p>
+    <nav class="lands" aria-label="Zum Thema springen">
+      <a class="lbtn" href="#was"><span class="n">1</span>Was Laufzeit heißt</a>
+      <a class="lbtn" href="#kurz-lang"><span class="n">2</span>Kurz, mittel, lang</a>
+      <a class="lbtn" href="#risiko"><span class="n">3</span>Das Risiko</a>
+      <a class="lbtn" href="#chance"><span class="n">4</span>Die Chance</a>
+      <a class="lbtn" href="#wiederanlage"><span class="n">5</span>Kurz hat auch ein Risiko</a>
+      <a class="lbtn" href="#wahl"><span class="n">6</span>Die passende Laufzeit</a>
+    </nav>
+
+    <section class="kap" id="was" aria-labelledby="h-was">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">1</span>
+        <h2 id="h-was">Was Laufzeit heißt</h2>
+        <p>Jede Anleihe hat ein festes Ende: die <a href="begriffe.html#faelligkeit">Fälligkeit</a>. An diesem Tag bekommst du <strong>100&nbsp;% des Nennwerts zurück – egal, wo der Kurs vorher stand.</strong> Die Zeit bis dahin ist die Restlaufzeit.</p><p>Dazwischen zahlt die Anleihe ihren Kupon, meist einmal im Jahr. Das Jahr steht im Namen: „2031“ heißt, 2031 gibt es das Geld zurück.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">So läuft eine Anleihe</p><svg class="sb zs sb-d" viewBox="0 0 480 190" role="img" aria-labelledby="sb1t"><title id="sb1t">Zeitstrahl von heute bis Mai 2031: Kauf zu 100&nbsp;Prozent, dann jedes Jahr im Mai 3&nbsp;Prozent Kupon – fünfmal, der letzte zusammen mit der Rückzahlung von 100&nbsp;Prozent.</title><text class="axt" x="8" y="18">↑ Was passiert</text><rect x="40" y="112" width="400" height="16" rx="8" fill="#DFFFD9"/><line x1="40" y1="120" x2="440" y2="120" stroke="#1A1A19" stroke-opacity="0.25" stroke-width="1.2"/><circle cx="52" cy="120" r="9" fill="#1A1A19"/><text x="52" y="152" text-anchor="middle" font-size="13" font-weight="600" fill="#1A1A19">Kauf</text><text x="52" y="168" text-anchor="middle" font-size="12" fill="#55544F">heute · 100&nbsp;%</text><line x1="428" y1="52" x2="428" y2="132" stroke="#1F7A5E" stroke-width="2.5" stroke-linecap="round"/><g fill="#1DA300"><circle cx="127.2" cy="120" r="7"/><circle cx="202.4" cy="120" r="7"/><circle cx="277.6" cy="120" r="7"/><circle cx="352.8" cy="120" r="7"/><circle cx="428" cy="120" r="7"/></g><g font-size="12.5" font-weight="600" fill="#157C00" text-anchor="middle"><text x="127.2" y="98">3&nbsp;%</text><text x="202.4" y="98">3&nbsp;%</text><text x="277.6" y="98">3&nbsp;%</text><text x="352.8" y="98">3&nbsp;%</text><text x="434" y="98" text-anchor="start">3&nbsp;%</text></g><text x="240" y="72" text-anchor="middle" font-size="12.5" fill="#55544F">jedes Jahr der Kupon</text><rect x="376" y="24" width="98" height="26" rx="13" fill="#1F7A5E"/><text x="425" y="41" text-anchor="middle" font-size="12.5" font-weight="600" fill="#fff">100&nbsp;% zurück</text><text x="428" y="152" text-anchor="middle" font-size="13" font-weight="600" fill="#1F7A5E">Fällig</text><text x="428" y="168" text-anchor="middle" font-size="12" fill="#55544F">Mai 2031</text><text class="axt" x="472" y="186" text-anchor="end">Zeit →</text></svg><svg class="sb zs sb-m" viewBox="0 0 330 200" role="img" aria-labelledby="sb1tm"><title id="sb1tm">Zeitstrahl von heute bis Mai 2031: Kauf zu 100&nbsp;Prozent, dann jedes Jahr im Mai 3&nbsp;Prozent Kupon – fünfmal, der letzte zusammen mit der Rückzahlung von 100&nbsp;Prozent.</title><text x="0" y="16" font-size="13" font-weight="600" fill="#55544F">↑ Was passiert</text><rect x="22" y="112" width="296" height="16" rx="8" fill="#DFFFD9"/><line x1="22" y1="120" x2="318" y2="120" stroke="#1A1A19" stroke-opacity="0.25" stroke-width="1.2"/><circle cx="34" cy="120" r="9" fill="#1A1A19"/><text x="2" y="152" font-size="14" font-weight="600" fill="#1A1A19">Kauf</text><text x="2" y="169" font-size="13" fill="#55544F">heute · 100&nbsp;%</text><line x1="290" y1="52" x2="290" y2="132" stroke="#1F7A5E" stroke-width="2.5" stroke-linecap="round"/><g fill="#1DA300"><circle cx="85.2" cy="120" r="7"/><circle cx="136.4" cy="120" r="7"/><circle cx="187.6" cy="120" r="7"/><circle cx="238.8" cy="120" r="7"/><circle cx="290.0" cy="120" r="7"/></g><g font-size="13" font-weight="600" fill="#157C00" text-anchor="middle"><text x="85.2" y="98">3&nbsp;%</text><text x="136.4" y="98">3&nbsp;%</text><text x="187.6" y="98">3&nbsp;%</text><text x="238.8" y="98">3&nbsp;%</text><text x="297" y="98" text-anchor="start">3&nbsp;%</text></g><text x="160" y="72" text-anchor="middle" font-size="13" fill="#55544F">jedes Jahr der Kupon</text><rect x="222" y="24" width="106" height="26" rx="13" fill="#1F7A5E"/><text x="275" y="42" text-anchor="middle" font-size="13" font-weight="600" fill="#fff">100&nbsp;% zurück</text><text x="290" y="152" text-anchor="middle" font-size="14" font-weight="600" fill="#1F7A5E">Fällig</text><text x="290" y="169" text-anchor="middle" font-size="13" fill="#55544F">Mai 2031</text><text x="328" y="196" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Zeit →</text></svg><p class="sb-f">Fünf Kupons bis Mai 2031 – der letzte kommt zusammen mit der Rückzahlung. Die Restlaufzeit schrumpft jeden Tag: Eine 10-jährige Anleihe ist nach acht Jahren eine 2-jährige.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Laufzeit = Zeit bis zur Rückzahlung. Bis dahin gibt es den Kupon, am Ende 100&nbsp;%.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="kurz-lang" aria-labelledby="h-kurz-lang">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">2</span>
+        <h2 id="h-kurz-lang">Kurz, mittel oder lang</h2>
+        <p><strong>Kurz</strong> heißt bis etwa 3 Jahre, <strong>mittel</strong> 3 bis 7, <strong>lang</strong> alles darüber – bis zu 30, 50 oder 100 Jahren. Die Grenzen sind Faustregeln, keine Gesetze.</p><p>Der Unterschied ist nicht der Zins allein. Es ist, <strong>wie stark der Kurs zwischendurch schwankt</strong>, wenn sich das allgemeine Zinsniveau ändert: kaum bei kurzen, heftig bei langen Laufzeiten.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Drei Klassen, eine Frage: Wie stark schwankt der Kurs?</p><div class="drei" role="img" aria-label="Kurz bis 3 Jahre: Kurs schwankt wenig, rund 2 Prozent je Prozentpunkt Zinsniveau. Mittel 3 bis 7 Jahre: rund 5 Prozent. Lang über 7 Jahre: rund 8 bis 20 Prozent."><div class="dk"><span class="dk-k">Kurz</span><span class="dk-z">bis 3 Jahre</span><span class="dk-r">±2&nbsp;%</span><span class="dk-l">je Punkt Zinsniveau</span><span class="dk-w">Geld parken, Termin in Sicht</span></div><div class="dk"><span class="dk-k">Mittel</span><span class="dk-z">3 bis 7 Jahre</span><span class="dk-r">±5&nbsp;%</span><span class="dk-l">je Punkt Zinsniveau</span><span class="dk-w">Sparziel, Zinseinkommen</span></div><div class="dk"><span class="dk-k">Lang</span><span class="dk-z">über 7 Jahre</span><span class="dk-r">±8–20&nbsp;%</span><span class="dk-l">je Punkt Zinsniveau</span><span class="dk-w">Zins für Jahre sichern – mit Nerven</span></div></div><p class="sb-f">Kursänderung je Prozentpunkt allgemeines Zinsniveau, Anleihe mit 3&nbsp;% Kupon, gerundet.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Je länger die Laufzeit, desto stärker schwankt der Kurs – in beide Richtungen.</span></p>
+    </section>
+
+    <section class="kap" id="risiko" aria-labelledby="h-risiko">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">3</span>
+        <h2 id="h-risiko">Das Risiko: Zinsniveau steigt, Kurs fällt</h2>
+        <p>Deine Anleihe zahlt 3&nbsp;%. Steigt das allgemeine Zinsniveau auf 4&nbsp;%, bringen neue Anleihen mehr – <strong>deine ist nur noch mit Abschlag zu verkaufen.</strong> Der Kurs fällt so weit, bis sie einem Käufer wieder 4&nbsp;% bringt.</p><p>Wie weit, hängt an der Restlaufzeit. Faustregel: <strong>Kursverlust in % ≈ Duration × Prozentpunkte.</strong> Die <a href="begriffe.html#duration">Duration</a> ist kürzer als die Restlaufzeit – bei 10 Jahren rund 8,5, bei 30 Jahren rund 20. Wer bis zur Fälligkeit hält, bekommt trotzdem 100&nbsp;% – sitzt aber so lange mit dem alten Zins fest.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Zinsniveau steigt um 1 Punkt – der Kurs fällt</p><div class="balken" role="img" aria-label="Kursverlust bei einem Prozentpunkt höherem Zinsniveau: 2 Jahre minus 2 Prozent, 5 Jahre minus 5 Prozent, 10 Jahre minus 8 Prozent, 30 Jahre minus 17 Prozent."><div class="hb ax-row"><span class="ax-t">Laufzeit</span><span class="ax-t">Kursverlust →</span></div><div class="hb"><span class="hb-l">2 Jahre</span><span class="hb-bar n" style="--w:18%"><b>−2&nbsp;%</b></span></div><div class="hb"><span class="hb-l">5 Jahre</span><span class="hb-bar o" style="--w:32%"><b>−5&nbsp;%</b></span></div><div class="hb"><span class="hb-l">10 Jahre</span><span class="hb-bar " style="--w:52%"><b>−8&nbsp;%</b></span></div><div class="hb"><span class="hb-l">30 Jahre</span><span class="hb-bar " style="--w:100%"><b>−17&nbsp;%</b></span></div></div><p class="sb-f">Anleihe mit 3&nbsp;% Kupon, Kurs 100. Rechne deine eigene im <a href="rechner.html#zinsniveau">Rechner</a> nach.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Lange Laufzeit und steigendes Zinsniveau = fallender Kurs. Halten bis zur Fälligkeit rettet den Kurs, nicht die verlorenen Jahre.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="chance" aria-labelledby="h-chance">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">4</span>
+        <h2 id="h-chance">Die Chance: Zinsniveau fällt, Kurs steigt</h2>
+        <p>Dieselbe Mechanik läuft auch andersherum. <strong>Fällt das allgemeine Zinsniveau, steigt der Kurs deiner Anleihe</strong> – und die lange Laufzeit, die vorher das Risiko war, ist jetzt der Hebel nach oben.</p><p>Dazu kommt die zweite Chance: <strong>Du hast dir den Zins für Jahre gesichert.</strong> Wer zehn Jahre zu 3&nbsp;% gekauft hat, bekommt die 3&nbsp;% bis zum Schluss – auch wenn neue Anleihen längst nur noch 1,5&nbsp;% bringen.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Zinsniveau fällt um 1 Punkt – der Kurs steigt</p><div class="balken" role="img" aria-label="Kursgewinn bei einem Prozentpunkt niedrigerem Zinsniveau: 2 Jahre plus 2 Prozent, 5 Jahre plus 5 Prozent, 10 Jahre plus 9 Prozent, 30 Jahre plus 22 Prozent."><div class="hb ax-row"><span class="ax-t">Laufzeit</span><span class="ax-t">Kursgewinn →</span></div><div class="hb"><span class="hb-l">2 Jahre</span><span class="hb-bar g" style="--w:18%"><b>+2&nbsp;%</b></span></div><div class="hb"><span class="hb-l">5 Jahre</span><span class="hb-bar g" style="--w:32%"><b>+5&nbsp;%</b></span></div><div class="hb"><span class="hb-l">10 Jahre</span><span class="hb-bar g" style="--w:52%"><b>+9&nbsp;%</b></span></div><div class="hb"><span class="hb-l">30 Jahre</span><span class="hb-bar g" style="--w:100%"><b>+22&nbsp;%</b></span></div></div><p class="sb-f">Nach oben etwas mehr als nach unten – die Kurve ist gebogen. Fachwort: <a href="begriffe.html#konvexitaet">Konvexität</a>.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Lange Laufzeit ist eine Wette auf fallendes Zinsniveau – und eine Zinsgarantie für Jahre.</span></p>
+    </section>
+
+    <section class="kap" id="wiederanlage" aria-labelledby="h-wiederanlage">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">5</span>
+        <h2 id="h-wiederanlage">Kurz hat auch ein Risiko</h2>
+        <p>Kurze Laufzeit fühlt sich sicher an: Der Kurs schwankt kaum, das Geld kommt bald zurück. <strong>Aber dann musst du neu anlegen – zum Zins von morgen.</strong> Ist das allgemeine Zinsniveau gefallen, bringt die nächste Anleihe weniger.</p><p>Das ist das <a href="begriffe.html#wiederanlagerisiko">Wiederanlagerisiko</a>. Die Chance daran: Steigt das Zinsniveau, bist du schnell wieder frei und legst zum höheren Zins neu an – ohne Kursverlust.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Kurz anlegen, wenn das Zinsniveau fällt</p><div role="img" aria-label="Drei Anlagen à zwei Jahre: 4 Prozent, dann 2,5 Prozent, dann 1,5 Prozent – der Zins sinkt bei jeder Wiederanlage. Zum Vergleich: sechs Jahre fest 3,5 Prozent."><div class="ax2"><span class="ax-t">↑ Zins pro Jahr</span><span class="ax-t">angenommene Werte</span></div><div class="tr"><div class="tr-s" style="--h:120px"><b>4&nbsp;%</b><small>2026 – 2028</small></div><div class="tr-s s2" style="--h:82px"><b>2,5&nbsp;%</b><small>2028 – 2030</small></div><div class="tr-s s3" style="--h:58px"><b>1,5&nbsp;%</b><small>2030 – 2032</small></div></div><div class="tr-x"><span>1. Anlage</span><span>2. Anlage</span><span>3. Anlage</span></div><div class="ax3"><span class="ax-t">Zeit →</span></div></div><p class="sb-f">Alternative: einmal 6 Jahre zu 3,5&nbsp;% – am Anfang weniger, am Ende mehr.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Kurz schützt den Kurs, nicht den Zins. Lang schützt den Zins, nicht den Kurs.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="wahl" aria-labelledby="h-wahl">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">6</span>
+        <h2 id="h-wahl">Die passende Laufzeit</h2>
+        <p>Die einfachste Regel: <strong>Laufzeit = der Tag, an dem du das Geld brauchst.</strong> Auto in zwei Jahren? Zwei Jahre. Studium 2031? Fällig 2031. Dann ist der Kurs zwischendurch egal.</p><p>Weißt du es nicht – oder willst du Zinseinkommen für lange? Dann <strong>teile auf:</strong> mehrere Anleihen mit Fälligkeiten in 1, 2, 3, 4 und 5 Jahren. Jedes Jahr wird eine fällig und wandert zum aktuellen Zins ans Ende – die <a href="fortgeschrittene.html#leiter">Anleihenleiter</a>.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Die Leiter: fünf Sprossen, jedes Jahr eine fällig</p><div class="balken lt" role="img" aria-label="Fünf Anleihen mit Fälligkeit in 1, 2, 3, 4 und 5 Jahren, je 10.000 Euro. Die erste wird nächstes Jahr fällig und wird als neue 5-jährige wieder angelegt."><div class="hb ax-row"><span class="ax-t">Fällig</span><span class="ax-t">Restlaufzeit in Jahren →</span><span></span></div><div class="hb"><span class="hb-l">2027</span><span class="hb-bar f" style="--w:20%"><b>1&nbsp;J.</b></span><span class="hb-r">wird fällig</span></div><div class="hb"><span class="hb-l">2028</span><span class="hb-bar" style="--w:40%"><b>2&nbsp;J.</b></span><span class="hb-r">10.000&nbsp;€</span></div><div class="hb"><span class="hb-l">2029</span><span class="hb-bar" style="--w:60%"><b>3&nbsp;J.</b></span><span class="hb-r">10.000&nbsp;€</span></div><div class="hb"><span class="hb-l">2030</span><span class="hb-bar" style="--w:80%"><b>4&nbsp;J.</b></span><span class="hb-r">10.000&nbsp;€</span></div><div class="hb"><span class="hb-l">2031</span><span class="hb-bar" style="--w:100%"><b>5&nbsp;J.</b></span><span class="hb-r">10.000&nbsp;€</span></div></div><p class="sb-f">Das fällige Geld wird als neue 5-jährige angelegt – die Leiter läuft weiter.</p><a class="go sb-go" href="anleihen-suche.html?art=0&amp;w=EUR&amp;zins=0&amp;rest=b">Staatsanleihen in Euro, 1–3 Jahre →</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Laufzeit nach dem Termin wählen. Ohne Termin: aufteilen statt raten.</span></p>
+    </section>
+
+    <div class="weiter">
+      <a class="go" href="risiko.html">Risiko kennen: die sieben Risiken →</a>
+      <a class="go leise" href="rechner.html#zinsniveau">Rechner: Was macht ±1 Punkt mit dem Kurs? →</a>
+      <a class="go leise" href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit →</a>
+    </div>
+    <p class="klein">Diese Seite erklärt die Laufzeit. Sie empfiehlt keine Anlage. Die Zahlen sind gerundet.</p>
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="zinsniveau.html">Zinsniveau – warum es steigt und fällt</a></li>
+        <li><a href="bonitaet.html">Bonität und Ratings – wie sicher ist ein Schuldner?</a></li>
+        <li><a href="anlageziele.html">Welche Anleihe wozu passt</a></li>
+        <li><a href="zinskurve.html">Zinskurve seit 1972 – lohnt sich lang gerade?</a></li>
+      </ul>
+    </nav>
+    <details class="quellen" id="quellen">
+      <summary>Datenquellen und Methodik</summary>
+      <div class="quellen-body">
+        <p><strong>Kursänderungen.</strong> Gerechnet für eine Anleihe mit 3&nbsp;% Kupon (jährlich) zum Kurs 100 bei einer Änderung des allgemeinen Zinsniveaus um einen Prozentpunkt: 2 Jahre −1,9&nbsp;% / +1,9&nbsp;%, 5 Jahre −4,5&nbsp;% / +4,7&nbsp;%, 10 Jahre −8,1&nbsp;% / +9,0&nbsp;%, 30 Jahre −17,3&nbsp;% / +22,4&nbsp;% – im Text auf ganze Prozent gerundet, die Klassen-Kacheln auf runde Werte. Faustregel: Kursänderung in % ≈ modifizierte Duration × Änderung in Prozentpunkten. Modifizierte Duration derselben Anleihe: 2 Jahre 1,9, 5 Jahre 4,6, 10 Jahre 8,5, 30 Jahre 19,6. Bei großen Änderungen und langen Laufzeiten überschätzt die Faustregel den Verlust und unterschätzt den Gewinn – das ist die <a href="begriffe.html#konvexitaet">Konvexität</a>.</p>
+        <p><strong>Laufzeitklassen.</strong> Kurz bis 3 Jahre, mittel 3 bis 7, lang über 7 Jahre – die Einteilung dieser Website (wie auf den Seiten nach Laufzeit); andere Quellen ziehen die Grenzen bei 1, 5 und 10 Jahren. Die Zinsen im Wiederanlage-Beispiel sind angenommen.</p>
+      </div>
+    </details>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt: die Seite rendert auch ohne Menü-Skript.
+window.MC = window.MC || { navInit: function () {} };
+MC.navInit();
+</script>
+</body>
+</html>

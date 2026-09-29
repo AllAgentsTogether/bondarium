@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vier Anleitungen zur passenden Anleihe – METALCONCRETE</title>
+<meta name="description" content="Vier Anleitungen führen Schritt für Schritt zur passenden Anleihe: Geld kurz parken, auf ein Datum sparen, bis zur Rente anlegen, höhere Zinsen bekommen.">
+<link rel="canonical" href="https://www.metalconcrete.de/guide.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/guide.html">
+<meta property="og:title" content="Vier Anleitungen zur passenden Anleihe – METALCONCRETE">
+<meta property="og:description" content="Vier Anleitungen führen Schritt für Schritt zur passenden Anleihe: Geld kurz parken, auf ein Datum sparen, bis zur Rente anlegen, höhere Zinsen bekommen.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Vier Anleitungen zur passenden Anleihe – METALCONCRETE">
+<meta name="twitter:description" content="Vier Anleitungen führen Schritt für Schritt zur passenden Anleihe: Geld kurz parken, auf ein Datum sparen, bis zur Rente anlegen, höhere Zinsen bekommen.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" as="image" href="guide-hero.webp" media="(min-width: 761px)">
+<style>
+  /* Guide (neu nach Entwurf des Nutzers, 24.09.2026): Hero mit Foto, Personen-Karten als Reiter, eine Anleitung
+     sichtbar (ohne JS alle), Seitenspalte mit drei Kästen, Vorteile-Band. Grundregeln in base.css. */
+  .g-hero { position: relative; min-height: 318px; }
+  .gh-text { position: relative; z-index: 1; max-width: 560px; padding-top: 6px; }
+  .g-hero h1 { font-size: 46px; line-height: 1.12; margin-bottom: 18px; }
+  .g-hero h1 .hl { color: var(--green-text); }
+  .g-hero .sub { max-width: 500px; margin-bottom: 16px; }
+  .gh-img { position: absolute; right: -24px; top: -34px; width: 470px; height: auto; z-index: 0;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 26%, #000 86%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 14%, #000 72%, transparent 100%);
+    -webkit-mask-composite: source-in; mask-image: linear-gradient(to right, transparent 0, #000 26%, #000 86%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 14%, #000 72%, transparent 100%); mask-composite: intersect; }
+  /* Personen-Karten (Reiter) */
+  .personas { position: relative; z-index: 2; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 10px; scroll-margin-top: 84px; }
+  .pc { display: flex; flex-direction: column; align-items: center; text-align: center; background: #fff; border: 1.5px solid rgba(26,26,25,0.06); border-radius: var(--radius); padding: 16px 10px 16px; text-decoration: none; color: var(--ink); box-shadow: var(--shadow); transition: border-color .15s ease, transform .15s ease; }
+  .pc:hover { border-color: var(--green-line); transform: translateY(-2px); }
+  .pc[aria-selected="true"] { border-color: var(--green-text); box-shadow: 0 0 0 1px var(--green-text), 0 12px 28px rgba(57,255,20,0.18); }
+  .pc:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  .pc-img { display: block; width: 100%; max-width: 124px; margin-bottom: 12px; }
+  .pc-img img { display: block; width: 100%; height: auto; }
+  .pc b { font-size: 16px; font-weight: 600; }
+  .pc-r { font-size: 12.5px; color: var(--text); margin-top: 3px; }
+  .pc-z { font-size: 14px; line-height: 1.4; color: var(--ink); margin: 8px 0 12px; min-height: 2.8em; display: flex; align-items: center; justify-content: center; }
+  .pc-go { width: 38px; height: 38px; border-radius: 50%; background: var(--green-tint); color: var(--green-text); display: grid; place-items: center; margin-top: auto; flex: none; transition: background-color .15s ease, color .15s ease; }
+  .pc-go svg { width: 18px; height: 18px; }
+  .pc[aria-selected="true"] .pc-go, .pc:hover .pc-go { background: var(--green); color: var(--ink); }
+  @media (prefers-reduced-motion: reduce) { .pc, .pc-go { transition: none; } .pc:hover { transform: none; } }
+  /* Anleitung */
+  .guide { margin-top: 28px; background: #fff; border: 1px solid rgba(26,26,25,0.07); border-radius: 20px; box-shadow: var(--shadow); padding: 30px 34px 26px; scroll-margin-top: 84px; }
+  .g-kopf { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 24px; align-items: start; }
+  .g-av { display: block; width: 104px; height: 104px; border-radius: 50%; background: #E6ECF6; overflow: hidden; }
+  .g-av img { display: block; width: 100%; height: auto; margin-top: 6px; }
+  .g-wer { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); margin: 6px 0 6px; }
+  .g-kopf h2 { font-size: 28px; margin-bottom: 8px; }
+  .g-sit { font-size: 16.5px; line-height: 1.6; color: var(--text); max-width: 560px; }
+  .g-body { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 24px 40px; margin-top: 26px; align-items: stretch; }   /* seit 25.09.2026 abends: beide Spalten gleich hoch */
+  .steps { list-style: none; display: grid; gap: 22px; }
+  .steps li { display: grid; grid-template-columns: 26px minmax(0, 1fr); column-gap: 14px; align-items: start; }   /* Symbole vor den Nummern seit 25.09.2026 entfernt (Nutzerwunsch) */
+  .steps .sn { width: 26px; height: 26px; border-radius: 50%; background: var(--green); color: var(--ink); display: grid; place-items: center; font-size: 13px; font-weight: 600; margin-top: 4px; }
+  .steps strong { display: block; font-size: 16.5px; font-weight: 600; color: var(--ink); margin: 4px 0 4px; }
+  .steps p { font-size: 14.5px; line-height: 1.6; color: var(--text); }
+  .steps p strong { display: inline; font-size: inherit; margin: 0; }
+  .stlink { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 600; text-decoration: none; background: var(--soft); color: var(--green-text); padding: 6px 12px; border-radius: 999px; }
+  .stlink:hover { background: var(--green); color: var(--ink); }
+  .stlink-b { margin-left: 4px; background: #fff; border: 1.5px solid var(--green-line); padding: 4.5px 12px; }
+  .g-side { display: flex; flex-direction: column; gap: 16px; }
+  .g-side .sbox { flex: 1; align-content: start; }
+  .sbox { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 12px; background: #fff; border: 1px solid rgba(26,26,25,0.09); border-radius: 14px; padding: 18px 18px 18px 16px; }
+  .sb-i { width: 36px; height: 36px; border-radius: 50%; background: var(--soft); color: var(--green-text); display: grid; place-items: center; }
+  .sb-i svg { width: 20px; height: 20px; }
+  .sbox .sb-l { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); margin: 2px 0 6px; }
+  .sbox p { font-size: 14px; line-height: 1.6; color: var(--text); }
+  .sb-fehler .sb-i { background: #E4F2EC; color: var(--up); }
+  .sbox.sb-fehler .sb-l { color: var(--up); }
+  .sb-ziel { background: var(--green-tint); border-color: var(--green-line); }
+  /* Empfehlung je Typ mit Knopf zu den Top 10 ihres Bereichs (25.09.2026) */
+  /* Empfehlung als Band über die volle Breite unter Schritten und Kästen (seit 25.09.2026 abends – symmetrischer Abschluss jeder Anleitung) */
+  .g-emp { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 14px 20px; align-items: center; margin-top: 24px; background: var(--ink); border-radius: 16px; padding: 20px 24px; }
+  .ge-i { width: 44px; height: 44px; border-radius: 50%; background: var(--green); color: var(--ink); display: grid; place-items: center; }
+  .ge-i svg { width: 22px; height: 22px; }
+  .g-emp .sb-l { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green); margin: 0 0 4px; }
+  .g-emp .ge-t p { font-size: 14.5px; line-height: 1.55; color: rgba(255,255,255,0.88); }
+  .g-emp .ge-t p strong { color: #fff; font-weight: 600; }
+  .ge-a { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 240px; }
+  .ge-a .go { font-size: 14px; padding: 11px 16px; white-space: nowrap; }
+  .ge-l { font-size: 13px; color: rgba(255,255,255,0.8); text-decoration: none; }
+  .ge-l:hover { color: var(--green); text-decoration: underline; }
+  .sb-t { display: block; font-size: 15px; font-weight: 600; color: var(--blue); text-decoration: none; line-height: 1.4; }
+  .sb-mehr { display: block; margin-top: 10px; font-size: 14px; }
+  .sb-t:hover .sb-mehr { text-decoration: underline; }
+  /* Nadines Anleitung (28.09.2026, Nutzerwunsch): Schritte über die volle Breite, Top 3 Picks als Karten mit Tageskurs,
+     unten links „Wie kaufe ich eine Anleihe?“, rechts eine voreingestellte Suche. */
+  .steps-voll { margin-top: 26px; max-width: 760px; }
+  .picks { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 18px 0 0 40px; }
+  .pick { display: flex; flex-direction: column; background: #fff; border: 2px solid var(--green-line); border-radius: 14px; padding: 15px 17px; }
+  .pick:hover { border-color: var(--green); }
+  /* 29.09.2026 (Nutzerwunsch): Anleihen grün umrandet, ETFs orange; bei Nadine, Tobias, Michael steht rechts eine vierte Karte mit einem passenden ETF */
+  .pick[data-etf] { border-color: rgba(207,116,48,0.7); }
+  .pick[data-etf]:hover { border-color: var(--orange); }
+  .pick[data-etf] .pk-typ, .pick[data-etf] .pk-daten .pk-rend { color: var(--orange-text); }
+  .picks-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .picks-4 .pick { padding: 15px 14px; }
+  .picks-4 .pk-name { font-size: 16px; }
+  .picks-4 .pk-daten { gap: 8px 8px; }
+  .picks-4 .pk-daten dd { font-size: 13.5px; }
+  .picks-4 .pk-daten .pk-isin { font-size: 11.5px; letter-spacing: 0; }
+  @media (max-width: 940px) { .picks-4 .pick { padding: 15px 17px; } .picks-4 .pk-daten dd { font-size: 14.5px; } .picks-4 .pk-daten .pk-isin { font-size: 12.5px; } }
+  .pk-typ { font-size: 11.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); margin: 0 0 4px; }
+  .pk-name { font-size: 17px; font-weight: 600; line-height: 1.3; margin: 0 0 12px; }
+  .pk-name a { color: var(--ink); text-decoration: none; }
+  .pk-name a:hover { text-decoration: underline; text-decoration-color: var(--green-text); }
+  .pk-daten { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; margin: 0 0 12px; }
+  .pk-daten dt { font-size: 11.5px; color: var(--text); }
+  .pk-daten dd { margin: 1px 0 0; font-size: 14.5px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .pk-daten .pk-rest { display: block; font-size: 12px; font-weight: 500; color: var(--text); }
+  .pk-daten .pk-rend { color: var(--green-text); }
+  .pk-daten .pk-isin { font-size: 12.5px; font-weight: 500; letter-spacing: 0.02em; }
+  .pk-rend small { font-size: 11.5px; font-weight: 500; color: var(--text); }
+  .gf-etf { display: inline-block; margin-top: 2px; font-size: 14.5px; padding: 11px 18px; box-shadow: none; }
+  .pk-stand { font-size: 12.5px; color: var(--text); margin: 12px 0 0 40px; }
+  .g-fuss { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 16px; margin-top: 26px; }
+  .gf-kauf { position: relative; display: flex; flex-direction: column; gap: 4px; background: var(--ink); color: #fff; border-radius: 16px; padding: 20px 64px 20px 22px; text-decoration: none; }
+  .gf-kauf .gf-l { color: var(--green); }
+  .gf-t { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; }
+  .gf-s { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.5; }
+  .gf-go { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; border-radius: 50%; background: var(--green); color: var(--ink); display: grid; place-items: center; }
+  .gf-go svg { width: 18px; height: 18px; }
+  .gf-kauf:hover .gf-go { background: #fff; }
+  .gf-kauf:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+  .gf-l { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); margin: 0; }
+  .gf-suche { background: var(--green-tint); border: 1px solid var(--green-line); border-radius: 16px; padding: 18px 20px; }
+  .gf-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
+  .gf-chips span { font-size: 12.5px; font-weight: 600; color: var(--ink); background: #fff; border: 1px solid var(--green-line); border-radius: 999px; padding: 3px 10px; }
+  .gf-feld { display: flex; gap: 8px; background: #fff; border: 2px solid var(--green-text); border-radius: 12px; padding: 5px 5px 5px 12px; }
+  .gf-feld:focus-within { border-color: var(--ink); }
+  .gf-feld input { flex: 1 1 auto; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 15px; color: var(--ink); }
+  .gf-feld input::-webkit-search-cancel-button { -webkit-appearance: none; }
+  .gf-feld .go { flex: none; width: auto; padding: 9px 16px; font-size: 14px; border: 0; cursor: pointer; box-shadow: none; }   /* width: base.css macht .go am Handy 100 % breit */
+  @media (max-width: 940px) { .picks { grid-template-columns: minmax(0, 1fr); margin-left: 0; } .pk-stand { margin-left: 0; } .g-fuss { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 940px) and (min-width: 601px) { .picks-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .gf-feld input { font-size: 16px; } .gf-t { font-size: 18px; } }
+  .g-up { margin-top: 20px; font-size: 13px; }
+  .g-up a { color: var(--text); text-decoration: none; }
+  .g-up a:hover { color: var(--blue); text-decoration: underline; }
+  /* Vorteile-Band über die volle Fensterbreite */
+  .vorteile { margin-top: 56px; padding: 40px 0 44px; background: #E7FFE3; box-shadow: 0 0 0 100vmax #E7FFE3; clip-path: inset(0 -100vmax); text-align: center; }
+  .vorteile h2 { font-size: 24px; margin-bottom: 28px; }
+  .vt { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; text-align: left; }
+  .vt li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .vt-i { width: 52px; height: 52px; border-radius: 50%; background: #fff; color: var(--green-text); display: grid; place-items: center; box-shadow: 0 4px 14px rgba(29,163,0,0.10); }
+  .vt-i svg { width: 24px; height: 24px; }
+  .vt strong { display: block; font-size: 15px; font-weight: 600; color: var(--ink); margin: 4px 0 6px; }
+  .vt p { font-size: 14px; line-height: 1.55; color: var(--text); }
+  .vorteile + .klein { margin-top: 34px; }
+  @media (max-width: 940px) {
+    .gh-img { width: 400px; right: -20px; }
+    .personas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .g-body { grid-template-columns: minmax(0, 1fr); }
+    .g-side { flex-direction: row; flex-wrap: wrap; }
+    .g-side .sbox { flex: 1 1 240px; }
+    .g-emp { grid-template-columns: 44px minmax(0, 1fr); }
+    .ge-a { grid-column: 1 / -1; }
+    .ge-a .go { white-space: normal; }
+    .vt { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 760px) {
+    .g-hero { min-height: 0; }
+    .gh-img { display: none; }
+    .g-hero h1 { font-size: 34px; }
+    .guide { padding: 24px 22px 22px; }
+    .g-kopf { grid-template-columns: 76px minmax(0, 1fr); gap: 16px; }
+    .g-av { width: 76px; height: 76px; }
+    .g-kopf h2 { font-size: 23px; }
+  }
+  @media (max-width: 600px) {
+    .g-hero h1 { font-size: 28px; }
+    .personas { gap: 8px; }
+    .pc { padding: 12px 6px 12px; border-radius: 12px; }
+    .pc-img { max-width: 84px; margin-bottom: 8px; }
+    .pc b { font-size: 14px; }
+    .pc-r { font-size: 12px; }
+    .pc-z { font-size: 12px; margin: 5px 0 8px; min-height: 0; }
+    .pc-go { width: 30px; height: 30px; }
+    .guide { padding: 20px 16px 18px; border-radius: 14px; }
+    .g-kopf { grid-template-columns: 60px minmax(0, 1fr); gap: 12px; }
+    .g-av { width: 60px; height: 60px; }
+    .g-wer { font-size: 12px; letter-spacing: 0.08em; margin-top: 2px; }
+    .g-kopf h2 { font-size: 21px; }
+    .g-sit { font-size: 15.5px; }
+    .steps li { column-gap: 12px; }
+    .steps .sn { margin-top: 2px; }
+    .g-side { grid-template-columns: minmax(0, 1fr); }
+    .vorteile { padding: 32px 0 34px; }
+    .vorteile h2 { font-size: 21px; }
+    .vt { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Vier Anleitungen nach Ziel: Vier Menschen, vier Wege zur passenden Anleihe","description":"Vier Anleitungen führen Schritt für Schritt zur passenden Anleihe: Geld kurz parken, auf ein Datum sparen, bis zur Rente anlegen, höhere Zinsen bekommen.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-28","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/guide.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.metalconcrete.de/anleihen.html"},{"@type":"ListItem","position":3,"name":"Vier Anleitungen nach Ziel","item":"https://www.metalconcrete.de/guide.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="anleihen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn current" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html" class="current">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <section class="g-hero" aria-labelledby="h-guide">
+      <div class="gh-text">
+        <h1 id="h-guide">Wähle die Person, <span class="hl">die dir am nächsten kommt.</span></h1>
+      </div>
+      <img class="gh-img" src="guide-hero.webp" width="828" height="716" alt="" fetchpriority="high" decoding="async">
+    </section>
+    <div class="personas" id="personas" role="tablist" aria-label="Person wählen">
+      <a class="pc" id="t-nadine" href="#nadine" role="tab" aria-selected="true" aria-controls="nadine" data-k="nadine"><span class="pc-img"><img src="guide-nadine.webp" width="248" height="248" alt="" decoding="async"></span><b>Nadine, 41</b><span class="pc-r">Selbstständige</span><span class="pc-z">parkt Geld für zwölf Monate</span><span class="pc-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
+      <a class="pc" id="t-tobias" href="#tobias" role="tab" aria-selected="false" aria-controls="tobias" data-k="tobias"><span class="pc-img"><img src="guide-tobias.webp" width="248" height="248" alt="" decoding="async"></span><b>Tobias, 39</b><span class="pc-r">Vater von zwei Kindern</span><span class="pc-z">legt für zehn Jahre an</span><span class="pc-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
+      <a class="pc" id="t-michael" href="#michael" role="tab" aria-selected="false" aria-controls="michael" data-k="michael"><span class="pc-img"><img src="guide-michael.webp" width="248" height="248" alt="" decoding="async"></span><b>Michael, 55</b><span class="pc-r">Unternehmer</span><span class="pc-z">will Zinsen über Jahrzehnte</span><span class="pc-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
+      <a class="pc" id="t-jonas" href="#jonas" role="tab" aria-selected="false" aria-controls="jonas" data-k="jonas"><span class="pc-img"><img src="guide-jonas.webp" width="248" height="248" alt="" decoding="async"></span><b>Jonas, 29</b><span class="pc-r">Ingenieur</span><span class="pc-z">will einen ruhigen Baustein</span><span class="pc-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
+    </div>
+
+    <section class="guide" id="nadine" role="tabpanel" aria-labelledby="h-nadine">   <!-- Aufbau seit 28.09.2026 (Nutzerwunsch): Ziel, Kriterien, Top 3 Picks, darunter „Wie kaufe ich eine Anleihe?“ und eine voreingestellte Suche; ohne Rechnung, Fehler-Kasten und „Worauf es ankommt“ -->
+      <div class="g-kopf">
+        <span class="g-av"><img src="guide-nadine.webp" width="248" height="248" alt="" loading="lazy" decoding="async"></span>
+        <div>
+          <p class="g-wer">Nadine, 41 · Selbstständige</p>
+          <h2 id="h-nadine">Geld kurzfristig sicher parken</h2>
+          <p class="g-sit">Nadine hat 18.000&nbsp;€ für ihre Steuernachzahlung zurückgelegt. Fällig ist sie in zwölf Monaten – bis dahin soll das Geld Zinsen bringen und dann voll ausgezahlt sein. Sie investiert sicher: nur in Anleihen mit Investment Grade.</p>
+        </div>
+      </div>
+      <ol class="steps steps-voll">
+        <li><span class="sn" aria-hidden="true">1</span><div><strong>Das Ziel</strong><p>In zwölf Monaten soll das ganze Geld wieder da sein – mit Zinsen, ohne Risiko. Die Anleihe muss also <strong>spätestens in zwölf Monaten fällig</strong> werden: Dann zahlt der Schuldner 100&nbsp;% zurück, egal wie der Kurs zwischendurch steht. Vorher lohnt der Vergleich mit <strong>Festgeld für ein Jahr</strong>: Bringt es ähnlich viel, ist es die einfachere Wahl.</p></div></li>
+        <li><span class="sn" aria-hidden="true">2</span><div><strong>Die Kriterien</strong><p>Eine Anleihe mit <strong>Investment Grade</strong> – also einem Rating von BBB oder besser, wie es die Ratingagenturen nur solide Schuldner geben. Von <strong>Staaten oder großen Unternehmen</strong>, in Euro, mit festem Zins. Je besser das Rating, desto sicherer – alle drei Beispiele liegen deutlich über der Grenze. Bei einem Jahr Laufzeit zählen auch die Kosten: Verteilt Nadine 18.000&nbsp;€ auf drei Käufe, kosten die Ordergebühren schnell 0,1 Prozentpunkte Rendite und mehr. Und die Unternehmensanleihe bringt nur rund 0,2 Punkte mehr als der Bund.</p></div></li>
+        <li><span class="sn" aria-hidden="true">3</span><div><strong>Drei Beispiele für Nadine</strong><p>Drei Anleihen, die in knapp zwölf Monaten zurückgezahlt werden – zwei Staaten und ein Autobauer. Nadine kann eine davon wählen oder die 18.000&nbsp;€ aufteilen. Ein Klick auf den Namen öffnet den Steckbrief mit Kursverlauf. Ganz rechts steht zum Vergleich ein ETF (orange umrandet) auf Bundeswertpapiere mit höchstens einem Jahr Restlaufzeit: Er schwankt kaum, hat aber keinen Rückzahlungstag – in zwölf Monaten verkauft Nadine ihn zum Tageskurs. Die Rendite liegt unter der der drei Anleihen.</p></div></li>
+      </ol>
+      <ul class="picks picks-4" aria-label="Drei Beispiel-Anleihen und ein ETF für Nadine">
+          <li class="pick" data-isin="DE000BU22106" data-faellig="2027-09-16">
+            <p class="pk-typ">Staatsanleihe · Deutschland</p>
+            <h4 class="pk-name"><a href="anleihe.html?isin=DE000BU22106">Bundesschatzanweisung 1,9&nbsp;% 2027</a></h4>
+            <dl class="pk-daten">
+              <div><dt>Rendite</dt><dd class="pk-rend">3,07&nbsp;%</dd></div>
+              <div><dt>Fällig</dt><dd>16.09.2027 <span class="pk-rest"></span></dd></div>
+              <div><dt>Kurs</dt><dd class="pk-kurs">98,90&nbsp;%</dd></div>
+              <div><dt>Kupon</dt><dd>1,90&nbsp;%</dd></div>
+              <div><dt>Ab</dt><dd>0,01&nbsp;€</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">DE000BU22106</dd></div>
+            </dl>
+          </li>
+          <li class="pick" data-isin="FR001400NBC6" data-faellig="2027-09-24">
+            <p class="pk-typ">Staatsanleihe · Frankreich</p>
+            <h4 class="pk-name"><a href="anleihe.html?isin=FR001400NBC6">Frankreich OAT 2,5&nbsp;% 2027</a></h4>
+            <dl class="pk-daten">
+              <div><dt>Rendite</dt><dd class="pk-rend">3,31&nbsp;%</dd></div>
+              <div><dt>Fällig</dt><dd>24.09.2027 <span class="pk-rest"></span></dd></div>
+              <div><dt>Kurs</dt><dd class="pk-kurs">99,23&nbsp;%</dd></div>
+              <div><dt>Kupon</dt><dd>2,50&nbsp;%</dd></div>
+              <div><dt>Ab</dt><dd>1&nbsp;€</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">FR001400NBC6</dd></div>
+            </dl>
+          </li>
+          <li class="pick" data-isin="XS2055728054" data-faellig="2027-09-24">
+            <p class="pk-typ">Unternehmensanleihe · Autobauer</p>
+            <h4 class="pk-name"><a href="anleihe.html?isin=XS2055728054">BMW 0,375&nbsp;% 2027</a></h4>
+            <dl class="pk-daten">
+              <div><dt>Rendite</dt><dd class="pk-rend">3,27&nbsp;%</dd></div>
+              <div><dt>Fällig</dt><dd>24.09.2027 <span class="pk-rest"></span></dd></div>
+              <div><dt>Kurs</dt><dd class="pk-kurs">97,23&nbsp;%</dd></div>
+              <div><dt>Kupon</dt><dd>0,375&nbsp;%</dd></div>
+              <div><dt>Ab</dt><dd>1.000&nbsp;€</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">XS2055728054</dd></div>
+            </dl>
+          </li>
+          <li class="pick" data-etf="DE000A0Q4RZ9">
+            <p class="pk-typ">ETF · Bund · bis 1 Jahr</p>
+            <h4 class="pk-name">iShares eb.rexx Government Germany 0-1yr</h4>
+            <dl class="pk-daten">
+              <div><dt>Rendite</dt><dd class="pk-rend">2,67&nbsp;%</dd></div>
+              <div><dt>Laufzeiten</dt><dd>0 bis 1 Jahr</dd></div>
+              <div><dt>Kosten p.&nbsp;a.</dt><dd>0,13&nbsp;%</dd></div>
+              <div><dt>Zinsen</dt><dd>ausschüttend</dd></div>
+              <div><dt>Fondsgröße</dt><dd>1,9&nbsp;Mrd.&nbsp;€</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">DE000A0Q4RZ9</dd></div>
+            </dl>
+          </li>
+      </ul>
+      <p class="pk-stand">Kurs und Rendite: <span class="pk-quelle">Deutsche Börse / Bundesbank, Stand 25.09.2026</span> – werden täglich aktualisiert. Beispiele, die die Kriterien erfüllen – keine Empfehlung und keine Anlageberatung; die Bonität kann sich ändern – vor dem Kauf auf <a href="bonitaet.html">Bonität prüfen</a>. ETF: Rendite bis Fälligkeit (vor Kosten), Kosten und Fondsgröße laut Anbieter, Stand 25.09.2026.</p>
+      <div class="g-fuss">
+        <a class="gf-kauf" href="erste-anleihe.html"><span class="gf-l">Neu hier?</span><span class="gf-t">Wie kaufe ich eine Anleihe?</span><span class="gf-s">Depot, Order, Limit – in neun Schritten zur ersten Anleihe.</span><span class="gf-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
+        <form class="gf-suche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen für Nadines Ziel suchen">
+          <p class="gf-l">Selbst suchen</p>
+          <p class="gf-chips"><span>Staat &amp; Unternehmen</span><span>Euro</span><span>fester Zins</span><span>bis 1 Jahr</span></p>
+          <input type="hidden" name="art" value="0,2"><input type="hidden" name="w" value="EUR"><input type="hidden" name="zins" value="0"><input type="hidden" name="rest" value="a">
+          <div class="gf-feld"><label for="gf-q-nadine" class="sr-only">Anleihe suchen</label><input id="gf-q-nadine" name="q" type="search" placeholder="Name, ISIN oder WKN – oder leer lassen" autocomplete="off" spellcheck="false"><button type="submit" class="go">Suchen</button></div>
+        </form>
+      </div>
+      <p class="g-up"><a href="#personas">↑ Andere Person wählen</a></p>
+    </section>
+    <section class="guide" id="tobias" role="tabpanel" aria-labelledby="h-tobias">   <!-- Aufbau seit 28.09.2026 wie Nadine (Nutzerwunsch): Ziel, Kriterien, Top 3 Picks, darunter Kaufen-Kasten und voreingestellte Suche -->
+      <div class="g-kopf">
+        <span class="g-av"><img src="guide-tobias.webp" width="248" height="248" alt="" loading="lazy" decoding="async"></span>
+        <div>
+          <p class="g-wer">Tobias, 39 · Vater von zwei Kindern</p>
+          <h2 id="h-tobias">Geld langfristig sicher parken</h2>
+          <p class="g-sit">Tobias hat 30.000&nbsp;€ für seine beiden Kinder zurückgelegt. In zehn Jahren soll das Geld für Ausbildung oder Studium bereitstehen – bis dahin braucht er es nicht. Er will sicher investieren: nur in Anleihen mit Investment Grade.</p>
+        </div>
+      </div>
+      <ol class="steps steps-voll">
+        <li><span class="sn" aria-hidden="true">1</span><div><strong>Das Ziel</strong><p>In zehn Jahren soll das ganze Geld wieder da sein – mit Zinsen. Die Anleihe sollte also <strong>in rund zehn Jahren fällig</strong> werden: Dann zahlt der Schuldner 100&nbsp;% zurück, egal wie der Kurs zwischendurch steht. Weil Tobias das Geld vorher nicht braucht, muss er nie zum Tageskurs verkaufen.</p></div></li>
+        <li><span class="sn" aria-hidden="true">2</span><div><strong>Die Kriterien</strong><p>Eine Anleihe mit <strong>Investment Grade</strong> – also einem Rating von BBB oder besser, wie es die Ratingagenturen nur solide Schuldner geben. Von <strong>Staaten oder großen Unternehmen</strong>, in Euro, mit festem Zins. Je besser das Rating, desto sicherer – alle drei Beispiele liegen klar über der Grenze: Deutschland und Österreich ganz oben, die Telekom im soliden Mittelfeld.</p></div></li>
+        <li><span class="sn" aria-hidden="true">3</span><div><strong>Drei Beispiele für Tobias</strong><p>Drei Anleihen, die in rund zehn Jahren zurückgezahlt werden – zwei Staaten und ein bekanntes deutsches Unternehmen, je rund 10.000&nbsp;€. Ein Klick auf den Namen öffnet den Steckbrief mit Kursverlauf. Ganz rechts steht zum Vergleich ein Laufzeit-ETF (orange umrandet): Er hält rund 70 Unternehmensanleihen, die alle 2036 fällig werden, und zahlt im Dezember 2036 aus – fast wie eine Anleihe, nur breit gestreut. Er ist allerdings erst seit Mai 2026 am Markt und noch klein.</p></div></li>
+      </ol>
+      <ul class="picks picks-4" aria-label="Drei Beispiel-Anleihen und ein ETF für Tobias">
+          <li class="pick" data-isin="DE000BU2Z072" data-faellig="2036-08-15">
+            <p class="pk-typ">Staatsanleihe · Deutschland</p>
+            <h4 class="pk-name"><a href="anleihe.html?isin=DE000BU2Z072">Bundesanleihe 3&nbsp;% 2036</a></h4>
+            <dl class="pk-daten">
+              <div><dt>Rendite</dt><dd class="pk-rend">3,58&nbsp;%</dd></div>
+              <div><dt>Fällig</dt><dd>15.08.2036 <span class="pk-rest"></span></dd></div>
+              <div><dt>Kurs</dt><dd class="pk-kurs">95,21&nbsp;%</dd></div>
+              <div><dt>Kupon</dt><dd>3,00&nbsp;%</dd></div>
+              <div><dt>Ab</dt><dd>0,01&nbsp;€</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">DE000BU2Z072</dd></div>
+            </dl>
+          </li>
+          <li class="pick" data-isin="AT0000A04967" data-faellig="2037-03-15">
+            <p class="pk-typ">Staatsanleihe · Österreich</p>
+            <h4 class="pk-name"><a href="anleihe.html?isin=AT0000A04967">Österreich 4,15&nbsp;% 2037</a></h4>
+            <dl class="pk-daten">
+              <div><dt>Rendite</dt><dd class="pk-rend">3,86&nbsp;%</dd></div>
+              <div><dt>Fällig</dt><dd>15.03.2037 <span class="pk-rest"></span></dd></div>
+              <div><dt>Kurs</dt><dd class="pk-kurs">102,44&nbsp;%</dd></div>
+              <div><dt>Kupon</dt><dd>4,15&nbsp;%</dd></div>
+              <div><dt>Ab</dt><dd>1.000&nbsp;€</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">AT0000A04967</dd></div>
+            </dl>
+          </li>
+          <li class="pick" data-isin="XS2788600869" data-faellig="2036-03-20">
+            <p class="pk-typ">Unternehmensanleihe · DAX</p>
+            <h4 class="pk-name"><a href="anleihe.html?isin=XS2788600869">Deutsche Telekom 3,25&nbsp;% 2036</a></h4>
+            <dl class="pk-daten">
+              <div><dt>Rendite</dt><dd class="pk-rend">4,28&nbsp;%</dd></div>
+              <div><dt>Fällig</dt><dd>20.03.2036 <span class="pk-rest"></span></dd></div>
+              <div><dt>Kurs</dt><dd class="pk-kurs">92,07&nbsp;%</dd></div>
+              <div><dt>Kupon</dt><dd>3,25&nbsp;%</dd></div>
+              <div><dt>Ab</dt><dd>1.000&nbsp;€</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">XS2788600869</dd></div>
+            </dl>
+          </li>
+          <li class="pick" data-etf="IE000AD2AYN2">
+            <p class="pk-typ">Laufzeit-ETF · Unternehmen</p>
+            <h4 class="pk-name">iShares iBonds Dec 2036 Term €&nbsp;Corp</h4>
+            <dl class="pk-daten">
+              <div><dt>Rendite</dt><dd class="pk-rend">4,66&nbsp;%</dd></div>
+              <div><dt>Endet</dt><dd>Dez. 2036</dd></div>
+              <div><dt>Kosten p.&nbsp;a.</dt><dd>0,12&nbsp;%</dd></div>
+              <div><dt>Zinsen</dt><dd>thesaurierend</dd></div>
+              <div><dt>Fondsgröße</dt><dd>37&nbsp;Mio.&nbsp;€</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">IE000AD2AYN2</dd></div>
+            </dl>
+          </li>
+      </ul>
+      <p class="pk-stand">Kurs und Rendite: <span class="pk-quelle">Deutsche Börse / Bundesbank, Stand 25.09.2026</span> – werden täglich aktualisiert. Beispiele, die die Kriterien erfüllen – keine Empfehlung und keine Anlageberatung; die Bonität kann sich ändern – vor dem Kauf auf <a href="bonitaet.html">Bonität prüfen</a>. ETF: Rendite bis Fälligkeit (vor Kosten), Kosten und Fondsgröße laut Anbieter, Stand 25.09.2026.</p>
+      <div class="g-fuss">
+        <a class="gf-kauf" href="erste-anleihe.html"><span class="gf-l">Neu hier?</span><span class="gf-t">Wie kaufe ich eine Anleihe?</span><span class="gf-s">Depot, Order, Limit – in neun Schritten zur ersten Anleihe.</span><span class="gf-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
+        <form class="gf-suche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen für Tobias’ Ziel suchen">
+          <p class="gf-l">Selbst suchen</p>
+          <p class="gf-chips"><span>Staat &amp; Unternehmen</span><span>Euro</span><span>fester Zins</span><span>7 bis 30 Jahre</span></p>
+          <input type="hidden" name="art" value="0,2"><input type="hidden" name="w" value="EUR"><input type="hidden" name="zins" value="0"><input type="hidden" name="rest" value="d">
+          <div class="gf-feld"><label for="gf-q-tobias" class="sr-only">Anleihe suchen</label><input id="gf-q-tobias" name="q" type="search" placeholder="Name, ISIN oder WKN – oder leer lassen" autocomplete="off" spellcheck="false"><button type="submit" class="go">Suchen</button></div>
+        </form>
+      </div>
+      <p class="g-up"><a href="#personas">↑ Andere Person wählen</a></p>
+    </section>
+    <section class="guide" id="michael" role="tabpanel" aria-labelledby="h-michael">   <!-- Aufbau seit 28.09.2026 wie Nadine/Tobias (Nutzerwunsch): hohe, regelmäßige Zinsen über Jahrzehnte, 100.000 € auf drei lange Anleihen -->
+      <div class="g-kopf">
+        <span class="g-av"><img src="guide-michael.webp" width="248" height="248" alt="" loading="lazy" decoding="async"></span>
+        <div>
+          <p class="g-wer">Michael, 55 · Unternehmer</p>
+          <h2 id="h-michael">Regelmäßige Zinsen über Jahrzehnte</h2>
+          <p class="g-sit">Michael will 100.000&nbsp;€ anlegen. Ihm ist vor allem eine hohe, wiederkehrende Zinszahlung wichtig – und zwar für lange Zeit. Wie der Kurs der Anleihe schwankt, interessiert ihn nicht. Er verteilt das Geld auf drei besonders lang laufende Anleihen.</p>
+        </div>
+      </div>
+      <ol class="steps steps-voll">
+        <li><span class="sn" aria-hidden="true">1</span><div><strong>Das Ziel</strong><p>Jedes Jahr hohe Zinsen – und das möglichst lange. Deshalb wählt Michael Anleihen, die erst <strong>in rund 14 bis 19 Jahren fällig</strong> werden – mit hohem Kupon. Bis dahin zahlt jede Anleihe Jahr für Jahr ihren festen Kupon. Der Kurs zwischendurch ist ihm egal: Er verkauft nicht, und am Ende gibt es 100&nbsp;% zurück. Aber Achtung: <strong>Hoher Kupon heißt nicht hohe Rendite.</strong> Die Bundesanleihe mit 4,75&nbsp;% kostet rund 110&nbsp;%, zurück gibt es 100&nbsp;% – einen Teil seiner hohen Zinsen bezahlt Michael also mit dem eigenen Geld. Was unterm Strich bleibt, zeigt die Rendite.</p></div></li>
+        <li><span class="sn" aria-hidden="true">2</span><div><strong>Die Kriterien</strong><p>Anleihen mit <strong>Investment Grade</strong> – also einem Rating von BBB oder besser –, mit festem Kupon und langer Restlaufzeit, <strong>auf drei Schuldner verteilt</strong>, je rund 33.333&nbsp;€. Vorsicht: Mehr Rendite heißt immer auch mehr Risiko – wie zum Beispiel bei Rumänien. Alle drei in Euro – ohne Währungsrisiko.</p></div></li>
+        <li><span class="sn" aria-hidden="true">3</span><div><strong>Drei Beispiele für Michael</strong><p>Drei Anleihen, die bis in die 2040er Jahre laufen – zwei Staaten und ein Weltkonzern. Ganz rechts steht zum Vergleich ein ETF (orange umrandet) auf Euro-Staatsanleihen mit 15 bis 30 Jahren: breit gestreut, er zahlt die Zinsen halbjährlich aus. Aber ein ETF wird nie fällig – es gibt keinen Tag, an dem sicher 100&nbsp;% zurückkommen, und sein Kurs schwankt dauerhaft stark.</p></div></li>
+      </ol>
+      <ul class="picks picks-4" aria-label="Drei Beispiel-Anleihen und ein ETF für Michael">
+          <li class="pick" data-isin="DE0001135366" data-faellig="2040-07-04">
+            <p class="pk-typ">Staatsanleihe · Deutschland</p>
+            <h4 class="pk-name"><a href="anleihe.html?isin=DE0001135366">Bundesanleihe 4,75&nbsp;% 2040</a></h4>
+            <dl class="pk-daten">
+              <div><dt>Rendite</dt><dd class="pk-rend">3,74&nbsp;%</dd></div>
+              <div><dt>Fällig</dt><dd>04.07.2040 <span class="pk-rest"></span></dd></div>
+              <div><dt>Kurs</dt><dd class="pk-kurs">110,71&nbsp;%</dd></div>
+              <div><dt>Kupon</dt><dd>4,75&nbsp;%</dd></div>
+              <div><dt>Ab</dt><dd>0,01&nbsp;€</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">DE0001135366</dd></div>
+            </dl>
+          </li>
+          <li class="pick" data-isin="XS3200176298" data-faellig="2045-10-07">
+            <p class="pk-typ">Staatsanleihe · Rumänien</p>
+            <h4 class="pk-name"><a href="anleihe.html?isin=XS3200176298">Rumänien 6,5&nbsp;% 2045</a></h4>
+            <dl class="pk-daten">
+              <div><dt>Rendite</dt><dd class="pk-rend">6,97&nbsp;%</dd></div>
+              <div><dt>Fällig</dt><dd>07.10.2045 <span class="pk-rest"></span></dd></div>
+              <div><dt>Kurs</dt><dd class="pk-kurs">95,08&nbsp;%</dd></div>
+              <div><dt>Kupon</dt><dd>6,50&nbsp;%</dd></div>
+              <div><dt>Ab</dt><dd>1.000&nbsp;€</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">XS3200176298</dd></div>
+            </dl>
+          </li>
+          <li class="pick" data-isin="XS2976332283" data-faellig="2045-01-14">
+            <p class="pk-typ">Unternehmensanleihe · Schweiz</p>
+            <h4 class="pk-name"><a href="anleihe.html?isin=XS2976332283">Nestlé 3,5&nbsp;% 2045</a></h4>
+            <dl class="pk-daten">
+              <div><dt>Rendite</dt><dd class="pk-rend">4,61&nbsp;%</dd></div>
+              <div><dt>Fällig</dt><dd>14.01.2045 <span class="pk-rest"></span></dd></div>
+              <div><dt>Kurs</dt><dd class="pk-kurs">86,52&nbsp;%</dd></div>
+              <div><dt>Kupon</dt><dd>3,50&nbsp;%</dd></div>
+              <div><dt>Ab</dt><dd>1.000&nbsp;€</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">XS2976332283</dd></div>
+            </dl>
+          </li>
+          <li class="pick" data-etf="IE00B1FZS913">
+            <p class="pk-typ">ETF · Euro-Staaten · 15–30 Jahre</p>
+            <h4 class="pk-name">iShares € Govt Bond 15-30yr</h4>
+            <dl class="pk-daten">
+              <div><dt>Rendite</dt><dd class="pk-rend">4,53&nbsp;%</dd></div>
+              <div><dt>Laufzeiten</dt><dd>15 bis 30 Jahre</dd></div>
+              <div><dt>Kosten p.&nbsp;a.</dt><dd>0,15&nbsp;%</dd></div>
+              <div><dt>Zinsen</dt><dd>ausschüttend</dd></div>
+              <div><dt>Fondsgröße</dt><dd>961&nbsp;Mio.&nbsp;€</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">IE00B1FZS913</dd></div>
+            </dl>
+          </li>
+      </ul>
+      <p class="pk-stand">Kurs und Rendite: <span class="pk-quelle">Deutsche Börse / Bundesbank, Stand 25.09.2026</span> – werden täglich aktualisiert. Beispiele, die die Kriterien erfüllen – keine Empfehlung und keine Anlageberatung; die Bonität kann sich ändern – vor dem Kauf auf <a href="bonitaet.html">Bonität prüfen</a>. ETF: Rendite bis Fälligkeit (vor Kosten), Kosten und Fondsgröße laut Anbieter, Stand 25.09.2026.</p>
+      <div class="g-fuss">
+        <a class="gf-kauf" href="erste-anleihe.html"><span class="gf-l">Neu hier?</span><span class="gf-t">Wie kaufe ich eine Anleihe?</span><span class="gf-s">Depot, Order, Limit – in neun Schritten zur ersten Anleihe.</span><span class="gf-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
+        <form class="gf-suche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen für Michaels Ziel suchen">
+          <p class="gf-l">Selbst suchen</p>
+          <p class="gf-chips"><span>Staat &amp; Unternehmen</span><span>Euro</span><span>Kupon über 4&nbsp;%</span><span>7 bis 30 Jahre</span></p>
+          <input type="hidden" name="art" value="0,2"><input type="hidden" name="w" value="EUR"><input type="hidden" name="zins" value="0"><input type="hidden" name="kupon" value="g,d,e"><input type="hidden" name="rest" value="d">
+          <div class="gf-feld"><label for="gf-q-michael" class="sr-only">Anleihe suchen</label><input id="gf-q-michael" name="q" type="search" placeholder="Name, ISIN oder WKN – oder leer lassen" autocomplete="off" spellcheck="false"><button type="submit" class="go">Suchen</button></div>
+        </form>
+      </div>
+      <p class="g-up"><a href="#personas">↑ Andere Person wählen</a></p>
+    </section>
+    <section class="guide" id="jonas" role="tabpanel" aria-labelledby="h-jonas">   <!-- Aufbau seit 28.09.2026 wie die anderen (Nutzerwunsch): Jonas streut sein Depot mit Anleihen-ETFs – Euro-Staatsanleihen 1 bis 3 Jahre (29.09.2026) -->
+      <div class="g-kopf">
+        <span class="g-av"><img src="guide-jonas.webp" width="248" height="248" alt="" loading="lazy" decoding="async"></span>
+        <div>
+          <p class="g-wer">Jonas, 29 · Ingenieur</p>
+          <h2 id="h-jonas">Ein ruhiger Baustein fürs Depot</h2>
+          <p class="g-sit">Jonas liebt ETFs. Neben seinen Aktien-ETFs will er einen ruhigen Baustein im Depot – eine Alternative zum Tagesgeld, breit gestreut und ohne einzelne Anleihen auswählen zu müssen. Er spart 300&nbsp;€ im Monat per Sparplan, nur in ETFs auf europäische Staatsanleihen mit 1 bis 3 Jahren Laufzeit.</p>
+        </div>
+      </div>
+      <ol class="steps steps-voll">
+        <li><span class="sn" aria-hidden="true">1</span><div><strong>Das Ziel</strong><p>Ein Teil seines Geldes soll <strong>kaum schwanken und trotzdem Zinsen bringen</strong> – wie Tagesgeld, aber mit etwas mehr Rendite und ohne dass er Aktionszinsen hinterherlaufen muss. Ein ETF bündelt Dutzende Anleihen, Jonas muss keine einzelne auswählen und zahlt per Sparplan monatlich ein. Ehrlich gesagt: Einen Aktien-Crash gleichen so kurze Laufzeiten kaum aus – dafür wären längere Laufzeiten nötig. Jonas geht es um Ruhe, nicht um den Ausgleich.</p></div></li>
+        <li><span class="sn" aria-hidden="true">2</span><div><strong>Die Kriterien</strong><p>Nur <strong>Staatsanleihen aus dem Euroraum</strong> – Deutschland, Frankreich, Italien, Spanien und weitere, alle mit Investment Grade – und nur <strong>1 bis 3 Jahre</strong> Restlaufzeit. Kurze Laufzeiten heißen: Der Kurs schwankt wenig, wenn sich das Zinsniveau ändert. Alles in Euro, also ohne Währungsrisiko. Ein ETF hat keine Fälligkeit – er ersetzt auslaufende Anleihen laufend durch neue mit 1 bis 3 Jahren.</p></div></li>
+        <li><span class="sn" aria-hidden="true">3</span><div><strong>Drei Beispiele für Jonas</strong><p>Drei große ETFs auf Euro-Staatsanleihen mit 1 bis 3 Jahren. Sie halten fast dieselben Anleihen – die Wahl hängt vor allem an einer Frage: Will Jonas die Zinsen ausgezahlt bekommen (iShares) oder automatisch wieder anlegen lassen (Xtrackers: am günstigsten und größten; Amundi: etwas teurer)?</p></div></li>
+      </ol>
+      <ul class="picks" aria-label="Drei Beispiele für Jonas">
+          <li class="pick" data-etf="LU0290356871">
+            <p class="pk-typ">ETF · Euro-Staaten · 1–3 Jahre</p>
+            <h4 class="pk-name">Xtrackers Eurozone Government Bond 1-3</h4>
+            <dl class="pk-daten">
+              <div><dt>Rendite</dt><dd class="pk-rend">≈&nbsp;3,45&nbsp;%</dd></div>
+              <div><dt>Laufzeiten</dt><dd>1 bis 3 Jahre</dd></div>
+              <div><dt>Kosten p.&nbsp;a.</dt><dd>0,10&nbsp;%</dd></div>
+              <div><dt>Zinsen</dt><dd>thesaurierend</dd></div>
+              <div><dt>Fondsgröße</dt><dd>3,5&nbsp;Mrd.&nbsp;€</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">LU0290356871</dd></div>
+            </dl>
+          </li>
+          <li class="pick" data-etf="IE00B14X4Q57">
+            <p class="pk-typ">ETF · Euro-Staaten · 1–3 Jahre</p>
+            <h4 class="pk-name">iShares € Govt Bond 1-3yr</h4>
+            <dl class="pk-daten">
+              <div><dt>Rendite</dt><dd class="pk-rend">≈&nbsp;3,45&nbsp;%</dd></div>
+              <div><dt>Laufzeiten</dt><dd>1 bis 3 Jahre</dd></div>
+              <div><dt>Kosten p.&nbsp;a.</dt><dd>0,10&nbsp;%</dd></div>
+              <div><dt>Zinsen</dt><dd>ausschüttend</dd></div>
+              <div><dt>Fondsgröße</dt><dd>1,8&nbsp;Mrd.&nbsp;€</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">IE00B14X4Q57</dd></div>
+            </dl>
+          </li>
+          <li class="pick" data-etf="LU1650487413">
+            <p class="pk-typ">ETF · Euro-Staaten · 1–3 Jahre</p>
+            <h4 class="pk-name">Amundi Euro Government Bond 1-3Y</h4>
+            <dl class="pk-daten">
+              <div><dt>Rendite</dt><dd class="pk-rend">≈&nbsp;3,45&nbsp;%</dd></div>
+              <div><dt>Laufzeiten</dt><dd>1 bis 3 Jahre</dd></div>
+              <div><dt>Kosten p.&nbsp;a.</dt><dd>0,15&nbsp;%</dd></div>
+              <div><dt>Zinsen</dt><dd>thesaurierend</dd></div>
+              <div><dt>Fondsgröße</dt><dd>2,2&nbsp;Mrd.&nbsp;€</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">LU1650487413</dd></div>
+            </dl>
+          </li>
+      </ul>
+      <p class="pk-stand">Rendite: Durchschnitt der Euro-Staatsanleihen mit 1 bis 3 Jahren Restlaufzeit (eigene Berechnung aus Börsenkursen, Stand 25.09.2026) – für alle drei ETFs ähnlich, weil sie fast dieselben Anleihen halten; vor Kosten. Kosten und Fondsgröße laut Anbieter. Beispiele, die die Kriterien erfüllen – keine Empfehlung und keine Anlageberatung.</p>
+      <div class="g-fuss">
+        <a class="gf-kauf" href="erste-anleihe.html"><span class="gf-l">Neu hier?</span><span class="gf-t">Wie kaufe ich eine Anleihe?</span><span class="gf-s">Depot, Order, Limit – in neun Schritten zur ersten Anleihe.</span><span class="gf-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
+        <div class="gf-suche">
+          <p class="gf-l">Selbst vergleichen</p>
+          <p class="gf-chips"><span>Euro-Staatsanleihen</span><span>1 bis 3 Jahre</span><span>in Euro</span></p>
+          <a class="go gf-etf" href="anleihen-etf.html#kurze-laufzeiten">Anleihen-ETFs vergleichen&nbsp;→</a>
+        </div>
+      </div>
+      <p class="g-up"><a href="#personas">↑ Andere Person wählen</a></p>
+    </section>
+
+    <section class="vorteile" aria-labelledby="h-vorteile">
+      <h2 id="h-vorteile">Warum Anleihen zu deinen Plänen passen</h2>
+      <ul class="vt">
+        <li><span class="vt-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.2 19 6v5.6c0 4.4-3 7.8-7 9.2-4-1.4-7-4.8-7-9.2V6z"/><path d="m8.8 12.2 2.2 2.2 4.2-4.4"/></svg></span><div><strong>Planbar und sicher</strong><p>Fester Zins und Rückzahlung zum Nennwert bei Fälligkeit – bei soliden Schuldnern.</p></div></li>
+        <li><span class="vt-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 16.5 9 11l3.5 3.5 8-8"/><path d="M15 6.5h5.5V12"/></svg></span><div><strong>Verlässliche Zinsen</strong><p>Rendite schon ab kurzer Laufzeit und kleinen Beträgen.</p></div></li>
+        <li><span class="vt-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6.5h9M17 6.5h3M4 12h3M11 12h9M4 17.5h11M19 17.5h1"/><circle cx="15" cy="6.5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17.5" r="2"/></svg></span><div><strong>Flexibel wählbar</strong><p>Laufzeit, Zinstermine und Risiko passend zu deinen Zielen.</p></div></li>
+        <li><span class="vt-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="m8.3 12.3 2.5 2.5 5-5.2"/></svg></span><div><strong>Transparent</strong><p>Zins, Laufzeit und Rückzahlung stehen vorher fest. Die Risiken sind klar: Bonität und Kurs vor Fälligkeit.</p></div></li>
+      </ul>
+    </section>
+
+    <p class="klein">Die vier Personen sind erfunden, ihre Zahlen gerundet und beispielhaft; Renditen ändern sich täglich. Die Anleitungen nennen Kriterien, keine bestimmten Anleihen – sie zeigen, wie man vorgeht, und sind keine Anlageberatung.</p>
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="etf-oder-anleihe.html">ETF oder Anleihe?</a></li>
+        <li><a href="anleihen-suche.html">Zur Anleihen-Suche</a></li>
+        <li><a href="grundlagen.html">Anleihen einfach erklärt</a></li>
+        <li><a href="anlageziele.html">Welche Anleihe wozu passt</a></li>
+        <li><a href="begriffe.html">Glossar: Begriffe kurz erklärt</a></li>
+      </ul>
+    </nav>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+
+// Beispiel-Anleihen (Nadine, Tobias, Michael – 28.09.2026; bis 29.09. „Top 3 Picks“): Kurs und Rendite täglich aus kurse-auswahl.json (update_kurse.py sammelt die ISINs aus den
+// HTML-Seiten), Restlaufzeit aus dem Fälligkeitstag; ohne Datei bleiben die eingebetteten Werte vom 25.09.2026 stehen.
+(function () {
+  var picks = document.querySelectorAll(".pick[data-isin]"); if (!picks.length) return;
+  var heute = new Date(), fmt = function (v, d) { return v.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d }); };
+  picks.forEach(function (li) {
+    var f = new Date(li.getAttribute("data-faellig") + "T00:00:00"), m = Math.round((f - heute) / (1000 * 60 * 60 * 24 * 30.44));
+    var el = li.querySelector(".pk-rest"); if (el) el.textContent = m >= 24 ? "in " + fmt(m / 12, 1) + " Jahren" : m > 1 ? "in " + m + " Monaten" : m === 1 ? "in einem Monat" : "in wenigen Tagen";
+  });
+  if (!window.MC || !MC.load) return;
+  MC.load("kurse-auswahl.json").then(function (d) {
+    var K = d.kurse || {}, n = 0;
+    picks.forEach(function (li) {
+      var k = K[li.getAttribute("data-isin")]; if (!k || typeof k[0] !== "number") return;
+      li.querySelector(".pk-kurs").textContent = fmt(k[0], 2) + "\u00a0%";
+      if (typeof k[1] === "number") li.querySelector(".pk-rend").textContent = fmt(k[1], 2) + "\u00a0%";
+      n++;
+    });
+    if (n && d.stand) { var p = d.stand.split("-"); document.querySelectorAll(".pk-quelle").forEach(function (q) { q.textContent = "Deutsche Börse / Bundesbank, Stand " + p[2] + "." + p[1] + "." + p[0]; }); }
+  }).catch(function (e) { console.warn("Tageskurse nicht geladen, eingebettete Kurse bleiben:", e); });
+})();
+
+// Personen-Karten als Reiter: nur die Anleitung der gewählten Person ist sichtbar; Anker (#nadine …) bleiben gültig.
+(function () {
+  var tabs = [].slice.call(document.querySelectorAll(".pc[data-k]")), panels = [].slice.call(document.querySelectorAll(".guide[role=tabpanel]"));
+  if (!tabs.length) return;
+  var known = function (id) { return panels.some(function (p) { return p.id === id; }); };
+  function select(id, opt) {
+    opt = opt || {};
+    tabs.forEach(function (t) { var on = t.getAttribute("data-k") === id; t.setAttribute("aria-selected", on ? "true" : "false"); t.tabIndex = on ? 0 : -1; });
+    panels.forEach(function (p) { p.hidden = p.id !== id; });
+    if (opt.hash !== false && history.replaceState) history.replaceState(null, "", "#" + id);
+    if (opt.scroll) document.getElementById(id).scrollIntoView({ behavior: opt.smooth ? "smooth" : "auto", block: "start" });
+  }
+  var list = document.getElementById("personas");
+  list.addEventListener("click", function (e) {
+    var t = e.target.closest ? e.target.closest(".pc[data-k]") : null; if (!t) return;
+    e.preventDefault();
+    var id = t.getAttribute("data-k"), p = document.getElementById(id);
+    select(id);
+    // Anleitung ins Bild holen, wenn sie unterhalb des sichtbaren Bereichs beginnt (Handy, kleine Fenster)
+    if (p.getBoundingClientRect().top > window.innerHeight * 0.75) p.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  list.addEventListener("keydown", function (e) {
+    var i = tabs.indexOf(document.activeElement); if (i < 0) return;
+    var n = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+    if (n === undefined) return;
+    e.preventDefault();
+    var t = tabs[(n + tabs.length) % tabs.length]; t.focus(); select(t.getAttribute("data-k"));
+  });
+  window.addEventListener("hashchange", function () { var id = location.hash.slice(1); if (known(id)) select(id, { hash: false, scroll: true }); });
+  var h = location.hash.slice(1);
+  select(known(h) ? h : panels[0].id, { hash: false, scroll: known(h) });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Realzins seit 1970: Zins minus Inflation – METALCONCRETE</title>
+<meta name="description" content="Zins minus Inflation: Realzins der 10-jährigen Bundesanleihe seit 1970, heute und nach Steuern – plus die Inflationserwartung des Markts bis 2046.">
+<link rel="canonical" href="https://www.metalconcrete.de/realzins.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/realzins.html">
+<meta property="og:title" content="Realzins seit 1970: Zins minus Inflation – METALCONCRETE">
+<meta property="og:description" content="Zins minus Inflation: Realzins der 10-jährigen Bundesanleihe seit 1970, heute und nach Steuern – plus die Inflationserwartung des Markts bis 2046.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Realzins seit 1970: Zins minus Inflation – METALCONCRETE">
+<meta name="twitter:description" content="Zins minus Inflation: Realzins der 10-jährigen Bundesanleihe seit 1970, heute und nach Steuern – plus die Inflationserwartung des Markts bis 2046.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Realzins seit 1970 (neu 26.09.2026, Menü „Zinsen“ (bis 29.09.2026 „Einordnen“)): vier Heute-Kacheln, zwei Charts (Zins und Inflation;
+     Realzins), Schalter Jahre/Monate, vier Erklärkarten im Look von „Zinskurve seit 1972“. Grundregeln in base.css.
+     Daten: realzins.json (scripts/update_realzins.py), per inline_data.py eingebettet. */
+
+  /* Heute: vier Kacheln */
+  .heute { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 26px 0 30px; }
+  .hk { background: #fff; border: 1px solid rgba(26,26,25,0.08); border-radius: 14px; padding: 16px 18px 14px; box-shadow: var(--shadow); display: grid; gap: 4px; align-content: start; min-width: 0; }
+  .hk-l { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .hk-l .sw { width: 14px; height: 4px; border-radius: 2px; background: var(--c); flex: none; }
+  .hk-l .sw.gestr { background: repeating-linear-gradient(90deg, var(--c) 0 4px, transparent 4px 7px); }
+  .hk-v { font-size: 34px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .hk-v small { font-size: 13px; font-weight: 600; letter-spacing: 0; color: var(--text); margin-left: 5px; }
+  .hk-v.plus { color: var(--up); } .hk-v.minus { color: var(--down); }
+  .hk-d { font-size: 12.5px; color: var(--text); line-height: 1.45; }
+  .hk-d b { color: var(--ink); font-weight: 600; }
+  @media (max-width: 900px) { .heute { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .heute { gap: 8px; margin: 20px 0 24px; } .hk { padding: 12px 12px 11px; border-radius: 12px; } .hk-l { font-size: 12px; letter-spacing: 0.05em; gap: 6px; } .hk-l .sw { width: 10px; } .hk-v { font-size: 25px; } .hk-v small { font-size: 12px; margin-left: 3px; } .hk-d { font-size: 12px; } }
+
+  /* Chart-Kopf (Kopfzeile + Schalter), je Chart Titel mit eigener Legende; Muster „Zinskurve seit 1972“ */
+  .ckopf { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; border-bottom: 1px solid var(--rule); padding-bottom: 10px; }
+  .ckopf .eyebrow { margin: 0; flex: 1 1 420px; }
+  .cblock { margin-top: 20px; }
+  .ctitel { font-size: 15px; font-weight: 600; color: var(--ink); margin: 0 0 4px; }
+  .cerkl { font-size: 14px; color: var(--text); margin: 0 0 8px; max-width: 760px; line-height: 1.5; }
+  .legend { display: flex; gap: 6px 20px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--ink); margin: 0 0 4px; }
+  .legend .leg { display: inline-flex; align-items: center; gap: 7px; }
+  .sw-line { width: 20px; height: 3px; border-radius: 2px; background: var(--c, var(--line)); }
+  .sw-area { width: 20px; height: 12px; border-radius: 2px; background: var(--c); opacity: 0.55; }
+  .zeit { display: inline-flex; gap: 6px; margin-left: auto; flex: none; }
+  .zeit button { font: inherit; font-size: 12.5px; font-weight: 600; min-height: 32px; padding: 5px 13px; border-radius: 999px; border: 1px solid rgba(26,26,25,0.25); background: #fff; color: var(--ink); cursor: pointer; }
+  .zeit button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+  .zeit button:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  svg { width: 100%; height: auto; display: block; }
+  /* Charts werden in der echten Breite des Kastens gezeichnet (viewBox = Pixel, neu bei Größenänderung):
+     kein Querscrollen, Schrift am Handy wie am Desktop lesbar. min-height hält den Platz frei (kein Springen). */
+  #chart-zi { min-height: 420px; } #chart-rz { min-height: 300px; }
+  @media (max-width: 640px) { #chart-zi { min-height: 300px; } #chart-rz { min-height: 230px; } }
+  .chart-scroll .hint-touch { display: none; }
+  @media (hover: none) { .chart-scroll .hint-hover { display: none; } .chart-scroll .hint-touch { display: inline; } }
+  @media (max-width: 600px) { .zeit { margin-left: 0; } .ckopf .eyebrow { flex-basis: 100%; } }
+  /* Touch: Schalter und Quellen-Aufklapper mit Fingerfläche ≥ 40 px */
+  @media (pointer: coarse) { .zeit button { min-height: 40px; padding: 8px 16px; font-size: 14px; } details.quellen > summary { padding: 11px 0; } }
+
+  /* Rechnungen und Tabellen in den Karten */
+  .rt { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .rt th, .rt td { text-align: left; padding: 7px 8px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  .rt th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .rt td.num, .rt th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .rt td.plus { color: var(--up); font-weight: 600; } .rt td.minus { color: var(--down); font-weight: 600; }
+  .rt tr.sum td { font-weight: 600; border-bottom: 0; padding-top: 10px; }
+  .rt td small { display: block; font-size: 12px; color: var(--text); font-weight: 400; }
+  @media (max-width: 600px) { .rt { font-size: 12.5px; } .rt th, .rt td { padding: 6px 5px 6px 0; } .rt th.num { white-space: normal; } .rt td:last-child, .rt th:last-child { padding-right: 0; } }
+  /* Sehr schmale Handys (320–380 px): Tabellen passen in die Karte */
+  @media (max-width: 380px) { .kap { padding: 18px 12px 20px; } .kap .k-bild { padding: 12px 10px; } .rt { font-size: 12px; } .rt th { font-size: 12px; letter-spacing: 0.03em; hyphens: manual; } .rt th, .rt td { padding: 6px 4px 6px 0; } .rt td small { font-size: 12px; } }
+  /* Schaubild-Kästen dieser Seite oben bündig statt vertikal zentriert (keine Leerflächen neben langen Texten) */
+  .kap .k-bild { align-self: start; justify-content: flex-start; }
+  /* Kaufkraft als Balken: Kategorie links, Balken mit Wert, Linie beim Einsatz 10.000 € */
+  .kk { display: grid; grid-template-columns: 108px minmax(0, 1fr); gap: 7px 12px; align-items: center; }
+  .kk .ax-t.rechts { text-align: right; }
+  .kk-l { font-size: 14px; color: var(--ink); line-height: 1.25; }
+  .kk-l small { display: block; font-size: 12px; color: var(--text); }
+  .kk-bahn { position: relative; height: 30px; }
+  .kk-bahn::after { content: ""; position: absolute; z-index: 0; left: var(--einsatz); top: -4px; bottom: -4px; border-left: 1.5px dashed rgba(26,26,25,0.45); }
+  .kk-bar { position: absolute; z-index: 1; left: 0; top: 0; bottom: 0; width: var(--w); border-radius: 0 6px 6px 0; background: var(--c); }
+  .kk-w { position: absolute; z-index: 2; top: 50%; transform: translateY(-50%); left: calc(var(--w) + 8px); font-size: 14.5px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ink); }
+  .kk-w.innen { left: auto; right: calc(100% - var(--w) + 9px); color: #fff; }
+  .kk-w.innen.dunkel { color: var(--ink); }
+  .kk-einsatz { grid-column: 2; position: relative; height: 16px; font-size: 12px; color: var(--text); }
+  .kk-einsatz span { position: absolute; left: var(--einsatz); transform: translateX(-50%); white-space: nowrap; }
+  @media (max-width: 600px) { .kk { grid-template-columns: 84px minmax(0, 1fr); gap: 6px 8px; } .kk-l { font-size: 12.5px; } .kk-w { font-size: 13px; } }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Realzins seit 1970: Zins minus Inflation","description":"Zins minus Inflation: Realzins der 10-jährigen Bundesanleihe seit 1970, heute und nach Steuern – plus die Inflationserwartung des Markts bis 2046.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-26","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/realzins.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Zinsen","item":"https://www.metalconcrete.de/beobachten.html"},{"@type":"ListItem","position":3,"name":"Realzins seit 1970","item":"https://www.metalconcrete.de/realzins.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="zinsen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn current" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html" class="current">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>Realzins seit 1970</h1>
+    <p class="sub">Was eine Anleihe bringt, zählt erst nach Inflation. Hier die 10-jährige Bundesanleihe gegen die Teuerung seit 1970: was übrig blieb, was heute übrig bleibt – auch nach Steuern – und welche Inflation der Markt für die nächsten Jahre erwartet. Täglich aktualisiert.</p>
+    <nav class="lands" aria-label="Zum Abschnitt springen">
+      <a class="lbtn" href="#realzins"><span class="n">1</span>Was der Realzins ist</a>
+      <a class="lbtn" href="#geschichte"><span class="n">2</span>Seit 1970</a>
+      <a class="lbtn" href="#steuern"><span class="n">3</span>Nach Steuern</a>
+      <a class="lbtn" href="#erwartung"><span class="n">4</span>Erwartung des Markts</a>
+    </nav>
+
+    <div class="heute" id="heute">
+      <div class="hk" style="--c:#2C2C2A"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Bund 10 Jahre</span><b class="hk-v" id="h-zins">3,63<small>%</small></b><span class="hk-d" id="h-zins-d">Rendite, nominal · Stand 25.09.2026</span></div>
+      <div class="hk" style="--c:#CF7430"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Inflation</span><b class="hk-v" id="h-vpi">2,9<small>%</small></b><span class="hk-d" id="h-vpi-d">Verbraucherpreise Deutschland, August 2026 gegen Vorjahr</span></div>
+      <div class="hk" id="h-real-k" style="--c:#1F7A5E"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Realzins heute</span><b class="hk-v plus" id="h-real">+0,7<small>Punkte</small></b><span class="hk-d" id="h-real-d">Zins minus Inflation · nach Abgeltungsteuer <b>−0,2</b></span></div>
+      <div class="hk" style="--c:#CF7430"><span class="hk-l"><span class="sw gestr" aria-hidden="true"></span>Markterwartung</span><b class="hk-v" id="h-be">2,3<small>% Inflation</small></b><span class="hk-d" id="h-be-d">pro Jahr bis 2033 im Euroraum, abgeleitet aus der inflationsindexierten Bundesanleihe</span></div>
+    </div>
+
+    <div class="ckopf">
+      <p class="eyebrow" id="eyebrow-rz">10-jährige Bundesanleihe und Verbraucherpreise · Jahreswerte · 1970 – 2026 · Stand: 25.09.2026</p>
+      <span class="zeit" role="group" aria-label="Zeitraster"><button type="button" data-modus="jahre" aria-pressed="true">Jahre</button><button type="button" data-modus="monate" aria-pressed="false">Monate</button></span>
+    </div>
+    <div class="cblock">
+      <p class="ctitel">Zins und Inflation</p>
+      <p class="cerkl">Liegt die schwarze Linie über der orangen, ist das Geld schneller gewachsen als die Preise.</p>
+      <div class="legend">
+        <span class="leg"><span class="sw-line" style="--c:#2C2C2A" aria-hidden="true"></span>Bund 10 Jahre (Rendite)</span>
+        <span class="leg"><span class="sw-line" style="--c:#CF7430" aria-hidden="true"></span>Inflation (Verbraucherpreise)</span>
+      </div>
+      <div id="chart-zi" class="chart-scroll"></div>
+    </div>
+    <div class="cblock">
+      <p class="ctitel">Realzins</p>
+      <p class="cerkl">Der Abstand beider Linien, in Prozentpunkten – was nach Inflation übrig blieb.</p>
+      <div class="legend">
+        <span class="leg"><span class="sw-area" style="--c:#1F7A5E" aria-hidden="true"></span>über null: Kaufkraft gewonnen</span>
+        <span class="leg"><span class="sw-area" style="--c:#993C1D" aria-hidden="true"></span>unter null: Kaufkraft verloren</span>
+      </div>
+      <div id="chart-rz" class="chart-scroll"></div>
+    </div>
+    <p class="note" id="note-rz">Bund 10 Jahre: Jahresdurchschnitt der Rendite; Inflation: Jahresteuerung des Verbraucherpreisindex (bis 1991 früheres Bundesgebiet); das laufende Jahr bis zum letzten veröffentlichten Monat. Realzins = Differenz beider Werte in Prozentpunkten.</p>
+
+    <section class="kap" id="realzins" aria-labelledby="h-realzins">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">1</span>
+        <h2 id="h-realzins">Was der Realzins ist</h2>
+        <p>Die Anleihe zahlt dir 3 % – aber wenn alles um 3 % teurer wird, kannst du dir am Ende genauso viel kaufen wie vorher. <strong>Realzins = Zins minus Inflation.</strong> Er sagt dir, ob dein Geld an Kaufkraft gewinnt oder verliert. Renditen – hier, in der Suche und bei deinem Broker – sind immer nominal, also vor Inflation.</p><p>Die Charts oben rechnen im Rückblick: Zins und Inflation desselben Jahres. Beim Kauf kennst du nur den Zins; die Inflation der kommenden Jahre musst du schätzen. Wer 2021 zu rund 0 % kaufte, bekam 2022 eine Inflation von 6,9 % – genau das ist das Inflationsrisiko.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">10.000 € zu 3 % Zins – nach zehn Jahren</p>
+        <div class="kk" role="img" aria-label="Kaufkraft von 10.000 Euro nach zehn Jahren bei 3 Prozent Zins: ohne Inflation 13.439 Euro, bei 2 Prozent Inflation 11.025 Euro, bei 3 Prozent 10.000 Euro, bei 5 Prozent 8.250 Euro." style="--einsatz:71.4%">
+          <span class="ax-t" aria-hidden="true">Inflation</span><span class="ax-t rechts" aria-hidden="true">Kaufkraft in heutigen Euro →</span>
+          <span class="kk-l">Ohne Inflation<small>nur nominal</small></span><span class="kk-bahn"><span class="kk-bar" style="--w:96.0%;--c:#D6D5D0"></span><span class="kk-w innen dunkel" style="--w:96.0%">13.439 €</span></span><span class="kk-l">2 % Inflation</span><span class="kk-bahn"><span class="kk-bar" style="--w:78.8%;--c:#1F7A5E"></span><span class="kk-w innen" style="--w:78.8%">11.025 €</span></span><span class="kk-l">3 % Inflation</span><span class="kk-bahn"><span class="kk-bar" style="--w:71.4%;--c:#6E6D68"></span><span class="kk-w innen" style="--w:71.4%">10.000 €</span></span><span class="kk-l">5 % Inflation</span><span class="kk-bahn"><span class="kk-bar" style="--w:58.9%;--c:#993C1D"></span><span class="kk-w innen" style="--w:58.9%">8.250 €</span></span>
+          <span class="kk-einsatz" aria-hidden="true"><span>Einsatz 10.000 €</span></span>
+        </div>
+        <p class="sb-f">Zinsen jedes Jahr wieder angelegt, ohne Steuern. Die Formel: 10.000 € × (1,03 ÷ (1 + Inflation))<sup>10</sup>. Mit deinen Zahlen: <a href="rechner.html">Rechner</a>.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Nicht der Zins zählt, sondern der Abstand zur Inflation. 3 % Zins bei 1 % Inflation sind mehr wert als 6 % bei 5 %.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="geschichte" aria-labelledby="h-geschichte">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">2</span>
+        <h2 id="h-geschichte">Vier Jahrzehnte im Plus, dann zwölf magere Jahre</h2>
+        <p>Deutschland ist ein Sonderfall: <strong>Von 1970 bis 2011 gab es kein einziges Jahr mit negativem Realzins</strong> – selbst in den Ölkrisen der 1970er lag die Bundesanleihe über der Inflation, weil die Bundesbank den Leitzins früh anhob. Die 1980er waren das goldene Jahrzehnt der Sparer: im Schnitt <span data-dek="1980" data-f="real">4,8</span> Punkte über der Inflation, 1986 sogar über 6.</p><p>Dann kippte es. <strong>Von 2012 bis 2023 lag der Realzins um null oder darunter</strong> (nur 2013 und 2014 knapp im Plus) – erst die Nullzinsjahre, in denen die Bundesanleihe kaum noch etwas brachte, dann der Inflationsschub: 2022 mit 6,9 % Inflation und gut 1 % Zins das schlechteste Jahr der Reihe, <span id="t-min">−5,8</span> Punkte. Seit 2024 ist der Realzins wieder positiv, wenn auch knapp.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Die Jahrzehnte im Schnitt</p>
+        <table class="rt" id="dekaden"><thead><tr><th scope="col">Jahr&shy;zehnt</th><th scope="col" class="num">Bund&nbsp;10&nbsp;J.</th><th scope="col" class="num">Infla&shy;tion</th><th scope="col" class="num">Real&shy;zins</th></tr></thead><tbody>
+          <tr><td>1970er</td><td class="num">8,1 %</td><td class="num">4,9 %</td><td class="num plus">+3,2</td></tr>
+          <tr><td>1980er</td><td class="num">7,6 %</td><td class="num">2,9 %</td><td class="num plus">+4,8</td></tr>
+          <tr><td>1990er</td><td class="num">6,6 %</td><td class="num">2,5 %</td><td class="num plus">+4,1</td></tr>
+          <tr><td>2000er</td><td class="num">4,1 %</td><td class="num">1,6 %</td><td class="num plus">+2,6</td></tr>
+          <tr><td>2010er</td><td class="num">1,1 %</td><td class="num">1,3 %</td><td class="num minus">−0,3</td></tr>
+          <tr><td>2020er<small>bis 2026</small></td><td class="num">1,5 %</td><td class="num">3,3 %</td><td class="num minus">−1,8</td></tr>
+        </tbody></table>
+        <p class="sb-f">Durchschnitt der Jahreswerte je Jahrzehnt, Realzins in Prozentpunkten. Über die ganze Reihe seit 1970: <span id="t-schnitt">+2,3</span> Punkte.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Ein hohes allgemeines Zinsniveau brachte in Deutschland fast immer auch einen hohen Realzins. Die Ausnahme sind die Jahre 2012 bis 2023 – und ob sie vorbei ist, entscheidet die Inflation, nicht der Zins.</span></p>
+    </section>
+
+    <section class="kap" id="steuern" aria-labelledby="h-steuern">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">3</span>
+        <h2 id="h-steuern">Nach Steuern wird es enger</h2>
+        <p>Der Staat besteuert den nominalen Zins, nicht den realen: <strong>Abgeltungsteuer 25 % plus Solidaritätszuschlag, zusammen 26,375 %</strong>, gegebenenfalls Kirchensteuer dazu. Von <span id="s-zins">3,63</span> % bleiben netto <span id="s-netto">2,67</span> % – die Inflation zieht aber vom vollen Betrag ab. Ein positiver Realzins vor Steuern kann so nach Steuern negativ werden.</p><p>Je höher die Inflation, desto schlimmer: Bei 6 % Zins und 5 % Inflation bleibt vor Steuern 1 Punkt, nach Steuern minus 0,6. <strong>Der Sparerpauschbetrag</strong> (1.000 € im Jahr, 2.000 € für Paare) stellt kleine Depots frei – bis rund 33.000 € bei 3 % Zins zahlst du keine Steuer.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Die Rechnung heute</p>
+        <table class="rt" id="steuer-tab"><tbody>
+          <tr><td>Bund 10 Jahre, nominal</td><td class="num" id="st-z">3,63 %</td></tr>
+          <tr><td>Abgeltungsteuer + Soli (26,375 %)<small>auf den vollen Zins, oberhalb des Pauschbetrags</small></td><td class="num" id="st-st">−0,96</td></tr>
+          <tr><td>Inflation<small>Verbraucherpreise gegen Vorjahr</small></td><td class="num" id="st-i">−2,90</td></tr>
+          <tr class="sum"><td>Realzins nach Steuern</td><td class="num minus" id="st-r">−0,23</td></tr>
+        </tbody></table>
+        <p class="sb-f">In Prozentpunkten pro Jahr; ohne Kirchensteuer. Unterhalb des Sparerpauschbetrags entfällt die Steuerzeile.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Nominal × 0,74 minus Inflation – das ist der Realzins nach Steuern. Bei <span id="m-vpi">2,9</span> % Inflation braucht es <strong><span id="m-noetig">3,94</span> % Zins</strong>, nur um gleichzuziehen. Und: Freistellungsauftrag stellen, damit der Pauschbetrag wirkt.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="erwartung" aria-labelledby="h-erwartung">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">4</span>
+        <h2 id="h-erwartung">Was der Markt an Inflation erwartet</h2>
+        <p>Der Bund hat Anleihen ausgegeben, deren Rückzahlung und Zinsen mit der Inflation im Euroraum wachsen (harmonisierter Verbraucherpreisindex ohne Tabak). <strong>Ihre Rendite ist ein echter Realzins</strong> – sie kommt zur Inflation obendrauf, egal wie hoch diese ausfällt. Der Abstand zur normalen Bundesanleihe gleicher Laufzeit heißt Breakeven-Inflation: die Inflationsrate, bei der beide gleich viel bringen. Sie ist die Inflationserwartung des Markts.</p><p>Liegt die Inflation bis zur Fälligkeit im Schnitt höher als der Breakeven, war die indexierte Anleihe die bessere Wahl; liegt sie darunter, die normale. Seit 2024 gibt der Bund keine neuen indexierten Anleihen mehr aus; die drei laufenden werden an der Börse weiter gehandelt.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Inflationsindexierte Bundesanleihen</p>
+        <table class="rt" id="linker-tab"><thead><tr><th scope="col">Fällig</th><th scope="col" class="num">Real&shy;rendite</th><th scope="col" class="num">Bund nominal</th><th scope="col" class="num">Break&shy;even</th></tr></thead><tbody>
+          <tr><td>2030<small>Kupon 0,50 %</small></td><td class="num">1,00 %</td><td class="num">3,34 %</td><td class="num plus">2,34 %</td></tr>
+          <tr><td>2033<small>Kupon 0,10 %</small></td><td class="num">1,20 %</td><td class="num">3,46 %</td><td class="num plus">2,26 %</td></tr>
+          <tr><td>2046<small>Kupon 0,10 %</small></td><td class="num">1,56 %</td><td class="num">3,86 %</td><td class="num plus">2,30 %</td></tr>
+        </tbody></table>
+        <p class="sb-f">Realrendite laut Bundesbank, nominale Bundrendite gleicher Restlaufzeit aus der Zinsstrukturkurve; der Breakeven ist die Differenz – von uns berechnet. Er misst die Inflation im Euroraum, die Kachel „Inflation“ oben Deutschland – meist nah beieinander, aber nicht gleich. Die drei Papiere in der Suche: <a href="anleihen-suche.html?q=Inflationsindex&amp;art=0">inflationsindexierte Bundesanleihen →</a></p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Der Breakeven ist die Wette, die du mit jeder normalen Anleihe eingehst: dass die Inflation darunter bleibt. Wie die indexierte Anleihe funktioniert: <a href="anleihe-arten.html#inflationsindexiert">Anleihe-Arten</a>.</span></p>
+    </section>
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="renditen.html">Staatsanleihen seit 1970 – das Zinsniveau von acht Ländern</a></li>
+        <li><a href="zinskurve.html">Zinskurve seit 1972</a></li>
+        <li><a href="risikoaufschlaege.html">Risikoaufschläge seit 1953 – das Angstbarometer</a></li>
+        <li><a href="risiko.html#inflation">Risiko: Inflation</a></li>
+        <li><a href="rechner.html">Rechner</a></li>
+      </ul>
+    </nav>
+    <details class="quellen" id="quellen">
+      <summary>Datenquellen und Methodik</summary>
+      <div class="quellen-body">
+        <p><strong>Methodik.</strong> Realzins = Rendite der 10-jährigen Bundesanleihe minus Inflationsrate, in Prozentpunkten (die einfache Differenz; exakt wäre (1 + Zins) / (1 + Inflation) − 1, der Unterschied liegt bei diesen Größen unter 0,2 Punkten). Jahreswerte: Jahresdurchschnitt der Rendite und Jahresteuerung des Verbraucherpreisindex; Monatswerte: Monatsdurchschnitt der Rendite und Veränderung des Index gegen den Vorjahresmonat. Das laufende Jahr reicht bis zum letzten veröffentlichten Monat, seine Inflation ist der Durchschnitt der bisherigen Monatsraten. Realzins nach Steuern = Zins × (1 − 0,26375) − Inflation. Breakeven = nominale Bundrendite gleicher Restlaufzeit (Zinsstrukturkurve, linear zwischen den Stützstellen) minus Realrendite der indexierten Anleihe – von uns berechnet, alles andere so von den Quellen geliefert.</p>
+        <p><strong>Datenquellen.</strong> Rendite: <a href="https://data-explorer.oecd.org/">OECD</a>, Main Economic Indicators, „Long-term interest rates“ Deutschland, Monatsdurchschnitte seit 1970 (Datenlieferant der OECD ist die Bundesbank; dieselbe Monatsreihe wie auf <a href="renditen.html">Staatsanleihen seit 1970</a>); Tageswert und laufender Monat: <a href="https://www.bundesbank.de/de/statistiken/geld-und-kapitalmaerkte/zinssaetze-und-renditen/zinsstruktur-am-rentenmarkt">Deutsche Bundesbank</a>, aus der Zinsstruktur abgeleitete Rendite einer 10-jährigen Bundesanleihe mit jährlichem Kupon – derselbe Tageswert wie auf Staatsanleihen seit 1970. Die Inflationserwartung rechnet mit der Svensson-Kurve, weil sie die nominale Rendite für jede Restlaufzeit braucht. Inflation: Verbraucherpreisindex des <a href="https://www.destatis.de/DE/Themen/Wirtschaft/Preise/Verbraucherpreisindex/_inhalt.html">Statistischen Bundesamts</a> – ab 1991 Deutschland (2020 = 100, über die Bundesbank-Datenbank), 1970 bis 1991 Preisindex für die Lebenshaltung aller privaten Haushalte, früheres Bundesgebiet (Destatis, „Verbraucherpreisindex – Lange Reihen ab 1948“); der Index vor 1992 ist auf eine Nachkommastelle gerundet, deshalb wirken die Monatsraten dort gestuft. Inflationserwartung: Realrenditen der inflationsindexierten Bundesanleihen 2030, 2033 und 2046 laut Bundesbank (indexiert auf den harmonisierten Verbraucherpreisindex des Euroraums ohne Tabak) (Kurse und Renditen börsennotierter Bundeswertpapiere); Einstellung der Neuemission laut <a href="https://www.deutsche-finanzagentur.de/">Finanzagentur</a> (November 2023). Aktualisierung täglich um 10 Uhr; Renditen vom Vortag, Verbraucherpreise nach Veröffentlichung des Monats.</p>
+        <p>Diese Seite erklärt und zeigt Daten; sie empfiehlt keine Anlage und ersetzt keine Steuerberatung. Keine Anlageberatung.</p>
+        <p id="datastand">Daten-Stand: 25.09.2026</p>
+      </div>
+    </details>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+window.MC.hoverWrap = window.MC.hoverWrap || function (s) { return s; };
+window.MC.load = window.MC.load || function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); };
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+
+// ---- Realzins: Bund 10 J., Inflation, Differenz (realzins.json, scripts/update_realzins.py) ----
+(function () {
+  const SANS = 'Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif';
+  const C = { zins: "#2C2C2A", infl: "#CF7430", plus: "#1F7A5E", minus: "#993C1D" };
+  const STEUER = 0.26375;   // Abgeltungsteuer 25 % + Solidaritätszuschlag 5,5 % darauf
+  const MON = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+  const fmt = (v, d) => v.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d }).replace(/^-/, "−");   // echtes Minus (Achsen „−2“ statt „-2“)
+  const vz = (v, d) => (v > 0 ? "+" : v < 0 ? "−" : "±") + fmt(Math.abs(v), d);
+  const deDatum = iso => { const d = new Date(iso + "T12:00:00"); return isNaN(d) ? iso : d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }); };
+  const monLang = m => `${MON[+m.slice(5, 7) - 1]} ${m.slice(0, 4)}`;
+  const monKurz = m => `${MON[+m.slice(5, 7) - 1].slice(0, 3)} ${m.slice(0, 4)}`;
+  const setT = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+  let DATA = null, MODUS = "jahre", BREITE = 0;
+
+  // Heute-Kacheln, Steuer-Rechnung, Erwartungs-Tabelle und Textzahlen
+  function kacheln(d) {
+    const h = d.heute || {};
+    if (h.zins10) {
+      const z = h.zins10[1];
+      setT("h-zins", ""); document.getElementById("h-zins").innerHTML = `${fmt(z, 2)}<small>%</small>`;
+      setT("h-zins-d", `Rendite, nominal · Stand ${deDatum(h.zins10[0])}`);
+      ["s-zins", "s-zins2"].forEach(id => setT(id, fmt(z, 2)));
+      setT("s-netto", fmt(z * (1 - STEUER), 2)); setT("st-z", `${fmt(z, 2)} %`); setT("st-st", `−${fmt(z * STEUER, 2)}`);
+      const brutto = 50000 * z / 100, steuer = Math.max(0, brutto - 1000) * STEUER;
+      setT("s-brutto", fmt(brutto, 0)); setT("s-steuer", fmt(steuer, 0)); setT("s-netto-eur", fmt(brutto - steuer, 0));
+    }
+    if (h.vpi) {
+      const i = h.vpi[1];
+      document.getElementById("h-vpi").innerHTML = `${fmt(i, 1)}<small>%</small>`;
+      setT("h-vpi-d", `Verbraucherpreise Deutschland, ${monLang(h.vpi[0])} gegen Vorjahr`);
+      setT("s-vpi", fmt(i, 1)); setT("st-i", `−${fmt(i, 2)}`); setT("s-verlust", fmt(50000 * i / 100, 0));
+      setT("m-vpi", fmt(i, 1)); setT("m-noetig", fmt(Math.max(0, i) / (1 - STEUER), 2));
+    }
+    if (h.zins10 && h.vpi) {
+      const real = h.zins10[1] - h.vpi[1], netto = h.zins10[1] * (1 - STEUER) - h.vpi[1];
+      const el = document.getElementById("h-real");
+      el.innerHTML = `${vz(real, 1)}<small>Punkte</small>`; el.className = "hk-v " + (real > 0 ? "plus" : real < 0 ? "minus" : "");
+      const kk = document.getElementById("h-real-k"); if (kk) kk.style.setProperty("--c", real < 0 ? C.minus : C.plus);
+      document.getElementById("h-real-d").innerHTML = `Zins minus Inflation · nach Abgeltungsteuer <b>${vz(netto, 1)}</b>`;
+      const st = document.getElementById("st-r"); st.textContent = vz(netto, 2); st.className = "num " + (netto > 0 ? "plus" : netto < 0 ? "minus" : "");
+    }
+    if (h.linker && h.linker.length) {
+      const l = h.linker.find(x => x.faellig.startsWith("2033")) || h.linker[0];
+      if (l.breakeven != null) {
+        document.getElementById("h-be").innerHTML = `${fmt(l.breakeven, 1)}<small>% Inflation</small>`;
+        setT("h-be-d", `pro Jahr bis ${l.faellig.slice(0, 4)} im Euroraum, abgeleitet aus der inflationsindexierten Bundesanleihe`);
+        setT("e-nom", fmt(l.nominal, 2)); setT("e-real", fmt(l.real, 2)); setT("e-be", fmt(l.breakeven, 2));
+      }
+      const tb = document.querySelector("#linker-tab tbody");
+      if (tb) tb.innerHTML = h.linker.map(x => `<tr><td>${x.faellig.slice(0, 4)}<small>${(k => k ? "Kupon " + MC.esc(k[1].replace(/\s/, "\u00A0")) : "")(x.name.match(/(\d+,\d+\s%)/))}</small></td><td class="num">${fmt(x.real, 2)} %</td>` +
+        `<td class="num">${x.nominal == null ? "–" : fmt(x.nominal, 2) + " %"}</td><td class="num${x.breakeven == null ? "" : x.breakeven >= 0 ? " plus" : " minus"}">${x.breakeven == null ? "–" : fmt(x.breakeven, 2) + " %"}</td></tr>`).join("");
+    }
+    // Jahrzehnte-Tabelle und Textzahlen aus den Jahreswerten
+    const J = (d.jahre || []).filter(j => j[2] != null);
+    if (J.length) {
+      const tb = document.querySelector("#dekaden tbody");
+      const dek = {};
+      J.forEach(j => { const k = Math.floor(j[0] / 10) * 10; (dek[k] = dek[k] || []).push(j); });
+      const lauf = d.laufend && d.laufend.jahr;
+      if (tb) tb.innerHTML = Object.keys(dek).sort().map(k => {
+        const r = dek[k], n = r.length, z = r.reduce((a, j) => a + j[1], 0) / n, i = r.reduce((a, j) => a + j[2], 0) / n, re = z - i;
+        const offen = lauf && r[r.length - 1][0] === lauf && n < 10;
+        return `<tr><td>${k}er${offen ? `<small>bis ${lauf}</small>` : ""}</td><td class="num">${fmt(z, 1)} %</td><td class="num">${fmt(i, 1)} %</td><td class="num${re >= 0 ? " plus" : " minus"}">${vz(re, 1)}</td></tr>`;
+      }).join("");
+      document.querySelectorAll("[data-dek]").forEach(el => { const r = dek[+el.dataset.dek]; if (r) el.textContent = fmt(r.reduce((a, j) => a + j[1] - j[2], 0) / r.length, 1); });
+      const min = J.reduce((a, j) => (j[1] - j[2] < a[1] - a[2] ? j : a));
+      setT("t-min", vz(min[1] - min[2], 1));
+      setT("t-schnitt", vz(J.reduce((a, j) => a + j[1] - j[2], 0) / J.length, 1));
+    }
+  }
+
+  // Beide Charts: oben Zins und Inflation (Linien), unten die Differenz (Fläche, grün über null, rot darunter)
+  function charts(d) {
+    const jahre = MODUS === "jahre";
+    const P = jahre ? (d.jahre || []).map(j => ({ k: String(j[0]), z: j[1], i: j[2] })) : (d.monate || []).map(m => ({ k: m[0], z: m[1], i: m[2] }));
+    if (!P.length) return;
+    // In der echten Pixelbreite zeichnen: viewBox = Kastenbreite, Schrift damit in echten px
+    const W = Math.max(280, Math.round(document.getElementById("chart-zi").clientWidth || 1000));
+    const eng = W < 600, FS = eng ? 11.5 : 13;
+    const X0 = eng ? 34 : 58, X1 = W - (eng ? 64 : 60);
+    BREITE = W;
+    const n = P.length, x = idx => X0 + (n > 1 ? idx / (n - 1) : 0.5) * (X1 - X0);
+    const label = p => jahre ? p.k : monKurz(p.k);
+    const jahr = k => +k.slice(0, 4);
+    // x-Achse: alle fünf Jahre, schmal alle zehn
+    const XS = W < 520 ? 10 : 5;
+    const j0 = Math.ceil(jahr(P[0].k) / XS) * XS, j1 = jahr(P[n - 1].k);
+    const xTicks = [];
+    for (let j = j0; j <= j1; j += XS) { const idx = P.findIndex(p => jahr(p.k) === j); if (idx >= 0) xTicks.push([x(idx), j]); }
+    const gitter = (Y0, Y1, lo, hi, schritt, y, plus) => {
+      let g = "";
+      for (let v = lo; v <= hi + 1e-9; v += schritt) {
+        const yy = y(v).toFixed(1), null0 = Math.abs(v) < 1e-9;
+        g += `<line x1="${X0}" y1="${yy}" x2="${X1}" y2="${yy}" stroke="#1A1A19" stroke-opacity="${null0 ? 0.55 : 0.09}" stroke-width="${null0 ? 1.4 : 1}"/>`;
+        g += `<text x="${X0 - 8}" y="${(+yy + 4.5).toFixed(1)}" text-anchor="end" font-family="${SANS}" font-size="${FS}" fill="#55544F">${plus && v > 0 ? "+" : ""}${fmt(v, 0)}</text>`;
+      }
+      xTicks.forEach(([xx, j]) => { g += `<line x1="${xx.toFixed(1)}" y1="${Y0}" x2="${xx.toFixed(1)}" y2="${Y1}" stroke="#1A1A19" stroke-opacity="0.06"/><text x="${xx.toFixed(1)}" y="${Y1 + 22}" text-anchor="middle" font-family="${SANS}" font-size="${FS}" fill="#55544F">${j}</text>`; });
+      g += `<line x1="${X0}" y1="${Y1}" x2="${X1}" y2="${Y1}" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/>`;
+      return g;
+    };
+    const kopf = (text) => `<text x="${X1}" y="14" text-anchor="end" font-family="${SANS}" font-size="${eng ? 11 : 11.5}" style="fill:var(--muted)" letter-spacing="${eng ? "0.04em" : "0.08em"}"><tspan class="hint-hover">${W < 440 ? "MAUS: WERTE" : "MAUS AUF DEN CHART: WERT JE " + text}</tspan><tspan class="hint-touch">${W < 440 ? "TIPPEN: WERTE" : "TIPPEN: WERT JE " + text}</tspan></text>`;
+    const einheit = jahre ? "JAHR" : "MONAT";
+    const zeitraum = `${label(P[0])} bis ${label(P[n - 1])}`;
+
+    // Chart 1: Zins und Inflation
+    {
+      const H = eng ? 300 : 420, Y0 = 34, Y1 = H - 54;
+      const werte = P.flatMap(p => [p.z, p.i]).filter(v => v != null);
+      const lo = Math.min(0, Math.floor(Math.min(...werte) / 2) * 2), hi = Math.ceil(Math.max(...werte) / 2) * 2;
+      const y = v => Y1 - (v - lo) / (hi - lo) * (Y1 - Y0);
+      let g = gitter(Y0, Y1, lo, hi, 2, y, false), paths = "", series = [], enden = [];
+      for (const [key, name, farbe] of [["z", "Bund 10 Jahre", C.zins], ["i", "Inflation", C.infl]]) {
+        const pts = P.map((p, idx) => p[key] == null ? null : [x(idx), y(p[key]), p]).filter(Boolean);
+        const line = pts.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join("");
+        const last = pts[pts.length - 1];
+        paths += `<path d="${line}" fill="none" stroke="${farbe}" stroke-width="${jahre ? 2.2 : 1.6}" stroke-linejoin="round" stroke-linecap="round"/>`
+          + `<circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="3.5" fill="${farbe}"/>`;
+        enden.push({ x: last[0], y: last[1], farbe, text: name === "Inflation" ? "Inflation" : "Bund" });
+        series.push({ x: pts.map(p => +p[0].toFixed(1)), y: pts.map(p => +p[1].toFixed(1)), color: farbe,
+          tips: pts.map(p => `${label(p[2])}: ${name} ${fmt(p[2][key], jahre && key === "z" ? 2 : 1)} %${p[2].z != null && p[2].i != null ? ` · Realzins ${vz(p[2].z - p[2].i, 1)}` : ""}`) });
+      }
+      // Namen am Linienende: mindestens 15 px Abstand, sonst auseinanderschieben (höherer Wert oben)
+      if (enden.length === 2) {
+        const [a, b] = enden[0].y <= enden[1].y ? enden : [enden[1], enden[0]];
+        const luecke = 15 - (b.y - a.y);
+        if (luecke > 0) { a.y -= luecke / 2; b.y += luecke / 2; }
+      }
+      enden.forEach(e => { paths += `<text x="${(e.x + 8).toFixed(1)}" y="${(e.y + 4.5).toFixed(1)}" font-family="${SANS}" font-size="${eng ? 12 : 13}" font-weight="600" fill="${e.farbe}" paint-order="stroke" stroke="#FBFAF7" stroke-width="3" stroke-linejoin="round">${e.text}</text>`; });
+      const aria = `Rendite der 10-jährigen Bundesanleihe und Inflationsrate in Prozent, ${jahre ? "Jahreswerte" : "Monatswerte"} ${zeitraum}; zuletzt Bund ${fmt(P[n - 1].z, 2)} %, Inflation ${P[n - 1].i == null ? "noch nicht veröffentlicht" : fmt(P[n - 1].i, 1) + " %"}. Werte mit den Pfeiltasten abrufbar.`;
+      const svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${MC.esc(aria)}" xmlns="http://www.w3.org/2000/svg">
+        <text x="4" y="14" font-family="${SANS}" font-size="12" font-weight="600" style="fill:var(--muted)">↑ in % pro Jahr</text>${kopf(einheit)}${g}${paths}
+        <text x="${X1}" y="${H - 8}" text-anchor="end" font-family="${SANS}" font-size="12" font-weight="600" style="fill:var(--muted)">Jahr →</text></svg>`;
+      document.getElementById("chart-zi").innerHTML = MC.hoverWrap(svg, series, null, { mode: "nearest" });
+    }
+    // Beschriftung im Realzins-Chart: bester und schlechtester Wert, dazu der letzte am Linienende
+    const txt = (xx, yy, t, farbe, anker) => `<text x="${xx.toFixed(1)}" y="${yy.toFixed(1)}" text-anchor="${anker}" font-family="${SANS}" font-size="${eng ? 11.5 : 12.5}" font-weight="600" fill="${farbe}" paint-order="stroke" stroke="#FBFAF7" stroke-width="3.5" stroke-linejoin="round">${t}</text>`;
+    function marken(pts, y) {
+      const hoch = pts.reduce((a, p) => (p[1] > a[1] ? p : a)), tief = pts.reduce((a, p) => (p[1] < a[1] ? p : a)), letzt = pts[pts.length - 1];
+      let m = "";
+      for (const [p, oben] of [[hoch, true], [tief, false]]) {
+        const yy = y(p[1]), farbe = oben ? C.plus : C.minus, t = `${vz(p[1], 1)} (${label(p[2])})`;
+        m += `<circle cx="${p[0].toFixed(1)}" cy="${yy.toFixed(1)}" r="3.2" fill="${farbe}" stroke="#FBFAF7" stroke-width="1.5"/>`;
+        m += oben ? txt(Math.min(X1 - 45, Math.max(X0 + 45, p[0])), yy - 9, t, farbe, "middle") : txt(p[0] - 8, yy + 4.5, t, farbe, "end");
+      }
+      const yl = y(letzt[1]);
+      m += `<circle cx="${letzt[0].toFixed(1)}" cy="${yl.toFixed(1)}" r="3.2" fill="#1A1A19"/>` + txt(letzt[0] + 8, yl + 4.5, vz(letzt[1], 1), letzt[1] < 0 ? C.minus : C.plus, "start");
+      return m;
+    }
+    // Chart 2: Realzins
+    {
+      const H = eng ? 230 : 300, Y0 = 30, Y1 = H - 54;
+      const pts = P.map((p, idx) => p.i == null ? null : [x(idx), p.z - p.i, p]).filter(Boolean);
+      const werte = pts.map(p => p[1]);
+      const lo = Math.floor((Math.min(...werte, -1) - 0.6) / 2) * 2, hi = Math.ceil((Math.max(...werte, 1) + 0.6) / 2) * 2;
+      const y = v => Y1 - (v - lo) / (hi - lo) * (Y1 - Y0);
+      const y0 = y(0).toFixed(1);
+      let g = gitter(Y0, Y1, lo, hi, 2, y, true);
+      const line = pts.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(1)} ${y(p[1]).toFixed(1)}`).join("");
+      const area = `M${pts[0][0].toFixed(1)} ${y0}${pts.map(p => `L${p[0].toFixed(1)} ${y(p[1]).toFixed(1)}`).join("")}L${pts[pts.length - 1][0].toFixed(1)} ${y0}Z`;
+      const paths = `<defs><clipPath id="rz-pos"><rect x="${X0}" y="${Y0}" width="${X1 - X0}" height="${(y0 - Y0).toFixed(1)}"/></clipPath><clipPath id="rz-neg"><rect x="${X0}" y="${y0}" width="${X1 - X0}" height="${(Y1 - y0).toFixed(1)}"/></clipPath></defs>`
+        + `<path d="${area}" fill="${C.plus}" fill-opacity="0.45" clip-path="url(#rz-pos)"/><path d="${area}" fill="${C.minus}" fill-opacity="0.5" clip-path="url(#rz-neg)"/>`
+        + `<path d="${line}" fill="none" stroke="#1A1A19" stroke-opacity="0.55" stroke-width="1.2" stroke-linejoin="round"/>`
+        + marken(pts, y);
+      const series = [{ x: pts.map(p => +p[0].toFixed(1)), y: pts.map(p => +y(p[1]).toFixed(1)), color: C.plus,
+        tips: pts.map(p => `${label(p[2])}: Realzins ${vz(p[1], 1)} Punkte (Bund ${fmt(p[2].z, jahre ? 2 : 1)} %, Inflation ${fmt(p[2].i, 1)} %)`) }];
+      const letzte = pts[pts.length - 1];
+      const aria = `Realzins in Prozentpunkten, ${jahre ? "Jahreswerte" : "Monatswerte"} ${zeitraum}; zuletzt ${vz(letzte[1], 1)} (${label(letzte[2])}). Grün über null, rot unter null. Werte mit den Pfeiltasten abrufbar.`;
+      const svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${MC.esc(aria)}" xmlns="http://www.w3.org/2000/svg">
+        <text x="4" y="14" font-family="${SANS}" font-size="12" font-weight="600" style="fill:var(--muted)">↑ Prozentpunkte</text>${kopf(einheit)}${g}${paths}
+        <text x="${X1}" y="${H - 8}" text-anchor="end" font-family="${SANS}" font-size="12" font-weight="600" style="fill:var(--muted)">Jahr →</text></svg>`;
+      document.getElementById("chart-rz").innerHTML = MC.hoverWrap(svg, series, null, { mode: "nearest" });
+    }
+    // Kopfzeile, Fußnote, Fußzeile
+    const st = d.stand || {};
+    const stand = st.zins || "";
+    setT("eyebrow-rz", `10-jährige Bundesanleihe und Verbraucherpreise · ${jahre ? "Jahreswerte" : "Monatsdurchschnitte"} · ${jahr(P[0].k)} – ${jahr(P[n - 1].k)}${stand ? ` · Stand: ${deDatum(stand)}` : ""}`);
+    setT("note-rz", jahre
+      ? "Bund 10 Jahre: Jahresdurchschnitt der Rendite; Inflation: Jahresteuerung des Verbraucherpreisindex (bis 1991 früheres Bundesgebiet); das laufende Jahr bis zum letzten veröffentlichten Monat. Realzins = Differenz beider Werte in Prozentpunkten."
+      : "Bund 10 Jahre: Monatsdurchschnitt der Rendite (laufender Monat aus den bisherigen Handelstagen); Inflation: Verbraucherpreise gegen den Vorjahresmonat (bis 1991 früheres Bundesgebiet, dort gerundet und deshalb gestuft). Der letzte Monat hat noch keine Inflationsrate, bis das Statistische Bundesamt sie veröffentlicht.");
+    if (stand) {
+      const el = document.getElementById("datastand");
+      if (el) { el.textContent = "Daten-Stand: " + deDatum(stand) + (st.vpi ? ` · Preise ${monLang(st.vpi)}` : ""); const dd = (Date.now() - new Date(stand + "T12:00:00")) / 864e5; el.classList.toggle("stale", dd > 7); }
+    }
+  }
+
+  document.querySelectorAll(".zeit button").forEach(b => b.addEventListener("click", () => {
+    if (!DATA || b.dataset.modus === MODUS) return;
+    MODUS = b.dataset.modus;
+    document.querySelectorAll(".zeit button").forEach(x => x.setAttribute("aria-pressed", x.dataset.modus === MODUS ? "true" : "false"));
+    charts(DATA);
+  }));
+
+  // Drehen des Handys / Fenstergröße: neu zeichnen, wenn sich die Breite des Chart-Kastens ändert
+  let rzT = 0;
+  window.addEventListener("resize", () => { clearTimeout(rzT); rzT = setTimeout(() => { const w = Math.round(document.getElementById("chart-zi").clientWidth); if (DATA && Math.abs(w - BREITE) > 2) charts(DATA); }, 150); });
+
+  MC.load("realzins.json").then(function (d) { DATA = d; kacheln(d); charts(d); }).catch(function (e) {
+    document.getElementById("chart-zi").innerHTML = '<p class="note">Die Daten konnten nicht geladen werden.</p>';
+    if (window.console) console.warn("realzins.json", e);
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zinskurve seit 1972: Deutschland und USA – METALCONCRETE</title>
+<meta name="description" content="Lohnt sich lange Laufzeit gerade? Der Abstand zwischen 10- und 2-jährigen Staatsanleihen – Deutschland seit 1972, USA seit 1976, täglich aktualisiert.">
+<link rel="canonical" href="https://www.metalconcrete.de/zinskurve.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/zinskurve.html">
+<meta property="og:title" content="Zinskurve seit 1972: Deutschland und USA – METALCONCRETE">
+<meta property="og:description" content="Lohnt sich lange Laufzeit gerade? Der Abstand zwischen 10- und 2-jährigen Staatsanleihen – Deutschland seit 1972, USA seit 1976, täglich aktualisiert.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Zinskurve seit 1972: Deutschland und USA – METALCONCRETE">
+<meta name="twitter:description" content="Lohnt sich lange Laufzeit gerade? Der Abstand zwischen 10- und 2-jährigen Staatsanleihen – Deutschland seit 1972, USA seit 1976, täglich aktualisiert.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Zinskurve seit 1972 (neu 25.09.2026, Menü „Zinsen“ (bis 29.09.2026 „Einordnen“)): Heute-Kacheln, Chart 10 J. − 2 J. (Deutschland, USA),
+     drei Erklärkarten im Look von „Risiko kennen“. Grundregeln in base.css. */
+
+  /* Heute: zwei Kacheln mit dem aktuellen Abstand */
+  .heute { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 26px 0 30px; }
+  .hk { background: #fff; border: 1px solid rgba(26,26,25,0.08); border-radius: 14px; padding: 18px 20px 16px; box-shadow: var(--shadow); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 18px; align-items: center; }
+  .hk-l { grid-column: 1 / -1; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .hk-l .sw { width: 14px; height: 4px; border-radius: 2px; background: var(--c); }
+  .hk-v { font-size: 40px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .hk-v small { font-size: 14px; font-weight: 600; letter-spacing: 0; color: var(--text); margin-left: 6px; }
+  .hk-s { justify-self: end; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; background: rgba(26,26,25,0.07); color: var(--ink); }
+  .hk-s.steil { background: rgba(31,122,94,0.14); color: var(--up); }
+  .hk-s.invers { background: rgba(153,60,29,0.12); color: var(--down); }
+  .hk-d { grid-column: 1 / -1; font-size: 13px; color: var(--text); margin-top: 6px; }
+  @media (max-width: 600px) { .heute { grid-template-columns: 1fr; gap: 10px; } .hk { padding: 14px 16px 14px; } .hk-v { font-size: 32px; } }
+
+  /* Legende und Chart wie auf „Staatsanleihen seit 1970“ */
+  .legend { display: flex; gap: 10px 22px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 10px 0; margin-bottom: 24px; }
+  .legend .leg { display: inline-flex; align-items: center; gap: 7px; color: var(--ink); }
+  /* Legende als Schalter (wie Langläufer/Renditen, dazu Ausblenden): aria-pressed = Kurve sichtbar */
+  .legend button.leg { font: inherit; background: none; border: 0; padding: 4px 0; min-height: 24px; cursor: pointer; border-radius: 3px; text-underline-offset: 4px; }
+  .legend button.leg:hover, .legend button.leg.on { text-decoration: underline; text-decoration-thickness: 1px; }
+  .legend button.leg:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .legend button.leg[aria-pressed="false"] { color: var(--muted); text-decoration: line-through; }
+  .legend button.leg[aria-pressed="false"] .sw-line { opacity: 0.3; }
+  .legend .leg-hint { font-size: 12px; flex-basis: 100%; }
+  #chart-zk .ser { transition: opacity .15s; }
+  #chart-zk .ser.dim { opacity: 0.2; }
+  #chart-zk .ser.hi .line { stroke-width: 2.6; }
+  .sw-line { width: 20px; height: 3px; border-radius: 2px; background: var(--c, var(--line)); }
+  .sw-area { width: 20px; height: 12px; border-radius: 2px; background: rgba(44,44,42,0.16); border-top: 2px solid rgba(26,26,25,0.5); }
+  svg { width: 100%; height: auto; display: block; }
+  #chart-zk { aspect-ratio: 1000 / 460; }
+  .chart-scroll .hint-touch { display: none; }
+  @media (hover: none) { .chart-scroll .hint-hover { display: none; } .chart-scroll .hint-touch { display: inline; } }
+  /* Unter 900 px zeichnet das Skript eine schmale Fassung in Containerbreite (Seitenverhältnis setzt es selbst) */
+  @media (max-width: 899px) { #chart-zk { aspect-ratio: 100 / 95; } }
+
+  /* Karte 2: drei Zeilen steil / flach / invers */
+  .wz { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 10px 14px; align-items: start; padding: 11px 14px; border-radius: 10px; background: rgba(26,26,25,0.045); font-size: 14px; line-height: 1.4; }
+  .wz + .wz { margin-top: 8px; }
+  .wz .w1 { font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; font-size: 12.5px; padding-top: 2px; }
+  .wz.steil .w1 { color: var(--up); } .wz.flach .w1 { color: var(--text); } .wz.invers .w1 { color: var(--down); }
+  .wz .w2 { color: var(--ink); } .wz .w2 b { font-weight: 600; }
+
+  /* Karte 3: Tabelle invers → Rezession */
+  .rz { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .rz th, .rz td { text-align: left; padding: 7px 8px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  .rz th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .rz td:first-child { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .rz td.ja { color: var(--down); font-weight: 600; } .rz td.nein { color: var(--up); font-weight: 600; }
+  @media (max-width: 600px) { .wz { grid-template-columns: 1fr; gap: 4px; } .rz { font-size: 13px; } }
+  @media (max-width: 600px) { #sb-formen text { font-size: 20px; } }   /* Handy: das Schaubild schrumpft auf rund 60 %, so bleiben die Beschriftungen gut 12 px groß */
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Zinskurve seit 1972: Abstand zwischen 10 und 2 Jahren, Deutschland und USA","description":"Lohnt sich lange Laufzeit gerade? Der Abstand zwischen 10- und 2-jährigen Staatsanleihen – Deutschland seit 1972, USA seit 1976, täglich aktualisiert.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-25","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/zinskurve.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Zinsen","item":"https://www.metalconcrete.de/beobachten.html"},{"@type":"ListItem","position":3,"name":"Zinskurve seit 1972","item":"https://www.metalconcrete.de/zinskurve.html"}]}</script>
+</head>
+<body>
+<a href="#main" class="skip-link">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="zinsen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn current" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html" class="current">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>Zinskurve seit 1972</h1>
+    <p class="sub">Lohnt es sich gerade, dein Geld lange zu binden? Das zeigt der Abstand zwischen der 10-jährigen und der 2-jährigen Staatsanleihe. Ist er groß, bekommst du für die lange Laufzeit deutlich mehr Zins. Ist er klein oder sogar negativ, bringt kurz fast dasselbe – oder mehr. Für Deutschland seit 1972 und die USA seit 1976, täglich aktualisiert.</p>
+
+    <div class="heute" id="heute">
+      <div class="hk" data-land="DE" style="--c:#2C2C2A"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Deutschland · Bundesanleihen</span><b class="hk-v"><span class="v">+0,35</span><small>Prozentpunkte</small></b><span class="hk-s s normal">normal</span><span class="hk-d d">10 Jahre 3,63&nbsp;% · 2 Jahre 3,28&nbsp;% · Stand 25.09.2026</span></div>
+      <div class="hk" data-land="US" style="--c:#1D5FA0"><span class="hk-l"><span class="sw" aria-hidden="true"></span>USA · Treasuries</span><b class="hk-v"><span class="v">+0,26</span><small>Prozentpunkte</small></b><span class="hk-s s flach">flach</span><span class="hk-d d">10 Jahre 5,11&nbsp;% · 2 Jahre 4,85&nbsp;% · Stand 23.09.2026</span></div>
+    </div>
+
+    <p class="eyebrow" id="eyebrow-zk">10 Jahre minus 2 Jahre · Monatsdurchschnitte · 1972 – 2026 · Stand: 25.09.2026</p>
+    <div class="legend" id="legend-zk">
+      <button type="button" class="leg" data-key="DE" aria-pressed="true" title="Deutschland ausblenden"><span class="sw-line" style="--c:#2C2C2A" aria-hidden="true"></span>Deutschland</button>
+      <button type="button" class="leg" data-key="US" aria-pressed="true" title="USA ausblenden"><span class="sw-line" style="--c:#1D5FA0" aria-hidden="true"></span>USA</button>
+      <span class="leg"><span class="sw-area" aria-hidden="true"></span>unter null: Kurve invers – kurz bringt mehr als lang</span>
+      <span class="leg-hint">Klick auf Deutschland oder USA blendet die Kurve aus und wieder ein, Überfahren hebt sie hervor (Esc löst).</span>
+    </div>
+    <div id="chart-zk" class="chart-scroll"></div>
+    <p class="note">Rendite der 10-jährigen minus Rendite der 2-jährigen Staatsanleihe, in Prozentpunkten; Monatsdurchschnitte, der letzte Punkt ist der laufende Monat. Über null steigt die Zinskurve (normal), unter null ist sie invers.</p>
+
+    <section class="kap" id="lesen" aria-labelledby="h-lesen">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">1</span>
+        <h2 id="h-lesen">Was der Abstand bedeutet</h2>
+        <p>Normalerweise bekommst du mehr Zins, wenn du dein Geld länger verleihst. <strong>Der Abstand ist dann positiv, die Zinskurve steigt.</strong> Wie steil sie steigt, wechselt: Erwartet der Markt, dass das allgemeine Zinsniveau steigt, ist die Kurve steil. Erwartet er, dass es sinkt, wird sie flach – oder sie kippt.</p><p>Dann bringt die 2-jährige Anleihe mehr als die 10-jährige. <strong>Das heißt invers</strong> und passiert selten: in rund 15&nbsp;% der Monate seit 1972.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Drei Formen der Zinskurve</p><svg class="sb" id="sb-formen" viewBox="0 0 480 256" role="img" aria-labelledby="sb1t"><title id="sb1t">Schematisch: Rendite je Laufzeit von 2 bis 10 Jahren. Steil: die Rendite steigt von 2 auf 4 Prozent. Flach: sie bleibt bei rund 3 Prozent. Invers: sie fällt von 4 auf 3 Prozent.</title>
+        <text class="axt" x="8" y="17" font-size="13" font-weight="600" fill="#55544F">↑ Rendite in %</text>
+        <line x1="70" y1="40" x2="450" y2="40" stroke="#1A1A19" stroke-opacity="0.09"/><text x="62" y="44.5" text-anchor="end" font-size="13" fill="#55544F">5</text>
+        <line x1="70" y1="82" x2="450" y2="82" stroke="#1A1A19" stroke-opacity="0.09"/><text x="62" y="86.5" text-anchor="end" font-size="13" fill="#55544F">4</text>
+        <line x1="70" y1="124" x2="450" y2="124" stroke="#1A1A19" stroke-opacity="0.09"/><text x="62" y="128.5" text-anchor="end" font-size="13" fill="#55544F">3</text>
+        <line x1="70" y1="166" x2="450" y2="166" stroke="#1A1A19" stroke-opacity="0.09"/><text x="62" y="170.5" text-anchor="end" font-size="13" fill="#55544F">2</text>
+        <line x1="70" y1="208" x2="450" y2="208" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/>
+        <text x="90" y="228" text-anchor="middle" font-size="13" fill="#55544F">2 J.</text><text x="230" y="228" text-anchor="middle" font-size="13" fill="#55544F">5 J.</text><text x="400" y="228" text-anchor="middle" font-size="13" fill="#55544F">10 J.</text>
+        <text class="axt" x="450" y="250" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Laufzeit →</text>
+        <path d="M90 166 C 190 130, 300 96, 400 82" fill="none" stroke="#1F7A5E" stroke-width="3" stroke-linecap="round"/><circle cx="400" cy="82" r="4" fill="#1F7A5E"/><text x="410" y="78" font-size="14" font-weight="600" fill="#1F7A5E">steil</text>
+        <path d="M90 126 C 190 122, 300 119, 400 116" fill="none" stroke="#55544F" stroke-width="3" stroke-linecap="round"/><circle cx="400" cy="116" r="4" fill="#55544F"/><text x="410" y="120" font-size="14" font-weight="600" fill="#55544F">flach</text>
+        <path d="M90 82 C 190 100, 300 120, 400 150" fill="none" stroke="#993C1D" stroke-width="3" stroke-linecap="round"/><circle cx="400" cy="150" r="4" fill="#993C1D"/><text x="410" y="158" font-size="14" font-weight="600" fill="#993C1D">invers</text>
+      </svg><p class="sb-f">Der Abstand im Chart oben ist der Höhenunterschied zwischen dem rechten und dem linken Ende: bei „steil“ +2 Punkte, bei „flach“ +0,2, bei „invers“ −1.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Der Abstand sagt dir, wie viel Zins die lange Laufzeit extra bringt – nicht, wie hoch das allgemeine Zinsniveau ist. Beides zusammen lesen: das Niveau bei <a href="renditen.html">Staatsanleihen seit 1970</a>, die Form hier.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="anleihe" aria-labelledby="h-anleihe">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">2</span>
+        <h2 id="h-anleihe">Was das für deine Anleihe heißt</h2>
+        <p><strong>Steil:</strong> Lange Laufzeit wird gut bezahlt. Wer sich den Zins für Jahre sichern will, bekommt dafür einen spürbaren Aufschlag.</p><p><strong>Normal:</strong> Lang bringt etwas mehr, aber nicht viel. Ob sich das lohnt, entscheidet, wie lange du das Geld sicher entbehren kannst.</p><p><strong>Flach:</strong> Kurz bringt fast dasselbe wie lang. Dann sprechen die Risiken für kurz – der Kurs schwankt weniger, und das Geld ist bald wieder frei. Oder du baust eine <a href="fortgeschrittene.html#leiter">Leiter</a> aus mehreren Fälligkeiten.</p><p><strong>Invers:</strong> Kurz bringt sogar mehr. Verlockend – aber der Markt erwartet ein sinkendes allgemeines Zinsniveau. Wer heute lang bindet, hat den Zins fest, bevor er fällt.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Kurve → Laufzeit</p>
+        <div class="wz steil"><span class="w1">Steil</span><span class="w2"><b>Lang lohnt sich.</b> Aufschlag für 10 Jahre deutlich – Zins sichern, wenn du das Geld so lange entbehren kannst.</span></div>
+        <div class="wz normal"><span class="w1">Normal</span><span class="w2"><b>Abwägen.</b> Etwas Aufschlag für lang – lohnt sich, wenn du das Geld sicher so lange entbehren kannst.</span></div>
+        <div class="wz flach"><span class="w1">Flach</span><span class="w2"><b>Kurz bleiben.</b> Kaum Aufschlag für lang – kurze Laufzeit, später neu anlegen, oder eine Leiter.</span></div>
+        <div class="wz invers"><span class="w1">Invers</span><span class="w2"><b>Kurz bringt mehr – noch.</b> Der Markt erwartet ein fallendes allgemeines Zinsniveau; lang sichert den heutigen Zins.</span></div>
+        <p class="sb-f">Abstand über 1 Punkt = steil, 0,3 bis 1 = normal, 0 bis 0,3 = flach, unter 0 = invers – so stufen auch die Kacheln oben ein. Keine Empfehlung, sondern die Logik hinter dem Chart.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Steil – lang lohnt. Normal – abwägen. Flach – kurz bleiben oder Leiter. Invers – kurz bringt mehr, lang sichert. Dein Ziel entscheidet: <a href="anlageziele.html#zinsen-sichern">Zins sichern</a> oder <a href="anlageziele.html#kurzfristig">Geld parken</a>.</span></p>
+    </section>
+
+    <section class="kap" id="warnsignal" aria-labelledby="h-warnsignal">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">3</span>
+        <h2 id="h-warnsignal">Die inverse Kurve als Warnsignal</h2>
+        <p>Die inverse Kurve hat einen Ruf: <strong>In den USA ging sie fast jeder Rezession voraus</strong> – meist ein bis zwei Jahre vorher. Der Grund ist einfach: Der Markt erwartet, dass die Notenbank den Leitzins senken muss, weil die Wirtschaft schwächelt.</p><p>Verlässlich ist das nicht. Die jüngste Inversion von 2022 bis 2024 war mit 26 Monaten die längste seit Beginn der US-Reihe 1976 – eine Rezession blieb bis heute aus. Für dich als Anleihe-Käufer zählt vor allem: <strong>Invers heißt, der Markt erwartet ein sinkendes allgemeines Zinsniveau.</strong></p>
+      </div>
+      <div class="k-bild"><p class="sb-k">USA: Kurve invers – und danach?</p>
+        <table class="rz"><thead><tr><th scope="col">Kurve invers</th><th scope="col">Rezession danach</th></tr></thead><tbody>
+          <tr><td>09/1978 – 04/1980</td><td class="ja">ja – ab 01/1980</td></tr>
+          <tr><td>09/1980 – 10/1981</td><td class="ja">ja – ab 07/1981</td></tr>
+          <tr><td>02/1982 – 06/1982</td><td class="ja">mitten in der Rezession ab 07/1981</td></tr>
+          <tr><td>01/1989 – 06/1989</td><td class="ja">ja – ab 07/1990</td></tr>
+          <tr><td>02/2000 – 12/2000</td><td class="ja">ja – ab 03/2001</td></tr>
+          <tr><td>06/2006 – 03/2007</td><td class="ja">ja – ab 12/2007</td></tr>
+          <tr><td>07/2022 – 08/2024</td><td class="nein">bisher nein</td></tr>
+        </tbody></table>
+        <p class="sb-f">Monate mit inverser Kurve (Monatsdurchschnitt 10 J. − 2 J. unter null, Phasen ab drei Monaten) und der Beginn der nächsten Rezession nach der US-Datierung (NBER). 2019 war die Kurve nur an einzelnen Tagen invers; die Rezession 2020 kam durch die Pandemie.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Invers ist ein Warnsignal für die Wirtschaft, kein Absturz für Anleihen – im Gegenteil: Fällt das allgemeine Zinsniveau danach, steigen die Kurse der langen Anleihen.</span></p>
+    </section>
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="renditen.html">Staatsanleihen seit 1970 – das Zinsniveau von acht Ländern</a></li>
+        <li><a href="realzins.html">Realzins seit 1970 – was nach Inflation bleibt</a></li>
+        <li><a href="fortgeschrittene.html#zinskurve">Für Fortgeschrittene: die Zinskurve lesen</a></li>
+        <li><a href="rechner.html#zinsniveau">Rechner: Kurs bei verändertem Zinsniveau</a></li>
+        <li><a href="langlaeufer.html">Langläufer</a></li>
+      </ul>
+    </nav>
+    <details class="quellen" id="quellen">
+      <summary>Datenquellen und Methodik</summary>
+      <div class="quellen-body">
+        <p><strong>Methodik.</strong> Gezeigt wird die Rendite der 10-jährigen minus die Rendite der 2-jährigen Staatsanleihe in Prozentpunkten. Der Chart zeigt Monatsdurchschnitte (der laufende Monat aus den bisherigen Handelstagen), die Kacheln oben den jüngsten Tageswert. Einstufung der Kacheln: über 1 Punkt „steil“, 0,3 bis 1 „normal“, 0 bis 0,3 „flach“, unter 0 „invers“ – eine grobe Lesehilfe, keine amtliche Definition.</p>
+        <p><strong>Datenquellen.</strong> Deutschland: <a href="https://www.bundesbank.de/de/statistiken/geld-und-kapitalmaerkte/zinssaetze-und-renditen/zinsstruktur-am-rentenmarkt">Deutsche Bundesbank</a>, Zinsstrukturkurve am Rentenmarkt (Svensson-Methode), börsennotierte Bundeswertpapiere mit Restlaufzeit 2 und 10 Jahre – Monatswerte seit September 1972, Tageswerte seit August 1997 (Zeitreihen BBSIS, abgerufen über die Bundesbank-API). Das sind Nullkupon-Renditen; der Tageswert auf <a href="renditen.html">Staatsanleihen seit 1970</a> ist die Rendite einer 10-jährigen Bundesanleihe mit jährlichem Kupon und liegt deshalb meist einige Hundertstel darunter. USA: <a href="https://www.federalreserve.gov/releases/h15/">Federal Reserve, Statistical Release H.15</a>, Treasury constant maturities 2 und 10 Jahre, Tageswerte seit Juni 1976; Monatsdurchschnitte aus den Handelstagen. Rezessionen: Datierung des <a href="https://www.nber.org/research/business-cycle-dating">NBER</a>. Aktualisierung täglich um 10 Uhr; die Bundesbank veröffentlicht den Tageswert am Abend, die Fed am Folgetag – „Stand“ nennt jeweils den letzten Wert.</p>
+        <p>Diese Seite erklärt und zeigt Daten; sie empfiehlt keine Anlage. Keine Anlageberatung.</p>
+        <p id="datastand">Daten-Stand: 25.09.2026</p>
+      </div>
+    </details>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+window.MC.hoverWrap = window.MC.hoverWrap || function (s) { return s; };
+window.MC.load = window.MC.load || function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); };
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+
+// ---- Zinskurve: Abstand 10 J. − 2 J. (zinskurve.json, scripts/update_zinskurve.py) ----
+(function () {
+  const SANS = 'Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif';
+  const LAND = { DE: { name: "Deutschland", color: "#2C2C2A" }, US: { name: "USA", color: "#1D5FA0" } };
+  const MON = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+  const fmt = (v, d) => v.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d }).replace(/^-/, "−");   // echtes Minus
+  const vz = v => (v > 0 ? "+" : v < 0 ? "−" : "±") + fmt(Math.abs(v), 2);
+  const stufe = v => v < 0 ? ["invers", "invers"] : v < 0.3 ? ["flach", "flach"] : v <= 1 ? ["normal", "normal"] : ["steil", "steil"];
+  const deDatum = iso => { const d = new Date(iso + "T12:00:00"); return isNaN(d) ? iso : d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }); };
+  const monLabel = m => `${MON[+m.slice(5, 7) - 1]} ${m.slice(0, 4)}`;
+
+  function kacheln(d) {
+    for (const land of ["DE", "US"]) {
+      const h = d.heute && d.heute[land];
+      const el = document.querySelector(`.hk[data-land="${land}"]`);
+      if (!h || !el) continue;
+      const ab = h[2] - h[1], st = stufe(ab);
+      el.querySelector(".v").textContent = vz(ab);
+      const s = el.querySelector(".s"); s.textContent = st[0]; s.className = "hk-s s " + st[1];
+      el.querySelector(".d").textContent = `10 Jahre ${fmt(h[2], 2)}\u00A0% · 2 Jahre ${fmt(h[1], 2)}\u00A0% · Stand ${deDatum(h[0])}`;
+    }
+  }
+
+  // Chart wie „Langläufer“: Maus zeigt den Wert der nächstgelegenen Linie, Namen am rechten Linienende,
+  // breite unsichtbare Trefferfläche je Linie. Dazu (Nutzerwunsch 25.09.2026 abends) die Legende als Schalter:
+  // Klick blendet Deutschland oder USA aus und wieder ein (mindestens eine Kurve bleibt sichtbar),
+  // Überfahren der Legende oder einer Linie hebt sie hervor, Esc löst. Die y-Achse bleibt beim Ausblenden gleich.
+  const VIS = { DE: true, US: true };
+  let DATA = null, HI = null, BREITE = 0;
+  function chart(d) {
+    DATA = d;
+    // Geometrie je Containerbreite (Handy-Lesbarkeit): ab 900 px die bisherige Fassung (viewBox
+    // 1000 × 460, Maßstab 1), darunter eine schmale Fassung in echter Containerbreite – die Schrift
+    // bleibt 12 px, statt wie früher mit einem 700-px-SVG quer zu scrollen (effektiv 8–9 px)
+    const box = document.getElementById("chart-zk");
+    const cw = Math.round((box && box.clientWidth) || 1000), eng = cw < 900;
+    const W = eng ? Math.max(280, cw) : 1000, H = eng ? Math.round(Math.min(460, Math.max(320, W * 0.95))) : 460;
+    const X0 = eng ? 34 : 58, X1 = eng ? W - 92 : 900, Y0 = eng ? 30 : 34, Y1 = eng ? H - 44 : 400, FS = eng ? 12 : 13;
+    BREITE = eng ? W : 1000;
+    if (box) box.style.aspectRatio = `${W} / ${H}`;
+    const reihen = ["DE", "US"].filter(l => d.monate && d.monate[l] && d.monate[l].length);
+    if (!reihen.length) return;
+    const zeigen = reihen.filter(l => VIS[l]);
+    const alle = reihen.flatMap(l => d.monate[l].map(m => m[2] - m[1]));
+    const monate = reihen.flatMap(l => d.monate[l].map(m => m[0]));
+    const m0 = monate.reduce((a, b) => a < b ? a : b), m1 = monate.reduce((a, b) => a > b ? a : b);
+    const idx = m => (+m.slice(0, 4) - +m0.slice(0, 4)) * 12 + (+m.slice(5, 7) - +m0.slice(5, 7));
+    const n = idx(m1);
+    const x = m => X0 + idx(m) / n * (X1 - X0);
+    const lo = Math.floor(Math.min(...alle) - 0.3), hi = Math.ceil(Math.max(...alle) + 0.3);
+    const y = v => Y1 - (v - lo) / (hi - lo) * (Y1 - Y0);
+    let g = "";
+    for (let v = lo; v <= hi; v++) {
+      const yy = y(v).toFixed(1), null0 = v === 0;
+      g += `<line x1="${X0}" y1="${yy}" x2="${X1}" y2="${yy}" stroke="#1A1A19" stroke-opacity="${null0 ? 0.55 : 0.09}" stroke-width="${null0 ? 1.4 : 1}"/>`;
+      g += `<text x="${X0 - 8}" y="${(+yy + 4.5).toFixed(1)}" text-anchor="end" font-family="${SANS}" font-size="${FS}" fill="#55544F">${v > 0 ? "+" + v : v < 0 ? "−" + (-v) : "0"}</text>`;
+    }
+    const XS = eng ? 10 : 5;
+    const j0 = Math.ceil(+m0.slice(0, 4) / XS) * XS, j1 = +m1.slice(0, 4);
+    for (let j = j0; j <= j1; j += XS) {
+      const xx = x(`${j}-01`).toFixed(1);
+      g += `<line x1="${xx}" y1="${Y0}" x2="${xx}" y2="${Y1}" stroke="#1A1A19" stroke-opacity="0.06"/><text x="${xx}" y="${Y1 + 22}" text-anchor="middle" font-family="${SANS}" font-size="${FS}" fill="#55544F">${j}</text>`;
+    }
+    g += `<line x1="${X0}" y1="${Y1}" x2="${X1}" y2="${Y1}" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/>`;
+    const y0 = y(0).toFixed(1);
+    let paths = "", series = [];
+    // Namen am Linienende, nach Wert sortiert und entzerrt (wie Langläufer)
+    const ends = zeigen.map(l => { const m = d.monate[l][d.monate[l].length - 1]; return { l, py: y(m[2] - m[1]), px: x(m[0]) }; }).sort((a, b) => a.py - b.py);
+    for (let i = 1; i < ends.length; i++) if (ends[i].py - ends[i - 1].py < 16) ends[i].py = ends[i - 1].py + 16;
+    for (const l of zeigen) {
+      const pts = d.monate[l].map(m => [x(m[0]), y(m[2] - m[1]), m]);
+      const line = pts.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join("");
+      const area = `M${pts[0][0].toFixed(1)} ${y0}${pts.map(p => `L${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join("")}L${pts[pts.length - 1][0].toFixed(1)} ${y0}Z`;
+      const last = pts[pts.length - 1], e = ends.find(o => o.l === l);
+      paths += `<g class="ser" data-key="${l}"><path d="${area}" fill="${LAND[l].color}" fill-opacity="0.16" clip-path="url(#zk-neg)"/>`
+        + `<path class="hit" d="${line}" fill="none" stroke="${LAND[l].color}" stroke-width="14" opacity="0" pointer-events="stroke"/>`
+        + `<path class="line" d="${line}" fill="none" stroke="${LAND[l].color}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>`
+        + `<circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="3.5" fill="${LAND[l].color}"/>`
+        + `<text x="${(e.px + 9).toFixed(1)}" y="${(e.py + 4.5).toFixed(1)}" font-family="${SANS}" font-size="${FS}" font-weight="600" fill="${LAND[l].color}" paint-order="stroke" stroke="#FBFAF7" stroke-width="3" stroke-linejoin="round">${LAND[l].name}</text></g>`;
+      series.push({ x: pts.map(p => +p[0].toFixed(1)), y: pts.map(p => +p[1].toFixed(1)), color: LAND[l].color,
+        tips: pts.map(p => `${LAND[l].name} ${monLabel(p[2][0])}: ${vz(p[2][2] - p[2][1])} Punkte (10 J. ${fmt(p[2][2], 2)}\u00A0%, 2 J. ${fmt(p[2][1], 2)}\u00A0%)`) });
+    }
+    const aria = `Abstand zwischen 10-jähriger und 2-jähriger Staatsanleihe in Prozentpunkten, Monatsdurchschnitte ${monLabel(m0)} bis ${monLabel(m1)}: ${zeigen.map(l => { const m = d.monate[l]; const s = m[m.length - 1]; return `${LAND[l].name} zuletzt ${vz(s[2] - s[1])}`; }).join(", ")}. Werte mit den Pfeiltasten abrufbar.`;
+    const svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${MC.esc(aria)}" xmlns="http://www.w3.org/2000/svg">
+      <defs><clipPath id="zk-neg"><rect x="${X0}" y="${y0}" width="${X1 - X0}" height="${(Y1 - y0).toFixed(1)}"/></clipPath></defs>
+      <text x="4" y="14" font-family="${SANS}" font-size="12" font-weight="600" style="fill:var(--muted)">↑ Abstand in Prozentpunkten (10 J. − 2 J.)</text>
+      ${eng ? "" : `<text x="${X1}" y="14" text-anchor="end" font-family="${SANS}" font-size="11.5" style="fill:var(--muted)" letter-spacing="0.08em"><tspan class="hint-hover">MAUS AUF EINE LINIE: WERT JE MONAT</tspan><tspan class="hint-touch">TIPPEN: WERT JE MONAT</tspan></text>`}
+      ${g}${paths}
+      <text x="${eng ? W - 4 : X1}" y="${H - 8}" text-anchor="end" font-family="${SANS}" font-size="12" font-weight="600" style="fill:var(--muted)">Jahr →</text>
+    </svg>`;
+    document.getElementById("chart-zk").innerHTML = MC.hoverWrap(svg, series, null, { mode: "nearest" });
+    legende();
+    hervorheben(HI);
+    // Kopfzeile des Charts und Fußzeile
+    const staende = reihen.map(l => d.stand && d.stand[l]).filter(Boolean).sort();
+    if (staende.length) {
+      const st = staende[staende.length - 1];
+      document.getElementById("eyebrow-zk").textContent = `10 Jahre minus 2 Jahre · Monatsdurchschnitte · ${m0.slice(0, 4)} – ${m1.slice(0, 4)} · Stand: ${deDatum(st)}`;
+      const el = document.getElementById("datastand");
+      if (el) { el.textContent = "Daten-Stand: " + deDatum(st); const dd = (Date.now() - new Date(st + "T12:00:00")) / 864e5; el.classList.toggle("stale", dd > 7); }
+    }
+  }
+
+  // Legende: Schalter je Land (aria-pressed = Kurve sichtbar)
+  function legende() {
+    document.querySelectorAll("#legend-zk .leg[data-key]").forEach(b => {
+      const l = b.dataset.key, an = !!VIS[l];
+      b.setAttribute("aria-pressed", an ? "true" : "false");
+      b.title = an ? `${LAND[l].name} ausblenden` : `${LAND[l].name} einblenden`;
+    });
+  }
+  function hervorheben(key) {
+    HI = key && VIS[key] ? key : null;
+    document.querySelectorAll("#chart-zk .ser").forEach(s => {
+      s.classList.toggle("dim", !!HI && s.dataset.key !== HI);
+      s.classList.toggle("hi", !!HI && s.dataset.key === HI);
+    });
+    document.querySelectorAll("#legend-zk .leg[data-key]").forEach(b => b.classList.toggle("on", b.dataset.key === HI));
+  }
+  (function verdrahten() {
+    const leg = document.getElementById("legend-zk"), box = document.getElementById("chart-zk");
+    if (!leg || !box) return;
+    const keyOf = e => { const b = e.target.closest ? e.target.closest(".leg[data-key]") : null; return b ? b.dataset.key : null; };
+    leg.addEventListener("click", e => {
+      const l = keyOf(e); if (!l || !DATA) return;
+      if (VIS[l] && Object.keys(VIS).filter(k => VIS[k]).length === 1) return;   // mindestens eine Kurve bleibt sichtbar
+      VIS[l] = !VIS[l];
+      HI = null;
+      chart(DATA);
+    });
+    ["pointerover", "focusin"].forEach(ev => leg.addEventListener(ev, e => { const l = keyOf(e); if (l) hervorheben(l); }));
+    ["pointerout", "focusout"].forEach(ev => leg.addEventListener(ev, e => {
+      const b = e.target.closest ? e.target.closest(".leg[data-key]") : null;
+      if (b && !(e.relatedTarget && b.contains(e.relatedTarget))) hervorheben(null);
+    }));
+    document.addEventListener("keydown", e => { if (e.key === "Escape" && HI) hervorheben(null); });
+    // Maus auf einer Linie hebt sie hervor – nur auf Geräten mit Maus (auf Touch bliebe es sonst kleben)
+    if (window.matchMedia && window.matchMedia("(hover: hover)").matches) {
+      const serOf = e => e.target.closest ? e.target.closest("#chart-zk .ser[data-key]") : null;
+      box.addEventListener("pointerover", e => { const s = serOf(e); if (s && (e.target.classList.contains("hit") || e.target.classList.contains("line"))) hervorheben(s.dataset.key); });
+      box.addEventListener("pointerout", e => { const s = serOf(e); if (s && !(e.relatedTarget && s.contains(e.relatedTarget))) hervorheben(null); });
+    }
+  })();
+
+  // Drehen des Handys / Fenstergröße: in der neuen Containerbreite neu zeichnen
+  let rzT = 0;
+  window.addEventListener("resize", () => {
+    clearTimeout(rzT);
+    rzT = setTimeout(() => {
+      const el = document.getElementById("chart-zk"); if (!DATA || !el) return;
+      const cw = Math.round(el.clientWidth), want = cw >= 900 ? 1000 : Math.max(280, cw);
+      if (Math.abs(want - BREITE) > 2) chart(DATA);
+    }, 150);
+  });
+  MC.load("zinskurve.json").then(function (d) { kacheln(d); chart(d); }).catch(function (e) {
+    document.getElementById("chart-zk").innerHTML = '<p class="note">Die Daten konnten nicht geladen werden.</p>';
+    if (window.console) console.warn("zinskurve.json", e);
+  });
+})();
+</script>
+</body>
+</html>

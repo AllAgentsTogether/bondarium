@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /trigger/
+
+Sitemap: https://www.metalconcrete.de/sitemap.xml

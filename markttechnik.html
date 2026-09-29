@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Markttechnik lesen: Woran Profis das Zinsniveau ablesen – METALCONCRETE</title>
+<meta name="description" content="Auktionen der Finanzagentur, Leitzins-Erwartungen, Zentralbankbilanz, Swap-Spread und Breakeven-Inflation: Die fünf Signale, mit denen Profis den Anleihenmarkt lesen – und eine Wochenroutine.">
+<link rel="canonical" href="https://www.metalconcrete.de/markttechnik.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/markttechnik.html">
+<meta property="og:title" content="Markttechnik lesen: Woran Profis das Zinsniveau ablesen – METALCONCRETE">
+<meta property="og:description" content="Auktionen der Finanzagentur, Leitzins-Erwartungen, Zentralbankbilanz, Swap-Spread und Breakeven-Inflation: Die fünf Signale, mit denen Profis den Anleihenmarkt lesen – und eine Wochenroutine.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Markttechnik lesen: Woran Profis das Zinsniveau ablesen – METALCONCRETE">
+<meta name="twitter:description" content="Auktionen der Finanzagentur, Leitzins-Erwartungen, Zentralbankbilanz, Swap-Spread und Breakeven-Inflation: Die fünf Signale, mit denen Profis den Anleihenmarkt lesen – und eine Wochenroutine.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Markttechnik lesen – neu 27.09.2026 (Menü Verstehen, Profi): sechs Karten im Look von „Laufzeit“ und „Duration“.
+     Schaubilder als HTML-Kacheln, Treppe (SVG) und Tabelle; Zahlen in den Beispielen sind angenommen oder mit Stand markiert. Grundregeln in base.css. */
+
+  /* Auktionszettel (1) */
+  .zettel { border: 1.5px solid rgba(26,26,25,0.14); border-radius: 12px; padding: 12px 14px; background: #FBFAF7; }
+  .zettel .zk { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-bottom: 8px; display: flex; justify-content: space-between; gap: 8px; }
+  .zettel .zk span:last-child { font-weight: 400; letter-spacing: 0; text-transform: none; }
+  .zettel dl { display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; margin: 0; font-size: 14px; }
+  .zettel dt { color: var(--text); } .zettel dd { margin: 0; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .zettel dd.hl { color: var(--green-text); }
+  .zettel .btc { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; font-size: 14px; gap: 10px; }
+  .zettel .btc b { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; color: var(--green-text); }
+
+  /* Treppe der Erwartungen (2) */
+  .tp .axt { font-size: 12px; font-weight: 600; fill: #55544F; }
+  .tp .tick { font-size: 11.5px; fill: #55544F; }
+
+  /* Zwei Richtungen (3) */
+  .zwei { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .zr { display: flex; flex-direction: column; background: var(--ap-soft); border-radius: 12px; padding: 12px 10px; }
+  .zr-k { font-size: 14px; font-weight: 600; }
+  .zr-z { font-size: 12.5px; color: var(--text); margin-top: 1px; }
+  .zr-f { display: grid; grid-template-columns: auto 1fr; gap: 6px 8px; align-items: center; margin-top: 10px; font-size: 13.5px; }
+  .zr-f .pf { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; color: #fff; font-weight: 600; font-size: 14px; }
+  .zr-f .up { background: var(--up); } .zr-f .dn { background: var(--down); }
+
+  /* Spread-Balken (4, 5) */
+  .balken .hb { display: grid; grid-template-columns: 130px minmax(0, 1fr); align-items: center; gap: 10px; }
+  .balken .hb + .hb { margin-top: 7px; }
+  .hb-l { font-size: 13.5px; font-weight: 600; color: var(--ap-ink); line-height: 1.25; }
+  .hb-l small { display: block; font-size: 12px; font-weight: 400; color: var(--text); }
+  .hb-bar { display: flex; align-items: center; justify-content: flex-end; height: 28px; width: var(--w); min-width: max-content; padding: 0 8px 0 10px; border-radius: 6px; background: #1F7A5E; }
+  .hb-bar.o { background: #A3651A; } .hb-bar.r { background: var(--down); } .hb-bar.n { background: #8E8D86; } .hb-bar.g { background: #1DA300; }
+  .hb-bar b { color: #fff; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .erg { margin-top: 10px; padding: 9px 12px; border-radius: 10px; background: #fff; border: 1.5px solid var(--green-line); font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .erg b { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; color: var(--green-text); }
+
+  /* Wochenroutine (6) */
+  .qt { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .qt th { text-align: left; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); padding: 0 8px 6px 0; border-bottom: 1.5px solid rgba(26,26,25,0.22); font-weight: 600; }
+  .qt td { padding: 7px 8px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; line-height: 1.4; }
+  .qt td:first-child { font-weight: 600; white-space: nowrap; }
+  .qt tr:last-child td { border-bottom: 0; }
+  .qt a { color: var(--blue); }
+
+  .sb-f { font-size: 12.5px; color: var(--text); margin-top: 10px; line-height: 1.45; }
+  .sb-go { margin-top: 14px; align-self: flex-start; font-size: 14px; padding: 10px 16px; }
+  @media (max-width: 600px) {
+    .zettel dl { font-size: 13px; }
+    .zwei { grid-template-columns: 1fr; }
+    .balken .hb { grid-template-columns: 104px minmax(0, 1fr); } .hb-l { font-size: 12.5px; }
+    .qt { font-size: 12.5px; } .qt td:first-child { white-space: normal; }
+    .sb-go { align-self: stretch; text-align: center; }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Markttechnik lesen: Woran Profis das Zinsniveau ablesen","description":"Auktionen der Finanzagentur, Leitzins-Erwartungen, Zentralbankbilanz, Swap-Spread und Breakeven-Inflation: Die fünf Signale, mit denen Profis den Anleihenmarkt lesen – und eine Wochenroutine.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-27","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/markttechnik.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Verstehen","item":"https://www.metalconcrete.de/wissen.html"},{"@type":"ListItem","position":3,"name":"Markttechnik lesen","item":"https://www.metalconcrete.de/markttechnik.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="verstehen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn current" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe current">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>Markttechnik lesen</h1>
+    <p class="sub">Profis prognostizieren das Zinsniveau nicht – sie lesen ab, was der Markt schon eingepreist hat, und wo das Angebot herkommt. Fünf Signale und eine Wochenroutine. Sechs Karten, jede mit Schaubild. Lesezeit: etwa 7 Minuten.</p>
+    <nav class="lands" aria-label="Zum Thema springen">
+      <a class="lbtn" href="#auktion"><span class="n">1</span>Auktionen</a>
+      <a class="lbtn" href="#erwartung"><span class="n">2</span>Leitzins-Erwartung</a>
+      <a class="lbtn" href="#bilanz"><span class="n">3</span>Zentralbankbilanz</a>
+      <a class="lbtn" href="#swap"><span class="n">4</span>Swap-Spread</a>
+      <a class="lbtn" href="#breakeven"><span class="n">5</span>Breakeven-Inflation</a>
+      <a class="lbtn" href="#routine"><span class="n">6</span>Die Wochenroutine</a>
+    </nav>
+
+    <section class="kap" id="auktion" aria-labelledby="h-auktion">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">1</span>
+        <h2 id="h-auktion">Auktionen: Wo das Angebot herkommt</h2>
+        <p>Der Bund leiht sich Geld per Auktion: Die <strong>Finanzagentur</strong> veröffentlicht jedes Quartal den Emissionskalender – welche Laufzeit wann in welchem Volumen kommt. Banken bieten, die Bundesbank teilt zu. Große Volumina drücken auf die Kurse der laufenden Anleihen, schon Tage vorher.</p><p>Das Ergebnis liest du in einer Zahl: <strong>Bid-to-Cover</strong>, Gebote geteilt durch Zuteilung. Über 2 heißt gefragt, unter 1,5 heißt zäh – dann steigen die Renditen oft weiter. Bei Unternehmen läuft es über Syndikate; die <strong>Neuemissionsprämie</strong> (ein paar Basispunkte über der laufenden Anleihe) zeigt, wie hungrig der Markt ist.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">So liest du ein Auktionsergebnis</p><div class="zettel" role="img" aria-label="Beispiel-Auktionszettel: 10-jährige Bundesanleihe, Emissionsvolumen 4,5 Milliarden Euro, Gebote 9,0 Milliarden, Zuteilung 3,6 Milliarden, Marktpflegequote 0,9 Milliarden, Durchschnittsrendite 2,60 Prozent, Bid-to-Cover 2,5."><div class="zk"><span>Bundesanleihe 10 Jahre</span><span>Beispiel</span></div><dl><dt>Emissionsvolumen</dt><dd>4,5 Mrd.&nbsp;€</dd><dt>Gebote</dt><dd>9,0 Mrd.&nbsp;€</dd><dt>Zuteilung an Bieter</dt><dd>3,6 Mrd.&nbsp;€</dd><dt>Marktpflegequote (Bund behält)</dt><dd>0,9 Mrd.&nbsp;€</dd><dt>Durchschnittsrendite</dt><dd class="hl">2,60&nbsp;%</dd></dl><div class="btc"><span>Bid-to-Cover = Gebote ÷ Zuteilung</span><b>2,5</b></div></div><p class="sb-f">Kalender und Ergebnisse veröffentlicht die Finanzagentur (deutsche-finanzagentur.de), Auktionen laufen über die Bundesbank. Zahlen hier erfunden, Struktur echt.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Emissionskalender = das Angebot der nächsten Wochen. Bid-to-Cover = wie gern es genommen wird.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="erwartung" aria-labelledby="h-erwartung">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">2</span>
+        <h2 id="h-erwartung">Leitzins: Nicht der Wert zählt, sondern die Erwartung</h2>
+        <p>Der <a href="begriffe.html#leitzins">Einlagesatz der EZB</a> steht in der Zeitung. Was du dort nicht liest: <strong>welche Schritte der Markt für die nächsten Sitzungen schon eingepreist hat.</strong> Die kurzen Laufzeiten handeln diese Erwartung – deshalb bewegt sich die 2-jährige oft Monate vor der EZB.</p><p>Die Regel: <strong>Nur die Überraschung bewegt den Markt.</strong> Senkt die EZB wie erwartet, passiert nichts. Senkt sie nicht, obwohl der Markt es erwartet hat, steigen die Renditen. Wer die Erwartung kennt, weiß, was „gut“ und „schlecht“ an einem EZB-Tag bedeutet.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Was der Markt einpreist – Beispiel</p><svg class="sb tp" viewBox="0 0 480 190" role="img" aria-labelledby="sb2t"><title id="sb2t">Treppe: Einlagesatz heute 2,50 Prozent, vom Markt erwartet 2,25 nach der nächsten Sitzung, 2,00 danach, dann Pause. Ein Halten bei 2,50 wäre eine Überraschung nach oben.</title><g class="tick"><text x="44" y="46" text-anchor="end">2,50</text><text x="44" y="88" text-anchor="end">2,25</text><text x="44" y="130" text-anchor="end">2,00</text></g><g stroke="#1A1A19" stroke-opacity="0.12"><line x1="52" y1="42" x2="440" y2="42"/><line x1="52" y1="84" x2="440" y2="84"/><line x1="52" y1="126" x2="440" y2="126"/></g><path d="M52 42 H160 V84 H270 V126 H440" fill="none" stroke="#1DA300" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M160 42 H440" fill="none" stroke="#993C1D" stroke-width="2.2" stroke-dasharray="5 4" stroke-linecap="round"/><circle cx="52" cy="42" r="6" fill="#1A1A19" stroke="#fff" stroke-width="2"/><circle cx="160" cy="84" r="5" fill="#1DA300" stroke="#fff" stroke-width="2"/><circle cx="270" cy="126" r="5" fill="#1DA300" stroke="#fff" stroke-width="2"/><text x="60" y="30" class="axt">heute 2,50&nbsp;%</text><text x="300" y="112" class="axt" fill="#157C00">eingepreist: zwei Senkungen</text><text x="300" y="34" class="axt" fill="#993C1D">Halten = Überraschung</text><g class="tick" text-anchor="middle"><text x="160" y="160">nächste Sitzung</text><text x="270" y="160">übernächste</text><text x="380" y="160">danach</text></g><text x="8" y="14" class="axt">↑ Einlagesatz in&nbsp;%</text><text x="472" y="184" text-anchor="end" class="axt">EZB-Sitzungen →</text></svg><p class="sb-f">Angenommener Pfad. Den echten liest du aus den €STR-Terminsätzen (Overnight-Index-Swaps), die Nachrichtenagenturen vor jeder Sitzung als „vom Markt erwartet“ zitieren.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Der Markt handelt die Erwartung, nicht den Beschluss. Nur die Abweichung davon bewegt deine Kurse.</span></p>
+    </section>
+
+    <section class="kap" id="bilanz" aria-labelledby="h-bilanz">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">3</span>
+        <h2 id="h-bilanz">Die Zentralbankbilanz: der größte Käufer geht</h2>
+        <p>Von 2015 bis 2022 kaufte die EZB Anleihen für Billionen (Quantitative Easing) – <strong>ein Käufer, der nie auf den Preis schaut, drückt die Renditen.</strong> Seit 2023 lässt sie die Bestände auslaufen: Quantitative Tightening. Was fällig wird, kauft sie nicht nach.</p><p>Für dich heißt das: <strong>Der Markt muss jedes Jahr mehr Anleihen aufnehmen</strong> – die des Staates plus die, die aus der EZB-Bilanz zurückkommen. Das hebt die Laufzeitprämie: Lange Laufzeiten bringen wieder spürbar mehr als kurze, und der <a href="anleihenleiter.html#rolldown">Roll-down</a> lohnt sich wieder.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Kaufen oder auslaufen lassen</p><div class="zwei" role="img" aria-label="Quantitative Easing: Zentralbank kauft, Nachfrage steigt, Kurse steigen, Renditen fallen, Laufzeitprämie klein. Quantitative Tightening: Bestände laufen aus, Angebot am Markt steigt, Kurse fallen, Renditen steigen, Laufzeitprämie wächst."><div class="zr"><span class="zr-k">QE: Zentralbank kauft</span><span class="zr-z">2015 – 2022</span><div class="zr-f"><span class="pf up">↑</span><span>Nachfrage, Kurse</span><span class="pf dn">↓</span><span>Renditen, Laufzeitprämie</span></div></div><div class="zr"><span class="zr-k">QT: Bestände laufen aus</span><span class="zr-z">seit 2023</span><div class="zr-f"><span class="pf up">↑</span><span>Angebot am Markt, Renditen</span><span class="pf dn">↓</span><span>Kurse; Laufzeitprämie wächst</span></div></div></div><p class="sb-f">Die Bilanzsumme des Eurosystems und die Anleihebestände (APP, PEPP) veröffentlicht die EZB wöchentlich.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Kauft die Zentralbank, sind lange Laufzeiten teuer. Zieht sie sich zurück, bezahlt der Markt dich wieder fürs Warten.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="swap" aria-labelledby="h-swap">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">4</span>
+        <h2 id="h-swap">Swap-Spread: Ist die Bundesanleihe noch knapp?</h2>
+        <p>Banken tauschen untereinander feste gegen variable Zinsen; der feste Satz für zehn Jahre ist der <strong>Swap-Satz</strong> – der Zins ohne Staat. Die Bundesanleihe rentierte jahrzehntelang darunter: Wer den sichersten Schuldner will, zahlt einen Knappheitsaufschlag.</p><p>Seit Ende 2024 ist das zeitweise gekippt: <strong>Die 10-jährige Bundesanleihe rentiert über dem Swap-Satz.</strong> Nicht, weil der Bund unsicher wäre – sondern weil viel mehr Bundesanleihen kommen (Sondervermögen, gelockerte Schuldenbremse) und die EZB weniger hält. Für dich: Bund ist nicht mehr überteuert, und Pfandbriefe oder Agenturen bringen relativ weniger Extra als früher.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">10 Jahre: Swap-Satz und Bundesanleihe – Beispiel</p><div class="balken" role="img" aria-label="Früher: Swap-Satz 2,60, Bundesanleihe 2,30 Prozent, Spread plus 30 Basispunkte Knappheit. Heute: Swap 2,60, Bund 2,65, Spread minus 5 Basispunkte."><div class="hb ax-row"><span class="ax-t">Früher</span><span class="ax-t">Rendite →</span></div><div class="hb"><span class="hb-l">Swap-Satz</span><span class="hb-bar n" style="--w:100%"><b>2,60&nbsp;%</b></span></div><div class="hb"><span class="hb-l">Bund<small>Knappheitsaufschlag</small></span><span class="hb-bar" style="--w:88%"><b>2,30&nbsp;%</b></span></div><div class="hb ax-row" style="margin-top:12px"><span class="ax-t">Heute</span><span></span></div><div class="hb"><span class="hb-l">Swap-Satz</span><span class="hb-bar n" style="--w:100%"><b>2,60&nbsp;%</b></span></div><div class="hb"><span class="hb-l">Bund<small>mehr Angebot</small></span><span class="hb-bar o" style="--w:102%"><b>2,65&nbsp;%</b></span></div></div><div class="erg"><span>Swap-Spread früher +30 → heute</span><b>−5 Bp</b></div><p class="sb-f">Werte angenommen; die Größenordnung entspricht dem Wechsel seit Ende 2024. 1 Basispunkt (Bp) = 0,01 Prozentpunkte.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Swap-Spread = Preis der Knappheit. Positiv: Bund ist teuer. Negativ: Bund ist reichlich – und fair bezahlt.</span></p>
+    </section>
+
+    <section class="kap" id="breakeven" aria-labelledby="h-breakeven">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">5</span>
+        <h2 id="h-breakeven">Breakeven-Inflation: Was der Markt erwartet</h2>
+        <p>Der Bund hat <a href="begriffe.html#inflationsindexiert">inflationsindexierte Anleihen</a>, die eine reale Rendite zahlen. <strong>Nominale Rendite minus reale Rendite = Breakeven-Inflation</strong> – die Inflation, bei der beide gleich abschneiden. Liegt sie bei 2,0&nbsp;%, erwartet der Markt im Schnitt 2&nbsp;% Inflation über die Laufzeit.</p><p>So nutzt du sie: <strong>Erwartest du mehr Inflation als der Breakeven, ist die indexierte Anleihe die bessere Wahl</strong> – erwartest du weniger, die nominale. Und die Zahl sagt dir, was von deiner nominalen Rendite real übrig bleiben dürfte. Die aktuellen Werte stehen täglich auf der Seite <a href="realzins.html#erwartung">Realzins</a>.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Nominal, real, Breakeven – Beispiel 10 Jahre</p><div class="balken" role="img" aria-label="Nominale Bundesanleihe 2,6 Prozent, inflationsindexierte real 0,6 Prozent, Breakeven-Inflation 2,0 Prozent."><div class="hb"><span class="hb-l">Bund nominal</span><span class="hb-bar" style="--w:100%"><b>2,6&nbsp;%</b></span></div><div class="hb"><span class="hb-l">Bund real<small>inflationsindexiert</small></span><span class="hb-bar g" style="--w:30%"><b>0,6&nbsp;%</b></span></div></div><div class="erg"><span>Breakeven = 2,6 − 0,6</span><b>2,0&nbsp;%</b></div><p class="sb-f">Angenommene Werte. Der Breakeven enthält auch eine kleine Risikoprämie und schwankt mit der Liquidität der indexierten Anleihen – er ist eine Marktmeinung, keine Prognose.</p><a class="go sb-go" href="realzins.html#erwartung">Realzins: die Breakeven-Werte heute →</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Breakeven = nominal minus real = die Inflation, die der Markt einpreist. Deine Meinung dagegen entscheidet: indexiert oder nominal.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="routine" aria-labelledby="h-routine">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">6</span>
+        <h2 id="h-routine">Die Wochenroutine: fünf Blicke, zehn Minuten</h2>
+        <p>Du brauchst kein Bloomberg-Terminal. <strong>Ein fester Blick pro Woche</strong> auf fünf Signale reicht, um zu wissen, in welchem Regime der Markt gerade ist – und ob deine <a href="anleihenleiter.html#kurve">Strategie</a> noch zur Kurve passt.</p><p>Die Reihenfolge ist Absicht: erst die Kurve (das Gesamtbild), dann die Aufschläge (das Risiko), dann Inflation und EZB (die Richtung), zuletzt der Kalender (das Angebot). Alles außer den beiden Kalendern findest du auf dieser Website, täglich aktualisiert.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Signal · wo · was es dir sagt</p><table class="qt" aria-label="Wochenroutine: fünf Signale, Fundstelle und Bedeutung"><thead><tr><th scope="col">Signal</th><th scope="col">Wo</th><th scope="col">Sagt dir</th></tr></thead><tbody><tr><td>Zinskurve</td><td><a href="zinskurve.html">Zinskurve seit 1972</a></td><td>steil, flach oder invers – lohnt lang?</td></tr><tr><td>Aufschläge</td><td><a href="risikoaufschlaege.html">Risikoaufschläge</a></td><td>Angst oder Ruhe – Bonität wählen</td></tr><tr><td>Realzins, Breakeven</td><td><a href="realzins.html">Realzins seit 1970</a></td><td>was nach Inflation bleibt</td></tr><tr><td>EZB-Termin</td><td>EZB-Kalender, 8 Sitzungen im Jahr</td><td>erwartet vs. beschlossen</td></tr><tr><td>Emissionskalender</td><td>Finanzagentur, je Quartal</td><td>Angebot der nächsten Wochen</td></tr></tbody></table><p class="sb-f">Dazu monatlich die Inflationszahl (Destatis, Schnellschätzung am Monatsende) – sie bewegt die Erwartung an die EZB am stärksten.</p><a class="go sb-go" href="beobachten.html">Übersicht Zinsen: alle Datenseiten →</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Kurve, Aufschläge, Realzins, EZB, Kalender – einmal die Woche. Nicht um zu handeln, sondern um nicht überrascht zu werden.</span></p>
+    </section>
+
+    <div class="weiter">
+      <a class="go" href="zinskurve.html">Zinskurve seit 1972 →</a>
+      <a class="go leise" href="realzins.html">Realzins und Breakeven →</a>
+      <a class="go leise" href="risikoaufschlaege.html">Risikoaufschläge seit 1953 →</a>
+    </div>
+    <p class="klein">Diese Seite erklärt Marktsignale. Sie ist keine Zinsprognose und keine Anlageberatung. Zahlen in den Schaubildern sind Beispiele, wo nicht anders angegeben.</p>
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="zinsniveau.html">Zinsniveau – warum es steigt und fällt</a></li>
+        <li><a href="anleihenleiter.html">Leiter, Hantel, Roll-down – die Strategie zur Kurve</a></li>
+        <li><a href="duration.html">Duration und Konvexität</a></li>
+        <li><a href="langlaeufer.html">Langläufer – wo die Laufzeitprämie am größten ist</a></li>
+      </ul>
+    </nav>
+    <details class="quellen" id="quellen">
+      <summary>Datenquellen und Methodik</summary>
+      <div class="quellen-body">
+        <p><strong>Auktionen.</strong> Emissionsplanung und Auktionsergebnisse: Bundesrepublik Deutschland – Finanzagentur GmbH (Quartalsvorschau, Ergebnisse je Tender), Durchführung über das Bund-Bietungs-System der Deutschen Bundesbank. Bid-to-Cover = Gebotsvolumen ÷ Zuteilung; die Marktpflegequote ist der Anteil, den der Bund für die spätere Abgabe im Sekundärmarkt zurückbehält. Die Zahlen in Karte 1 sind erfunden.</p>
+        <p><strong>Erwartungen.</strong> Eingepreiste Leitzinsschritte werden aus €STR-Overnight-Index-Swaps (Euroraum) bzw. Fed-Funds-Futures (USA) abgeleitet; der Pfad in Karte 2 ist angenommen. EZB-Einlagesatz seit 2019 und die Historie stehen auf der Seite <a href="zinsniveau.html#ezb">Zinsniveau</a>.</p>
+        <p><strong>Bilanz.</strong> Ankaufprogramme APP (ab 2015) und PEPP (2020–2022) des Eurosystems; seit März 2023 Abbau der APP-Bestände durch Nichtwiederanlage, seit 2025 auch PEPP (EZB, wöchentlicher Finanzausweis, Statistical Data Warehouse).</p>
+        <p><strong>Swap-Spread.</strong> Differenz zwischen dem 10-jährigen Euro-Zinsswap (fest gegen 6-Monats-Euribor bzw. €STR) und der Rendite der 10-jährigen Bundesanleihe. Seit dem vierten Quartal 2024 zeitweise negativ (Bund über Swap); die Zahlen in Karte 4 sind Beispiele für die Größenordnung, keine Tageswerte.</p>
+        <p><strong>Breakeven.</strong> Nominale Rendite einer Bundesanleihe minus reale Rendite der inflationsindexierten Bundesanleihe gleicher Laufzeit (Index: HVPI Euroraum ohne Tabak); tagesaktuelle Werte und die drei umlaufenden indexierten Bundesanleihen auf der Seite <a href="realzins.html#erwartung">Realzins</a>. Die Zahlen in Karte 5 sind angenommen.</p>
+      </div>
+    </details>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt: die Seite rendert auch ohne Menü-Skript.
+window.MC = window.MC || { navInit: function () {} };
+MC.navInit();
+</script>
+</body>
+</html>

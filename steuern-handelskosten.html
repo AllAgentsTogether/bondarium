@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steuern und Handelskosten bei Anleihen: Was von der Rendite bleibt – METALCONCRETE</title>
+<meta name="description" content="Abgeltungsteuer auf Zins und Kursgewinn, Stückzinsen als Steuerhebel, Nullkupon und Fremdwährung, Ordergebühr, Geld-Brief-Spanne und Stückelung: Was zwischen brutto und netto liegt.">
+<link rel="canonical" href="https://www.metalconcrete.de/steuern-handelskosten.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/steuern-handelskosten.html">
+<meta property="og:title" content="Steuern und Handelskosten bei Anleihen: Was von der Rendite bleibt – METALCONCRETE">
+<meta property="og:description" content="Abgeltungsteuer auf Zins und Kursgewinn, Stückzinsen als Steuerhebel, Nullkupon und Fremdwährung, Ordergebühr, Geld-Brief-Spanne und Stückelung: Was zwischen brutto und netto liegt.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Steuern und Handelskosten bei Anleihen: Was von der Rendite bleibt – METALCONCRETE">
+<meta name="twitter:description" content="Abgeltungsteuer auf Zins und Kursgewinn, Stückzinsen als Steuerhebel, Nullkupon und Fremdwährung, Ordergebühr, Geld-Brief-Spanne und Stückelung: Was zwischen brutto und netto liegt.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Steuern und Handelskosten – neu 27.09.2026 (Menü Verstehen, Profi): sechs Karten im Look von „Laufzeit“ und „Duration“.
+     Allgemeine Information mit Stand-Datum, keine Steuerberatung (Hinweis oben und im Aufklapper). Schaubilder als HTML-Balken. Grundregeln in base.css. */
+
+  .stand { display: inline-flex; align-items: center; gap: 8px; margin: -8px 0 22px; padding: 7px 12px; border-radius: 999px; background: #fff; border: 1px solid rgba(26,26,25,0.14); font-size: 13px; color: var(--text); }
+  .stand b { font-weight: 600; color: var(--ink); }
+
+  /* Balken (1, 2, 5) */
+  .balken .hb { display: grid; grid-template-columns: 150px minmax(0, 1fr); align-items: center; gap: 10px; }
+  .balken .hb + .hb { margin-top: 7px; }
+  .hb-l { font-size: 13.5px; font-weight: 600; color: var(--ap-ink); line-height: 1.25; }
+  .hb-l small { display: block; font-size: 12px; font-weight: 400; color: var(--text); }
+  .hb-bar { display: flex; align-items: center; justify-content: flex-end; height: 28px; width: var(--w); min-width: max-content; padding: 0 8px 0 10px; border-radius: 6px; background: #1F7A5E; }
+  .hb-bar.o { background: #A3651A; } .hb-bar.r { background: var(--down); } .hb-bar.n { background: #8E8D86; } .hb-bar.g { background: #1DA300; }
+  .hb-bar b { color: #fff; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .erg { margin-top: 10px; padding: 9px 12px; border-radius: 10px; background: #fff; border: 1.5px solid var(--green-line); font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .erg b { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; color: var(--green-text); }
+
+  /* Zwei Fälle (2, 4) */
+  .zwei { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .zf { display: flex; flex-direction: column; background: var(--ap-soft); border-radius: 12px; padding: 12px 10px; }
+  .zf-k { font-size: 14px; font-weight: 600; }
+  .zf-z { font-size: 12.5px; color: var(--text); margin-top: 1px; }
+  .zf-r { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; margin-top: 8px; font-variant-numeric: tabular-nums; }
+  .zf-r.plus { color: var(--up); } .zf-r.minus { color: var(--down); }
+  .zf-w { font-size: 12.5px; line-height: 1.4; margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(26,26,25,0.10); color: var(--ink); }
+
+  /* Zeitstrahl Stückzinsen (3) */
+  .zs { position: relative; height: 134px; margin-top: 6px; }
+  .zs .ln { position: absolute; left: 4%; right: 4%; top: 58px; height: 3px; background: rgba(26,26,25,0.18); border-radius: 2px; }
+  .zs .ev { position: absolute; top: 0; width: 150px; margin-left: -75px; text-align: center; font-size: 12.5px; line-height: 1.3; color: var(--text); }
+  .zs .ev b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .zs .ev.minus b { color: var(--down); } .zs .ev.plus b { color: var(--up); }
+  .zs .ev::after { content: ""; position: absolute; left: 50%; top: 52px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: #1A1A19; border: 3px solid #fff; box-shadow: 0 0 0 1.5px rgba(26,26,25,0.25); }
+  .zs .ev.plus::after { background: #1DA300; } .zs .ev.minus::after { background: var(--down); }
+  .zs .ev .u { position: absolute; left: 0; right: 0; top: 74px; font-size: 12px; color: var(--text); }
+  .zs .jahr { position: absolute; top: 112px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); }
+
+  /* Stückelung (6) */
+  .stk { display: flex; height: 40px; border-radius: 8px; overflow: hidden; }
+  .stk span { display: grid; place-items: center; color: #fff; font-size: 13.5px; font-weight: 600; font-variant-numeric: tabular-nums; width: var(--w); }
+  .stk .a { background: #1DA300; } .stk .b { background: #A3651A; } .stk .c { background: #55544F; }
+  .stk-leg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; font-size: 12.5px; line-height: 1.35; color: var(--text); }
+  .stk-leg b { display: block; color: var(--ink); font-weight: 600; }
+
+  .sb-f { font-size: 12.5px; color: var(--text); margin-top: 10px; line-height: 1.45; }
+  .sb-go { margin-top: 14px; align-self: flex-start; font-size: 14px; padding: 10px 16px; }
+  @media (max-width: 600px) {
+    .balken .hb { grid-template-columns: 110px minmax(0, 1fr); } .hb-l { font-size: 12.5px; }
+    .zf-r { font-size: 19px; }
+    .zs .ev { width: 110px; margin-left: -55px; font-size: 12px; }
+    .stk-leg { grid-template-columns: 1fr; }
+    .sb-go { align-self: stretch; text-align: center; }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Steuern und Handelskosten bei Anleihen: Was von der Rendite bleibt","description":"Abgeltungsteuer auf Zins und Kursgewinn, Stückzinsen als Steuerhebel, Nullkupon und Fremdwährung, Ordergebühr, Geld-Brief-Spanne und Stückelung: Was zwischen brutto und netto liegt.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-27","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/steuern-handelskosten.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Verstehen","item":"https://www.metalconcrete.de/wissen.html"},{"@type":"ListItem","position":3,"name":"Steuern und Handelskosten","item":"https://www.metalconcrete.de/steuern-handelskosten.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="verstehen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn current" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe current">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>Steuern und Handelskosten: Was von der Rendite bleibt</h1>
+    <p class="sub">Zwischen 3,9&nbsp;% auf dem Kurszettel und dem Geld auf deinem Konto liegen Abgeltungsteuer, Ordergebühr und Geld-Brief-Spanne. Wer sie kennt, holt bei gleicher Anleihe mehr heraus. Sechs Karten, jede mit Schaubild. Lesezeit: etwa 6 Minuten.</p>
+    <p class="stand"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg><span><b>Allgemeine Information, keine Steuerberatung.</b> Steuerregeln: Stand September 2026, deutsche Privatanleger. Im Einzelfall entscheidet dein Steuerberater.</span></p>
+    <nav class="lands" aria-label="Zum Thema springen">
+      <a class="lbtn" href="#zins"><span class="n">1</span>Steuer auf den Zins</a>
+      <a class="lbtn" href="#kursgewinn"><span class="n">2</span>Kursgewinn ist auch Ertrag</a>
+      <a class="lbtn" href="#stueckzinsen"><span class="n">3</span>Stückzinsen</a>
+      <a class="lbtn" href="#nullkupon"><span class="n">4</span>Nullkupon und Fremdwährung</a>
+      <a class="lbtn" href="#kosten"><span class="n">5</span>Handelskosten</a>
+      <a class="lbtn" href="#stueckelung"><span class="n">6</span>Stückelung</a>
+    </nav>
+
+    <section class="kap" id="zins" aria-labelledby="h-zins">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">1</span>
+        <h2 id="h-zins">Die Steuer auf den Zins</h2>
+        <p>Zinsen sind Kapitalerträge: <strong>25&nbsp;% <a href="begriffe.html#abgeltungsteuer">Abgeltungsteuer</a> plus Solidaritätszuschlag = 26,375&nbsp;%</strong>, mit Kirchensteuer rund 28&nbsp;%. Ein deutscher Broker zieht sie direkt ab – du siehst nur den Nettobetrag.</p><p>Steuerfrei bleiben 1.000&nbsp;€ im Jahr (Paare 2.000&nbsp;€), der <a href="begriffe.html#sparerpauschbetrag">Sparerpauschbetrag</a>. Er wirkt nur mit <a href="begriffe.html#freistellungsauftrag">Freistellungsauftrag</a> beim Broker. Auslandsbroker ohne deutsche Steuerabführung zahlen brutto aus – dann rechnest du in der Anlage KAP selbst ab.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">100&nbsp;€ Zins – was ankommt</p><div class="balken" role="img" aria-label="100 Euro Zins brutto. Ohne Kirchensteuer bleiben 73,63 Euro, mit 9 Prozent Kirchensteuer 72,01 Euro, innerhalb des Sparerpauschbetrags 100 Euro."><div class="hb"><span class="hb-l">Brutto</span><span class="hb-bar n" style="--w:100%"><b>100,00&nbsp;€</b></span></div><div class="hb"><span class="hb-l">Netto<small>26,375&nbsp;% Steuer</small></span><span class="hb-bar" style="--w:74%"><b>73,63&nbsp;€</b></span></div><div class="hb"><span class="hb-l">Mit Kirchensteuer<small>9&nbsp;%, zusammen 27,99&nbsp;%</small></span><span class="hb-bar o" style="--w:72%"><b>72,01&nbsp;€</b></span></div><div class="hb"><span class="hb-l">Im Pauschbetrag<small>bis 1.000&nbsp;€ im Jahr</small></span><span class="hb-bar g" style="--w:100%"><b>100,00&nbsp;€</b></span></div></div><p class="sb-f">Faustregel: Zins × 0,74 = netto. Der Pauschbetrag lohnt sich am meisten, wenn er beim Broker mit dem höchsten Zinsertrag hinterlegt ist.</p><a class="go sb-go" href="rechner.html#netto">Rechner: Zinsen netto nach Steuer →</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> 26,375&nbsp;% auf jeden Zins-Euro über dem Pauschbetrag. Freistellungsauftrag stellen, sonst verschenkst du 1.000&nbsp;€ steuerfreie Zinsen.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="kursgewinn" aria-labelledby="h-kursgewinn">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">2</span>
+        <h2 id="h-kursgewinn">Kursgewinn ist auch Ertrag</h2>
+        <p>Kaufst du zu 96 und bekommst 100 zurück, sind die 4 Punkte <strong>steuerpflichtig wie Zinsen</strong> – fällig erst bei Rückzahlung oder Verkauf, nicht Jahr für Jahr. Deine Rendite bis Fälligkeit ist also komplett steuerpflichtig, nicht nur der Kupon.</p><p>Umgekehrt gilt es auch: Kaufst du zu 104 und bekommst 100, ist der Verlust ein <strong>Kapitalverlust, der andere Kapitalerträge mindert</strong> – Zinsen, Dividenden, Aktiengewinne. Der Broker verrechnet ihn automatisch im Verlusttopf; über mehrere Broker hinweg geht das nur mit Verlustbescheinigung in der Steuererklärung.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Unter oder über 100 gekauft</p><div class="zwei" role="img" aria-label="Kauf 96, Rückzahlung 100: Gewinn 4 Punkte, steuerpflichtig bei Rückzahlung, netto 2,95 Punkte. Kauf 104, Rückzahlung 100: Verlust 4 Punkte, verrechenbar mit Zinsen und anderen Kapitalerträgen."><div class="zf"><span class="zf-k">Kauf 96 → 100</span><span class="zf-z">Kursgewinn 4 Punkte</span><span class="zf-r plus">+2,95 netto</span><span class="zf-w">Steuer 1,05 – aber erst bei Rückzahlung. Bis dahin arbeitet das Geld für dich.</span></div><div class="zf"><span class="zf-k">Kauf 104 → 100</span><span class="zf-z">Kursverlust 4 Punkte</span><span class="zf-r minus">−4,00 · Steuer −1,05</span><span class="zf-w">Verlust mindert Zinsen und andere Kapitalerträge – im selben Depot automatisch.</span></div></div><p class="sb-f">Hoher Kupon über 100 gekauft heißt: hohe Zinsen jetzt versteuern, Verlust erst am Ende gutgeschrieben. Niedriger Kupon unter 100: umgekehrt – steuerlich meist günstiger.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Die ganze Rendite ist steuerpflichtig – der Kursgewinn erst am Ende. Verluste über 100 senken die Steuer auf andere Erträge.</span></p>
+    </section>
+
+    <section class="kap" id="stueckzinsen" aria-labelledby="h-stueckzinsen">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">3</span>
+        <h2 id="h-stueckzinsen">Stückzinsen: Steuer verschieben</h2>
+        <p>Kaufst du zwischen zwei Zinsterminen, zahlst du dem Verkäufer die aufgelaufenen <a href="begriffe.html#stueckzinsen">Stückzinsen</a>. <strong>Steuerlich sind sie negative Zinsen:</strong> Der Broker bucht sie in den Verlusttopf, sie mindern sofort deine steuerpflichtigen Erträge. Den vollen Kupon versteuerst du später.</p><p>Das ist kein Geschenk, sondern eine Verschiebung – aber eine nützliche: <strong>Kauf im Dezember, Zinstermin im Januar</strong> drückt die Steuer im alten Jahr und schiebt den Ertrag ins neue. Wer den Pauschbetrag in einem Jahr nicht ausschöpft, kann ihn so besser nutzen.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Kupon 3&nbsp;%, Zinstermin 1. Februar, Kauf am 1. Dezember</p><div class="zs" role="img" aria-label="Kauf am 1. Dezember: Stückzinsen minus 2,50 Prozent, mindern die Steuer im alten Jahr. 1. Februar: Kupon plus 3,00 Prozent, steuerpflichtig im neuen Jahr. Wirtschaftlich bleiben 0,50 Prozent für zwei Monate."><span class="ln"></span><span class="ev minus" style="left:22%"><b>−2,50</b>Stückzinsen gezahlt<span class="u">1. Dezember · altes Jahr</span></span><span class="ev plus" style="left:70%"><b>+3,00</b>Kupon erhalten<span class="u">1. Februar · neues Jahr</span></span><span class="jahr" style="left:4%">Jahr 1</span><span class="jahr" style="right:4%">Jahr 2</span></div><div class="erg"><span>Ertrag für zwei Monate Haltezeit</span><b>0,50</b></div><p class="sb-f">Die −2,50 wirken im alten Jahr wie ein Verlust, die +3,00 im neuen wie Zinsen. Bei Verkauf zwischen Terminen bekommst du Stückzinsen – dann sind sie steuerpflichtig.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Gezahlte Stückzinsen senken die Steuer sofort, der Kupon kommt später dran. Über den Jahreswechsel ein Hebel für den Pauschbetrag.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="nullkupon" aria-labelledby="h-nullkupon">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">4</span>
+        <h2 id="h-nullkupon">Nullkupon und Fremdwährung</h2>
+        <p>Ein <a href="begriffe.html#nullkupon">Nullkupon</a> zahlt keinen Zins, sondern wird unter 100 gekauft und zu 100 zurückgezahlt. <strong>Die Steuer fällt erst am Ende an</strong> – bis dahin verzinst sich der volle Betrag, nicht nur der Nettozins. Über zehn Jahre bringt das bei 3&nbsp;% rund 0,7&nbsp;% mehr als eine Kuponanleihe. Sinnvoll für Geld mit festem Termin, nicht für laufendes Einkommen.</p><p>Bei <a href="begriffe.html#fremdwaehrungsanleihe">Fremdwährungsanleihen</a> rechnet das Finanzamt in Euro: <strong>Der Wechselkursgewinn zwischen Kauf und Rückzahlung ist Teil des steuerpflichtigen Kursgewinns</strong> – ein Verlust mindert entsprechend. Die Dollar-Anleihe zu 5&nbsp;% kann in Euro also mehr oder weniger als 5&nbsp;% versteuern.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">10.000&nbsp;€, 10 Jahre, 3&nbsp;%, nach Steuern</p><div class="zwei" role="img" aria-label="Kuponanleihe, Zinsen jährlich versteuert und netto wieder angelegt: 12.442 Euro. Nullkupon, Steuer erst bei Rückzahlung: 12.532 Euro, 90 Euro mehr."><div class="zf"><span class="zf-k">Kuponanleihe</span><span class="zf-z">Steuer jedes Jahr, netto wieder angelegt</span><span class="zf-r">12.442&nbsp;€</span><span class="zf-w">Der Zinseszins läuft nur auf den Nettozins von 2,21&nbsp;%.</span></div><div class="zf"><span class="zf-k">Nullkupon</span><span class="zf-z">Steuer erst bei Rückzahlung</span><span class="zf-r plus">12.532&nbsp;€</span><span class="zf-w">Zinseszins auf die vollen 3&nbsp;% – die Steuer kommt am Ende auf 3.439&nbsp;€ Gewinn.</span></div></div><p class="sb-f">Ohne Pauschbetrag gerechnet. Vorsicht: Nullkupons sind selten, oft wenig gehandelt und schwanken stark – <a href="duration.html">Duration = Laufzeit</a>.</p><a class="go sb-go" href="anleihen-suche.html?zins=2&amp;w=EUR">Suche: Nullkupon-Anleihen in Euro →</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Nullkupon = Steuer erst am Ende, Zinseszins auf brutto. Fremdwährung = auch der Wechselkurs wird versteuert.</span></p>
+    </section>
+
+    <section class="kap" id="kosten" aria-labelledby="h-kosten">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">5</span>
+        <h2 id="h-kosten">Handelskosten: die zweite Steuer</h2>
+        <p>Beim Kauf zahlst du zweimal: die <strong>Ordergebühr</strong> des Brokers (0 bis rund 50&nbsp;€, siehe <a href="broker-vergleich.html">Broker-Vergleich</a>) und die <a href="begriffe.html#geld-brief-spanne">Geld-Brief-Spanne</a> der Börse – bei Bundesanleihen 0,05&nbsp;%, bei kleinen Unternehmensanleihen auch 1&nbsp;% und mehr. Bei 5.000&nbsp;€ sind 10&nbsp;€ Gebühr plus 0,3&nbsp;% Spanne zusammen 25&nbsp;€, also 0,5&nbsp;%.</p><p>Entscheidend ist die Haltedauer: <strong>Einmalkosten verteilen sich auf die Jahre.</strong> Bei einem Jahr fressen die 0,5&nbsp;% ein Achtel der Rendite, bei zehn Jahren fast nichts. Immer mit <a href="begriffe.html#limit">Limit</a> ordern und den Handelsplatz mit dem engsten Spread wählen – das spart oft mehr als die Brokerwahl.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">25&nbsp;€ Einmalkosten auf 5.000&nbsp;€, je Jahr Haltedauer</p><div class="balken" role="img" aria-label="Einmalkosten von 0,5 Prozent verteilt: 1 Jahr 0,50 Prozent pro Jahr, 2 Jahre 0,25, 5 Jahre 0,10, 10 Jahre 0,05 Prozent pro Jahr."><div class="hb ax-row"><span class="ax-t">Haltedauer</span><span class="ax-t">Kosten pro Jahr →</span></div><div class="hb"><span class="hb-l">1 Jahr</span><span class="hb-bar r" style="--w:100%"><b>0,50&nbsp;%</b></span></div><div class="hb"><span class="hb-l">2 Jahre</span><span class="hb-bar o" style="--w:50%"><b>0,25&nbsp;%</b></span></div><div class="hb"><span class="hb-l">5 Jahre</span><span class="hb-bar" style="--w:20%"><b>0,10&nbsp;%</b></span></div><div class="hb"><span class="hb-l">10 Jahre</span><span class="hb-bar g" style="--w:10%"><b>0,05&nbsp;%</b></span></div></div><p class="sb-f">Nur Kaufkosten; wer bis zur Fälligkeit hält, zahlt beim Verkauf nichts. Bei 20.000&nbsp;€ statt 5.000&nbsp;€ wiegt die feste Gebühr ein Viertel so viel.</p><a class="go sb-go" href="broker-vergleich.html">Broker im Vergleich: Kosten je Kauf →</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Gebühr plus Spanne sind Einmalkosten – kurze Haltedauer macht sie teuer. Limit setzen, Spread vergleichen, bis zur Fälligkeit halten.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="stueckelung" aria-labelledby="h-stueckelung">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">6</span>
+        <h2 id="h-stueckelung">Stückelung: Was du überhaupt kaufen kannst</h2>
+        <p>Die <a href="begriffe.html#stueckelung">Stückelung</a> ist der kleinste handelbare Betrag. <strong>Fast die Hälfte der Euro-Unternehmensanleihen ist nur in 100.000-€-Stücken zu haben</strong> – die Emittenten sparen sich so den Prospekt für Privatanleger. Staatsanleihen sind fast alle ab 1.000&nbsp;€ oder sogar 0,01&nbsp;€ (Bund) erhältlich.</p><p>Für dich heißt das: Die schöne Rendite auf dem Kurszettel gibt es oft nur ab 100.000&nbsp;€ – oder gar nicht. Filtere in der Suche nach Mindestanlage, oder nimm für diese Segmente einen <a href="anleihen-etf.html">Anleihen-ETF</a>, der die großen Stücke für dich bündelt.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Euro-Unternehmensanleihen nach Stückelung</p><div role="img" aria-label="Von rund 21.700 Euro-Unternehmensanleihen im Register der Suche haben 37 Prozent eine Stückelung bis 1.000 Euro, 14 Prozent zwischen 1.001 und 99.999 Euro und 49 Prozent ab 100.000 Euro."><div class="stk"><span class="a" style="--w:37%">37&nbsp;%</span><span class="b" style="--w:14%">14&nbsp;%</span><span class="c" style="--w:49%">49&nbsp;%</span></div><div class="stk-leg"><span><b>bis 1.000&nbsp;€</b>für jedes Depot</span><span><b>1.001 bis 99.999&nbsp;€</b>meist 2.000 bis 50.000</span><span><b>ab 100.000&nbsp;€</b>nur für große Depots</span></div></div><p class="sb-f">Rund 21.700 Euro-Unternehmensanleihen im Register der Anleihen-Suche, Stand 26.09.2026. Euro-Staatsanleihen: 83&nbsp;% bis 1.000&nbsp;€.</p><a class="go sb-go" href="anleihen-suche.html?art=2&amp;w=EUR&amp;stk=a">Suche: Unternehmensanleihen ab 1.000&nbsp;€ →</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Erst die Stückelung prüfen, dann die Rendite bewundern. Die Hälfte der Unternehmensanleihen beginnt bei 100.000&nbsp;€.</span></p>
+    </section>
+
+    <div class="weiter">
+      <a class="go" href="rechner.html#netto">Rechner: Zinsen netto nach Steuer →</a>
+      <a class="go leise" href="broker-vergleich.html">Broker im Vergleich →</a>
+      <a class="go leise" href="erste-anleihe.html">Deine erste Anleihe: Order und Limit →</a>
+    </div>
+    <p class="klein">Allgemeine Information zu Steuern und Kosten, Stand September 2026, für Privatanleger mit Wohnsitz in Deutschland. Keine Steuer- und keine Anlageberatung – im Einzelfall hilft ein Steuerberater. Die Zahlen sind gerundet.</p>
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="rendite-lesen.html#netto">Rendite richtig lesen – von brutto zu real</a></li>
+        <li><a href="realzins.html">Realzins seit 1970 – auch nach Steuern</a></li>
+        <li><a href="anleihen-suche.html">Anleihen-Suche – mit Filter Mindestanlage</a></li>
+        <li><a href="anleihe-arten.html">Anleihe-Arten – Nullkupon, Fremdwährung &amp; Co.</a></li>
+      </ul>
+    </nav>
+    <details class="quellen" id="quellen">
+      <summary>Datenquellen und Methodik</summary>
+      <div class="quellen-body">
+        <p><strong>Steuern (Stand September 2026).</strong> Kapitalerträge nach § 20 EStG: Zinsen, Stückzinsen und Veräußerungs- bzw. Einlösungsgewinne von Anleihen; Abgeltungsteuer 25&nbsp;% (§ 32d EStG) plus Solidaritätszuschlag 5,5&nbsp;% = 26,375&nbsp;%, mit Kirchensteuer 8&nbsp;% 27,82&nbsp;%, 9&nbsp;% 27,99&nbsp;%. Sparerpauschbetrag 1.000&nbsp;€ / 2.000&nbsp;€ (§ 20 Abs. 9 EStG). Gezahlte Stückzinsen sind negative Einnahmen im allgemeinen Verlusttopf; Verluste aus Anleihen sind mit allen Kapitalerträgen verrechenbar (Aktienverluste dagegen nur mit Aktiengewinnen). Fremdwährung: Anschaffung und Rückzahlung werden zum jeweiligen Euro-Kurs bewertet, die Differenz ist Teil des Gewinns oder Verlusts. Günstigerprüfung, Kirchensteuer-Abzugsverfahren und Besonderheiten (Altbestände vor 2009, Verlustbescheinigung, Auslandsbroker) sind vereinfacht dargestellt. Allgemeine Information, keine Steuerberatung.</p>
+        <p><strong>Rechnungen.</strong> Netto = brutto × (1 − 0,26375). Nullkupon (Karte 4): 10.000&nbsp;€ × 1,03¹⁰ = 13.439&nbsp;€, Steuer 26,375&nbsp;% auf 3.439&nbsp;€ Gewinn = 907&nbsp;€, netto 12.532&nbsp;€; Kuponanleihe: 10.000&nbsp;€ × (1 + 0,03 × 0,73625)¹⁰ = 12.442&nbsp;€, ohne Pauschbetrag und Kosten. Handelskosten (Karte 5): 10&nbsp;€ Ordergebühr + 0,3&nbsp;% halbe Spanne auf 5.000&nbsp;€ = 25&nbsp;€ = 0,5&nbsp;%, geteilt durch die Haltedauer in Jahren.</p>
+        <p><strong>Stückelung (Karte 6).</strong> Auswertung des Registers der Anleihen-Suche (ESMA FIRDS, Stand 26.09.2026): 21.658 Unternehmensanleihen in Euro, davon 8.055 mit Stückelung bis 1.000&nbsp;€ (37&nbsp;%), 3.012 zwischen 1.001 und 99.999&nbsp;€ (14&nbsp;%), 10.590 ab 100.000&nbsp;€ (49&nbsp;%); 1.175 Euro-Staatsanleihen, davon 975 bis 1.000&nbsp;€ (83&nbsp;%).</p>
+      </div>
+    </details>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt: die Seite rendert auch ohne Menü-Skript.
+window.MC = window.MC || { navInit: function () {} };
+MC.navInit();
+</script>
+</body>
+</html>

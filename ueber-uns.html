@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Über uns – METALCONCRETE</title>
+<meta name="description" content="Zinsen für Jahre sichern statt Tagesgeld-Hopping: Wir machen Anleihen verständlich – für Privatpersonen und Unternehmen, mit täglich aktuellen Daten.">
+<link rel="canonical" href="https://www.metalconcrete.de/ueber-uns.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/ueber-uns.html">
+<meta property="og:title" content="Über uns – METALCONCRETE">
+<meta property="og:description" content="Zinsen für Jahre sichern statt Tagesgeld-Hopping: Wir machen Anleihen verständlich – für Privatpersonen und Unternehmen, mit täglich aktuellen Daten.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Über uns – METALCONCRETE">
+<meta name="twitter:description" content="Zinsen für Jahre sichern statt Tagesgeld-Hopping: Wir machen Anleihen verständlich – für Privatpersonen und Unternehmen, mit täglich aktuellen Daten.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+ <style>
+  /* Farbvariablen und .kap/.k-bild/.merk kommen aus base.css. Seiteneigene Bausteine: Schaubild-Legende, Gründe, Zielgruppen-Karten, dunkles Band */
+  .hero { max-width: 720px; }
+  .hero .sub { margin-bottom: 0; }
+  .kap { margin-top: 30px; }
+  .k-bild svg .axt { font-size: 13px; font-weight: 600; fill: #55544F; }
+  .lg { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12.5px; font-weight: 600; color: var(--text); margin: -2px 0 6px; }
+  .lg span::before { content: ""; display: inline-block; vertical-align: middle; margin: 0 6px 2px 0; }
+  .lg .lg-a::before { width: 18px; height: 4px; border-radius: 2px; background: #1DA300; }
+  .lg .lg-z::before { width: 9px; height: 9px; border-radius: 50%; background: #39FF14; box-shadow: inset 0 0 0 1.6px #157C00; }
+  .lg .lg-t::before { width: 18px; height: 2px; border-radius: 1px; background: rgba(26,26,25,0.7); }
+  .lg .lg-w::before { width: 9px; height: 9px; border-radius: 50%; background: #CF7430; }
+  .gruende { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .grund { display: flex; gap: 16px; align-items: flex-start; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 22px 22px 20px; box-shadow: var(--shadow); }
+  .grund .gi { flex: none; width: 46px; height: 46px; border-radius: 12px; background: var(--green-tint); color: var(--green-text); display: grid; place-items: center; }
+  .grund .gi svg { width: 24px; height: 24px; }
+  .grund h3 { margin-bottom: 6px; }
+  .grund p { font-size: 15px; line-height: 1.6; color: var(--text); }
+  .klein a { color: var(--green-text); }
+  .wer { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .karte { display: flex; flex-direction: column; gap: 12px; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 22px; box-shadow: var(--shadow); }
+  .karte .kopf { display: flex; align-items: center; gap: 16px; margin-bottom: 2px; }
+  .karte .kopf img { flex: none; width: 76px; height: 76px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--green-line); }
+  .karte .kicker { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); margin-bottom: 4px; }
+  .karte h3 { margin-bottom: 0; }
+  .karte > p { font-size: 15.5px; line-height: 1.6; color: var(--ink); }
+  .karte .plus { display: flex; gap: 12px; align-items: flex-start; background: var(--green-tint); border-radius: 12px; padding: 12px 14px; font-size: 15px; line-height: 1.5; }
+  .karte .plus span { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--green); color: var(--ink); font-weight: 700; font-size: 17px; line-height: 1; }
+  .karte ul { list-style: none; display: grid; gap: 6px; flex: 1; align-content: start; }
+  .karte li { font-size: 15px; line-height: 1.5; color: var(--ink); padding-left: 22px; position: relative; }
+  .karte li::before { content: ""; position: absolute; left: 0; top: 7px; width: 10px; height: 10px; border-radius: 50%; background: var(--green); }
+  .karte > a { font-size: 15px; font-weight: 600; color: var(--green-text); text-decoration: none; margin-top: 4px; }
+  .karte > a:hover { text-decoration: underline; }
+  .band { position: relative; overflow: hidden; margin-top: 56px; background: var(--ink); color: #fff; border-radius: var(--radius); padding: 44px 44px 42px; }
+  .band-deko { position: absolute; right: -40px; bottom: -60px; width: 360px; height: 360px; opacity: 0.22; pointer-events: none; }
+  .band h2, .band p, .band .weiter { position: relative; }
+  .band h2 { color: #fff; font-size: 36px; max-width: none; margin-bottom: 18px; }
+  .band h2 span { color: var(--green); }
+  .band p { font-size: 17px; line-height: 1.6; color: rgba(255,255,255,0.84); max-width: 640px; }
+  .band p + p { margin-top: 12px; }
+  .band p strong { color: #fff; }
+  .band .go.leise { background: transparent; color: #fff; border-color: rgba(255,255,255,0.45); }
+  .band .go.leise:hover { background: rgba(255,255,255,0.08); }
+  .band a:focus-visible { outline-color: var(--green); }
+  .kontakt p { font-size: 16.5px; line-height: 1.6; color: var(--ink); max-width: 720px; }
+  @media (max-width: 860px) { .gruende, .wer { grid-template-columns: 1fr; } }
+  @media (max-width: 600px) {
+    .kap { margin-top: 24px; }
+    .k-bild svg .tk { font-size: 16px; } .k-bild svg .an { font-size: 17px; } .k-bild svg .axt { font-size: 17px; }
+    .grund { padding: 18px 16px; gap: 14px; }
+    .grund .gi { width: 40px; height: 40px; }
+    .karte { padding: 20px 16px 20px; }
+    .karte .kopf img { width: 60px; height: 60px; }
+    .band { margin-top: 44px; padding: 30px 18px 30px; border-radius: 12px; }
+    .band h2 { font-size: 26px; }
+    .band p { font-size: 16px; }
+    .band-deko { width: 240px; height: 240px; right: -40px; bottom: -40px; }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Über uns","item":"https://www.metalconcrete.de/ueber-uns.html"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"Über uns","headline":"Zinsen, die bleiben.","description":"Zinsen für Jahre sichern statt Tagesgeld-Hopping: Wir machen Anleihen verständlich – für Privatpersonen und Unternehmen, mit täglich aktuellen Daten.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-29","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/ueber-uns.html"}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="ueber">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html" class="current">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+
+  <div class="hero">
+    <h1>Zinsen, die bleiben.</h1>
+    <p class="sub">Wir machen Anleihen verständlich – für alle, die sich Zinsen für Jahre sichern wollen, statt ihnen hinterherzulaufen. Privat wie im Unternehmen.</p>
+  </div>
+
+  <section class="kap" aria-labelledby="h-bild">
+    <div class="k-text">
+      <h2 id="h-bild">Der Unterschied in einem Bild</h2>
+      <p><strong>Beim Tagesgeld wandert der Zins.</strong> Den guten Zins gibt es oft nur als Lockangebot für ein paar Monate. Danach heißt es: neue Bank suchen, Konto eröffnen, Geld umziehen. Und sinkt das Zinsniveau, sinkt der Tagesgeldzins mit.</p>
+      <p><strong>Bei der Anleihe steht der Zins fest.</strong> Er wird beim Kauf vereinbart und gilt bis zur Fälligkeit. Jedes Jahr kommt die Zinszahlung, am Ende das Geld zurück – sofern der Herausgeber zahlen kann.</p>
+    </div>
+    <div class="k-bild"><p class="sb-k">Tagesgeld und Anleihe über die Jahre</p><p class="lg" aria-hidden="true"><span class="lg-a">Anleihe</span><span class="lg-z">Zinszahlung</span><span class="lg-t">Tagesgeld</span><span class="lg-w">Bankwechsel</span></p><svg class="sb" viewBox="0 0 460 244" role="img" aria-labelledby="sbt" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif"><title id="sbt">Schematisch: Der Zins einer Anleihe bleibt vom Kauf bis zur Fälligkeit gleich, jedes Jahr gibt es eine Zinszahlung, am Ende das Geld zurück. Der Tagesgeldzins startet als Lockangebot höher, fällt nach einigen Monaten, steigt nur nach einem Bankwechsel wieder und sinkt mit dem Zinsniveau.</title>
+      <text class="axt" x="4" y="16">↑ Zins</text>
+      <line x1="40" y1="200" x2="444" y2="200" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/>
+      <line x1="40" y1="30" x2="40" y2="200" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/>
+      <line x1="410" y1="100" x2="410" y2="200" stroke="#1A1A19" stroke-opacity="0.3" stroke-width="1.2" stroke-dasharray="4 4"/>
+      <text x="40" y="218" class="tk" font-size="12" fill="#55544F">Kauf</text>
+      <text x="410" y="218" text-anchor="middle" class="tk" font-size="12" fill="#55544F">Fälligkeit</text>
+      <path d="M40 62 H95 V128 H150 V84 H205 V148 H265 V114 H315 V166 L444 184" fill="none" stroke="#1A1A19" stroke-opacity="0.7" stroke-width="2.2" stroke-linejoin="round"/>
+      <circle cx="150" cy="128" r="5" fill="#CF7430"/><circle cx="265" cy="148" r="5" fill="#CF7430"/>
+      <line x1="40" y1="100" x2="410" y2="100" stroke="#1DA300" stroke-width="4" stroke-linecap="round"/>
+      <g fill="#39FF14" stroke="#157C00" stroke-width="1.6"><circle cx="101.7" cy="100" r="5"/><circle cx="163.3" cy="100" r="5"/><circle cx="225" cy="100" r="5"/><circle cx="286.7" cy="100" r="5"/><circle cx="348.3" cy="100" r="5"/><circle cx="410" cy="100" r="5"/></g>
+      <text x="46" y="52" class="an" font-size="13" font-weight="600" fill="#55544F">Lockangebot</text>
+      <text x="364" y="88" text-anchor="middle" class="an" font-size="13" font-weight="600" fill="#157C00">fester Zins</text>
+      <text x="444" y="160" text-anchor="end" class="an" font-size="13" font-weight="600" fill="#55544F">Tagesgeld</text>
+      <text class="axt" x="456" y="240" text-anchor="end">Zeit →</text>
+    </svg><p class="sb-f">Schematisch. Steigt das Zinsniveau, steigt auch der Tagesgeldzins – die Anleihe bleibt beim vereinbarten Zins. Dafür weißt du von Anfang an, woran du bist.</p></div>
+    <div class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><p><strong>Kurz gesagt:</strong> Zinsen festhalten statt hinterherlaufen.</p></div>
+  </section>
+
+  <section class="section" aria-labelledby="h-gruende">
+    <h2 id="h-gruende">Was dir eine Anleihe bringt</h2>
+    <div class="gruende">
+      <div class="grund">
+        <span class="gi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M9 15.5l2 2 4-4"/></svg></span>
+        <div><h3>Ein Einkommen, das bleibt</h3><p>Jedes Jahr kommt die vereinbarte Zinszahlung aufs Konto – bis zur Fälligkeit. Dann bekommst du dein Geld zurück.</p></div>
+      </div>
+      <div class="grund">
+        <span class="gi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+        <div><h3>Den Zins festhalten</h3><p>Gibt es gerade gute Zinsen, sicherst du sie dir für Jahre. Sinkt das Zinsniveau später, zahlt deine Anleihe trotzdem weiter wie vereinbart.</p></div>
+      </div>
+      <div class="grund">
+        <span class="gi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="12" cy="5" r="2"/><path d="M12 7v14M5 13a7 7 0 0 0 14 0M8.5 11h7"/></svg></span>
+        <div><h3>Kein Tagesgeld-Hopping</h3><p>Keine Lockangebote im Blick behalten, keine neuen Konten eröffnen, kein Geld hin- und herschieben. Einmal kaufen genügt.</p></div>
+      </div>
+      <div class="grund">
+        <span class="gi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+        <div><h3>Sicherheit und Unabhängigkeit</h3><p>Wer weiß, was wann zurückkommt, kann planen – für die Wohnung, das Auto oder den Ruhestand. Ganz ohne Bankaktionen.</p></div>
+      </div>
+    </div>
+    <p class="klein">Wie verlässlich die Zahlungen sind, hängt vom Herausgeber ab – worauf du achten solltest, steht unter <a href="bonitaet.html">Bonität</a>. Verkaufst du vor der Fälligkeit, gilt der Kurs an diesem Tag.</p>
+  </section>
+
+  <section class="section" aria-labelledby="h-wer">
+    <h2 id="h-wer">Für wen wir das machen</h2>
+    <div class="wer">
+      <div class="karte">
+        <div class="kopf"><img src="anlegerprofil-privatanleger.webp" width="76" height="76" alt="" loading="lazy" decoding="async"><div><p class="kicker">Privatpersonen</p><h3>Für dein Erspartes</h3></div></div>
+        <p>Du willst, dass dein Geld verlässlich Zinsen bringt – ohne jedes Jahr die Bank zu wechseln. Anleihen sind genau dafür gemacht.</p>
+        <ul>
+          <li>Ein regelmäßiges Einkommen aus Zinsen</li>
+          <li>Sparziele mit festem Datum – Auto, Wohnung, Ruhestand</li>
+          <li>Ein ruhiger Baustein neben Aktien und Tagesgeld</li>
+          <li>Einstieg ohne Vorwissen – alles Schritt für Schritt erklärt</li>
+        </ul>
+        <a href="anlegerprofile.html">Sind Anleihen etwas für dich? →</a>
+      </div>
+      <div class="karte">
+        <div class="kopf"><img src="anlegerprofil-unternehmerin.webp" width="76" height="76" alt="" loading="lazy" decoding="async"><div><p class="kicker">Unternehmerinnen und Unternehmer</p><h3>Für die Rücklagen deiner Firma</h3></div></div>
+        <p>Alle Gründe gelten auch hier – und einer kommt dazu:</p>
+        <p class="plus"><span aria-hidden="true">+</span>Für Firmen gibt es deutlich weniger Tagesgeld-Angebote. Viele Zinsaktionen gelten nur für Privatkunden.</p>
+        <ul>
+          <li>Rücklagen bis zu einem festen Datum anlegen – für Steuer, Investition oder Tilgung</li>
+          <li>Beträge über der Einlagensicherung breit verteilen</li>
+          <li>Flexibel bleiben – Anleihen sind börsentäglich handelbar</li>
+        </ul>
+        <a href="anlageziele.html">Welche Anleihe wozu passt →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="h-warum">
+    <svg class="band-deko" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" fill="none" stroke="#39FF14" stroke-width="4" stroke-linejoin="round"/></svg>
+    <h2 id="h-warum">Anleihen für alle –<br><span>nicht nur für Profis.</span></h2>
+    <p>Anleihen gehören zu den größten Märkten der Welt. Trotzdem gelten sie oft als Thema für Fachleute: viele Fachbegriffe, verstreute Daten, wenig verständliche Erklärungen. So bleibt Geld auf dem Konto liegen, statt verlässlich Zinsen zu bringen.</p>
+    <p><strong>Das wollen wir ändern.</strong> Wir erklären Anleihen so, dass jeder sie versteht, und zeigen täglich aktuelle Daten, mit denen du selbst entscheiden kannst.</p>
+    <div class="weiter">
+      <a class="go" href="grundlagen.html">Anleihen einfach erklärt →</a>
+      <a class="go leise" href="anleihen-suche.html">Zur Anleihen-Suche →</a>
+    </div>
+  </section>
+
+  <section class="section kontakt" aria-labelledby="h-kontakt">
+    <h2 id="h-kontakt">Kontakt</h2>
+    <!-- TODO vor Veröffentlichung: [E-MAIL-ADRESSE] durch die echte Adresse ersetzen (im href und im Linktext) – dieselbe wie im Impressum (rechtliches.html). -->
+    <p>Fragen, Hinweise oder einen Fehler gefunden? Schreib uns: <a href="mailto:[E-MAIL-ADRESSE]">[E-MAIL-ADRESSE]</a></p>
+  </section>
+
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+</script>
+</body>
+</html>

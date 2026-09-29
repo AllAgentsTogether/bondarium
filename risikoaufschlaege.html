@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Risikoaufschläge seit 1953 – METALCONCRETE</title>
+<meta name="description" content="Risikoaufschläge seit 1953: Wie viel mehr Zins Italien, Frankreich und US-Unternehmen zahlen als der sicherste Schuldner – das Angstbarometer der Anleihen.">
+<link rel="canonical" href="https://www.metalconcrete.de/risikoaufschlaege.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/risikoaufschlaege.html">
+<meta property="og:title" content="Risikoaufschläge seit 1953 – METALCONCRETE">
+<meta property="og:description" content="Risikoaufschläge seit 1953: Wie viel mehr Zins Italien, Frankreich und US-Unternehmen zahlen als der sicherste Schuldner – das Angstbarometer der Anleihen.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Risikoaufschläge seit 1953 – METALCONCRETE">
+<meta name="twitter:description" content="Risikoaufschläge seit 1953: Wie viel mehr Zins Italien, Frankreich und US-Unternehmen zahlen als der sicherste Schuldner – das Angstbarometer der Anleihen.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Risikoaufschläge seit 1953 (neu 26.09.2026, Menü „Zinsen“ (bis 29.09.2026 „Einordnen“)): vier Heute-Kacheln, zwei Charts
+     (Euro-Staaten gegen Bund seit 1991; US-Unternehmen Aaa/Baa gegen US-Staatsanleihe seit 1953),
+     drei Erklärkarten im Look von „Realzins seit 1970“. Grundregeln in base.css.
+     Daten: risikoaufschlaege.json (scripts/update_risikoaufschlaege.py), per inline_data.py eingebettet. */
+
+  /* Heute: vier Kacheln (Muster realzins.html) */
+  .heute { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 26px 0 30px; }
+  .hk { background: #fff; border: 1px solid rgba(26,26,25,0.08); border-radius: 14px; padding: 16px 18px 14px; box-shadow: var(--shadow); display: grid; gap: 4px; align-content: start; min-width: 0; }
+  .hk-l { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .hk-l .sw { width: 14px; height: 4px; border-radius: 2px; background: var(--c); flex: none; }
+  .hk-v { font-size: 34px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .hk-v small { font-size: 13px; font-weight: 600; letter-spacing: 0; color: var(--text); margin-left: 5px; }
+  .hk-d { font-size: 12.5px; color: var(--text); line-height: 1.45; }
+  .hk-d b { color: var(--ink); font-weight: 600; }
+  @media (max-width: 900px) { .heute { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 600px) { .heute { gap: 8px; margin: 20px 0 24px; } .hk { padding: 12px 12px 11px; border-radius: 12px; } .hk-l { font-size: 12px; letter-spacing: 0.05em; gap: 6px; } .hk-l .sw { width: 10px; } .hk-v { font-size: 25px; } .hk-v small { font-size: 12px; margin-left: 3px; } .hk-d { font-size: 12px; } }
+
+  /* Chart-Blöcke: Kopfzeile, Titel, Legende als Schalter (Muster zinskurve.html), Chart in echter Breite */
+  .ckopf { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; border-bottom: 1px solid var(--rule); padding-bottom: 10px; }
+  .ckopf .eyebrow { margin: 0; flex: 1 1 420px; }
+  .cblock { margin-top: 22px; }
+  .cblock + .cblock { margin-top: 34px; }
+  .ctitel { font-size: 15px; font-weight: 600; color: var(--ink); margin: 0 0 4px; }
+  .cerkl { font-size: 14px; color: var(--text); margin: 0 0 8px; max-width: 760px; line-height: 1.5; }
+  .legend { display: flex; gap: 6px 20px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--ink); margin: 0 0 4px; }
+  .legend .leg { display: inline-flex; align-items: center; gap: 7px; color: var(--ink); }
+  .legend button.leg { font: inherit; background: none; border: 0; padding: 4px 0; min-height: 24px; cursor: pointer; border-radius: 3px; text-underline-offset: 4px; }
+  .legend button.leg:hover, .legend button.leg.on { text-decoration: underline; text-decoration-thickness: 1px; }
+  .legend button.leg:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .legend button.leg[aria-pressed="false"] { color: var(--muted); text-decoration: line-through; }
+  .legend button.leg[aria-pressed="false"] .sw-line { opacity: 0.3; }
+  .legend .leg-hint { font-size: 12px; color: var(--muted); flex-basis: 100%; }
+  .sw-line { width: 20px; height: 3px; border-radius: 2px; background: var(--c, var(--line)); }
+  .chart-scroll .ser { transition: opacity .15s; }
+  .chart-scroll .ser.dim { opacity: 0.18; }
+  .chart-scroll .ser.hi .line { stroke-width: 2.8; }
+  svg { width: 100%; height: auto; display: block; }
+  /* Charts werden in der echten Breite des Kastens gezeichnet (viewBox = Pixel, neu bei Größenänderung):
+     kein Querscrollen, Schrift am Handy wie am Desktop lesbar. min-height hält den Platz frei. */
+  #chart-eu, #chart-us { min-height: 400px; }
+  @media (max-width: 640px) { #chart-eu, #chart-us { min-height: 290px; } }
+  .chart-scroll .hint-touch { display: none; }
+  @media (hover: none) { .chart-scroll .hint-hover { display: none; } .chart-scroll .hint-touch { display: inline; } }
+  @media (max-width: 600px) { .ckopf .eyebrow { flex-basis: 100%; } }
+  @media (pointer: coarse) { details.quellen > summary { padding: 11px 0; } }
+
+  /* Tabellen in den Karten (Muster realzins.html) */
+  .rt { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .rt th, .rt td { text-align: left; padding: 7px 8px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  .rt th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .rt td.num, .rt th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .rt td.plus { color: var(--up); font-weight: 600; } .rt td.minus { color: var(--down); font-weight: 600; }
+  .rt td small { display: block; font-size: 12px; color: var(--text); font-weight: 400; }
+  .rt th[colspan] { text-align: center; border-bottom: 0; padding-bottom: 2px; letter-spacing: 0.04em; }   /* Gruppenkopf „Kursverlust bei Restlaufzeit von“ (27.09.2026) */
+  .rt th[rowspan] { vertical-align: bottom; }
+  .rt td:last-child, .rt th:last-child { padding-right: 0; }
+  @media (max-width: 600px) { .rt { font-size: 12.5px; } .rt th, .rt td { padding: 6px 5px 6px 0; } .rt th.num { white-space: normal; } }
+  @media (max-width: 380px) { .kap { padding: 18px 12px 20px; } .kap .k-bild { padding: 12px 10px; } .rt { font-size: 12px; } .rt th { font-size: 12px; letter-spacing: 0.03em; } .rt th, .rt td { padding: 6px 4px 6px 0; } .rt td small { font-size: 12px; } }
+  .kap .k-bild { align-self: start; justify-content: flex-start; }
+
+  /* Karte 1: Rangliste heute als Balken – Land links, Balken mit Wert rechts */
+  .rl { display: grid; grid-template-columns: 104px minmax(0, 1fr); gap: 6px 12px; align-items: center; }
+  .rl-l { font-size: 14px; color: var(--ink); line-height: 1.25; }
+  .rl-l small { display: block; font-size: 12px; color: var(--text); }
+  .rl-bahn { position: relative; height: 22px; }
+  .rl-bar { position: absolute; left: 0; top: 0; bottom: 0; width: var(--w); border-radius: 0 5px 5px 0; background: var(--c, #6E6D68); }
+  .rl-w { position: absolute; top: 50%; transform: translateY(-50%); left: calc(var(--w) + 8px); font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ink); }
+  .rl-null { grid-column: 1 / -1; font-size: 12px; color: var(--text); padding-top: 4px; border-top: 1px dashed rgba(26,26,25,0.35); }
+  @media (max-width: 600px) { .rl { grid-template-columns: 84px minmax(0, 1fr); gap: 5px 8px; } .rl-l { font-size: 12.5px; } .rl-w { font-size: 12.5px; } }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Risikoaufschläge seit 1953: Länder und Unternehmen","description":"Risikoaufschläge seit 1953: Wie viel mehr Zins Italien, Frankreich und US-Unternehmen zahlen als der sicherste Schuldner – das Angstbarometer der Anleihen.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-26","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/risikoaufschlaege.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Zinsen","item":"https://www.metalconcrete.de/beobachten.html"},{"@type":"ListItem","position":3,"name":"Risikoaufschläge seit 1953","item":"https://www.metalconcrete.de/risikoaufschlaege.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="zinsen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn current" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html" class="current">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>Risikoaufschläge seit 1953</h1>
+    <p class="sub">Wie viel mehr Zins zahlen Italien, Frankreich oder ein Unternehmen als der sicherste Schuldner? Der Aufschlag ist das Angstbarometer des Anleihenmarkts.</p>
+    <nav class="lands" aria-label="Zum Abschnitt springen">
+      <a class="lbtn" href="#aufschlag"><span class="n">1</span>Was der Aufschlag ist</a>
+      <a class="lbtn" href="#angst"><span class="n">2</span>Das Angstbarometer</a>
+      <a class="lbtn" href="#anleihe"><span class="n">3</span>Für deine Anleihe</a>
+    </nav>
+
+    <div class="heute" id="heute">
+      <div class="hk" data-land="IT" style="--c:#1D5FA0"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Italien − Bund</span><b class="hk-v"><span class="v">+0,81</span><small>Punkte</small></b><span class="hk-d d"><b>3,99&nbsp;%</b> gegen 3,18&nbsp;% · August 2026</span></div>
+      <div class="hk" data-land="FR" style="--c:#2C2C2A"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Frankreich − Bund</span><b class="hk-v"><span class="v">+0,82</span><small>Punkte</small></b><span class="hk-d d"><b>4,00&nbsp;%</b> gegen 3,18&nbsp;% · August 2026</span></div>
+      <div class="hk" data-land="ES" style="--c:#CF7430"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Spanien − Bund</span><b class="hk-v"><span class="v">+0,45</span><small>Punkte</small></b><span class="hk-d d"><b>3,63&nbsp;%</b> gegen 3,18&nbsp;% · August 2026</span></div>
+      <div class="hk" id="hk-us" style="--c:#993C1D"><span class="hk-l"><span class="sw" aria-hidden="true"></span>USA: Unternehmen Baa</span><b class="hk-v"><span class="v" id="us-v">+1,39</span><small>Punkte</small></b><span class="hk-d" id="us-d">über der US-Staatsanleihe · 24.09.2026 · Schnitt seit 1953: <b>1,9</b></span></div>
+    </div>
+
+    <div class="ckopf">
+      <p class="eyebrow" id="eyebrow-eu">Staatsanleihen 10 Jahre gegen Deutschland · Monatswerte · 1991 – 2026 · Stand: August 2026</p>
+    </div>
+    <div class="cblock">
+      <p class="ctitel">Euro-Staaten gegen die Bundesanleihe</p>
+      <p class="cerkl">Vor dem Euro der Preis der Währung, seither der Preis des Zweifels.</p>
+      <div class="legend" id="legend-eu">
+        <button type="button" class="leg" data-key="IT" aria-pressed="true" title="Italien ausblenden"><span class="sw-line" style="--c:#1D5FA0" aria-hidden="true"></span>Italien</button>
+        <button type="button" class="leg" data-key="ES" aria-pressed="true" title="Spanien ausblenden"><span class="sw-line" style="--c:#CF7430" aria-hidden="true"></span>Spanien</button>
+        <button type="button" class="leg" data-key="FR" aria-pressed="true" title="Frankreich ausblenden"><span class="sw-line" style="--c:#2C2C2A" aria-hidden="true"></span>Frankreich</button>
+      </div>
+      <div id="chart-eu" class="chart-scroll"></div>
+    </div>
+    <div class="cblock">
+      <p class="ctitel">USA: Unternehmen gegen Staatsanleihe</p>
+      <p class="cerkl">Aaa: beste Bonität. Baa: unterste Stufe Investment Grade.</p>
+      <div class="legend" id="legend-us">
+        <button type="button" class="leg" data-key="AAA" aria-pressed="true" title="Aaa ausblenden"><span class="sw-line" style="--c:#1F7A5E" aria-hidden="true"></span>Aaa</button>
+        <button type="button" class="leg" data-key="BAA" aria-pressed="true" title="Baa ausblenden"><span class="sw-line" style="--c:#993C1D" aria-hidden="true"></span>Baa</button>
+      </div>
+      <div id="chart-us" class="chart-scroll"></div>
+    </div>
+    <p class="note" id="note-ra">Monatsdurchschnitte in Prozentpunkten.</p>
+
+    <section class="kap" id="aufschlag" aria-labelledby="h-aufschlag">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">1</span>
+        <h2 id="h-aufschlag">Was der Aufschlag ist</h2>
+        <p><strong>Aufschlag = Rendite minus Bundesanleihe</strong> – der Lohn für das Risiko des Schuldners, auch Spread genannt.</p><p>Neu in der Rangliste: <strong>Frankreich zahlt seit 2024 mehr als Spanien</strong>, Griechenland weniger als Italien. 2012 war es umgekehrt.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Aufschlag gegen die Bundesanleihe heute</p>
+        <div class="rl" id="rangliste" role="img" aria-label="Rangliste der Euro-Staaten nach Aufschlag gegen Deutschland, August 2026: Frankreich 0,82 Punkte, Italien 0,81, Griechenland 0,69, Belgien 0,58, Spanien 0,45, Portugal 0,37, Finnland 0,34, Österreich 0,23, Irland 0,17, Niederlande 0,10.">
+          <span class="rl-l">Frankreich</span><span class="rl-bahn"><span class="rl-bar" style="--w:88%;--c:#2C2C2A"></span><span class="rl-w" style="--w:88%">+0,82</span></span>
+          <span class="rl-l">Italien</span><span class="rl-bahn"><span class="rl-bar" style="--w:87%;--c:#1D5FA0"></span><span class="rl-w" style="--w:87%">+0,81</span></span>
+          <span class="rl-l">Griechenland</span><span class="rl-bahn"><span class="rl-bar" style="--w:74%"></span><span class="rl-w" style="--w:74%">+0,69</span></span>
+          <span class="rl-l">Belgien</span><span class="rl-bahn"><span class="rl-bar" style="--w:62%"></span><span class="rl-w" style="--w:62%">+0,58</span></span>
+          <span class="rl-l">Spanien</span><span class="rl-bahn"><span class="rl-bar" style="--w:48%;--c:#CF7430"></span><span class="rl-w" style="--w:48%">+0,45</span></span>
+          <span class="rl-l">Portugal<small>Juli 2026</small></span><span class="rl-bahn"><span class="rl-bar" style="--w:40%"></span><span class="rl-w" style="--w:40%">+0,37</span></span>
+          <span class="rl-l">Finnland</span><span class="rl-bahn"><span class="rl-bar" style="--w:37%"></span><span class="rl-w" style="--w:37%">+0,34</span></span>
+          <span class="rl-l">Österreich</span><span class="rl-bahn"><span class="rl-bar" style="--w:25%"></span><span class="rl-w" style="--w:25%">+0,23</span></span>
+          <span class="rl-l">Irland</span><span class="rl-bahn"><span class="rl-bar" style="--w:18%"></span><span class="rl-w" style="--w:18%">+0,17</span></span>
+          <span class="rl-l">Niederlande</span><span class="rl-bahn"><span class="rl-bar" style="--w:11%"></span><span class="rl-w" style="--w:11%">+0,10</span></span>
+          <span class="rl-null">Deutschland = 0, der Maßstab</span>
+        </div>
+        <p class="sb-f" id="rl-f">10-jährige Staatsanleihen, August 2026, Prozentpunkte über Deutschland. <a href="anleihen-laender.html">Die Anleihen dazu</a>.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Der Aufschlag ist der Preis des Zweifels – ein Grund, nachzusehen, warum: <a href="bonitaet.html#zins">Bonität und Ratings</a>.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="angst" aria-labelledby="h-angst">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">2</span>
+        <h2 id="h-angst">Das Angstbarometer</h2>
+        <p><strong>Aufschläge messen nicht, ob ein Schuldner ausfällt, sondern wie viele daran zweifeln.</strong> 1992 zahlte Italien 7 Punkte mehr – wegen der Lira, nicht wegen einer Pleite. Mit dem Euro fiel der Aufschlag auf 0,1.</p><p>2011 kippte das: Italien 5,2 Punkte, Spanien 5,6, Griechenland 27. Nach Draghis „Whatever it takes“ im Juli 2012 schmolzen die Aufschläge, die Kurse stiegen.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Die großen Ausschläge</p>
+        <table class="rt" id="krisen"><thead><tr><th scope="col">Krise</th><th scope="col">Wer</th><th scope="col" class="num">Auf&shy;schlag</th></tr></thead><tbody>
+          <tr><td>1992<small>Währungskrise</small></td><td>Italien</td><td class="num minus">7,0<small>Okt 1992</small></td></tr>
+          <tr><td>2008<small>Finanzkrise</small></td><td>US-Unternehmen Baa</td><td class="num minus">6,0<small>Dez 2008</small></td></tr>
+          <tr><td rowspan="4">2011/12<small>Eurokrise</small></td><td>Griechenland</td><td class="num minus">27,4<small>Feb 2012</small></td></tr>
+          <tr><td>Portugal</td><td class="num minus">12,0<small>Jan 2012</small></td></tr>
+          <tr><td>Spanien</td><td class="num minus">5,6<small>Jul 2012</small></td></tr>
+          <tr><td>Italien</td><td class="num minus">5,2<small>Nov 2011</small></td></tr>
+        </tbody></table>
+        <p class="sb-f">Monatsdurchschnitte. Heute: Italien <span id="k-it">0,81</span>, US-Baa <span id="k-us">1,39</span>.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Der Höhepunkt der Angst war oft der beste Kaufmoment – erkennbar erst hinterher.</span></p>
+    </section>
+
+    <section class="kap" id="anleihe" aria-labelledby="h-anleihe">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">3</span>
+        <h2 id="h-anleihe">Was das für deine Anleihe heißt</h2>
+        <p>Der Aufschlag wirkt zweimal. <strong>Als Einkommen:</strong> Er ist der Extra-Zins, den du jedes Jahr bekommst, solange der Schuldner zahlt. <strong>Auf den Kurs:</strong> Verlangt der Markt für deinen Schuldner plötzlich mehr Aufschlag – etwa nach schlechten Nachrichten –, fällt der Kurs deiner Anleihe sofort, weil sie noch den alten, niedrigeren Zins zahlt. Wie stark, zeigt die Tabelle: je länger die Restlaufzeit, desto stärker. Sinkt der Aufschlag wieder, steigt der Kurs im gleichen Maß.</p>
+        <p>Wer bis zur Fälligkeit hält, bekommt trotzdem 100&nbsp;% zurück – der Kursverlust ist dann nur vorübergehend, solange der Schuldner zahlt.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">So stark fällt der Kurs, wenn der Aufschlag steigt</p>
+        <table class="rt"><thead>
+          <tr><th scope="col" rowspan="2">Mehr Aufschlag</th><th scope="colgroup" colspan="3" class="num">Kursverlust bei Restlaufzeit</th></tr>
+          <tr><th scope="col" class="num">2 Jahre</th><th scope="col" class="num">5 Jahre</th><th scope="col" class="num">10 Jahre</th></tr>
+        </thead><tbody>
+          <tr><td>0,5 Punkte mehr</td><td class="num minus">−0,9&nbsp;%</td><td class="num minus">−2,3&nbsp;%</td><td class="num minus">−4,2&nbsp;%</td></tr>
+          <tr><td>1 Punkt mehr</td><td class="num minus">−1,9&nbsp;%</td><td class="num minus">−4,5&nbsp;%</td><td class="num minus">−8,1&nbsp;%</td></tr>
+          <tr><td>2 Punkte mehr</td><td class="num minus">−3,7&nbsp;%</td><td class="num minus">−8,7&nbsp;%</td><td class="num minus">−15,4&nbsp;%</td></tr>
+        </tbody></table>
+        <p class="sb-f">Lesebeispiel: Deine Anleihe läuft noch 5 Jahre, der Markt verlangt 1 Punkt mehr Aufschlag – der Kurs fällt um 4,5&nbsp;%, von 100 auf rund 95,5. Gerechnet bei 3&nbsp;% Kupon; im <a href="rechner.html#zinsniveau">Rechner</a> mit deinen Zahlen.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Ein hoher Aufschlag ist kein Schnäppchen, sondern der Preis für möglichen Ausfall: <a href="risiko.html#ausfall">Risiko kennen</a>.</span></p>
+    </section>
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="renditen.html">Staatsanleihen seit 1970</a></li>
+        <li><a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a></li>
+        <li><a href="fortgeschrittene.html#spread">Spreads für Fortgeschrittene</a></li>
+      </ul>
+    </nav>
+    <details class="quellen" id="quellen">
+      <summary>Datenquellen und Methodik</summary>
+      <div class="quellen-body">
+        <p><strong>Methodik.</strong> Aufschlag = Rendite minus sicherer Vergleich im selben Monat, in Prozentpunkten (berechnet). Euro-Staaten: 10-jährige Staatsanleihen minus Deutschland, Monatsdurchschnitte ab März 1991. Die OECD meldet für Deutschland die Umlaufsrendite 9–10 Jahre, etwas unter der jüngsten Bundesanleihe; die Aufschläge liegen daher 0,1 bis 0,3 Punkte über den Marktspreads. USA: Moody’s Aaa und Baa (Restlaufzeit ab 20 Jahren) minus 10-jährige US-Staatsanleihe, Monatsdurchschnitte seit 1953 – wegen der längeren Laufzeit steckt darin auch ein Laufzeitaufschlag, deshalb liegt selbst Aaa meist über null; Kachel = jüngster Tageswert. Kurstabelle: Barwert bei 3&nbsp;% Kupon.</p>
+        <p><strong>Datenquellen.</strong> <a href="https://data-explorer.oecd.org/">OECD</a>, „Long-term interest rates“, elf Länder (wie <a href="renditen.html">Staatsanleihen seit 1970</a>; keine Tageswerte). <a href="https://fred.stlouisfed.org/series/BAA10YM">FRED</a>: AAA10YM, BAA10YM (monatlich), AAA10Y, BAA10Y (täglich). Aktualisierung täglich um 10 Uhr.</p>
+        <p>Keine Anlageberatung.</p>
+        <p id="datastand">Daten-Stand: 24.09.2026 · Länder August 2026</p>
+      </div>
+    </details>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+window.MC.hoverWrap = window.MC.hoverWrap || function (s) { return s; };
+window.MC.load = window.MC.load || function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); };
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+
+// ---- Risikoaufschläge: Euro-Staaten gegen Bund, US-Unternehmen gegen Treasury (risikoaufschlaege.json, scripts/update_risikoaufschlaege.py) ----
+(function () {
+  const SANS = 'Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif';
+  // Spalten in laender.monate: [Monat, DE, IT, ES, FR, PT, GR, IE, BE, NL, AT, FI]
+  const COL = { IT: 2, ES: 3, FR: 4 };
+  const EU = { IT: { name: "Italien", color: "#1D5FA0" }, ES: { name: "Spanien", color: "#CF7430" }, FR: { name: "Frankreich", color: "#2C2C2A" } };
+  const US = { AAA: { name: "Aaa", color: "#1F7A5E", col: 1 }, BAA: { name: "Baa", color: "#993C1D", col: 2 } };
+  // Beschriftete Ausschläge im Chart (Monat, Reihe, Text) – nur wenn der Monat in den Daten liegt
+  const MARKEN_EU = [["1992-10", "IT", "Lira-Krise"], ["2011-11", "IT", "Eurokrise"], ["2018-11", "IT", "Haushaltsstreit"], ["1998-12", "IT", "Tiefstand", "rechts"]];   // "rechts": Beschriftung rechts oberhalb, hinter der Euro-Linie – direkt über dem Punkt kreuzte die Linie (01/1999) den Text
+  const MARKEN_US = [["1974-12", "BAA", "Ölkrise"], ["1982-10", "BAA", "Rezession"], ["2002-10", "BAA", "Enron, WorldCom"], ["2008-12", "BAA", "Finanzkrise"], ["2020-04", "BAA", "Corona"]];
+  const MON = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+  const fmt = (v, d) => v.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d }).replace(/^-/, "−");   // echtes Minus (Achsen „−2“ statt „-2“)
+  const vz = (v, d) => (v > 0 ? "+" : v < 0 ? "−" : "±") + fmt(Math.abs(v), d);
+  const deDatum = iso => { const d = new Date(iso + "T12:00:00"); return isNaN(d) ? iso : d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }); };
+  const monLang = m => `${MON[+m.slice(5, 7) - 1]} ${m.slice(0, 4)}`;
+  const monKurz = m => `${MON[+m.slice(5, 7) - 1].slice(0, 3)} ${m.slice(0, 4)}`;
+  const setT = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+  const VIS = { IT: true, ES: true, FR: true, AAA: true, BAA: true };
+  let DATA = null, BREITE = 0, HI = { eu: null, us: null };
+
+  // Heute-Kacheln, Rangliste, Textzahlen
+  function kacheln(d) {
+    const L = d.laender || {}, heute = L.heute || [], monate = L.monate || [];
+    const byCode = {}; heute.forEach(h => { byCode[h.code] = h; });
+    const letzte = monate[monate.length - 1];
+    for (const k of Object.keys(EU)) {
+      const h = byCode[k], el = document.querySelector(`.hk[data-land="${k}"]`);
+      if (!h || !el || !letzte) continue;
+      const de = h.rendite - h.aufschlag;
+      el.querySelector(".v").textContent = vz(h.aufschlag, 2);
+      el.querySelector(".d").innerHTML = `<b>${fmt(h.rendite, 2)}&nbsp;%</b> gegen ${fmt(de, 2)}&nbsp;% · ${monLang(h.monat)}`;
+    }
+    const it = byCode.IT;
+    if (it) {
+      setT("k-it", fmt(it.aufschlag, 2));
+      setT("bsp-it", `Italien ${fmt(it.rendite, 2)}\u00A0%, Deutschland ${fmt(it.rendite - it.aufschlag, 2)}\u00A0%: 10.000\u00A0€ bringen in Italien ${fmt(Math.round(it.aufschlag * 100), 0)}\u00A0€ im Jahr mehr.`);
+    }
+    // Rangliste: alle Länder, sortiert (kommt sortiert aus der Datei), Balken relativ zum größten Aufschlag
+    if (heute.length) {
+      const max = Math.max(...heute.map(h => h.aufschlag), 0.01), stand = L.monate && letzte ? letzte[0] : heute[0].monat;
+      const rl = document.getElementById("rangliste");
+      rl.innerHTML = heute.map(h => {
+        const w = Math.max(2, Math.round(Math.max(0, h.aufschlag) / max * 88)), c = EU[h.code] ? `;--c:${EU[h.code].color}` : "";
+        return `<span class="rl-l">${MC.esc(h.name)}${h.monat !== stand ? `<small>${monLang(h.monat)}</small>` : ""}</span><span class="rl-bahn"><span class="rl-bar" style="--w:${w}%${c}"></span><span class="rl-w" style="--w:${w}%">${vz(h.aufschlag, 2)}</span></span>`;
+      }).join("") + `<span class="rl-null">Deutschland = 0, der Maßstab</span>`;
+      rl.setAttribute("aria-label", `Rangliste der Euro-Staaten nach Aufschlag gegen Deutschland, ${monLang(stand)}: ` + heute.map(h => `${h.name} ${fmt(h.aufschlag, 2)} Punkte`).join(", ") + ".");
+      document.getElementById("rl-f").innerHTML = `10-jährige Staatsanleihen, ${monLang(stand)}, Prozentpunkte über Deutschland. <a href="anleihen-laender.html">Die Anleihen dazu</a>.`;
+    }
+    // USA: Tageswert und Durchschnitt seit 1953
+    const u = d.us || {}, um = u.monate || [];
+    if (u.heute && um.length) {
+      const baa = u.heute[2], schnitt = um.reduce((a, m) => a + m[2], 0) / um.length;
+      setT("us-v", vz(baa, 2)); setT("k-us", fmt(baa, 2));
+      document.getElementById("us-d").innerHTML = `über der US-Staatsanleihe · ${deDatum(u.heute[0])} · Schnitt seit ${um[0][0].slice(0, 4)}: <b>${fmt(schnitt, 1)}</b>`;
+    }
+  }
+
+  // Ein Linienchart in der echten Kastenbreite: Reihen = [{key, name, color, pts:[[monat, wert], …]}]
+  function linien(boxId, legId, reihen, opt) {
+    const box = document.getElementById(boxId);
+    const W = Math.max(280, Math.round(box.clientWidth || 1000));
+    const eng = W < 600, FS = eng ? 11.5 : 13;
+    const H = eng ? 290 : 400, X0 = eng ? 30 : 44, X1 = W - (eng ? 80 : 122), Y0 = 34, Y1 = H - 54;
+    BREITE = W;
+    const alle = reihen.flatMap(r => r.pts.map(p => p[0]));
+    const m0 = alle.reduce((a, b) => a < b ? a : b), m1 = alle.reduce((a, b) => a > b ? a : b);
+    const idx = m => (+m.slice(0, 4) - +m0.slice(0, 4)) * 12 + (+m.slice(5, 7) - +m0.slice(5, 7));
+    const n = Math.max(1, idx(m1));
+    const x = m => X0 + idx(m) / n * (X1 - X0);
+    const zeigen = reihen.filter(r => VIS[r.key]);
+    const werte = reihen.flatMap(r => r.pts.map(p => p[1]));   // y-Achse bleibt beim Ausblenden gleich
+    const schritt = opt.schritt;
+    const lo = Math.min(0, Math.floor(Math.min(...werte) / schritt) * schritt), hi = Math.ceil((Math.max(...werte) + schritt * 0.15) / schritt) * schritt;
+    const y = v => Y1 - (v - lo) / (hi - lo) * (Y1 - Y0);
+    let g = "";
+    for (let v = lo; v <= hi + 1e-9; v += schritt) {
+      const yy = y(v).toFixed(1), null0 = Math.abs(v) < 1e-9;
+      g += `<line x1="${X0}" y1="${yy}" x2="${X1}" y2="${yy}" stroke="#1A1A19" stroke-opacity="${null0 ? 0.55 : 0.09}" stroke-width="${null0 ? 1.4 : 1}"/>`;
+      g += `<text x="${X0 - 8}" y="${(+yy + 4.5).toFixed(1)}" text-anchor="end" font-family="${SANS}" font-size="${FS}" fill="#55544F">${v > 0 ? "+" : ""}${fmt(v, 0)}</text>`;
+    }
+    const XS = W < 520 ? opt.xsEng : opt.xs;
+    const j0 = Math.ceil(+m0.slice(0, 4) / XS) * XS, j1 = +m1.slice(0, 4);
+    for (let j = j0; j <= j1; j += XS) {
+      const xx = x(`${j}-01`).toFixed(1);
+      g += `<line x1="${xx}" y1="${Y0}" x2="${xx}" y2="${Y1}" stroke="#1A1A19" stroke-opacity="0.06"/><text x="${xx}" y="${Y1 + 22}" text-anchor="middle" font-family="${SANS}" font-size="${FS}" fill="#55544F">${j}</text>`;
+    }
+    g += `<line x1="${X0}" y1="${Y1}" x2="${X1}" y2="${Y1}" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/>`;
+    // Senkrechte Marke (Euro-Start)
+    if (opt.senkrecht && opt.senkrecht[0] > m0 && opt.senkrecht[0] < m1) {
+      const xx = x(opt.senkrecht[0]).toFixed(1);
+      g += `<line x1="${xx}" y1="${Y0}" x2="${xx}" y2="${Y1}" stroke="#1A1A19" stroke-opacity="0.45" stroke-dasharray="3 4"/>`
+        + `<text x="${(+xx + 6).toFixed(1)}" y="${Y1 - 7}" font-family="${SANS}" font-size="${eng ? 11 : 12}" font-weight="600" fill="#55544F">${opt.senkrecht[1]}</text>`;
+    }
+    // Namen am Linienende, entzerrt
+    const ends = zeigen.map(r => { const p = r.pts[r.pts.length - 1]; return { key: r.key, py: y(p[1]), px: x(p[0]) }; }).sort((a, b) => a.py - b.py);
+    for (let i = 1; i < ends.length; i++) if (ends[i].py - ends[i - 1].py < 15) ends[i].py = ends[i - 1].py + 15;
+    let paths = "", series = [];
+    const txt = (xx, yy, t, farbe, anker) => `<text x="${xx.toFixed(1)}" y="${yy.toFixed(1)}" text-anchor="${anker}" font-family="${SANS}" font-size="${eng ? 11 : 12.5}" font-weight="600" fill="${farbe}" paint-order="stroke" stroke="#FBFAF7" stroke-width="3.5" stroke-linejoin="round">${t}</text>`;
+    for (const r of zeigen) {
+      const pts = r.pts.map(p => [x(p[0]), y(p[1]), p]);
+      const line = pts.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(1)} ${p[1].toFixed(1)}`).join("");
+      const last = pts[pts.length - 1], e = ends.find(o => o.key === r.key);
+      let marken = "";
+      for (const [m, key, t, anker] of opt.marken || []) {
+        if (key !== r.key || (eng && opt.markenEng && !opt.markenEng.includes(m))) continue;
+        const p = pts.find(q => q[2][0] === m); if (!p) continue;
+        const links = p[0] > X1 - (eng ? 70 : 90);
+        if (anker === "rechts") {
+          marken += `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.2" fill="${r.color}" stroke="#FBFAF7" stroke-width="1.5"/>`
+            + txt(p[0] + 10, p[1] - 14, `${t} ${fmt(p[2][1], 1)}`, r.color, "start");
+          continue;
+        }
+        marken += `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.2" fill="${r.color}" stroke="#FBFAF7" stroke-width="1.5"/>`
+          + txt(links ? p[0] - 7 : p[0], p[1] - 9, `${t} ${fmt(p[2][1], 1)}`, r.color, links ? "end" : p[0] < X0 + 80 ? "start" : "middle");
+      }
+      paths += `<g class="ser" data-key="${r.key}"><path class="hit" d="${line}" fill="none" stroke="${r.color}" stroke-width="14" opacity="0" pointer-events="stroke"/>`
+        + `<path class="line" d="${line}" fill="none" stroke="${r.color}" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>`
+        + `<circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="3.5" fill="${r.color}"/>` + marken
+        + `<text x="${(e.px + 9).toFixed(1)}" y="${(e.py + 4.5).toFixed(1)}" font-family="${SANS}" font-size="${eng ? 12 : 13}" font-weight="600" fill="${r.color}" paint-order="stroke" stroke="#FBFAF7" stroke-width="3" stroke-linejoin="round">${r.name}${eng ? "" : " " + vz(last[2][1], 2)}</text></g>`;
+      series.push({ x: pts.map(p => +p[0].toFixed(1)), y: pts.map(p => +p[1].toFixed(1)), color: r.color,
+        tips: pts.map(p => `${r.name} ${monKurz(p[2][0])}: ${vz(p[2][1], 2)} Punkte${p[2][2] ? ` (${p[2][2]})` : ""}`) });
+    }
+    const aria = `${opt.aria}, Monatsdurchschnitte ${monLang(m0)} bis ${monLang(m1)}: ${zeigen.map(r => `${r.name} zuletzt ${vz(r.pts[r.pts.length - 1][1], 2)}`).join(", ")}. Werte mit den Pfeiltasten abrufbar.`;
+    const svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${MC.esc(aria)}" xmlns="http://www.w3.org/2000/svg">
+      <text x="4" y="14" font-family="${SANS}" font-size="12" font-weight="600" style="fill:var(--muted)">${W < 420 ? "↑ Punkte" : "↑ Aufschlag in Prozentpunkten"}</text>
+      <text x="${X1}" y="14" text-anchor="end" font-family="${SANS}" font-size="${eng ? 11 : 11.5}" style="fill:var(--muted)" letter-spacing="${eng ? "0.04em" : "0.08em"}"><tspan class="hint-hover">${W < 700 ? "MAUS: WERTE" : "MAUS AUF EINE LINIE: WERT JE MONAT"}</tspan><tspan class="hint-touch">${W < 700 ? "TIPPEN: WERTE" : "TIPPEN: WERT JE MONAT"}</tspan></text>
+      ${g}${paths}
+      <text x="${X1}" y="${H - 8}" text-anchor="end" font-family="${SANS}" font-size="12" font-weight="600" style="fill:var(--muted)">Jahr →</text></svg>`;
+    box.innerHTML = MC.hoverWrap(svg, series, null, { mode: "nearest" });
+    document.querySelectorAll(`#${legId} .leg[data-key]`).forEach(b => {
+      const k = b.dataset.key, an = !!VIS[k], name = b.textContent.trim().split(" –")[0];
+      b.setAttribute("aria-pressed", an ? "true" : "false"); b.title = an ? `${name} ausblenden` : `${name} einblenden`;
+    });
+  }
+
+  function charts(d) {
+    const L = d.laender || {}, M = L.monate || [];
+    if (M.length) {
+      const reihen = Object.keys(EU).map(k => ({ key: k, name: EU[k].name, color: EU[k].color,
+        pts: M.filter(z => z[COL[k]] != null && z[1] != null).map(z => [z[0], +(z[COL[k]] - z[1]).toFixed(2), `Rendite ${fmt(z[COL[k]], 2)}\u00A0%, Deutschland ${fmt(z[1], 2)}\u00A0%`]) }));
+      linien("chart-eu", "legend-eu", reihen, { schritt: 1, xs: 5, xsEng: 10, senkrecht: ["1999-01", "Euro"], marken: MARKEN_EU, markenEng: ["1992-10", "2011-11"],
+        aria: "Aufschlag 10-jähriger Staatsanleihen gegenüber Deutschland in Prozentpunkten" });
+      hervorheben("eu", HI.eu);
+      const st = d.stand && d.stand.laender;
+      setT("eyebrow-eu", `Staatsanleihen 10 Jahre gegen Deutschland · Monatswerte · ${M[0][0].slice(0, 4)} – ${M[M.length - 1][0].slice(0, 4)}${st ? ` · Stand: ${monLang(st)}` : ""}`);
+    }
+    const u = d.us || {}, UM = u.monate || [];
+    if (UM.length) {
+      const reihen = Object.keys(US).map(k => ({ key: k, name: US[k].name, color: US[k].color, pts: UM.filter(z => z[US[k].col] != null).map(z => [z[0], z[US[k].col], ""]) }));
+      linien("chart-us", "legend-us", reihen, { schritt: 1, xs: 10, xsEng: 20, marken: MARKEN_US, markenEng: ["2008-12"],
+        aria: "Aufschlag von US-Unternehmensanleihen (Moody’s Aaa und Baa) gegenüber der 10-jährigen US-Staatsanleihe in Prozentpunkten" });
+      hervorheben("us", HI.us);
+    }
+    // Daten-Stand im Quellen-Aufklapper
+    const st = d.stand || {};
+    if (st.us || st.laender) {
+      const el = document.getElementById("datastand");
+      if (el) {
+        el.textContent = "Daten-Stand: " + (st.us ? deDatum(st.us) : "") + (st.laender ? ` · Länder ${monLang(st.laender)}` : "");
+        const dd = st.us ? (Date.now() - new Date(st.us + "T12:00:00")) / 864e5 : 0;
+        el.classList.toggle("stale", dd > 7);
+      }
+    }
+  }
+
+  // Legende als Schalter (Muster zinskurve.html): Klick blendet aus/ein (eine Linie bleibt), Überfahren hebt hervor
+  function hervorheben(chart, key) {
+    const box = chart === "eu" ? "chart-eu" : "chart-us", leg = chart === "eu" ? "legend-eu" : "legend-us";
+    HI[chart] = key && VIS[key] ? key : null;
+    document.querySelectorAll(`#${box} .ser`).forEach(s => { s.classList.toggle("dim", !!HI[chart] && s.dataset.key !== HI[chart]); s.classList.toggle("hi", !!HI[chart] && s.dataset.key === HI[chart]); });
+    document.querySelectorAll(`#${leg} .leg[data-key]`).forEach(b => b.classList.toggle("on", b.dataset.key === HI[chart]));
+  }
+  for (const [chart, legId, keys] of [["eu", "legend-eu", Object.keys(EU)], ["us", "legend-us", Object.keys(US)]]) {
+    const leg = document.getElementById(legId);
+    const keyOf = e => { const b = e.target.closest ? e.target.closest(".leg[data-key]") : null; return b ? b.dataset.key : null; };
+    leg.addEventListener("click", e => {
+      const k = keyOf(e); if (!k || !DATA) return;
+      if (VIS[k] && keys.filter(x => VIS[x]).length === 1) return;   // mindestens eine Linie bleibt sichtbar
+      VIS[k] = !VIS[k]; HI[chart] = null; charts(DATA);
+    });
+    ["pointerover", "focusin"].forEach(ev => leg.addEventListener(ev, e => { const k = keyOf(e); if (k) hervorheben(chart, k); }));
+    ["pointerout", "focusout"].forEach(ev => leg.addEventListener(ev, e => { const b = e.target.closest ? e.target.closest(".leg[data-key]") : null; if (b && !(e.relatedTarget && b.contains(e.relatedTarget))) hervorheben(chart, null); }));
+    const box = document.getElementById(chart === "eu" ? "chart-eu" : "chart-us");
+    box.addEventListener("pointerover", e => { const s = e.target.closest ? e.target.closest(".ser") : null; if (s) hervorheben(chart, s.dataset.key); });
+    box.addEventListener("pointerout", e => { const s = e.target.closest ? e.target.closest(".ser") : null; if (s && !(e.relatedTarget && s.contains(e.relatedTarget))) hervorheben(chart, null); });
+  }
+  document.addEventListener("keydown", e => { if (e.key === "Escape") { hervorheben("eu", null); hervorheben("us", null); } });
+
+  // Drehen des Handys / Fenstergröße: neu zeichnen, wenn sich die Breite ändert
+  let rzT = 0;
+  window.addEventListener("resize", () => { clearTimeout(rzT); rzT = setTimeout(() => { const w = Math.round(document.getElementById("chart-eu").clientWidth); if (DATA && Math.abs(w - BREITE) > 2) charts(DATA); }, 150); });
+
+  MC.load("risikoaufschlaege.json").then(function (d) { DATA = d; kacheln(d); charts(d); }).catch(function (e) {
+    document.getElementById("chart-eu").innerHTML = '<p class="note">Die Daten konnten nicht geladen werden.</p>';
+    if (window.console) console.warn("risikoaufschlaege.json", e);
+  });
+})();
+</script>
+</body>
+</html>

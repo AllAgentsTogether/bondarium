@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Handelsplätze verstehen: Wo Anleihen gehandelt werden – METALCONCRETE</title>
+<meta name="description" content="Profimarkt und Börse, wer den Kurs stellt, und elf Handelsplätze in einer Tabelle: Frankfurt, Stuttgart, gettex, Tradegate, Quotrix, Xetra, LS Exchange, Direkthandel – mit Bedeutung und Bewertung.">
+<link rel="canonical" href="https://www.metalconcrete.de/handelsplaetze.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/handelsplaetze.html">
+<meta property="og:title" content="Handelsplätze verstehen: Wo Anleihen gehandelt werden – METALCONCRETE">
+<meta property="og:description" content="Profimarkt und Börse, wer den Kurs stellt, und elf Handelsplätze in einer Tabelle: Frankfurt, Stuttgart, gettex, Tradegate, Quotrix, Xetra, LS Exchange, Direkthandel – mit Bedeutung und Bewertung.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Handelsplätze verstehen: Wo Anleihen gehandelt werden – METALCONCRETE">
+<meta name="twitter:description" content="Profimarkt und Börse, wer den Kurs stellt, und elf Handelsplätze in einer Tabelle: Frankfurt, Stuttgart, gettex, Tradegate, Quotrix, Xetra, LS Exchange, Direkthandel – mit Bedeutung und Bewertung.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Handelsplätze verstehen – neu 28.09.2026 (Menü Verstehen, Fortgeschrittene): drei Karten im Look von „Markttechnik“
+     und dazwischen die Tabelle der Handelsplätze als breite weiße Fläche (wie „Alle Stufen im Vergleich“ auf bonitaet.html).
+     Zahlen in den Schaubildern sind Beispiele; die Tabelle nennt Quellen und Stand im Aufklapper. Grundregeln in base.css. */
+
+  /* Zwei Welten (1) */
+  .welten { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .welt { display: flex; flex-direction: column; gap: 8px; border-radius: 12px; padding: 12px 12px 14px; background: var(--ap-soft); }
+  .welt.du { background: #fff; border: 1.5px solid var(--green-line); }
+  .welt-k { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); }
+  .welt-z { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .welt-z small { display: block; font-size: 12.5px; font-weight: 400; letter-spacing: 0; color: var(--text); margin-top: 2px; }
+  .welt ul { list-style: none; margin: 2px 0 0; padding: 0; display: grid; gap: 4px; font-size: 13.5px; line-height: 1.35; color: var(--ink); }
+  .welt li { padding-left: 14px; position: relative; }
+  .welt li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--green-graph, #1DA300); }
+  .welt-pfeil { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); justify-content: center; }
+  .welt-pfeil b { color: var(--green-text); font-weight: 600; }
+
+  /* Wer den Kurs stellt (2) */
+  .quote { display: grid; gap: 8px; }
+  .qz { display: grid; grid-template-columns: minmax(0, 1.1fr) auto auto auto; align-items: center; gap: 8px 10px; padding: 10px 12px; border-radius: 12px; background: var(--ap-soft); }
+  .qz .qn { font-size: 14px; font-weight: 600; line-height: 1.25; }
+  .qz .qn small { display: block; font-size: 12px; font-weight: 400; color: var(--text); }
+  .qz .qp { text-align: center; font-variant-numeric: tabular-nums; }
+  .qz .qp span { display: block; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
+  .qz .qp b { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+  .qz .qs { text-align: center; padding: 6px 10px; border-radius: 999px; background: #fff; border: 1.5px solid var(--green-line); font-size: 13px; font-weight: 600; color: var(--green-text); white-space: nowrap; }
+  .qz.weit .qs { border-color: rgba(207,116,48,0.6); color: var(--orange-text); }
+  .quote .zeit { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 13px; color: var(--text); padding: 4px 2px 0; }
+  .quote .zeit b { color: var(--ink); font-weight: 600; }
+
+  /* Die Tabelle (3) – breite weiße Fläche */
+  .hp { margin-top: 26px; padding: 26px 30px 24px; border-radius: var(--radius); background: #fff; border: 1px solid rgba(26,26,25,0.08); box-shadow: var(--shadow); scroll-margin-top: 80px; }
+  .hp h2 { margin-bottom: 8px; }
+  .hp-in { font-size: 16px; line-height: 1.55; color: var(--text); max-width: 760px; margin-bottom: 16px; }
+  .hp-t { width: 100%; border-collapse: collapse; font-size: 14.5px; line-height: 1.35; }
+  .hp-t thead th { font-size: 12px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text); text-align: left; padding: 0 10px 10px 0; border-bottom: 1px solid rgba(26,26,25,0.16); vertical-align: bottom; }
+  .hp-t tbody th, .hp-t tbody td { padding: 10px 10px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; text-align: left; }
+  .hp-t tbody tr:last-child > * { border-bottom: 0; }
+  .hp-t tbody th { font-weight: 600; color: var(--ink); width: 36%; }
+  .hp-t tbody th small { display: block; font-size: 13px; font-weight: 400; color: var(--text); line-height: 1.4; margin-top: 2px; }
+  .hp-t td.n { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .hp-t td.b { white-space: nowrap; }
+  .hp-t .bd { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+  .hp-t .bd.s { background: #DFFFD9; color: var(--green-text); }
+  .hp-t .bd.g { background: rgba(31,122,94,0.12); color: #1F7A5E; }
+  .hp-t .bd.m { background: rgba(29,95,160,0.10); color: var(--blue); }
+  .hp-t .bd.k { background: rgba(26,26,25,0.07); color: var(--text); }
+  .dots { display: inline-flex; gap: 3px; vertical-align: middle; }
+  .dots i { width: 9px; height: 9px; border-radius: 50%; background: rgba(26,26,25,0.13); }
+  .dots i.on { background: var(--green-graph, #1DA300); }
+  .hp-t tbody tr.dim > * { color: var(--text); }
+  .hp-t tbody tr.dim th { color: var(--text); }
+  .hp .klein { margin-top: 14px; }
+
+  /* Platz wählen (4) */
+  .schritte { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: s; }
+  .schritte li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 12px; border-radius: 12px; background: var(--ap-soft); counter-increment: s; }
+  .schritte li::before { content: counter(s); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--green-graph, #1DA300); color: #fff; font-weight: 600; font-size: 14px; }
+  .schritte b { display: block; font-size: 14.5px; font-weight: 600; }
+  .schritte span { display: block; font-size: 13px; color: var(--text); line-height: 1.4; margin-top: 1px; }
+
+  .sb-f { font-size: 12.5px; color: var(--text); margin-top: 10px; line-height: 1.45; }
+  @media (max-width: 760px) {
+    .hp { padding: 22px 16px 20px; }
+    /* Tabelle als Karten: jede Zeile ein Block, Kopfzeile ausgeblendet, Beschriftung je Zelle aus data-l */
+    .hp-t thead { display: none; }
+    .hp-t, .hp-t tbody, .hp-t tr { display: block; width: 100%; }
+    .hp-t tbody tr { padding: 10px 0 12px; border-bottom: 1px solid var(--rule); }
+    .hp-t tbody tr:last-child { border-bottom: 0; }
+    .hp-t tbody th { display: block; width: auto; padding: 0 0 8px; border: 0; }
+    .hp-t tbody td { display: inline-grid; grid-template-columns: auto; gap: 1px; padding: 0 18px 0 0; border: 0; font-size: 13.5px; }
+    .hp-t tbody td::before { content: attr(data-l); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
+    .hp-t td.n, .hp-t td.b { white-space: normal; }
+  }
+  @media (max-width: 600px) {
+    .welten { grid-template-columns: 1fr; }
+    .welt-z { font-size: 20px; }
+    .qz { grid-template-columns: minmax(0, 1fr) auto auto; }
+    .qz .qs { grid-column: 1 / -1; justify-self: start; }
+    .hp { border-radius: 12px; padding: 18px 12px 18px; }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Handelsplätze verstehen: Wo Anleihen gehandelt werden","description":"Profimarkt und Börse, wer den Kurs stellt, und elf Handelsplätze in einer Tabelle: Frankfurt, Stuttgart, gettex, Tradegate, Quotrix, Xetra, LS Exchange, Direkthandel – mit Bedeutung und Bewertung.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-28","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/handelsplaetze.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Verstehen","item":"https://www.metalconcrete.de/wissen.html"},{"@type":"ListItem","position":3,"name":"Handelsplätze verstehen","item":"https://www.metalconcrete.de/handelsplaetze.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="verstehen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn current" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe current">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>Handelsplätze verstehen</h1>
+    <p class="sub">Wo Anleihen gehandelt werden, wer dir den Kurs stellt und welcher Platz für dich taugt. Drei Karten und eine Tabelle mit elf Handelsplätzen. Lesezeit: etwa 5 Minuten.</p>
+    <nav class="lands" aria-label="Zum Thema springen">
+      <a class="lbtn" href="#welten"><span class="n">1</span>Zwei Welten</a>
+      <a class="lbtn" href="#kurs"><span class="n">2</span>Wer den Kurs stellt</a>
+      <a class="lbtn" href="#tabelle"><span class="n">3</span>Die Handelsplätze</a>
+      <a class="lbtn" href="#wahl"><span class="n">4</span>Platz wählen</a>
+    </nav>
+
+    <section class="kap" id="welten" aria-labelledby="h-welten">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">1</span>
+        <h2 id="h-welten">Zwei Welten: Profimarkt und Börse</h2>
+        <p>Der Anleihenmarkt ist der größte Markt der Welt – und läuft zum größten Teil <strong>ohne Börse</strong>. Banken, Fonds und Versicherer handeln untereinander: per Telefon, Chat und auf Plattformen wie Bloomberg, Tradeweb oder MarketAxess. Allein europäische Staatsanleihen: 34 Billionen Euro im zweiten Halbjahr 2025, im Schnitt 6,3 Millionen Euro je Geschäft, die Hälfte davon ganz ohne Handelsplatz.</p>
+        <p>Dorthin kommst du nicht. Dein Weg ist die Börse: Dort stellt ein <strong>Handelsexperte</strong> laufend Kauf- und Verkaufskurse – auch für 1.000 Euro. Den Preis holt er sich aus dem Profimarkt und gibt ihn mit einer Spanne an dich weiter.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Wer mit wem handelt</p><div class="welten" role="img" aria-label="Profimarkt: Banken, Fonds und Versicherer untereinander, im Schnitt 6,3 Millionen Euro je Geschäft, per Telefon und Plattform. Börse: du mit dem Handelsexperten, ab 1.000 Euro, über deinen Broker. Der Preis fließt vom Profimarkt zur Börse."><div class="welt"><span class="welt-k">Profimarkt</span><span class="welt-z">Ø 6,3 Mio.&nbsp;€<small>je Geschäft, europäische Staatsanleihen 2025</small></span><ul><li>Bank ↔ Bank, Fonds, Versicherer</li><li>Telefon, Chat, Plattform</li><li>zur Hälfte ohne Handelsplatz</li></ul></div><div class="welt du"><span class="welt-k">Börse – dein Weg</span><span class="welt-z">ab 1.000&nbsp;€<small>je Order, über deinen Broker</small></span><ul><li>du ↔ Handelsexperte</li><li>Kurs laufend gestellt, 8 bis 22 Uhr</li><li>Preis = Profipreis + Spanne</li></ul></div><span class="welt-pfeil"><b>Der Preis fließt vom Profimarkt zur Börse</b></span></div><p class="sb-f">ICMA, Sekundärmarkt europäischer Staatsanleihen, 2. Halbjahr 2025.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Profis handeln untereinander, du über die Börse. Dein Kurs ist der Profipreis plus Spanne.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="kurs" aria-labelledby="h-kurs">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">2</span>
+        <h2 id="h-kurs">Wer den Kurs stellt – und wann er gut ist</h2>
+        <p>An jedem Platz sitzt ein Handelsexperte: in Frankfurt der <strong>Spezialist</strong>, in Stuttgart der Bondexperte, bei gettex, Tradegate und Quotrix ein <strong>Market Maker</strong> wie die Baader Bank. Er nennt einen Geldkurs (dazu kauft er) und einen Briefkurs (dazu verkauft er). Der Abstand ist die <a href="fortgeschrittene.html#handel">Spanne</a> – bei Bundesanleihen ein paar Hundertstel, bei kleinen Unternehmensanleihen ein halber Punkt und mehr.</p>
+        <p>Zwei Regeln: <strong>Zwischen 9 und 17:30 Uhr</strong>, wenn der Profimarkt läuft, sind die Spannen am engsten – morgens und abends stellt er breiter, weil ihm die Referenz fehlt. Und ein Kurs ohne Umsatz ist nur eine <strong>Taxe</strong>: eine Einladung, kein Beweis, dass jemand dazu handelt.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Geld, Brief, Spanne – Beispiel</p><div class="quote" role="img" aria-label="Bundesanleihe: Geld 98,40, Brief 98,44, Spanne 0,04 Punkte, das sind 2 Euro je 5.000 Euro. Kleine Unternehmensanleihe: Geld 95,00, Brief 96,00, Spanne 1 Punkt, das sind 50 Euro je 5.000 Euro. Tagsüber eng, abends weiter."><div class="qz"><span class="qn">Bundesanleihe<small>viel Handel</small></span><span class="qp"><span>Geld</span><b>98,40</b></span><span class="qp"><span>Brief</span><b>98,44</b></span><span class="qs">0,04 = 2&nbsp;€</span></div><div class="qz weit"><span class="qn">Kleine Unternehmensanleihe<small>wenig Handel</small></span><span class="qp"><span>Geld</span><b>95,00</b></span><span class="qp"><span>Brief</span><b>96,00</b></span><span class="qs">1,00 = 50&nbsp;€</span></div><p class="zeit"><span>Spanne je 5.000&nbsp;€ Nennwert</span><b>9 – 17:30 Uhr eng · sonst weiter</b></p></div><p class="sb-f">Angenommene Kurse. Geld = der Experte kauft, Brief = er verkauft; du kaufst zum Brief.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Geld = er kauft, Brief = er verkauft. Die Spanne ist dein Preis – tagsüber eng, abends weit, ohne Umsatz nur eine Taxe.</span></p>
+    </section>
+
+    <section class="hp" id="tabelle" aria-labelledby="h-tabelle">
+      <h2 id="h-tabelle">Die Handelsplätze im Überblick</h2>
+      <p class="hp-in">Elf Wege zur Anleihe. <strong>Bedeutung</strong> sagt, welches Gewicht der Platz im Anleihenhandel hat. <strong>Für dich</strong> ist unsere Einschätzung für Privatanleger – nach Auswahl, Spanne, Handelszeit und Börsenentgelt. Welche Plätze du siehst, entscheidet dein Broker.</p>
+      <table class="hp-t"><caption class="sr-only">Elf Handelsplätze für Anleihen: Beschreibung, Anzahl Anleihen, Handelszeit, Bedeutung und Bewertung für Privatanleger</caption>
+<thead><tr><th scope="col">Handelsplatz</th><th scope="col">Anleihen</th><th scope="col">Handelszeit</th><th scope="col">Bedeutung</th><th scope="col">Für dich</th></tr></thead>
+<tbody>
+<tr><th scope="row">Börse Frankfurt<small>Parkett der Deutschen Börse, Spezialisten stellen die Kurse. Die größte Auswahl in Deutschland – und die Quelle der Kurse auf dieser Website.</small></th><td class="n" data-l="Anleihen">rund 27.700</td><td class="n" data-l="Handelszeit">8 – 17:30 Uhr</td><td class="b" data-l="Bedeutung"><span class="bd s">sehr groß</span></td><td class="b" data-l="Für dich"><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="sr-only">5 von 5</span></td></tr>
+<tr><th scope="row">Börse Stuttgart<small>Führend bei Unternehmensanleihen. Die Bondexperten bündeln Liquidität aus dem Profimarkt und stellen bis in den Abend Kurse.</small></th><td class="n" data-l="Anleihen">rund 17.800</td><td class="n" data-l="Handelszeit">7:30 – 22 Uhr</td><td class="b" data-l="Bedeutung"><span class="bd s">sehr groß</span></td><td class="b" data-l="Für dich"><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span><span class="sr-only">5 von 5</span></td></tr>
+<tr><th scope="row">gettex<small>Elektronischer Platz der Börse München, Market Maker Baader Bank. Kein Börsenentgelt; bei einigen Brokern ganz ohne Gebühr.</small></th><td class="n" data-l="Anleihen">rund 14.600</td><td class="n" data-l="Handelszeit">8 – 22 Uhr</td><td class="b" data-l="Bedeutung"><span class="bd g">groß</span></td><td class="b" data-l="Für dich"><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span><span class="sr-only">4 von 5</span></td></tr>
+<tr><th scope="row">Tradegate BSX<small>Berlin, seit 2026 mit der Börse Berlin verschmolzen. Europas größte Privatanleger-Börse bei Aktien; Anleihen sind Nebensache, Bundesanleihen aber eng. Kein Börsenentgelt.</small></th><td class="n" data-l="Anleihen">keine Angabe</td><td class="n" data-l="Handelszeit">7:30 – 22 Uhr</td><td class="b" data-l="Bedeutung"><span class="bd m">mittel</span></td><td class="b" data-l="Für dich"><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span><span class="sr-only">3 von 5</span></td></tr>
+<tr><th scope="row">Quotrix<small>Market-Maker-Börse der Börse Düsseldorf (mit Hamburg und Hannover). Ohne Börsenentgelt, große Auswahl – aber wenig bekannt und nicht bei jedem Broker.</small></th><td class="n" data-l="Anleihen">rund 16.000</td><td class="n" data-l="Handelszeit">7:30 – 22 Uhr</td><td class="b" data-l="Bedeutung"><span class="bd k">klein</span></td><td class="b" data-l="Für dich"><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span><span class="sr-only">3 von 5</span></td></tr>
+<tr><th scope="row">Börse München<small>Parkett mit Spezialisten, neben gettex. Solide Auswahl, ansonsten kein Grund, den Umweg zu gehen.</small></th><td class="n" data-l="Anleihen">über 15.000</td><td class="n" data-l="Handelszeit">8 – 22 Uhr</td><td class="b" data-l="Bedeutung"><span class="bd k">klein</span></td><td class="b" data-l="Für dich"><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span><span class="sr-only">3 von 5</span></td></tr>
+<tr><th scope="row">Xetra<small>Elektronisches Orderbuch der Deutschen Börse. Bei Anleihen fast nur Bundeswertpapiere – dort dafür sehr eng.</small></th><td class="n" data-l="Anleihen">wenige</td><td class="n" data-l="Handelszeit">9 – 17:30 Uhr</td><td class="b" data-l="Bedeutung"><span class="bd k">klein</span></td><td class="b" data-l="Für dich"><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span><span class="sr-only">2 von 5</span></td></tr>
+<tr><th scope="row">LS Exchange<small>Börse von Lang &amp; Schwarz in Hamburg, Handelsplatz von Trade Republic. Lange Zeiten, kleine Auswahl – nur ein Teil der Anleihen ist überhaupt handelbar.</small></th><td class="n" data-l="Anleihen">Auswahl</td><td class="n" data-l="Handelszeit">7:30 – 23 Uhr</td><td class="b" data-l="Bedeutung"><span class="bd k">klein</span></td><td class="b" data-l="Für dich"><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></span><span class="sr-only">2 von 5</span></td></tr>
+<tr><th scope="row">Direkthandel<small>Außerbörslich direkt mit einem Market Maker (Baader, Lang &amp; Schwarz, Tradegate …). Kein Börsenentgelt, aber keine Börsenaufsicht über den Preis – Briefkurs mit der Börse vergleichen.</small></th><td class="n" data-l="Anleihen">je Anbieter</td><td class="n" data-l="Handelszeit">meist 8 – 22 Uhr</td><td class="b" data-l="Bedeutung"><span class="bd m">mittel</span></td><td class="b" data-l="Für dich"><span class="dots" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span><span class="sr-only">3 von 5</span></td></tr>
+<tr><th scope="row">Börsen im Ausland<small>Euronext, Borsa Italiana, SIX, Wien. Für Sonderfälle – Zugang teuer, Abwicklung und Steuer aufwendiger. Luxemburg notiert Tausende Anleihen, gehandelt wird dort kaum.</small></th><td class="n" data-l="Anleihen">–</td><td class="n" data-l="Handelszeit">–</td><td class="b" data-l="Bedeutung"><span class="bd k">für dich klein</span></td><td class="b" data-l="Für dich"><span class="dots" aria-hidden="true"><i class="on"></i><i></i><i></i><i></i><i></i></span><span class="sr-only">1 von 5</span></td></tr>
+<tr class="dim"><th scope="row">Profimarkt<small>Außerbörslich und auf Plattformen (Bloomberg, Tradeweb, MarketAxess): Banken, Fonds, Versicherer, Losgrößen in Millionen. Hier entstehen die Preise – für dich nicht zugänglich.</small></th><td class="n" data-l="Anleihen">alle</td><td class="n" data-l="Handelszeit">–</td><td class="b" data-l="Bedeutung"><span class="bd s">sehr groß</span></td><td class="b" data-l="Für dich"><span class="dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span class="sr-only">kein Zugang</span></td></tr>
+</tbody></table>
+      <p class="klein">Anzahl und Handelszeiten für Anleihen laut den Handelsplätzen, Stand September 2026 – Einzelheiten im Aufklapper unten. „Für dich“ ist unsere Einschätzung, keine Empfehlung: Was am Ende zählt, ist die Spanne für deine Anleihe an dem Tag.</p>
+    </section>
+
+    <section class="kap" id="wahl" aria-labelledby="h-wahl">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">4</span>
+        <h2 id="h-wahl">So wählst du den Platz</h2>
+        <p>Dein Broker bestimmt die Auswahl: Neobroker haben oft nur einen Platz, Direktbanken fast alle – welcher Broker welche hat, steht im <a href="broker-vergleich.html">Broker-Vergleich</a>. <strong>Der beste Platz ist der mit der engsten Spanne für genau deine Anleihe</strong>, und das kann heute Frankfurt sein und morgen Stuttgart.</p>
+        <p>Drei Schritte: Erst prüfen, wo die Anleihe einen Kurs <strong>mit Umsatz</strong> hat – im <a href="anleihen-suche.html">Steckbrief</a> siehst du Platz, Datum und Umsatz. Dann den Briefkurs an zwei Plätzen vergleichen; der Unterschied ist oft größer als die Gebühr. Dann mit <strong>Limit</strong> kaufen, tagsüber zwischen 9 und 17:30 Uhr.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Drei Schritte vor der Order</p><ol class="schritte"><li><div><b>Kurs mit Umsatz?</b><span>Ohne Umsatz ist der Kurs eine Taxe. Steckbrief: Platz, Datum, Umsatz.</span></div></li><li><div><b>Briefkurs vergleichen</b><span>Zwei Plätze, gleiche Minute. 0,3 Punkte Unterschied = 15&nbsp;€ je 5.000&nbsp;€.</span></div></li><li><div><b>Limit, tagsüber</b><span>9 bis 17:30 Uhr, Limit am Briefkurs oder knapp darunter.</span></div></li></ol><p class="sb-f">Mehr zu Kosten je Kauf: <a href="steuern-handelskosten.html#kosten">Steuern und Handelskosten</a>.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Erst Umsatz, dann Briefkurs, dann Limit. Ein Platz ist so gut wie seine Spanne für deine Anleihe.</span></p>
+    </section>
+
+    <div class="weiter">
+      <a class="go" href="anleihen-suche.html">Zur Anleihen-Suche →</a>
+      <a class="go leise" href="broker-vergleich.html">Broker im Vergleich →</a>
+      <a class="go leise" href="fortgeschrittene.html#handel">Handel ohne Renditeverlust →</a>
+    </div>
+    <p class="klein">Diese Seite erklärt Handelsplätze. Sie ist keine Anlageberatung und keine Empfehlung für einen Anbieter. Kurse in den Schaubildern sind Beispiele.</p>
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="erste-anleihe.html">Deine erste Anleihe in neun Schritten</a></li>
+        <li><a href="steuern-handelskosten.html">Steuern und Handelskosten</a></li>
+        <li><a href="kuendbare-anleihen.html">Kündbare Anleihen</a></li>
+        <li><a href="begriffe.html">Glossar: Begriffe kurz erklärt</a></li>
+      </ul>
+    </nav>
+    <details class="quellen" id="quellen">
+      <summary>Datenquellen und Methodik</summary>
+      <div class="quellen-body">
+        <p><strong>Profimarkt.</strong> ICMA Secondary Market Practices Committee, European Secondary Market Data Report, 2. Halbjahr 2025 (Sovereign Edition, April 2026): 34,1 Billionen Euro Umsatz in europäischen Staatsanleihen (EU und Großbritannien), 50 % des Volumens außerbörslich (OTC), 31 % Händler-zu-Kunde- und 19 % Händler-zu-Händler-Plattformen; durchschnittliche Geschäftsgröße 2025: 6,3 Millionen Euro.</p>
+        <p><strong>Anzahl und Handelszeiten</strong> gelten für Anleihen und stammen von den Handelsplätzen (Stand 28.09.2026): Börse Frankfurt rund 27.700 Anleihen, 8 – 17:30 Uhr (Deutsche Börse, Broschüre „So handeln Sie Anleihen“; Aktien und ETFs bis 22 Uhr). Börse Stuttgart rund 17.800 Anleihen (Börse Stuttgart, „Die Bondexperten“), 7:30 – 22 Uhr (Handelszeit seit 1. Juli 2025 laut Börse Stuttgart). gettex 8.500 Euro- und 6.100 Fremdwährungsanleihen, Börse München über 15.000, beide bis 22 Uhr seit 16.10.2023 (Pressemitteilung Bayerische Börse). Tradegate BSX: Verschmelzung von Tradegate Exchange und Börse Berlin zum 01.01.2026, 7:30 – 22 Uhr (Handelskalender), keine Transaktionsentgelte; eine Anleihen-Zahl nennt die Börse nicht. Quotrix rund 16.000 Anleihen, seit 01.07.2025 bis 22 Uhr (Presseinformation Börse Düsseldorf, 24.06.2025). LS Exchange / Lang &amp; Schwarz 7:30 – 23 Uhr. Xetra-Anleihehandel 9 – 17:30 Uhr. Direkthandel: Zeiten je Market Maker.</p>
+        <p><strong>Bewertung „Für dich“.</strong> Unsere Einschätzung nach vier Kriterien: Auswahl an Anleihen, übliche Spanne, Handelszeit und Börsenentgelt – je Platz gewichtet, keine Messung. Sie ersetzt nicht den Blick auf die Spanne der konkreten Anleihe. „Bedeutung“ ordnet das Gewicht im Anleihenhandel ein (Umsatz, Auswahl, Rolle als Preisquelle).</p>
+        <p><strong>Kurse auf dieser Website.</strong> Börse Frankfurt (Nachhandelsdaten der Deutschen Börse, dazu Tradegate und Xetra), Bundeswertpapiere von der Bundesbank – siehe <a href="anleihen-suche.html#quellen">Anleihen-Suche</a>.</p>
+      </div>
+    </details>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt: die Seite rendert auch ohne Menü-Skript.
+window.MC = window.MC || { navInit: function () {} };
+MC.navInit();
+</script>
+</body>
+</html>

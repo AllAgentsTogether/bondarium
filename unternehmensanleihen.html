@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unternehmensanleihen: Renditen seit 1970 – METALCONCRETE</title>
+<meta name="description" content="Renditen von Unternehmensanleihen seit 1970 nach Bonität und Land: USA, Deutschland, Japan, China und Australien – Jahresmittel, Spannen, aktueller Stand.">
+<link rel="canonical" href="https://www.metalconcrete.de/unternehmensanleihen.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/unternehmensanleihen.html">
+<meta property="og:title" content="Unternehmensanleihen: Renditen seit 1970 – METALCONCRETE">
+<meta property="og:description" content="Renditen von Unternehmensanleihen seit 1970 nach Bonität und Land: USA, Deutschland, Japan, China und Australien – Jahresmittel, Spannen, aktueller Stand.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Unternehmensanleihen: Renditen seit 1970 – METALCONCRETE">
+<meta name="twitter:description" content="Renditen von Unternehmensanleihen seit 1970 nach Bonität und Land: USA, Deutschland, Japan, China und Australien – Jahresmittel, Spannen, aktueller Stand.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Legende: Einträge sind Buttons (Hover/Fokus hebt die Linie hervor, Klick blendet sie aus) */
+  .legend { display: flex; gap: 10px 22px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 10px 0; margin-bottom: 24px; }
+  .legend .leg { display: inline-flex; align-items: center; gap: 7px; font: inherit; color: inherit; background: none; border: 0; padding: 2px 0; cursor: pointer; border-radius: 3px; }
+  .legend .leg:hover { color: var(--ink); }
+  .legend .leg:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .legend .leg.on { color: var(--ink); }
+  .legend .leg[aria-pressed="true"] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+  .legend .leg-hint { font-size: 12px; flex-basis: 100%; }
+  .sw-line { width: 20px; height: 3px; border-radius: 2px; background: var(--c, var(--line)); }
+  .sw-line.dashed { background: repeating-linear-gradient(90deg, var(--c, var(--line)) 0 6px, transparent 6px 9px); }
+  /* Legende: längere Einträge, zwei Zeilen + Hinweis auf dem Desktop */
+  #legend-unternehmen { min-height: 94px; }
+  svg { width: 100%; height: auto; display: block; }
+  /* Charts: reservierte Höhe (viewBox 1000×520; schmale Container siehe Media-Query 739 px) */
+  #chart-unternehmen { aspect-ratio: 1000 / 520; }
+  /* Serien: Hervorheben per Legende oder Maus auf der Linie (übrige stark abgeblendet),
+     Klick in der Legende fixiert die Hervorhebung */
+  .ser { transition: opacity 0.18s ease; }
+  .ser.dim { opacity: 0.12; }
+  .ser.hi path.line { stroke-width: 2.6; }
+  /* Hinweiszeile im Chart: Hover-Variante („… oder Maus“) bzw. Touch-Variante */
+  .chart-scroll .hint-touch { display: none; }
+  @media (hover: none) {
+    .chart-scroll .hint-hover { display: none; }
+    .chart-scroll .hint-touch { display: inline; }
+  }
+  /* Hoch-Tief-Band (Spanne der Monatsmittel je Jahr): dezent, kräftig beim hervorgehobenen Land */
+  .band { fill-opacity: 0.09; transition: fill-opacity 0.15s ease; }
+  .ser.hi .band { fill-opacity: 0.3; }
+  /* Tabellen-Stand, der deutlich älter ist als die jüngsten Tageswerte */
+  td.num .old { color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; margin-top: 36px; font-size: 13px; }   /* Ausnahme: acht Segmente müssen in 1000 px passen (Inter läuft breiter) */
+  caption { text-align: left; font-size: 19px; font-weight: 600; margin-bottom: 12px; }
+  th, td { text-align: left; padding: 10px 8px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }   /* 8 statt 12 px, damit die Tabelle mit Inter in 1000 px passt */
+  thead th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  tbody th { font-weight: 400; white-space: nowrap; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.cur { color: var(--muted); letter-spacing: 0.04em; white-space: nowrap; }
+  td.cur .sym { color: var(--ink); letter-spacing: 0; }
+  /* Tabellenkopf: Titel links, Hinweis rechts */
+  caption .cap-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px 20px; flex-wrap: wrap; }
+  caption label { font-size: 13px; color: var(--muted); display: inline-flex; align-items: center; gap: 8px; }
+  caption select { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 8px; cursor: pointer; }
+  caption select:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  /* Spaltenköpfe: Klick sortiert (auf-/absteigend), Richtung per aria-sort */
+  thead th .sortbtn { font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  thead th .sortbtn::after { content: "↕"; font-size: 12px; opacity: 0.45; }
+  thead th .sortbtn:hover, thead th[aria-sort="ascending"] .sortbtn, thead th[aria-sort="descending"] .sortbtn { color: var(--ink); }
+  thead th[aria-sort="ascending"] .sortbtn::after { content: "↑"; opacity: 1; }
+  thead th[aria-sort="descending"] .sortbtn::after { content: "↓"; opacity: 1; }
+  thead th .sortbtn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  tbody td.empty { color: var(--muted); }
+  caption .cap-note { font-size: 13px; color: var(--muted); }
+  /* Handy: Tabelle scrollt quer – Titel und Hinweis bleiben links im Bild */
+  @media (max-width: 899px) { caption .cap-row { position: sticky; left: 0; width: min(100%, calc(100vw - 32px)); } }
+  td.txt { color: var(--muted); white-space: nowrap; }
+  .tag { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 7px; }
+  @media (max-width: 760px) {  #legend-unternehmen { min-height: 123px; } }
+  @media (max-width: 600px) {
+    .legend { gap: 10px 14px; }
+    #legend-unternehmen { min-height: 181px; }   /* gemessen bei 390 px: 5 Zeilen + Hinweis */
+  }
+  @media (max-width: 400px) {  #legend-unternehmen { min-height: 210px; } }
+  @media (max-width: 900px) {
+    table { min-width: 820px; }
+    #ctable-wrap table { min-width: 900px; }
+  }
+  /* Unter 900 px zeichnet das Skript eine schmale Fassung in Containerbreite (Seitenverhältnis
+     setzt es selbst); bis dahin grob reservieren, damit nichts springt */
+  @media (max-width: 899px) { #chart-unternehmen { aspect-ratio: 100 / 95; } }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Unternehmensanleihen: Renditen nach Bonität und Land","description":"Renditen von Unternehmensanleihen seit 1970 nach Bonität und Land: USA, Deutschland, Japan, China und Australien – Jahresmittel, Spannen, aktueller Stand.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-25","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/unternehmensanleihen.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Zinsen","item":"https://www.metalconcrete.de/beobachten.html"},{"@type":"ListItem","position":3,"name":"Unternehmensanleihen seit 1970","item":"https://www.metalconcrete.de/unternehmensanleihen.html"}]}</script>
+</head>
+<body>
+<noscript><p style="margin:0;padding:12px 16px;background:#FBE9D0;border-bottom:1px solid #E0CBA8;color:#5A4A2A;font-size:14px;text-align:center">Diese Seite benötigt JavaScript für Charts und aktuelle Marktdaten.</p></noscript>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="zinsen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn current" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html" class="current">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+
+    <h1>Unternehmens&shy;anleihen seit 1970</h1>
+    <p class="sub" id="sub-unternehmen">Mit einer Unternehmensanleihe leihst du einem Unternehmen Geld – für eine feste Laufzeit und zu einem festen Zins. Weil ein Unternehmen eher ausfallen kann als ein Staat, zahlt es meist mehr Zins; wie viel mehr, hängt vor allem von seiner Bonität ab. Der Vergleich unten zeigt Unternehmensanleihen deshalb nach Bonitätsklassen aus fünf Ländern, überwiegend mit 10 Jahren Laufzeit – so lassen sie sich neben die 10-jährigen Staatsanleihen legen.</p>
+
+    <p class="eyebrow" id="eyebrow-unternehmen">Unternehmensanleihen · 1970 – 2026 · Stand: 17.09.2026</p>
+    <div class="legend" id="legend-unternehmen"></div>
+
+    <div id="chart-unternehmen" class="chart-scroll"></div>
+
+    <p class="note" id="note-unternehmen">Jahresdurchschnitte in der jeweiligen Landeswährung, ergänzt um den aktuellen Wert; die Fläche um jede Linie zeigt die Spanne des Jahres. Laufzeiten und Ratingskalen unterscheiden sich je Reihe – aussagekräftig ist vor allem der Vergleich jeder Reihe mit ihrer eigenen Geschichte.</p>
+
+    <div class="table-scroll" id="ctable-wrap">
+    <table>
+      <caption><div class="cap-row"><span>Acht Segmente im Überblick</span><span class="cap-note">Hoch, Tief und Ø: Jahresdurchschnitte seit 1970 bzw. seit Beginn der Reihe, ohne das laufende Jahr; Japan: noch kein volles Jahr</span></div></caption>
+      <thead id="cthead">
+        <tr><th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Segment</button></th><th scope="col" data-col="current"><button type="button" class="sortbtn" data-col="current">Aktuelle Rendite</button></th><th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th><th scope="col" data-col="rating"><button type="button" class="sortbtn" data-col="rating">Bonität</button></th><th scope="col" data-col="mat"><button type="button" class="sortbtn" data-col="mat">Laufzeit</button></th><th scope="col" data-col="stand"><button type="button" class="sortbtn" data-col="stand">Stand</button></th><th scope="col" data-col="high"><button type="button" class="sortbtn" data-col="high">Hoch</button></th><th scope="col" data-col="low"><button type="button" class="sortbtn" data-col="low">Tief</button></th><th scope="col" data-col="avg"><button type="button" class="sortbtn" data-col="avg">Ø</button></th></tr>
+      </thead>
+      <tbody id="ctable"><tr>
+      <th scope="row"><i class="tag" style="background:#1D5FA0"></i>USA · AAA–A (HQM)</th>
+      <td class="num">5,58&nbsp;%</td>
+      <td class="cur">USD <span class="sym">$</span></td>
+      <td class="txt">AAA–A</td>
+      <td class="txt">10 J.</td>
+      <td class="num">08.2026</td>
+      <td class="num">13,12&nbsp;% (1984)</td>
+      <td class="num">2,37&nbsp;% (2020)</td>
+      <td class="num">6,31&nbsp;%</td>
+    </tr><tr>
+      <th scope="row"><i class="tag" style="background:#B23B2E"></i>USA · Baa (Moody's)</th>
+      <td class="num">6,48&nbsp;%</td>
+      <td class="cur">USD <span class="sym">$</span></td>
+      <td class="txt">Baa</td>
+      <td class="txt">20+ J.</td>
+      <td class="num">15.09.2026</td>
+      <td class="num">16,11&nbsp;% (1982)</td>
+      <td class="num">3,39&nbsp;% (2021)</td>
+      <td class="num">8,16&nbsp;%</td>
+    </tr><tr>
+      <th scope="row"><i class="tag" style="background:#2C2C2A"></i>Deutschland · Unternehmen</th>
+      <td class="num">4,54&nbsp;%</td>
+      <td class="cur">EUR <span class="sym">€</span></td>
+      <td class="txt">gemischt</td>
+      <td class="txt">alle (Ø ≈ 7 J.)</td>
+      <td class="num">15.09.2026</td>
+      <td class="num">11,11&nbsp;% (1974)</td>
+      <td class="num">0,90&nbsp;% (2021)</td>
+      <td class="num">5,90&nbsp;%</td>
+    </tr><tr>
+      <th scope="row"><i class="tag" style="background:#8A5FBF"></i>Japan · AA (R&amp;I)</th>
+      <td class="num">3,53&nbsp;%</td>
+      <td class="cur">JPY <span class="sym">¥</span></td>
+      <td class="txt">AA</td>
+      <td class="txt">10 J.</td>
+      <td class="num">17.09.2026</td>
+      <td class="num">–</td>
+      <td class="num">–</td>
+      <td class="num">–</td>
+    </tr><tr>
+      <th scope="row"><i class="tag" style="background:#1F7A5E"></i>Japan · A (R&amp;I)</th>
+      <td class="num">3,79&nbsp;%</td>
+      <td class="cur">JPY <span class="sym">¥</span></td>
+      <td class="txt">A</td>
+      <td class="txt">10 J.</td>
+      <td class="num">17.09.2026</td>
+      <td class="num">–</td>
+      <td class="num">–</td>
+      <td class="num">–</td>
+    </tr><tr>
+      <th scope="row"><i class="tag" style="background:#2F8A9A"></i>China · AAA (ChinaBond)</th>
+      <td class="num">2,02&nbsp;%</td>
+      <td class="cur">CNY <span class="sym">¥</span></td>
+      <td class="txt">AAA (lokal)</td>
+      <td class="txt">10 J.</td>
+      <td class="num">16.09.2026</td>
+      <td class="num">5,60&nbsp;% (2011)</td>
+      <td class="num">2,23&nbsp;% (2025)</td>
+      <td class="num">4,39&nbsp;%</td>
+    </tr><tr>
+      <th scope="row"><i class="tag" style="background:#C07E28"></i>Australien · A</th>
+      <td class="num">5,64&nbsp;%</td>
+      <td class="cur">AUD <span class="sym">$</span></td>
+      <td class="txt">A</td>
+      <td class="txt">10 J.</td>
+      <td class="num">08.2026</td>
+      <td class="num">8,79&nbsp;% (2008)</td>
+      <td class="num">1,90&nbsp;% (2020)</td>
+      <td class="num">5,34&nbsp;%</td>
+    </tr><tr>
+      <th scope="row"><i class="tag" style="background:#A0386E"></i>Australien · BBB</th>
+      <td class="num">5,92&nbsp;%</td>
+      <td class="cur">AUD <span class="sym">$</span></td>
+      <td class="txt">BBB</td>
+      <td class="txt">10 J.</td>
+      <td class="num">08.2026</td>
+      <td class="num">9,94&nbsp;% (2008)</td>
+      <td class="num">2,92&nbsp;% (2020)</td>
+      <td class="num">6,06&nbsp;%</td>
+    </tr></tbody>
+    </table>
+    </div>
+
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="renditen.html">Staatsanleihen – die acht größten Volkswirtschaften seit 1970</a></li>
+        <li><a href="zinskurve.html">Zinskurve seit 1972</a></li>
+        <li><a href="risikoaufschlaege.html">Risikoaufschläge seit 1953 – Aaa und Baa gegen Staatsanleihe</a></li>
+        <li><a href="langlaeufer.html">Langläufer – wenn eine Anleihe 30, 50 oder 100 Jahre läuft</a></li>
+      </ul>
+    </nav>
+    <details class="quellen" id="quellen">
+      <summary>Datenquellen und Methodik</summary>
+      <div class="quellen-body">
+        <p><strong>Methodik.</strong> Der Chart zeigt acht Segmente des Marktes für Unternehmensanleihen aus fünf Volkswirtschaften als Jahresdurchschnitte seit 1970, soweit verfügbar, ergänzt um den jeweils aktuellen Wert: für die USA die Renditekurve hochwertiger Unternehmensanleihen des Finanzministeriums (AAA bis A, 10 Jahre) und die Moody's-Klasse Baa (Laufzeiten ab 20 Jahren), für Deutschland die Unternehmensanleihen der Bundesbank-Statistik, für Japan Unternehmensanleihen der Ratingklassen AA und A mit 10 Jahren Restlaufzeit (JSDA), für China die AAA-Unternehmensanleihekurve über 10 Jahre (ChinaBond) und für Australien Unternehmensanleihen der Ratingklassen A und BBB mit 10 Jahren Laufzeit (RBA). Baa, Bundesbank, Japan und China werden börsentäglich aktualisiert, HQM und Australien monatlich. Alle Renditen gelten in der jeweiligen Landeswährung. Die Reihen beginnen unterschiedlich: Moody's Baa und die deutschen Unternehmensanleihen reichen bis 1970 zurück, die HQM-Kurve ab 1984, Australien ab 2005, China ab 2007. Für Japan liegen Jahresmittel erst für die Jahre vor, für die alle zwölf Monatsendwerte nachgeladen sind – die Historie bis 2002 füllt sich mit den täglichen Datenläufen schrittweise auf. Die Laufzeiten sind nicht einheitlich: HQM, Japan, China und Australien beziehen sich auf rund 10 Jahre Restlaufzeit, die deutschen Unternehmensanleihen auf alle Laufzeiten (mittlere Restlaufzeit rund 7 Jahre), Moody's Baa auf 20 Jahre und mehr. Auch die Bonitäten sind über Ländergrenzen nur eingeschränkt vergleichbar: Japanische Ratings (R&amp;I) und erst recht chinesische fallen auf der heimischen Skala deutlich großzügiger aus als bei S&amp;P oder Moody's – ein chinesisches AAA entspricht international etwa BBB oder darunter –, und die Bundesbank-Reihe ist nicht nach Rating gefiltert. Aussagekräftig ist daher vor allem der Vergleich jeder Reihe mit ihrer eigenen Geschichte und mit der 10-jährigen Staatsanleihe desselben Landes (<a href="renditen.html">Staatsanleihen seit 1970</a>), weniger der Renditeabstand zwischen den Ländern. Die schattierte Fläche um jede Linie zeigt die Spanne des Jahres vom niedrigsten bis zum höchsten Monatswert (FRED und Bundesbank: Monatsmittel; HQM, Japan, China und Australien: Monatsendwerte).</p>
+        <p><strong>Datenquellen.</strong> USA: <a href="https://home.treasury.gov/data/treasury-coupon-issues-and-corporate-bond-yield-curve/corporate-bond-yield-curve">U.S. Treasury, HQM Corporate Bond Yield Curve</a> (Spot-Rendite 10 Jahre, monatlich, via <a href="https://fred.stlouisfed.org/series/HQMCB10YR">FRED</a>), <a href="https://fred.stlouisfed.org/series/DBAA">Moody's Seasoned Baa Corporate Bond Yield</a> (Monatsmittel seit 1919, börsentäglich via FRED). Deutschland: <a href="https://www.bundesbank.de/de/statistiken/geld-und-kapitalmaerkte">Deutsche Bundesbank</a>, Umlaufsrenditen inländischer Inhaberschuldverschreibungen – Anleihen von Unternehmen (Nicht-MFIs) (Monatsmittel, börsentäglich). Japan: <a href="https://market.jsda.or.jp/shijyo/saiken/baibai/baisanchi/index.html">Japan Securities Dealers Association (JSDA)</a>, Rating-Matrix der Referenzkurse für den außerbörslichen Anleihehandel – Durchschnittsrendite der von R&amp;I mit AA bzw. A bewerteten Anleihen mit 10 Jahren Restlaufzeit (börsentäglich, seit 2002). China: <a href="https://yield.chinabond.com.cn/">ChinaBond (China Central Depository &amp; Clearing)</a>, Renditekurve Unternehmensanleihen AAA, Punkt 10 Jahre (börsentäglich, seit 2006). Australien: <a href="https://www.rba.gov.au/statistics/tables/">Reserve Bank of Australia</a>, Tabelle F3 – Anleihen nichtfinanzieller Unternehmen mit Rating A bzw. BBB, Zielrestlaufzeit 10 Jahre (monatlich, seit 2005). Jahresdurchschnitt = Mittel der zwölf Monatswerte; Ø, Hoch und Tief beziehen sich auf Jahresdurchschnitte des jeweils verfügbaren Zeitraums ab 1970.</p>
+        <p id="datastand">Daten-Stand: 17.09.2026</p>
+      </div>
+    </details>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+window.MC.hoverWrap = window.MC.hoverWrap || function (s) { return s; };
+window.MC.load = window.MC.load || function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); };
+window.MC.minus = window.MC.minus || function (s) { return String(s).replace(/^-/, "−"); };
+// ============ Gemeinsame Helfer ============
+const SANS = 'Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif';
+const X0 = 70, X1 = 930, YTOP = 20, YBOT = 465, YEAR0 = 1970;   // X1 = Standard-Rechtsrand der Zeitachse (je Chart überschreibbar: x1)
+
+// ---------- Texte ----------
+const T = {
+  skipLink: "Zum Inhalt springen",
+  title: "Unternehmensanleihen: Renditen seit 1970 – METALCONCRETE",
+  metaDesc: "Renditen von Unternehmensanleihen seit 1970 nach Bonität und Land: USA, Deutschland, Japan, China und Australien – Jahresmittel, Spannen und aktueller Stand.",
+  footerLegal: "Rechtliches", footerImprint: "Impressum", footerPrivacy: "Datenschutz",
+  crossNav: 'Weiter: <a href="renditen.html">Staatsanleihen – die acht größten Volkswirtschaften seit 1970 →</a> · <a href="langlaeufer.html">Langläufer – wenn eine Anleihe 30, 50 oder 100 Jahre läuft →</a>',
+  thCurrent: "Aktuelle Rendite", thStand: "Stand",
+  footerDisclaimer: "Keine Anlageberatung.",
+  dataAsOf: "Daten-Stand:", outdated: "veraltet", standOld: "(älter)",
+  legendHint: "Legende: Überfahren hebt hervor, Klick fixiert (Esc löst).",
+  legendHintTouch: "Legende: Antippen hebt eine Linie hervor, erneutes Antippen löst sie.",
+  axisY: "↑ Rendite in % (Jahresdurchschnitt)", axisX: "Jahr →",
+  chartHintBase: "JAHRESDURCHSCHNITTE IN %", chartHintHover: "LINIE PER LEGENDE ODER MAUS HERVORHEBEN", chartHintTouch: "LINIE PER LEGENDE HERVORHEBEN",
+  tipRange: "Spanne", asOf: "Stand:",
+  corpEyebrow: "Unternehmensanleihen",
+  corpTblCaption: "Acht Segmente im Überblick", corpCapNote: "Hoch, Tief und Ø: Jahresdurchschnitte seit 1970 bzw. seit Beginn der Reihe, ohne das laufende Jahr; Japan: noch kein volles Jahr", thHigh2: "Hoch", thLow2: "Tief", thAvg2: "Ø",
+  thSegment: "Segment", thRating: "Bonität", thMaturity: "Laufzeit",
+  ratingMixed: "gemischt", ratingCn: "AAA (lokal)", matAll: "alle (Ø ≈ 7 J.)", mat10: "10 J.", mat20: "20+ J.",
+  sUsHqm: "USA · AAA–A · 10 J. (HQM)", sUsBaa: "USA · Baa (Moody's)",
+  sDeCorp: "Deutschland · Unternehmen",
+  sJpAa: "Japan · AA · 10 J.", sJpA: "Japan · A · 10 J.", sCnAaa: "China · AAA · 10 J.",
+  sAuA: "Australien · A · 10 J.", sAuBbb: "Australien · BBB · 10 J.",
+  // Kurzformen für die Tabelle (Laufzeit steht dort in eigener Spalte)
+  tUsHqm: "USA · AAA–A (HQM)", tUsBaa: "USA · Baa (Moody's)", tDeCorp: "Deutschland · Unternehmen",
+  tJpAa: "Japan · AA (R&I)", tJpA: "Japan · A (R&I)", tCnAaa: "China · AAA (ChinaBond)", tAuA: "Australien · A", tAuBbb: "Australien · BBB",
+  corpChartAria: "Renditen von Unternehmensanleihen nach Bonität und Land seit 1970",
+  corpChartTitle: "Renditen von Unternehmensanleihen seit 1970: USA (HQM 10 Jahre, Moody's Baa), Deutschland (Unternehmen), Japan (AA und A, 10 Jahre), China (AAA, 10 Jahre), Australien (A und BBB, 10 Jahre)",
+  mkBaaHigh: "USA Baa 16,1\u00A0% (1982)", mkBaaHighTitle: "Hoch 1982: 16,11\u00A0% Jahresdurchschnitt – Volcker-Zinsschock und Rezession, Höhepunkt des allgemeinen Zinsniveaus (der Risikoaufschlag erreichte sein Hoch erst im Dezember 2008)",
+  mkDeCorpLow: "Deutschland 0,9\u00A0% (2021)", mkDeCorpLowTitle: "Tief 2021: 0,90\u00A0% Jahresdurchschnitt – Negativzins-Ära und EZB-Anleihenkäufe drückten selbst Unternehmensanleihen fast auf null"
+};
+function L(k) { return T[k] != null ? T[k] : k; }
+function loc() { return "de-DE"; }
+
+function fmt(v, dec = 0) {
+  if (typeof v !== "number" || !isFinite(v)) return "–";
+  return MC.minus(v.toLocaleString(loc(), { minimumFractionDigits: dec, maximumFractionDigits: dec }));
+}
+const isDay = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d));
+const isMonth = d => /^\d{4}-\d{2}$/.test(String(d));
+// Voriger Werktag (Mo–Fr) eines Datums "JJJJ-MM-TT"
+function prevWeekday(d) {
+  const t = new Date(d + "T12:00:00Z");
+  do { t.setUTCDate(t.getUTCDate() - 1); } while (t.getUTCDay() === 0 || t.getUTCDay() === 6);
+  return t.toISOString().slice(0, 10);
+}
+// Liegt ein Stand ("JJJJ-MM-TT" bzw. "JJJJ-MM") nach dem heutigen Tag bzw. Monat (Ortszeit)?
+function isFuture(d) {
+  const n = new Date(), p = v => String(v).padStart(2, "0");
+  const today = `${n.getFullYear()}-${p(n.getMonth() + 1)}-${p(n.getDate())}`;
+  return isMonth(d) ? d > today.slice(0, 7) : String(d) > today;
+}
+function fmtDate(iso) {
+  const d = new Date(String(iso).slice(0, 10) + "T12:00:00");
+  return isNaN(d) ? "–" : d.toLocaleDateString(loc(), { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+// "Stand"-Angabe: Tageswerte als Datum, Monatswerte ("JJJJ-MM", OECD) als
+// MM.JJJJ; Ungültiges → "–"
+function fmtStand(d) {
+  if (isMonth(d)) return d.slice(5, 7) + "." + d.slice(0, 4);
+  return isDay(d) ? fmtDate(d) : "–";
+}
+// Dezimaljahr eines Datums ("JJJJ-MM-TT") bzw. einer Monatsangabe ("JJJJ-MM")
+function decYear(d) {
+  if (isMonth(d)) return Number(d.slice(0, 4)) + (Number(d.slice(5, 7)) - 0.5) / 12;
+  const dt = new Date(d + "T12:00:00Z");
+  const start = Date.UTC(dt.getUTCFullYear(), 0, 1);
+  return dt.getUTCFullYear() + (dt.getTime() - start) / 86400000 / 365.25;
+}
+// Alter eines Standes in Tagen, bezogen auf ref (Datum "JJJJ-MM-TT") bzw. heute;
+// Monatswerte zählen ab der Monatsmitte
+function ageDays(d, ref) {
+  const iso = isMonth(d) ? d + "-15" : d;
+  const to = isDay(ref) ? new Date(ref + "T00:00:00").getTime() : Date.now();
+  return (to - new Date(iso + "T00:00:00")) / 864e5;
+}
+
+
+// ============ Segmente und Daten ============
+// Währungszeichen zur Spalte "Währung" (ISO-Code + Symbol)
+const CUR_SYM = { USD: "$", EUR: "€", JPY: "¥", CNY: "¥", AUD: "$" };
+// Acht Segmente (Bonität × Land), Reihenfolge: USA, Deutschland, Japan, China,
+// Australien – innerhalb eines Landes von hoher zu niedrigerer Bonität. Farben aus
+// derselben Palette wie oben, so verteilt, dass Reihen mit ähnlichem aktuellem
+// Niveau verschiedene Farbfamilien tragen; die zweite Rating-Stufe eines Landes
+// (Japan A, Australien BBB) zusätzlich gestrichelt.
+// tblKey/cur/rating/mat: Spalten der Tabelle (Kurzname, Währung, Bonität, Laufzeit); code: Endlabel im Chart.
+const CORP = [
+  { key: "us_hqm",  code: "US HQM",     tblKey: "tUsHqm",  cur: "USD", rating: "AAA–A", matKey: "mat10",  nameKey: "sUsHqm",  color: "#1D5FA0" },
+  { key: "us_baa",  code: "US Baa",     tblKey: "tUsBaa",  cur: "USD", rating: "Baa",   matKey: "mat20",  nameKey: "sUsBaa",  color: "#B23B2E" },
+  { key: "de_corp", code: "DE Untern.", tblKey: "tDeCorp", cur: "EUR", ratingKey: "ratingMixed", matKey: "matAll", nameKey: "sDeCorp", color: "#2C2C2A" },
+  { key: "jp_aa",   pubNextDay: true, code: "JP AA",      tblKey: "tJpAa",   cur: "JPY", rating: "AA",    matKey: "mat10",  nameKey: "sJpAa",   color: "#8A5FBF", text: "#7A52B0" },
+  { key: "jp_a",    pubNextDay: true, code: "JP A",       tblKey: "tJpA",    cur: "JPY", rating: "A",     matKey: "mat10",  nameKey: "sJpA",    color: "#1F7A5E", dash: "6 3" },
+  { key: "cn_aaa",  code: "CN AAA",     tblKey: "tCnAaa",  cur: "CNY", ratingKey: "ratingCn", matKey: "mat10", nameKey: "sCnAaa", color: "#2F8A9A", text: "#1F6F7D" },
+  { key: "au_a",    code: "AU A",       tblKey: "tAuA",    cur: "AUD", rating: "A",     matKey: "mat10",  nameKey: "sAuA",    color: "#C07E28", text: "#8A5A1A" },
+  { key: "au_bbb",  code: "AU BBB",     tblKey: "tAuBbb",  cur: "AUD", rating: "BBB",   matKey: "mat10",  nameKey: "sAuBbb",  color: "#A0386E", dash: "6 3" }
+];
+// Segmente mit börsentäglicher Quelle (Moody's via FRED, Bundesbank, JSDA, ChinaBond)
+const CORP_DAILY = ["us_baa", "de_corp", "jp_aa", "jp_a", "cn_aaa"];
+
+// Eingebettete Basisdaten (Jahresdurchschnitte der Monatswerte, % p. a.);
+// "latest", neue Jahre und die Jahresspannen kommen aus unternehmen.json
+// (scripts/update_unternehmen.py, voller Lauf). Japan: Jahresmittel erscheinen,
+// sobald das Skript zwölf Monatsendwerte eines Jahres nachgeladen hat (die JSDA
+// erlaubt nur wenige Abrufe je Lauf). Stand: 16.09.2026.
+const RC = {
+  range: {},
+  // Monatswerte (nur für Reihen ohne Jahresmittel gezeichnet, z. B. Japan) – aus unternehmen.json
+  monthly: {},
+  latest: {
+    us_hqm: { date: "2026-08", yield: 5.58 },
+    us_baa: { date: "2026-09-15", yield: 6.48 },
+    de_corp: { date: "2026-09-15", yield: 4.54 },
+    jp_aa: { date: "2026-09-17", yield: 3.53 },
+    jp_a: { date: "2026-09-17", yield: 3.79 },
+    cn_aaa: { date: "2026-09-16", yield: 2.02 },
+    au_a: { date: "2026-08", yield: 5.64 },
+    au_bbb: { date: "2026-08", yield: 5.92 }
+  },
+  annual: {
+  us_hqm: { 1984: 13.12, 1985: 11.78, 1986: 9.35, 1987: 9.53, 1988: 9.86, 1989: 9.38, 1990: 9.56, 1991: 9.0, 1992: 8.04, 1993: 6.82, 1994: 7.9, 1995: 7.35, 1996: 7.17, 1997: 7.05, 1998: 6.28, 1999: 6.94, 2000: 7.78, 2001: 6.82, 2002: 6.29, 2003: 5.25, 2004: 5.33, 2005: 5.18, 2006: 5.75, 2007: 5.89, 2008: 6.88, 2009: 6.37, 2010: 5.04, 2011: 4.66, 2012: 3.69, 2013: 3.93, 2014: 3.8, 2015: 3.67, 2016: 3.41, 2017: 3.53, 2018: 4.06, 2019: 3.38, 2020: 2.37, 2021: 2.52, 2022: 4.53, 2023: 5.32, 2024: 5.09, 2025: 5.16 },
+  us_baa: { 1970: 9.11, 1971: 8.56, 1972: 8.16, 1973: 8.24, 1974: 9.5, 1975: 10.61, 1976: 9.75, 1977: 8.97, 1978: 9.49, 1979: 10.69, 1980: 13.67, 1981: 16.04, 1982: 16.11, 1983: 13.55, 1984: 14.19, 1985: 12.72, 1986: 10.39, 1987: 10.58, 1988: 10.83, 1989: 10.18, 1990: 10.35, 1991: 9.8, 1992: 8.98, 1993: 7.93, 1994: 8.62, 1995: 8.2, 1996: 8.05, 1997: 7.86, 1998: 7.22, 1999: 7.87, 2000: 8.36, 2001: 7.95, 2002: 7.8, 2003: 6.77, 2004: 6.39, 2005: 6.06, 2006: 6.48, 2007: 6.48, 2008: 7.45, 2009: 7.3, 2010: 6.04, 2011: 5.66, 2012: 4.93, 2013: 5.1, 2014: 4.85, 2015: 5.0, 2016: 4.72, 2017: 4.44, 2018: 4.8, 2019: 4.37, 2020: 3.6, 2021: 3.39, 2022: 5.07, 2023: 5.86, 2024: 5.75, 2025: 6.0 },
+  de_corp: { 1970: 8.48, 1971: 8.16, 1972: 8.08, 1973: 9.76, 1974: 11.11, 1975: 9.13, 1976: 8.15, 1977: 6.77, 1978: 6.6, 1979: 7.65, 1980: 8.92, 1981: 11.05, 1982: 9.33, 1983: 7.91, 1984: 7.83, 1985: 7.06, 1986: 6.54, 1987: 6.63, 1988: 6.74, 1989: 7.23, 1990: 9.01, 1991: 8.92, 1992: 8.75, 1993: 6.87, 1994: 7.03, 1995: 6.85, 1996: 5.85, 1997: 5.17, 1998: 5.0, 1999: 4.99, 2000: 6.22, 2001: 5.88, 2002: 5.99, 2003: 4.96, 2004: 4.0, 2005: 3.69, 2006: 4.15, 2007: 5.04, 2008: 6.28, 2009: 5.54, 2010: 4.03, 2011: 4.25, 2012: 3.73, 2013: 3.37, 2014: 2.94, 2015: 2.43, 2016: 2.07, 2017: 1.73, 2018: 2.49, 2019: 2.53, 2020: 1.75, 2021: 0.9, 2022: 3.26, 2023: 4.22, 2024: 3.65, 2025: 3.58 },
+  jp_aa: {  },
+  jp_a: {  },
+  cn_aaa: { 2007: 4.88, 2008: 5.35, 2009: 4.76, 2010: 4.62, 2011: 5.6, 2012: 5.06, 2013: 5.49, 2014: 5.58, 2015: 4.48, 2016: 3.75, 2017: 4.87, 2018: 4.92, 2019: 4.33, 2020: 4.08, 2021: 3.88, 2022: 3.6, 2023: 3.34, 2024: 2.54, 2025: 2.23 },
+  au_a: { 2005: 6.24, 2006: 6.61, 2007: 7.3, 2008: 8.79, 2009: 8.14, 2010: 7.4, 2011: 6.92, 2012: 5.58, 2013: 5.49, 2014: 4.89, 2015: 4.4, 2016: 4.13, 2017: 3.95, 2018: 3.89, 2019: 2.73, 2020: 1.9, 2021: 2.45, 2022: 5.35, 2023: 5.73, 2024: 5.28, 2025: 4.92 },
+  au_bbb: { 2005: 6.4, 2006: 6.79, 2007: 7.57, 2008: 9.94, 2009: 9.58, 2010: 7.74, 2011: 7.71, 2012: 6.9, 2013: 6.76, 2014: 5.74, 2015: 4.96, 2016: 4.81, 2017: 4.41, 2018: 4.48, 2019: 3.48, 2020: 2.92, 2021: 3.14, 2022: 6.19, 2023: 6.51, 2024: 5.8, 2025: 5.36 }
+  }
+};
+
+const CORP_MARKERS = [
+  { key: "us_baa", t: 1982.5, v: 16.11, textKey: "mkBaaHigh", titleKey: "mkBaaHighTitle", anchor: "start", dx: 8, dy: 4, color: "#B23B2E" },
+  { key: "de_corp", t: 2021.5, v: 0.90, textKey: "mkDeCorpLow", titleKey: "mkDeCorpLowTitle", anchor: "middle", dx: 0, dy: 17, color: "#2C2C2A", narrow: { anchor: "end", dx: -7, dy: 4 } }
+];
+
+// ============ Chart-Instanzen ============
+// Der Chart-Code ist instanzbasiert (gleicher Code auf renditen.html):
+// je Instanz Reihendefinitionen (defs), Daten (data: annual/range/latest),
+// Tagesquellen (daily), Marker, DOM-Ziele, Y-Achsen-Mindesthöhe (vMax0) und die
+// per Legende fixierte Hervorhebung (pinned – bleibt über Datenladen erhalten).
+const CHARTS = {
+  unternehmen: { defs: CORP, data: RC, daily: CORP_DAILY, markers: CORP_MARKERS, chartId: "chart-unternehmen", legendId: "legend-unternehmen",
+    x1: 885, vMax0: 9, labelRoom: 116, ariaKey: "corpChartAria", titleKey: "corpChartTitle", pinned: null }   // x1 885: längere Endlabels („DE Untern. 4,58 %“ ragte bei 900 über den Rand); labelRoom: Platz dafür in der schmalen Fassung
+};
+
+// Jüngstes Datum über alle Reihen (bestimmt das rechte Chart-Ende)
+function newestDate(ch) {
+  let best = null;
+  for (const c of ch.defs) {
+    const l = ch.data.latest[c.key];
+    if (l && (isDay(l.date) || isMonth(l.date)) && (best === null || decYear(l.date) > decYear(best))) best = l.date;
+  }
+  return best;
+}
+// Jüngstes Tagesdatum der börsentäglichen Quellen (Daten-Stand in Eyebrow und Fußzeile)
+function newestDaily(ch) {
+  let best = null;
+  for (const k of ch.daily) {
+    const l = ch.data.latest[k];
+    if (l && isDay(l.date) && (best === null || l.date > best)) best = l.date;
+  }
+  return best || newestDate(ch);
+}
+
+// Endlabels: einfache Kollisionsvermeidung – nach y sortieren, Mindestabstand
+// nach unten erzwingen, Überlauf am unteren Rand nach oben zurückschieben
+function spreadLabels(items, gap, lo, hi) {
+  items.sort((a, b) => a.y - b.y);
+  for (let i = 1; i < items.length; i++) if (items[i].y - items[i - 1].y < gap) items[i].y = items[i - 1].y + gap;
+  const last = items.length - 1;
+  if (last >= 0 && items[last].y > hi) {
+    items[last].y = hi;
+    for (let i = last - 1; i >= 0; i--) if (items[i + 1].y - items[i].y < gap) items[i].y = items[i + 1].y - gap;
+  }
+  if (items.length && items[0].y < lo) {
+    items[0].y = lo;
+    for (let i = 1; i < items.length; i++) if (items[i].y - items[i - 1].y < gap) items[i].y = items[i - 1].y + gap;
+  }
+}
+
+// Geometrie je Containerbreite (Handy-Lesbarkeit): ab 900 px die bisherige Fassung
+// (viewBox 1000 × 520, im 1000-px-Container Maßstab 1), darunter eine schmale Fassung
+// in echter Containerbreite – Maßstab 1, die Schrift bleibt also 11–12 px groß, statt
+// wie früher mit einem 700-px-SVG quer zu scrollen (effektiv 7–8 px).
+function chartGeom(ch) {
+  const el = document.getElementById(ch.chartId);
+  const cw = Math.round((el && el.clientWidth) || 1000);
+  if (cw >= 900) return { W: 1000, H: 520, X0, X1: ch.x1 || X1, YTOP, YBOT, yl: 62, xl: 485, xt: 508, step: 10, narrow: false };
+  const W = Math.max(280, cw), H = Math.round(Math.min(520, Math.max(320, W * 0.95)));
+  return { W, H, X0: 40, X1: W - (ch.labelRoom || 66), YTOP: 26, YBOT: H - 44, yl: 34, xl: H - 26, xt: H - 6, step: W < 560 ? 20 : 10, narrow: true };
+}
+
+// ============ Chart: 8 Renditelinien (je Instanz) ============
+function buildYieldChart(ch) {
+  const D = ch.data;
+  const G = chartGeom(ch);
+  const { X0, YTOP, YBOT } = G;          // überdecken die Desktop-Konstanten in dieser Funktion
+  const tEnd = decYear(newestDate(ch)) + 0.15;
+  const X1c = G.X1;
+  const x = t => X0 + (t - YEAR0) * (X1c - X0) / (tEnd - YEAR0);
+
+  // Y-Achse: Mindesthöhe vMax0 (Staatsanleihen 21 % wegen Italien 1982), sonst aus den Daten
+  let vMax = ch.vMax0, vMin = -1;
+  for (const c of ch.defs) {
+    const l = D.latest[c.key];
+    if (l && typeof l.yield === "number") vMax = Math.max(vMax, l.yield * 1.05);
+    for (const v of Object.values(D.annual[c.key] || {})) vMax = Math.max(vMax, v + 0.6);
+    for (const r of Object.values(D.range[c.key] || {})) vMax = Math.max(vMax, r[1] + 0.3);
+  }
+  const y = v => YBOT - (v - vMin) * (YBOT - YTOP) / (vMax - vMin);
+
+  const series = [], hoverSeries = [], labels = [], bands = [];
+  // Hoch-Tief-Band: Polygon aus Jahres-Hochs (vorwärts) und -Tiefs (rückwärts) je
+  // lückenlosem Abschnitt; das laufende Jahr (noch ohne Jahresmittel) führt das
+  // Band mit seiner bisherigen Spanne bis zum aktuellen Wert weiter
+  function bandPath(pts) {
+    if (pts.length < 2) return "";
+    const top = pts.map((p, i) => `${i ? "L" : "M"}${p.x} ${p.hi}`);
+    const bot = pts.slice().reverse().map(p => `L${p.x} ${p.lo}`);
+    return top.join(" ") + " " + bot.join(" ") + " Z";
+  }
+  const rangeTip = r => r ? ` · ${L("tipRange")} ${fmt(r[0], 2)}–${fmt(r[1], 2)}\u00A0%` : "";
+  for (const c of ch.defs) {
+    const ann = D.annual[c.key] || {};
+    const rng = D.range[c.key] || {};
+    const years = Object.keys(ann).map(Number).sort((a, b) => a - b);
+    const latest = D.latest[c.key];
+    const seg = [], hx = [], hy = [], htips = [], bandParts = [];
+    let bandPts = [];
+    // Name roh für die Tooltip-Texte (site.js setzt sie als Text, nicht als HTML –
+    // „Moody's“ würde sonst als &#39; erscheinen), maskiert für den SVG-<title>
+    const rawName = L(c.nameKey), name = MC.esc(rawName);
+    let prevYear = null, endDot = "", lastT = null;
+    // Reihen ohne volles Jahr (Japan, Historie ab 03/2025): Monatswerte als Linie statt eines
+    // einzelnen Punkts – sonst erschien der Punkt in jedem Tooltip (auch bei 1972)
+    const mon = years.length ? {} : (D.monthly[c.key] || {});
+    let prevM = null;
+    for (const m of Object.keys(mon).sort()) {
+      const t = decYear(m), px = +x(t).toFixed(1), py = +y(mon[m]).toFixed(1);
+      const mi = Number(m.slice(0, 4)) * 12 + Number(m.slice(5, 7));
+      seg.push(`${prevM !== null && mi - prevM === 1 ? "L" : "M"}${px} ${py}`);
+      prevM = mi; lastT = t; prevYear = Number(m.slice(0, 4));
+      hx.push(px); hy.push(py);
+      htips.push(`${rawName} ${fmtStand(m)}: ${fmt(mon[m], 2)}\u00A0%`);
+    }
+    for (const yr of years) {
+      const px = +x(yr + 0.5).toFixed(1), py = +y(ann[yr]).toFixed(1);
+      // Datenlücken (z. B. Indien 1986–1995) unterbrechen die Linie
+      const cont = prevYear !== null && yr - prevYear === 1;
+      seg.push(`${cont ? "L" : "M"}${px} ${py}`);
+      prevYear = yr; lastT = yr + 0.5;
+      hx.push(px); hy.push(py);
+      htips.push(`${rawName} ${yr}: ${fmt(ann[yr], 2)}\u00A0%${rangeTip(rng[yr])}`);
+      const r = rng[yr];
+      if (!r || !cont) { bandParts.push(bandPath(bandPts)); bandPts = []; }
+      if (r) bandPts.push({ x: px, lo: +y(r[0]).toFixed(1), hi: +y(r[1]).toFixed(1) });
+    }
+    if (latest && typeof latest.yield === "number" && (isDay(latest.date) || isMonth(latest.date))) {
+      const lt = decYear(latest.date);
+      const px = +x(lt).toFixed(1), py = +y(latest.yield).toFixed(1);
+      // Anschluss an das letzte Jahresmittel, solange die Lücke unter zwei Jahren bleibt
+      const cont = lastT !== null && lt - lastT < 2.0;
+      seg.push(`${cont ? "L" : "M"}${px} ${py}`);
+      hx.push(px); hy.push(py);
+      const curYr = Number(String(latest.date).slice(0, 4));
+      const rc = years.length && curYr > prevYear ? rng[curYr] : null;   // Spanne des laufenden Jahres (bisher)
+      const rcTip = rc ? [Math.min(rc[0], latest.yield), Math.max(rc[1], latest.yield)] : null;   // wie das Band: inkl. aktuellem Wert
+      const tipTxt = `${rawName} ${fmtStand(latest.date)}: ${fmt(latest.yield, 2)}\u00A0%${rangeTip(rcTip)}`;
+      htips.push(tipTxt);
+      // Bandende am aktuellen Wert: Spanne der bisherigen Monatsmittel, erweitert um den
+      // (tagesaktuellen) Wert selbst, damit die Linie nicht aus dem Band herausragt
+      if (rc && cont && bandPts.length) bandPts.push({ x: px, lo: +y(Math.min(rc[0], latest.yield)).toFixed(1), hi: +y(Math.max(rc[1], latest.yield)).toFixed(1) });
+      endDot = `<circle cx="${px}" cy="${py}" r="3" fill="${c.color}"><title>${MC.esc(tipTxt)}</title></circle>`;
+      labels.push({ key: c.key, x: px, y: py, py, text: `${c.code} ${fmt(latest.yield, 2)}\u00A0%`, color: c.text || c.color });
+    }
+    bandParts.push(bandPath(bandPts));
+    const bd = bandParts.filter(Boolean).join(" ");
+    if (bd) bands.push({ key: c.key, color: c.color, d: bd });
+    series.push({ key: c.key, color: c.color, dash: c.dash, d: seg.join(" "), endDot });
+    hoverSeries.push({ x: hx, y: hy, tips: htips, color: c.color });
+  }
+  // Tooltip-Referenz (site.js nutzt die erste Serie als Zeitachse): die sichtbare
+  // Serie mit dem frühesten Startpunkt nach vorn – sonst springt der Tooltip bei
+  // ausgeblendeter USA-Linie auf China (ab 2002)
+  if (hoverSeries.length > 1) {
+    let ref = 0;
+    hoverSeries.forEach((h, i) => { if (h.x.length && h.x[0] < hoverSeries[ref].x[0]) ref = i; });
+    if (ref > 0) hoverSeries.unshift(hoverSeries.splice(ref, 1)[0]);
+  }
+  // Endlabels rechts vom Endpunkt, mindestens 12 px Abstand zueinander
+  spreadLabels(labels, 13.5, YTOP + 5, YBOT - 3);
+  const labelOf = {};
+  for (const l of labels) {
+    // Verbindungslinie, falls das Label vom Endpunkt weggeschoben wurde
+    const lead = Math.abs(l.y - l.py) > 2 ? `<line x1="${(l.x + 3).toFixed(1)}" y1="${l.py}" x2="${(l.x + 8).toFixed(1)}" y2="${l.y.toFixed(1)}" stroke="${l.color}" stroke-width="1"/>` : "";
+    labelOf[l.key] = lead + `<text x="${(l.x + 10).toFixed(1)}" y="${(l.y + 3.5).toFixed(1)}" font-family="${SANS}" font-size="11" fill="${l.color}" paint-order="stroke" stroke="#FBFAF7" stroke-width="3" stroke-linejoin="round">${l.text}</text>`;
+  }
+
+  let grid = [], yLabels = [];
+  for (let v = 0; v <= vMax; v += 2) {
+    grid.push(`<line x1="${X0}" y1="${y(v).toFixed(1)}" x2="${X1c}" y2="${y(v).toFixed(1)}"${v === 0 ? ' stroke="rgba(44,44,42,0.28)"' : ""}/>`);
+    yLabels.push(`<text x="${G.yl}" y="${(y(v) + 4).toFixed(1)}">${fmt(v)}\u00A0%</text>`);
+  }
+  let vGrid = [], xLabels = [`<text x="${X0}" y="${G.xl}">${YEAR0}</text>`];
+  for (let yr = YEAR0 + 10; yr < tEnd - 3; yr += 10) {
+    vGrid.push(`<line x1="${x(yr).toFixed(1)}" y1="${YTOP}" x2="${x(yr).toFixed(1)}" y2="${YBOT}"/>`);
+    if ((yr - YEAR0) % G.step === 0) xLabels.push(`<text x="${x(yr).toFixed(1)}" y="${G.xl}">${yr}</text>`);
+  }
+
+  let markers = [];
+  for (const m0 of ch.markers) {
+    const m = G.narrow && m0.narrow ? Object.assign({}, m0, m0.narrow) : m0;   // eigene Lage in der schmalen Fassung
+    // eigene .ser-Gruppe mit Reihenschlüssel: wird mit der Linie hervorgehoben bzw. abgeblendet
+    markers.push(`<g class="ser" data-key="${m.key}"><circle cx="${x(m.t).toFixed(1)}" cy="${y(m.v).toFixed(1)}" r="3" fill="${m.color}"><title>${L(m.titleKey)}</title></circle>`
+      + `<text x="${(x(m.t) + m.dx).toFixed(1)}" y="${(y(m.v) + m.dy).toFixed(1)}" text-anchor="${m.anchor}" font-family="${SANS}" font-size="11" style="fill:var(--muted)" paint-order="stroke" stroke="#FBFAF7" stroke-width="3" stroke-linejoin="round">${L(m.textKey)}</text></g>`);
+  }
+
+  // Zeichenreihenfolge: hintere Reihen zuerst, die ersten (USA/China/Deutschland
+  // bzw. USA-Segmente) zuletzt (liegen damit oben). Hover-Reihenfolge bleibt die Listenreihenfolge.
+  // Jede Serie (Linie, Endpunkt, Endlabel) als Gruppe – Legende blendet sie ab/aus.
+  const drawOrder = series.slice().reverse();
+  const box = document.getElementById(ch.chartId);
+  if (box) box.style.aspectRatio = `${G.W} / ${G.H}`;   // reservierte Höhe passend zur Fassung
+  ch.drawnW = G.narrow ? G.W : 1000;
+  return MC.hoverWrap(`<svg viewBox="0 0 ${G.W} ${G.H}" role="img" aria-label="${L(ch.ariaKey)}" xmlns="http://www.w3.org/2000/svg">
+    <title>${L(ch.titleKey)}</title>
+    <text x="4" y="12" font-family="${SANS}" font-size="12" font-weight="600" style="fill:var(--muted)">${L("axisY")}</text>
+    ${G.narrow ? "" : `<text x="${X1c}" y="12" text-anchor="end" font-family="${SANS}" font-size="11.5" style="fill:var(--muted)" letter-spacing="0.08em"><tspan class="hint-hover">${L("chartHintHover")}</tspan><tspan class="hint-touch">${L("chartHintTouch")}</tspan></text>`}
+    <text x="${X1c}" y="${G.xt}" text-anchor="end" font-family="${SANS}" font-size="12" font-weight="600" style="fill:var(--muted)">${L("axisX")}</text>
+    <g stroke="rgba(44,44,42,0.09)" stroke-width="1">${grid.join("")}</g>
+    <g stroke="rgba(44,44,42,0.07)" stroke-width="1">${vGrid.join("")}</g>
+    <g font-family="${SANS}" font-size="12" style="fill:var(--muted)" text-anchor="end">${yLabels.join("")}</g>
+    <g font-family="${SANS}" font-size="12" style="fill:var(--muted)" text-anchor="middle">${xLabels.join("")}</g>
+    <line x1="${X0}" y1="${YBOT}" x2="${X1c}" y2="${YBOT}" stroke="rgba(44,44,42,0.35)" stroke-width="1"/>
+    <line x1="${X0}" y1="${YTOP}" x2="${X0}" y2="${YBOT}" stroke="rgba(44,44,42,0.35)" stroke-width="1"/>
+    ${bands.slice().reverse().map(b => `<g class="ser" data-key="${b.key}"><path class="band" fill="${b.color}" stroke="none" d="${b.d}"/></g>`).join("\n")}
+    ${markers.join("\n")}
+    ${drawOrder.map(p => `<g class="ser line-g" data-key="${p.key}"><path fill="none" stroke="${p.color}" stroke-width="14" opacity="0" pointer-events="stroke" d="${p.d}"/><path class="line" fill="none" stroke="${p.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"${p.dash ? ` stroke-dasharray="${p.dash}"` : ""} d="${p.d}"/>${p.endDot}${labelOf[p.key] || ""}</g>`).join("\n")}
+  </svg>`, hoverSeries);
+}
+
+// ============ Legende und Hervorhebung (je Instanz) ============
+function buildLegend(ch) {
+  return ch.defs.map(c =>
+    `<button type="button" class="leg" data-key="${c.key}" aria-pressed="${ch.pinned === c.key ? "true" : "false"}"><i class="sw-line${c.dash ? " dashed" : ""}" style="--c:${c.color}"></i>${MC.esc(L(c.nameKey))}</button>`
+  ).join("") + `<span class="leg-hint">${L(window.matchMedia && window.matchMedia("(hover: none)").matches ? "legendHintTouch" : "legendHint")}</span>`;
+}
+// Hervorheben: Serie (Linie, Band, Endlabel) kräftig, übrige abgeblendet; Legendeneintrag markiert.
+// Auslöser: Legende (Hover/Fokus), Maus auf der Linie (nur Hover-Geräte) oder Fixierung (pinned).
+function highlight(ch, key) {
+  document.querySelectorAll(`#${ch.chartId} .ser`).forEach(g => {
+    g.classList.toggle("dim", !!key && g.dataset.key !== key);
+    g.classList.toggle("hi", !!key && g.dataset.key === key);
+  });
+  document.querySelectorAll(`#${ch.legendId} .leg`).forEach(b => b.classList.toggle("on", b.dataset.key === key));
+}
+function wireHighlight(ch) {
+  const leg = document.getElementById(ch.legendId), chart = document.getElementById(ch.chartId);
+  if (!leg || !chart) return;
+  const keyOf = e => { const b = e.target.closest ? e.target.closest(".leg[data-key]") : null; return b ? b.dataset.key : null; };
+  const setPinned = k => {
+    ch.pinned = k;
+    leg.querySelectorAll(".leg").forEach(b => b.setAttribute("aria-pressed", b.dataset.key === k ? "true" : "false"));
+    highlight(ch, k);
+  };
+  // Legende: Hover/Fokus hebt hervor (solange nichts fixiert ist), Klick fixiert bzw. löst, Escape löst
+  ["pointerover", "focusin"].forEach(ev => leg.addEventListener(ev, e => { const k = keyOf(e); if (k && !ch.pinned) highlight(ch, k); }));
+  ["pointerout", "focusout"].forEach(ev => leg.addEventListener(ev, e => {
+    const b = e.target.closest ? e.target.closest(".leg[data-key]") : null;
+    if (b && !ch.pinned && !(e.relatedTarget && b.contains(e.relatedTarget))) highlight(ch, null);
+  }));
+  leg.addEventListener("click", e => { const k = keyOf(e); if (k) setPinned(ch.pinned === k ? null : k); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && ch.pinned) setPinned(null); });
+  // Maus auf einer Linie im Chart (breiter unsichtbarer Pfad) – nur auf Hover-Geräten, auf Touch
+  // bliebe die Hervorhebung sonst an der zuletzt angetippten Linie kleben
+  const canHover = window.matchMedia && window.matchMedia("(hover: hover)").matches;
+  if (canHover) {
+    const lineOf = e => e.target.closest ? e.target.closest(`#${ch.chartId} .line-g[data-key]`) : null;
+    chart.addEventListener("pointerover", e => { const g = lineOf(e); if (g && !ch.pinned) highlight(ch, g.dataset.key); });
+    chart.addEventListener("pointerout", e => { const g = lineOf(e); if (g && !ch.pinned && !(e.relatedTarget && g.contains(e.relatedTarget))) highlight(ch, null); });
+  }
+}
+Object.values(CHARTS).forEach(wireHighlight);
+// Drehen des Handys / Fenstergröße: Chart in der neuen Containerbreite neu zeichnen
+// (nur wenn sich die gezeichnete Fassung ändert; Hervorhebung bleibt erhalten)
+(function () {
+  let t = 0;
+  window.addEventListener("resize", () => {
+    clearTimeout(t);
+    t = setTimeout(() => {
+      for (const ch of Object.values(CHARTS)) {
+        const el = document.getElementById(ch.chartId);
+        if (!el || !ch.drawnW) continue;
+        const cw = Math.round(el.clientWidth), want = cw >= 900 ? 1000 : Math.max(280, cw);
+        if (Math.abs(want - ch.drawnW) > 2) {
+          try { el.innerHTML = buildYieldChart(ch); highlight(ch, ch.pinned); } catch (e) { console.warn("Neuzeichnen fehlgeschlagen:", e); }
+        }
+      }
+    }, 150);
+  });
+})();
+
+// ============ Tabellen ============
+// Stand je Zeile; Werte, die deutlich hinter dem jüngsten Tagesstand zurückliegen
+// (Tageswert > 7 Tage, Monatswert > 100 Tage), gedämpft mit Hinweis.
+// Sortierung per Klick auf den Spaltenkopf (CSORT); bleibt über das Nachladen von unternehmen.json erhalten.
+const OLD_DAY = 7, OLD_MONTH = 100;
+const CSORT = { col: null, dir: 1 };       // col: null = Listenreihenfolge (Land, dann Bonität)
+// Kennzahlen einer Reihe: aktueller Wert, Stand (+ Alter), Hoch/Tief/Ø der Jahresdurchschnitte
+function rowStats(ch, c, ref) {
+  const ann = ch.data.annual[c.key] || {};
+  const years = Object.keys(ann).map(Number).sort((a, b) => a - b);
+  const latest = ch.data.latest[c.key] || {};
+  let hi = null, lo = null, sum = 0;
+  for (const yr of years) {
+    const v = ann[yr];
+    sum += v;
+    if (hi === null || v > ann[hi]) hi = yr;
+    if (lo === null || v < ann[lo]) lo = yr;
+  }
+  const avg = years.length ? sum / years.length : null;
+  const hasDate = isDay(latest.date) || isMonth(latest.date);
+  const old = hasDate && ageDays(latest.date, ref) > (isMonth(latest.date) ? OLD_MONTH : OLD_DAY);
+  return {
+    c, name: L(c.tblKey || c.nameKey),
+    current: typeof latest.yield === "number" ? latest.yield : null,
+    stand: hasDate ? decYear(latest.date) : null, standTxt: hasDate ? fmtStand(latest.date) : null, old,
+    high: hi !== null ? ann[hi] : null, hiYr: hi, low: lo !== null ? ann[lo] : null, loYr: lo, avg
+  };
+}
+function corpRows() {
+  const ch = CHARTS.unternehmen, ref = newestDaily(ch);
+  return ch.defs.map(c => Object.assign(rowStats(ch, c, ref), {
+    cur: c.cur, rating: c.rating || L(c.ratingKey), mat: L(c.matKey)
+  }));
+}
+// Vergleich je Spalte: Texte sprachabhängig, Zahlen numerisch; fehlende Werte immer ans Ende
+function cmpRows(a, b, col, dir) {
+  const x = a[col], y = b[col];
+  if (x == null && y == null) return 0;
+  if (x == null) return 1;
+  if (y == null) return -1;
+  const r = typeof x === "string" ? x.localeCompare(y, loc()) : x - y;
+  return r * dir;
+}
+// Gemeinsame Zellen: Stand (ggf. gedämpft), aktueller Wert, Hoch/Tief/Ø
+// Aktuelle Rendite steht seit 28.09.2026 direkt hinter der Zeilenüberschrift (Nutzerwunsch: Rendite immer in Spalte 2)
+function curYieldCell(r) { return `<td class="num">${r.current !== null ? fmt(r.current, 2) + "\u00A0%" : "–"}</td>`; }
+function statCells(r) {
+  const stand = r.standTxt !== null ? (r.old ? `<span class="old">${MC.esc(r.standTxt)} ${L("standOld")}</span>` : MC.esc(r.standTxt)) : "–";
+  return `<td class="num">${stand}</td>
+      <td class="num">${r.high !== null ? `${fmt(r.high, 2)}\u00A0% (${r.hiYr})` : "–"}</td>
+      <td class="num">${r.low !== null ? `${fmt(r.low, 2)}\u00A0% (${r.loYr})` : "–"}</td>
+      <td class="num">${r.avg !== null ? fmt(r.avg, 2) + "\u00A0%" : "–"}</td>`;
+}
+function buildCorpTable() {
+  let rows = corpRows();
+  if (CSORT.col) rows = rows.slice().sort((a, b) => cmpRows(a, b, CSORT.col, CSORT.dir));
+  return rows.map(r => `<tr>
+      <th scope="row"><i class="tag" style="background:${r.c.color}"></i>${MC.esc(r.name)}</th>${curYieldCell(r)}
+      <td class="cur">${r.cur}${CUR_SYM[r.cur] ? ` <span class="sym">${CUR_SYM[r.cur]}</span>` : ""}</td>
+      <td class="txt">${MC.esc(r.rating)}</td>
+      <td class="txt">${MC.esc(r.mat)}</td>
+      ${statCells(r)}
+    </tr>`).join("");
+}
+// Sortierrichtung in den Spaltenköpfen (aria-sort) spiegeln
+function markSort(theadId, sort) {
+  for (const th of document.querySelectorAll(`#${theadId} th[data-col]`)) {
+    if (th.dataset.col === sort.col) th.setAttribute("aria-sort", sort.dir > 0 ? "ascending" : "descending");
+    else th.removeAttribute("aria-sort");
+  }
+}
+function renderCorpTable() {
+  document.getElementById("ctable").innerHTML = buildCorpTable();
+  markSort("cthead", CSORT);
+}
+// Sortieren: Klick auf Spaltenkopf – erster Klick aufsteigend, erneuter Klick kehrt um
+function wireSort(theadId, sort, render) {
+  const thead = document.getElementById(theadId);
+  if (!thead) return;
+  thead.addEventListener("click", e => {
+    const b = e.target.closest(".sortbtn");
+    if (!b) return;
+    const col = b.dataset.col;
+    if (sort.col === col) sort.dir = -sort.dir; else { sort.col = col; sort.dir = 1; }
+    render();
+  });
+}
+wireSort("cthead", CSORT, renderCorpTable);
+
+// Eyebrow je Abschnitt: "<Titel> · 1970 – <Endjahr> · Stand: <jüngster Tageswert>"
+function setEyebrow(id, titleKey, ch) {
+  const nd = newestDaily(ch), el = document.getElementById(id);
+  if (!el || !nd) return;
+  el.textContent = `${L(titleKey)} · ${YEAR0} – ${Number(String(nd).slice(0, 4))} · ${L("asOf")} ${fmtStand(nd)}`;
+}
+function renderAll() {
+  for (const ch of Object.values(CHARTS)) {
+    document.getElementById(ch.legendId).innerHTML = buildLegend(ch);
+    document.getElementById(ch.chartId).innerHTML = buildYieldChart(ch);
+    highlight(ch, ch.pinned);
+  }
+  renderCorpTable();
+  setEyebrow("eyebrow-unternehmen", "corpEyebrow", CHARTS.unternehmen);
+}
+
+// Fußzeile: jüngster Tageswert der börsentäglichen Quellen (Moody's, Bundesbank, JSDA, ChinaBond); ab 5 Tagen „veraltet“ (Klasse „stale“, base.css)
+const STALE_DAYS = 5;
+function updateDatastand() {
+  const el = document.getElementById("datastand");
+  const d = newestDaily(CHARTS.unternehmen);
+  if (!el || !d) return;
+  const dd = ageDays(d);
+  el.textContent = L("dataAsOf") + " " + fmtStand(d) + (dd > STALE_DAYS ? " · " + L("outdated") : "");
+  el.classList.toggle("stale", dd > STALE_DAYS);
+}
+// Erst-Render
+(function () {
+  try { renderAll(); } catch (e) { console.warn("Render fehlgeschlagen:", e); }
+  updateDatastand();
+})();
+// Daten aus einer JSON in eine Chart-Instanz übernehmen – nur plausible Werte:
+// Datum "JJJJ-MM-TT" oder "JJJJ-MM", Rendite als endliche Zahl, Jahre vierstellig,
+// Spannen als Paare [Tief, Hoch] aus endlichen Zahlen mit Tief ≤ Hoch
+function mergeData(ch, items) {
+  if (!items || typeof items !== "object") return;
+  const D = ch.data;
+  for (const c of ch.defs) {
+    const src = items[c.key];
+    if (!src || typeof src !== "object") continue;
+    let l = src.latest;
+    // Japan (JSDA): Dateien tragen das Veröffentlichungsdatum = nächster Geschäftstag nach dem
+    // Handelstag. Ältere unternehmen.json-Stände haben dieses Datum gespeichert (bis 26.09.2026:
+    // „28.09.2026“ für die Kurse vom Freitag, 25.09.) – ein solcher Zukunftsstand wird auf den
+    // vorigen Werktag zurückgeführt; das Update-Skript speichert seitdem den Handelstag selbst.
+    if (c.pubNextDay && l && isDay(l.date) && isFuture(l.date)) l = { date: prevWeekday(l.date), yield: l.yield };
+    // Stände mit Datum nach heute verwerfen (Quellfehler: die JSDA benennt ihre Dateien nach
+    // dem Veröffentlichungstag = nächster Geschäftstag – bis 26.09.2026 stand so „28.09.2026“ hier)
+    if (l && (isDay(l.date) || isMonth(l.date)) && !isFuture(l.date) && typeof l.yield === "number" && isFinite(l.yield)) D.latest[c.key] = { date: l.date, yield: l.yield };
+    if (src.monthly && typeof src.monthly === "object") {
+      const mo = D.monthly[c.key] = {};
+      for (const m of Object.keys(src.monthly)) {
+        const v = src.monthly[m];
+        if (isMonth(m) && !isFuture(m) && typeof v === "number" && isFinite(v)) mo[m] = v;
+      }
+    }
+    if (src.annual && typeof src.annual === "object") {
+      const an = D.annual[c.key] = D.annual[c.key] || {};
+      for (const yr of Object.keys(src.annual)) {
+        const v = src.annual[yr];
+        if (/^\d{4}$/.test(yr) && typeof v === "number" && isFinite(v)) an[yr] = v;
+      }
+    }
+    if (src.range && typeof src.range === "object") {
+      const rg = D.range[c.key] = D.range[c.key] || {};
+      for (const yr of Object.keys(src.range)) {
+        const r = src.range[yr];
+        if (/^\d{4}$/.test(yr) && Array.isArray(r) && r.length === 2 && r.every(v => typeof v === "number" && isFinite(v)) && r[0] <= r[1]) rg[yr] = [r[0], r[1]];
+      }
+    }
+  }
+}
+function rerender(src) {
+  try { renderAll(); } catch (e) { console.warn(`renderAll nach ${src} fehlgeschlagen:`, e); }
+  updateDatastand();
+}
+MC.load("unternehmen.json")
+  .then(d => { if (d) mergeData(CHARTS.unternehmen, d.series); rerender("unternehmen.json"); })
+  .catch(e => { console.warn("unternehmen.json nicht ladbar, eingebettete Daten bleiben sichtbar:", e); });
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+</script>
+</body>
+</html>

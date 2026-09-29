@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bonität und Ratings: von AAA bis D erklärt – METALCONCRETE</title>
+<meta name="description" content="Bonität und Ratings erklärt: die Skala von AAA bis D, Investment Grade und Hochzins, Ausfälle je Note und warum schlechtere Noten mehr Zins zahlen.">
+<link rel="canonical" href="https://www.metalconcrete.de/bonitaet.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="METALCONCRETE"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="METALCONCRETE">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.metalconcrete.de/bonitaet.html">
+<meta property="og:title" content="Bonität und Ratings: von AAA bis D erklärt – METALCONCRETE">
+<meta property="og:description" content="Bonität und Ratings erklärt: die Skala von AAA bis D, Investment Grade und Hochzins, Ausfälle je Note und warum schlechtere Noten mehr Zins zahlen.">
+<meta property="og:image" content="https://www.metalconcrete.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="METALCONCRETE – Anleihen verstehen und finden">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bonität und Ratings: von AAA bis D erklärt – METALCONCRETE">
+<meta name="twitter:description" content="Bonität und Ratings erklärt: die Skala von AAA bis D, Investment Grade und Hochzins, Ausfälle je Note und warum schlechtere Noten mehr Zins zahlen.">
+<meta name="twitter:image" content="https://www.metalconcrete.de/og-image.png">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Bonität und Ratings (24.09.2026): fünf Erklärkarten nach dem Gestaltungssystem (base.css); hier nur die eigenen Bausteine. */
+  /* Notenfarben: von Grün (beste) über Gelb bis Rot (Ausfall), dunkle Schrift auf hellem Grund */
+  .rc { display: inline-block; white-space: nowrap; min-width: 50px; text-align: center; font-size: 14px; font-weight: 600; letter-spacing: 0.02em; border-radius: 7px; padding: 4px 8px; font-variant-numeric: tabular-nums; }
+  .r1 { background: #D8EEE4; color: #14553F; } .r2 { background: #E3F1EC; color: #1B6B52; } .r3 { background: #EAF2E3; color: #2F6326; }
+  .r4 { background: #F2F0D8; color: #5A560F; } .r5 { background: #FBEADB; color: #8E4A17; } .r6 { background: #F9E1D5; color: #8A3519; }
+  .r7 { background: #F4D8D1; color: #7A2414; } .r8 { background: #E9D3CF; color: #5C1A10; }
+  /* 1: So entsteht ein Rating (Fluss) */
+  .fluss { list-style: none; display: grid; gap: 10px; }
+  .fluss li { position: relative; display: grid; grid-template-columns: 42px minmax(0, 1fr); gap: 12px; align-items: center; background: var(--green-tint); border: 1px solid var(--green-line); border-radius: 12px; padding: 11px 14px; }
+  .fluss li + li::before { content: ""; position: absolute; left: 34px; top: -11px; width: 2px; height: 10px; background: var(--green-line); }
+  .fluss .fi { width: 42px; height: 42px; border-radius: 50%; background: #fff; color: var(--green-text); display: grid; place-items: center; box-shadow: 0 1px 3px rgba(26,26,25,0.08); }
+  .fluss .fi svg { width: 22px; height: 22px; }
+  .fluss b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); }
+  .fluss span.ft { display: block; font-size: 14px; line-height: 1.45; color: var(--text); }
+  .fluss li.f-note { background: #EEF6F1; border-color: rgba(31,122,94,0.25); }
+  .fluss .f-noten { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+  .fluss .f-noten .rc { min-width: 0; font-size: 12px; padding: 2px 7px; }
+  /* 2: Notenskala */
+  .skala-t { width: 100%; border-collapse: collapse; font-size: 14px; line-height: 1.4; }
+  .skala-t th, .skala-t td { text-align: left; vertical-align: top; padding: 7px 6px; border-bottom: 1px solid var(--rule); font-weight: 400; color: var(--ink); }
+  .skala-t thead th { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); padding-top: 0; }
+  .skala-t tbody th { width: 104px; }
+  .skala-t .mo { width: 84px; white-space: nowrap; color: var(--text); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  .skala-t small { display: block; font-size: 12px; color: var(--text); margin-top: 3px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .skala-t td b { font-weight: 600; }
+  .skala-t td .st { display: block; font-size: 12.5px; color: var(--text); margin-top: 2px; }
+  .skala-t tr.grenze td { padding: 6px 6px; border-bottom: 2px dashed rgba(162,86,28,0.55); border-top: 0; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: var(--orange-text); text-align: center; background: #FFF8F2; }
+  .skala-t tbody tr:hover > * { background: transparent; }
+  .skala-t tr.grenze:hover td { background: #FFF8F2; }
+  /* 3 und 4: Balken je Note (HTML), Achse unten mit Ticks */
+  .rb-ax, .rb, .rb-tk { display: grid; grid-template-columns: 62px minmax(0, 1fr); gap: 10px; }
+  .rb-ax { margin-bottom: 4px; }
+  .rbs { list-style: none; display: grid; gap: 6px; }
+  .rb { align-items: center; }
+  .rb .rc { min-width: 0; width: 100%; }
+  .rb-v { display: flex; align-items: center; gap: 8px; min-height: 28px; background: repeating-linear-gradient(to right, rgba(26,26,25,0.09) 0 1px, transparent 1px var(--tick, 20%)); }
+  .rb-v i { display: block; flex: none; height: 18px; min-width: 3px; border-radius: 0 5px 5px 0; background: var(--blue); }
+  .rb.hy .rb-v i { background: #A85A22; }
+  .rb-v i { display: flex; justify-content: flex-end; align-items: center; }
+  .rb-v i.null { min-width: 0; width: 0; }
+  .rb-v i b.in { color: #fff; padding: 0 7px; font-size: 12.5px; }
+  .rb-v i b.in small { color: #fff; opacity: 0.92; }
+  .rb-v b { font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .rb-v b small { font-weight: 400; color: var(--text); font-size: 12px; }
+  .rb-tk { margin-top: 3px; }
+  .rb-xt { text-align: right; margin-top: 4px; }
+  .tk { position: relative; height: 15px; font-size: 12px; color: var(--text); font-variant-numeric: tabular-nums; }
+  .tk i { position: absolute; top: 0; font-style: normal; transform: translateX(-50%); }
+  .tk i:first-child { transform: none; }
+  .rb-leg { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 12.5px; color: var(--text); }
+  .rb-leg span { display: inline-flex; align-items: center; gap: 6px; }
+  .rb-leg span::before { content: ""; width: 14px; height: 10px; border-radius: 0 3px 3px 0; background: var(--blue); }
+  .rb-leg span.hy::before { background: #A85A22; }
+  /* 5: Checkliste */
+  .check { list-style: none; display: grid; gap: 10px; }
+  .check li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 14.5px; line-height: 1.45; color: var(--text); }
+  .check b { color: var(--ink); font-weight: 600; }
+  .check .ok { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: var(--up); }
+  .check svg { width: 15px; height: 15px; }
+  .wo { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--rule); font-size: 14px; line-height: 1.5; color: var(--text); }
+  .wo b { color: var(--ink); }
+  @media (max-width: 600px) {
+    .skala-t { font-size: 13px; }
+    .skala-t tbody th { width: 86px; }
+    .skala-t .mo { width: 70px; font-size: 12px; }
+    .skala-t small { font-size: 12px; }
+    .rb-ax, .rb, .rb-tk { grid-template-columns: 52px minmax(0, 1fr); gap: 8px; }
+    .rb-v b { font-size: 12.5px; }
+    .fluss li { grid-template-columns: 36px minmax(0, 1fr); padding: 10px 12px; }
+    .fluss .fi { width: 36px; height: 36px; }
+    .fluss li + li::before { left: 29px; }
+  }
+  /* Vergleichstabelle: alle Stufen, fünf Agenturen (volle Breite zwischen Karte 2 und 3) */
+  .vgl { margin-top: 26px; padding: 26px 30px 24px; border-radius: var(--radius); background: #fff; border: 1px solid rgba(26,26,25,0.08); box-shadow: var(--shadow); scroll-margin-top: 80px; }
+  .vgl h2 { margin-bottom: 8px; }
+  .vgl-in { font-size: 16px; line-height: 1.55; color: var(--text); max-width: 720px; margin-bottom: 16px; }
+  .vgl-t { width: 100%; border-collapse: collapse; font-size: 14.5px; line-height: 1.3; font-variant-numeric: tabular-nums; }
+  .vgl-t thead th { font-size: 12px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text); text-align: center; padding: 0 6px 10px; border-bottom: 1px solid rgba(26,26,25,0.16); vertical-align: bottom; width: 20%; }
+  .vgl-t tr.vz > * { text-align: center; padding: 6px 6px; border-bottom: 1px solid var(--rule); color: var(--ink); font-weight: 600; white-space: nowrap; }
+  .vgl-t tr.vz > th { font-weight: 600; }
+  .vgl-t tr.vg th { text-align: left; padding: 12px 6px 6px; font-size: 14px; font-weight: 600; color: var(--text); border-bottom: 1px solid var(--rule); }
+  .vgl-t tr.vg .vg-i { display: flex; align-items: center; gap: 10px; }
+  .vgl-t tr.vg .rc { flex: none; min-width: 64px; }
+  .vgl-t tr.k-ig > * { background: rgba(31,122,94,0.04); }
+  .vgl-t tr.k-hy > * { background: rgba(207,116,48,0.06); }
+  .vgl-t tr.k-dd > * { background: rgba(153,60,29,0.07); }
+  .vgl-t tr.grenze td { padding: 7px 6px; border-bottom: 2px dashed rgba(162,86,28,0.55); font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; color: var(--orange-text); text-align: center; background: #FFF8F2; }
+  .vgl-t tbody tr:hover > * { background-color: rgba(29,95,160,0.05); }
+  .vgl-t tbody tr.vg:hover > *, .vgl-t tr.grenze:hover td { background: transparent; }
+  .vgl-t tr.grenze:hover td { background: #FFF8F2; }
+  .vgl .klein { margin-top: 14px; }
+  @media (max-width: 760px) {
+    .vgl { padding: 22px 16px 20px; }
+  }
+  @media (max-width: 600px) {
+    .vgl { border-radius: 12px; padding: 18px 10px 18px; }
+    .vgl h2, .vgl-in, .vgl .klein { padding: 0 6px; }
+    .vgl-t { font-size: 13px; }
+    .vgl-t thead th { font-size: 12px; letter-spacing: 0.04em; padding: 0 3px 8px; }
+    .vgl-t tr.vz > * { padding: 5px 3px; }
+    .vgl-t tr.vg th { padding: 10px 4px 5px; font-size: 12.5px; }
+  }
+  /* Sehr schmale Handys (bis 380 px): beide Tabellen ohne seitlichen Überlauf */
+  .vgl-w { overflow-x: auto; }
+  @media (max-width: 380px) {
+    .skala-t th, .skala-t td { padding-left: 4px; padding-right: 4px; }
+    .skala-t tbody th { width: 76px; }
+    .skala-t small { white-space: normal; }
+    .skala-t .mo { width: 64px; font-size: 12px; }
+    .vgl-t { font-size: 12px; }
+    .vgl-t thead th { font-size: 12px; letter-spacing: 0.02em; padding: 0 2px 8px; }
+    .vgl-t tr.vz > * { padding: 5px 2px; }
+  }
+  /* 5: Der Ausblick (seit 24.09.2026 spät): Beispielzeile, vier Ausblicke, Zeiträume */
+  .abl-so { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 14px; color: var(--text); }
+  .abl-sk { font-weight: 600; }
+  .abl-tag { display: inline-block; font-size: 13px; font-weight: 600; border-radius: 7px; padding: 4px 9px; background: #F9E1D5; color: #8A3519; white-space: nowrap; }
+  .abl { list-style: none; display: grid; gap: 8px; }
+  .abl li { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 12px; align-items: center; border: 1px solid var(--rule); border-radius: 12px; padding: 9px 12px; background: #fff; }
+  .abl .ai { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; }
+  .abl .ai svg { width: 20px; height: 20px; }
+  .abl b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); }
+  .abl .at { display: block; font-size: 14px; line-height: 1.4; color: var(--text); }
+  .abl .a-pos .ai { background: #D8EEE4; color: #14553F; }
+  .abl .a-sta .ai { background: var(--green-tint); color: var(--green-text); }
+  .abl .a-neg .ai { background: #F9E1D5; color: #8A3519; }
+  .abl .a-dev .ai { background: #ECEBE7; color: #55544F; }
+  .abl-z { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .abl-z div { background: var(--green-tint); border: 1px solid var(--green-line); border-radius: 10px; padding: 9px 12px; }
+  .abl-z dt { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); }
+  .abl-z dd { margin: 3px 0 0; font-size: 14px; font-weight: 600; line-height: 1.35; color: var(--ink); }
+  @media (max-width: 380px) {
+    .abl-z { grid-template-columns: 1fr; }
+    .abl li { padding: 8px 10px; gap: 10px; }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Bonität und Ratings einfach erklärt","description":"Bonität und Ratings erklärt: die Skala von AAA bis D, Investment Grade und Hochzins, Ausfälle je Note und warum schlechtere Noten mehr Zins zahlen.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-25","publisher":{"@type":"Organization","name":"METALCONCRETE","url":"https://www.metalconcrete.de/"},"mainEntityOfPage":"https://www.metalconcrete.de/bonitaet.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.metalconcrete.de/"},{"@type":"ListItem","position":2,"name":"Verstehen","item":"https://www.metalconcrete.de/wissen.html"},{"@type":"ListItem","position":3,"name":"Bonität und Ratings","item":"https://www.metalconcrete.de/bonitaet.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="verstehen">
+    <a class="brand" href="index.html"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath><linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient><linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs><g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/><rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg><span>METAL<b>CONCRETE</b></span></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="index.html#akademie" class="nav-group-btn current" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe current">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <main id="main">
+    <h1>Bonität und Ratings einfach erklärt</h1>
+    <p class="sub">Wie sicher bekommst du dein Geld zurück? Das sagt die Bonität des Schuldners – und das Rating ist die Note dafür. Sechs kurze Schritte, jeder mit Schaubild. Lesezeit: etwa 7 Minuten.</p>
+    <nav class="lands" aria-label="Zum Schritt springen">
+      <a class="lbtn" href="#was"><span class="n">1</span>Was ist Bonität?</a>
+      <a class="lbtn" href="#skala"><span class="n">2</span>Die Skala</a>
+      <a class="lbtn" href="#ausfall"><span class="n">3</span>Ausfälle</a>
+      <a class="lbtn" href="#zins"><span class="n">4</span>Zins</a>
+      <a class="lbtn" href="#ausblick"><span class="n">5</span>Ausblick</a>
+      <a class="lbtn" href="#nutzen"><span class="n">6</span>Richtig nutzen</a>
+    </nav>
+
+    <section class="kap" id="was" aria-labelledby="h-was">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">1</span>
+        <h2 id="h-was">Was ist Bonität?</h2>
+        <p>Bonität heißt Kreditwürdigkeit: <strong>Wie sicher zahlt ein Schuldner Zinsen und Rückzahlung</strong> – pünktlich und vollständig?</p><p>Das kannst du selbst kaum prüfen. Deshalb bewerten <strong>Ratingagenturen</strong> Staaten und Unternehmen und geben ihnen eine Note: das <strong>Rating</strong>. In der EU sind 28 Agenturen registriert; die drei großen – S&amp;P, Moody’s und Fitch – machen gut 90&nbsp;% des Geschäfts.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">So entsteht ein Rating</p><ol class="fluss" aria-label="So entsteht ein Rating">
+<li><span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 9 12 4l8.5 5M5 9.5h14M6.5 10v7M10 10v7M14 10v7M17.5 10v7M4 20h16"/></svg></span><span><b>Der Schuldner</b><span class="ft">Ein Staat oder ein Unternehmen leiht sich Geld über Anleihen.</span></span></li>
+<li><span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5 5"/><path d="M8 10.5h5M10.5 8v5"/></svg></span><span><b>Die Agentur prüft</b><span class="ft">Schulden, Einnahmen, Gewinne, Wirtschaft, Politik – und wie sich das entwickeln kann.</span></span></li>
+<li class="f-note"><span class="fi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.2 19 6v5.6c0 4.4-3 7.8-7 9.2-4-1.4-7-4.8-7-9.2V6z"/><path d="m8.8 12.2 2.2 2.2 4.2-4.4"/></svg></span><span><b>Die Note</b><span class="ft">von AAA (beste) bis D (ausgefallen) – dazu ein Ausblick, wohin sie sich bewegt</span><span class="f-noten" aria-hidden="true"><span class="rc r1">AAA</span><span class="rc r2">AA</span><span class="rc r3">A</span><span class="rc r4">BBB</span><span class="rc r5">BB</span><span class="rc r6">B</span><span class="rc r7">CCC</span><span class="rc r8">D</span></span></span></li>
+</ol></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Das Rating ist die Schulnote für die Zahlungsfähigkeit eines Schuldners.</span></p>
+    </section>
+    <section class="kap kap-b" id="skala" aria-labelledby="h-skala">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">2</span>
+        <h2 id="h-skala">Die Skala: von AAA bis D</h2>
+        <p>S&amp;P und Fitch vergeben Buchstaben von <strong>AAA</strong> (beste Note) bis <strong>D</strong> (Zahlung ausgefallen). Plus und Minus stufen fein ab: A+ ist besser als A, A− schlechter. Moody’s schreibt dieselben Stufen anders – Aaa, Aa1, Aa2 … – mit 1, 2 und 3 statt Plus und Minus.</p><p>Die wichtigste Grenze liegt zwischen <strong>BBB−</strong> und <strong>BB+</strong>. Darüber heißt es <strong>Investment Grade</strong>: solide. Darunter beginnt der <strong>Hochzins-Bereich</strong> („High Yield“): spekulativ. Alle Stufen von fünf Agenturen nebeneinander zeigt die <a href="#vergleich">Vergleichstabelle</a> unter dieser Karte.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Die Notenskala</p><table class="skala-t"><caption class="sr-only">Notenskala der Ratingagenturen: S&amp;P und Fitch, Moody’s und Bedeutung</caption><thead><tr><th scope="col">S&amp;P, Fitch</th><th scope="col">Moody’s</th><th scope="col">Bedeutung</th></tr></thead><tbody><tr><th scope="row"><span class="rc r1">AAA</span></th><td class="mo">Aaa</td><td><b>höchste Sicherheit</b></td></tr><tr><th scope="row"><span class="rc r2">AA</span><small>AA+ · AA · AA−</small></th><td class="mo">Aa1–Aa3</td><td><b>sehr sicher</b></td></tr><tr><th scope="row"><span class="rc r3">A</span><small>A+ · A · A−</small></th><td class="mo">A1–A3</td><td><b>sicher, aber anfälliger für schlechte Zeiten</b></td></tr><tr><th scope="row"><span class="rc r4">BBB</span><small>BBB+ · BBB · BBB−</small></th><td class="mo">Baa1–Baa3</td><td><b>ausreichend</b></td></tr><tr class="grenze"><td colspan="3">↑ Investment Grade · Hochzins (spekulativ) ↓</td></tr><tr><th scope="row"><span class="rc r5">BB</span><small>BB+ · BB · BB−</small></th><td class="mo">Ba1–Ba3</td><td><b>spekulativ, große Unsicherheiten</b></td></tr><tr><th scope="row"><span class="rc r6">B</span><small>B+ · B · B−</small></th><td class="mo">B1–B3</td><td><b>hoch spekulativ</b></td></tr><tr><th scope="row"><span class="rc r7">CCC–C</span><small>CCC · CC · C</small></th><td class="mo">Caa1–C</td><td><b>Ausfall droht</b></td></tr><tr><th scope="row"><span class="rc r8">D</span></th><td class="mo">–</td><td><b>Zahlung ausgefallen</b></td></tr></tbody></table><p class="sb-f">Die Noten von Staaten und Unternehmen ändern sich laufend – die aktuelle Note steht bei den Agenturen und im Steckbrief der Anleihe bei deinem Broker.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Bis BBB− solide, darunter spekulativ.</span></p>
+    </section>
+    <section class="vgl" id="vergleich" aria-labelledby="h-vergleich">
+      <h2 id="h-vergleich">Alle Stufen im Vergleich</h2>
+      <p class="vgl-in">So schreiben die fünf Agenturen, die auch die Europäische Zentralbank anerkennt, dieselbe Note. Jede Zeile ist eine Stufe – von AAA ganz oben bis zum Ausfall.</p>
+      <div class="vgl-w"><table class="vgl-t"><caption class="sr-only">Ratingstufen von S&amp;P, Moody’s, Fitch, Scope und Morningstar DBRS im Vergleich</caption>
+<thead><tr><th scope="col">S&amp;P</th><th scope="col">Moody’s</th><th scope="col">Fitch</th><th scope="col">Scope</th><th scope="col">Morningstar DBRS</th></tr></thead>
+<tbody><tr class="vg"><th colspan="5" scope="rowgroup"><span class="vg-i"><span class="rc r1">AAA</span><span>höchste Sicherheit</span></span></th></tr><tr class="vz k-ig"><th scope="row">AAA</th><td>Aaa</td><td>AAA</td><td>AAA</td><td>AAA</td></tr><tr class="vg"><th colspan="5" scope="rowgroup"><span class="vg-i"><span class="rc r2">AA</span><span>sehr sicher</span></span></th></tr><tr class="vz k-ig"><th scope="row">AA+</th><td>Aa1</td><td>AA+</td><td>AA+</td><td>AA (high)</td></tr><tr class="vz k-ig"><th scope="row">AA</th><td>Aa2</td><td>AA</td><td>AA</td><td>AA</td></tr><tr class="vz k-ig"><th scope="row">AA−</th><td>Aa3</td><td>AA−</td><td>AA−</td><td>AA (low)</td></tr><tr class="vg"><th colspan="5" scope="rowgroup"><span class="vg-i"><span class="rc r3">A</span><span>sicher, aber anfälliger für schlechte Zeiten</span></span></th></tr><tr class="vz k-ig"><th scope="row">A+</th><td>A1</td><td>A+</td><td>A+</td><td>A (high)</td></tr><tr class="vz k-ig"><th scope="row">A</th><td>A2</td><td>A</td><td>A</td><td>A</td></tr><tr class="vz k-ig"><th scope="row">A−</th><td>A3</td><td>A−</td><td>A−</td><td>A (low)</td></tr><tr class="vg"><th colspan="5" scope="rowgroup"><span class="vg-i"><span class="rc r4">BBB</span><span>ausreichend</span></span></th></tr><tr class="vz k-ig"><th scope="row">BBB+</th><td>Baa1</td><td>BBB+</td><td>BBB+</td><td>BBB (high)</td></tr><tr class="vz k-ig"><th scope="row">BBB</th><td>Baa2</td><td>BBB</td><td>BBB</td><td>BBB</td></tr><tr class="vz k-ig"><th scope="row">BBB−</th><td>Baa3</td><td>BBB−</td><td>BBB−</td><td>BBB (low)</td></tr><tr class="grenze"><td colspan="5">↑ Investment Grade · Hochzins (spekulativ) ↓</td></tr><tr class="vg"><th colspan="5" scope="rowgroup"><span class="vg-i"><span class="rc r5">BB</span><span>spekulativ, große Unsicherheiten</span></span></th></tr><tr class="vz k-hy"><th scope="row">BB+</th><td>Ba1</td><td>BB+</td><td>BB+</td><td>BB (high)</td></tr><tr class="vz k-hy"><th scope="row">BB</th><td>Ba2</td><td>BB</td><td>BB</td><td>BB</td></tr><tr class="vz k-hy"><th scope="row">BB−</th><td>Ba3</td><td>BB−</td><td>BB−</td><td>BB (low)</td></tr><tr class="vg"><th colspan="5" scope="rowgroup"><span class="vg-i"><span class="rc r6">B</span><span>hoch spekulativ</span></span></th></tr><tr class="vz k-hy"><th scope="row">B+</th><td>B1</td><td>B+</td><td>B+</td><td>B (high)</td></tr><tr class="vz k-hy"><th scope="row">B</th><td>B2</td><td>B</td><td>B</td><td>B</td></tr><tr class="vz k-hy"><th scope="row">B−</th><td>B3</td><td>B−</td><td>B−</td><td>B (low)</td></tr><tr class="vg"><th colspan="5" scope="rowgroup"><span class="vg-i"><span class="rc r7">CCC–C</span><span>Ausfall droht</span></span></th></tr><tr class="vz k-dd"><th scope="row">CCC+</th><td>Caa1</td><td>CCC+</td><td>CCC</td><td>CCC (high)</td></tr><tr class="vz k-dd"><th scope="row">CCC</th><td>Caa2</td><td>CCC</td><td>CCC</td><td>CCC</td></tr><tr class="vz k-dd"><th scope="row">CCC−</th><td>Caa3</td><td>CCC−</td><td>CCC</td><td>CCC (low)</td></tr><tr class="vz k-dd"><th scope="row">CC</th><td>Ca</td><td>CC</td><td>CC</td><td>CC</td></tr><tr class="vz k-dd"><th scope="row">C</th><td>C</td><td>C</td><td>C</td><td>C</td></tr><tr class="vg"><th colspan="5" scope="rowgroup"><span class="vg-i"><span class="rc r8">D</span><span>ausgefallen</span></span></th></tr><tr class="vz k-dd"><th scope="row">D, SD</th><td>C¹</td><td>D, RD</td><td>D, SD</td><td>D, SD</td></tr></tbody></table></div>
+      <p class="klein">Gleiche Zeile heißt gleiche Stufe – aber jede Agentur arbeitet mit eigenen Methoden, dieselbe Note bedeutet deshalb nicht exakt dasselbe Risiko. D steht für Ausfall. Fällt nur ein Teil der Anleihen aus, vergeben S&amp;P, Scope und Morningstar DBRS SD, Fitch RD. ¹ Moody’s hat kein D: Seine tiefste Note C steht meist schon für einen Ausfall.</p>
+    </section>
+    <section class="kap" id="ausfall" aria-labelledby="h-ausfall">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">3</span>
+        <h2 id="h-ausfall">Was die Note bedeutet</h2>
+        <p>Ein Rating ist keine Garantie, sondern eine Einschätzung. Aber es zeigt die Richtung: <strong>Je schlechter die Note, desto öfter fallen Schuldner aus.</strong></p><p>Bis BBB fällt pro Jahr im Schnitt nicht einmal eines von 500 Unternehmen aus. Ab BB steigt das Risiko steil – bei CCC trifft es jedes Jahr etwa jedes vierte.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Wie oft Schuldner ausfallen</p><div class="ax-row rb-ax" aria-hidden="true"><span class="ax-t">Rating</span><span></span></div><ul class="rbs" aria-label="Ausfälle innerhalb eines Jahres je Note, Anteil der Unternehmen mit dieser Note zu Jahresbeginn, Durchschnitt 1981 bis 2024: AAA 0 Prozent, AA 0,02, A 0,05, BBB 0,14, BB 0,56, B 2,93, CCC bis C 26,12 Prozent."><li class="rb"><span class="rc r1">AAA</span><span class="rb-v" style="--tick: 33.333%"><i class="null"></i><b>0,00&nbsp;%<small> · keiner</small></b></span></li><li class="rb"><span class="rc r2">AA</span><span class="rb-v" style="--tick: 33.333%"><i style="width: 0.07%"></i><b>0,02&nbsp;%<small> · 1 von 5.000</small></b></span></li><li class="rb"><span class="rc r3">A</span><span class="rb-v" style="--tick: 33.333%"><i style="width: 0.17%"></i><b>0,05&nbsp;%<small> · 1 von 2.000</small></b></span></li><li class="rb"><span class="rc r4">BBB</span><span class="rb-v" style="--tick: 33.333%"><i style="width: 0.47%"></i><b>0,14&nbsp;%<small> · 1 von 700</small></b></span></li><li class="rb hy"><span class="rc r5">BB</span><span class="rb-v" style="--tick: 33.333%"><i style="width: 1.87%"></i><b>0,56&nbsp;%<small> · 1 von 180</small></b></span></li><li class="rb hy"><span class="rc r6">B</span><span class="rb-v" style="--tick: 33.333%"><i style="width: 9.77%"></i><b>2,93&nbsp;%<small> · 1 von 34</small></b></span></li><li class="rb hy"><span class="rc r7">CCC</span><span class="rb-v" style="--tick: 33.333%"><i style="width: 87.07%"><b class="in">26,12&nbsp;%<small> · 1 von 4</small></b></i></span></li></ul><div class="rb-tk" aria-hidden="true"><span></span><span class="tk"><i style="left: 0.00%">0</i><i style="left: 33.33%">10</i><i style="left: 66.67%">20</i><i style="left: 100.00%">30</i></span></div><p class="ax-t rb-xt" aria-hidden="true">Ausfälle innerhalb eines Jahres in&nbsp;% →</p><p class="rb-leg" aria-hidden="true"><span>Investment Grade</span><span class="hy">Hochzins</span></p><p class="sb-f">Anteil der Unternehmen mit dieser Note zu Jahresbeginn, die im selben Jahr ausfielen. Langjähriger Durchschnitt; CCC steht für CCC bis C.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Unter BBB− steigt das Ausfallrisiko steil an.</span></p>
+    </section>
+    <section class="kap kap-b" id="zins" aria-labelledby="h-zins">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">4</span>
+        <h2 id="h-zins">Mehr Risiko, mehr Zins</h2>
+        <p>Wer eine schlechtere Note hat, muss mehr Zins bieten – sonst leiht ihm niemand Geld. Den Mehrzins gegenüber einer sicheren Staatsanleihe nennt man <strong>Risikoaufschlag</strong> oder <a href="begriffe.html#spread">Spread</a>.</p><p>Der Aufschlag ist kein Geschenk, sondern der Lohn für das Risiko. Ein auffällig hoher Zins heißt deshalb fast immer: Es gibt einen Grund dafür.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Aufschlag je Note</p><div class="ax-row rb-ax" aria-hidden="true"><span class="ax-t">Rating</span><span></span></div><ul class="rbs" aria-label="Typischer Aufschlag je Note in&nbsp;Prozentpunkten: AAA 0,40, AA 0,55, A 0,78, BBB 1,11, BB 1,84, B 3,21, CCC 8,85."><li class="rb"><span class="rc r1">AAA</span><span class="rb-v" style="--tick: 20.000%"><i style="width: 4.00%"></i><b>+0,40</b></span></li><li class="rb"><span class="rc r2">AA</span><span class="rb-v" style="--tick: 20.000%"><i style="width: 5.50%"></i><b>+0,55</b></span></li><li class="rb"><span class="rc r3">A</span><span class="rb-v" style="--tick: 20.000%"><i style="width: 7.80%"></i><b>+0,78</b></span></li><li class="rb"><span class="rc r4">BBB</span><span class="rb-v" style="--tick: 20.000%"><i style="width: 11.10%"></i><b>+1,11</b></span></li><li class="rb hy"><span class="rc r5">BB</span><span class="rb-v" style="--tick: 20.000%"><i style="width: 18.40%"></i><b>+1,84</b></span></li><li class="rb hy"><span class="rc r6">B</span><span class="rb-v" style="--tick: 20.000%"><i style="width: 32.10%"></i><b>+3,21</b></span></li><li class="rb hy"><span class="rc r7">CCC</span><span class="rb-v" style="--tick: 20.000%"><i style="width: 88.50%"><b class="in">+8,85</b></i></span></li></ul><div class="rb-tk" aria-hidden="true"><span></span><span class="tk"><i style="left: 0.00%">0</i><i style="left: 20.00%">2</i><i style="left: 40.00%">4</i><i style="left: 60.00%">6</i><i style="left: 80.00%">8</i><i style="left: 100.00%">10</i></span></div><p class="ax-t rb-xt" aria-hidden="true">Aufschlag in&nbsp;Prozentpunkten →</p><p class="rb-leg" aria-hidden="true"><span>Investment Grade</span><span class="hy">Hochzins</span></p><p class="sb-f">Typischer Aufschlag über sichere Staatsanleihen für große US-Unternehmen. Er schwankt mit der Marktlage – in Krisen ist er deutlich größer.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Hoher Zins heißt schlechtere Note – das ist der Preis für mehr Risiko.</span></p>
+    </section>
+    <section class="kap" id="ausblick" aria-labelledby="h-ausblick">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">5</span>
+        <h2 id="h-ausblick">Der Ausblick: wohin die Note geht</h2>
+        <p>Zur Note eines Staates oder Unternehmens gehört fast immer ein <strong>Ausblick</strong> (englisch „Outlook“). Er sagt, wohin sich die Note in den nächsten ein bis zwei Jahren wahrscheinlich bewegt: <strong>positiv</strong>, <strong>stabil</strong> oder <strong>negativ</strong>.</p><p>Ein negativer Ausblick ist ein Warnsignal, aber noch kein Urteil: Laut Moody’s wurde bisher etwa jeder dritte Schuldner mit negativem Ausblick innerhalb von 18 Monaten herabgestuft. Wird es ernst, setzt die Agentur die Note auf eine <strong>Beobachtungsliste</strong> (CreditWatch, Review oder Rating Watch). Dann folgte bei Moody’s in mehr als der Hälfte der Fälle die Herabstufung.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">So liest du den Ausblick</p><p class="abl-so"><span class="abl-sk">So steht es da:</span> <span class="rc r2">AA−</span> <span class="abl-tag">Ausblick negativ</span></p><ul class="abl" aria-label="Die vier Ausblicke"><li class="a-pos"><span class="ai" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 17 17 7M9 7h8v8"/></svg></span><span><b>Positiv</b><span class="at">Die Note steigt eher.</span></span></li><li class="a-sta"><span class="ai" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 12h15M13.5 6l6 6-6 6"/></svg></span><span><b>Stabil</b><span class="at">Die Note bleibt eher, wie sie ist.</span></span></li><li class="a-neg"><span class="ai" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M7 7l10 10M17 9v8H9"/></svg></span><span><b>Negativ</b><span class="at">Die Note sinkt eher.</span></span></li><li class="a-dev"><span class="ai" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.5v17M8 7.5l4-4 4 4M8 16.5l4 4 4-4"/></svg></span><span><b>In Entwicklung</b><span class="at">Rauf oder runter – beides ist möglich. Selten.</span></span></li></ul><dl class="abl-z"><div><dt>Ausblick</dt><dd>gilt für ein bis zwei Jahre</dd></div><div><dt>Beobachtungsliste</dt><dd>Entscheidung meist in wenigen Monaten</dd></div></dl></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Schau nicht nur auf die Note, sondern auch auf den Ausblick: Er zeigt, wohin sie geht.</span></p>
+    </section>
+    <section class="kap kap-b" id="nutzen" aria-labelledby="h-nutzen">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">6</span>
+        <h2 id="h-nutzen">Ratings richtig nutzen</h2>
+        <p>Ratings ändern sich. Wird ein Schuldner herabgestuft, fällt meist der Kurs seiner Anleihen.</p><p>Ratings können auch irren oder zu spät kommen. Die Agenturen werden meist vom Schuldner selbst bezahlt. Und die US-Bank Lehman Brothers hatte bei Moody’s noch wenige Tage vor ihrer Pleite 2008 die gute Note A2.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">So nutzt du Ratings</p><ul class="check" aria-label="So nutzt du Ratings"><li><span class="ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5.5 12.5 4 4 9-9.5"/></svg></span><span><b>Mehrere Agenturen:</b> Sieh dir die Noten von mehr als einer an – sie weichen oft um eine Stufe ab.</span></li><li><span class="ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5.5 12.5 4 4 9-9.5"/></svg></span><span><b>Ausblick:</b> negativ heißt, eine Herabstufung ist möglich – auch bei guter Note.</span></li><li><span class="ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5.5 12.5 4 4 9-9.5"/></svg></span><span><b>Rang der Anleihe:</b> nachrangige Anleihen stehen oft Stufen tiefer als der Schuldner.</span></li><li><span class="ok" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5.5 12.5 4 4 9-9.5"/></svg></span><span><b>Streuen:</b> Auch eine gute Note ist keine Garantie.</span></li></ul><p class="wo"><b>Wo stehen Rating und Ausblick?</b> Die Note steht im Steckbrief der Anleihe bei deinem Broker. Note und Ausblick findest du auf der Website des Schuldners (Investor Relations) und bei den Agenturen selbst.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Das Rating ist ein guter Anfang, keine Garantie: Ausblick und Rang prüfen, Geld streuen.</span></p>
+    </section>
+
+    <div class="weiter">
+      <a class="go" href="anleihen-laender.html">Staatsanleihen nach Ländern →</a>
+      <a class="go leise" href="grundlagen.html">Anleihen einfach erklärt →</a>
+      <a class="go leise" href="unternehmensanleihen.html">Unternehmensanleihen nach Bonität →</a>
+    </div>
+    <p class="klein">Diese Seite erklärt, wie Ratings funktionieren; sie empfiehlt keine Anlage. Ratings sind Einschätzungen der Agenturen und können sich jederzeit ändern. Die Zahlen sind gerundet.</p>
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="risiko.html">Risiko kennen – sieben Risiken von Anleihen</a></li>
+        <li><a href="erste-anleihe.html">Deine erste Anleihe</a></li>
+        <li><a href="fortgeschrittene.html#spread">Spreads für Fortgeschrittene</a></li>
+        <li><a href="risikoaufschlaege.html">Risikoaufschläge seit 1953 – die Zeitreihe</a></li>
+        <li><a href="begriffe.html#bonitaet">Glossar: Bonität und Rating</a></li>
+      </ul>
+    </nav>
+    <details class="quellen" id="quellen">
+      <summary>Datenquellen und Methodik</summary>
+      <div class="quellen-body">
+        <p><strong>Notenskala.</strong> Bedeutung der Noten nach den Definitionen von <a href="https://www.spglobal.com/ratings/en/credit-ratings/about/understanding-credit-ratings">S&amp;P Global Ratings</a> (Investment Grade = BBB− oder besser) und <a href="https://ratings.moodys.com/rmc-documents/53954">Moody’s, Rating Symbols and Definitions (1. Juli 2026)</a>; Moody’s-Zusätze 1, 2, 3 = oberes, mittleres, unteres Ende einer Stufe.</p>
+        <p><strong>Vergleichstabelle.</strong> Zuordnung von AAA bis BB laut <a href="https://www.ecb.europa.eu/mopo/coll/risk/ecaf/html/index.en.html">Eurosystem-Ratingskala der EZB</a> (Kreditqualitätsstufen 1 bis 5 für Morningstar DBRS, Fitch, Moody’s, S&amp;P und Scope – die fünf von der EZB anerkannten Agenturen). Darunter nach den Skalen der Agenturen: <a href="https://www.spglobal.com/ratings/en/regulatory/article/-/view/sourceId/504352">S&amp;P (Ratings Definitions)</a> und <a href="https://www.lrl.mn.gov/archive/minutes/senate/2025/capinv/20250304/CapInv_20250304_Fitch-Ratings-Rating-Definitions.pdf">Fitch (Rating Definitions, 11.06.2024)</a> mit Plus und Minus von AA bis CCC, Moody’s mit 1 bis 3 von Aa bis Caa, dann Ca und C; <a href="https://eba.europa.eu/documents/10180/2733281/(Mapping+Report+-+Scope).pdf/37231313-f408-4d85-9f22-a82a22880da3">Scope</a> mit Plus und Minus von AA bis B, CCC, CC und C ohne Zusatz; <a href="https://dbrs.morningstar.com/research/236754/long-term-obligations-rating-scale">Morningstar DBRS (15.12.2025)</a> mit (high) und (low) von AA bis CCC, SD laut <a href="https://dbrs.morningstar.com/research/236735/default-definition">Default-Rahmenwerk (22.12.2025)</a>. Zuordnung der tiefsten Stufen (Ca, C) wie in der Übersicht der <a href="https://en.wikipedia.org/wiki/Bond_credit_rating">Wikipedia</a>.</p>
+        <p><strong>Ausfälle.</strong> Gewichteter Durchschnitt der Ein-Jahres-Ausfallquoten 1981–2024 für Unternehmen weltweit mit S&amp;P-Rating (Tabelle 4): Anteil der am 1. Januar bewerteten Unternehmen, die bis Jahresende ausfielen, gewichtet nach der Zahl der Unternehmen je Jahr – AAA 0,00&nbsp;%, AA 0,02&nbsp;%, A 0,05&nbsp;%, BBB 0,14&nbsp;%, BB 0,56&nbsp;%, B 2,93&nbsp;%, CCC/C 26,12&nbsp;%. Quelle: S&amp;P Global Ratings, <a href="https://maalot.co.il/Publications/FTS20250331162126.pdf">2024 Annual Global Corporate Default And Rating Transition Study</a>, 27.03.2025. „1 von …“ ist daraus gerundet.</p>
+        <p><strong>Aufschläge.</strong> „Default spreads“ nach Rating für große US-Unternehmen außerhalb der Finanzbranche, Daten Januar 2026: AAA 0,40, AA 0,55, A 0,78, BBB 1,11, BB 1,84, B 3,21, CCC 8,85&nbsp;Prozentpunkte über sicheren Staatsanleihen. Quelle: <a href="https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/ratings.html">Aswath Damodaran, NYU Stern</a>. Aufschläge schwanken mit der Marktlage; in Krisen sind sie deutlich größer.</p>
+        <p><strong>Ausblick.</strong> Vier Ausblicke positiv, stabil, negativ und „developing“ (Fitch: „evolving“), hier „in Entwicklung“. Zeitraum: nach <a href="https://www.maalot.co.il/Publications/RS20251216162753.pdf">S&amp;P Global Ratings Definitions (16.12.2025)</a> meist bis zu zwei Jahre (Investment Grade) bzw. bis zu einem Jahr (Hochzins); ein positiver oder negativer Ausblick ist nicht zwingend Vorbote einer Änderung. CreditWatch meist innerhalb von 90 Tagen entschieden. Fitch: ein bis zwei Jahre, Rating Watch (<a href="https://www.lrl.mn.gov/archive/minutes/senate/2025/capinv/20250304/CapInv_20250304_Fitch-Ratings-Rating-Definitions.pdf">Fitch Rating Definitions, 11.06.2024</a>). Moody’s (<a href="https://ratings.moodys.com/rmc-documents/53954">Rating Symbols and Definitions</a>): historisch wurde rund ein Drittel der Schuldner innerhalb von 18 Monaten nach einem negativen (positiven) Ausblick herab- (herauf-)gestuft; Überprüfungen („Review“) meist nach 30 bis 90 Tagen abgeschlossen, bei Review auf Herabstufung in mehr als der Hälfte der Fälle mit Herabstufung.</p>
+        <p><strong>Agenturen.</strong> <a href="https://www.esma.europa.eu/credit-rating-agencies/cra-authorisation">ESMA</a>: 28 registrierte oder zertifizierte Ratingagenturen (Stand 03.08.2026), Rechtsgrundlage Verordnung (EG) Nr. 1060/2009. Marktanteile in der EU 2025 nach Umsatz: S&amp;P 50,42&nbsp;%, Moody’s 29,63&nbsp;%, Fitch 11,82&nbsp;% – zusammen 91,87&nbsp;% (<a href="https://www.esma.europa.eu/sites/default/files/2025-12/ESMA84-900617762-2652_CRA_Market_Share_Calculation_2025.pdf">ESMA, CRA Market Share Calculation 2025</a>). Bezahlung durch den Schuldner („issuer pays“): <a href="https://en.wikipedia.org/wiki/Credit_rating_agency">Wikipedia, Credit rating agency</a>. Lehman Brothers: Moody’s setzte das A2-Rating fünf Tage vor dem Insolvenzantrag (15.09.2008) auf Überprüfung (<a href="https://www.fool.com/investing/general/2012/03/14/ratings-agencies-are-always-the-last-to-know.aspx">The Motley Fool, 14.03.2012</a>).</p>
+      </div>
+    </details>
+  </main>
+  <footer><span>Keine Anlageberatung.</span> · <a href="rechtliches.html">Rechtliches</a> · <a href="rechtliches.html#impressum">Impressum</a> · <a href="rechtliches.html#datenschutz">Datenschutz</a></footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Fallback, falls site.js nicht laedt (404/Netzfehler): Minimal-Implementierung,
+// damit die Seite trotzdem rendert; die volle Version kommt aus site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }, navInit: function () {} };
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+</script>
+</body>
+</html>

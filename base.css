@@ -1,0 +1,461 @@
+/* base.css – Gestaltungssystem, Kopfzeile, Marke, Navigation und gemeinsame Bausteine aller Seiten.
+   Wird vor dem seitenspezifischen <style> geladen; die Seiten ergänzen nur noch eigene Bausteine. */
+/* ============================================================================================
+   Gestaltungssystem (24.09.2026) – ein Look für alle Seiten.
+   Eine Schrift (seit 27.09.2026, Nutzerentscheid nach Mockup): Manrope (400/500/600/700) für alles – selbst gehostet
+   (manrope-400/500/600/700.woff2, Latin-Teilmenge aus @fontsource/manrope 5.3.0, SIL OFL). Vorher Source Serif 4 + Inter + Caveat.
+   Stufenleiter: Display 56 · H1 44 · H2 32 · H3 20 · Lead 19 · Body 17 · UI 15 · Label 12–12,5 (Versalien, 0,06 em) · Caption 13.
+   Titel (H1, H2, Marke) in 700 mit enger Laufweite, sonst kein Schnitt über 600; Versal-Labels 0,08 em; keine Schrift unter 12 px. Fließtext groß und ruhig, Inhalte in Karten. Die Seiten definieren nur noch ihre eigenen Bausteine;
+   alles Gemeinsame steht hier. Ältere Variablennamen (--line, --ma, --muted, --ap-*) bleiben gültig.
+   ============================================================================================ */
+@font-face { font-family: 'Manrope'; src: url(manrope-400.woff2) format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Manrope'; src: url(manrope-500.woff2) format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Manrope'; src: url(manrope-600.woff2) format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Manrope'; src: url(manrope-700.woff2) format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+:root {
+  --sans: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --serif: var(--sans);   /* seit 27.09.2026 keine Serif mehr: Titel und Marke ebenfalls Manrope (700); der Name bleibt, weil viele Seiten var(--serif) nutzen */
+  --bg: #FBFAF7; --ink: #1A1A19; --text: #55544F;
+  /* Grundfarbe seit 25.09.2026 Giftgrün statt Blau (Nutzerwunsch „anstelle von blau soll die grundfarbe giftgrün sein! überall!“):
+     --blue heißt aus Kompatibilität weiter so (viele Seiten nutzen var(--blue)/--line/--ap-blue), ist aber jetzt das tiefe Giftgrün. */
+  /* Seit dem Gesamttest 25.09.2026: Schrift-Grün #157C00 statt #1DA300 (#1DA300 lag mit 3,2–3,3:1 unter der AA-Grenze 4,5:1).
+     #157C00 erreicht 5,4:1 auf Weiß, 5,1:1 auf warmem Weiß, 4,8:1 auf den hellgrünen Karten; weiße Schrift auf #157C00-Flächen 5,4:1.
+     --blue-dark (#178500) bleibt für Kante, Unterstreichung und CONCRETE in der Kopfzeile. */
+  --blue: #157C00; --blue-dark: #178500; --orange: #CF7430; --orange-text: #A2561C;
+  /* Giftgrün (seit 25.09.2026, Nutzerwunsch „die ganze Seite soll einen giftgrünen Touch bekommen“): --green für Flächen und Knöpfe
+     (Schrift darauf immer dunkel), --green-text als etwas tiefere Schriftfarbe (Neon auf Weiß wäre unlesbar), die Tints sind
+     leicht transparent, damit der Untergrund durchscheint. --soft (ehemals Hellblau #EBEFFA) ist jetzt die grüne Fläche. */
+  --green: #39FF14; --green-hover: #2EE60D; --green-text: #157C00;
+  --green-tint: rgba(57,255,20,0.16); --green-tint-2: rgba(57,255,20,0.30); --green-line: rgba(57,255,20,0.55);
+  --soft: var(--green-tint);
+  --rule: rgba(26,26,25,0.10); --up: #1F7A5E; --down: #993C1D;
+  --line: var(--blue); --ma: var(--orange); --muted: var(--text);
+  --ap-blue: var(--blue); --ap-orange: var(--orange); --ap-ink: var(--ink); --ap-text: var(--text); --ap-soft: var(--soft); --ap-sans: var(--sans);
+  --radius: 16px; --shadow: 0 1px 2px rgba(26,26,25,0.04), 0 10px 28px rgba(26,26,25,0.05);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+/* Schnitt höchstens 600, Schrift nie unter 12 px (Typografie-Regel) */
+strong, b { font-weight: 600; }
+small { font-size: max(12px, 0.85em); }
+sup, sub { font-size: max(12px, 0.7em); line-height: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 17px; line-height: 1.6; padding: 48px 24px; -webkit-font-smoothing: antialiased; }
+.wrap { max-width: 1000px; margin: 0 auto; }
+main a { color: var(--blue); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+/* Seitenkopf */
+.eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--rub-text); margin-bottom: 8px; }
+h1 { font-family: var(--serif); font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; color: var(--ink); margin-bottom: 14px; overflow-wrap: break-word; hyphens: auto; }
+h2 { font-family: var(--serif); font-size: 32px; font-weight: 700; line-height: 1.15; letter-spacing: -0.025em; color: var(--ink); margin-bottom: 10px; }
+h3 { font-size: 20px; font-weight: 600; line-height: 1.25; color: var(--ink); margin-bottom: 6px; }
+.sub { font-size: 19px; color: var(--text); line-height: 1.55; max-width: 660px; margin-bottom: 24px; }
+/* Text */
+.prose { font-size: 17px; line-height: 1.6; max-width: 720px; }
+.prose p { margin-bottom: 14px; }
+.prose p:last-child { margin-bottom: 0; }
+.prose strong { font-weight: 600; }
+.note, .klein { font-size: 13px; color: var(--text); margin-top: 18px; line-height: 1.6; }
+.section { margin-top: 56px; border-top: 2px solid var(--rub-line); padding-top: 32px; }
+caption, .more summary { font-size: 19px; font-weight: 600; color: var(--ink); }
+/* Sprungmenü (Pillen mit blauer Nummer) */
+.lands { display: flex; flex-wrap: wrap; gap: 8px; }
+a.lbtn { font-size: 14px; font-weight: 600; line-height: 1; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.16); border-radius: 999px; padding: 9px 14px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+a.lbtn .n { width: 20px; height: 20px; border-radius: 50%; background: var(--rub); color: var(--rub-ink); font-size: 12px; display: grid; place-items: center; margin-left: -4px; }
+a.lbtn:hover { border-color: var(--rub-text); color: var(--rub-text); }
+a.lbtn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+/* Knöpfe */
+.go { display: inline-block; background: var(--green); color: var(--ink); font-size: 15px; font-weight: 600; text-decoration: none; padding: 12px 20px; border-radius: 8px; box-shadow: 0 6px 16px rgba(57,255,20,0.30); transition: background-color .15s ease; }
+.go:hover { background: var(--green-hover); }
+.go.leise { background: #fff; color: var(--blue); border: 1.5px solid rgba(29,163,0,0.45); box-shadow: none; }
+.go.leise:hover { background: var(--soft); }
+.go:focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+.weiter { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+/* Karten (Erklärkarten der Wissen-Seiten): Text links, Schaubild rechts, Merksatz darunter */
+.kap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 24px 36px; align-items: start; margin-top: 26px; padding: 30px 34px 32px; border-radius: var(--radius); background: linear-gradient(160deg, var(--rub-card) 0%, var(--rub-card-2) 100%); border: 1px solid rgba(26,26,25,0.07); box-shadow: var(--shadow); scroll-margin-top: 80px; }
+.kap.kap-b { background: linear-gradient(160deg, #F9F7F1 0%, #FBFAF7 100%); }
+.knr { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--rub); color: var(--rub-ink); font-size: 20px; font-weight: 600; box-shadow: 0 6px 16px var(--rub-glow); margin-bottom: 14px; }
+.kap h2 { margin-bottom: 14px; }
+.k-text p { font-size: 17px; line-height: 1.6; color: var(--ink); }
+.k-text > p + p { margin-top: 12px; }
+.k-text strong { font-weight: 600; }
+.k-bild { background: #fff; border: 1px solid rgba(26,26,25,0.08); border-radius: 14px; padding: 18px 20px 18px; align-self: start; display: flex; flex-direction: column; justify-content: flex-start; }
+.k-bild > * { flex: none; }
+.sb-k { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--rub-text); margin-bottom: 12px; }
+.sb-f { font-size: 14px; line-height: 1.55; color: var(--text); margin-top: 12px; }
+.sb { width: 100%; height: auto; display: block; }
+/* Kasten (Beispiel-Suchen der Anleihen-Suche) und Merksatz */
+.bsp { margin-top: 16px; background: #fff; border-left: 4px solid var(--orange); border-radius: 0 12px 12px 0; padding: 12px 16px 13px; }
+.merk { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; margin-top: -4px; background: var(--rub-tint); border-radius: 12px; padding: 12px 16px; font-size: 15.5px; line-height: 1.5; color: var(--ink); }
+.merk .mi { flex: none; width: 32px; height: 32px; border-radius: 50%; background: #fff; color: var(--rub-text); display: grid; place-items: center; }
+.merk .mi svg { width: 20px; height: 20px; }
+.merk strong { font-weight: 600; }
+/* Weiter-Zeile und Fußzeile */
+/* Weiter-Navigation am Seitenende (seit 29.09.2026 als Linkliste statt Fließtext mit „ · “ und „→“ – Nutzerbefund „sieht unruhig aus“):
+   kleine Überschrift, Links in Spalten mit feiner Trennlinie, der Pfeil steht rechtsbündig. Gruppierte Variante (.crossnav-gruppen,
+   Akademie-Seiten): je Stufe eine Spalte mit eigener Überschrift. */
+.crossnav { font-size: 14px; color: var(--text); margin-top: 44px; border-top: 2px solid var(--rub-line); padding-top: 18px; }
+.crossnav-t { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin: 0 0 6px; }
+.crossnav-l { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); column-gap: 32px; }
+.crossnav-l li { border-bottom: 1px solid var(--rule); min-width: 0; }
+.crossnav .crossnav-l a { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 11px 2px 11px 0; font-size: 15px; line-height: 1.4; color: var(--ink); text-decoration: none; }
+.crossnav .crossnav-l a::after { content: "→"; flex: none; color: var(--green-text); transition: transform .15s; }
+.crossnav .crossnav-l a:hover { color: var(--green-text); }
+.crossnav .crossnav-l a:hover::after { transform: translateX(3px); }
+.crossnav .crossnav-l a:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 3px; }
+.crossnav-gs { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px 32px; margin-top: 4px; }
+.crossnav-g .crossnav-l { grid-template-columns: 1fr; }
+.crossnav-gt { font-size: 15px; font-weight: 600; color: var(--ink); margin: 0; padding-bottom: 6px; border-bottom: 1px solid rgba(26,26,25,0.22); }
+@media (max-width: 600px) { .crossnav .crossnav-l a { padding: 12px 2px 12px 0; } }
+footer { font-size: 13px; color: var(--text); margin-top: 56px; border-top: 1px solid var(--rule); padding-top: 16px; line-height: 1.6; }
+footer a { color: var(--blue); }
+@media (max-width: 860px) {
+  .kap { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .k-bild { align-self: auto; }
+}
+@media (max-width: 760px) {
+  body { padding: 40px 20px; }
+  .topbar { padding: 22px 0; margin-top: -40px; }
+  h1 { font-size: 38px; }
+  .kap { padding: 24px 22px 26px; }
+  .kap h2 { font-size: 24px; }
+}
+@media (max-width: 600px) {
+  body { padding: 26px 16px; }
+  h1 { font-size: 34px; line-height: 1.15; }
+  h2 { font-size: 26px; }
+  .sub { font-size: 17px; }
+  .prose, .k-text p { font-size: 16px; }
+  .eyebrow { letter-spacing: 0.08em; }
+  .section { margin-top: 44px; padding-top: 26px; }
+  .kap { padding: 20px 16px 22px; border-radius: 12px; }
+  .knr { width: 36px; height: 36px; font-size: 17px; }
+  .k-bild { padding: 14px 14px; }
+  .go { width: 100%; text-align: center; }
+}
+
+.topbar { display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 12px 24px; margin-bottom: 40px; }   /* Spaltenabstand 24 px (vorher 44), damit vier Stufen, Such-Knopf und „Über uns“ neben die Marke passen */
+/* Seit 23.09.2026 bleibt die Kopfzeile beim Scrollen oben stehen. Der Hintergrund reicht per border-image-outset
+   über die volle Fensterbreite (ohne Querscrollen); Innenabstand und negativer Außenabstand halten die Lage im
+   Ruhezustand unverändert. Beim Scrollen (Klasse is-stuck, site.js) bekommt sie unten eine dunklere Kante. */
+/* Seit 25.09.2026 abends: Die Kopfzeile beginnt am Fensterrand (negativer Außenabstand = Body-Abstand oben) und hat oben wie unten
+   denselben Innenabstand – Marke und Menü sitzen damit mittig im grünen Band (vorher saß der Inhalt im unteren Drittel, weil das
+   Grün 80 px nach oben gemalt wurde). Bandhöhe 90 px (≤ 760 px: 82 px, ≤ 600 px: 58 px). */
+.topbar { position: sticky; top: 0; z-index: 50; padding: 26px 0; margin: -48px 0 26px; }
+/* Seit 25.09.2026 ist die Kopfzeile giftgrün (erst dunkelblau, dann Nutzerwunsch „Grundfarbe Giftgrün, überall“). Das Grün reicht
+   per border-image-outset über die volle Breite (nur Malfläche, erzeugt kein Scrollen). Marke und Menü in dunkler Schrift (Weiß wäre auf Neon unlesbar), CONCRETE im tiefen Grün, Menülisten weiß.
+   Beim Scrollen (is-stuck) eine dunkelgrüne Kante unten. */
+.topbar { border-image: linear-gradient(var(--green), var(--green)) fill 0 / / 0 100vmax 0; }
+.topbar.is-stuck { border-image: linear-gradient(to top, var(--blue-dark) 3px, var(--green) 3px) fill 0 / / 0 100vmax 0; }
+/* Rubriken: seit 26.09.2026 überall dasselbe Grün (Nutzerwunsch „dieses Grün soll einheitlich auf allen Seiten zu sehen sein …
+   manchmal braun, oder es gibt gar nichts“). Vorher hatte jede Stufe eine leise Kennfarbe (Entscheiden Orange, Kaufen Mint,
+   Einordnen Graphit). Die Variablen --rub* bleiben als Schnittstelle (Nummernkreise, Sprungpillen, Schaubild-Labels, Kartentönung,
+   Merksatz, Trennlinien) – sie sind jetzt auf allen Seiten grün. data-rubrik am <header> schreibt scripts/nav.py weiterhin. */
+:root { --rub: var(--green); --rub-ink: var(--ink); --rub-text: var(--green-text); --rub-tint: rgba(57,255,20,0.16); --rub-card: rgba(57,255,20,0.14); --rub-card-2: rgba(57,255,20,0.04); --rub-line: rgba(57,255,20,0.55); --rub-glow: rgba(57,255,20,0.30); }
+/* Kante unter dem Band: seit 26.09.2026 auf allen Seiten (auch Startseite, Rechtliches, 404) dunkelgrün, wie beim Scrollen (is-stuck) */
+.topbar { border-image: linear-gradient(to top, var(--blue-dark) 3px, var(--green) 3px) fill 0 / / 0 100vmax 0; }
+.topbar .brand { color: var(--ink); }
+.topbar .brand b { color: var(--blue-dark); }
+.topbar .brand:hover b { color: var(--ink); }
+.topbar .sitenav > a, .topbar .nav-group-btn { color: rgba(26,26,25,0.78); }
+.topbar .sitenav > a:hover, .topbar .nav-group-btn:hover { color: var(--ink); }
+.topbar .sitenav > a.current, .topbar .nav-group-btn.current { color: var(--ink); text-decoration-color: var(--blue-dark); text-decoration-thickness: 2px; }   /* Strich in derselben Farbe wie die Kante unter dem Band */
+.topbar .sitenav > a:focus-visible, .topbar .nav-group-btn:focus-visible, .topbar .brand:focus-visible { outline-color: var(--ink); }
+.topbar .nav-group.open .nav-group-btn { color: var(--ink); }
+html { scroll-padding-top: 100px; }   /* Sprungziele nicht unter der festen Kopfzeile verstecken */
+/* Seit 23.09.2026 steht die Navigation (Suche, Wissen) in derselben Zeile wie die Marke, links, auf einer Mittellinie */
+.topbar .sitenav { margin-bottom: 0; position: relative; top: 1px; flex: 1 1 auto; align-items: center; }   /* 1 px tiefer: Mitte der Großbuchstaben wie bei der Marke; flex: 1 füllt die Zeile, damit Such-Knopf und „Über uns“ (margin-left: auto) rechts stehen */
+.brand { display: inline-flex; align-items: center; gap: 14px; text-decoration: none; color: var(--ink); font-family: var(--serif); font-weight: 700; font-size: 17px; letter-spacing: 0.10em; }
+.brand svg { width: 38px; height: 38px; flex: none; }
+.brand b { font-weight: 500; color: var(--muted); }
+.brand:hover b { color: var(--line); }
+.sitenav { display: flex; gap: 14px; flex-wrap: wrap; font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 40px; }
+.sitenav a { color: var(--muted); text-decoration: none; padding: 13px 4px 16px; margin: -13px -4px -13px; transition: color 0.15s ease; }
+.sitenav a:hover { color: var(--line); }
+.sitenav a.current { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
+.sitenav a:focus-visible, .brand:focus-visible, footer a:focus-visible, a:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 3px; }
+/* Skip-Link: visuell versteckt, bis er per Tastatur fokussiert wird */
+.skip-link { position: absolute; left: -9999px; top: 0; z-index: 100; background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 0 0 7px 0; font-family: var(--sans); font-size: 13px; text-decoration: none; }
+.skip-link:focus { left: 0; }
+/* Nur für Screenreader (Tabellen-/Chart-Alternativen, Zusatzlabels) */
+.sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+/* Fußzeile: Datenstand-Warnung („veraltet“) einheitlich */
+#datastand.stale { color: var(--down); }
+/* Horizontale Scroll-Container (Tabellen/Charts) mit Scroll-Schatten als Affordanz.
+   Voraussetzung: Tabelle/SVG selbst ohne eigenen Hintergrund (transparent) – erfüllt. */
+.table-scroll, .chart-scroll {
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  background:
+    linear-gradient(90deg, var(--bg) 30%, transparent),
+    linear-gradient(90deg, transparent, var(--bg) 70%) 100% 0,
+    radial-gradient(farthest-side at 0 50%, rgba(44,44,42,0.18), transparent),
+    radial-gradient(farthest-side at 100% 50%, rgba(44,44,42,0.18), transparent) 100% 0;
+  background-repeat: no-repeat;
+  background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+  background-attachment: local, local, scroll, scroll;
+}
+/* Reduzierte Bewegung: Animationen/Transitions site-weit praktisch abschalten */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+
+/* --- Nav-Dropdowns (seit 25.09.2026 die vier Stufen Verstehen, Entscheiden, Kaufen, Einordnen – Menü „Der Weg“) ---
+   Der Gruppen-Kopf (.nav-group-btn) ist ein Link auf die Übersicht der Stufe; das Menü öffnet per Hover
+   bzw. Tastaturfokus, auf Touch-Geräten per erstem Tipp (site.js, Klasse .open). Bis 760 px wird die
+   Kopfzeile zum Akkordeon hinter einem Burger-Knopf (Regeln am Dateiende). */
+.nav-group { position: relative; display: inline-block; }
+.nav-group-btn { font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; background: none; border: none; color: var(--muted); cursor: pointer; padding: 13px 4px 16px; margin: -13px -4px -13px; display: inline-flex; align-items: baseline; gap: 5px; transition: color 0.15s ease; }
+.nav-group-btn:hover { color: var(--line); }
+.nav-group-btn.current { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 6px; }
+/* Pfeil als CSS-Dreieck statt Textzeichen „▾“: das Zeichen kam aus einer Fallback-Schrift und ließ die Nav-Zeilen nach dem ersten Paint um einige Pixel wachsen (Layout-Shift auf allen Seiten). */
+.nav-caret { display: inline-block; width: 8px; height: 5px; background: currentColor; clip-path: polygon(0 0, 100% 0, 50% 100%); transform: translateY(-1px); }
+.nav-group-menu { position: absolute; top: calc(100% + 4px); left: -12px; min-width: 175px; width: max-content; max-width: 360px; background: #fff; border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 6px 24px rgba(44,44,42,0.13); padding: 6px 0; display: none; z-index: 60; }
+/* Offen per Hover (unten, nur Geräte mit Maus), per Tastatur über die Klasse kb (site.js setzt sie,
+   solange der Fokus in der Gruppe steckt; Escape nimmt sie weg) und per .open (Touch: erster Tipp;
+   Handy-Akkordeon). Reines :focus-visible/:focus-within genügte nicht: Beim Tab vom Kopf in den
+   ersten Eintrag war das Menü kurz ausgeblendet und der Fokus fiel auf <body>. */
+.nav-group.open .nav-group-menu, .nav-group.kb .nav-group-menu { display: block; }
+@media (hover: hover) and (min-width: 1001px) { .nav-group:hover .nav-group-menu { display: block; } }
+@media (min-width: 761px) { .nav-group-menu { max-height: calc(100vh - 110px); overflow-y: auto; } }   /* seit 27.09.2026 (Verstehen hat 19 Zeilen): auf niedrigen Bildschirmen scrollt der Aufklapper statt abgeschnitten zu werden */
+/* Früher: rechtsbündig bei Platzmangel. Seit 23.09.2026 verschiebt site.js navInit das Menü per style.left passgenau; die Klasse bleibt als Rückfall. */
+.nav-group-menu.nav-menu-right { left: auto; right: -12px; }
+.sitenav .nav-group-menu a { display: block; padding: 10px 16px; margin: 0; text-transform: none; letter-spacing: 0; font-size: 14.5px; font-weight: 500; }   /* Einträge in normaler Schreibweise – lange Titel lesen sich so leichter; Köpfe und Chips bleiben Versalien */
+.sitenav .nav-group-menu a:hover { background: rgba(44,44,42,0.04); }
+/* Trennlinie im Aufklapper (nav.py: Eintrag None) */
+.nav-group-menu .nav-sep { display: block; height: 1px; background: var(--rule); margin: 6px 16px; }
+/* Gruppenüberschrift im Aufklapper (nav.py: Eintrag als Zeichenkette), z. B. „Einstieg“, „Weiter“, „Nachschlagen“:
+   kleine graue Zeile, ab der zweiten mit feiner Linie darüber */
+/* Gruppenüberschriften (seit 25.09.2026 spät als grüne Chips, damit sie sich klar von den Einträgen abheben – Nutzerwunsch) */
+.nav-group-menu .nav-cap { display: inline-block; margin: 8px 16px 4px; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; color: var(--ink); background: var(--green); text-transform: uppercase; }
+.nav-group-menu .nav-cap:first-child { margin-top: 4px; }
+.nav-group-menu a:not(.nav-ov) + .nav-cap { margin-top: 10px; }
+/* Hervorgehobener Eintrag (nav.py, Klasse nav-hl – die Anleihen-Suche ganz oben im Menü Kaufen): dezenter Rahmen statt Farbe */
+.sitenav .nav-group-menu a.nav-hl { margin: 4px 10px 6px; padding: 9px 12px; background: #F2F2EF; border: 1px solid var(--green-line); border-radius: 6px; font-weight: 600; }   /* hellgrau mit feiner grüner Linie (26.09.2026) */
+.sitenav .nav-group-menu a.nav-hl:hover { background: #EAEAE6; border-color: var(--blue); }
+.nav-group-menu a.nav-hl + .nav-cap { margin-top: 6px; }
+/* „Übersicht“ (nav.py, Klasse nav-ov) nur im Handy-Akkordeon: dort klappt der Kopf auf statt zu navigieren */
+.sitenav .nav-group-menu a.nav-ov { display: none; }
+.nav-group-btn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 3px; }
+/* Knopf „Anleihen-Suche“ rechts in der Kopfzeile: dunkel mit Neon-Schrift, auf der Suche selbst mint (Stufe Kaufen) */
+/* Seit 25.09.2026 abends kein Such-Knopf mehr in der Kopfzeile (Nutzerwunsch „Die Anleihen-Suche soll ganz oben raus“, jetzt im Menü Kaufen):
+   Die nav-cta-Regeln bleiben für einen späteren Knopf (nav.py BUTTONS). */
+/* 25.09.2026 spät: „Über uns“ steht direkt hinter den Stufen in einer Reihe (Nutzerwunsch), nicht mehr am rechten Rand. */
+.topbar .sitenav a.nav-cta { margin-left: auto; padding: 8px 12px; border-radius: 6px; background: var(--ink); color: var(--green); font-weight: 600; letter-spacing: 0.08em; transition: background-color .15s ease, color .15s ease; }
+.topbar .sitenav a.nav-cta:hover { background: #000; color: #fff; }
+.topbar .sitenav a.nav-cta.current { text-decoration: none; background: var(--up); color: #fff; }
+.topbar .sitenav a.nav-cta:focus-visible { outline-color: var(--ink); outline-offset: 3px; }
+/* Burger-Knopf: nur bis 1000 px sichtbar (Regeln am Dateiende; bis 26.09.2026: 760 px) */
+.nav-toggle { display: none; }
+/* Suchfeld rechts außen in der Kopfzeile (nav.py SEARCH, seit 26.09.2026): führt direkt in die Anleihen-Suche.
+   38 px hoch wie das Logo – links die Marke, rechts das Feld, beide bündig mit dem Seitenrand; dazwischen das Menü.
+   Weiß mit tiefgrünem Rand (dieselbe Farbe wie die Kante unter dem Band), Lupe links im Feld. */
+.topbar .sitenav { flex: 0 0 auto; }
+.kopfsuche { flex: 1 1 132px; min-width: 0; max-width: 200px; margin-left: auto; display: flex; align-items: center; height: 38px; padding: 0 12px 0 3px; background: #fff; border: 2px solid var(--blue-dark); border-radius: 10px; transition: box-shadow .15s ease, border-color .15s ease; }
+.kopfsuche:focus-within { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(255,255,255,0.9); }
+.kopfsuche button { order: -1; flex: none; display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 7px; background: none; color: var(--green-text); cursor: pointer; }
+.kopfsuche button:hover { color: var(--ink); }
+.kopfsuche button:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
+.kopfsuche button svg { width: 18px; height: 18px; display: block; }
+.kopfsuche input { flex: 1 1 auto; width: 0; min-width: 0; height: 100%; margin: 0 0 0 3px; padding: 0; border: 0; outline: 0; background: none; font-family: var(--sans); font-size: 14.5px; color: var(--ink); }
+.kopfsuche input::placeholder { color: #8E8D86; opacity: 1; }
+.kopfsuche input::-webkit-search-cancel-button { -webkit-appearance: none; }
+@media (max-width: 1100px) { .topbar { column-gap: 18px; } }   /* zwischen 1001 und 1100 px bleibt so Platz für das volle Feld */
+
+/* Tabellenzeilen: ruhiges Hover als Lesehilfe (auch Zeilenköpfe <th scope="row">) */
+table tbody tr:hover > :is(td, th) { background-color: rgba(57,255,20,0.10); }
+
+/* --- Hover-Tooltip für Charts (site.js: MC.hoverWrap) ---
+   Zeigt beim Überfahren eines Graphen den nächstgelegenen Datenpunkt:
+   vertikale Markierungslinie, Punkt je Serie und Label mit Datum + Wert. */
+.hovergraph { position: relative; display: block; }
+.hovergraph:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 3px; }
+.hovergraph .tipline { position: absolute; width: 1px; background: rgba(44,44,42,0.30); pointer-events: none; display: none; }
+.hovergraph .tipdot { position: absolute; width: 8px; height: 8px; border-radius: 50%; background: #2C2C2A; box-shadow: 0 0 0 2px #fff; transform: translate(-50%, -50%); pointer-events: none; display: none; z-index: 2; }
+.hovergraph .tiplab { position: absolute; font-family: var(--sans); font-size: 12px; line-height: 1.5; padding: 4px 8px; border-radius: 5px; background: #2C2C2A; color: #fff; white-space: pre-line; pointer-events: none; display: none; z-index: 3; font-variant-numeric: tabular-nums; box-shadow: 0 2px 10px rgba(44,44,42,0.22); }
+.hovergraph.tipon .tipline, .hovergraph.tipon .tipdot, .hovergraph.tipon .tiplab { display: block; }
+
+/* Mikro-Details */
+::selection { background: rgba(29,95,160,0.16); }
+html { scroll-behavior: smooth; }  /* wird bei prefers-reduced-motion oben zurückgesetzt */
+
+/* Datenquellen und Methodik (Seitenstandard seit 23.09.2026): nie offen im Bild, sondern ein unauffälliger
+   Aufklapper am Seitenende – <details class="quellen" id="quellen"> direkt vor </main>. Sichtbar bleibt nur die
+   kleine Zeile „Datenquellen und Methodik“; ein Klick (oder der Link #quellen) öffnet den Text. */
+details.quellen { margin-top: 22px; font-family: var(--sans); }
+details.quellen > summary { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; list-style: none; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 4px 0; }
+details.quellen > summary::-webkit-details-marker { display: none; }
+details.quellen > summary::before { content: ''; width: 6px; height: 6px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-45deg); transition: transform .15s ease; margin-top: -1px; }
+details.quellen[open] > summary::before { transform: rotate(45deg); margin-top: -4px; }
+details.quellen > summary:hover { color: var(--line); }
+details.quellen > summary:focus-visible { outline: 2px solid var(--line); outline-offset: 3px; border-radius: 3px; }
+.quellen-body { margin-top: 12px; max-width: 820px; font-size: 13px; line-height: 1.65; color: var(--muted); }
+.quellen-body p { margin: 0 0 10px; }
+.quellen-body p:last-child { margin-bottom: 0; }
+.quellen-body a { color: var(--line); }
+.quellen-body strong { color: var(--ink); font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { details.quellen > summary::before { transition: none; } }
+
+/* Kopfzeile bis 1000 px (bis 26.09.2026: 760 px; steht am Dateiende, damit sie die Grundregeln überschreibt): Marke links, Burger-Knopf rechts;
+   das Menü ist zu, bis der Knopf es öffnet (site.js setzt .nav-open am <header>). Offen wird es ein Akkordeon in voller Breite:
+   oben der Such-Knopf, darunter die vier Stufen als Zeilen, die einzeln auf- und zuklappen (Klasse .open an .nav-group),
+   ganz unten „Über uns“. Vier Aufklapper plus Knopf passen sonst nicht mehr in zwei Zeilen. */
+@media (max-width: 1000px) {
+  /* Suchfeld zwischen Marke und Burger-Knopf; das Menü klappt darunter in voller Breite auf */
+  .topbar { column-gap: 12px; }
+  .kopfsuche { order: 1; flex: 1 1 150px; max-width: 240px; }
+  .topbar .nav-toggle { order: 2; margin-left: 0; }
+  .topbar .sitenav { order: 3; }
+  .nav-toggle { display: inline-flex; align-items: center; justify-content: center; margin: -3px 0 -3px auto; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 8px; background: transparent; color: var(--ink); cursor: pointer; }
+  .nav-toggle:hover { background: rgba(26,26,25,0.08); }
+  .nav-toggle:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .nav-toggle-i { position: relative; display: block; width: 22px; height: 2px; background: currentColor; border-radius: 1px; transition: background-color .15s ease; }
+  .nav-toggle-i::before, .nav-toggle-i::after { content: ''; position: absolute; left: 0; width: 22px; height: 2px; background: currentColor; border-radius: 1px; transition: transform .15s ease, top .15s ease; }
+  .nav-toggle-i::before { top: -7px; }
+  .nav-toggle-i::after { top: 7px; }
+  .topbar.nav-open .nav-toggle-i { background: transparent; }
+  .topbar.nav-open .nav-toggle-i::before { top: 0; transform: rotate(45deg); }
+  .topbar.nav-open .nav-toggle-i::after { top: 0; transform: rotate(-45deg); }
+  .topbar .sitenav { display: none; flex: 1 0 100%; width: 100%; flex-direction: column; align-items: stretch; gap: 0; top: 0; margin-top: 2px; max-height: calc(100vh - 90px); overflow-y: auto; }
+  .topbar.nav-open .sitenav { display: flex; }
+  .topbar .sitenav a.nav-cta { order: -1; margin: 4px 0 10px; padding: 12px 14px; text-align: center; }
+  .nav-group { display: block; width: 100%; border-top: 1px solid rgba(26,26,25,0.16); }
+  .topbar .nav-group-btn { display: flex; width: 100%; justify-content: space-between; align-items: center; padding: 13px 4px; margin: 0; }
+  .nav-group.open .nav-caret { transform: rotate(180deg) translateY(1px); }
+  .nav-group-menu, .nav-group-menu.nav-menu-right { position: static; left: auto; right: auto; width: auto; min-width: 0; max-width: none; background: transparent; border: 0; border-radius: 0; box-shadow: none; padding: 0 0 10px; }
+  .nav-group.open .nav-group-menu { display: block; }
+  .sitenav .nav-group-menu a { padding: 9px 4px 9px 16px; }
+  .sitenav .nav-group-menu a:hover { background: rgba(26,26,25,0.06); }
+  .sitenav .nav-group-menu a.nav-ov { display: block; }
+  .topbar .sitenav .nav-group-menu a { color: rgba(26,26,25,0.78); }   /* auf Neon lesbar (Grau wäre zu blass) */
+  .topbar .sitenav .nav-group-menu a:hover { color: var(--ink); }
+  .nav-group-menu .nav-cap { margin-left: 16px; background: #fff; }   /* auf Neon: weißer Chip */
+  .sitenav .nav-group-menu a.nav-hl { margin: 6px 4px 6px 16px; padding: 9px 12px; border-color: var(--blue); }   /* auf Neon: tiefes Grün statt der hellen Linie */
+  .nav-group-menu a + .nav-cap { margin-top: 10px; }
+  .topbar .sitenav > a:not(.nav-cta) { display: block; border-top: 1px solid rgba(26,26,25,0.16); padding: 13px 4px; margin: 0; }
+  .topbar .sitenav > a.current { text-decoration: none; font-weight: 600; }
+}
+/* Kopfzeile am Handy: Marke etwas kompakter */
+@media (max-width: 600px) {
+  .topbar { gap: 10px 12px; padding: 14px 0; margin: -26px 0 16px; }
+  html { scroll-padding-top: 66px; }
+  .brand { font-size: 13.5px; letter-spacing: 0.14em; gap: 9px; }
+  .brand svg { width: 30px; height: 30px; }
+  .topbar .sitenav { letter-spacing: 0.08em; max-height: calc(100vh - 58px); }
+  .nav-toggle { margin-top: -7px; margin-bottom: -7px; }   /* Tippfläche 44 px, Kopfzeile bleibt 58 px hoch */
+  .topbar .nav-group-btn { letter-spacing: 0.08em; }
+  /* Suchfeld am Handy nur als Lupe neben dem Burger (gleiche Tippfläche 44 px, gleiche Farbe) – ein Tipp öffnet die Anleihen-Suche */
+  .kopfsuche { flex: none; width: 44px; max-width: none; height: 44px; margin: -7px 0 -7px auto; padding: 0; background: none; border: 0; border-radius: 8px; }
+  .kopfsuche:focus-within { box-shadow: none; }
+  .kopfsuche input { display: none; }
+  .kopfsuche button { width: 44px; height: 44px; border-radius: 8px; color: var(--ink); }
+  .kopfsuche button:hover { background: rgba(26,26,25,0.08); }
+  .kopfsuche button svg { width: 21px; height: 21px; }
+  .topbar .nav-toggle { margin-left: -8px; }
+}
+
+/* Achsentitel (Regel seit 24.09.2026: jedes Diagramm beschriftet seine Achsen).
+   SVG-Schaubilder: y-Titel links oben mit „↑“, x-Titel rechts unter der Achse mit „→“ (13 px, fett, #55544F).
+   HTML-Balken: Kopfzeile .ax-row im Raster der Balkenzeilen – links die Kategorie, rechts die Wertachse. */
+.ax-row { margin-bottom: 2px; }
+.ax-t { font-size: 12px; font-weight: 600; line-height: 1.3; color: var(--text); }
+@media (max-width: 600px) { svg text.axt { font-size: 16px; } }   /* SVG schrumpft am Handy – Achsentitel bleiben lesbar */
+/* Handy (28.09.2026, Nutzerbefund iPhone): Die Scroll-Schatten (background-attachment: local) zeichnet iOS Safari seit iOS 13 nicht –
+   der Nutzer sieht dann nicht, dass die Tabelle breiter ist. Deshalb bis 600 px ein sichtbarer Hinweis, der beim Wischen links kleben bleibt.
+   Ab 16 px Schriftgröße zoomt iOS in Formularfelder nicht hinein – Auswahlfelder und Eingaben am Handy deshalb mindestens 16 px. */
+@media (max-width: 600px) {
+  .table-scroll::before, .chart-scroll::before { content: "← Tabelle breiter als der Bildschirm – wischen →"; position: sticky; left: 0; display: block; width: max-content; max-width: 100%; margin-bottom: 4px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
+  .chart-scroll::before { content: "← Grafik breiter als der Bildschirm – wischen →"; }
+  select, input[type="search"], input[type="text"], input[type="number"] { font-size: max(16px, 1em) !important; }   /* !important, weil Seiten-Styles wie „caption select { font: inherit }“ sonst gewinnen */
+}
+
+/* ---- Kursverlauf (site.js: MC.verlauf, MC.kursChart; seit 25.09.2026) ---- */
+.kv { margin-top: 14px; }
+.kv svg { display: block; width: 100%; height: auto; }
+.kv .hovergraph { max-width: 680px; }
+.kv-kopf { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; max-width: 680px; margin-bottom: 6px; }
+.kv-titel { font-size: 14px; font-weight: 600; color: var(--ink); }
+.kv-ver { font-weight: 600; margin-left: 6px; font-variant-numeric: tabular-nums; }
+.kv-ver.plus { color: var(--up); }
+.kv-ver.minus { color: var(--down); }
+.kv-zeit { display: flex; flex-wrap: wrap; gap: 6px; }
+.kv-btn { font: inherit; font-size: 12px; line-height: 1; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.18); border-radius: 999px; padding: 6px 10px; cursor: pointer; }
+.kv-btn:hover { border-color: var(--ink); }
+.kv-btn[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
+.kv-btn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+.kv-leer, .kv-legende { font-size: 12.5px; color: var(--text); line-height: 1.5; margin: 4px 0 0; max-width: 680px; }
+.kv-punkt { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--ink); margin: 0 6px 1px 0; }
+/* Detail-Feld (Anleihen-Suche, ETF-Seite): klebt am linken Rand der quer scrollenden Tabelle */
+.det { position: sticky; left: 0; width: min(100%, calc(100vw - 48px)); max-width: 1000px; padding: 16px 18px 18px; margin: 2px 0 8px; background: #fff; border: 1px solid var(--rule); border-radius: 12px; box-shadow: 0 6px 22px rgba(44,44,42,0.08); white-space: normal; box-sizing: border-box; }
+/* Kopf der Kurzansicht (seit 28.09.2026): Zeile 1 Name + Emittent, Zeile 2 ISIN fett mit Kopierknopf */
+.det-kopf { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin-bottom: 14px; }
+.det-kopf b { font-size: 16px; color: var(--ink); line-height: 1.35; }
+.det-kopf span { font-size: 12.5px; color: var(--text); font-variant-numeric: tabular-nums; }
+.det-kopf .det-emi { flex: 1 1 auto; min-width: 0; }
+.det-kopf .det-id { flex: 0 0 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 13px; letter-spacing: 0.02em; }
+.det-kopf .det-id b { font-size: 13.5px; font-weight: 700; }
+.kopie { font: inherit; font-size: 12px; line-height: 1.3; color: var(--green-text); background: none; border: 1px solid rgba(21,124,0,0.35); border-radius: 999px; padding: 2px 9px; cursor: pointer; }
+.kopie:hover { background: var(--soft); }
+.kopie:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+.det-kpi { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 18px; margin: 0; }
+.det-kpi div { min-width: 0; }
+.det-kpi dt { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-bottom: 2px; }
+.det-kpi dd { margin: 0; font-size: 16px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1.3; }
+.det-kpi dd small { display: block; font-size: 12px; font-weight: 400; color: var(--text); margin-top: 1px; }
+.det-note { font-size: 12.5px; line-height: 1.5; color: var(--text); margin: 14px 0 0; max-width: 760px; }
+@media (max-width: 760px) { .det-kpi { grid-template-columns: repeat(2, minmax(0, 1fr)); } .det { padding: 14px; } }
+.det-legende { display: block; margin: 12px 0 0; font-size: 12px; line-height: 1.5; color: var(--text); max-width: 760px; }
+.det-kpi dd .klein { font-size: 14.5px; font-weight: 600; line-height: 1.3; }
+/* Kurzansicht (Anleihen-Suche, seit 26.09.2026): fünf Kennzahlen, alles Weitere auf dem Steckbrief anleihe.html;
+   die Veränderung zum Vortag steht als +/− (.kv-ver) direkt hinter dem Kurs */
+.det-kpi.fuenf { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.det-kpi dd .kv-ver { font-size: 13px; font-weight: 600; white-space: nowrap; }
+.det-kpi dd .kv-ver.null, .kv-ver.null { color: var(--text); }
+.det-mehr { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; margin: 14px 0 0; font-size: 12.5px; color: var(--text); line-height: 1.5; }
+.det-mehr .det-link { display: inline-block; padding: 8px 15px; border-radius: 999px; font-size: 14px; font-weight: 600; color: var(--ink); background: var(--green); text-decoration: none; white-space: nowrap; }
+.det-mehr .det-link:hover { filter: brightness(0.96); }
+.det-mehr .det-link:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+@media (max-width: 900px) { .det-kpi.fuenf { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .det-kpi.fuenf { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Kacheln der Stufen (seit 29.09.2026 drei: Verstehen, Entscheiden, Kaufen – Einordnen ist das Menü „Zinsen“): auf der Startseite unter „Unsere Akademie“ und seit 28.09.2026
+   oben auf den drei Übersichten (wissen, entscheiden, kaufen) als Navigation zwischen den Stufen (Nutzerwunsch; ersetzt
+   den kurzen Umschalter .stufen-nav vom selben Tag). Die aktuelle Stufe trägt aria-current="page" und sieht aus wie beim Überfahren. */
+.tueren { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; border: 1px solid var(--rule); border-radius: 16px; overflow: hidden; }   /* seit 28.09.2026 mitten im Blatt (Akademie): eigener Rahmen statt Anschnitt an die Blattkante */
+.tueren a { position: relative; display: flex; align-items: center; gap: 10px; min-height: 108px; padding: 18px 12px 18px 18px; border-left: 1px solid var(--rule); text-decoration: none; color: var(--ink); background: #fff; transition: background-color .18s ease; }
+.tueren a:first-child { border-left: 0; }
+.tueren a::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--green); transform: scaleY(0); transform-origin: top; transition: transform .18s ease; }
+.tueren a:hover, .tueren a:focus-visible { background: var(--tint); }
+.tueren a:hover::before, .tueren a:focus-visible::before { transform: scaleY(1); }
+.tueren a:focus-visible { outline: 2px solid var(--blue); outline-offset: -4px; }
+.tueren .txt { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.tueren .kopf { display: flex; align-items: center; gap: 8px; }
+.tueren .verb { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.1; }
+.tueren .sub { font-size: 14px; line-height: 1.35; color: #3A3A36; margin: 0; max-width: none; }   /* margin: base.css gibt .sub (Seiten-Untertitel) 24 px Abstand */
+.tueren .sub b { font-weight: 500; color: inherit; }
+.tueren .ill { flex: none; width: 52px; height: auto; display: block; }
+.tueren .ill-weit { display: none; }
+@media (prefers-reduced-motion: reduce) { .tueren a, .tueren a::before { transition: none; } }
+@media (max-width: 1000px) { .tueren a { padding: 16px 12px 16px 16px; } .tueren .verb { font-size: 19px; } .tueren .ill { width: 54px; } }
+@media (max-width: 880px) {   /* seit 29.09.2026 drei Stufen: bleiben bis 600 px in einer Reihe */
+  .tueren a { padding: 14px 10px 14px 14px; min-height: 96px; }
+  .tueren .verb { font-size: 18px; }
+  .tueren .ill { width: 46px; }
+}
+@media (max-width: 600px) {
+  .tueren { grid-template-columns: minmax(0, 1fr); margin: 0; border-radius: 0; border: 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .tueren a, .tueren a:nth-child(n+3) { border-left: 0; border-top: 0; padding: 14px 8px 14px 4px; min-height: 84px; }
+  .tueren a + a:nth-child(n) { border-top: 1px solid var(--rule); }   /* :nth-child(n) hebt die Gewichtung über die Regel oben */
+  .tueren a::before { display: none; }
+  .tueren .ill { width: 60px; }
+}
+.tueren a[aria-current="page"] { background: var(--tint); }
+.tueren a[aria-current="page"]::before { transform: scaleY(1); }
+.tueren.stufen-kopf { margin-bottom: 30px; background: #fff; }
+@media (max-width: 600px) { .tueren.stufen-kopf { margin-bottom: 22px; } .tueren a[aria-current="page"] { box-shadow: inset 4px 0 0 var(--green); } }
+
+/* Menü „Akademie“ (seit 28.09.2026, Nutzerwunsch): ein Aufklapper mit den vier Stufen, je Name und Unterzeile;
+   die Stufe der aktuellen Seite mit grüner Kante links. */
+.sitenav .nav-group-menu a.nav-stufe { display: flex; flex-direction: column; gap: 1px; padding: 10px 18px 10px 16px; border-left: 3px solid transparent; }
+.nav-stufe b { font-size: 15px; font-weight: 600; color: var(--ink); }
+.nav-stufe small { font-size: 12.5px; font-weight: 500; color: var(--text); }
+.sitenav .nav-group-menu a.nav-stufe.current { border-left-color: var(--green); background: var(--green-tint); text-decoration: none; }
+.nav-akademie .nav-group-menu { min-width: 230px; }
+#akademie { scroll-margin-top: 90px; }
