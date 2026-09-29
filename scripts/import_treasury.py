@@ -30,7 +30,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 URL = "https://www.treasurydirect.gov/GA-FI/FedInvest/selectSecurityPriceDate"
-UA = "Mozilla/5.0 (metalconcrete.de Kursaufbereitung; historische Treasury-Preise)"
+UA = "Mozilla/5.0 (bondarium.de Kursaufbereitung; historische Treasury-Preise)"
 
 
 def isin_aus_cusip(cusip: str) -> str:

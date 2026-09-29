@@ -1,5 +1,5 @@
 {
-  "name": "metalconcrete-website-build",
+  "name": "bondarium-website-build",
   "version": "1.0.0",
   "private": true,
   "description": "Build-Werkzeuge für den Deploy-Workflow (Minify). Nur devDependencies – die Website selbst ist statisch und ohne npm-Abhängigkeiten.",

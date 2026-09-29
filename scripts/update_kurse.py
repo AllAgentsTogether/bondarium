@@ -105,10 +105,10 @@ INDEX = ROOT / "anleihen-index.json"
 
 API = "https://mfs.deutsche-boerse.com/api/"
 DIENSTE = {"F": "DFRA-posttrade", "X": "DETR-posttrade", "T": "DGAT-posttrade"}
-UA = {"User-Agent": "metalconcrete.de Kursaufbereitung (MiFIR Delayed Data)", "Accept": "*/*"}
+UA = {"User-Agent": "bondarium.de Kursaufbereitung (MiFIR Delayed Data)", "Accept": "*/*"}
 BBK = "https://api.statistiken.bundesbank.de/rest/data/BBSSY/D.{item}.EUR...?detail=dataonly&{zeit}"
 BBK_H = {"Accept": "application/vnd.sdmx.data+csv;version=1.0.0",
-         "User-Agent": "metalconcrete.de Anleihen-Suche (Datenaufbereitung)"}
+         "User-Agent": "bondarium.de Anleihen-Suche (Datenaufbereitung)"}
 
 HALTEN_TAGE = 45                 # Kurse ohne neue Feststellung bleiben so lange stehen (mit Datum)
 KURS_GRENZEN = (1.0, 400.0)      # Plausibilität, % des Nennwerts

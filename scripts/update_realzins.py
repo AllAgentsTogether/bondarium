@@ -50,10 +50,10 @@ OUT = Path(__file__).resolve().parent.parent / "realzins.json"
 
 OECD = ("https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_FINMARK,4.0/"
         "DEU.M.IRLT.PA.....?startPeriod=1970-01&format=csvfilewithlabels")
-OECD_H = {"User-Agent": "metalconcrete.de Realzins (Datenaufbereitung)", "Accept": "text/csv,*/*"}
+OECD_H = {"User-Agent": "bondarium.de Realzins (Datenaufbereitung)", "Accept": "text/csv,*/*"}
 BUBA = "https://api.statistiken.bundesbank.de/rest/data/{reihe}?detail=dataonly{extra}"
 BUBA_H = {"Accept": "application/vnd.sdmx.data+csv;version=1.0.0",
-          "User-Agent": "metalconcrete.de Realzins (Datenaufbereitung)"}
+          "User-Agent": "bondarium.de Realzins (Datenaufbereitung)"}
 R_KURVE = "BBSIS/D.I.ZST.ZI.EUR.S1311.B.A604..R.A.A._Z._Z.A"      # alle Restlaufzeiten (R005X, R01XX … R30XX)
 R_ZAR10 = "BBSIS/D.I.ZAR.ZI.EUR.S1311.B.A604.R10XX.R.A.A._Z._Z.A"   # 10 Jahre, jährlicher Kupon – wie renditen.html
 R_VPI_M = "BBDP1/M.DE.N.VPI.C.A00000.I20.A"

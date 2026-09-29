@@ -42,10 +42,10 @@ OUT = Path(__file__).resolve().parent.parent / "zinskurve.json"
 
 BUBA = "https://api.statistiken.bundesbank.de/rest/data/BBSIS/{freq}.I.ZST.ZI.EUR.S1311.B.A604.{lz}.R.A.A._Z._Z.A?detail=dataonly{extra}"
 BUBA_HEADERS = {"Accept": "application/vnd.sdmx.data+csv;version=1.0.0",
-                "User-Agent": "metalconcrete.de Zinskurve (Datenaufbereitung)"}
+                "User-Agent": "bondarium.de Zinskurve (Datenaufbereitung)"}
 FED = ("https://www.federalreserve.gov/datadownload/Output.aspx?rel=H15&series=bf17364827e38702b42a58cf8eaa3f78"
        "&lastobs=&from=&to=&filetype=csv&label=include&layout=seriescolumn")
-FED_HEADERS = {"User-Agent": "metalconcrete.de Zinskurve (Datenaufbereitung)", "Accept": "text/csv,*/*"}
+FED_HEADERS = {"User-Agent": "bondarium.de Zinskurve (Datenaufbereitung)", "Accept": "text/csv,*/*"}
 FED_COLS = {"RIFLGFCY02_N.B": 2, "RIFLGFCY10_N.B": 10}   # Spaltenkennungen in der H.15-Datei
 LO, HI = -5.0, 25.0                                      # Plausibilität je Wert (in %)
 US_START = "1976-06"                                     # ab hier gibt es die 2-jährige US-Rendite

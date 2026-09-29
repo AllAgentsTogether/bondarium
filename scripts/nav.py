@@ -128,14 +128,11 @@ SEARCH = ('    <form class="kopfsuche" action="{p}anleihen-suche.html" method="g
           '<button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>')
 
 BRAND = ('<a class="brand" href="{home}"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
-         '<defs><clipPath id="mcclip"><rect x="6" y="8" width="88" height="88" rx="16"/></clipPath>'
-         '<linearGradient id="mcstone" x1="0" y1="1" x2="0.3" y2="0"><stop offset="0" stop-color="#1F1F1D"/><stop offset="0.6" stop-color="#2C2C2A"/><stop offset="1" stop-color="#3B3A36"/></linearGradient>'
-         '<linearGradient id="mcsteel" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#16456F"/><stop offset="0.45" stop-color="#1D5FA0"/><stop offset="0.62" stop-color="#7FA8D2"/><stop offset="0.78" stop-color="#1D5FA0"/><stop offset="1" stop-color="#2C73BC"/></linearGradient></defs>'
-         '<g clip-path="url(#mcclip)"><rect x="6" y="8" width="88" height="88" rx="16" fill="url(#mcstone)"/>'
-         '<path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="#FBFAF7" stroke-width="10" fill="none" stroke-linejoin="round"/>'
-         '<path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" stroke="url(#mcsteel)" stroke-width="4" fill="none" stroke-linejoin="round"/>'
-         '<rect x="6.75" y="8.75" width="86.5" height="86.5" rx="15.4" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="1.5"/></g></svg>'
-         '<span>METAL<b>CONCRETE</b></span></a>')
+         '<rect width="100" height="100" rx="24" fill="#1A1A19"/>'
+         '<rect x="20" y="62" width="60" height="13" rx="6.5" fill="#39FF14"/>'
+         '<rect x="20" y="43.5" width="44" height="13" rx="6.5" fill="#39FF14"/>'
+         '<rect x="20" y="25" width="28" height="13" rx="6.5" fill="#39FF14"/></svg>'
+         '<span>bondari<b>um</b></span></a>')
 
 START_RE = re.compile(r'  <(?:header|div) class="topbar"(?: data-rubrik="[a-z]+")?>\n')
 END_RE = re.compile(r'    </nav>\n(?:    <form class="kopfsuche"[^\n]*\n)?  </(?:header|div)>\n')

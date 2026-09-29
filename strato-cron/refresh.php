@@ -7,7 +7,7 @@
  *
  * Aufruf durch einen externen Cron (z. B. cron-job.org: Di–Sa 10:00 Uhr,
  * Zeitzone Europe/Berlin) – zwei Varianten werden unterstützt:
- *   1) als URL:     https://www.metalconcrete.de/trigger/refresh.php?key=GEHEIM&mode=voll
+ *   1) als URL:     https://www.bondarium.de/trigger/refresh.php?key=GEHEIM&mode=voll
  *   2) per PHP-CLI: php refresh.php voll
  *
  * mode=voll     Daten abrufen – höchstens einmal am Tag: Der Workflow prüft

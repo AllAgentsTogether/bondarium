@@ -1,4 +1,4 @@
-# Technik-Audit — metalconcrete Website
+# Technik-Audit — Bondarium Website
 
 Stand: 2026-07-02 · Zwei Prüfrunden, alle Befunde behoben.
 Geprüft: 10 HTML-Seiten, base.css, 4 Python-Scripts, GitHub-Workflow, refresh.php, 4 JSON-Dateien.

@@ -1,0 +1,85 @@
+name: Kurse nachholen (falls der 10-Uhr-Lauf den Vortag verpasst hat)
+
+# Seit 29.09.2026. Die Tagesdateien der Deutschen Börse (MiFIR-Delayed-Data) liegen nur etwa einen Börsentag
+# online – fällt der 10-Uhr-Lauf aus oder scheitert der Kurs-Schritt, wäre der Tag sonst für immer verloren.
+# Dieser Workflow prüft um 13:40 und 17:40 Uhr (Berlin, Di–Sa), ob der letzte Börsentag im Kursverlauf fehlt
+# (scripts/kurs_luecken.py --fehlt-neu). Nur dann holt er die Kurse (update_kurse.py verarbeitet jede gelistete
+# Tagesdatei, die jünger ist als der Stand), rechnet die Top 10 neu, committet und stößt einen
+# Veröffentlichungs-Lauf („schnell“, ohne Abruf) von update-data.yml an. Sonst endet er nach Sekunden.
+on:
+  schedule:
+    - cron: "40 13 * * 2-6"
+      timezone: "Europe/Berlin"
+    - cron: "40 17 * * 2-6"
+      timezone: "Europe/Berlin"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write   # für den anschließenden Veröffentlichungs-Lauf (workflow_dispatch)
+
+concurrency:
+  group: update-data   # nie gleichzeitig mit dem 10-Uhr-Lauf
+  cancel-in-progress: false
+
+jobs:
+  nachholen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          ref: main
+
+      - name: Fehlt der letzte Börsentag?
+        id: pruefen
+        run: |
+          if python3 scripts/kurs_luecken.py --fehlt-neu; then echo "holen=1" >> "$GITHUB_OUTPUT"; else echo "holen=0" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Python einrichten
+        if: steps.pruefen.outputs.holen == '1'
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        with:
+          python-version: "3.12"
+
+      - name: Kurse holen (Deutsche Börse, Bundesbank)
+        if: steps.pruefen.outputs.holen == '1'
+        env:
+          ROH_DIR: _roh
+        run: python scripts/update_kurse.py
+
+      - name: Rohe Kursdateien sichern (Artefakt, 90 Tage)
+        if: steps.pruefen.outputs.holen == '1' && hashFiles('_roh/*') != ''
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: kurse-roh-${{ github.run_id }}
+          path: _roh/
+          retention-days: 90
+          compression-level: 0
+
+      - name: Top 10 neu berechnen
+        if: steps.pruefen.outputs.holen == '1'
+        continue-on-error: true
+        run: python scripts/update_top10.py
+
+      - name: Committen und veröffentlichen
+        if: steps.pruefen.outputs.holen == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add anleihen-kurse.json kurse-auswahl.json top10-*.json kurse
+          if git diff --cached --quiet; then
+            echo "Keine neue Tagesdatei verarbeitet – nichts zu tun."
+            exit 0
+          fi
+          git commit -m "Kurse nachgeholt"
+          git pull --rebase --autostash origin main || { git rebase --abort || true; echo "::error::Rebase fehlgeschlagen"; exit 1; }
+          git push || git push
+          # Commits mit dem GITHUB_TOKEN lösen keinen Push-Lauf aus – deshalb die Veröffentlichung ausdrücklich starten
+          gh workflow run update-data.yml --ref main -f lauf=schnell
+
+      - name: Lücken im Kursverlauf (Alarm)
+        if: ${{ !cancelled() && steps.pruefen.outputs.holen == '1' }}
+        run: python3 scripts/kurs_luecken.py

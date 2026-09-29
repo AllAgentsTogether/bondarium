@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /trigger/
 
-Sitemap: https://www.metalconcrete.de/sitemap.xml
+Sitemap: https://www.bondarium.de/sitemap.xml

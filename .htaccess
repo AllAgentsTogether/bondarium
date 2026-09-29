@@ -1,0 +1,108 @@
+# .htaccess – Sicherheit, HTTPS, Kanonisierung, Kompression und Caching für
+# www.bondarium.de (Apache/Strato). Wird vom GitHub-Workflow mit ins
+# Veröffentlichungsverzeichnis kopiert.
+
+AddDefaultCharset UTF-8
+
+# ---- MIME-Typen für Fotos (WebP) und die eigene Webschrift (WOFF2), falls der
+#      Server sie nicht von sich aus kennt (seit 24.09.2026, Anlegerprofile) ----
+<IfModule mod_mime.c>
+AddType image/webp .webp
+AddType font/woff2 .woff2
+</IfModule>
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+# ---- HTTPS erzwingen ----
+# Beide Bedingungen (UND-verknüpft) verhindern eine Redirect-Schleife, wenn
+# Strato TLS vor dem Apache terminiert: dann ist %{HTTPS} zwar "off", aber
+# X-Forwarded-Proto meldet "https" – und es wird NICHT umgeleitet.
+RewriteCond %{HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^ https://www.bondarium.de%{REQUEST_URI} [R=301,L]
+# ---- Kanonischer Host: ohne www -> mit www (eine URL je Seite) ----
+RewriteCond %{HTTP_HOST} ^bondarium\.de$ [NC]
+RewriteRule ^ https://www.bondarium.de%{REQUEST_URI} [R=301,L]
+# ---- index.html -> Verzeichnis-URL (Canonical ist "/") ----
+RewriteCond %{THE_REQUEST} \s/+index\.html[\s?] [NC]
+RewriteRule ^index\.html$ / [R=301,L]
+# ---- Frühere englische Kopien (/en/…) dauerhaft auf die deutschen Seiten ----
+RewriteRule ^en/?$ / [R=301,L]
+RewriteRule ^en/(.+)$ /$1 [R=301,L]
+# ---- Laufzeit-Seite (23.09.2026) aufgeteilt in Staats- und Unternehmensanleihen nach Laufzeit ----
+RewriteRule ^anleihen-laufzeit\.html$ /staatsanleihen-laufzeit.html [R=301,L]
+# ---- Laufzeit-Einzelseiten (23.09.2026) – Ziel seit der Aufteilung: staatsanleihen-laufzeit.html ----
+RewriteRule ^anleihen-sehr-kurzfristig\.html$ /staatsanleihen-laufzeit.html#sehr-kurzfristig [R=301,NE,L]
+RewriteRule ^anleihen-kurzfristig\.html$ /staatsanleihen-laufzeit.html#kurzfristig [R=301,NE,L]
+RewriteRule ^anleihen-mittelfristig\.html$ /staatsanleihen-laufzeit.html#mittelfristig [R=301,NE,L]
+RewriteRule ^anleihen-langfristig\.html$ /staatsanleihen-laufzeit.html#langfristig [R=301,NE,L]
+RewriteRule ^anleihen-sehr-langfristig\.html$ /staatsanleihen-laufzeit.html#sehr-langfristig [R=301,NE,L]
+# ---- Übersicht „Optimierung“ (23.09.2026) umbenannt in „Wissen“ ----
+RewriteRule ^optimierung\.html$ /wissen.html [R=301,L]
+# ---- Aktien-Teil (23.09.2026) archiviert (Ordner website_aktien_archiv) ----
+# Die Seiten liegen noch auf dem Server (der Deploy löscht nichts), werden aber
+# dauerhaft auf die passende Anleihen-Seite umgeleitet.
+RewriteRule ^anleihen\.html$ / [R=301,L]
+RewriteRule ^zinsen\.html$ /renditen.html [R=301,L]
+RewriteRule ^(bip|steuer)\.html$ /wissen.html [R=301,L]
+RewriteRule ^(historie|krisen|kgv|marktsentiment|sentiment|fear-greed|vix|aaii|einflussfaktoren|verlierer)\.html$ / [R=301,L]
+RewriteRule ^(data|sentiment|valuations|einfluss|verlierer)\.json$ - [G,L]
+</IfModule>
+
+# ---- Eigene 404-Seite (mit Marke und Navigation) ----
+ErrorDocument 404 /404.html
+
+# ---- Security-Header ----
+<IfModule mod_headers.c>
+Header always set X-Content-Type-Options "nosniff"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+Header always set Cross-Origin-Opener-Policy "same-origin"
+# CSP: Inline-Skripte/-Styles sind Teil der Architektur ('unsafe-inline');
+# es werden keinerlei externe Ressourcen geladen (keine CDNs/fremden Fonts/Analytics;
+# die Schreibschrift der Anlegerprofile liegt als WOFF2 auf dem eigenen Server).
+Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'"
+# HSTS: HTTPS läuft seit 10.07.2026 stabil (Redirect + Zertifikat verifiziert)
+Header always set Strict-Transport-Security "max-age=31536000"
+
+# ---- Caching: Daten-JSONs kurz, HTML gar nicht (immer revalidieren – Daten 1×/Tag
+#      um 10 Uhr neu, das HTML enthält die eingebetteten Daten), statische Assets lang – base.css
+#      und site.js bekommen im Deploy eine Versions-URL (?v=<Hash>), daher
+#      ist ein langer Cache dort unschädlich. ----
+<FilesMatch "\.json$">
+  Header set Cache-Control "max-age=900, stale-while-revalidate=3600"
+</FilesMatch>
+# Such-Index (≈ 1 MB gzip, wöchentlich neu): die Suche lädt ihn seit 25.09.2026 über eine
+# Versions-URL (?v=<Hash>, gesetzt im Deploy) – deshalb darf er lange im Browser bleiben.
+<Files "anleihen-index.json">
+  Header set Cache-Control "max-age=2592000, immutable"
+</Files>
+# Kursverlauf (kurse/<Jahr>/<teil>.json, kurse/bund/<ISIN>.json): ändert sich einmal am Tag;
+# gilt auch für die Stammdaten-Teildateien anleihen/<teil>.json (Steckbrief anleihe.html, wöchentlich neu)
+<FilesMatch "^[0-9a-f]{2}\.json$|^[A-Z]{2}[A-Z0-9]{9}[0-9]\.json$">
+  Header set Cache-Control "max-age=3600, stale-while-revalidate=86400"
+</FilesMatch>
+<FilesMatch "\.html$">
+  # seit 25.09.2026: HTML immer beim Server nachfragen (ETag/Last-Modified -> 304, wenn
+  # unverändert). Vorher 5 Minuten + stale-while-revalidate, wodurch nach einem Deploy
+  # bis zu zweimal die alte Seite erschien.
+  Header set Cache-Control "no-cache"
+</FilesMatch>
+<FilesMatch "\.(css|js)$">
+  Header set Cache-Control "max-age=604800, stale-while-revalidate=604800"
+</FilesMatch>
+<FilesMatch "\.(svg|png|webp|woff2|ico|txt|xml)$">
+  Header set Cache-Control "max-age=86400, stale-while-revalidate=604800"
+</FilesMatch>
+</IfModule>
+
+# ---- Kompression: Strato komprimiert von sich aus nur HTML. JSON (bis 55 KB),
+#      CSS, JS und SVG werden hier explizit per gzip ausgeliefert (~70 % kleiner).
+#      mod_deflate setzt "Vary: Accept-Encoding" selbst. ----
+<IfModule mod_deflate.c>
+<IfModule mod_filter.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
+  AddOutputFilterByType DEFLATE application/json application/javascript text/javascript application/xml image/svg+xml
+</IfModule>
+</IfModule>

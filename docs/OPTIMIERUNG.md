@@ -1,4 +1,4 @@
-# Optimierung 09/2026 — metalconcrete Website
+# Optimierung 09/2026 — Bondarium Website
 
 Stand: 02.09.2026 · Umfang: alle 14 Seiten, base.css, site.js, .htaccess, Workflow, Build-Skripte, Python-Pipeline.
 Zwei Schleifen: (1) Analyse aller Ebenen + Umsetzung, (2) Re-Audit (Regressionen, Rest, Härtung) + Umsetzung.
@@ -60,6 +60,6 @@ Alle 14 Seiten + 404 in DE und EN, Desktop und Mobile: keine Konsolenfehler, kei
 ## Nächste Schritte für dich
 1. **Impressum:** Platzhalter `[VORNAME NACHNAME]`, `[STRASSE HAUSNUMMER]`, `[PLZ ORT]`, `[E-MAIL-ADRESSE]` in `rechtliches.html` (Markup, T.de und T.en) ausfüllen – § 5 DDG; die Seite ist bis dahin `noindex`.
 2. **Committen & pushen** (`git add -A && git commit && git push`): der Push löst den neuen Workflow aus (FAST-Lauf + Deploy). `update-data.NEU.yml` liegt jetzt in `_to_delete/` (Inhalt ist im aktiven Workflow aufgegangen) – Ordner nach Prüfung löschen.
-3. **Nach dem ersten Deploy prüfen:** `https://www.metalconcrete.de/` (Header `content-encoding: gzip` auch für `data.json`), `https://metalconcrete.de/` → 301 auf www, `/index.html` → 301 auf `/`, eine Fantasie-URL → eigene 404-Seite, `/en/` inkl. DE-Knopf, `/trigger/refresh-config.php` → 403.
+3. **Nach dem ersten Deploy prüfen:** `https://www.bondarium.de/` (Header `content-encoding: gzip` auch für `data.json`), `https://bondarium.de/` → 301 auf www, `/index.html` → 301 auf `/`, eine Fantasie-URL → eigene 404-Seite, `/en/` inkl. DE-Knopf, `/trigger/refresh-config.php` → 403.
 4. **Strato-Cron** an den neuen Takt anpassen (z. B. 1×/Tag `voll` als Fallback) oder abschalten; die GitHub-Crons decken werktags alles ab.
 5. Optional: Verlierer-Ranking wöchentlich statt abgeschaltet (Kommentar im Workflow); Datenschutzerklärung um konkrete Strato-Löschfrist ergänzen.

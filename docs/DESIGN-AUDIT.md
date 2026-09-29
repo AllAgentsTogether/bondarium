@@ -1,4 +1,4 @@
-# Design-Audit — metalconcrete Website
+# Design-Audit — Bondarium Website
 
 Stand: 2026-07-02 · Geprüft: alle 10 HTML-Seiten, base.css, logo.svg, logo-icon.svg
 Fokus: Design, Konsistenz, Responsive, Typografie/Kontrast, designbezogene Accessibility (kein Daten-/Funktionsaudit).

@@ -156,7 +156,7 @@ Unter `https://github.com/PhilGerEsp/website/actions` sollte Dienstag bis Samsta
 
 **Neue Regeln (`.github/workflows/update-data.yml`):**
 
-- **10-Uhr-Lauf:** Ein externer Cron ruft um 10:00 `https://www.metalconcrete.de/trigger/refresh.php?key=…&mode=voll` auf; `refresh.php` startet den Workflow per `workflow_dispatch` (beginnt binnen Sekunden).
+- **10-Uhr-Lauf:** Ein externer Cron ruft um 10:00 `https://www.bondarium.de/trigger/refresh.php?key=…&mode=voll` auf; `refresh.php` startet den Workflow per `workflow_dispatch` (beginnt binnen Sekunden).
 - **Reserve:** GitHub-Zeitplan `15 10 * * 2-6` mit `timezone: "Europe/Berlin"` (Sommer-/Winterzeit automatisch). Er ruft nur ab, wenn heute noch nichts abgefragt wurde.
 - **Tagessperre:** Job `sperre` liest `data.json` von `main` (per `gh api`, kein Checkout) und vergleicht `updatedAt` (in Berliner Zeit) mit heute. Schon abgefragt → der Lauf endet ohne Abruf und ohne Deploy. Übergehen nur manuell mit dem Häkchen `erzwingen`.
 - **Push-Deploys und `schnell`:** kein einziger Datenabruf mehr, nur Veröffentlichen des Repo-Stands. Der Checkout nutzt `ref: main`, damit ein Push, der auf den 10-Uhr-Lauf warten musste, dessen frische JSONs veröffentlicht.

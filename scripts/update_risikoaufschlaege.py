@@ -56,9 +56,9 @@ START = "1991-03"   # ab hier hat Italien eine OECD-Monatsreihe
 
 OECD = ("https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_FINMARK,4.0/"
         + "+".join(a for _, a, _ in LAENDER) + ".M.IRLT.PA.....?startPeriod=1970-01&format=csvfilewithlabels")
-OECD_H = {"User-Agent": "metalconcrete.de Risikoaufschlaege (Datenaufbereitung)", "Accept": "text/csv,*/*"}
+OECD_H = {"User-Agent": "bondarium.de Risikoaufschlaege (Datenaufbereitung)", "Accept": "text/csv,*/*"}
 FRED = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}&cosd={cosd}"
-FRED_H = {"User-Agent": "metalconcrete.de Risikoaufschlaege (Datenaufbereitung)", "Accept": "text/csv,*/*"}
+FRED_H = {"User-Agent": "bondarium.de Risikoaufschlaege (Datenaufbereitung)", "Accept": "text/csv,*/*"}
 LO, HI = -5.0, 40.0
 
 

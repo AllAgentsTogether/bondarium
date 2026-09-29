@@ -105,7 +105,7 @@ FILES_API = ("https://registers.esma.europa.eu/solr/esma_registers_firds_files/s
 GLEIF_API = "https://api.gleif.org/api/v1/lei-records?"
 GLEIF_GC = "https://goldencopy.gleif.org/api/v2/golden-copies/publishes/latest"
 SUPRANATIONAL = re.compile(r"EUROPEAN (FINANCIAL STABILITY|STABILITY MECHANISM|UNION)|^EUROPEAN UNION$", re.IGNORECASE)
-UA = {"User-Agent": "metalconcrete.de Anleihen-Suche (Datenaufbereitung)", "Accept": "*/*"}
+UA = {"User-Agent": "bondarium.de Anleihen-Suche (Datenaufbereitung)", "Accept": "*/*"}
 NS = "{urn:iso:std:iso:20022:tech:xsd:auth.017.001.02}"
 
 CFI_ANLEIHE = ("DB", "DT", "DN")

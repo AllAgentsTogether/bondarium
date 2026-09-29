@@ -153,8 +153,8 @@ footer a { color: var(--blue); }
 /* Kante unter dem Band: seit 26.09.2026 auf allen Seiten (auch Startseite, Rechtliches, 404) dunkelgrün, wie beim Scrollen (is-stuck) */
 .topbar { border-image: linear-gradient(to top, var(--blue-dark) 3px, var(--green) 3px) fill 0 / / 0 100vmax 0; }
 .topbar .brand { color: var(--ink); }
-.topbar .brand b { color: var(--blue-dark); }
-.topbar .brand:hover b { color: var(--ink); }
+.topbar .brand b { color: inherit; }   /* auf dem grünen Band einfarbig, grünes „um“ nur auf hellem Grund */
+.topbar .brand:hover { color: rgba(26,26,25,0.78); }
 .topbar .sitenav > a, .topbar .nav-group-btn { color: rgba(26,26,25,0.78); }
 .topbar .sitenav > a:hover, .topbar .nav-group-btn:hover { color: var(--ink); }
 .topbar .sitenav > a.current, .topbar .nav-group-btn.current { color: var(--ink); text-decoration-color: var(--blue-dark); text-decoration-thickness: 2px; }   /* Strich in derselben Farbe wie die Kante unter dem Band */
@@ -163,10 +163,10 @@ footer a { color: var(--blue); }
 html { scroll-padding-top: 100px; }   /* Sprungziele nicht unter der festen Kopfzeile verstecken */
 /* Seit 23.09.2026 steht die Navigation (Suche, Wissen) in derselben Zeile wie die Marke, links, auf einer Mittellinie */
 .topbar .sitenav { margin-bottom: 0; position: relative; top: 1px; flex: 1 1 auto; align-items: center; }   /* 1 px tiefer: Mitte der Großbuchstaben wie bei der Marke; flex: 1 füllt die Zeile, damit Such-Knopf und „Über uns“ (margin-left: auto) rechts stehen */
-.brand { display: inline-flex; align-items: center; gap: 14px; text-decoration: none; color: var(--ink); font-family: var(--serif); font-weight: 700; font-size: 17px; letter-spacing: 0.10em; }
+.brand { display: inline-flex; align-items: center; gap: 11px; text-decoration: none; color: var(--ink); font-family: var(--serif); font-weight: 700; font-size: 22px; letter-spacing: -0.025em; line-height: 1; }   /* Wortmarke „bondarium“ (Logo C, 30.09.2026): klein, eng, Manrope 700 */
 .brand svg { width: 38px; height: 38px; flex: none; }
-.brand b { font-weight: 500; color: var(--muted); }
-.brand:hover b { color: var(--line); }
+.brand b { font-weight: 700; color: var(--green-text); }
+.brand:hover b { color: var(--ink); }
 .sitenav { display: flex; gap: 14px; flex-wrap: wrap; font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 40px; }
 .sitenav a { color: var(--muted); text-decoration: none; padding: 13px 4px 16px; margin: -13px -4px -13px; transition: color 0.15s ease; }
 .sitenav a:hover { color: var(--line); }
@@ -336,7 +336,7 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 @media (max-width: 600px) {
   .topbar { gap: 10px 12px; padding: 14px 0; margin: -26px 0 16px; }
   html { scroll-padding-top: 66px; }
-  .brand { font-size: 13.5px; letter-spacing: 0.14em; gap: 9px; }
+  .brand { font-size: 19px; letter-spacing: -0.02em; gap: 9px; }
   .brand svg { width: 30px; height: 30px; }
   .topbar .sitenav { letter-spacing: 0.08em; max-height: calc(100vh - 58px); }
   .nav-toggle { margin-top: -7px; margin-bottom: -7px; }   /* Tippfläche 44 px, Kopfzeile bleibt 58 px hoch */

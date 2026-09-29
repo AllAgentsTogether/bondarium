@@ -1,0 +1,495 @@
+name: Daten aktualisieren & auf Strato veröffentlichen
+
+# ===== Datenabruf: höchstens EINMAL am Tag, um 10:00 Uhr Berlin (seit 23.09.2026) =====
+#
+# * 10-Uhr-Lauf: Ein externer Cron (z. B. cron-job.org, Zeitzone Europe/Berlin,
+#   Di–Sa 10:00) ruft /trigger/refresh.php?key=…&mode=voll auf. refresh.php
+#   startet diesen Workflow per workflow_dispatch – der beginnt binnen Sekunden.
+#   GitHubs eigener Zeitplan ist dafür zu unpünktlich: 09/2026 lief der auf
+#   07:17 gestellte Lauf täglich erst zwischen 11:30 und 12:15 Uhr.
+# * Reserve: GitHub-Zeitplan 10:15 Berlin. Er fragt nur ab, wenn heute noch
+#   kein Datenabruf stattfand (externer Cron ausgefallen/noch nicht
+#   eingerichtet) – sonst endet er nach wenigen Sekunden ohne Abruf.
+# * Tagessperre: Jeder automatische Abruf-Lauf prüft zuerst, ob heute (Berlin)
+#   schon abgefragt wurde (renditen.json → checkedAt auf main). Mehrfachaufrufe
+#   des Triggers führen also nie zu einem zweiten Abruf. Manuell lässt sich
+#   ein zweiter Abruf mit dem Häkchen „erzwingen“ auslösen.
+# * Push-Deploys und 'schnell' fragen KEINE Quelle ab: Sie veröffentlichen nur
+#   den Repo-Stand von main. Der enthält die Daten des letzten Abrufs, weil
+#   jeder Abruf-Lauf seine JSONs committet.
+# * Dienstag–Samstag: dann liegen die Renditen und Kurse des Vortags vor
+#   (Bundesbank abends, U.S. Treasury nach US-Handelsschluss); Samstag holt den
+#   Freitag, Sonntag/Montag gäbe es nichts Neues.
+# * Seit 23.09.2026 nur noch Anleihen: Der Aktien-Teil (Kurse, Sentiment,
+#   Bewertung, Einflussfaktoren, Verlierer) liegt im Ordner
+#   website_aktien_archiv und wird nicht mehr abgefragt.
+on:
+  schedule:
+    # Reserve (siehe oben). Zeitzone Berlin: Sommer-/Winterzeit automatisch.
+    - cron: "15 10 * * 2-6"
+      timezone: "Europe/Berlin"
+  push:
+    branches: [ main ]        # bei Änderungen (z. B. Design): nur Veröffentlichung, kein Datenabruf
+    paths-ignore:             # Doku-/Meta-Commits lösen keinen Lauf mit Deploy aus
+      - "**.md"
+      - "_to_delete/**"
+      - ".gitattributes"
+      - ".gitignore"
+  workflow_dispatch:           # 10-Uhr-Auslöser (externer Cron über refresh.php) / manueller Start
+    inputs:
+      lauf:
+        description: "voll = Daten abrufen (höchstens 1×/Tag) · schnell = nur veröffentlichen, kein Abruf"
+        type: choice
+        options: [voll, schnell]
+        default: voll
+      erzwingen:
+        description: "Tagessperre übergehen (nur 'voll'): auch abrufen, wenn heute schon abgefragt wurde"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+# Nur ein Lauf gleichzeitig; laufende Läufe NICHT abbrechen (sonst könnte der
+# 10-Uhr-Lauf mit Commit von einem Push-Deploy abgewürgt werden). Ein
+# wartender Lauf startet erst nach dem Commit des laufenden – die Tagessperre
+# sieht dann den frischen Stand.
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  # ----- Tagessperre: Wurde heute (Berlin) schon abgefragt? Läuft nur bei
+  #       automatischen Abruf-Läufen (Zeitplan, 'voll' ohne „erzwingen“). -----
+  sperre:
+    name: Heute schon abgefragt?
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.lauf != 'schnell' && github.event.inputs.erzwingen != 'true')
+    runs-on: ubuntu-latest
+    outputs:
+      abrufen: ${{ steps.pruefen.outputs.abrufen }}
+    steps:
+      - name: Letzten Abruf in renditen.json (main) prüfen
+        id: pruefen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Nur renditen.json von main lesen (kein Checkout). checkedAt setzt
+          # jeder Abruf, auch ohne Wertänderung. Scheitert das Lesen, wird
+          # abgerufen (lieber einmal zu viel als ein Tag ohne Daten).
+          gh api "repos/${GITHUB_REPOSITORY}/contents/renditen.json?ref=main" \
+            -H "Accept: application/vnd.github.raw+json" > renditen.json || echo '{}' > renditen.json
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import datetime, json, sys
+          from zoneinfo import ZoneInfo
+          berlin = ZoneInfo("Europe/Berlin")
+          heute = datetime.datetime.now(berlin).date()
+          try:
+              stempel = json.load(open("renditen.json", encoding="utf-8")).get("checkedAt") or ""
+              zuletzt = datetime.datetime.fromisoformat(stempel.replace("Z", "+00:00")).astimezone(berlin).date()
+          except Exception:
+              stempel, zuletzt = "", None
+          abrufen = zuletzt != heute
+          print(f"Letzter Abruf: {stempel or 'unbekannt'} – heute ({heute}) "
+                + ("noch nicht abgefragt → Abruf." if abrufen else "schon abgefragt → kein zweiter Abruf."),
+                file=sys.stderr)
+          print("abrufen=" + ("1" if abrufen else "0"))
+          PY
+
+  update:
+    needs: sperre
+    # Push/'schnell'/„erzwingen“: Sperre übersprungen → Lauf immer. Sonst nur,
+    # wenn heute noch nicht abgefragt wurde (sonst gäbe es nichts Neues zu
+    # veröffentlichen).
+    if: ${{ !cancelled() && (needs.sperre.result == 'skipped' || needs.sperre.outputs.abrufen == '1') }}
+    runs-on: ubuntu-latest
+    env:
+      # VOLL=1: Datenabruf aller Quellen, Commit der JSONs, Frische-Prüfung –
+      # im 10-Uhr-Lauf, im Reserve-Lauf und beim manuellen 'voll'-Start.
+      # Push-Deploys und 'schnell' (VOLL leer) veröffentlichen nur.
+      VOLL: ${{ (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.lauf != 'schnell')) && '1' || '' }}
+    steps:
+      # Actions auf Commit-SHA gepinnt (Supply-Chain-Härtung, Audit 07/2026)
+      # ref: main – immer den neuesten Stand holen: Ein Push-Deploy, der auf den
+      # 10-Uhr-Lauf warten musste, veröffentlicht so dessen frische JSONs und
+      # nicht den älteren Stand seines eigenen Commits.
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          ref: main
+
+      # ----- Daten holen: nur im Abruf-Lauf (VOLL=1) -----
+      - name: Python einrichten
+        if: env.VOLL == '1'
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        with:
+          python-version: "3.12"
+
+      # Fehler der Updater werden NICHT mehr verschluckt (früher "|| true"):
+      # continue-on-error markiert den Schritt rot (sichtbar im Lauf-Protokoll),
+      # das Deploy läuft trotzdem weiter – die Seiten behalten den letzten Stand.
+      # Staatsanleihen-Renditen (renditen.html)
+      - name: Anleihenrenditen holen (Treasury/Bundesbank/MoF/ChinaBond/OECD)
+        if: env.VOLL == '1'
+        continue-on-error: true
+        run: python scripts/update_renditen.py
+
+      # Unternehmensanleihen-Segmente (unternehmensanleihen.html):
+      # FRED (HQM, Moody's Baa), Bundesbank (Unternehmen), JSDA (Japan AA/A),
+      # ChinaBond (AAA), RBA (A/BBB 10 J.)
+      - name: Unternehmensanleihen holen (FRED/Bundesbank/JSDA/ChinaBond/RBA)
+        if: env.VOLL == '1'
+        continue-on-error: true
+        run: python scripts/update_unternehmen.py
+
+      # Langläufer (langlaeufer.html): Tageskurs/-rendite der Bundesanleihen 0 % 2050 und 4,75 % 2040
+      # 0 % 2050 (DE0001102481) aus der Bundesbank-Reihe BBSSY, komplette Historie
+      - name: Langläufer-Kurse holen (Bundesbank, Bund 0 % 2050 und 4,75 % 2040)
+        if: env.VOLL == '1'
+        continue-on-error: true
+        run: python scripts/update_langlaeufer.py
+
+      # Anleihen-Suche (anleihen-suche.html): Index aller Anleihen an deutschen
+      # Börsen aus der wöchentlichen ESMA-Gesamtdatei (FIRDS, ~50 MB) und dem
+      # LEI-Register (GLEIF, dazu die Beziehungsdatei ~25 MB für den Konzernsitz).
+      # Schreibt anleihen-index.json (Suche) und die 256 Teildateien anleihen/<teil>.json
+      # (Stammdaten je ISIN für den Steckbrief anleihe.html, seit 26.09.2026).
+      # Drosselt sich selbst: fragt erst, wenn der Index
+      # 7 Tage alt ist, und baut nur bei neuer Gesamtdatei neu – also einmal pro
+      # Woche (samstags). Dauer dann ~2 Minuten, sonst Sekundenbruchteile.
+      # Läuft VOR den Kursen (seit 26.09.2026): So rechnet update_kurse.py Rendite und Aufschlag mit den
+      # aktuellen Stammdaten, und neue Anleihen bekommen am selben Tag einen Kurs (vorher fehlten sie bis
+      # zum nächsten Lauf, und Renditen liefen mit dem Vorwochen-Index). Schlägt der Index fehl, laufen die
+      # Kurse trotzdem (continue-on-error) – mit dem bisherigen Index.
+      - name: Anleihen-Suche aktualisieren (ESMA FIRDS + GLEIF, 1×/Woche)
+        if: env.VOLL == '1'
+        continue-on-error: true
+        run: python scripts/update_anleihen_index.py
+
+      # Kurse aller Anleihen der Suche und aller Anleihen/ETFs der Datenseiten (seit 25.09.2026):
+      # Tagesdateien der Deutschen Börse (MiFIR-Delayed-Data: Börse Frankfurt, Xetra, Tradegate –
+      # kostenlos, 15 Minuten verzögert, je Datei nur einen Börsentag abrufbar) plus Bundesbank
+      # für Bundeswertpapiere; ~30 MB Download, unter einer Minute. Schreibt anleihen-kurse.json
+      # (Suche), kurse-auswahl.json (Datenseiten, wird eingebettet) und den Kursverlauf kurse/
+      # (kurse/<Jahr>/<teil>.json enthält seit 26.09.2026 auch „aktuell“ für den Steckbrief anleihe.html).
+      - name: Kurse holen (Deutsche Börse MiFIR-Delayed-Data, Bundesbank)
+        if: env.VOLL == '1'
+        continue-on-error: true
+        env:
+          ROH_DIR: _roh   # Rohdateien zusätzlich sichern (seit 29.09.2026), siehe nächster Schritt
+        run: python scripts/update_kurse.py
+
+      # Rohe Tagesdateien der Börse 90 Tage als Artefakt aufheben (seit 29.09.2026): Die Börse hält sie nur etwa einen
+      # Börsentag bereit. Mit dem Artefakt lässt sich ein fehlerhaft verarbeiteter Tag später neu rechnen
+      # (FIXTURE_DIR=<entpackter Ordner> python scripts/update_kurse.py). Nicht im Repo (≈ 28 MB je Tag).
+      - name: Rohe Kursdateien sichern (Artefakt, 90 Tage)
+        if: env.VOLL == '1' && hashFiles('_roh/*') != ''
+        continue-on-error: true
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: kurse-roh-${{ github.run_id }}
+          path: _roh/
+          retention-days: 90
+          compression-level: 0   # Dateien sind schon gzip
+
+      # Zinskurve (zinskurve.html): Abstand 10 J. − 2 J. für Deutschland (Bundesbank,
+      # Zinsstrukturkurve BBSIS, Monats- und Tageswerte) und USA (Fed H.15, Tageswerte);
+      # vier Abrufe, ~5 s.
+      - name: Zinskurve holen (Bundesbank BBSIS, Fed H.15)
+        if: env.VOLL == '1'
+        continue-on-error: true
+        run: python scripts/update_zinskurve.py
+
+      # Realzins (realzins.html, seit 26.09.2026): Bund 10 J. (OECD Monatswerte seit 1970, Bundesbank
+      # Tageswert), Verbraucherpreise (Bundesbank BBDP1, ab 1992; davor Konstanten aus Destatis) und
+      # Realrenditen der inflationsindexierten Bundesanleihen (Bundesbank BBSSY); fünf Abrufe, ~5 s.
+      - name: Realzins holen (OECD, Bundesbank BBSIS/BBDP1/BBSSY)
+        if: env.VOLL == '1'
+        continue-on-error: true
+        run: python scripts/update_realzins.py
+
+      # Risikoaufschläge (risikoaufschlaege.html, seit 26.09.2026): Euro-Staaten gegen Deutschland (OECD Monatswerte,
+      # 11 Länder, ~1,6 MB) und US-Unternehmen Aaa/Baa gegen 10-jährige US-Staatsanleihe (FRED, monatlich seit 1953
+      # und täglich); vier Abrufe, ~10 s.
+      - name: Risikoaufschläge holen (OECD, FRED)
+        if: env.VOLL == '1'
+        continue-on-error: true
+        run: python scripts/update_risikoaufschlaege.py
+
+      # Top 10 (seit 26.09.2026): die zehn meistgehandelten Anleihen je Laufzeitgruppe und je Land – Zahl der
+      # Börsentage mit Umsatz (Frankfurt + Tradegate) in den letzten 60 Börsentagen aus kurse/, dazu Stammdaten
+      # aus dem Index. Schreibt vier kleine top10-*.json (werden in die Seiten eingebettet); die Seiten ersetzen
+      # ihre Handauswahl erst, wenn die Datei „aktiv“ ist (mindestens 20 Börsentage erfasst). Sekunden.
+      - name: Top 10 berechnen (aus Kursverlauf und Index)
+        if: env.VOLL == '1'
+        continue-on-error: true
+        run: python scripts/update_top10.py
+
+      # ----- Versionierung: nur im Abruf-Lauf (nicht bei Push/'schnell') -----
+      - name: Änderungen committen (Versionierung auf GitHub)
+        if: env.VOLL == '1'
+        continue-on-error: true   # blockiert NICHT den Strato-Upload, falls der Push mal scheitert
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add renditen.json unternehmen.json langlaeufer.json anleihen-index.json anleihen-kurse.json kurse-auswahl.json zinskurve.json realzins.json risikoaufschlaege.json top10-*.json kurse anleihen
+          if ! git diff --cached --quiet; then
+            git commit -m "Daten aktualisiert"
+            # Vor dem Push mit dem Remote abgleichen (falls inzwischen gepusht wurde);
+            # bei Konflikt den Rebase sauber abbrechen (keine Konfliktmarker im Baum)
+            git pull --rebase --autostash origin main || { git rebase --abort || true; echo "::warning::Rebase fehlgeschlagen – Commit bleibt lokal, Deploy läuft weiter"; }
+            git push || git push   # ein Wiederholungsversuch
+          else
+            echo "Keine Datenänderungen – nichts zu committen."
+          fi
+
+      # ----- Veröffentlichen: IMMER (auch bei jedem Push) -----
+      - name: Veröffentlichungs-Ordner bauen (nur die echten Website-Dateien)
+        # Explizite Liste ohne "|| true": fehlt eine Dateiklasse, bricht der Lauf ab
+        # (früher kamen OG-Bild/Favicons/Sitemap unbemerkt nie auf dem Server an).
+        run: |
+          mkdir -p _site
+          cp *.html *.json *.svg *.css *.js *.png *.webp *.woff2 robots.txt sitemap.xml llms.txt _site/   # webp: Fotos der Anlegerprofile, woff2: Manrope (seit 24.09.2026)
+          rm -f _site/package.json _site/package-lock.json   # Build-Metadaten gehören nicht auf den Webroot
+          cp .htaccess _site/.htaccess
+          cp -r kurse _site/kurse   # Kursverlauf: kurse/<Jahr>/<teil>.json und kurse/bund/<ISIN>.json
+          cp -r anleihen _site/anleihen   # Stammdaten je ISIN für den Steckbrief anleihe.html (256 Teildateien)
+          ls -la _site
+
+      # ----- Daten in die Seiten einbetten: die JSONs landen kompakt als
+      #       <script type="application/json"> in jeder Seite (site.js: MC.load).
+      #       Kein zweiter Request, kein Render-Sprung, Fallback-Werte so frisch
+      #       wie der Lauf. Die Quell-HTML im Repo bleiben unverändert. -----
+      - name: Daten in die HTML-Seiten einbetten
+        run: python3 scripts/inline_data.py _site
+
+      # ----- Build-Werkzeuge: exakt gepinnt über package-lock.json (Integrity-
+      #       Hashes), ohne Lifecycle-Scripts – kein "npx --yes latest" mehr -----
+      - name: Node-Werkzeuge installieren (Minifier)
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      # ----- Zeitstempel + Cache-Busting -----
+      # * sitemap-lastmod und JSON-LD-dateModified nur für die Datenseiten (die
+      #   sich mit jedem Lauf ändern); statische Seiten (Wissen, Anlageziele,
+      #   Begriffe, Rechtliches) behalten ihr Datum aus der Quelle.
+      # * site.js/base.css werden lange gecacht (.htaccess); eine Versions-URL aus
+      #   dem Inhalts-Hash zwingt Browser nur dann zur neuen Datei, wenn sich der
+      #   Inhalt wirklich geändert hat (früher: neue URL bei jedem Lauf).
+      - name: Zeitstempel & Versions-URLs setzen
+        run: |
+          HEUTE=$(date -u +%F)
+          # alle eigenen Skripte minifizieren (site.js und ausgelagerte Seiten-Skripte wie laufzeit.js)
+          for j in _site/*.js; do ./node_modules/.bin/terser "$j" --compress --mangle -o "$j"; done
+          CSS=$(sha256sum _site/base.css | cut -c1-10)
+          IDX=$(sha256sum _site/anleihen-index.json | cut -c1-10)
+          for f in _site/*.html; do
+            [ -f "$f" ] || continue
+            # jedes <script src="name.js"> bekommt den Hash seiner Datei als Versions-URL
+            for j in _site/*.js; do
+              n=$(basename "$j"); h=$(sha256sum "$j" | cut -c1-10)
+              sed -i -E "s|src=\"(/?)${n//./\\.}[^\"]*\"|src=\"\1${n}?v=${h}\"|g" "$f"
+            done
+            sed -i -E "s|href=\"(/?)base\.css[^\"]*\"|href=\"\1base.css?v=${CSS}\"|g" "$f"
+            # Such-Index: Versions-URL, damit .htaccess ihn lange cachen darf (siehe dort)
+            sed -i -E "s|fetch\(\"anleihen-index\.json[^\"]*\"\)|fetch(\"anleihen-index.json?v=${IDX}\")|g" "$f"
+            # Startseiten-Links kanonisch (Quelle nutzt index.html, damit die
+            # Seiten auch lokal per file:// navigierbar bleiben)
+            sed -i -E 's|href="index\.html"|href="/"|g' "$f"
+            # Datenseiten erkennt man an den eingebetteten JSON-Blöcken
+            if grep -q 'data-mc="' "$f"; then
+              sed -i -E "s|\"dateModified\": ?\"[0-9]{4}-[0-9]{2}-[0-9]{2}\"|\"dateModified\":\"${HEUTE}\"|g" "$f"
+              name=$(basename "$f"); [ "$name" = "index.html" ] && name=""
+              loc="https://www.bondarium.de/${name}"
+              sed -i -E "s|(<loc>${loc}</loc><lastmod>)[0-9]{4}-[0-9]{2}-[0-9]{2}|\1${HEUTE}|" _site/sitemap.xml
+            fi
+          done
+          grep -o 'src="site.js[^"]*"' _site/index.html | head -1
+          grep -o 'anleihen-index.json?v=[0-9a-f]*' _site/anleihen-suche.html | head -1
+          grep -c "<lastmod>${HEUTE}" _site/sitemap.xml || true
+
+      # ----- Minifizieren (HTML inkl. Inline-CSS/JS) direkt vor dem Upload.
+      # continue-on-error: ein Minify-Fehler darf das Deploy nicht blockieren –
+      # dann geht die unminifizierte (funktional identische) Fassung raus.
+      - name: Minifizieren (HTML/CSS/JS)
+        continue-on-error: true
+        run: |
+          ./node_modules/.bin/html-minifier-terser \
+            --collapse-whitespace --conservative-collapse --remove-comments \
+            --minify-css true --minify-js true \
+            --file-ext html --input-dir _site --output-dir _site
+          ls -la _site
+
+      # ----- Strato-Cron-Trigger mitveröffentlichen + konfigurieren (erst jetzt,
+      #       unmittelbar vor dem Upload: die Datei mit Token & Schlüssel liegt so
+      #       nur minimal lange im Arbeitsverzeichnis) -----
+      # refresh.php + .htaccess landen unter /trigger/, die Konfiguration (mit
+      # Token & Schlüssel aus den GitHub-Secrets) wird hier erzeugt.
+      - name: Trigger bauen & konfigurieren
+        # Secrets NICHT per ${{ }} direkt ins Shell-Skript interpolieren (Sonder-
+        # zeichen wie ' oder \ würden das PHP zerbrechen bzw. Injection erlauben).
+        # Stattdessen: Secrets via env übergeben, Datei mit python3 -c und
+        # korrektem PHP-Single-Quote-Escaping (\ und ') schreiben.
+        env:
+          TRIGGER_KEY: ${{ secrets.TRIGGER_KEY }}
+          GH_DISPATCH_TOKEN: ${{ secrets.GH_DISPATCH_TOKEN }}
+        run: |
+          mkdir -p _site/trigger
+          cp strato-cron/refresh.php _site/trigger/refresh.php
+          cp strato-cron/.htaccess  _site/trigger/.htaccess
+          python3 -c '
+          import os
+          sq = chr(39)  # einfaches Anfuehrungszeichen
+          def esc(s):
+              # PHP-Single-Quote-String: nur Backslash und Apostroph maskieren
+              return s.replace("\\", "\\\\").replace(sq, "\\" + sq)
+          fields = [
+              ("repo",     "AllAgentsTogether/bondarium"),
+              ("workflow", "update-data.yml"),
+              ("branch",   "main"),
+              ("secret",   os.environ.get("TRIGGER_KEY", "")),
+              ("token",    os.environ.get("GH_DISPATCH_TOKEN", "")),
+          ]
+          lines = ["<?php", "return ["]
+          for k, v in fields:
+              pad = " " * (9 - len(k))
+              lines.append("  " + sq + k + sq + pad + "=> " + sq + esc(v) + sq + ",")
+          lines.append("];")
+          with open("_site/trigger/refresh-config.php", "w", encoding="utf-8") as f:
+              f.write("\n".join(lines) + "\n")
+          '
+
+      - name: Per SFTP zu Strato hochladen
+        uses: wlixcc/SFTP-Deploy-Action@896dcfc555b4cbe36a4acc9bc0827ab474d429fc # v1.2.5 (SHA-gepinnt, Action erhält das SFTP-Passwort)
+        with:
+          server: ${{ secrets.SFTP_SERVER }}
+          username: ${{ secrets.SFTP_USERNAME }}
+          password: ${{ secrets.SFTP_PASSWORD }}
+          port: 22
+          sftp_only: true          # Strato erlaubt nur reines SFTP, kein rsync/SSH-Shell
+          local_path: './_site/*'
+          # Zielordner = Startverzeichnis des SFTP-Zugangs (/bondarium, Strato-Nutzer su1338619) = Docroot
+          # der Domain. Verifiziert am 10.07.2026: Live-Abruf mit Cache-Buster
+          # liefert exakt den Repo-Stand; nur zwischengespeicherte Antworten
+          # können älter wirken (Cache-Header regelt jetzt die .htaccess).
+          remote_path: './'
+
+      # Die Root-.htaccess MUSS separat hochgeladen werden: das Glob ./_site/*
+      # im Schritt oben wird per glob(3) expandiert und überspringt Punktdateien
+      # (Audit 07/2026). Expliziter Dateiname umgeht das.
+      - name: .htaccess separat hochladen (Glob überspringt Punktdateien)
+        uses: wlixcc/SFTP-Deploy-Action@896dcfc555b4cbe36a4acc9bc0827ab474d429fc # v1.2.5
+        with:
+          server: ${{ secrets.SFTP_SERVER }}
+          username: ${{ secrets.SFTP_USERNAME }}
+          password: ${{ secrets.SFTP_PASSWORD }}
+          port: 22
+          sftp_only: true
+          local_path: './_site/.htaccess'
+          remote_path: './'
+
+      # Trigger-Konfiguration darf NIE als Quelltext ausgeliefert werden (403 durch
+      # /trigger/.htaccess). Ein Deploy, nach dem sie lesbar wäre, wird rot.
+      - name: Nach-Deploy-Prüfung (Trigger-Konfiguration nicht abrufbar)
+        continue-on-error: true
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 https://www.bondarium.de/trigger/refresh-config.php || echo "000")
+          echo "refresh-config.php -> HTTP $code"
+          if [ "$code" = "200" ]; then echo "::error::/trigger/refresh-config.php ist öffentlich lesbar – Token sofort rotieren!"; exit 1; fi
+
+      # ----- Automatische Alarm-Prüfung: schlägt fehl (= E-Mail von GitHub), wenn
+      #       Daten veraltet sind. Nur im Abruf-Lauf (1×/Tag), nicht bei
+      #       Push-Deploys (früher bis zu 48 Alarm-Mails am Tag). -----
+      - name: Frische-Prüfung (Alarm bei veralteten Daten)
+        if: env.VOLL == '1'
+        run: |
+          python - <<'PY'
+          import json, sys, datetime, os
+
+          probleme = []
+          heute = datetime.date.today()
+
+          def _datum(wert):
+              """ISO-Datum/-Zeitstempel oder Monat 'JJJJ-MM' (OECD) -> date; None wenn unlesbar."""
+              s = str(wert)[:10]
+              if len(s) == 7:
+                  s += "-15"   # Monatswert: Monatsmitte annehmen
+              try:
+                  return datetime.date.fromisoformat(s)
+              except ValueError:
+                  return None
+
+          def _alter(wert, quelle):
+              d = _datum(wert)
+              if d is None:
+                  probleme.append(f"{quelle}: Datum unlesbar ({wert!r})")
+                  return None
+              return (heute - d).days
+
+          def _lade(fname):
+              try:
+                  return json.load(open(fname, encoding="utf-8"))
+              except Exception as e:
+                  probleme.append(f"{fname} beschädigt/unlesbar: {e}")
+                  return {}
+
+          # 1) Feld-spezifische Frische der Anleihen-Suche
+          checks = [
+              # Anleihen-Suche: ESMA-Gesamtdatei erscheint wöchentlich (samstags)
+              ("anleihen-index.json → stand", (_lade("anleihen-index.json") if os.path.exists("anleihen-index.json") else {}).get("stand"), 16),
+              # Kurse (Deutsche Börse, Bundesbank): börsentäglich
+              ("anleihen-kurse.json → stand", (_lade("anleihen-kurse.json") if os.path.exists("anleihen-kurse.json") else {}).get("stand"), 7),
+              ("kurse-auswahl.json → stand", (_lade("kurse-auswahl.json") if os.path.exists("kurse-auswahl.json") else {}).get("stand"), 7),
+              # Steckbrief anleihe.html: Teildateien Stammdaten (wöchentlich) und aktuelle Kurse (börsentäglich), Stichprobe 00
+              ("anleihen/00.json → stand", (_lade("anleihen/00.json") if os.path.exists("anleihen/00.json") else {}).get("stand"), 16),
+              (f"kurse/{heute.year}/00.json → stand", (_lade(f"kurse/{heute.year}/00.json") if os.path.exists(f"kurse/{heute.year}/00.json") else {}).get("stand"), 7),
+              # Zinskurve: Bundesbank und Fed börsentäglich (stand ist ein Dict je Land)
+              ("zinskurve.json → stand.DE", ((_lade("zinskurve.json") if os.path.exists("zinskurve.json") else {}).get("stand") or {}).get("DE"), 7),
+              ("zinskurve.json → stand.US", ((_lade("zinskurve.json") if os.path.exists("zinskurve.json") else {}).get("stand") or {}).get("US"), 7),
+              # Realzins: Bundrendite börsentäglich; Verbraucherpreise monatlich (Destatis veröffentlicht den Vormonat Anfang des Monats → bis ~45 Tage alt)
+              ("realzins.json → stand.zins", ((_lade("realzins.json") if os.path.exists("realzins.json") else {}).get("stand") or {}).get("zins"), 7),
+              ("realzins.json → stand.vpi", ((_lade("realzins.json") if os.path.exists("realzins.json") else {}).get("stand") or {}).get("vpi"), 75),
+              # Risikoaufschläge: FRED börsentäglich; OECD-Monatswerte erscheinen mit ~2–6 Wochen Verzug → 100 Tage wie bei den Renditen
+              ("risikoaufschlaege.json → stand.us", ((_lade("risikoaufschlaege.json") if os.path.exists("risikoaufschlaege.json") else {}).get("stand") or {}).get("us"), 7),
+              ("risikoaufschlaege.json → stand.laender", ((_lade("risikoaufschlaege.json") if os.path.exists("risikoaufschlaege.json") else {}).get("stand") or {}).get("laender"), 100),
+          ]
+          for quelle, wert, schwelle in checks:
+              if not wert:
+                  probleme.append(f"{quelle}: Feld fehlt/leer")
+                  continue
+              age = _alter(wert, quelle)
+              if age is None:
+                  continue
+              print(f"{quelle}: {wert} (vor {age} Tagen, Schwelle {schwelle})")
+              if age > schwelle:
+                  probleme.append(f"{quelle} veraltet: {wert} ({age} Tage alt, Schwelle {schwelle} Tage)")
+
+          # 2) Anleihenrenditen je Land: Tagesquellen (USA, Deutschland, Japan,
+          #    China) 10 Tage; OECD-Monatswerte (Indien, GB, Frankreich, Italien)
+          #    erscheinen mit ~2 Monaten Verzug → 100 Tage.
+          renj = _lade("renditen.json") if os.path.exists("renditen.json") else {}
+          if not renj:
+              probleme.append("renditen.json fehlt/leer")
+          for land, c in (renj.get("countries") or {}).items():
+              wert = (c.get("latest") or {}).get("date")
+              schwelle = 10 if land in ("us", "de", "jp", "cn") else 100
+              if not wert:
+                  probleme.append(f"renditen.json → {land}: kein latest.date")
+                  continue
+              age = _alter(wert, f"renditen.json → {land}")
+              if age is None:
+                  continue
+              print(f"renditen.json → {land}: {wert} (vor {age} Tagen, Schwelle {schwelle})")
+              if age > schwelle:
+                  probleme.append(f"renditen.json → {land} veraltet: {wert} ({age} Tage alt, Schwelle {schwelle} Tage)")
+
+          if probleme:
+              for p in probleme:
+                  print(f"::error::{p}")
+              sys.exit(1)
+          print("Alles frisch und gültig. ✓")
+          PY
+
+      # ----- Lücken im Kursverlauf (seit 29.09.2026): fehlt ein Börsentag seit dem 24.09.2026 in kurse/, wird der
+      #       Lauf rot (= E-Mail von GitHub). Ein fehlender Tag ist nur nachholbar, solange die Tagesdatei der Börse
+      #       noch gelistet ist (≈ 1 Börsentag) oder das Rohdaten-Artefakt existiert. -----
+      - name: Lücken im Kursverlauf (Alarm)
+        if: ${{ !cancelled() && env.VOLL == '1' }}   # auch, wenn die Frische-Prüfung schon rot ist
+        run: python3 scripts/kurs_luecken.py
