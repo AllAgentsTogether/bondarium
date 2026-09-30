@@ -30,14 +30,14 @@
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  /* Legende: Einträge sind Buttons (Hover/Fokus hebt die Linie hervor, Klick blendet sie aus) */
-  .legend { display: flex; gap: 10px 22px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 10px 0; margin-bottom: 24px; }
-  .legend .leg { display: inline-flex; align-items: center; gap: 7px; font: inherit; color: inherit; background: none; border: 0; padding: 2px 0; cursor: pointer; border-radius: 3px; }
-  .legend .leg:hover { color: var(--ink); }
-  .legend .leg:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
-  .legend .leg.on { color: var(--ink); }
+  /* Legende (Grundform .legend.linie / button.leg / .leg-hint: base.css): Einträge sind Buttons – Hover/Fokus hebt die Linie hervor, Klick fixiert */
+  .legend button.leg { color: inherit; padding: 2px 0; }
+  .legend .leg:hover, .legend .leg.on { color: var(--ink); }
   .legend .leg[aria-pressed="true"] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
-  .legend .leg-hint { font-size: 12px; flex-basis: 100%; }
+  h1 { hyphens: manual; -webkit-hyphens: manual; }   /* nur an der vorgesehenen Stelle trennen (vorher „Unternehmensanlei-hen“) */
+  .abschnitt { font-size: 22px; margin: 0 0 6px; }
+  #h-segmente { margin-top: 36px; }
+  .tab-note { font-size: 13px; color: var(--muted); margin: 0 0 4px; }
   .sw-line { width: 20px; height: 3px; border-radius: 2px; background: var(--c, var(--line)); }
   .sw-line.dashed { background: repeating-linear-gradient(90deg, var(--c, var(--line)) 0 6px, transparent 6px 9px); }
   /* Legende: längere Einträge, zwei Zeilen + Hinweis auf dem Desktop */
@@ -61,9 +61,9 @@
   .ser.hi .band { fill-opacity: 0.3; }
   /* Tabellen-Stand, der deutlich älter ist als die jüngsten Tageswerte */
   td.num .old { color: var(--muted); }
-  table { width: 100%; border-collapse: collapse; margin-top: 36px; font-size: 13px; }   /* Ausnahme: acht Segmente müssen in 1000 px passen (Inter läuft breiter) */
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }   /* Ausnahme: acht Segmente müssen in 1000 px passen (Manrope läuft breiter als die Systemschrift) */
   caption { text-align: left; font-size: 19px; font-weight: 600; margin-bottom: 12px; }
-  th, td { text-align: left; padding: 10px 8px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }   /* 8 statt 12 px, damit die Tabelle mit Inter in 1000 px passt */
+  th, td { text-align: left; padding: 10px 8px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }   /* 8 statt 12 px, damit die Tabelle mit Manrope in 1000 px passt */
   thead th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
   tbody th { font-weight: 400; white-space: nowrap; }
   td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -75,16 +75,9 @@
   caption select { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 8px; cursor: pointer; }
   caption select:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   /* Spaltenköpfe: Klick sortiert (auf-/absteigend), Richtung per aria-sort */
-  thead th .sortbtn { font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
-  thead th .sortbtn::after { content: "↕"; font-size: 12px; opacity: 0.45; }
-  thead th .sortbtn:hover, thead th[aria-sort="ascending"] .sortbtn, thead th[aria-sort="descending"] .sortbtn { color: var(--ink); }
-  thead th[aria-sort="ascending"] .sortbtn::after { content: "↑"; opacity: 1; }
-  thead th[aria-sort="descending"] .sortbtn::after { content: "↓"; opacity: 1; }
-  thead th .sortbtn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  /* Sortierknöpfe .sortbtn: base.css */
   tbody td.empty { color: var(--muted); }
   caption .cap-note { font-size: 13px; color: var(--muted); }
-  /* Handy: Tabelle scrollt quer – Titel und Hinweis bleiben links im Bild */
-  @media (max-width: 899px) { caption .cap-row { position: sticky; left: 0; width: min(100%, calc(100vw - 32px)); } }
   td.txt { color: var(--muted); white-space: nowrap; }
   .tag { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 7px; }
   @media (max-width: 760px) {  #legend-unternehmen { min-height: 123px; } }
@@ -153,7 +146,7 @@
           <a href="realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="unternehmensanleihen.html" class="current">Unternehmensanleihen seit 1970</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
       </div>
@@ -168,99 +161,21 @@
     <p class="sub" id="sub-unternehmen">Mit einer Unternehmensanleihe leihst du einem Unternehmen Geld – für eine feste Laufzeit und zu einem festen Zins. Weil ein Unternehmen eher ausfallen kann als ein Staat, zahlt es meist mehr Zins; wie viel mehr, hängt vor allem von seiner Bonität ab. Der Vergleich unten zeigt Unternehmensanleihen deshalb nach Bonitätsklassen aus fünf Ländern, überwiegend mit 10 Jahren Laufzeit – so lassen sie sich neben die 10-jährigen Staatsanleihen legen.</p>
 
     <p class="eyebrow" id="eyebrow-unternehmen">Unternehmensanleihen · 1970 – 2026 · Stand: 17.09.2026</p>
-    <div class="legend" id="legend-unternehmen"></div>
+    <h2 class="abschnitt" id="h-verlauf">Renditen nach Bonität und Land seit 1970</h2>
+    <div class="legend linie" id="legend-unternehmen"></div>
 
     <div id="chart-unternehmen" class="chart-scroll"></div>
 
     <p class="note" id="note-unternehmen">Jahresdurchschnitte in der jeweiligen Landeswährung, ergänzt um den aktuellen Wert; die Fläche um jede Linie zeigt die Spanne des Jahres. Laufzeiten und Ratingskalen unterscheiden sich je Reihe – aussagekräftig ist vor allem der Vergleich jeder Reihe mit ihrer eigenen Geschichte.</p>
 
+    <h2 class="abschnitt" id="h-segmente">Acht Segmente im Überblick</h2>
+    <p class="tab-note">Hoch, Tief und Ø: Jahresdurchschnitte seit 1970 bzw. seit Beginn der Reihe, ohne das laufende Jahr; Japan: noch kein volles Jahr</p>
     <div class="table-scroll" id="ctable-wrap">
-    <table>
-      <caption><div class="cap-row"><span>Acht Segmente im Überblick</span><span class="cap-note">Hoch, Tief und Ø: Jahresdurchschnitte seit 1970 bzw. seit Beginn der Reihe, ohne das laufende Jahr; Japan: noch kein volles Jahr</span></div></caption>
+    <table aria-labelledby="h-segmente">
       <thead id="cthead">
         <tr><th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Segment</button></th><th scope="col" data-col="current"><button type="button" class="sortbtn" data-col="current">Aktuelle Rendite</button></th><th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th><th scope="col" data-col="rating"><button type="button" class="sortbtn" data-col="rating">Bonität</button></th><th scope="col" data-col="mat"><button type="button" class="sortbtn" data-col="mat">Laufzeit</button></th><th scope="col" data-col="stand"><button type="button" class="sortbtn" data-col="stand">Stand</button></th><th scope="col" data-col="high"><button type="button" class="sortbtn" data-col="high">Hoch</button></th><th scope="col" data-col="low"><button type="button" class="sortbtn" data-col="low">Tief</button></th><th scope="col" data-col="avg"><button type="button" class="sortbtn" data-col="avg">Ø</button></th></tr>
       </thead>
-      <tbody id="ctable"><tr>
-      <th scope="row"><i class="tag" style="background:#1D5FA0"></i>USA · AAA–A (HQM)</th>
-      <td class="num">5,58&nbsp;%</td>
-      <td class="cur">USD <span class="sym">$</span></td>
-      <td class="txt">AAA–A</td>
-      <td class="txt">10 J.</td>
-      <td class="num">08.2026</td>
-      <td class="num">13,12&nbsp;% (1984)</td>
-      <td class="num">2,37&nbsp;% (2020)</td>
-      <td class="num">6,31&nbsp;%</td>
-    </tr><tr>
-      <th scope="row"><i class="tag" style="background:#B23B2E"></i>USA · Baa (Moody's)</th>
-      <td class="num">6,48&nbsp;%</td>
-      <td class="cur">USD <span class="sym">$</span></td>
-      <td class="txt">Baa</td>
-      <td class="txt">20+ J.</td>
-      <td class="num">15.09.2026</td>
-      <td class="num">16,11&nbsp;% (1982)</td>
-      <td class="num">3,39&nbsp;% (2021)</td>
-      <td class="num">8,16&nbsp;%</td>
-    </tr><tr>
-      <th scope="row"><i class="tag" style="background:#2C2C2A"></i>Deutschland · Unternehmen</th>
-      <td class="num">4,54&nbsp;%</td>
-      <td class="cur">EUR <span class="sym">€</span></td>
-      <td class="txt">gemischt</td>
-      <td class="txt">alle (Ø ≈ 7 J.)</td>
-      <td class="num">15.09.2026</td>
-      <td class="num">11,11&nbsp;% (1974)</td>
-      <td class="num">0,90&nbsp;% (2021)</td>
-      <td class="num">5,90&nbsp;%</td>
-    </tr><tr>
-      <th scope="row"><i class="tag" style="background:#8A5FBF"></i>Japan · AA (R&amp;I)</th>
-      <td class="num">3,53&nbsp;%</td>
-      <td class="cur">JPY <span class="sym">¥</span></td>
-      <td class="txt">AA</td>
-      <td class="txt">10 J.</td>
-      <td class="num">17.09.2026</td>
-      <td class="num">–</td>
-      <td class="num">–</td>
-      <td class="num">–</td>
-    </tr><tr>
-      <th scope="row"><i class="tag" style="background:#1F7A5E"></i>Japan · A (R&amp;I)</th>
-      <td class="num">3,79&nbsp;%</td>
-      <td class="cur">JPY <span class="sym">¥</span></td>
-      <td class="txt">A</td>
-      <td class="txt">10 J.</td>
-      <td class="num">17.09.2026</td>
-      <td class="num">–</td>
-      <td class="num">–</td>
-      <td class="num">–</td>
-    </tr><tr>
-      <th scope="row"><i class="tag" style="background:#2F8A9A"></i>China · AAA (ChinaBond)</th>
-      <td class="num">2,02&nbsp;%</td>
-      <td class="cur">CNY <span class="sym">¥</span></td>
-      <td class="txt">AAA (lokal)</td>
-      <td class="txt">10 J.</td>
-      <td class="num">16.09.2026</td>
-      <td class="num">5,60&nbsp;% (2011)</td>
-      <td class="num">2,23&nbsp;% (2025)</td>
-      <td class="num">4,39&nbsp;%</td>
-    </tr><tr>
-      <th scope="row"><i class="tag" style="background:#C07E28"></i>Australien · A</th>
-      <td class="num">5,64&nbsp;%</td>
-      <td class="cur">AUD <span class="sym">$</span></td>
-      <td class="txt">A</td>
-      <td class="txt">10 J.</td>
-      <td class="num">08.2026</td>
-      <td class="num">8,79&nbsp;% (2008)</td>
-      <td class="num">1,90&nbsp;% (2020)</td>
-      <td class="num">5,34&nbsp;%</td>
-    </tr><tr>
-      <th scope="row"><i class="tag" style="background:#A0386E"></i>Australien · BBB</th>
-      <td class="num">5,92&nbsp;%</td>
-      <td class="cur">AUD <span class="sym">$</span></td>
-      <td class="txt">BBB</td>
-      <td class="txt">10 J.</td>
-      <td class="num">08.2026</td>
-      <td class="num">9,94&nbsp;% (2008)</td>
-      <td class="num">2,92&nbsp;% (2020)</td>
-      <td class="num">6,06&nbsp;%</td>
-    </tr></tbody>
+      <tbody id="ctable"><tr><td colspan="9" class="empty">Die Daten werden geladen …</td></tr></tbody>
     </table>
     </div>
 
@@ -284,9 +199,9 @@
     </details>
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
@@ -316,7 +231,7 @@ const T = {
   chartHintBase: "JAHRESDURCHSCHNITTE IN %", chartHintHover: "LINIE PER LEGENDE ODER MAUS HERVORHEBEN", chartHintTouch: "LINIE PER LEGENDE HERVORHEBEN",
   tipRange: "Spanne", asOf: "Stand:",
   corpEyebrow: "Unternehmensanleihen",
-  corpTblCaption: "Acht Segmente im Überblick", corpCapNote: "Hoch, Tief und Ø: Jahresdurchschnitte seit 1970 bzw. seit Beginn der Reihe, ohne das laufende Jahr; Japan: noch kein volles Jahr", thHigh2: "Hoch", thLow2: "Tief", thAvg2: "Ø",
+  thHigh2: "Hoch", thLow2: "Tief", thAvg2: "Ø",
   thSegment: "Segment", thRating: "Bonität", thMaturity: "Laufzeit",
   ratingMixed: "gemischt", ratingCn: "AAA (lokal)", matAll: "alle (Ø ≈ 7 J.)", mat10: "10 J.", mat20: "20+ J.",
   sUsHqm: "USA · AAA–A · 10 J. (HQM)", sUsBaa: "USA · Baa (Moody's)",
@@ -334,10 +249,7 @@ const T = {
 function L(k) { return T[k] != null ? T[k] : k; }
 function loc() { return "de-DE"; }
 
-function fmt(v, dec = 0) {
-  if (typeof v !== "number" || !isFinite(v)) return "–";
-  return MC.minus(v.toLocaleString(loc(), { minimumFractionDigits: dec, maximumFractionDigits: dec }));
-}
+const fmt = (v, dec = 0) => MC.zahl(v, dec);   // gemeinsames Zahlenformat (site.js)
 const isDay = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d));
 const isMonth = d => /^\d{4}-\d{2}$/.test(String(d));
 // Voriger Werktag (Mo–Fr) eines Datums "JJJJ-MM-TT"
@@ -352,10 +264,7 @@ function isFuture(d) {
   const today = `${n.getFullYear()}-${p(n.getMonth() + 1)}-${p(n.getDate())}`;
   return isMonth(d) ? d > today.slice(0, 7) : String(d) > today;
 }
-function fmtDate(iso) {
-  const d = new Date(String(iso).slice(0, 10) + "T12:00:00");
-  return isNaN(d) ? "–" : d.toLocaleDateString(loc(), { day: "2-digit", month: "2-digit", year: "numeric" });
-}
+const fmtDate = iso => MC.datum ? MC.datum(iso) : String(iso);
 // "Stand"-Angabe: Tageswerte als Datum, Monatswerte ("JJJJ-MM", OECD) als
 // MM.JJJJ; Ungültiges → "–"
 function fmtStand(d) {
@@ -390,7 +299,7 @@ const CUR_SYM = { USD: "$", EUR: "€", JPY: "¥", CNY: "¥", AUD: "$" };
 const CORP = [
   { key: "us_hqm",  code: "US HQM",     tblKey: "tUsHqm",  cur: "USD", rating: "AAA–A", matKey: "mat10",  nameKey: "sUsHqm",  color: "#1D5FA0" },
   { key: "us_baa",  code: "US Baa",     tblKey: "tUsBaa",  cur: "USD", rating: "Baa",   matKey: "mat20",  nameKey: "sUsBaa",  color: "#B23B2E" },
-  { key: "de_corp", code: "DE Untern.", tblKey: "tDeCorp", cur: "EUR", ratingKey: "ratingMixed", matKey: "matAll", nameKey: "sDeCorp", color: "#2C2C2A" },
+  { key: "de_corp", code: "DE Untern.", tblKey: "tDeCorp", cur: "EUR", ratingKey: "ratingMixed", matKey: "matAll", nameKey: "sDeCorp", color: "#1A1A19" },
   { key: "jp_aa",   pubNextDay: true, code: "JP AA",      tblKey: "tJpAa",   cur: "JPY", rating: "AA",    matKey: "mat10",  nameKey: "sJpAa",   color: "#8A5FBF", text: "#7A52B0" },
   { key: "jp_a",    pubNextDay: true, code: "JP A",       tblKey: "tJpA",    cur: "JPY", rating: "A",     matKey: "mat10",  nameKey: "sJpA",    color: "#1F7A5E", dash: "6 3" },
   { key: "cn_aaa",  code: "CN AAA",     tblKey: "tCnAaa",  cur: "CNY", ratingKey: "ratingCn", matKey: "mat10", nameKey: "sCnAaa", color: "#2F8A9A", text: "#1F6F7D" },
@@ -400,40 +309,14 @@ const CORP = [
 // Segmente mit börsentäglicher Quelle (Moody's via FRED, Bundesbank, JSDA, ChinaBond)
 const CORP_DAILY = ["us_baa", "de_corp", "jp_aa", "jp_a", "cn_aaa"];
 
-// Eingebettete Basisdaten (Jahresdurchschnitte der Monatswerte, % p. a.);
-// "latest", neue Jahre und die Jahresspannen kommen aus unternehmen.json
-// (scripts/update_unternehmen.py, voller Lauf). Japan: Jahresmittel erscheinen,
-// sobald das Skript zwölf Monatsendwerte eines Jahres nachgeladen hat (die JSDA
-// erlaubt nur wenige Abrufe je Lauf). Stand: 16.09.2026.
-const RC = {
-  range: {},
-  // Monatswerte (nur für Reihen ohne Jahresmittel gezeichnet, z. B. Japan) – aus unternehmen.json
-  monthly: {},
-  latest: {
-    us_hqm: { date: "2026-08", yield: 5.58 },
-    us_baa: { date: "2026-09-15", yield: 6.48 },
-    de_corp: { date: "2026-09-15", yield: 4.54 },
-    jp_aa: { date: "2026-09-17", yield: 3.53 },
-    jp_a: { date: "2026-09-17", yield: 3.79 },
-    cn_aaa: { date: "2026-09-16", yield: 2.02 },
-    au_a: { date: "2026-08", yield: 5.64 },
-    au_bbb: { date: "2026-08", yield: 5.92 }
-  },
-  annual: {
-  us_hqm: { 1984: 13.12, 1985: 11.78, 1986: 9.35, 1987: 9.53, 1988: 9.86, 1989: 9.38, 1990: 9.56, 1991: 9.0, 1992: 8.04, 1993: 6.82, 1994: 7.9, 1995: 7.35, 1996: 7.17, 1997: 7.05, 1998: 6.28, 1999: 6.94, 2000: 7.78, 2001: 6.82, 2002: 6.29, 2003: 5.25, 2004: 5.33, 2005: 5.18, 2006: 5.75, 2007: 5.89, 2008: 6.88, 2009: 6.37, 2010: 5.04, 2011: 4.66, 2012: 3.69, 2013: 3.93, 2014: 3.8, 2015: 3.67, 2016: 3.41, 2017: 3.53, 2018: 4.06, 2019: 3.38, 2020: 2.37, 2021: 2.52, 2022: 4.53, 2023: 5.32, 2024: 5.09, 2025: 5.16 },
-  us_baa: { 1970: 9.11, 1971: 8.56, 1972: 8.16, 1973: 8.24, 1974: 9.5, 1975: 10.61, 1976: 9.75, 1977: 8.97, 1978: 9.49, 1979: 10.69, 1980: 13.67, 1981: 16.04, 1982: 16.11, 1983: 13.55, 1984: 14.19, 1985: 12.72, 1986: 10.39, 1987: 10.58, 1988: 10.83, 1989: 10.18, 1990: 10.35, 1991: 9.8, 1992: 8.98, 1993: 7.93, 1994: 8.62, 1995: 8.2, 1996: 8.05, 1997: 7.86, 1998: 7.22, 1999: 7.87, 2000: 8.36, 2001: 7.95, 2002: 7.8, 2003: 6.77, 2004: 6.39, 2005: 6.06, 2006: 6.48, 2007: 6.48, 2008: 7.45, 2009: 7.3, 2010: 6.04, 2011: 5.66, 2012: 4.93, 2013: 5.1, 2014: 4.85, 2015: 5.0, 2016: 4.72, 2017: 4.44, 2018: 4.8, 2019: 4.37, 2020: 3.6, 2021: 3.39, 2022: 5.07, 2023: 5.86, 2024: 5.75, 2025: 6.0 },
-  de_corp: { 1970: 8.48, 1971: 8.16, 1972: 8.08, 1973: 9.76, 1974: 11.11, 1975: 9.13, 1976: 8.15, 1977: 6.77, 1978: 6.6, 1979: 7.65, 1980: 8.92, 1981: 11.05, 1982: 9.33, 1983: 7.91, 1984: 7.83, 1985: 7.06, 1986: 6.54, 1987: 6.63, 1988: 6.74, 1989: 7.23, 1990: 9.01, 1991: 8.92, 1992: 8.75, 1993: 6.87, 1994: 7.03, 1995: 6.85, 1996: 5.85, 1997: 5.17, 1998: 5.0, 1999: 4.99, 2000: 6.22, 2001: 5.88, 2002: 5.99, 2003: 4.96, 2004: 4.0, 2005: 3.69, 2006: 4.15, 2007: 5.04, 2008: 6.28, 2009: 5.54, 2010: 4.03, 2011: 4.25, 2012: 3.73, 2013: 3.37, 2014: 2.94, 2015: 2.43, 2016: 2.07, 2017: 1.73, 2018: 2.49, 2019: 2.53, 2020: 1.75, 2021: 0.9, 2022: 3.26, 2023: 4.22, 2024: 3.65, 2025: 3.58 },
-  jp_aa: {  },
-  jp_a: {  },
-  cn_aaa: { 2007: 4.88, 2008: 5.35, 2009: 4.76, 2010: 4.62, 2011: 5.6, 2012: 5.06, 2013: 5.49, 2014: 5.58, 2015: 4.48, 2016: 3.75, 2017: 4.87, 2018: 4.92, 2019: 4.33, 2020: 4.08, 2021: 3.88, 2022: 3.6, 2023: 3.34, 2024: 2.54, 2025: 2.23 },
-  au_a: { 2005: 6.24, 2006: 6.61, 2007: 7.3, 2008: 8.79, 2009: 8.14, 2010: 7.4, 2011: 6.92, 2012: 5.58, 2013: 5.49, 2014: 4.89, 2015: 4.4, 2016: 4.13, 2017: 3.95, 2018: 3.89, 2019: 2.73, 2020: 1.9, 2021: 2.45, 2022: 5.35, 2023: 5.73, 2024: 5.28, 2025: 4.92 },
-  au_bbb: { 2005: 6.4, 2006: 6.79, 2007: 7.57, 2008: 9.94, 2009: 9.58, 2010: 7.74, 2011: 7.71, 2012: 6.9, 2013: 6.76, 2014: 5.74, 2015: 4.96, 2016: 4.81, 2017: 4.41, 2018: 4.48, 2019: 3.48, 2020: 2.92, 2021: 3.14, 2022: 6.19, 2023: 6.51, 2024: 5.8, 2025: 5.36 }
-  }
-};
+// Daten: nur aus unternehmen.json (scripts/update_unternehmen.py; beim Deploy eingebettet). Seit 30.09.2026 ohne eingebettete
+// Rückfall-Reihen – vorher standen alle Jahreswerte zusätzlich hier im Skript (doppelt, und älter als die JSON).
+// annual/range/latest/monthly je Segment; Japan: Monatswerte, bis zwölf Monatsendwerte eines Jahres vorliegen.
+const RC = { range: {}, monthly: {}, latest: {}, annual: {} };
 
 const CORP_MARKERS = [
   { key: "us_baa", t: 1982.5, v: 16.11, textKey: "mkBaaHigh", titleKey: "mkBaaHighTitle", anchor: "start", dx: 8, dy: 4, color: "#B23B2E" },
-  { key: "de_corp", t: 2021.5, v: 0.90, textKey: "mkDeCorpLow", titleKey: "mkDeCorpLowTitle", anchor: "middle", dx: 0, dy: 17, color: "#2C2C2A", narrow: { anchor: "end", dx: -7, dy: 4 } }
+  { key: "de_corp", t: 2021.5, v: 0.90, textKey: "mkDeCorpLow", titleKey: "mkDeCorpLowTitle", anchor: "middle", dx: 0, dy: 17, color: "#1A1A19", narrow: { anchor: "end", dx: -7, dy: 4 } }
 ];
 
 // ============ Chart-Instanzen ============
@@ -591,7 +474,7 @@ function buildYieldChart(ch) {
     if (ref > 0) hoverSeries.unshift(hoverSeries.splice(ref, 1)[0]);
   }
   // Endlabels rechts vom Endpunkt, mindestens 12 px Abstand zueinander
-  spreadLabels(labels, 13.5, YTOP + 5, YBOT - 3);
+  spreadLabels(labels, G.narrow ? 15 : 13.5, YTOP + 5, YBOT - 3);   // schmale Fassung: mehr Abstand (Labels überlappten am Handy)
   const labelOf = {};
   for (const l of labels) {
     // Verbindungslinie, falls das Label vom Endpunkt weggeschoben wurde
@@ -808,21 +691,16 @@ function renderAll() {
   setEyebrow("eyebrow-unternehmen", "corpEyebrow", CHARTS.unternehmen);
 }
 
-// Fußzeile: jüngster Tageswert der börsentäglichen Quellen (Moody's, Bundesbank, JSDA, ChinaBond); ab 5 Tagen „veraltet“ (Klasse „stale“, base.css)
-const STALE_DAYS = 5;
+// Fußzeile: jüngster Tageswert der börsentäglichen Quellen (Moody's, Bundesbank, JSDA, ChinaBond); „veraltet“ nach der gemeinsamen
+// Regel (MC.veraltet, ab MC.STALE_TAGE Börsentagen; Klasse „stale“, base.css)
 function updateDatastand() {
   const el = document.getElementById("datastand");
   const d = newestDaily(CHARTS.unternehmen);
   if (!el || !d) return;
-  const dd = ageDays(d);
-  el.textContent = L("dataAsOf") + " " + fmtStand(d) + (dd > STALE_DAYS ? " · " + L("outdated") : "");
-  el.classList.toggle("stale", dd > STALE_DAYS);
+  const alt = isDay(d) && MC.veraltet ? MC.veraltet(d) : false;
+  el.textContent = L("dataAsOf") + " " + fmtStand(d) + (alt ? " · " + L("outdated") : "");
+  el.classList.toggle("stale", alt);
 }
-// Erst-Render
-(function () {
-  try { renderAll(); } catch (e) { console.warn("Render fehlgeschlagen:", e); }
-  updateDatastand();
-})();
 // Daten aus einer JSON in eine Chart-Instanz übernehmen – nur plausible Werte:
 // Datum "JJJJ-MM-TT" oder "JJJJ-MM", Rendite als endliche Zahl, Jahre vierstellig,
 // Spannen als Paare [Tief, Hoch] aus endlichen Zahlen mit Tief ≤ Hoch
@@ -870,7 +748,11 @@ function rerender(src) {
 }
 MC.load("unternehmen.json")
   .then(d => { if (d) mergeData(CHARTS.unternehmen, d.series); rerender("unternehmen.json"); })
-  .catch(e => { console.warn("unternehmen.json nicht ladbar, eingebettete Daten bleiben sichtbar:", e); });
+  .catch(e => {
+    console.warn("unternehmen.json nicht ladbar:", e);
+    const box = document.getElementById("chart-unternehmen"); if (box) { box.style.aspectRatio = "auto"; box.innerHTML = '<p class="note">Die Daten sind gerade nicht erreichbar. Bitte später erneut versuchen.</p>'; }
+    const tb = document.getElementById("ctable"); if (tb) tb.innerHTML = '<tr><td colspan="9" class="empty">Die Daten sind gerade nicht erreichbar.</td></tr>';
+  });
 
 // Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
 MC.navInit();

@@ -31,7 +31,6 @@
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Deine erste Anleihe (24.09.2026; seit 29.09.2026 neun Schritte + Checkliste): Erklärkarten nach dem Gestaltungssystem (base.css); hier nur die eigenen Bausteine. */
-  .sb-go { margin-top: 14px; align-self: flex-start; font-size: 14px; padding: 10px 16px; }
   .sb-f strong { color: var(--ink); font-weight: 600; }
   /* 1: Nummerierte Liste in der Karte (Order) */
   .nl { list-style: none; counter-reset: nl; display: grid; gap: 10px; }
@@ -101,12 +100,13 @@
   .fl-stand b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
   .fl-stand[hidden], .fl-ok { display: none; }
   .fl-btn { font: inherit; font-size: 13px; font-weight: 600; color: var(--blue); background: #fff; border: 1px solid rgba(29,163,0,0.45); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+  @media (pointer: coarse) { .fl-btn { min-height: 44px; padding: 0 16px; } .k-text .sb-bon { display: inline-flex; align-items: center; min-height: 44px; margin-top: 0; } }
   .fl-btn:hover { background: #F3FFF0; }
   .fl-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
   .fl-tipp { font-size: 14px; color: var(--text); margin: 6px 0 14px; }
   .fl { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 24px; }
   .fl li { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; }
-  .fl-c { position: relative; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: center; font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.35; cursor: pointer; padding: 3px 0; }
+  .fl-c { position: relative; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: center; min-height: 44px; font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.35; cursor: pointer; padding: 3px 0; }   /* ganze Zeile tippbar, mind. 44 px (30.09.2026) */
   .fl-c input { position: absolute; left: 0; top: 50%; width: 28px; height: 28px; margin: -14px 0 0; opacity: 0; cursor: pointer; }
   .fn { width: 28px; height: 28px; border-radius: 8px; background: #fff; color: var(--green-text); border: 1.5px solid var(--green-line); display: grid; place-items: center; font-size: 13px; font-weight: 600; transition: background-color .15s ease; }
   .fl-c input:checked + .fn { background: var(--up); border-color: var(--up); color: transparent; position: relative; }
@@ -114,7 +114,7 @@
   .fl-c input:checked ~ .fl-t { color: var(--text); font-weight: 500; }
   .fl-c input:focus-visible + .fn { outline: 2px solid var(--blue); outline-offset: 2px; }
   .fl-c:hover .fn { border-color: var(--up); }
-  .fl-s { font-size: 12.5px; font-weight: 600; color: var(--blue); text-decoration: none; white-space: nowrap; }
+  .fl-s { display: inline-flex; align-items: center; min-height: 44px; padding: 0 2px 0 8px; font-size: 12.5px; font-weight: 600; color: var(--blue); text-decoration: none; white-space: nowrap; }
   .fl-s:hover { text-decoration: underline; }
   .fertig.fl-done .fl-ok { display: block; margin-top: 14px; padding: 10px 14px; border-radius: 10px; background: #fff; border: 1.5px solid var(--up); font-size: 15px; font-weight: 600; color: var(--up); }
   .fl-nicht a { color: var(--ink); text-decoration: underline; text-decoration-color: rgba(26,26,25,0.35); text-underline-offset: 2px; }
@@ -148,7 +148,6 @@
     .ko-ax .ax-k { display: none; }
     .quotes { grid-template-columns: minmax(0, 1fr); }
     .or-r { grid-template-columns: 100px minmax(0, 1fr); }
-    .sb-go { align-self: stretch; text-align: center; }
     .fertig h2 { font-size: 21px; }
     .fl-print { display: none; }
     .kurz-raster .kap { padding: 20px 16px 22px; }
@@ -156,6 +155,7 @@
     .lands { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 2px 16px 8px; scroll-padding-left: 16px; scroll-snap-type: x proximity; scrollbar-width: none; }
     .lands::-webkit-scrollbar { display: none; }
     .lands a.lbtn { flex: none; scroll-snap-align: start; }
+    .lands.mehr-rechts { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 56px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 56px), transparent); }   /* Hinweis: weitere Schritte rechts (JS unten, 30.09.2026) */
   }
   @media print {
     .skip-link, .topbar, .lands, .weiter, .weiter-h, .crossnav, .quellen, footer, .sb-go, .sb-bon, .fl-stand, .fl-tipp, .fl-s { display: none !important; }
@@ -163,7 +163,7 @@
     .kurz-raster { display: block; }
   }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Deine erste Anleihe in neun Schritten","description":"Deine erste Anleihe in neun Schritten: vom Termin über Bonität, Depot und Order bis zu den Stückzinsen – mit durchgerechnetem Beispiel und Checkliste.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-24","dateModified":"2026-09-29","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/erste-anleihe.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Deine erste Anleihe in neun Schritten","description":"Deine erste Anleihe in neun Schritten: vom Termin über Bonität, Depot und Order bis zu den Stückzinsen – mit durchgerechnetem Beispiel und Checkliste.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-24","dateModified":"2026-09-30","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/erste-anleihe.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Kaufen","item":"https://www.bondarium.de/kaufen.html"},{"@type":"ListItem","position":3,"name":"Deine erste Anleihe","item":"https://www.bondarium.de/erste-anleihe.html"}]}</script>
 </head>
 <body>
@@ -214,7 +214,7 @@
           <a href="realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
       </div>
@@ -225,7 +225,7 @@
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="kaufen.html">Kaufen</a></li><li><span aria-current="page">Deine erste Anleihe</span></li></ol></nav>
   <main id="main">
     <h1>Deine erste Anleihe in neun Schritten</h1>
-    <p class="sub">Vom Termin bis zur Rückzahlung – mit einem Beispiel, das durch alle Schritte führt: 5.000&nbsp;€ für ein Auto im Herbst 2028, angelegt in einer Anleihe mit Bestnote. Lesezeit: etwa 7 Minuten.</p>
+    <p class="sub">Vom Termin bis zur Rückzahlung – mit einem Beispiel, das durch alle Schritte führt: 5.000&nbsp;€ für ein Auto im Herbst 2028, angelegt in einer Anleihe mit Bestnote. Das Beispiel rechnet mit Kursen vom 23.09.2026 und einem Kauf am 24.09.2026; mit heutigen Kursen fallen die Zahlen etwas anders aus. Lesezeit: etwa 7 Minuten.</p>
     <nav class="lands" aria-label="Zum Schritt springen">
       <a class="lbtn" href="#termin"><span class="n">1</span>Termin</a>
       <a class="lbtn" href="#bonitaet"><span class="n">2</span>Bonität</a>
@@ -340,13 +340,13 @@
         <span class="knr" aria-hidden="true">7</span>
         <h2 id="h-kurs">Prüfe Kurs, Rendite und Spanne</h2>
         <p>Der <strong>Kurs</strong> steht in Prozent vom Nennwert: 98,37&nbsp;% heißt, 5.000&nbsp;€ Nennwert kosten 4.918,50&nbsp;€. Am Ende bekommst du 100&nbsp;% – der Unterschied ist dein Kursgewinn.</p><p>Vergleiche deshalb die <strong>Rendite</strong>, nicht den Kupon: Sie rechnet Zinsen und Kursgewinn zusammen. Und schau auf die <strong>Spanne</strong> zwischen Brief- und Geldkurs. Bei großen Anleihen mit Milliarden im Umlauf ist sie winzig, bei kleinen oft mehr als ein Prozent.</p>
-        <p class="bsp"><b>Im Beispiel:</b> Kupon 2,40&nbsp;%, Kurs 98,37&nbsp;% – das ergibt eine Rendite von 3,22&nbsp;% im Jahr (mit 1&nbsp;€ Ordergebühr).</p>
+        <p class="bsp"><b>Im Beispiel (Kurse vom 23.09.2026):</b> Kupon 2,40&nbsp;%, Kurs 98,37&nbsp;% – das ergibt eine Rendite von 3,22&nbsp;% im Jahr (mit 1&nbsp;€ Ordergebühr).</p>
       </div>
       <div class="k-bild"><p class="sb-k">Zwei Kursanzeigen im Vergleich</p><div class="quotes" role="img" aria-label="Zwei Kursanzeigen. Große Anleihe mit Bestnote, 29,5 Milliarden Euro im Umlauf: Geld 98,33 Prozent, Brief 98,37 Prozent, Spanne 0,04 Punkte, auf 5.000 Euro 2 Euro. Kleine Firmenanleihe mit 50 Millionen Euro: Geld 97,00, Brief 98,50, Spanne 1,50 Punkte, auf 5.000 Euro 75 Euro.">
 <div class="q q-gut"><p class="q-n">Große Anleihe, Bestnote AAA<small>29,5 Mrd. € im Umlauf</small></p><div class="q-k"><span><small>Geld</small>98,33&nbsp;%</span><span><small>Brief</small>98,37&nbsp;%</span></div><p class="q-s">Spanne 0,04 Punkte<b>= 2&nbsp;€ auf 5.000&nbsp;€</b></p></div>
 <div class="q q-schlecht"><p class="q-n">Kleine Firmenanleihe<small>50 Mio. € im Umlauf</small></p><div class="q-k"><span><small>Geld</small>97,00&nbsp;%</span><span><small>Brief</small>98,50&nbsp;%</span></div><p class="q-s">Spanne 1,50 Punkte<b>= 75&nbsp;€ auf 5.000&nbsp;€</b></p></div>
 </div>
-<p class="sb-f"><strong>Brief</strong> = dafür kaufst du. <strong>Geld</strong> = dafür verkaufst du. Die Spanne dazwischen verlierst du, wenn du kaufst und gleich wieder verkaufst.</p><a class="go leise sb-go" href="fortgeschrittene.html#handel">Mehr zur Spanne&nbsp;→</a></div>
+<p class="sb-f"><strong>Brief</strong> = dafür kaufst du. <strong>Geld</strong> = dafür verkaufst du. Die Spanne dazwischen verlierst du, wenn du kaufst und gleich wieder verkaufst.</p><a class="go leise sb-go" href="handelsplaetze.html#kurs">Mehr zur Spanne&nbsp;→</a></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Rendite vergleichen und große Anleihen kaufen – dann bleibt die Spanne klein.</span></p>
     </section>
     <section class="kap kap-b" id="order" aria-labelledby="h-order">
@@ -373,7 +373,7 @@
         <h2 id="h-stueckzinsen">Plane die Stückzinsen ein</h2>
         <p>Kaufst du zwischen zwei Zinsterminen, zahlst du dem Verkäufer die Zinsen, die seit dem letzten Termin aufgelaufen sind – die <strong>Stückzinsen</strong>. Auf der Abrechnung stehen sie extra.</p><p>Das Geld ist nicht weg: Am nächsten Zinstermin bekommst du die Zinsen für das ganze Jahr. Und die gezahlten Stückzinsen zieht die Bank von diesen Zinsen ab – versteuern musst du im Beispiel nur 120&nbsp;€ − 113,10&nbsp;€ = 6,90&nbsp;€.</p><p><strong>Plane etwas Puffer ein:</strong> Für 5.000&nbsp;€ Nennwert brauchst du im Beispiel 5.032,60&nbsp;€ auf dem Verrechnungskonto – sonst lehnt die Bank die Order womöglich ab.</p>
       </div>
-      <div class="k-bild"><p class="sb-k">Wem die Zinsen gehören</p><svg class="sb sb-d" viewBox="0 0 400 206" role="img" aria-labelledby="ea6t"><title id="ea6t">Zinsperiode vom 19. Oktober 2025 bis 19. Oktober 2026. Die ersten 344 Tage bis zum Abrechnungstag deines Kaufs, dem 28. September 2026, gehören dem Verkäufer – dafür zahlst du 113,10 Euro Stückzinsen. Die letzten 21 Tage gehören dir. Am 19. Oktober 2026 bekommst du 120 Euro Zinsen für das ganze Jahr.</title>
+      <div class="k-bild"><p class="sb-k">Wem die Zinsen gehören – Beispiel: Kauf am 24.09.2026</p><svg class="sb sb-d" viewBox="0 0 400 206" role="img" aria-labelledby="ea6t"><title id="ea6t">Zinsperiode vom 19. Oktober 2025 bis 19. Oktober 2026. Die ersten 344 Tage bis zum Abrechnungstag deines Kaufs, dem 28. September 2026, gehören dem Verkäufer – dafür zahlst du 113,10 Euro Stückzinsen. Die letzten 21 Tage gehören dir. Am 19. Oktober 2026 bekommst du 120 Euro Zinsen für das ganze Jahr.</title>
 <rect x="20" y="110" width="339.3" height="16" fill="#FBE3CF"/>
 <rect x="359.3" y="110" width="20.7" height="16" fill="#1F7A5E"/>
 <text x="190" y="122" text-anchor="middle" font-size="12.5" font-weight="600" fill="#A2561C">344 Tage – Zinsen des Verkäufers</text>
@@ -436,7 +436,7 @@
 
     <div class="weiter">
       <a class="go" href="anleihen-suche.html?art=0,1&amp;land=DE&amp;w=EUR&amp;zins=0&amp;rest=b&amp;vol=b">Passende Anleihen finden&nbsp;→</a>
-      <a class="go leise" href="guide.html">Anleitungen für dein Ziel&nbsp;→</a>
+      <a class="go leise" href="guide.html">Anleihen-Beispiele nach Ziel&nbsp;→</a>
       <a class="go leise" href="grundlagen.html">Anleihen einfach erklärt&nbsp;→</a>
     </div>
     <p class="klein weiter-h">Die Suche ist vorgefiltert wie im Beispiel: Bund, Länder und Förderbanken · Euro · fester Zins · 1 bis 3 Jahre Restlaufzeit · ab 100 Mio.&nbsp;€ im Umlauf. Die Restlaufzeit passt du an deinen Termin an.</p>
@@ -463,9 +463,9 @@
     </details>
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
@@ -497,6 +497,13 @@ MC.navInit();
   box.querySelector(".fl-reset").addEventListener("click", function () { Array.prototype.forEach.call(cbs, function (c) { c.checked = false; }); upd(true); });
   box.querySelector(".fl-print").addEventListener("click", function () { window.print(); });
   upd(false);
+})();
+
+// Sprungleiste am Handy (wischbare Zeile, 30.09.2026): rechts ausblenden, solange noch Schritte rechts außerhalb liegen
+(function () {
+  var l = document.querySelector(".lands"); if (!l) return;
+  function pruef() { l.classList.toggle("mehr-rechts", l.scrollWidth - l.clientWidth - l.scrollLeft > 4); }
+  l.addEventListener("scroll", pruef, { passive: true }); window.addEventListener("resize", pruef); pruef();
 })();
 </script>
 </body>

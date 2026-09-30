@@ -60,7 +60,7 @@
   .karte ul { list-style: none; display: grid; gap: 6px; flex: 1; align-content: start; }
   .karte li { font-size: 15px; line-height: 1.5; color: var(--ink); padding-left: 22px; position: relative; }
   .karte li::before { content: ""; position: absolute; left: 0; top: 7px; width: 10px; height: 10px; border-radius: 50%; background: var(--green); }
-  .karte > a { font-size: 15px; font-weight: 600; color: var(--green-text); text-decoration: none; margin-top: 4px; }
+  .karte > a { display: inline-flex; align-items: center; align-self: flex-start; min-height: 44px; font-size: 15px; font-weight: 600; color: var(--green-text); text-decoration: none; margin-top: 0; }
   .karte > a:hover { text-decoration: underline; }
   .band { position: relative; overflow: hidden; margin-top: 56px; background: var(--ink); color: #fff; border-radius: var(--radius); padding: 44px 44px 42px; }
   .band-deko { position: absolute; right: -40px; bottom: -60px; width: 360px; height: 360px; opacity: 0.22; pointer-events: none; }
@@ -73,6 +73,16 @@
   .band .go.leise { background: transparent; color: #fff; border-color: rgba(255,255,255,0.45); }
   .band .go.leise:hover { background: rgba(255,255,255,0.08); }
   .band a:focus-visible { outline-color: var(--green); }
+  /* Risiko sichtbar statt Kleintext; Abschnitt „Wer dahintersteht“ (seit 30.09.2026) */
+  .risiko-hw { margin-top: 18px; background: #FBEADB; border-radius: 12px; padding: 14px 18px; font-size: 15.5px; line-height: 1.6; color: var(--ink); max-width: 820px; }
+  .risiko-hw strong { font-weight: 600; }
+  .risiko-hw a, .wir-l a { color: var(--green-text); }
+  .wir-l { display: grid; gap: 0; max-width: 820px; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); box-shadow: var(--shadow); padding: 6px 22px; }
+  .wir-l > div { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 4px 16px; padding: 14px 0; border-top: 1px solid var(--rule); }
+  .wir-l > div:first-child { border-top: 0; }
+  .wir-l dt { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); padding-top: 3px; }
+  .wir-l dd { font-size: 15.5px; line-height: 1.6; color: var(--ink); margin: 0; }
+  @media (max-width: 600px) { .wir-l { padding: 4px 16px; } .wir-l > div { grid-template-columns: minmax(0, 1fr); } }
   .kontakt p { font-size: 16.5px; line-height: 1.6; color: var(--ink); max-width: 720px; }
   @media (max-width: 860px) { .gruende, .wer { grid-template-columns: 1fr; } }
   @media (max-width: 600px) {
@@ -89,7 +99,7 @@
   }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Über uns","item":"https://www.bondarium.de/ueber-uns.html"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"Über uns","headline":"Zinsen, die bleiben.","description":"Zinsen für Jahre sichern statt Tagesgeld-Hopping: Wir machen Anleihen verständlich – für Privatpersonen und Unternehmen, mit täglich aktuellen Daten.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-29","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/ueber-uns.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"Über uns","headline":"Zinsen, die bleiben.","description":"Zinsen für Jahre sichern statt Tagesgeld-Hopping: Wir machen Anleihen verständlich – für Privatpersonen und Unternehmen, mit täglich aktuellen Daten.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-30","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/ueber-uns.html"}</script>
 </head>
 <body>
 <a class="skip-link" href="#main">Zum Inhalt springen</a>
@@ -139,7 +149,7 @@
           <a href="realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
       </div>
@@ -151,8 +161,8 @@
   <main id="main">
 
   <div class="hero">
-    <h1>Zinsen, die bleiben.</h1>
-    <p class="sub">Wir machen Anleihen verständlich – für alle, die sich Zinsen für Jahre sichern wollen, statt ihnen hinterherzulaufen. Privat wie im Unternehmen.</p>
+    <h1>Über Bondarium</h1>
+    <p class="sub"><strong>Zinsen, die bleiben:</strong> Wir machen Anleihen verständlich – für alle, die sich Zinsen für Jahre sichern wollen, statt ihnen hinterherzulaufen. Privat wie im Unternehmen.</p>
   </div>
 
   <section class="kap" aria-labelledby="h-bild">
@@ -193,14 +203,14 @@
       </div>
       <div class="grund">
         <span class="gi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="12" cy="5" r="2"/><path d="M12 7v14M5 13a7 7 0 0 0 14 0M8.5 11h7"/></svg></span>
-        <div><h3>Kein Tagesgeld-Hopping</h3><p>Keine Lockangebote im Blick behalten, keine neuen Konten eröffnen, kein Geld hin- und herschieben. Einmal kaufen genügt.</p></div>
+        <div><h3>Kein Tagesgeld-Hopping</h3><p>Keine Lockangebote im Blick behalten, keine neuen Konten eröffnen, kein Geld hin- und herschieben. Du kaufst einmal und kannst bis zur Fälligkeit halten.</p></div>
       </div>
       <div class="grund">
         <span class="gi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
-        <div><h3>Sicherheit und Unabhängigkeit</h3><p>Wer weiß, was wann zurückkommt, kann planen – für die Wohnung, das Auto oder den Ruhestand. Ganz ohne Bankaktionen.</p></div>
+        <div><h3>Planbarkeit</h3><p>Wer weiß, was wann zurückkommen soll, kann planen – für die Wohnung, das Auto oder den Ruhestand. Ganz ohne Bankaktionen.</p></div>
       </div>
     </div>
-    <p class="klein">Wie verlässlich die Zahlungen sind, hängt vom Herausgeber ab – worauf du achten solltest, steht unter <a href="bonitaet.html">Bonität</a>. Verkaufst du vor der Fälligkeit, gilt der Kurs an diesem Tag.</p>
+    <p class="risiko-hw"><strong>Auch Anleihen haben Risiken.</strong> Zins und Rückzahlung gibt es nur, wenn der Herausgeber zahlen kann – fällt er aus, kannst du viel bis alles verlieren. Verkaufst du vor der Fälligkeit, gilt der Kurs an diesem Tag, und der kann unter deinem Kaufkurs liegen. Mehr dazu unter <a href="risiko.html">Risiko kennen</a> und <a href="bonitaet.html">Bonität</a>.</p>
   </section>
 
   <section class="section" aria-labelledby="h-wer">
@@ -208,7 +218,7 @@
     <div class="wer">
       <div class="karte">
         <div class="kopf"><img src="anlegerprofil-privatanleger.webp" width="76" height="76" alt="" loading="lazy" decoding="async"><div><p class="kicker">Privatpersonen</p><h3>Für dein Erspartes</h3></div></div>
-        <p>Du willst, dass dein Geld verlässlich Zinsen bringt – ohne jedes Jahr die Bank zu wechseln. Anleihen sind genau dafür gemacht.</p>
+        <p>Du willst, dass dein Geld verlässlich Zinsen bringt – ohne jedes Jahr die Bank zu wechseln. Dafür können Anleihen passen.</p>
         <ul>
           <li>Ein regelmäßiges Einkommen aus Zinsen</li>
           <li>Sparziele mit festem Datum – Auto, Wohnung, Ruhestand</li>
@@ -224,7 +234,7 @@
         <ul>
           <li>Rücklagen bis zu einem festen Datum anlegen – für Steuer, Investition oder Tilgung</li>
           <li>Beträge über der Einlagensicherung breit verteilen</li>
-          <li>Flexibel bleiben – Anleihen sind börsentäglich handelbar</li>
+          <li>Flexibel bleiben – Anleihen sind börsentäglich handelbar, zum jeweiligen Kurs</li>
         </ul>
         <a href="anlageziele.html">Welche Anleihe wozu passt →</a>
       </div>
@@ -242,6 +252,16 @@
     </div>
   </section>
 
+  <section class="section wir" aria-labelledby="h-wir">
+    <h2 id="h-wir">Wer dahintersteht und wie Bondarium arbeitet</h2>
+    <dl class="wir-l">
+      <div><dt>Wer</dt><dd>Verantwortlich für Bondarium ist die im <a href="rechtliches.html#impressum">Impressum</a> genannte Person; dort stehen Name und Anschrift.</dd></div>
+      <div><dt>Unabhängig</dt><dd>Bondarium verkauft keine Anleihen und vermittelt keine Depots. Die Seiten enthalten keine Werbung und keine Affiliate-Links; Bondarium erhält keine Provisionen oder sonstigen Vergütungen von Banken, Brokern oder Herausgebern. Listen und Vergleiche richten sich nur nach den Daten.</dd></div>
+      <div><dt>Finanzierung</dt><dd>Bondarium finanziert sich nicht über Werbung, Provisionen oder Affiliate-Links. Es gibt kein Tracking und keine Analyse-Tools, siehe <a href="rechtliches.html#datenschutz">Datenschutz</a>.</dd></div>
+      <div><dt>Daten</dt><dd>Kurse und Stammdaten kommen aus öffentlichen Quellen, überwiegend automatisch – unter anderem Deutsche Bundesbank, ESMA, GLEIF und Deutsche Börse. Welche Quelle wofür, steht auf jeder Seite unten unter „Datenquellen und Methodik“ und gesammelt unter <a href="rechtliches.html#haftung">Datenquellen</a>.</dd></div>
+      <div><dt>Keine Beratung</dt><dd>Bondarium erklärt und zeigt Daten. Es ist keine Anlageberatung; entscheiden musst du selbst.</dd></div>
+    </dl>
+  </section>
   <section class="section kontakt" aria-labelledby="h-kontakt">
     <h2 id="h-kontakt">Kontakt</h2>
     <!-- TODO vor Veröffentlichung: [E-MAIL-ADRESSE] durch die echte Adresse ersetzen (im href und im Linktext) – dieselbe wie im Impressum (rechtliches.html). -->
@@ -250,9 +270,9 @@
 
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html" aria-current="page">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>

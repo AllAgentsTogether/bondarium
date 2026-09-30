@@ -16,8 +16,10 @@
 <link rel="preload" href="/manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  .links { font-size: 14px; line-height: 2; }
-  .links a { color: var(--line); text-decoration: none; }
+  /* Linkliste mit Tippflächen ≥ 44 px (seit 30.09.2026) */
+  .links { list-style: none; margin: 18px 0 0; padding: 0; font-size: 15px; max-width: 520px; }
+  .links li + li { border-top: 1px solid var(--rule); }
+  .links a { display: flex; align-items: center; min-height: 44px; color: var(--green-text); font-weight: 600; text-decoration: none; }
   .links a:hover { text-decoration: underline; }
   .suche404 { margin: 22px 0 6px; max-width: 520px; }
   .suche404 label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
@@ -75,7 +77,7 @@
           <a href="/realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="/unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
-          <a href="/risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="/risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="/langlaeufer.html">Langläufer</a>
         </div>
       </div>
@@ -86,13 +88,13 @@
   <main id="main">
     <h1>Diese Seite gibt es nicht (mehr)</h1>
     <p class="sub">Die angeforderte Adresse ist nicht vorhanden – vielleicht ein Tippfehler oder ein veralteter Link. Alle Inhalte sind über die Navigation oben erreichbar.</p>
-    <form class="suche404" action="/anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><label for="q404">Anleihe suchen</label><span class="zeile"><input id="q404" type="search" name="q" placeholder="Name oder ISIN" autocomplete="off" spellcheck="false"><button type="submit" class="go">Suchen</button></span></form>
-    <p class="links"><a href="/">→ Zur Startseite</a><br><a href="/wissen.html">→ Verstehen: Anleihen einfach erklärt</a><br><a href="/entscheiden.html">→ Entscheiden: Welche Anleihe passt zu dir?</a><br><a href="/kaufen.html">→ Kaufen: Deine erste Anleihe, Broker, Suche</a><br><a href="/beobachten.html">→ Zinsen: Renditen, Zinskurve, Langläufer</a></p>
+    <form class="suche404" action="/anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><label for="q404">Anleihe suchen – Name, ISIN oder WKN</label><span class="zeile"><input id="q404" type="search" name="q" placeholder="Anleihe suchen" enterkeyhint="search" autocomplete="off" spellcheck="false"><button type="submit" class="go">Suchen</button></span></form>
+    <ul class="links"><li><a href="/">→ Zur Startseite</a></li><li><a href="/anleihen.html">→ Anleihen: Suche, Top-10-Listen, ETFs</a></li><li><a href="/wissen.html">→ Verstehen: Anleihen einfach erklärt</a></li><li><a href="/entscheiden.html">→ Entscheiden: Welche Anleihe passt zu dir?</a></li><li><a href="/kaufen.html">→ Kaufen: Deine erste Anleihe, Broker, Suche</a></li><li><a href="/beobachten.html">→ Zinsen: Renditen, Zinskurve, Langläufer</a></li></ul>
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="/anleihen-suche.html">Anleihen-Suche</a><a href="/anleihen.html">Top-10-Listen</a><a href="/guide.html">Anleihen-Beispiele</a><a href="/anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="/anleihen-suche.html">Anleihen-Suche</a><a href="/anleihen.html">Top-10-Listen</a><a href="/guide.html">Anleihen-Beispiele nach Ziel</a><a href="/anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="/wissen.html">Verstehen</a><a href="/entscheiden.html">Entscheiden</a><a href="/kaufen.html">Kaufen</a><a href="/begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="/renditen.html">Renditen seit 1970</a><a href="/zinskurve.html">Zinskurve</a><a href="/risikoaufschlaege.html">Risikoaufschläge</a><a href="/langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="/renditen.html">Staatsanleihen seit 1970</a><a href="/zinskurve.html">Zinskurve</a><a href="/risikoaufschlaege.html">Risikoaufschläge</a><a href="/langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="/ueber-uns.html">Über uns</a><a href="/rechtliches.html#haftung">Datenquellen</a><a href="/rechtliches.html#impressum">Impressum</a><a href="/rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="/rechtliches.html">Rechtliches</a></p>
   </footer>

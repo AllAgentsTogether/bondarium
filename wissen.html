@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Verstehen: Wissen über Anleihen – Bondarium</title>
-<meta name="description" content="Stufe 1 – Verstehen: Anleihen einfach erklärt, Arten, Zinsniveau, Laufzeit, Bonität, Risiko, ETFs, Kündigung, Handelsplätze, Duration, Rendite, Steuern, Markt – und das Glossar.">
+<meta name="description" content="Stufe 1 – Verstehen: Anleihen einfach erklärt – Arten, Zinsniveau, Laufzeit, Bonität, Risiko, ETFs, Kündigung, Duration, Rendite, Steuern und das Glossar.">
 <link rel="canonical" href="https://www.bondarium.de/wissen.html">
 <meta name="robots" content="index, follow">
 <meta name="author" content="Bondarium"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
@@ -13,14 +13,14 @@
 <meta property="og:locale" content="de_DE">
 <meta property="og:url" content="https://www.bondarium.de/wissen.html">
 <meta property="og:title" content="Verstehen: Wissen über Anleihen – Bondarium">
-<meta property="og:description" content="Stufe 1 – Verstehen: Anleihen einfach erklärt, Arten, Zinsniveau, Laufzeit, Bonität, Risiko, ETFs, Kündigung, Handelsplätze, Duration, Rendite, Steuern, Markt – und das Glossar.">
+<meta property="og:description" content="Stufe 1 – Verstehen: Anleihen einfach erklärt – Arten, Zinsniveau, Laufzeit, Bonität, Risiko, ETFs, Kündigung, Duration, Rendite, Steuern und das Glossar.">
 <meta property="og:image" content="https://www.bondarium.de/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Bondarium: Finde Anleihen, die zu deinem Leben passen">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Verstehen: Wissen über Anleihen – Bondarium">
-<meta name="twitter:description" content="Stufe 1 – Verstehen: Anleihen einfach erklärt, Arten, Zinsniveau, Laufzeit, Bonität, Risiko, ETFs, Kündigung, Duration, Rendite, Steuern, Markt – und das Glossar.">
+<meta name="twitter:description" content="Stufe 1 – Verstehen: Anleihen einfach erklärt – Arten, Zinsniveau, Laufzeit, Bonität, Risiko, ETFs, Kündigung, Duration, Rendite, Steuern und das Glossar.">
 <meta name="twitter:image" content="https://www.bondarium.de/og-image.png">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -30,43 +30,12 @@
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  .more .prose { font-size: 15px; margin-top: 16px; }
-  /* Wissen-Kacheln seit 25.09.2026 (Nutzerwunsch: wenig Text, 4 je Zeile, immer ein Bild, Thema groß):
-     Illustration oben, Thema als H2, eine Zeile Untertitel. */
-  .hub { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }   /* seit 28.09.2026 vier Kacheln nebeneinander (Nutzerwunsch), vorher 3 */
-  .hub-card { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 14px 14px 14px; text-decoration: none; color: var(--ink); box-shadow: var(--shadow); transition: transform .15s ease, border-color .15s ease; }
-  .hub-card:hover { border-color: var(--green-line); transform: translateY(-2px); }
-  .hub-card:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
-  .hub-img { width: 100%; height: 92px; display: block; margin-bottom: 6px; }
-  .hub-card h2 { font-family: var(--sans); font-weight: 600; font-size: 17.5px; line-height: 1.25; margin-bottom: 0; }
-  .hub-card .desc { font-size: 13px; line-height: 1.4; color: var(--muted); }
-  .hub-card:hover h2 { color: var(--green-text); }
-  /* Achte Kachel „Nächste Stufe: Entscheiden“ (Menü „Der Weg“, 25.09.2026): orange wie die Stufe Entscheiden */
-  .hub-card.next { background: linear-gradient(160deg, rgba(57,255,20,0.14) 0%, rgba(57,255,20,0.04) 100%); border-color: rgba(57,255,20,0.55); }
-  .hub-card.next:hover { border-color: var(--blue); }
-  /* Seit „Zinsniveau“ (26.09.2026): „Nächste Stufe“ als breites Band unter den Themen (Bild links, Text rechts).
-     Seit „Kündbare Anleihen“ (27.09.2026) zehn, seit den fünf Profi-Seiten (27.09.2026) fünfzehn Themen: das Glossar ist bis 940 px ebenfalls ein Band (siehe unten). */
-  .hub-card.next { grid-column: 1 / -1; display: grid; grid-template-columns: 150px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 22px; row-gap: 4px; align-items: center; padding: 16px 20px; }
-  .hub-card.next .hub-img { grid-row: 1 / 3; width: 150px; height: 96px; margin: 0; }
-  .hub-card.next h2 { align-self: end; }
-  .hub-card.next .desc { align-self: start; }
-  .hub-card.next:hover h2 { color: var(--green-text); }
+  /* Kacheln (.hub, .hub-card, .next) und Aufklapper (.more) seit 30.09.2026 zentral in base.css – hier nur Seitenspezifisches. */
   .crossnav b { color: var(--ink); font-weight: 600; }
   .crossnav { line-height: 1.9; }
-  @media (prefers-reduced-motion: reduce) {  .hub-card { transition: none; }  .hub-card:hover { transform: none; } }
-  @media (max-width: 940px) {  .hub { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 600px) {  .hub { gap: 10px; }  .hub-card { padding: 14px 14px 14px; }  .hub-img { height: 84px; margin-bottom: 4px; }  .hub-card h2 { font-size: 17px; }  .hub-card .desc { font-size: 12.5px; }
-    .hub-card.next { grid-template-columns: 96px minmax(0, 1fr); column-gap: 14px; }
-    .hub-card.next .hub-img { width: 96px; height: 72px; }
-    }
-  .more summary { cursor: pointer; font-size: 19px; font-weight: 600; color: var(--ink); list-style: none; display: flex; align-items: center; gap: 10px; }
-  .more summary::-webkit-details-marker { display: none; }
-  .more summary::before { content: ''; width: 8px; height: 8px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(-45deg); transition: transform .15s; }
-  .more[open] summary::before { transform: rotate(45deg); }
-  .more summary:hover { color: var(--line); }
-  .more summary:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 3px; }
+  /* Stufen-Leiste am Handy kompakt: Regel steht seit 30.09.2026 zentral in base.css (.tueren.stufen-kopf). */
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","headline":"Verstehen – Wissen über Anleihen: Grundlagen, Anleihe-Arten, Zinsniveau, Laufzeit, Bonität, Risiko, ETF, Fortgeschrittene, Kündbare Anleihen, Glossar","description":"Stufe 1 – Verstehen: Anleihen einfach erklärt, Arten, Zinsniveau, Laufzeit, Bonität, Risiko, ETFs, Kündigung, Duration, Rendite, Steuern, Markt – und das Glossar.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-28","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/wissen.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","headline":"Verstehen – Wissen über Anleihen: Grundlagen, Anleihe-Arten, Zinsniveau, Laufzeit, Bonität, Risiko, ETF, Fortgeschrittene, Kündbare Anleihen, Glossar","description":"Stufe 1 – Verstehen: Anleihen einfach erklärt – Arten, Zinsniveau, Laufzeit, Bonität, Risiko, ETFs, Kündigung, Duration, Rendite, Steuern und das Glossar.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-30","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/wissen.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Verstehen","item":"https://www.bondarium.de/wissen.html"}]}</script>
 </head>
 <body>
@@ -117,7 +86,7 @@
           <a href="realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
       </div>
@@ -168,7 +137,7 @@
 </svg></a>
         </nav>   <!-- seit 28.09.2026 (Nutzerwunsch): dieselben Kacheln wie auf der Startseite als Navigation zwischen den Stufen -->
   <h1>Verstehen</h1>
-  <p class="sub">Wissen über Anleihen – sechzehn Themen vom Einstieg bis zum Glossar. Zeit zum Stöbern.</p>
+  <p class="sub">Wissen über Anleihen – <span id="w-n">16</span> Themen vom Einstieg bis zum Glossar. Zeit zum Stöbern.</p>
 
   <div class="hub">
     <a class="hub-card" href="grundlagen.html">
@@ -301,7 +270,7 @@
   <path d="M68 46 H98 A7 7 0 0 1 98 60 H68" fill="none" stroke="#1DA300" stroke-width="2" stroke-dasharray="4 3.5" stroke-opacity="0.5"/>
   <circle cx="21" cy="53" r="4" fill="#1A1A19"/><circle cx="38" cy="53" r="3.2" fill="#1DA300"/><circle cx="54" cy="53" r="3.2" fill="#1DA300"/>
   <path d="M68 30 V76" stroke="#CF7430" stroke-width="2.6" stroke-linecap="round"/>
-  <rect x="47" y="12" width="42" height="17" rx="8.5" fill="#CF7430"/>
+  <rect x="47" y="12" width="42" height="17" rx="8.5" fill="#A2561C"/>
   <text x="68" y="24.5" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9.5" font-weight="700" fill="#fff">kündbar</text>
   <path d="M64 70 H24 M30 64 L24 70 L30 76" fill="none" stroke="#CF7430" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
   <rect x="70" y="63" width="34" height="14" rx="7" fill="#1F7A5E"/>
@@ -320,8 +289,8 @@
   <rect x="62" y="50" width="9" height="30" rx="2" fill="#fff" stroke="#1DA300" stroke-width="2"/>
   <rect x="80" y="50" width="9" height="30" rx="2" fill="#fff" stroke="#1DA300" stroke-width="2"/>
   <rect x="18" y="80" width="84" height="6" rx="2" fill="#1DA300"/>
-  <rect x="66" y="8" width="46" height="18" rx="9" fill="#CF7430"/>
-  <text x="89" y="20.5" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9.5" font-weight="700" fill="#fff">98,40 | 98,44</text>
+  <rect x="40" y="1" width="78" height="17" rx="8.5" fill="#A2561C"/>
+  <text x="79" y="13" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9.5" font-weight="700" fill="#fff">98,40 | 98,44</text>
 </svg>
       <h2>Handelsplätze</h2>
       <p class="desc">Frankfurt, Stuttgart, gettex &amp; Co. – wer den Kurs stellt</p>
@@ -393,7 +362,7 @@
   <path d="M20 66 L38 50 L54 58 L72 34 L88 40 L102 24" fill="none" stroke="#1DA300" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
   <path d="M20 44 H102" stroke="#8E8D86" stroke-width="1.6" stroke-dasharray="4 3"/>
   <circle cx="102" cy="24" r="4.5" fill="#1DA300" stroke="#fff" stroke-width="2"/>
-  <rect x="62" y="62" width="40" height="14" rx="7" fill="#CF7430"/>
+  <rect x="62" y="62" width="40" height="14" rx="7" fill="#A2561C"/>
   <text x="82" y="72.5" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9" font-weight="700" fill="#fff">EZB</text>
   <circle cx="20" cy="66" r="3" fill="#1A1A19"/>
 </svg>
@@ -409,7 +378,7 @@
   <path d="M99.5 79.5 L110 90" stroke="#1DA300" stroke-width="4" stroke-linecap="round"/>
 </svg>
       <h2>Glossar</h2>
-      <p class="desc">67 Begriffe kurz erklärt</p>
+      <p class="desc">Alle Fachbegriffe kurz erklärt</p>
     </a>
     <a class="hub-card next" href="entscheiden.html">
       <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
@@ -455,9 +424,9 @@
   </nav>
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html" aria-current="page">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
@@ -470,6 +439,9 @@ window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']
 
 // Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
 MC.navInit();
+
+// Anzahl der Themen aus den Kacheln (30.09.2026) – nicht mehr von Hand
+(function () { var n = document.querySelectorAll(".hub > .hub-card:not(.next)").length, e = document.getElementById("w-n"); if (e && n) e.textContent = n; })();
 </script>
 </body>
 </html>

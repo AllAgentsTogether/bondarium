@@ -127,7 +127,7 @@ ZINSEN = ("Zinsen", "beobachten.html", [
     ("Realzins seit 1970", "realzins.html"),
     "Risiko",
     ("Unternehmensanleihen seit 1970", "unternehmensanleihen.html"),
-    ("Risikoaufschläge seit 1953", "risikoaufschlaege.html"),
+    ("Risikoaufschläge", "risikoaufschlaege.html"),
     ("Langläufer", "langlaeufer.html"),
 ])
 # Die Aufklapper neben der Akademie, in dieser Reihenfolge; Rubrik-Schlüssel je Menü; Zusatzseiten, die zu einem Menü zählen
@@ -166,10 +166,10 @@ SITE = "https://www.bondarium.de/"
 # Fußzeile aller Seiten (seit 30.09.2026; Vorbild: Startseite, dort seit 29.09.2026). Spalten: (Überschrift, id, Links)
 FOOTER = [
     ("Anleihen", "f-anl", [("Anleihen-Suche", "anleihen-suche.html"), ("Top-10-Listen", "anleihen.html"),
-                           ("Anleihen-Beispiele", "guide.html"), ("Anleihen-ETFs", "anleihen-etf.html")]),
+                           ("Anleihen-Beispiele nach Ziel", "guide.html"), ("Anleihen-ETFs", "anleihen-etf.html")]),
     ("Akademie", "f-akad", [("Verstehen", "wissen.html"), ("Entscheiden", "entscheiden.html"), ("Kaufen", "kaufen.html"),
                             ("Glossar", "begriffe.html")]),
-    ("Zinsen", "f-zins", [("Renditen seit 1970", "renditen.html"), ("Zinskurve", "zinskurve.html"),
+    ("Zinsen", "f-zins", [("Staatsanleihen seit 1970", "renditen.html"), ("Zinskurve", "zinskurve.html"),
                           ("Risikoaufschläge", "risikoaufschlaege.html"), ("Langläufer", "langlaeufer.html")]),
     ("Bondarium", "f-bond", [("Über uns", "ueber-uns.html"), ("Datenquellen", "rechtliches.html#haftung"),
                              ("Impressum", "rechtliches.html#impressum"), ("Datenschutz", "rechtliches.html#datenschutz")]),

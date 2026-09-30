@@ -38,11 +38,9 @@
 
   /* HTML-Balken (3, 4, 6) */
   .balken .hb { display: grid; grid-template-columns: 72px minmax(0, 1fr); align-items: center; gap: 10px; }
-  .balken .hb + .hb { margin-top: 7px; }
-  .hb-l { font-size: 14px; font-weight: 600; color: var(--ap-ink); }
-  .hb-bar { display: flex; align-items: center; justify-content: flex-end; height: 28px; width: var(--w); min-width: 60px; padding-right: 8px; border-radius: 6px; background: var(--down); }
-  .hb-bar.g { background: #1F7A5E; } .hb-bar.o { background: #A3651A; } .hb-bar.n { background: #55544F; }
-  .hb-bar b { color: #fff; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  /* Grundform der Balken in base.css; hier Wert rechts, Mindestbreite und Farben */
+  .hb-bar { justify-content: flex-end; min-width: 60px; padding-right: 8px; background: var(--down); }
+  .hb-bar.g { background: #1F7A5E; } .hb-bar.n { background: #55544F; }
   .sb-f { font-size: 12.5px; color: var(--text); margin-top: 10px; line-height: 1.45; }
 
   /* Drei Kacheln (2) */
@@ -70,12 +68,10 @@
   .lt .hb-bar.f { background: var(--green); } .lt .hb-bar.f b { color: var(--ink); }
   .lt .hb-r { font-size: 12.5px; color: var(--text); text-align: right; }
 
-  .sb-go { margin-top: 14px; align-self: flex-start; font-size: 14px; padding: 10px 16px; }
   @media (max-width: 600px) {
     .balken .hb { grid-template-columns: 56px minmax(0, 1fr); } .hb-l { font-size: 13px; }
     .drei { gap: 6px; } .dk { padding: 10px 8px; } .dk-r { font-size: 20px; } .dk-k { font-size: 13px; } .dk-w { font-size: 12px; }
     .lt .hb { grid-template-columns: 48px minmax(0, 1fr) 60px; }
-    .sb-go { align-self: stretch; text-align: center; }
   }
   /* Zeitstrahl (1): eigene Handy-Fassung (schmalere viewBox, Schrift effektiv ≥ 11 px) */
   .sb-m { display: none; }
@@ -132,7 +128,7 @@
           <a href="realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
       </div>
@@ -177,9 +173,9 @@
       <div class="k-text">
         <span class="knr" aria-hidden="true">3</span>
         <h2 id="h-risiko">Das Risiko: Zinsniveau steigt, Kurs fällt</h2>
-        <p>Deine Anleihe zahlt 3&nbsp;%. Steigt das allgemeine Zinsniveau auf 4&nbsp;%, bringen neue Anleihen mehr – <strong>deine ist nur noch mit Abschlag zu verkaufen.</strong> Der Kurs fällt so weit, bis sie einem Käufer wieder 4&nbsp;% bringt.</p><p>Wie weit, hängt an der Restlaufzeit. Faustregel: <strong>Kursverlust in % ≈ Duration × Prozentpunkte.</strong> Die <a href="begriffe.html#duration">Duration</a> ist kürzer als die Restlaufzeit – bei 10 Jahren rund 8,5, bei 30 Jahren rund 20. Wer bis zur Fälligkeit hält, bekommt trotzdem 100&nbsp;% – sitzt aber so lange mit dem alten Zins fest.</p>
+        <p>Deine Anleihe zahlt 3&nbsp;%. Steigt das allgemeine Zinsniveau auf 4&nbsp;%, bringen neue Anleihen mehr – <strong>deine ist nur noch mit Abschlag zu verkaufen.</strong> Der Kurs fällt so weit, bis sie einem Käufer wieder 4&nbsp;% bringt.</p><p>Wie weit, hängt an der Restlaufzeit. Faustregel: <strong>Kursverlust in % ≈ Duration × Prozentpunkte.</strong> Die <a href="duration.html">Duration</a> ist kürzer als die Restlaufzeit – bei 10 Jahren rund 8,5, bei 30 Jahren rund 20. Wer bis zur Fälligkeit hält, bekommt trotzdem 100&nbsp;% – sitzt aber so lange mit dem alten Zins fest.</p>
       </div>
-      <div class="k-bild"><p class="sb-k">Zinsniveau steigt um 1 Punkt – der Kurs fällt</p><div class="balken" role="img" aria-label="Kursverlust bei einem Prozentpunkt höherem Zinsniveau: 2 Jahre minus 2 Prozent, 5 Jahre minus 5 Prozent, 10 Jahre minus 8 Prozent, 30 Jahre minus 17 Prozent."><div class="hb ax-row"><span class="ax-t">Laufzeit</span><span class="ax-t">Kursverlust →</span></div><div class="hb"><span class="hb-l">2 Jahre</span><span class="hb-bar n" style="--w:18%"><b>−2&nbsp;%</b></span></div><div class="hb"><span class="hb-l">5 Jahre</span><span class="hb-bar o" style="--w:32%"><b>−5&nbsp;%</b></span></div><div class="hb"><span class="hb-l">10 Jahre</span><span class="hb-bar " style="--w:52%"><b>−8&nbsp;%</b></span></div><div class="hb"><span class="hb-l">30 Jahre</span><span class="hb-bar " style="--w:100%"><b>−17&nbsp;%</b></span></div></div><p class="sb-f">Anleihe mit 3&nbsp;% Kupon, Kurs 100. Rechne deine eigene im <a href="rechner.html#zinsniveau">Rechner</a> nach.</p></div>
+      <div class="k-bild"><p class="sb-k">Zinsniveau steigt um 1 Punkt – der Kurs fällt</p><div class="balken" role="img" aria-label="Kursverlust bei einem Prozentpunkt höherem Zinsniveau: 2 Jahre minus 2 Prozent, 5 Jahre minus 5 Prozent, 10 Jahre minus 8 Prozent, 30 Jahre minus 17 Prozent."><div class="hb ax-row"><span class="ax-t">Laufzeit</span><span class="ax-t">Kursverlust →</span></div><div class="hb"><span class="hb-l">2 Jahre</span><span class="hb-bar n" style="--w:8.5%"><b>−2&nbsp;%</b></span></div><div class="hb"><span class="hb-l">5 Jahre</span><span class="hb-bar o" style="--w:20%"><b>−5&nbsp;%</b></span></div><div class="hb"><span class="hb-l">10 Jahre</span><span class="hb-bar " style="--w:36%"><b>−8&nbsp;%</b></span></div><div class="hb"><span class="hb-l">30 Jahre</span><span class="hb-bar " style="--w:77%"><b>−17&nbsp;%</b></span></div></div><p class="sb-f">Anleihe mit 3&nbsp;% Kupon, Kurs 100. Balken im selben Maßstab wie bei Karte 4 (Kursgewinn), damit der Unterschied sichtbar bleibt. Rechne deine eigene im <a href="rechner.html#zinsniveau">Rechner</a> nach.</p></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Lange Laufzeit und steigendes Zinsniveau = fallender Kurs. Halten bis zur Fälligkeit rettet den Kurs, nicht die verlorenen Jahre.</span></p>
     </section>
 
@@ -189,7 +185,7 @@
         <h2 id="h-chance">Die Chance: Zinsniveau fällt, Kurs steigt</h2>
         <p>Dieselbe Mechanik läuft auch andersherum. <strong>Fällt das allgemeine Zinsniveau, steigt der Kurs deiner Anleihe</strong> – und die lange Laufzeit, die vorher das Risiko war, ist jetzt der Hebel nach oben.</p><p>Dazu kommt die zweite Chance: <strong>Du hast dir den Zins für Jahre gesichert.</strong> Wer zehn Jahre zu 3&nbsp;% gekauft hat, bekommt die 3&nbsp;% bis zum Schluss – auch wenn neue Anleihen längst nur noch 1,5&nbsp;% bringen.</p>
       </div>
-      <div class="k-bild"><p class="sb-k">Zinsniveau fällt um 1 Punkt – der Kurs steigt</p><div class="balken" role="img" aria-label="Kursgewinn bei einem Prozentpunkt niedrigerem Zinsniveau: 2 Jahre plus 2 Prozent, 5 Jahre plus 5 Prozent, 10 Jahre plus 9 Prozent, 30 Jahre plus 22 Prozent."><div class="hb ax-row"><span class="ax-t">Laufzeit</span><span class="ax-t">Kursgewinn →</span></div><div class="hb"><span class="hb-l">2 Jahre</span><span class="hb-bar g" style="--w:18%"><b>+2&nbsp;%</b></span></div><div class="hb"><span class="hb-l">5 Jahre</span><span class="hb-bar g" style="--w:32%"><b>+5&nbsp;%</b></span></div><div class="hb"><span class="hb-l">10 Jahre</span><span class="hb-bar g" style="--w:52%"><b>+9&nbsp;%</b></span></div><div class="hb"><span class="hb-l">30 Jahre</span><span class="hb-bar g" style="--w:100%"><b>+22&nbsp;%</b></span></div></div><p class="sb-f">Nach oben etwas mehr als nach unten – die Kurve ist gebogen. Fachwort: <a href="begriffe.html#konvexitaet">Konvexität</a>.</p></div>
+      <div class="k-bild"><p class="sb-k">Zinsniveau fällt um 1 Punkt – der Kurs steigt</p><div class="balken" role="img" aria-label="Kursgewinn bei einem Prozentpunkt niedrigerem Zinsniveau: 2 Jahre plus 2 Prozent, 5 Jahre plus 5 Prozent, 10 Jahre plus 9 Prozent, 30 Jahre plus 22 Prozent."><div class="hb ax-row"><span class="ax-t">Laufzeit</span><span class="ax-t">Kursgewinn →</span></div><div class="hb"><span class="hb-l">2 Jahre</span><span class="hb-bar g" style="--w:8.5%"><b>+2&nbsp;%</b></span></div><div class="hb"><span class="hb-l">5 Jahre</span><span class="hb-bar g" style="--w:21%"><b>+5&nbsp;%</b></span></div><div class="hb"><span class="hb-l">10 Jahre</span><span class="hb-bar g" style="--w:40%"><b>+9&nbsp;%</b></span></div><div class="hb"><span class="hb-l">30 Jahre</span><span class="hb-bar g" style="--w:100%"><b>+22&nbsp;%</b></span></div></div><p class="sb-f">Nach oben etwas mehr als nach unten – bei 30 Jahren +22&nbsp;% statt −17&nbsp;%, gleicher Maßstab wie bei Karte 3. Fachwort: <a href="duration.html#konvexitaet">Konvexität</a>.</p></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Lange Laufzeit ist eine Wette auf fallendes Zinsniveau – und eine Zinsgarantie für Jahre.</span></p>
     </section>
 
@@ -207,22 +203,22 @@
       <div class="k-text">
         <span class="knr" aria-hidden="true">6</span>
         <h2 id="h-wahl">Die passende Laufzeit</h2>
-        <p>Die einfachste Regel: <strong>Laufzeit = der Tag, an dem du das Geld brauchst.</strong> Auto in zwei Jahren? Zwei Jahre. Studium 2031? Fällig 2031. Dann ist der Kurs zwischendurch egal.</p><p>Weißt du es nicht – oder willst du Zinseinkommen für lange? Dann <strong>teile auf:</strong> mehrere Anleihen mit Fälligkeiten in 1, 2, 3, 4 und 5 Jahren. Jedes Jahr wird eine fällig und wandert zum aktuellen Zins ans Ende – die <a href="fortgeschrittene.html#leiter">Anleihenleiter</a>.</p>
+        <p>Die einfachste Regel: <strong>Laufzeit = der Tag, an dem du das Geld brauchst.</strong> Auto in zwei Jahren? Zwei Jahre. Studium 2031? Fällig 2031. Dann ist der Kurs zwischendurch egal.</p><p>Weißt du es nicht – oder willst du Zinseinkommen für lange? Dann <strong>teile auf:</strong> mehrere Anleihen mit Fälligkeiten in 1, 2, 3, 4 und 5 Jahren. Jedes Jahr wird eine fällig und wandert zum aktuellen Zins ans Ende – die <a href="anleihenleiter.html">Anleihenleiter</a>.</p>
       </div>
       <div class="k-bild"><p class="sb-k">Die Leiter: fünf Sprossen, jedes Jahr eine fällig</p><div class="balken lt" role="img" aria-label="Fünf Anleihen mit Fälligkeit in 1, 2, 3, 4 und 5 Jahren, je 10.000 Euro. Die erste wird nächstes Jahr fällig und wird als neue 5-jährige wieder angelegt."><div class="hb ax-row"><span class="ax-t">Fällig</span><span class="ax-t">Restlaufzeit in Jahren →</span><span></span></div><div class="hb"><span class="hb-l">2027</span><span class="hb-bar f" style="--w:20%"><b>1&nbsp;J.</b></span><span class="hb-r">wird fällig</span></div><div class="hb"><span class="hb-l">2028</span><span class="hb-bar" style="--w:40%"><b>2&nbsp;J.</b></span><span class="hb-r">10.000&nbsp;€</span></div><div class="hb"><span class="hb-l">2029</span><span class="hb-bar" style="--w:60%"><b>3&nbsp;J.</b></span><span class="hb-r">10.000&nbsp;€</span></div><div class="hb"><span class="hb-l">2030</span><span class="hb-bar" style="--w:80%"><b>4&nbsp;J.</b></span><span class="hb-r">10.000&nbsp;€</span></div><div class="hb"><span class="hb-l">2031</span><span class="hb-bar" style="--w:100%"><b>5&nbsp;J.</b></span><span class="hb-r">10.000&nbsp;€</span></div></div><p class="sb-f">Das fällige Geld wird als neue 5-jährige angelegt – die Leiter läuft weiter.</p><a class="go sb-go" href="anleihen-suche.html?art=0&amp;w=EUR&amp;zins=0&amp;rest=b">Staatsanleihen in Euro, 1–3 Jahre →</a></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Laufzeit nach dem Termin wählen. Ohne Termin: aufteilen statt raten.</span></p>
     </section>
 
-    <div class="weiter">
-      <a class="go" href="risiko.html">Risiko kennen: die sieben Risiken →</a>
-      <a class="go leise" href="rechner.html#zinsniveau">Rechner: Was macht ±1 Punkt mit dem Kurs? →</a>
-      <a class="go leise" href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit →</a>
-    </div>
     <p class="klein">Diese Seite erklärt die Laufzeit. Sie empfiehlt keine Anlage. Die Zahlen sind gerundet.</p>
 
     <nav class="crossnav" aria-label="Weiter">
       <p class="crossnav-t">Weiter</p>
       <ul class="crossnav-l">
+        <li><a href="risiko.html">Risiko kennen: die sieben Risiken</a></li>
+        <li><a href="rechner.html#zinsniveau">Rechner: Was macht ±1 Punkt mit dem Kurs?</a></li>
+        <li><a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a></li>
+        <li><a href="duration.html">Duration und Konvexität – wie stark der Kurs reagiert</a></li>
+        <li><a href="anleihenleiter.html">Leiter, Hantel, Roll-down</a></li>
         <li><a href="zinsniveau.html">Zinsniveau – warum es steigt und fällt</a></li>
         <li><a href="bonitaet.html">Bonität und Ratings – wie sicher ist ein Schuldner?</a></li>
         <li><a href="anlageziele.html">Welche Anleihe wozu passt</a></li>
@@ -238,9 +234,9 @@
     </details>
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>

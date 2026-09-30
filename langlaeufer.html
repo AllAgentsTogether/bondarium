@@ -39,8 +39,6 @@
   .fititem .v { display: block; font-size: 26px; line-height: 1.2; margin-bottom: 5px; font-variant-numeric: tabular-nums; }
   .fititem .d { display: block; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
   /* Chart */
-  .legend { display: flex; gap: 10px 22px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 10px 0; margin-bottom: 24px; }
-  .legend span { display: inline-flex; align-items: center; gap: 7px; }
   .sw-line { width: 20px; height: 3px; border-radius: 2px; background: var(--c, var(--line)); }
   svg { width: 100%; height: auto; display: block; }
   #chart-kurs { aspect-ratio: 1000 / 600; }
@@ -57,31 +55,18 @@
   .facts { min-width: 900px; font-size: 13px; }
   .facts th[scope=row] { white-space: normal; }
   .facts th[scope=row] small { display: block; color: var(--muted); font-weight: 400; font-size: 12px; margin-top: 2px; }
-  .kpis { min-width: 1000px; margin-top: 8px; font-size: 13px; }   /* Ausnahme von der 14-px-Stufe: 11–13 Spalten müssen in 1000 px passen (Typografie-Konzept 26.09.2026; Inter läuft breiter als die Systemschrift) */
-  #kpi-head th:first-child { width: 18.5%; }   /* feste Breite: Spalten springen beim Filtern nicht */
-  .kpis td.isin { font-variant-numeric: tabular-nums; white-space: nowrap; letter-spacing: 0.02em; }
-  .kpis td.txt { white-space: nowrap; }
-  .kpis td.art { padding-right: 10px; }   /* Abstand zur ISIN („Unternehmen“ ist die breiteste Angabe) */
+  /* .kpis Grundregeln und .sortbtn: base.css (seit 30.09.2026 keine Seiten-Kopien mehr) */
+  .kpis { margin-top: 8px; }
+  #kpi-head th:first-child { width: 19%; }   /* feste Breite: Spalten springen beim Filtern nicht */
+  .kpis td.emi { white-space: normal; line-height: 1.4; min-width: 90px; }   /* Emittent darf umbrechen – so passt die Tabelle in 1000 px */
   .kpis td.empty { color: var(--muted); padding: 18px 0; }
-  /* Tabellenkopf = Filter: Klick auf den Spaltentitel sortiert (auf-/absteigend),
-     die Währung hat zusätzlich ein Auswahlfeld im Kopf */
-  .kpis thead th { vertical-align: top; font-size: 12px; letter-spacing: 0; }
-  .kpis thead th .sortbtn { font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 0; padding: 6px 0; margin: -6px 0; min-height: 24px; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }   /* Tippfläche 24 px (WCAG 2.5.8), Lage unverändert */
-  .kpis thead th .sortbtn::after { content: "↕"; font-size: 12px; opacity: 0.45; }
-  .kpis thead th .sortbtn:hover, .kpis thead th[aria-sort] .sortbtn { color: var(--ink); }
-  .kpis thead th[aria-sort="ascending"] .sortbtn::after { content: "↑"; opacity: 1; }
-  .kpis thead th[aria-sort="descending"] .sortbtn::after { content: "↓"; opacity: 1; }
-  .kpis thead th .hfilter { display: block; margin-top: 6px; font: inherit; font-size: 12px; letter-spacing: 0; text-transform: none; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 6px; min-height: 24px; cursor: pointer; max-width: 110px; }
-  .kpis thead th .hfilter.on { border-color: var(--line); color: var(--line); }
-  .kpis thead th .sortbtn:focus-visible, .kpis thead th .hfilter:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
-  .kpis th, .kpis td { padding: 9px 4px 9px 0; }   /* 11 Spalten inkl. „Art“: knapper Abstand, damit die Tabelle in 1000 px passt */
-  .more summary { cursor: pointer; font-size: 19px; font-weight: 600; color: var(--ink); list-style: none; display: flex; align-items: center; gap: 10px; }
-  .more summary::-webkit-details-marker { display: none; }
-  .more summary::before { content: ''; width: 8px; height: 8px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(-45deg); transition: transform .15s; }
-  .more[open] summary::before { transform: rotate(45deg); }
-  .more summary:hover { color: var(--line); }
-  .kpis th[scope=row] { white-space: nowrap; line-height: 1.4; }
-  .kpis td.num { font-size: 14px; }
+  /* Tabellenkopf = Filter: Klick auf den Spaltentitel sortiert, die Währung hat zusätzlich ein Auswahlfeld im Kopf */
+  .kpis thead th .hfilter { display: block; margin-top: 6px; font: inherit; font-size: 12px; letter-spacing: 0; text-transform: none; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 6px; min-height: 24px; }
+  .kpis thead th .hfilter.on { border-color: var(--accent-text); color: var(--accent-text); }
+  .kpis thead th .hfilter:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
+  @media (pointer: coarse) { .kpis thead th .hfilter { min-height: 44px; } }   /* Tippfläche ≥ 44 px (vorher 34 px) */
+  .kpis th, .kpis td { padding: 9px 6px 9px 0; }   /* zehn Spalten in 1000 px */
+  .kpis th[scope=row] { white-space: nowrap; font-weight: 600; }
   .kpis td.num small { display: block; color: var(--muted); font-size: 12px; }
   .tag { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 7px; }
   @media (max-width: 760px) {  .fitrow { grid-template-columns: repeat(2, 1fr); }  .fititem .v { font-size: 23px; } }
@@ -146,7 +131,7 @@
           <a href="realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="langlaeufer.html" class="current">Langläufer</a>
         </div>
       </div>
@@ -166,26 +151,20 @@
 
     <div class="table-scroll">
     <table class="kpis" id="kpis">
+      <caption class="sr-only">Kennzahlen der sieben Langläufer: Rendite, Kurs, Abstand zum Hoch, Restlaufzeit, Kupon, Fälligkeit, Emittent, ISIN und Währung</caption>
       <thead id="kpi-head"><tr>
-        <th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Emittent</button></th>
+        <th scope="col" data-col="label"><button type="button" class="sortbtn" data-col="label">Anleihe</button></th>
         <th scope="col" data-col="yld"><button type="button" class="sortbtn" data-col="yld">Rendite</button></th>
-        <th scope="col" data-col="art"><button type="button" class="sortbtn" data-col="art" title="Staatsanleihe oder Unternehmensanleihe">Art</button></th>
-        <th scope="col" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th>
-        <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button><select class="hfilter" data-f="cur" aria-label="Nach Währung filtern"><option value="">Alle</option><option value="EUR">EUR</option><option value="USD">USD</option></select></th>
         <th scope="col" data-col="price"><button type="button" class="sortbtn" data-col="price">Kurs</button></th>
+        <th scope="col" data-col="sinceHigh"><button type="button" class="sortbtn" data-col="sinceHigh">Seit Hoch</button></th>
+        <th scope="col" data-col="years"><button type="button" class="sortbtn" data-col="years">Restlaufzeit</button></th>
         <th scope="col" data-col="coupon"><button type="button" class="sortbtn" data-col="coupon">Kupon</button></th>
         <th scope="col" data-col="maturity"><button type="button" class="sortbtn" data-col="maturity">Fälligkeit</button></th>
-        <th scope="col" data-col="years"><button type="button" class="sortbtn" data-col="years">Restlaufzeit</button></th>
-        <th scope="col" data-col="sinceHigh"><button type="button" class="sortbtn" data-col="sinceHigh">Seit Hoch</button></th>
+        <th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Emittent</button></th>
+        <th scope="col" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th>
+        <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button><select class="hfilter" data-f="cur" aria-label="Nach Währung filtern"><option value="">Alle</option><option value="EUR">EUR</option><option value="USD">USD</option></select></th>
       </tr></thead>
       <tbody id="kpis-body">
-        <tr><th scope="row"><i class="tag" style="background:#1D5FA0"></i>Bundesrepublik Deutschland</th><td class="num">3,90&nbsp;%</td><td class="txt art">Staat</td><td class="isin"><a href="anleihe.html?isin=DE0001102481" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">DE0001102481</a></td><td class="txt">EUR</td><td class="num">40,07</td><td class="num">0,00&nbsp;%</td><td class="num">15.08.2050</td><td class="num">23,9 Jahre</td><td class="num">−66&nbsp;%<small>Hoch 116,56 (03.2020)</small></td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#2C2C2A"></i>Bundesrepublik Deutschland</th><td class="num">3,73&nbsp;%</td><td class="txt art">Staat</td><td class="isin"><a href="anleihe.html?isin=DE0001135366" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">DE0001135366</a></td><td class="txt">EUR</td><td class="num">110,78</td><td class="num">4,75&nbsp;%</td><td class="num">04.07.2040</td><td class="num">13,8 Jahre</td><td class="num">−49&nbsp;%<small>Hoch 218,06 (03.2020)</small></td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#B23B2E"></i>Republik Italien</th><td class="num">4,70&nbsp;%</td><td class="txt art">Staat</td><td class="isin"><a href="anleihe.html?isin=IT0005441883" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">IT0005441883</a></td><td class="txt">EUR</td><td class="num">52,97</td><td class="num">2,15&nbsp;%</td><td class="num">01.03.2072</td><td class="num">45,5 Jahre</td><td class="num">−50&nbsp;%<small>Hoch 105,16 (08.2021)</small></td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#8A5FBF"></i>Republik Frankreich</th><td class="num">4,71&nbsp;%</td><td class="txt art">Staat</td><td class="isin"><a href="anleihe.html?isin=FR0014001NN8" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">FR0014001NN8</a></td><td class="txt">EUR</td><td class="num">21,55</td><td class="num">0,50&nbsp;%</td><td class="num">25.05.2072</td><td class="num">45,7 Jahre</td><td class="num">−78&nbsp;%<small>Hoch 97,38 (01.2021)</small></td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#1F7A5E"></i>Republik Österreich</th><td class="num">3,34&nbsp;%</td><td class="txt art">Staat</td><td class="isin"><a href="anleihe.html?isin=AT0000A2HLC4" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">AT0000A2HLC4</a></td><td class="txt">EUR</td><td class="num">28,83</td><td class="num">0,85&nbsp;%</td><td class="num">30.06.2120</td><td class="num">93,8 Jahre</td><td class="num">−79&nbsp;%<small>Hoch 134,55 (12.2020)</small></td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#C07E28"></i>Vereinigte Staaten</th><td class="num">5,54&nbsp;%</td><td class="txt art">Staat</td><td class="isin"><a href="anleihe.html?isin=US912810SN90" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">US912810SN90</a></td><td class="txt">USD</td><td class="num">44,40</td><td class="num">1,25&nbsp;%</td><td class="num">15.05.2050</td><td class="num">23,7 Jahre</td><td class="num">−56&nbsp;%<small>Hoch 101,72 (08.2020)</small></td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#2F8A9A"></i>Microsoft Corp.</th><td class="num">6,24&nbsp;%</td><td class="txt art">Unternehmen</td><td class="isin"><a href="anleihe.html?isin=US594918CD48" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">US594918CD48</a></td><td class="txt">USD</td><td class="num">50,83</td><td class="num">2,675&nbsp;%</td><td class="num">01.06.2060</td><td class="num">33,7 Jahre</td><td class="num">−55&nbsp;%<small>Hoch 111,94 (07.2020)</small></td></tr>
       </tbody>
     </table>
     </div>
@@ -193,8 +172,8 @@
 
     <div class="section prose">
     <h2>Warum der Hebel so groß ist</h2>
-    <p>Der Kurs einer Anleihe ist der heutige Wert aller künftigen Zahlungen. Beim Nullkupon-Bund gibt es genau eine – 100 im Jahr 2050 –, und steigt die Rendite, mit der man sie abzinst, von −0,1&nbsp;% auf 3,9&nbsp;%, schrumpft ihr Barwert von 103 auf 40. Das ist keine Krise des Schuldners, sondern Arithmetik. Die Kennzahl dafür heißt Duration: rund 24 beim Nullkupon-Bund, 22 beim BTP, 36 bei der Österreich-Anleihe, etwa 8 bei den 10-jährigen Staatsanleihen im <a href="renditen.html">Staatsanleihen-Chart</a>. Ein Prozentpunkt mehr Rendite kostet grob so viele Prozent Kurs.</p>
-    <p>Die Beispiele zeigen drei Dinge. Ein hoher Kupon schützt nicht, er verschiebt nur: Der Bund 4,75&nbsp;% 2040 kostete, als das allgemeine Zinsniveau bei null lag, 218 und hat seitdem 49&nbsp;% verloren – weniger als der Nullkupon-Bund mit rund zwei Dritteln, aber immer noch fast die Hälfte, obwohl er jedes Jahr 4,75&nbsp;% Zinsen zahlt. Der Kupon entscheidet über den Kurs, nicht die Bonität: Frankreich und Italien werden beide 2072 fällig, doch die OAT mit 0,5&nbsp;% steht bei 22, der BTP mit 2,15&nbsp;% bei 53. Und die Laufzeit wirkt nicht unbegrenzt: Die Österreich-Anleihe hatte auf ihrem Hoch bei 0,4&nbsp;% Rendite eine Duration über 70, heute bei 3,3&nbsp;% nur noch 36 – Zahlungen in 80 oder 100 Jahren sind fast nichts mehr wert. Deshalb werden Langläufer eher gehandelt als gehalten: Sie sind die reinste Wette auf ein sinkendes allgemeines Zinsniveau, die der Anleihemarkt bietet.</p>
+    <p>Der Kurs einer Anleihe ist der heutige Wert aller künftigen Zahlungen. Beim Nullkupon-Bund gibt es genau eine – 100 im Jahr 2050 –, und steigt die Rendite, mit der man sie abzinst, von −0,1&nbsp;% auf <span data-ll="bund-y">3,9&nbsp;%</span>, schrumpft ihr Barwert von 103 auf <span data-ll="bund-p">40</span>. Das ist keine Krise des Schuldners, sondern Arithmetik. Die Kennzahl dafür heißt Duration: rund <span data-ll="bund-d">23</span> beim Nullkupon-Bund, <span data-ll="btp-d">22</span> beim BTP, <span data-ll="at-d">36</span> bei der Österreich-Anleihe, etwa 8 bei den 10-jährigen Staatsanleihen im <a href="renditen.html">Staatsanleihen-Chart</a>. Ein Prozentpunkt mehr Rendite kostet grob so viele Prozent Kurs.</p>
+    <p>Die Beispiele zeigen drei Dinge. Ein hoher Kupon schützt nicht, er verschiebt nur: Der Bund 4,75&nbsp;% 2040 kostete, als das allgemeine Zinsniveau bei null lag, <span data-ll="bund2-hoch">218</span> und hat seitdem <span data-ll="bund2-minus">49&nbsp;%</span> verloren – weniger als der Nullkupon-Bund mit rund <span data-ll="bund-minus">zwei Dritteln</span>, aber immer noch einen großen Teil, obwohl er jedes Jahr 4,75&nbsp;% Zinsen zahlt. Der Kupon entscheidet über den Kurs, nicht die Bonität: Frankreich und Italien werden beide 2072 fällig, doch die OAT mit 0,5&nbsp;% steht bei <span data-ll="fr-p">22</span>, der BTP mit 2,15&nbsp;% bei <span data-ll="btp-p">53</span>. Und die Laufzeit wirkt nicht unbegrenzt: Die Österreich-Anleihe hatte auf ihrem Hoch bei 0,4&nbsp;% Rendite eine Duration über 70, heute bei <span data-ll="at-y">3,3&nbsp;%</span> nur noch <span data-ll="at-d2">36</span> – Zahlungen in 80 oder 100 Jahren sind fast nichts mehr wert. Deshalb werden Langläufer eher gehandelt als gehalten: Sie sind die reinste Wette auf ein sinkendes allgemeines Zinsniveau, die der Anleihemarkt bietet.</p>
     </div>
 
     <div class="section">
@@ -202,10 +181,11 @@
       <summary>Steckbrief der sieben Anleihen</summary>
     <div class="table-scroll">
     <table class="facts">
+      <caption class="sr-only">Steckbrief der sieben Anleihen: Emittent, Kupon, Emission, Volumen und Stückelung, Handel, Kursspanne seit Emission</caption>
       <thead><tr><th scope="col">Anleihe</th><th scope="col">Emittent</th><th scope="col">Kupon</th><th scope="col">Emission</th><th scope="col">Volumen · Stückelung</th><th scope="col">Handel</th><th scope="col">Kursspanne seit Emission</th></tr></thead>
       <tbody>
         <tr><th scope="row"><i class="tag" style="background:#1D5FA0"></i>Bund 0&nbsp;% 15.08.2050<small>DE0001102481 / 110248</small></th><td>Bundesrepublik Deutschland (Finanzagentur)</td><td>0&nbsp;% – Nullkupon, Ertrag nur aus der Rückzahlung zu 100</td><td>21.08.2019 zu 103,61 (Rendite −0,11&nbsp;%); 26 Aufstockungen bis 10/2025</td><td>45,5 Mrd. € · 0,01&nbsp;€</td><td>Deutsche Börsen; Referenzpreise der Bundesbank</td><td id="b-spanne">Hoch 116,56 (12.03.2020) · Tief 40,04 (15.09.2026)</td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#2C2C2A"></i>Bund 4,75&nbsp;% 04.07.2040<small>DE0001135366 / 113536</small></th><td>Bundesrepublik Deutschland (Finanzagentur)</td><td>4,75&nbsp;% p. a., jährlich am 4. Juli</td><td>23.07.2008 zu ≈97,8 (Rendite 4,91&nbsp;%); 10 Aufstockungen bis 2025</td><td>23 Mrd. € · 0,01&nbsp;€</td><td>Deutsche Börsen; Referenzpreise der Bundesbank</td><td id="b2-spanne">Hoch 218,06 (12.03.2020) · Tief 97,80 (23.07.2008)</td></tr>
+        <tr><th scope="row"><i class="tag" style="background:var(--ink)"></i>Bund 4,75&nbsp;% 04.07.2040<small>DE0001135366 / 113536</small></th><td>Bundesrepublik Deutschland (Finanzagentur)</td><td>4,75&nbsp;% p. a., jährlich am 4. Juli</td><td>23.07.2008 zu ≈97,8 (Rendite 4,91&nbsp;%); 10 Aufstockungen bis 2025</td><td>23 Mrd. € · 0,01&nbsp;€</td><td>Deutsche Börsen; Referenzpreise der Bundesbank</td><td id="b2-spanne">Hoch 218,06 (12.03.2020) · Tief 97,80 (23.07.2008)</td></tr>
         <tr><th scope="row"><i class="tag" style="background:#B23B2E"></i>BTP 2,15&nbsp;% 01.03.2072<small>IT0005441883 / A3KPKQ</small></th><td>Republik Italien (Dipartimento del Tesoro)</td><td>2,15&nbsp;% p. a., halbjährlich je 1,075&nbsp;% (1. März, 1. September)</td><td>12.04.2021 per Konsortium zu 99,467 (Rendite 2,18&nbsp;%)</td><td>5 → rund 7,4 Mrd. € · 1.000&nbsp;€</td><td>Borsa Italiana (MOT), daneben deutsche Börsen</td><td id="t-spanne">Hoch 105,16 (17.08.2021) · Tief 48,89 (03.10.2023)</td></tr>
         <tr><th scope="row"><i class="tag" style="background:#8A5FBF"></i>Frankreich 0,5&nbsp;% 25.05.2072<small>FR0014001NN8 / A2876Z</small></th><td>Republik Frankreich (Agence France Trésor)</td><td>0,5&nbsp;% p. a., jährlich am 25. Mai</td><td>19.01.2021 per Konsortium zu 95,895 (Rendite 0,593&nbsp;%, Rekordtief); Orderbuch 75 Mrd. €</td><td>7 Mrd. € zum Start, später aufgestockt · 1&nbsp;€</td><td>Euronext Paris, daneben deutsche Börsen</td><td id="fr-spanne">Hoch 97,38 (25.01.2021) · Tief 21,55 (15.09.2026)</td></tr>
         <tr><th scope="row"><i class="tag" style="background:#1F7A5E"></i>Österreich 0,85&nbsp;% 30.06.2120<small>AT0000A2HLC4 / A28Y97</small></th><td>Republik Österreich (OeBFA)</td><td>0,85&nbsp;% p. a., jährlich am 30. Juni</td><td>24.06.2020 per Konsortium zu 98,01 (Rendite 0,88&nbsp;%); später aufgestockt</td><td>2 → rund 5,2 Mrd. € · 1.000&nbsp;€</td><td>Wiener Börse, daneben deutsche Börsen</td><td id="at-spanne">Hoch 134,55 (10.12.2020) · Tief 28,23 (10.09.2026)</td></tr>
@@ -236,15 +216,16 @@
     </details>
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html" aria-current="page">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html" aria-current="page">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
 </div>
 
 <script src="site.js"></script>
+<script src="bond.js"></script>
 <script>
 // Rückfall, falls site.js nicht lädt (Netzfehler): Minimalform, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
 window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, minus: function (s) { return String(s).replace(/^-/, "\u2212"); }, zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\u2212") : "\u2013"; }, load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, hoverWrap: function (s) { return s; }, navInit: function () {} };
@@ -264,19 +245,14 @@ const T = {
   years: "Jahre", sinceHigh: "seit Hoch"
 };
 function L(k) { return T[k] != null ? T[k] : k; }
-const NF = {};
-function fmt(v, dec = 0) {
-  if (typeof v !== "number" || !isFinite(v)) return "–";
-  const nf = NF[dec] || (NF[dec] = new Intl.NumberFormat("de-DE", { minimumFractionDigits: dec, maximumFractionDigits: dec }));
-  return MC.minus(nf.format(v));   // gleiche Ausgabe wie toLocaleString, aber das Format wird nur einmal je Stellenzahl angelegt
-}
-const DF = new Intl.DateTimeFormat("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });   // einmal anlegen (Tooltips: ~2.000 Aufrufe)
-function fmtDate(iso) { const d = new Date(String(iso).slice(0, 10) + "T12:00:00"); return isNaN(d) ? "–" : DF.format(d); }
+// Zahlen, Daten und Anleihen-Mathematik: gemeinsame Helfer (site.js MC.zahl/MC.datum, bond.js MC.bond) – seit 30.09.2026 statt Kopien
+const fmt = (v, dec = 0) => MC.zahl(v, dec);
+const fmtDate = iso => MC.datum(iso);
 const DAY = 86400000;
 function decYear(iso) { const d = new Date(iso + "T12:00:00Z"); const y = d.getUTCFullYear(); return y + (d - Date.UTC(y, 0, 1)) / DAY / 365.25; }
-function ageDays(iso) { return (Date.now() - new Date(iso + "T00:00:00")) / DAY; }
 
-// ---------- Drei manuell gepflegte Kursreihen: Wochenschlusskurse der Börse Stuttgart ----------
+// ---------- Fünf manuell gepflegte Kursreihen bis 15.09.2026: Wochenschlusskurse der Börse Stuttgart ----------
+// (seit 24.09.2026 verlängert der gesammelte Tageskurs der Börse Frankfurt die Reihen automatisch, siehe unten – nachgepflegt werden muss nichts mehr)
 // Letzter Handelstag jeder Woche, abgelesen über finanzen.net ("Historisch", Handelsplatz Stuttgart),
 // Format "JJ-MM-TT:Kurs". Zur Pflege einfach die jüngste Woche anhängen – Kurs, Rendite, Restlaufzeit,
 // Endlabel und Chart folgen automatisch. Tages-Hoch/-Tief stehen als eigene Konstanten (high/low), weil
@@ -458,106 +434,18 @@ const MS = mkBond({
   raw: MS_WEEKLY_RAW
 });
 const COUPON_BONDS = [BTP, FR, AT, US, MS];
-const COLORS = { bund: "#1D5FA0", bund2: "#2C2C2A", btp: "#B23B2E", fr: "#8A5FBF", at: "#1F7A5E", us: "#C07E28", ms: "#2F8A9A" };
-const LABEL_COLORS = { bund: "#1D5FA0", bund2: "#2C2C2A", btp: "#8A2A20", fr: "#5E3D8C", at: "#155C46", us: "#8F5A16", ms: "#1F5F6A" };
+const COLORS = { bund: "#1D5FA0", bund2: "#1A1A19", btp: "#B23B2E", fr: "#8A5FBF", at: "#1F7A5E", us: "#C07E28", ms: "#2F8A9A" };
+const LABEL_COLORS = { bund: "#1D5FA0", bund2: "#1A1A19", btp: "#8A2A20", fr: "#5E3D8C", at: "#155C46", us: "#8F5A16", ms: "#1F5F6A" };
 
-// ---------- Bund 0 % 2050: Daten der Bundesbank (langlaeufer.json), eingebettete Monatsreihe als Rückfall ----------
+// ---------- Bund 0 % 2050: Daten der Bundesbank (langlaeufer.json, beim Deploy eingebettet) ----------
 const BUND = {
   isin: "DE0001102481", maturity: "2050-08-15",
   issue: { date: "2019-08-21", price: 103.61, yield: -0.11 },
   latest: { date: "2026-09-16", price: 40.07, yield: 3.90 },
   high: { date: "2020-03-12", price: 116.56, yield: -0.50 },
   low: { date: "2026-09-15", price: 40.04, yield: 3.90 },
-  weekly: null   // aus langlaeufer.json; bis dahin RB_FALLBACK (Monatsschluss)
+  weekly: null   // aus langlaeufer.json (seit 30.09.2026 ohne eingebettete Rückfallreihe; ohne JSON keine Linie)
 };
-const RB_FALLBACK = [
-  ["2019-08-30", 105.62, -0.18],
-  ["2019-09-27", 103.35, -0.11],
-  ["2019-10-25", 96.11, 0.13],
-  ["2019-11-29", 95.82, 0.14],
-  ["2019-12-27", 91.85, 0.28],
-  ["2020-01-31", 97.2, 0.09],
-  ["2020-02-28", 104.6, -0.15],
-  ["2020-03-27", 99.09, 0.03],
-  ["2020-04-30", 103.0, -0.1],
-  ["2020-05-29", 99.5, 0.02],
-  ["2020-06-26", 101.14, -0.04],
-  ["2020-07-31", 104.28, -0.14],
-  ["2020-08-28", 97.5, 0.08],
-  ["2020-09-25", 102.36, -0.08],
-  ["2020-10-30", 106.8, -0.22],
-  ["2020-11-27", 105.72, -0.19],
-  ["2020-12-30", 104.55, -0.15],
-  ["2021-01-29", 102.13, -0.07],
-  ["2021-02-26", 94.2, 0.2],
-  ["2021-03-26", 94.01, 0.21],
-  ["2021-04-30", 91.74, 0.29],
-  ["2021-05-28", 89.15, 0.39],
-  ["2021-06-25", 91.4, 0.31],
-  ["2021-07-30", 98.86, 0.04],
-  ["2021-08-27", 98.4, 0.06],
-  ["2021-09-24", 93.35, 0.24],
-  ["2021-10-29", 95.75, 0.15],
-  ["2021-11-26", 100.2, -0.01],
-  ["2021-12-30", 96.41, 0.13],
-  ["2022-01-28", 94.28, 0.21],
-  ["2022-02-25", 89.05, 0.41],
-  ["2022-03-25", 84.05, 0.61],
-  ["2022-04-29", 75.33, 1.01],
-  ["2022-05-27", 70.72, 1.24],
-  ["2022-06-24", 62.64, 1.68],
-  ["2022-07-29", 72.59, 1.149],
-  ["2022-08-26", 65.82, 1.507],
-  ["2022-09-30", 56.39, 2.077],
-  ["2022-10-28", 55.76, 2.124],
-  ["2022-11-25", 61.65, 1.761],
-  ["2022-12-30", 52.1, 2.389],
-  ["2023-01-27", 55.91, 2.134],
-  ["2023-02-24", 53.15, 2.328],
-  ["2023-03-31", 53.72, 2.297],
-  ["2023-04-28", 52.94, 2.358],
-  ["2023-05-26", 49.85, 2.591],
-  ["2023-06-30", 53.0, 2.369],
-  ["2023-07-28", 51.2, 2.507],
-  ["2023-08-25", 50.22, 2.587],
-  ["2023-09-29", 45.77, 2.951],
-  ["2023-10-27", 44.85, 3.038],
-  ["2023-11-24", 48.25, 2.765],
-  ["2023-12-29", 55.65, 2.226],
-  ["2024-01-26", 52.51, 2.457],
-  ["2024-02-23", 51.45, 2.543],
-  ["2024-03-28", 53.19, 2.423],
-  ["2024-04-26", 49.6, 2.703],
-  ["2024-05-31", 48.48, 2.802],
-  ["2024-06-28", 51.03, 2.609],
-  ["2024-07-26", 51.01, 2.618],
-  ["2024-08-30", 52.96, 2.48],
-  ["2024-09-27", 53.86, 2.421],
-  ["2024-10-25", 52.08, 2.561],
-  ["2024-11-29", 55.97, 2.284],
-  ["2024-12-27", 52.18, 2.571],
-  ["2025-01-31", 50.85, 2.685],
-  ["2025-02-28", 51.81, 2.618],
-  ["2025-03-28", 46.97, 3.023],
-  ["2025-04-25", 49.28, 2.837],
-  ["2025-05-30", 48.03, 2.953],
-  ["2025-06-27", 47.48, 3.009],
-  ["2025-07-25", 45.55, 3.189],
-  ["2025-08-29", 44.84, 3.267],
-  ["2025-09-26", 44.8, 3.281],
-  ["2025-10-31", 45.91, 3.192],
-  ["2025-11-28", 44.69, 3.314],
-  ["2025-12-23", 43.0, 3.486],
-  ["2026-01-30", 42.96, 3.505],
-  ["2026-02-27", 44.53, 3.364],
-  ["2026-03-27", 43.12, 3.511],
-  ["2026-04-30", 42.49, 3.588],
-  ["2026-05-29", 43.52, 3.497],
-  ["2026-06-26", 44.56, 3.407],
-  ["2026-07-31", 42.28, 3.647],
-  ["2026-08-28", 41.22, 3.769],
-  ["2026-09-16", 40.07, 3.9]
-];
 // Bund 4,75 % 2040 (Hochkupon-Langläufer aus 2008): Daten der Bundesbank aus langlaeufer.json;
 // ohne JSON nur Kennzahlen (keine Linie).
 const BUND2 = {
@@ -569,67 +457,17 @@ const BUND2 = {
   weekly: null
 };
 
-// ---------- Anleihemathematik (jährliche Verzinsung, Zeit taggenau; für alle Kuponanleihen) ----------
-function addDays(iso, n) { const d = new Date(iso + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
-// Kupontermine: vom Fälligkeitstag in Schritten von 12/freq Monaten rückwärts. Die Folge hängt nur von der Anleihe ab,
-// deshalb wird sie einmal je Anleihe bis 1990 zurück erzeugt (b._cs) und je Valutatag nur noch per Binärsuche geschnitten –
-// Ergebnis identisch zur schrittweisen Rechnung (couponDatesStep), die für Valutatage vor 1990 weiter gilt.
-function couponDatesStep(b, s) {
-  const out = [];
-  let d = new Date(b.maturity + "T12:00:00Z");
-  while (d.getTime() > s) { out.push(d.getTime()); d = new Date(d); d.setUTCMonth(d.getUTCMonth() - 12 / b.freq); }
-  return { dates: out.reverse(), prev: d.getTime() };
-}
-const CS_FLOOR = Date.UTC(1990, 0, 1);
-function couponDates(b, settle) {
-  const s = new Date(settle + "T12:00:00Z").getTime();
-  if (s <= CS_FLOOR) return couponDatesStep(b, s);
-  if (!b._cs || b._cs.m !== b.maturity + "/" + b.freq) {
-    const all = couponDatesStep(b, CS_FLOOR);
-    b._cs = { m: b.maturity + "/" + b.freq, seq: [all.prev].concat(all.dates) };   // aufsteigend, erstes Element ≤ 1990
-  }
-  const seq = b._cs.seq;
-  let lo = 1, hi = seq.length;                     // erster Termin nach dem Valutatag
-  while (lo < hi) { const m = (lo + hi) >> 1; if (seq[m] > s) hi = m; else lo = m + 1; }
-  return { dates: seq.slice(lo), prev: seq[lo - 1] };
-}
-// Kurs (clean) als Funktion der Rendite y für einen Valutatag – Laufzeiten der Zahlungen einmal vorberechnet
-function pricer(b, settle) {
-  const s = new Date(settle + "T12:00:00Z").getTime();
-  const { dates, prev } = couponDates(b, settle);
-  const c = b.coupon / b.freq, n = dates.length;
-  const tau = dates.map(t => (t - s) / DAY / 365.25), cf = dates.map((t, i) => c + (i === n - 1 ? 100 : 0));
-  const acc = c * (s - prev) / (dates[0] - prev);
-  return {
-    price(y) { let pv = 0; for (let i = 0; i < n; i++) pv += cf[i] / Math.pow(1 + y, tau[i]); return pv - acc; },
-    slope(y) { let d = 0; for (let i = 0; i < n; i++) d -= tau[i] * cf[i] / Math.pow(1 + y, tau[i] + 1); return d; }
-  };
-}
-function cleanPrice(b, y, settle) { return pricer(b, settle).price(y); }
-// Rendite aus dem Kurs: Newton-Verfahren (wenige Schritte); konvergiert es nicht im Bereich −2 … 30 %,
-// die bisherige Halbierung mit 80 Schritten auf derselben Kursfunktion.
-function yieldFromPrice(b, p, settle, start) {
-  const f = pricer(b, settle);
-  let y = start != null && isFinite(start) ? start : 0.03;
-  for (let i = 0; i < 40; i++) {
-    const d = f.slope(y), step = (f.price(y) - p) / d;
-    if (!isFinite(step)) break;
-    y -= step;
-    if (!(y > -0.02 && y < 0.30)) break;
-    if (Math.abs(step) < 1e-12) return y;
-  }
-  let lo = -0.02, hi = 0.30;
-  for (let i = 0; i < 80; i++) { const mid = (lo + hi) / 2; if (f.price(mid) > p) lo = mid; else hi = mid; }
-  return (lo + hi) / 2;
-}
+// ---------- Anleihemathematik: bond.js (MC.bond – jährliche Verzinsung, Zeit taggenau; gleiche Rechnung wie vorher inline) ----------
+const addDays = (iso, n) => MC.bond.addDays(iso, n);
+const yieldFromPrice = (b, p, settle, start) => MC.bond.yieldFromPrice(b, p, settle, start);
 function bondStats(b) {
   const settle = addDays(b.priceDate, b.settleDays);
-  return { settle, yld: yieldFromPrice(b, b.price, settle), years: (new Date(b.maturity + "T12:00:00Z") - new Date(settle + "T12:00:00Z")) / DAY / 365.25, coupons: couponDates(b, settle).dates.length };
+  return { settle, yld: yieldFromPrice(b, b.price, settle), years: MC.bond.yearsTo(b.maturity, settle) };
 }
 
 // ---------- Kennzahlen-Tabelle (alle sieben) ----------
-function yearsTo(mat, from) { return (new Date(mat + "T12:00:00Z") - new Date(from + "T12:00:00Z")) / DAY / 365.25; }
-const fmtCoupon = c => fmt(c, Math.round(c * 1000) % 10 ? 3 : 2);
+const yearsTo = (mat, from) => MC.bond.yearsTo(mat, from);
+const fmtCoupon = c => MC.bond.fmtCoupon(c);
 // Kennzahlentabelle: Spalte „Emittent“ ohne Unterzeile (Kupon, Fälligkeit
 // und Währung stehen in eigenen Spalten). Der Tabellenkopf
 // ist zugleich Filter: Klick auf den Titel sortiert, Währung per Auswahlfeld.
@@ -655,7 +493,7 @@ function kpiRows() {
     const bd = COUPON_BONDS.find(x => x.key === k), st = bondStats(bd);
     rows.push({ key: k, isin: bd.isin, coupon: bd.coupon, maturity: bd.maturity, price: bd.price, yld: st.yld * 100, years: st.years, high: bd.high, low: bd.low });
   });
-  return rows.map(r => { Object.assign(r, KPI_META[r.key]); r.sinceHigh = (r.price / r.high.price - 1) * 100; return r; });
+  return rows.map(r => { Object.assign(r, KPI_META[r.key]); r.label = L(r.key); r.sinceHigh = (r.price / r.high.price - 1) * 100; return r; });
 }
 function kpiMatch(r) {
   const f = KPI_FILTER;
@@ -671,12 +509,14 @@ function renderKpis() {
   const all = kpiRows();
   let rows = all.filter(kpiMatch);
   if (KPI_SORT.col) rows = rows.slice().sort(kpiCmp);
+  // Erste Spalte: der Anleihename (Kupon und Fälligkeit) – vorher der Emittent, zweimal „Bundesrepublik Deutschland“ (seit 30.09.2026)
   const html = rows.map(r =>
-    `<tr><th scope="row"><i class="tag" style="background:${COLORS[r.key]}"></i>${MC.esc(r.name)}</th><td class="num">${fmt(r.yld, 2)}\u00A0%</td><td class="txt art">${MC.esc(r.art)}</td>` +
-    `<td class="isin"><a href="anleihe.html?isin=${r.isin}" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">${r.isin}</a></td><td class="txt">${r.cur}</td>` +
-    `<td class="num">${fmt(r.price, 2)}</td><td class="num">${fmtCoupon(r.coupon)}\u00A0%</td>` +
-    `<td class="num">${fmtDate(r.maturity)}</td><td class="num">${fmt(r.years, 1)} ${L("years")}</td>` +
-    `<td class="num">${fmt(r.sinceHigh, 0)}\u00A0%<small>Hoch ${fmt(r.high.price, 2)} (${fmtDate(r.high.date).slice(3)})</small></td></tr>`);
+    `<tr><th scope="row"><i class="tag" style="background:${COLORS[r.key]}"></i>${MC.esc(r.label)}</th><td class="num">${fmt(r.yld, 2)}\u00A0%</td>` +
+    `<td class="num">${fmt(r.price, 2)}</td>` +
+    `<td class="num">${fmt(r.sinceHigh, 0)}\u00A0%<small>Hoch ${fmt(r.high.price, 2)} (${fmtDate(r.high.date).slice(3)})</small></td>` +
+    `<td class="num">${fmt(r.years, 1)} ${L("years")}</td><td class="num">${fmtCoupon(r.coupon)}\u00A0%</td><td class="num">${fmtDate(r.maturity)}</td>` +
+    `<td class="emi" title="${MC.esc(r.art === "Staat" ? "Staatsanleihe" : "Unternehmensanleihe")}">${MC.esc(r.name)}</td>` +
+    `<td class="isin"><a href="anleihe.html?isin=${r.isin}" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">${r.isin}</a></td><td class="txt">${r.cur}</td></tr>`);
   document.getElementById("kpis-body").innerHTML = html.join("") ||
     `<tr><td class="empty" colspan="10">Keine Anleihe entspricht dem Filter.</td></tr>`;
   for (const th of document.querySelectorAll("#kpi-head th[data-col]")) {
@@ -726,7 +566,7 @@ function chartGeom() {
 function buildChart() {
   const G = chartGeom();
   const { X0, X1, YTOP, YBOT } = G;
-  const weekly = BUND.weekly || RB_FALLBACK;
+  const weekly = BUND.weekly || [];
   const t0 = 2019.5;
   const tEnd = Math.max(decYear(BUND.latest.date), decYear(BUND2.latest.date), ...COUPON_BONDS.map(b => decYear(b.priceDate))) + 0.12;
   const x = t => X0 + (t - t0) * (X1 - X0) / (tEnd - t0);
@@ -736,8 +576,8 @@ function buildChart() {
   const lab = (px, py, text, color, anchor = "start", dx = 9, dy = 4) =>
     labels.push(`<text x="${(px + dx).toFixed(1)}" y="${(py + dy).toFixed(1)}" text-anchor="${anchor}" font-family="${SANS}" font-size="11" fill="${color}" paint-order="stroke" stroke="#FBFAF7" stroke-width="3" stroke-linejoin="round">${MC.esc(text)}</text>`);
   const dot = (px, py, color, tip, r = 3.5) => dots.push(`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${r}" fill="${color}" stroke="#FBFAF7" stroke-width="1.5">${tip ? `<title>${MC.esc(tip)}</title>` : ""}</circle>`);
-  // Bund: Wochenlinie mit Bundesbank-Renditen
-  {
+  // Bund: Wochenlinie mit Bundesbank-Renditen (nur mit langlaeufer.json)
+  if (weekly.length) {
     const bx = [], by = [], tips = [], seg = [];
     weekly.forEach(([d, p, yl], i) => {
       const px = +x(decYear(d)).toFixed(1), py = +y(p).toFixed(1);
@@ -782,9 +622,9 @@ function buildChart() {
     dot(x(decYear(end[0])), y(end[1]), COLORS[bd.key], null);
   });
   // Endlabels rechts, nach Kurs sortiert und entzerrt
-  const bEnd2 = weekly[weekly.length - 1];
+  const bEnd2 = weekly.length ? weekly[weekly.length - 1] : null;
   const ends = COUPON_BONDS.map(bd => ({ key: bd.key, p: bd.price, t: decYear(bd.priceDate), name: short[bd.key] }));
-  ends.push({ key: "bund", p: bEnd2[1], t: decYear(bEnd2[0]), name: "Bund 0\u00A0%" });
+  if (bEnd2) ends.push({ key: "bund", p: bEnd2[1], t: decYear(bEnd2[0]), name: "Bund 0\u00A0%" });
   if (BUND2.weekly && BUND2.weekly.length > 10) { const e2 = BUND2.weekly[BUND2.weekly.length - 1]; ends.push({ key: "bund2", p: e2[1], t: decYear(e2[0]), name: "Bund 4,75\u00A0%" }); }
   ends.sort((a, b) => b.p - a.p);
   let lastY = -1e9;
@@ -833,13 +673,37 @@ function renderAll() {
   renderKpis();
   document.getElementById("chart-kurs").innerHTML = buildChart();
   const el = document.getElementById("datastand");
-  const dd = ageDays(BUND.latest.date);
-  el.textContent = `${L("dataAsOf")} ${fmtDate(BUND.latest.date)}${dd > 5 ? " · " + L("outdated") : ""}`;
-  el.classList.toggle("stale", dd > 5);
+  const alt = MC.veraltet ? MC.veraltet(BUND.latest.date) : false;   // gemeinsame Regel (ab MC.STALE_TAGE Börsentagen), wie anleihe.html
+  el.textContent = `${L("dataAsOf")} ${fmtDate(BUND.latest.date)}${alt ? " · " + L("outdated") : ""}`;
+  el.classList.toggle("stale", alt);
+  prosa();
   // Stand-Zeile über dem Chart (wie auf den übrigen Zinsen-Seiten): jüngster Kurs aller sieben Reihen
   const neu = [BUND.latest.date, BUND2.latest && BUND2.latest.date, ...COUPON_BONDS.map(b => b.priceDate)].filter(Boolean).sort().pop();
   const eb = document.getElementById("eyebrow-ll");
   if (eb && neu) eb.textContent = `Kurse in % des Nennwerts · 2019 – ${neu.slice(0, 4)} · Stand: ${fmtDate(neu)}`;
+}
+// Zahlen im Fließtext aus den Daten (seit 30.09.2026; vorher fest und hinter der Tabelle zurück): aktuelle Kurse und Renditen,
+// Verlust seit dem Hoch, modifizierte Duration (MC.bond.duration) – „ein Prozentpunkt mehr Rendite kostet grob so viele Prozent Kurs“
+function prosa() {
+  const set = (k, t) => document.querySelectorAll(`[data-ll="${k}"]`).forEach(el => { el.textContent = t; });
+  const pct = v => `${fmt(v, 1)}\u00A0%`;
+  const modDur = (b, price, date, yld) => { const st = addDays(date, b.settleDays || 2); return MC.bond.duration(b, yld != null ? yld / 100 : yieldFromPrice(b, price, st), st).modified; };
+  if (BUND.latest && typeof BUND.latest.price === "number") {
+    if (typeof BUND.latest.yield === "number") set("bund-y", pct(BUND.latest.yield));
+    set("bund-p", fmt(BUND.latest.price, 0));
+    set("bund-d", fmt(modDur({ coupon: 0, freq: 1, maturity: BUND.maturity, settleDays: 2 }, BUND.latest.price, BUND.latest.date, BUND.latest.yield), 0));
+    set("bund-minus", `${fmt((1 - BUND.latest.price / BUND.high.price) * 100, 0)}\u00A0%`);
+  }
+  if (BUND2.latest && typeof BUND2.latest.price === "number") {
+    set("bund2-hoch", fmt(BUND2.high.price, 0));
+    set("bund2-minus", `${fmt((1 - BUND2.latest.price / BUND2.high.price) * 100, 0)}\u00A0%`);
+  }
+  set("btp-d", fmt(modDur(BTP, BTP.price, BTP.priceDate), 0));
+  set("btp-p", fmt(BTP.price, 0));
+  set("fr-p", fmt(FR.price, 0));
+  const atY = yieldFromPrice(AT, AT.price, addDays(AT.priceDate, AT.settleDays)) * 100;
+  set("at-y", pct(atY));
+  set("at-d", fmt(modDur(AT, AT.price, AT.priceDate), 0)); set("at-d2", fmt(modDur(AT, AT.price, AT.priceDate), 0));
 }
 (function () { try { renderAll(); } catch (e) { console.warn("Render fehlgeschlagen:", e); } })();
 // Drehen des Handys / Fenstergröße: Chart in der neuen Containerbreite neu zeichnen
@@ -889,7 +753,7 @@ if (MC.load && MC.verlauf) MC.load("kurse-auswahl.json").then(d => {
   return Promise.all(COUPON_BONDS.map(bd => {
     const k = K[bd.isin];
     if (!k || tage[k[2]] <= bd.priceDate) return null;
-    return MC.verlauf(bd.isin).catch(() => ({ t: [], k: [] })).then(v => {
+    return MC.verlauf(bd.isin, { ab: bd.priceDate }).catch(() => ({ t: [], k: [] })).then(v => {
       const neu = [];
       v.t.forEach((t, i) => { if (t > bd.priceDate && typeof v.k[i] === "number") neu.push([t, v.k[i]]); });
       if (!neu.length || neu[neu.length - 1][0] < tage[k[2]]) neu.push([tage[k[2]], k[0]]);

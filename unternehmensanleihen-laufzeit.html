@@ -30,59 +30,28 @@
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  .more .prose { font-size: 15px; margin-top: 16px; }
-
-  /* Sprungmenü: Knöpfe wie auf den Länderseiten, hier als Links zu den fünf Tabellen */
-  .lbtn { font-size: 13px; line-height: 1; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.18); border-radius: 999px; padding: 7px 13px; cursor: pointer; transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease; }
-  .lbtn:hover, .lbtn.hot { border-color: var(--green-text); color: var(--green-text); }
-  .lbtn[aria-pressed="true"] { background: var(--green); border-color: var(--green); color: var(--ink); }
-  .lbtn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
-
-  /* Tabelle (wie Kennzahlen-Tabelle der Langläufer-Seite) */
+  /* Top 10 je Restlaufzeit. Gemeinsamer Code: top10-tabellen.js (Tabellen, Sortierung, Rendite); Sprungpillen a.lbtn, .kpis,
+     .sortbtn, .more: base.css (seit 30.09.2026 keine Seiten-Kopien mehr). */
   .lzjump { margin-top: 4px; }
-  .lbtn .rng { font-size: 12px; color: var(--muted); }
+  .lbtn .rng { font-size: 12px; font-weight: 400; color: var(--muted); }
   .lbtn:hover .rng { color: inherit; }
   .lznote { margin-top: 16px; }
-  .kpis td.leer { text-align: left; color: var(--text); font-style: italic; padding: 14px 8px; white-space: normal; }
   .lzsec { margin-top: 40px; border-top: 1px solid var(--rule); padding-top: 26px; scroll-margin-top: 12px; }
   .lzsec table { margin-top: 6px; }
   table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
   th, td { text-align: left; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
   thead th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
   td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .kpis { min-width: 1000px; font-size: 13px; }   /* Ausnahme von der 14-px-Stufe: 11–13 Spalten müssen in 1000 px passen (Typografie-Konzept 26.09.2026; Inter läuft breiter als die Systemschrift) */
-  .kpis thead th:nth-child(2) { width: 18.5%; }   /* feste Breite: Spalten springen beim Länderwechsel nicht */
-  .kpis td.rk { color: var(--muted); padding-right: 6px; }
-  .kpis td.isin { font-variant-numeric: tabular-nums; white-space: nowrap; letter-spacing: 0.01em; }
-  .kpis td.txt { white-space: nowrap; }
-  .kpis td.art { padding-right: 10px; }   /* Abstand zur ISIN („Unternehmen“ ist die breiteste Angabe) */
-  .kpis td.txt small { display: block; color: var(--muted); font-size: 12px; }
-  /* Tabellenkopf: Klick auf den Spaltentitel sortiert (auf-/absteigend) */
-  .kpis thead th { vertical-align: top; font-size: 12px; letter-spacing: 0; }
-  .kpis thead th .sortbtn { font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
-  .kpis thead th .sortbtn::after { content: "↕"; font-size: 12px; opacity: 0.45; }
-  .kpis thead th .sortbtn:hover, .kpis thead th[aria-sort] .sortbtn { color: var(--ink); }
-  .kpis thead th[aria-sort="ascending"] .sortbtn::after { content: "↑"; opacity: 1; }
-  .kpis thead th[aria-sort="descending"] .sortbtn::after { content: "↓"; opacity: 1; }
-  .kpis thead th .sortbtn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
-  .kpis th, .kpis td { padding: 9px 2px 9px 0; }   /* 13 Spalten: knapper Abstand, damit die Tabelle in 1000 px passt */
-  .kpis th[scope=row] { font-weight: 400; white-space: nowrap; line-height: 1.4; }
-  .kpis td.num { font-size: 14px; }
-  .more summary { cursor: pointer; font-size: 19px; font-weight: 600; color: var(--ink); list-style: none; display: flex; align-items: center; gap: 10px; }
-  .more summary::-webkit-details-marker { display: none; }
-  .more summary::before { content: ''; width: 8px; height: 8px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(-45deg); transition: transform .15s; }
-  .more[open] summary::before { transform: rotate(45deg); }
-  .more summary:hover { color: var(--line); }
-  .more summary:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 3px; }
-  @media (prefers-reduced-motion: reduce) {  .lbtn { transition: none; } }
+  .kpis thead th:nth-child(2) { width: 18.5%; }   /* feste Breite: Spalten springen nicht */
+  .kpis th, .kpis td { padding: 9px 2px 9px 0; }   /* 11 Spalten: knapper Abstand, damit die Tabelle in 1000 px passt */
+  .kpis th[scope=row] { font-weight: 400; white-space: nowrap; }
+  /* Fälligkeit unter dem Emittenten nur, solange die Tabelle quer scrollt (dort ist die Spalte „Fälligkeit“ außer Sicht) */
+  .kpis th[scope=row] .fa-mobil { display: none; font-size: 12px; color: var(--text); }
+  /* H1 nur an den vorgesehenen Stellen trennen (vorher „meistge-handelten“, „Unternehmensanlei-hen“) */
+  h1 { hyphens: manual; -webkit-hyphens: manual; }
   @media (prefers-reduced-motion: no-preference) {  html { scroll-behavior: smooth; } }
-  @media (max-width: 600px) {
-    .lzsec { margin-top: 32px; padding-top: 20px; }
-    .lbtn { font-size: 12.5px; padding: 7px 11px; }
-  }
-  @media (max-width: 900px) {
-    .table-scroll table { min-width: 720px; }
-  }
+  @media (max-width: 600px) {  .lzsec { margin-top: 32px; padding-top: 20px; } }
+  @media (max-width: 900px) {  .table-scroll table { min-width: 720px; }  .kpis th[scope=row] .fa-mobil { display: block; } }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Unternehmensanleihen nach Laufzeit: die zehn meistgehandelten je Restlaufzeit","description":"Die meistgehandelten Unternehmensanleihen in fünf Laufzeitgruppen, von unter 1 bis über 30 Jahre – mit Emittent, ISIN, Kurs, Kupon und Rendite.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-26","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/unternehmensanleihen-laufzeit.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.bondarium.de/anleihen.html"},{"@type":"ListItem","position":3,"name":"Unternehmensanleihen nach Laufzeit","item":"https://www.bondarium.de/unternehmensanleihen-laufzeit.html"}]}</script>
@@ -135,7 +104,7 @@
           <a href="realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
       </div>
@@ -352,15 +321,17 @@
     </details>
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
 </div>
 
 <script src="site.js"></script>
+<script src="bond.js"></script>
+<script src="top10-tabellen.js"></script>
 <script>
 // Rückfall, falls site.js nicht lädt (Netzfehler): Minimalform, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
 window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, minus: function (s) { return String(s).replace(/^-/, "\u2212"); }, zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\u2212") : "\u2013"; }, load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, hoverWrap: function (s) { return s; }, navInit: function () {} };
@@ -437,9 +408,8 @@ const ANLEIHEN = {
   }
 };
 
-// Automatische Top 10 (seit 26.09.2026, scripts/update_top10.py): laufzeit.js lädt die Datei; ist sie „aktiv“
-// (mindestens 20 Börsentage erfasst), ersetzt sie die Handauswahl oben und TOP10_AKTIV passt die Texte an.
-const TOP10 = "top10-unternehmensanleihen-laufzeit.json";
+// Automatische Top 10 (seit 26.09.2026, scripts/update_top10.py): Ist die Datei „aktiv“ (mindestens 20 Börsentage erfasst),
+// ersetzt sie die Handauswahl oben (top10-tabellen.js) und TOP10_AKTIV passt die Texte an.
 function TOP10_AKTIV(d) {
   const f = d.fenster, dat = iso => iso.split("-").reverse().join(".");
   const set = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
@@ -450,11 +420,11 @@ function TOP10_AKTIV(d) {
   set("m-vol", `<strong>Volumen und Stückelung</strong> aus dem ESMA-Register (FIRDS), wöchentlich aktualisiert. Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage. Ratings zeigt die Seite nicht, weil sie sich nicht automatisch aktuell halten lassen – wie du die Bonität eines Unternehmens einschätzt, steht unter <a href="bonitaet.html">Bonität und Ratings</a>.`);
   const n = document.getElementById("lznote"); if (n) n.textContent = n.textContent.replace(/Volumen: [^;]+;/, "Volumen: ausgegebener Nennbetrag;");
 }
-// Tabellen rendert laufzeit.js (gemeinsamer Code beider Laufzeit-Seiten) aus ANLEIHEN.
+// Tabellen: top10-tabellen.js (gemeinsamer Code der vier Top-10-Seiten). Die Daten lädt die Seite selbst – so erkennt
+// scripts/inline_data.py die Dateien am Aufruf und bettet sie beim Deploy ein.
+if (window.T10 && window.MC && MC.bond) T10.laufzeit({ anleihen: ANLEIHEN, aktiv: TOP10_AKTIV, daten: [MC.load("kurse-auswahl.json"), MC.load("top10-unternehmensanleihen-laufzeit.json")] });
 // Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
 MC.navInit();
 </script>
-<!-- laufzeit.js ruft MC.load("kurse-auswahl.json") und MC.load("top10-unternehmensanleihen-laufzeit.json") – der Kommentar sorgt dafür, dass inline_data.py beide Dateien beim Deploy hier einbettet -->
-<script src="laufzeit.js"></script>
 </body>
 </html>

@@ -223,6 +223,12 @@ jobs:
         continue-on-error: true
         run: python scripts/update_top10.py
 
+      # Schlanker Suchindex für anleihen-suche.html (seit 30.09.2026): aus anleihen-index.json + anleihen-kurse.json
+      - name: Suchindex bauen
+        if: env.VOLL == '1'
+        continue-on-error: true
+        run: python scripts/suchindex.py
+
       # ----- Versionierung: nur im Abruf-Lauf (nicht bei Push/'schnell') -----
       - name: Änderungen committen (Versionierung auf GitHub)
         if: env.VOLL == '1'
@@ -230,7 +236,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add renditen.json unternehmen.json langlaeufer.json anleihen-index.json anleihen-kurse.json kurse-auswahl.json zinskurve.json realzins.json risikoaufschlaege.json top10-*.json kurse anleihen
+          git add renditen.json unternehmen.json langlaeufer.json anleihen-index.json anleihen-kurse.json kurse-auswahl.json zinskurve.json realzins.json risikoaufschlaege.json top10-*.json suchindex.json kurse kurse/jahre.json anleihen
           if ! git diff --cached --quiet; then
             git commit -m "Daten aktualisiert"
             # Vor dem Push mit dem Remote abgleichen (falls inzwischen gepusht wurde);
@@ -284,10 +290,11 @@ jobs:
       - name: Zeitstempel & Versions-URLs setzen
         run: |
           HEUTE=$(date -u +%F)
-          # alle eigenen Skripte minifizieren (site.js und ausgelagerte Seiten-Skripte wie laufzeit.js)
+          # alle eigenen Skripte minifizieren (site.js und ausgelagerte Seiten-Skripte wie top10-tabellen.js, bond.js, chart.js)
           for j in _site/*.js; do ./node_modules/.bin/terser "$j" --compress --mangle -o "$j"; done
           CSS=$(sha256sum _site/base.css | cut -c1-10)
           IDX=$(sha256sum _site/anleihen-index.json | cut -c1-10)
+          SIX=$(sha256sum _site/suchindex.json | cut -c1-10)
           for f in _site/*.html; do
             [ -f "$f" ] || continue
             # jedes <script src="name.js"> bekommt den Hash seiner Datei als Versions-URL
@@ -298,6 +305,7 @@ jobs:
             sed -i -E "s|href=\"(/?)base\.css[^\"]*\"|href=\"\1base.css?v=${CSS}\"|g" "$f"
             # Such-Index: Versions-URL, damit .htaccess ihn lange cachen darf (siehe dort)
             sed -i -E "s|fetch\(\"anleihen-index\.json[^\"]*\"\)|fetch(\"anleihen-index.json?v=${IDX}\")|g" "$f"
+            sed -i -E "s|\"suchindex\.json[^\"]*\"|\"suchindex.json?v=${SIX}\"|g" "$f"
             # Startseiten-Links kanonisch (Quelle nutzt index.html, damit die
             # Seiten auch lokal per file:// navigierbar bleiben)
             sed -i -E 's|href="index\.html"|href="/"|g' "$f"

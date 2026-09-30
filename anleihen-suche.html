@@ -30,33 +30,26 @@
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  .more .prose { font-size: 15px; margin-top: 16px; }
-
   /* Tabelle (wie Kennzahlen-Tabelle der Langläufer-Seite) */
   table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
   th, td { text-align: left; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
   thead th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
   td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .kpis { min-width: 1000px; font-size: 13px; }   /* Ausnahme von der 14-px-Stufe: 11–13 Spalten müssen in 1000 px passen (Typografie-Konzept 26.09.2026; Inter läuft breiter als die Systemschrift) */
+  /* .kpis Grundregeln (min-width 1000 px, 13 px, td.isin/txt/art): base.css */
   .kpis thead th:first-child { width: 25%; }   /* Anleihename darf umbrechen, die übrigen Spalten nicht */
-  .kpis td.isin { font-variant-numeric: tabular-nums; white-space: nowrap; letter-spacing: 0.01em; }
-  .kpis td.txt { white-space: nowrap; }
-  .kpis td.art { padding-right: 10px; }   /* Abstand zur ISIN („Unternehmen“ ist die breiteste Angabe) */
+  /* Zeilentitel (seit 30.09.2026): Emittent in lesbarer Schreibweise, darunter klein der Registername (FIRDS-Kurzname) */
+  .kpis th[scope=row] .reg { display: block; font-size: 12px; font-weight: 400; color: var(--text); margin-top: 2px; }
+  .kpis td.isin a { color: var(--accent-text); }
   /* Tabellenkopf: Klick auf den Spaltentitel sortiert (auf-/absteigend) */
   /* UX 29.09.2026: Spaltentitel in normaler Schreibung (Versalien liefen ~15 % breiter) und Sortierpfeil nur an der sortierten Spalte
      bzw. beim Überfahren – so passt die Tabelle ab 1048 px ohne Querwischen in 1000 px, und der Kopf kann beim Scrollen stehen bleiben */
   .kpis thead th { vertical-align: bottom; font-size: 12.5px; letter-spacing: 0; text-transform: none; font-weight: 600; color: var(--text); }
-  .kpis thead th .sortbtn { position: relative; font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+  .kpis thead th .sortbtn { position: relative; }   /* Grundform: base.css */
   .kpis thead th .sortbtn::after { content: "↕"; font-size: 12px; opacity: 0; position: absolute; left: 100%; margin-left: 2px; transition: opacity .12s; }
   .kpis thead th .sortbtn:hover::after, .kpis thead th .sortbtn:focus-visible::after { opacity: 0.5; }
   .kpis thead th[aria-sort] .sortbtn::after { position: static; margin-left: 0; }
-  .kpis thead th .sortbtn:hover, .kpis thead th[aria-sort] .sortbtn { color: var(--ink); }
-  .kpis thead th[aria-sort="ascending"] .sortbtn::after { content: "↑"; opacity: 1; }
-  .kpis thead th[aria-sort="descending"] .sortbtn::after { content: "↓"; opacity: 1; }
-  .kpis thead th .sortbtn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   .kpis th, .kpis td { padding: 9px 7px 9px 0; }
-  .kpis th[scope=row] { font-weight: 400; line-height: 1.4; }
-  .kpis td.num { font-size: 14px; }
+  .kpis th[scope=row] { font-weight: 400; }
   /* Suchfeld und Status */
   /* Suchfeld mit Lupe (UX 29.09.2026) */
   .suche { position: relative; max-width: 760px; margin: 4px 0 0; scroll-margin-top: calc(var(--kopf, 90px) + 16px); }
@@ -105,7 +98,7 @@
   .fbtn:disabled { opacity: 0.5; cursor: default; }
   .fbtn:focus-visible, .fclear:focus-visible, .freset:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   .fbtn.on { background: var(--green); border-color: var(--green); color: var(--ink); }
-  .fgrp.offen .fbtn.on, .fbtn.on:hover:not(:disabled) { color: #fff; box-shadow: 0 0 0 3px rgba(29,95,160,0.18); }
+  .fgrp.offen .fbtn.on, .fbtn.on:hover:not(:disabled) { color: var(--ink); border-color: var(--accent-text); box-shadow: 0 0 0 3px rgba(21,124,0,0.22); }   /* seit 30.09.2026 Tinte statt Weiß auf Grün (vorher ~1,3:1) */
   .fbtn.on::after { opacity: 0.85; }
   .fval:empty { display: none; }
   .fval { font-weight: 600; max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
@@ -134,7 +127,7 @@
   .fopt[hidden] { display: none; }
   .fopt .fnum { color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
   .fopt .ftxt small { display: block; font-size: 12px; line-height: 1.35; color: var(--muted); margin-top: 1px; }   /* Erläuterung je Option (Filter Kündigung, seit 27.09.2026) */
-  .fhint a { color: var(--blue); }
+  .fhint a { color: var(--accent-text); }
   #fp-kue .fopts { max-height: 460px; }   /* sieben Optionen mit Erläuterung ohne inneres Scrollen */
   .det-kpi dd.warn { color: var(--orange-text); }   /* Kündigung ab festem Termin oder ewig */
   .fopt.leer { color: var(--muted); }
@@ -150,12 +143,11 @@
     .fgrp { position: static; }
     .fpanel, .fpanel.rechts { left: 0; right: 0; max-width: none; width: auto; }
   }
-  .more summary { cursor: pointer; font-size: 19px; font-weight: 600; color: var(--ink); list-style: none; display: flex; align-items: center; gap: 10px; }
-  .more summary::-webkit-details-marker { display: none; }
-  .more summary::before { content: ''; width: 8px; height: 8px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(-45deg); transition: transform .15s; }
-  .more[open] summary::before { transform: rotate(45deg); }
-  .more summary:hover { color: var(--line); }
-  .more summary:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 3px; }
+  /* Tippflächen am Touch-Gerät ≥ 44 px (Filter-Pillen, Beispiele, Schalter; Sortierknöpfe regelt base.css) */
+  @media (pointer: coarse) {
+    .fbtn, .fmehr, .fclear, .bsp-l a, .freset, .status-unten a { min-height: 44px; display: inline-flex; align-items: center; }
+    .fopt { min-height: 44px; }
+  }
   @media (prefers-reduced-motion: no-preference) {  html { scroll-behavior: smooth; } }
   @media (hover: hover) { .kpis tbody tr.zeile:hover > * { background: rgba(57,255,20,0.07); } }   /* nur mit Maus – am Handy blieb die Zeile nach dem Tipp grün (28.09.2026) */
   /* Ab 1048 px passt die Tabelle in die Spalte: kein Scroll-Container mehr, der Tabellenkopf bleibt beim Scrollen unter der Kopfzeile stehen */
@@ -190,6 +182,7 @@
     .kpis tbody tr.zeile > th, .kpis tbody tr.zeile > td, .kpis tbody th[scope="row"] { display: block; position: static; padding: 0; border: 0; background: none; box-shadow: none; max-width: none; white-space: normal; text-align: left; min-width: 0; overflow-wrap: anywhere; }
     .kpis tbody tr.zeile > th { grid-column: 1 / -1; font-size: 15px; font-weight: 600; line-height: 1.35; }
     .kpis tbody tr.zeile > th .zbtn { font-weight: 600; }
+    .kpis tbody tr.zeile > th .reg { font-weight: 400; }
     .kpis tbody tr.zeile > td::before { display: block; font-size: 12px; font-weight: 500; letter-spacing: 0; color: var(--text); margin-bottom: 1px; }
     /* Karte (UX 29.09.2026): oben groß Rendite · Kurs · Kupon, darunter kleiner die übrigen Angaben, durch eine Linie getrennt */
     .kpis tbody tr.zeile > td { font-size: 13.5px; color: var(--ink); }
@@ -267,7 +260,7 @@
           <a href="realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
       </div>
@@ -286,27 +279,28 @@
     </form>
 
     <div class="filter" id="filter" role="group" aria-label="Filter">
-      <div class="fgrp" data-f="art"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-art" disabled><span class="flab">Art</span><span class="fval"></span></button><div class="fpanel" id="fp-art" hidden></div></div>
-      <div class="fgrp" data-f="land"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-land" disabled><span class="flab">Land</span><span class="fval"></span></button><div class="fpanel" id="fp-land" hidden></div></div>
-      <div class="fgrp" data-f="w"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-w" disabled><span class="flab">Währung</span><span class="fval"></span></button><div class="fpanel" id="fp-w" hidden></div></div>
-      <div class="fgrp" data-f="rest"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-rest" disabled><span class="flab">Restlaufzeit</span><span class="fval"></span></button><div class="fpanel" id="fp-rest" hidden></div></div>
-      <div class="fgrp" data-f="rendite"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-rendite" disabled><span class="flab">Rendite</span><span class="fval"></span></button><div class="fpanel" id="fp-rendite" hidden></div></div>
-      <div class="fgrp" data-f="kupon"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-kupon" disabled><span class="flab">Kupon</span><span class="fval"></span></button><div class="fpanel" id="fp-kupon" hidden></div></div>
-      <div class="fgrp neben" data-f="zins"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-zins" disabled><span class="flab">Zinsart</span><span class="fval"></span></button><div class="fpanel" id="fp-zins" hidden></div></div>
-      <div class="fgrp neben" data-f="kue"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-kue" disabled><span class="flab">Kündigung</span><span class="fval"></span></button><div class="fpanel" id="fp-kue" hidden></div></div>
-      <div class="fgrp neben" data-f="vol"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-vol" disabled><span class="flab">Volumen</span><span class="fval"></span></button><div class="fpanel" id="fp-vol" hidden></div></div>
-      <div class="fgrp neben" data-f="stk"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-stk" disabled><span class="flab">Mindestanlage</span><span class="fval"></span></button><div class="fpanel" id="fp-stk" hidden></div></div>
-      <div class="fgrp neben" data-f="pruef"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-pruef" disabled><span class="flab">Datenprüfung</span><span class="fval"></span></button><div class="fpanel" id="fp-pruef" hidden></div></div>
-      <button type="button" class="fmehr" id="fmehr" aria-expanded="false" disabled><span class="fmehr-t">Weitere Filter</span><span class="fanz"></span></button>
+      <div class="fgrp" data-f="art"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-art"><span class="flab">Art</span><span class="fval"></span></button><div class="fpanel" id="fp-art" hidden></div></div>
+      <div class="fgrp" data-f="land"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-land"><span class="flab">Land</span><span class="fval"></span></button><div class="fpanel" id="fp-land" hidden></div></div>
+      <div class="fgrp" data-f="w"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-w"><span class="flab">Währung</span><span class="fval"></span></button><div class="fpanel" id="fp-w" hidden></div></div>
+      <div class="fgrp" data-f="rest"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-rest"><span class="flab">Restlaufzeit</span><span class="fval"></span></button><div class="fpanel" id="fp-rest" hidden></div></div>
+      <div class="fgrp" data-f="rendite"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-rendite"><span class="flab">Rendite</span><span class="fval"></span></button><div class="fpanel" id="fp-rendite" hidden></div></div>
+      <div class="fgrp" data-f="kupon"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-kupon"><span class="flab">Kupon</span><span class="fval"></span></button><div class="fpanel" id="fp-kupon" hidden></div></div>
+      <div class="fgrp neben" data-f="zins"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-zins"><span class="flab">Zinsart</span><span class="fval"></span></button><div class="fpanel" id="fp-zins" hidden></div></div>
+      <div class="fgrp neben" data-f="kue"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-kue"><span class="flab">Kündigung</span><span class="fval"></span></button><div class="fpanel" id="fp-kue" hidden></div></div>
+      <div class="fgrp neben" data-f="vol"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-vol"><span class="flab">Volumen</span><span class="fval"></span></button><div class="fpanel" id="fp-vol" hidden></div></div>
+      <div class="fgrp neben" data-f="stk"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-stk"><span class="flab">Mindestanlage</span><span class="fval"></span></button><div class="fpanel" id="fp-stk" hidden></div></div>
+      <div class="fgrp neben" data-f="pruef"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-pruef"><span class="flab">Datenprüfung</span><span class="fval"></span></button><div class="fpanel" id="fp-pruef" hidden></div></div>
+      <button type="button" class="fmehr" id="fmehr" aria-expanded="false"><span class="fmehr-t">Weitere Filter</span><span class="fanz"></span></button>
       <button type="button" class="fclear" id="fclear" hidden>Alle Filter zurücksetzen</button>
     </div>
 
-    <p class="note status laedt" id="status" aria-live="polite">Die Suche wird geladen …</p>
+    <p class="note status" id="status" aria-live="polite">Suchbegriff eingeben oder Filter wählen – <span data-kz="anleihen-kurs">rund 33.000</span> Anleihen mit aktuellem Kurs an deutschen Börsen.</p>
     <noscript><p class="note">Die Suche braucht JavaScript.</p></noscript>
     <div class="bsp" id="bsp"><p class="bsp-t">Beispiele zum Loslegen</p><p class="bsp-l"><a href="?art=0&amp;w=EUR&amp;zins=0&amp;rest=a">Staatsanleihen in Euro, unter 1 Jahr</a><a href="?art=2&amp;w=EUR&amp;rest=b">Unternehmensanleihen in Euro, 1–3 Jahre</a><a href="?zins=0&amp;kupon=g,d,e">Fester Kupon über 4&nbsp;%</a><a href="?rest=e">Über 30 Jahre</a><a href="?zins=2">Nullkupon-Anleihen</a></p></div>
 
+    <h2 class="sr-only" id="h-treffer">Suchergebnisse</h2>
     <div class="table-scroll" id="treffer" hidden>
-    <table class="kpis">
+    <table class="kpis" aria-describedby="status">
       <caption class="sr-only">Gefundene Anleihen</caption>
       <thead><tr>
         <th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Anleihe</button></th>
@@ -318,7 +312,7 @@
         <th scope="col" data-col="art"><button type="button" class="sortbtn" data-col="art" title="Staat: Zentralstaat · Öffentlich: Bundesländer, Regionen, Städte, Förderbanken, supranationale Institutionen · Unternehmen: alle übrigen einschließlich Banken">Art</button></th>
         <th scope="col" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th>
         <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th>
-        <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe">Volumen</button></th>
+        <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe (Mrd. = Milliarden)">Volumen</button></th>
         <th scope="col" data-col="stk"><button type="button" class="sortbtn" data-col="stk" title="Kleinster Nennwert (zugleich Mindestanlage) in der Währung der Anleihe">Stückelung</button></th>
       </tr></thead>
       <tbody></tbody>
@@ -359,9 +353,9 @@
     </details>
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html" aria-current="page">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html" aria-current="page">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
@@ -376,6 +370,7 @@ window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']
 const T = {
   years: "Jahre", bn: "Mrd.", perp: "unbefristet", var: "variabel",
   ready: n => `<strong>${n} Anleihen</strong> mit aktuellem Kurs an deutschen Börsen – Suchbegriff eingeben oder Filter wählen.`,
+  loading: "Die Suche wird geladen …", relevanz: " · sortiert nach Übereinstimmung mit dem Suchbegriff",
   hits: n => n === 1 ? "<strong>1 Treffer</strong>" : `<strong>${n} Treffer</strong>`,
   unten: (n, max) => n > max ? `Das waren die ersten ${max} von ${n.toLocaleString("de-DE")} Treffern – mit Suchbegriff oder Filtern eingrenzen.` : `${n.toLocaleString("de-DE")} Treffer.`,
   hoch: "↑ Zur Suche und den Filtern",
@@ -423,29 +418,24 @@ const T = {
 function L(k) { return T[k] != null ? T[k] : k; }
 
 // ---------- Datenbasis ----------
-// anleihen-index.json (scripts/update_anleihen_index.py, wöchentlich aus der ESMA-Gesamtdatei):
-// rows[i] = [isin, name, art (0 Staat · 1 Öffentlich · 2 Unternehmen), waehrung, kupon ("var" = variabel),
-//            faellig ("" = unbefristet), volumen, stueckelung, boerse (0 – · 1 Stuttgart · 2 Frankfurt),
-//            emittent (Index in emittenten, nur für die Suche), zinsart (0 fest · 1 variabel · 2 null),
-//            land (ISO-Code des Konzernsitzes, "INT" = supranational), extra? (Suchwörter)]
-// Bewusst per fetch geladen (nicht MC.load): Die Datei ist zu groß, um sie in die Seite einzubetten.
-// anleihen-kurse.json (scripts/update_kurse.py, täglich; Deutsche Börse und Bundesbank):
-// {stand, tage: [Datum …], boersen: {F: "Börse Frankfurt", …}, kurse: {ISIN: [kurs, rendite|null, tag (Index in tage), boerse, umsatz]}}
-// – ~1,4 MB, deshalb per fetch geladen (nicht eingebettet). Kursverlauf: MC.verlauf (site.js).
+// suchindex.json (scripts/suchindex.py, nach jedem Kurs- und Indexlauf; seit 30.09.2026): nur Anleihen mit aktuellem Kurs, je Zeile
+// die Stammdaten wie in anleihen-index.json (Felder 0–12: isin, name, art, waehrung, kupon, faellig, volumen, stueckelung, boerse,
+// emittent (Index in emittenten, lesbare Schreibweise), zinsart, land, extra), dann r[13] = "<Rückzahlungsart><Jahr erster Handelstag>",
+// r[14] = Datenprüfung (Objekt oder 0) und der Tageskurs r[15–21] = kurs, rendite, tag (Index in tage), boerse, umsatz, vortag, aufschlag.
+// Rund 5,6 MB (gzip ~1,2 MB) statt vorher 8,8 MB (Index + Kurse, gzip ~1,7 MB) – und geladen erst, wenn jemand sucht oder filtert
+// (Fokus ins Suchfeld, Tippen, Filter, Adresse mit Suchbegriff) bzw. nach dem ersten Anzeigen im Leerlauf, nicht mit „Datensparen“.
+// Fehlt suchindex.json, baut die Seite dieselben Zeilen aus anleihen-index.json und anleihen-kurse.json (Rückfall, wie bisher).
 const MAX = 200;
 const AKTUELL_TAGE = 14;   // Kurs höchstens so alt (Kalendertage vor dem Stand) – ältere Anleihen stehen nicht in der Suche (Nutzerregel 26.09.2026: nur, was täglich aktuell gehalten werden kann)
-let IDX = null, HAY = null, KEYS = null, EMI = [], IDXMETA = null, ART = ["Staat", "Öffentlich", "Unternehmen"], KURSE = {}, KTAGE = [], KSTAND = "", BOERSEN = {};
+let IDX = null, HAY = null, KEYS = null, EMI = [], ART = ["Staat", "Öffentlich", "Unternehmen"], KURSE = {}, KTAGE = [], KSTAND = "", BOERSEN = {};
 const S = { q: "", col: "rest", dir: -1, f: {}, offen: new Set() };   // Standard seit 29.09.2026: längste Restlaufzeit zuerst
 
 // ---------- Formatierung ----------
-function fmt(v, dec = 0) {
-  if (typeof v !== "number" || !isFinite(v)) return "–";
-  return MC.minus(v.toLocaleString("de-DE", { minimumFractionDigits: dec, maximumFractionDigits: dec }));
-}
-function fmtDate(iso) { if (!iso) return L("perp"); const d = new Date(iso + "T12:00:00"); return isNaN(d) ? "–" : d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }); }
+const fmt = (v, dec = 0) => MC.zahl(v, dec);   // gemeinsames Zahlenformat (site.js)
+const fmtDate = iso => !iso ? L("perp") : MC.datum ? MC.datum(iso) : iso;
 const fmtCoupon = c => c === "var" ? L("var") : typeof c === "number" ? `${fmt(c, Math.round(c * 1000) % 10 ? 3 : 2)}\u00a0%` : "–";
 // Volumen immer in Mrd., höchstens drei gültige Ziffern (0,5 Mrd. · 1,25 Mrd. · 30,5 Mrd. · 122 Mrd.)
-const fmtVol = v => typeof v === "number" ? `${(v / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 })} ${L("bn")}` : "–";
+const fmtVol = (v, w) => typeof v === "number" ? `${(v / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 })} ${L("bn")}${w ? " " + w : ""}` : "–";   // mit Währung (seit 30.09.2026)
 const fmtStk = v => typeof v === "number" ? v.toLocaleString("de-DE", { maximumFractionDigits: 3 }) : "–";
 const norm = s => String(s).normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase();
 // Satzzeichen außer Komma/Punkt trennen Wörter („Mercedes-Benz“ → „mercedes benz“, „(2050)“ → „2050“)
@@ -463,7 +453,12 @@ const wName = c => { try { const n = NAMEN.w && NAMEN.w.of(c); return n && n !==
 // Innerhalb eines Filters gilt „oder“, zwischen den Filtern „und“.
 const bucket = (x, grenzen) => { for (const [g, k] of grenzen) if (x <= g) return k; return null; };
 // Kündigung je Anleihe (Regel in site.js); ohne site.js null = nicht einstufbar
-const kueVon = r => MC.kuendigung ? MC.kuendigung(r[1], Array.isArray(r[13]) && r[13][0] ? r[13][0][1] : "-", r[5], Array.isArray(r[13]) ? r[13][1] : "") : null;
+const kueVon = r => MC.kuendigung ? MC.kuendigung(r[1], typeof r[13] === "string" && r[13] ? r[13][0] : "-", r[5], typeof r[13] === "string" ? r[13].slice(1) : "") : null;
+// Angezeigter Name: Emittent in lesbarer Schreibweise ohne Rechtsform (die volle Form steht in der Kurzansicht), sonst der
+// Registername (FIRDS-Kurzname)
+const RF_ENDE = /[\s,]+(AG|SE|KGaA|GmbH|N\.V\.|B\.V\.|S\.A\.|S\.p\.A\.|S\.r\.l\.|PLC|p\.l\.c\.|Inc\.|Ltd\.?|Limited|LLC|Corp\.|Corporation|SA|NV|BV|AB|ASA|A\/S|Oyj|Aktiengesellschaft|Designated Activity Company)$/;
+// Staatsanleihen zeigen wie der Steckbrief das Land (GLEIF nennt die Schuldenagentur, z. B. „Direction Generale du Tresor“)
+const anzeigeName = r => r[2] === 0 && r[11] && r[11] !== "INT" ? landName(r[11]) : EMI[r[9]] ? EMI[r[9]].replace(RF_ENDE, "").replace(RF_ENDE, "") || EMI[r[9]] : r[1];
 // Schlüssel sind meist ein Wert, beim Filter Kündigung auch ein Array (trifft, wenn einer der Werte gewählt ist)
 const trifft = (sel, v) => Array.isArray(v) ? v.some(x => sel.has(x)) : sel.has(v);
 const zaehle = (m, v) => { if (Array.isArray(v)) { for (const x of v) m.set(x, (m.get(x) || 0) + 1); } else m.set(v, (m.get(v) || 0) + 1); };
@@ -547,13 +542,26 @@ const rendite = r => { const k = KURSE[r[0]]; return k && typeof k[1] === "numbe
 const FRAGLICH_AB = [2, 1.5, 3];
 const fraglich = r => { const k = KURSE[r[0]]; return !!(k && !k[4] && k[3] !== "B" && rendite(r) != null && r[5] && jahre(r[5]) < 1 && typeof k[7] === "number" && k[7] > (FRAGLICH_AB[r[2]] ?? 3)); };
 const KEY = {
-  name: r => r[1], art: r => r[2], isin: r => r[0], cur: r => r[3],
+  name: anzeigeName, art: r => r[2], isin: r => r[0], cur: r => r[3], rel: r => r.rel,
   kupon: r => typeof r[4] === "number" ? r[4] : null,
   faellig: r => r[5] || "9999", rest: r => r[5] || null,   // Restlaufzeit: unbefristet ohne Wert („–“) → immer ans Ende
   vol: r => typeof r[6] === "number" ? r[6] : null, stk: r => typeof r[7] === "number" ? r[7] : null,
   rendite, kurs: r => KURSE[r[0]] ? KURSE[r[0]][0] : null,
 };
+// Übereinstimmung mit dem Suchbegriff (seit 30.09.2026 Standard bei einer Suche, solange niemand eine Spalte sortiert):
+// genaue ISIN/WKN vor Treffern am Anfang des Emittenten, im Emittenten, am Wortanfang im Registernamen; bei Gleichstand das größere Volumen
+function relevanz(list) {
+  const q = woerter(S.q), toks = q.split(" ").filter(Boolean);
+  for (const r of list) {
+    const emi = " " + woerter(EMI[r[9]] || "") + " ", name = " " + woerter(r[1]) + " ", isin = r[0].toLowerCase();
+    let p = isin === q.replace(/ /g, "") || (/^de/.test(isin) && isin.slice(5, 11) === q) ? 10000 : 0;
+    if (emi.startsWith(" " + q)) p += 400;
+    for (const t of toks) p += emi.includes(" " + t) ? 120 : emi.includes(t) ? 60 : name.includes(" " + t) ? 30 : 0;
+    r.rel = p + Math.log10((typeof r[6] === "number" ? r[6] : 0) + 1);   // Volumen nur als Gleichstandsregel (höchstens ~12 Punkte)
+  }
+}
 function sortiere(list) {
+  if (S.col === "rel") relevanz(list);
   const key = KEY[S.col] || KEY.faellig;
   return list.sort((a, b) => {
     const x = key(a), y = key(b);
@@ -569,13 +577,14 @@ function zeile(r) {
   const k = KURSE[r[0]], rd = rendite(r), real = rd != null && istReal(r, k), offen = S.offen.has(r[0]);
   const alt = k && kDatum(k) !== KSTAND ? `<small class="alt">${fmtDate(kDatum(k)).slice(0, 6)}</small>` : "";
   const kurs = k ? `<span title="${MC.esc(L("kursTitle")(fmtDate(kDatum(k)), BOERSEN[k[3]] || "", k[4] ? fmtUmsatz(k[4], r[3]) : ""))}">${fmt(k[0], 2)}</span>${alt}` : "–";
-  return `<tr class="zeile${offen ? " offen" : ""}" data-isin="${MC.esc(r[0])}"><th scope="row"><button type="button" class="zbtn" aria-expanded="${offen}" aria-controls="det-${MC.esc(r[0])}">${MC.esc(r[1])}</button>${befund(r) ? `<span class="pruef" title="${MC.esc(L("pruefT")(widerspruch(r)))}">${L("pruefBadge")}</span>` : ""}</th>` +
+  const anz = anzeigeName(r);
+  return `<tr class="zeile${offen ? " offen" : ""}" data-isin="${MC.esc(r[0])}"><th scope="row"><button type="button" class="zbtn" aria-expanded="${offen}" aria-controls="det-${MC.esc(r[0])}">${MC.esc(anz)}</button>${anz !== r[1] ? `<small class="reg">${MC.esc(r[1])}</small>` : ""}${befund(r) ? `<span class="pruef" title="${MC.esc(L("pruefT")(widerspruch(r)))}">${L("pruefBadge")}</span>` : ""}</th>` +
     `<td class="num"${real ? ` title="${L("real")}"` : ""}>${rd != null ? (fraglich(r) ? `<span class="fraglich" title="${MC.esc(L("fraglichT")(fmt(k[7], 1)))}">${fmt(rd, 2)}\u00a0%<sup>?</sup></span>` : `${fmt(rd, 2)}\u00a0%${real ? "*" : ""}`) : "–"}</td>` +
     `<td class="num">${kurs}</td>` +
     `<td class="num">${fmtCoupon(r[4])}</td><td class="num">${!r[5] && pruefVon(r).faelligName ? L("pruefUnklar") : fmtDate(r[5])}</td>` +
     `<td class="num">${r[5] ? RL(jahre(r[5])) : "–"}</td>` +
-    `<td class="txt art">${MC.esc(ART[r[2]])}</td><td class="isin">${MC.esc(r[0])}</td><td class="txt">${MC.esc(r[3])}</td>` +
-    `<td class="num">${fmtVol(r[6])}</td><td class="num">${fmtStk(r[7])}</td></tr>` + (offen ? detailZeile(r) : "");
+    `<td class="txt art">${MC.esc(ART[r[2]])}</td><td class="isin"><a href="anleihe.html?isin=${encodeURIComponent(r[0])}" title="Steckbrief öffnen">${MC.esc(r[0])}</a></td><td class="txt">${MC.esc(r[3])}</td>` +
+    `<td class="num">${fmtVol(r[6], r[3])}</td><td class="num">${fmtStk(r[7])}</td></tr>` + (offen ? detailZeile(r) : "");
 }
 // Kurzansicht (seit 26.09.2026): vier Kennzahlen zum Einordnen – alles Weitere (Kursverlauf, Handel, Aufschlag zu Bund, Rang,
 // Rückzahlung, Zinsformel, Kaufrechnung) steht auf dem Steckbrief anleihe.html?isin=…
@@ -605,17 +614,21 @@ function detailZeile(r) {
   ].join("");
   const href = `anleihe.html?isin=${encodeURIComponent(r[0])}`;
   return `<tr class="zdet" id="det-${MC.esc(r[0])}"><td colspan="11"><div class="det">` +
-    `<div class="det-kopf"><b>${MC.esc(r[1])}</b>${EMI[r[9]] ? `<span class="det-emi">${MC.esc(EMI[r[9]])}</span>` : ""}` +
+    `<div class="det-kopf"><b>${MC.esc(EMI[r[9]] || r[1])}</b>${EMI[r[9]] ? `<span class="det-emi">${MC.esc(r[1])}</span>` : ""}` +
     `<span class="det-id">ISIN <b>${MC.esc(r[0])}</b>${wkn}<button type="button" class="kopie" data-isin="${MC.esc(r[0])}">${D.kopie}</button></span></div>` +
     `<dl class="det-kpi${kueF ? " fuenf" : ""}">${kpi}</dl>` +
     `<p class="det-mehr"><a class="det-link" href="${href}">${D.alle}</a></p>` +
     `</div></td></tr>`;
 }
 
-// ISIN in die Zwischenablage (Kopierknopf der Kurzansicht, seit 28.09.2026)
+// ISIN in die Zwischenablage (Kopierknopf der Kurzansicht, seit 28.09.2026; seit 30.09.2026 mit Rückfall ohne Clipboard-API
+// und Rückmeldung – vorher blieb der Knopf ohne HTTPS stumm)
 function kopieren(b) {
-  const D = L("det");
-  if (navigator.clipboard) navigator.clipboard.writeText(b.dataset.isin).then(() => { b.textContent = D.kopiert; setTimeout(() => { b.textContent = D.kopie; }, 1800); });
+  const D = L("det"), isin = b.dataset.isin;
+  const fertig = ok => { b.textContent = ok ? D.kopiert : `ISIN: ${isin} – bitte markieren und kopieren`; setTimeout(() => { b.textContent = D.kopie; }, ok ? 1800 : 5000); };
+  const alterWeg = () => { try { const ta = document.createElement("textarea"); ta.value = isin; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select(); const ok = document.execCommand("copy"); ta.remove(); return ok; } catch (e) { return false; } };
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(isin).then(() => fertig(true), () => fertig(alterWeg()));
+  else fertig(alterWeg());
 }
 
 // ---------- Filterleiste ----------
@@ -687,11 +700,13 @@ function zeige() {
   const unten = document.getElementById("status2");
   if (!aus) { box.hidden = true; unten.hidden = true; status.innerHTML = L("ready")(IDX.length.toLocaleString("de-DE")); return; }
   box.hidden = hits.length === 0;
+  // Sortierung: mit Suchbegriff nach Übereinstimmung, sonst längste Restlaufzeit zuerst – bis jemand eine Spalte wählt (S.eigen)
+  if (!S.eigen) { S.col = suche ? "rel" : "rest"; S.dir = -1; }
   sortiere(hits);
   // Genau ein Treffer für eine ISIN (Link von einer anderen Seite): Kurzansicht gleich öffnen
   if (hits.length === 1 && /^[A-Z]{2}[A-Z0-9]{9}\d$/i.test(S.q.trim()) && !S.zu) S.offen.add(hits[0][0]);
   box.querySelector("tbody").innerHTML = hits.slice(0, MAX).map(zeile).join("");
-  status.innerHTML = hits.length ? L("hits")(hits.length.toLocaleString("de-DE")) + (hits.length > MAX ? L("capped")(MAX) : "") : L("none");
+  status.innerHTML = hits.length ? L("hits")(hits.length.toLocaleString("de-DE")) + (S.col === "rel" && hits.length > 1 ? L("relevanz") : "") + (hits.length > MAX ? L("capped")(MAX) : "") : L("none");
   // Unter langen Listen: Hinweis wiederholen und Rückweg nach oben
   unten.hidden = hits.length <= 10;
   if (!unten.hidden) unten.innerHTML = `<span>${L("unten")(hits.length, MAX)}</span><a href="#q" class="hoch">${L("hoch")}</a>`;
@@ -709,6 +724,52 @@ function merkeURL() {
   if (neu !== location.pathname + location.search) history.replaceState(null, "", neu);
 }
 
+// ---------- Laden ----------
+// Zeilen im Format von suchindex.json aus den Einzeldateien bauen (Rückfall, gleiche Regeln wie scripts/suchindex.py)
+function ausEinzeldateien(ix, ku) {
+  const kurse = ku.kurse || {}, tage = ku.tage || [], kstand = ku.stand || "", rows = [];
+  if (!kstand) return { rows: [], tage, kstand: "" };
+  const grenze = new Date(Date.parse(kstand + "T12:00:00Z") - AKTUELL_TAGE * 86400000).toISOString().slice(0, 10);
+  for (const r of ix.rows || []) {
+    const k = kurses(kurse, r[0]); if (!k || (tage[k[2]] || "") < grenze || (r[5] && r[5] <= kstand)) continue;
+    const m = Array.isArray(r[13]) ? r[13] : [];
+    rows.push(r.slice(0, 13).concat([(m[0] && m[0][1] || "-") + String(m[1] || "").slice(0, 4), r[14] && Object.keys(r[14]).length ? r[14] : 0, k[0], k[1], k[2], k[3], k[4], k[6], k[7]]));
+  }
+  return { stand: ix.stand, kstand, tage, boersen: ku.boersen, art: ix.art, emittenten: ix.emittenten, rows };
+}
+const kurses = (k, isin) => Array.isArray(k[isin]) ? k[isin] : null;
+let ladeLauf = null;
+function laden() {
+  if (ladeLauf) return ladeLauf;
+  const st = document.getElementById("status");
+  st.classList.add("laedt"); st.textContent = L("loading");
+  const json = u => MC.json ? MC.json(u) : fetch(u).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
+  ladeLauf = json("suchindex.json")
+    .catch(err => { console.warn("suchindex.json nicht geladen – Rückfall auf anleihen-index.json und anleihen-kurse.json:", err);
+      return Promise.all([json("anleihen-index.json"), json("anleihen-kurse.json")]).then(([ix, ku]) => ausEinzeldateien(ix, ku)); })
+    .then(d => {
+      KTAGE = d.tage || []; KSTAND = d.kstand || ""; BOERSEN = d.boersen || {}; ART = d.art || ART; EMI = d.emittenten || [];
+      if (!KSTAND) { st.classList.remove("laedt"); st.textContent = L("errorKurse"); return; }
+      // Bereits fällige Anleihen (Fälligkeit heute oder früher) ausblenden – die Stammdaten kommen wöchentlich (Nutzerbefund 25.09.2026);
+      // nur Anleihen mit Kurs höchstens AKTUELL_TAGE vor dem Kursstand
+      const heute = new Date(HEUTE).toISOString().slice(0, 10);
+      const grenze = new Date(Date.parse(KSTAND + "T12:00:00Z") - AKTUELL_TAGE * 86400000).toISOString().slice(0, 10);
+      KURSE = {};
+      for (const r of d.rows) KURSE[r[0]] = [r[15], r[16], r[17], r[18], r[19], null, r[20], r[21]];
+      IDX = d.rows.filter(r => (!r[5] || r[5] > heute) && kDatum(KURSE[r[0]]) >= grenze);
+      HAY = IDX.map(suchtext);
+      KEYS = IDX.map(r => FILTER.map(f => f.key(r)));
+      FILTER.forEach(panelBauen);
+      st.classList.remove("laedt");
+      // Filterwerte aus der Adresse, die es nicht (mehr) gibt, verwerfen
+      for (const f of FILTER) for (const v of [...S.f[f.k]]) if (!f.namen.has(v)) S.f[f.k].delete(v);
+      document.getElementById("datastand").textContent = L("stand")(fmtDate(d.stand), KSTAND ? fmtDate(KSTAND) : "");
+      zeige();
+    })
+    .catch(err => { console.warn("Anleihe-Daten nicht geladen:", err); st.classList.remove("laedt"); st.textContent = L("error"); ladeLauf = null; });
+  return ladeLauf;
+}
+
 // ---------- Start ----------
 (function () {
   const p = new URLSearchParams(location.search);
@@ -717,8 +778,9 @@ function merkeURL() {
   const input = document.getElementById("q");
   input.value = S.q;
   let t = 0;
-  input.addEventListener("input", () => { clearTimeout(t); t = setTimeout(() => { S.q = input.value; zeige(); }, 120); });
-  input.form.addEventListener("submit", e => { e.preventDefault(); S.q = input.value; zeige(); input.blur(); });
+  input.addEventListener("input", () => { laden(); clearTimeout(t); t = setTimeout(() => { S.q = input.value; zeige(); }, 120); });
+  input.addEventListener("focus", laden);
+  input.form.addEventListener("submit", e => { e.preventDefault(); S.q = input.value; laden(); zeige(); input.blur(); });
 
   // Höhe der klebenden Kopfzeile für den klebenden Tabellenkopf
   const kopf = document.querySelector(".topbar");
@@ -729,8 +791,10 @@ function merkeURL() {
   // Weitere Filter von Anfang an zeigen, wenn einer davon aus der Adresse aktiv ist
   if (FILTER.some(f => S.f[f.k].size && document.querySelector(`.fgrp[data-f="${f.k}"]`).classList.contains("neben"))) mehrFilter(true);
   leiste.addEventListener("click", e => {
-    if (e.target.closest("#fmehr")) { mehrFilter(!leiste.classList.contains("alle")); return; }
+    if (e.target.closest("#fmehr")) { laden(); mehrFilter(!leiste.classList.contains("alle")); return; }
     const b = e.target.closest(".fbtn");
+    // Vor dem Laden: Daten holen, dann das gewünschte Auswahlfeld öffnen (Knöpfe sind nicht mehr gesperrt, seit 30.09.2026)
+    if (b && !IDX) { const f = b.parentElement.dataset.f; laden().then(() => { if (IDX) panel(f, true); }); return; }
     if (b) { const f = b.parentElement.dataset.f; panel(f, b.getAttribute("aria-expanded") !== "true"); return; }
     const r = e.target.closest(".freset");
     if (r) { S.f[r.closest(".fgrp").dataset.f].clear(); zeige(); return; }
@@ -762,6 +826,7 @@ function merkeURL() {
   box.querySelector("thead").addEventListener("click", e => {
     const b = e.target.closest(".sortbtn");
     if (!b) return;
+    S.eigen = true;
     if (S.col === b.dataset.col) S.dir = -S.dir; else { S.col = b.dataset.col; S.dir = b.dataset.col === "vol" || b.dataset.col === "rendite" ? -1 : 1; }
     zeige();
   });
@@ -769,7 +834,7 @@ function merkeURL() {
   box.querySelector("tbody").addEventListener("click", e => {
     const kb = e.target.closest(".kopie");
     if (kb) { kopieren(kb); return; }
-    if (e.target.closest(".zdet")) return;
+    if (e.target.closest(".zdet") || e.target.closest("a")) return;   // ISIN-Link führt direkt zum Steckbrief
     const tr = e.target.closest("tr.zeile"); if (!tr) return;
     if (!e.target.closest(".zbtn") && window.getSelection && String(window.getSelection()).length) return;   // Text markiert
     const isin = tr.dataset.isin, r = IDX.find(x => x[0] === isin), btn = tr.querySelector(".zbtn");
@@ -784,30 +849,14 @@ function merkeURL() {
     }
   });
 
-  const kurse = fetch("anleihen-kurse.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(d => { KURSE = d.kurse || {}; KTAGE = d.tage || []; KSTAND = d.stand || ""; BOERSEN = d.boersen || {}; })
-    .catch(e => console.warn("Kurse nicht geladen:", e));
-  const index = fetch("anleihen-index.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
-  Promise.all([index, kurse]).then(([d]) => {
-    // Bereits fällige Anleihen (Fälligkeit heute oder früher) ausblenden – die ESMA-Datei kommt wöchentlich, deshalb
-    // stehen abgelaufene Papiere noch einige Tage darin; kaufen kann man sie nicht mehr (Nutzerbefund 25.09.2026)
-    const heute = new Date(HEUTE).toISOString().slice(0, 10);
-    // Nur Anleihen mit aktuellem Kurs (höchstens AKTUELL_TAGE alt) – ohne Kursdatei bleibt die Suche leer, statt Veraltetes zu zeigen
-    if (!KSTAND) { const st = document.getElementById("status"); st.classList.remove("laedt"); st.textContent = L("errorKurse"); return; }
-    const grenze = new Date(Date.parse(KSTAND + "T12:00:00Z") - AKTUELL_TAGE * 86400000).toISOString().slice(0, 10);
-    IDX = d.rows.filter(r => (!r[5] || r[5] > heute) && KURSE[r[0]] && kDatum(KURSE[r[0]]) >= grenze); ART = d.art || ART; EMI = d.emittenten || [];
-    IDXMETA = { rang: d.rang || {}, rueckzahlung: d.rueckzahlung || {}, garantie: d.garantie || {} };
-    HAY = IDX.map(suchtext);
-    KEYS = IDX.map(r => FILTER.map(f => f.key(r)));
-    FILTER.forEach(panelBauen);
-    for (const b of leiste.querySelectorAll(".fbtn, .fmehr")) b.disabled = false;
-    document.getElementById("status").classList.remove("laedt");
-    // Filterwerte aus der Adresse, die es nicht (mehr) gibt, verwerfen
-    for (const f of FILTER) for (const v of [...S.f[f.k]]) if (!f.namen.has(v)) S.f[f.k].delete(v);
-    const stand = fmtDate(d.stand);
-    document.getElementById("datastand").textContent = L("stand")(stand, KSTAND ? fmtDate(KSTAND) : "");
-    zeige();
-  }).catch(e => { console.warn("Anleihe-Index nicht geladen:", e); const st = document.getElementById("status"); st.classList.remove("laedt"); st.textContent = L("error"); });
+  // Daten erst bei Bedarf (seit 30.09.2026): Suchbegriff oder Filter in der Adresse → sofort; sonst beim ersten Fokus, Tippen oder
+  // Filterklick, spätestens im Leerlauf nach dem Anzeigen (nicht bei „Datensparen“ oder langsamer Verbindung)
+  const p0 = new URLSearchParams(location.search);
+  if (p0.get("q") || FILTER.some(f => p0.get(f.k))) laden();
+  else {
+    const c = navigator.connection || {};
+    if (!c.saveData && !/(^|-)2g$|3g/.test(c.effectiveType || "")) window.addEventListener("load", () => (window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => laden(), { timeout: 4000 }));
+  }
 })();
 
 // Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js

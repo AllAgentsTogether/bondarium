@@ -31,27 +31,13 @@
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Anleihe-Arten (25.09.2026): Katalog in drei Gruppen (seit 26.09.2026) – wer leiht sich das Geld, wie wird verzinst, wie kommt das Geld zurück. Karten .typ im 2er-Raster,
-     die Karte „variabel“ über beide Spalten mit Schaubild. Grundregeln in base.css. */
-  .gruppe { margin-top: 34px; }
+     die Karte „variabel“ über beide Spalten mit Schaubild. Grundregeln in base.css; die Typ-Karten (.gruppe/.typ) stehen seit 30.09.2026 zentral in base.css, hier nur Seitenspezifisches. */
   .gruppe h2 { font-size: 26px; margin-bottom: 4px; }
   .gruppe .gsub { font-size: 16px; color: var(--text); margin-bottom: 16px; }
   .typen { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-  .typ { background: #fff; border: 1px solid rgba(26,26,25,0.09); border-radius: 14px; padding: 18px 20px 18px; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(26,26,25,0.03), 0 6px 18px rgba(26,26,25,0.035); }
   .typ.wide { grid-column: 1 / -1; background: linear-gradient(160deg, rgba(57,255,20,0.14) 0%, #fff 60%); border-color: var(--green-line); }
-  .typ .tk { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
-  .typ .ti { flex: none; width: 44px; height: 44px; border-radius: 50%; background: var(--soft); color: var(--green-text); display: grid; place-items: center; }
-  .typ .ti svg { width: 24px; height: 24px; }
-  .typ h3 { font-size: 19px; line-height: 1.2; letter-spacing: -0.01em; }
-  .typ .def { font-size: 15.5px; line-height: 1.55; color: var(--ink); }
   .typ .def + .def { margin-top: 8px; }
-  .typ dl { margin-top: 12px; display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: 6px 10px; font-size: 14px; line-height: 1.45; }
-  .typ dt { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); padding-top: 3px; }
-  .typ dd { color: var(--text); }
-  .typ dd strong { color: var(--ink); font-weight: 600; }
-  .typ .tl { margin-top: auto; padding-top: 14px; }
-  .typ .tl a { display: inline-block; font-size: 14px; font-weight: 600; text-decoration: none; background: var(--soft); color: var(--green-text); padding: 7px 12px; border-radius: 999px; }
-  .typ .tl a:hover { background: var(--green); color: var(--ink); }
-  .typ .tl a + a { margin-left: 6px; }
+  .typ .tl { display: flex; flex-wrap: wrap; gap: 6px; align-items: flex-start; }
   /* Karte variabel: Text links, Schaubild rechts */
   .wide .inner { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px 28px; align-items: start; }
   .wide .k-bild { align-self: stretch; }
@@ -65,12 +51,12 @@
   .merkmale li a { color: var(--blue); }
   @media (max-width: 860px) { .wide .inner { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 760px) { .typen { grid-template-columns: minmax(0, 1fr); } .merkmale ul { grid-template-columns: minmax(0, 1fr); } }
-  @media (max-width: 600px) { .typ { padding: 16px 16px; } .typ dl { grid-template-columns: 72px minmax(0, 1fr); } .gruppe h2 { font-size: 23px; } .merkmale { padding: 18px 16px; } }
+  @media (max-width: 600px) { .gruppe h2 { font-size: 23px; } .merkmale { padding: 18px 16px; } }
   /* Floater-Schaubild: eigene Handy-Fassung (schmalere viewBox, Schrift effektiv ≥ 11 px) */
   .sb-m { display: none; }
   @media (max-width: 600px) { .sb-d { display: none; } .sb-m { display: block; } }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Welche Anleihe-Arten gibt es? Dreizehn Arten einfach erklärt","description":"13 Anleihe-Arten einfach erklärt – von Staatsanleihe, Pfandbrief und Nachranganleihe bis Floater und Nullkupon. Je Art: Zins, Risiko und für wen sie passt.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-27","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihe-arten.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Welche Anleihe-Arten gibt es? Dreizehn Arten einfach erklärt","description":"13 Anleihe-Arten einfach erklärt – von Staatsanleihe, Pfandbrief und Nachranganleihe bis Floater und Nullkupon. Je Art: Zins, Risiko und für wen sie passt.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-30","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihe-arten.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Verstehen","item":"https://www.bondarium.de/wissen.html"},{"@type":"ListItem","position":3,"name":"Anleihe-Arten","item":"https://www.bondarium.de/anleihe-arten.html"}]}</script>
 </head>
 <body>
@@ -121,7 +107,7 @@
           <a href="realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
       </div>
@@ -168,7 +154,7 @@
       <h2 id="h-rueckzahlung">3 · Wie kommt das Geld zurück?</h2>
       <p class="gsub">Wann und in welcher Währung – zwei Vereinbarungen, die den Ertrag verändern, ohne am Kupon zu drehen.</p>
       <div class="typen">
-      <article class="typ" id="kuendbar"><div class="tk"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h11"/><path d="M11 8l4 4-4 4"/><rect x="17" y="6" width="4" height="12" rx="1.5"/></svg></span><h3>Kündbare Anleihe</h3></div><p class="def">Der Schuldner darf sie vorzeitig zu 100&nbsp;% zurückzahlen – meist ab einem festen Datum. Er tut es, wenn das allgemeine Zinsniveau gefallen ist und er sich billiger neu verschulden kann. Dafür zahlt er etwas mehr Zins.</p><dl><dt>Zins</dt><dd>fest, meist etwas höher als ohne Kündigungsrecht</dd><dt>Für wen</dt><dd>Wer den Aufschlag mitnimmt und damit leben kann, das Geld früher zurückzubekommen</dd><dt>Risiko</dt><dd>Kündigung, wenn du den hohen Zins am liebsten behalten würdest; keine Kündigung, wenn das Zinsniveau steigt</dd></dl><p class="tl"><a href="kuendbare-anleihen.html">Sechs Kündigungsarten →</a><a href="risiko.html#kuendigung">Risiko: Kündigung →</a></p></article>
+      <article class="typ" id="kuendbar"><div class="tk"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h11"/><path d="M11 8l4 4-4 4"/><rect x="17" y="6" width="4" height="12" rx="1.5"/></svg></span><h3>Kündbare Anleihe</h3></div><p class="def">Der Schuldner darf sie vor dem Ende zurückzahlen. Meist ist das harmlos: Bei einer Make-Whole-Kündigung zahlt er dir alles, was du bis zur Fälligkeit bekommen hättest, oder er kündigt nur in den letzten Monaten. Zinsen kosten kann dich vor allem die Kündigung zu 100&nbsp;% ab einem festen Termin, oft Jahre vor der Fälligkeit: Der Schuldner nutzt sie, wenn das allgemeine Zinsniveau gefallen ist.</p><dl><dt>Zins</dt><dd>fest; mit Kündigung ab festem Termin meist etwas höher als ohne</dd><dt>Für wen</dt><dd>Wer die Kündigungsart kennt und bei festem Termin damit leben kann, das Geld früher zurückzubekommen</dd><dt>Risiko</dt><dd>bei festem Termin: Kündigung, wenn du den hohen Zins am liebsten behalten würdest; keine Kündigung, wenn das Zinsniveau steigt</dd></dl><p class="tl"><a href="kuendbare-anleihen.html">Sechs Kündigungsarten →</a><a href="risiko.html#kuendigung">Risiko: Kündigung →</a></p></article>
       <article class="typ" id="fremdwaehrung"><div class="tk"><span class="ti" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.5a2.5 2.5 0 0 0-2.5-1.5c-1.5 0-2.5 1-2.5 2s1 1.6 2.5 2 2.5 1 2.5 2-1 2-2.5 2a2.5 2.5 0 0 1-2.5-1.5M12 6.5v11"/></svg></span><h3>Fremdwährungsanleihe</h3></div><p class="def">Zinsen und Rückzahlung kommen in Dollar, Kronen oder Lira. Der Zins ist oft höher als in Euro – der Wechselkurs entscheidet mit, was davon ankommt.</p><dl><dt>Zins</dt><dd>fest, in der Fremdwährung</dd><dt>Für wen</dt><dd>Wer bewusst auf eine Währung setzt oder dort Ausgaben hat</dd><dt>Risiko</dt><dd>Wechselkurs: 10&nbsp;% Kursverlust der Währung fressen zwei Jahre Zins; dazu Umtauschkosten beim Broker</dd></dl><p class="tl"><a href="anleihen-suche.html?w=USD&amp;art=0">Staatsanleihen in US-Dollar →</a><a href="risiko.html#waehrung">Risiko: Währung →</a></p></article>
       </div>
     </section>
@@ -200,9 +186,9 @@
     </nav>
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>

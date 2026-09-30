@@ -46,26 +46,14 @@
   .bdg.acht { color: #8E4A17; background: #FBEADB; }
   .bdg.plus { color: #157C00; background: #DCFBD3; }
 
-  /* Katalog der Kündigungsarten (2) */
-  .gruppe { margin-top: 34px; }
+  /* Katalog der Kündigungsarten (2) – Kartengrundregeln (.gruppe/.typ) seit 30.09.2026 zentral in base.css */
   .g-kopf { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
   .g-kopf .knr { margin: 0; flex: none; }
   .g-kopf h2 { margin: 0; }
   .gsub { font-size: 17px; color: var(--text); margin: 0 0 16px; max-width: 760px; }
   .typen { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-  .typ { background: #fff; border: 1px solid rgba(26,26,25,0.09); border-radius: 14px; padding: 18px 20px 18px; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(26,26,25,0.03), 0 6px 18px rgba(26,26,25,0.035); scroll-margin-top: 110px; }
-  .typ .tk { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
-  .typ .ti { flex: none; width: 44px; height: 44px; border-radius: 50%; background: var(--soft); color: var(--green-text); display: grid; place-items: center; }
-  .typ .ti svg { width: 24px; height: 24px; }
-  .typ h3 { font-size: 19px; line-height: 1.2; letter-spacing: -0.01em; flex: 1; min-width: 0; }
-  .typ .def { font-size: 15.5px; line-height: 1.55; color: var(--ink); }
-  .typ dl { margin-top: 12px; display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: 6px 10px; font-size: 14px; line-height: 1.45; }
-  .typ dt { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); padding-top: 3px; }
-  .typ dd { color: var(--text); margin: 0; }
-  .typ dd strong { color: var(--ink); font-weight: 600; }
-  .typ .tl { margin-top: auto; padding-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
-  .typ .tl a { display: inline-block; font-size: 14px; font-weight: 600; text-decoration: none; background: var(--soft); color: var(--green-text); padding: 7px 12px; border-radius: 999px; }
-  .typ .tl a:hover { background: var(--green); color: var(--ink); }
+  .typ h3 { flex: 1; min-width: 0; }
+  .typ .tl { display: flex; flex-wrap: wrap; gap: 6px; }
 
   /* Name lesen (3) */
   .nm { font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.35; background: var(--bg); border: 1px dashed rgba(26,26,25,0.22); border-radius: 10px; padding: 12px 14px; text-align: center; overflow-wrap: anywhere; }
@@ -109,7 +97,7 @@
 
   @media (max-width: 760px) { .typen, .pl { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 600px) {
-    .typ { padding: 16px; } .typ dl { grid-template-columns: 72px minmax(0, 1fr); } .typ h3 { font-size: 18px; }
+    .typ h3 { font-size: 18px; }
     .gsub { font-size: 16px; }
     .k-bild svg .tk { font-size: 17px; } .k-bild svg .an { font-size: 18px; } .k-bild svg .axt { font-size: 18px; }
     .nm { font-size: 17px; } .lese { font-size: 13.5px; }
@@ -168,7 +156,7 @@
           <a href="realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
       </div>
@@ -269,9 +257,9 @@
     </details>
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>

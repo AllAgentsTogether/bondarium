@@ -34,6 +34,8 @@
   section { margin-bottom: 36px; }
   section p { font-size: 14.5px; color: var(--ink); line-height: 1.7; margin-bottom: 10px; }
   .stand { color: var(--muted); font-size: 13px; }
+  .lands { margin-bottom: 30px; }
+  section[id] { scroll-margin-top: 90px; }   /* Sprungmarken: Überschrift nicht unter der festen Kopfzeile */
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Rechtliches","item":"https://www.bondarium.de/rechtliches.html"}]}</script>
 </head>
@@ -85,7 +87,7 @@
           <a href="realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
       </div>
@@ -98,14 +100,21 @@
 
   <h1>Impressum, Datenschutz &amp; Haftungsausschluss</h1>
   <p class="sub">Anbieterkennzeichnung, Datenschutzerklärung und rechtliche Hinweise für alle Inhalte dieser Website.</p>
+  <nav class="lands" aria-label="Zum Abschnitt springen">
+    <a class="lbtn" href="#impressum"><span class="n">1</span>Impressum</a>
+    <a class="lbtn" href="#datenschutz"><span class="n">2</span>Datenschutz</a>
+    <a class="lbtn" href="#haftung"><span class="n">3</span>Haftungsausschluss</a>
+  </nav>
 
   <!-- ============================================================
-       TODO: Impressum-Angaben eintragen (§ 5 DDG) – auch in T
+       TODO vor Veröffentlichung: Impressum nach § 5 DDG befüllen.
        Die Platzhalter [VORNAME NACHNAME], [STRASSE HAUSNUMMER], [PLZ ORT]
-       und [E-MAIL-ADRESSE] müssen VOR VERÖFFENTLICHUNG hier im HTML UND
-       unten in T durch echte Angaben ersetzt werden. [E-MAIL-ADRESSE] steht
-       zusätzlich auf ueber-uns.html (Abschnitt Kontakt).
+       und [E-MAIL-ADRESSE] im Abschnitt „Impressum“ unten durch echte
+       Angaben ersetzen. [E-MAIL-ADRESSE] steht zusätzlich auf ueber-uns.html
+       (Abschnitt Kontakt, im href und im Linktext). Danach im Kopf dieser
+       und aller anderen Seiten <meta name="author"> auf den Klarnamen setzen.
        Ein Postfach genügt als ladungsfähige Anschrift NICHT.
+       scripts/pruefen.py warnt beim Deploy, solange Platzhalter stehen.
        ============================================================ -->
   <section id="impressum">
     <h2>Impressum</h2>
@@ -147,9 +156,9 @@
 
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>

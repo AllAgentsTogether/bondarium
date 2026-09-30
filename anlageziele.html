@@ -45,9 +45,9 @@
   .passt b { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); }
   .pi { width: 34px; height: 34px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--green-text); box-shadow: 0 3px 10px rgba(30,45,80,0.10); }
   .pi svg { width: 18px; height: 18px; }
-  .sb-go { margin-top: 14px; align-self: flex-start; font-size: 14px; padding: 10px 16px; }
   .sb-bon { margin-top: 10px; align-self: flex-start; font-size: 14px; font-weight: 600; color: var(--green-text); text-decoration: none; }
   .sb-bon:hover { text-decoration: underline; }
+  @media (pointer: coarse) { .sb-bon { display: inline-flex; align-items: center; min-height: 44px; margin-top: 2px; } }
   /* Schaubilder: eigene Handy-Fassung (schmalere viewBox), damit die Beschriftung bei 360–390 px mindestens 11 px groß bleibt */
   .sb-m { display: none; }
   @media (max-width: 600px) { .sb.sb-d { display: none; } .sb.sb-m { display: block; } }
@@ -94,10 +94,9 @@
     .stapel { flex-direction: column; }
     .dp { grid-template-columns: 1fr; gap: 4px; }
     .dp-ax { grid-template-columns: 1fr; } .dp-ax .ax-k { display: none; }
-    .sb-go { align-self: stretch; text-align: center; }
   }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Anlageziele: Welche Anleihe wozu passt","description":"Sechs Anlageziele und die passende Anleihe: Geld kurz oder lang parken, Zinseinkommen, Zins für später sichern, große Beträge anlegen, Depot streuen.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-25","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anlageziele.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Anlageziele: Welche Anleihe wozu passt","description":"Sechs Anlageziele und die passende Anleihe: Geld kurz oder lang parken, Zinseinkommen, Zins für später sichern, große Beträge anlegen, Depot streuen.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-30","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anlageziele.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Entscheiden","item":"https://www.bondarium.de/entscheiden.html"},{"@type":"ListItem","position":3,"name":"Welche Anleihe wozu?","item":"https://www.bondarium.de/anlageziele.html"}]}</script>
 </head>
 <body>
@@ -148,7 +147,7 @@
           <a href="realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
       </div>
@@ -158,8 +157,8 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="entscheiden.html">Entscheiden</a></li><li><span aria-current="page">Welche Anleihe wozu?</span></li></ol></nav>
   <main id="main">
-    <h1>Welche Anleihe wozu passt</h1>
-    <p class="sub">Sechs typische Ziele, jedes mit Schaubild. Lesezeit: etwa 7 Minuten.</p>
+    <h1>Welche Anleihe wozu passt?</h1>
+    <p class="sub">Sechs typische Ziele, jedes mit Schaubild. Lesezeit: etwa 7 Minuten. Konkrete Beispiel-Anleihen zu einigen Zielen findest du bei den <a href="guide.html">Anleihen-Beispielen nach Ziel</a>.</p>
     <nav class="lands" aria-label="Zum Ziel springen">
       <a class="lbtn" href="#kurzfristig"><span class="n">1</span>Kurzfristig parken</a>
       <a class="lbtn" href="#langfristig"><span class="n">2</span>Langfristig parken</a>
@@ -190,8 +189,8 @@
 <text x="346" y="44" text-anchor="end" font-size="14" fill="#55544F">100&nbsp;% plus Zinsen</text>
 <line x1="352" y1="50" x2="352" y2="120" stroke="#1F7A5E" stroke-width="1.5" stroke-dasharray="3 3"/>
 <path d="M398 131 v-52 l22 8 -22 8z" fill="#CF7430"/>
-<text x="424" y="98" text-anchor="start" font-size="14" font-weight="600" fill="#CF7430">Juni:</text>
-<text x="424" y="114" text-anchor="start" font-size="14" font-weight="600" fill="#CF7430">Steuer</text>
+<text x="424" y="98" text-anchor="start" font-size="14" font-weight="600" fill="#A2561C">Juni:</text>
+<text x="424" y="114" text-anchor="start" font-size="14" font-weight="600" fill="#A2561C">Steuer</text>
 <text class="axt" x="428" y="182" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Monat&nbsp;→</text>
 </svg><svg class="sb sb-m" viewBox="0 0 300 200" role="img" aria-labelledby="sb1tm"><title id="sb1tm">Zeitstrahl: Im Oktober kaufst du die Anleihe. Im Mai wird sie fällig, das Geld kommt zurück. Im Juni ist die Steuer fällig.</title>
 <rect x="22" y="112" width="210" height="18" rx="4" fill="#DFFFD9"/>
@@ -207,10 +206,10 @@
 <text x="226" y="41" text-anchor="end" font-size="13" fill="#55544F">100&nbsp;% plus Zinsen</text>
 <line x1="232" y1="48" x2="232" y2="120" stroke="#1F7A5E" stroke-width="1.5" stroke-dasharray="3 3"/>
 <path d="M262 131 v-38 l18 7 -18 7z" fill="#CF7430"/>
-<text x="296" y="66" text-anchor="end" font-size="13" font-weight="600" fill="#CF7430">Juni:</text>
-<text x="296" y="83" text-anchor="end" font-size="13" font-weight="600" fill="#CF7430">Steuer</text>
+<text x="296" y="66" text-anchor="end" font-size="13" font-weight="600" fill="#A2561C">Juni:</text>
+<text x="296" y="83" text-anchor="end" font-size="13" font-weight="600" fill="#A2561C">Steuer</text>
 <text class="axt" x="296" y="184" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Monat&nbsp;→</text>
-</svg><a class="go leise sb-go" href="anleihen-suche.html?art=0&amp;w=EUR&amp;zins=0&amp;rest=a">Staatsanleihen in Euro bis 1 Jahr&nbsp;→</a><a class="sb-bon" href="bonitaet.html">Bonität prüfen&nbsp;→</a></div>
+</svg><a class="go leise sb-go" href="anleihen-suche.html?art=0&amp;w=EUR&amp;zins=0&amp;rest=a">Staatsanleihen in Euro bis 1 Jahr&nbsp;→</a><a class="sb-bon" href="bonitaet.html">Bonität vor dem Parken prüfen&nbsp;→</a></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Fälligkeit kurz vor dem Termin – dann passt es.</span></p>
     </section>
     <section class="kap kap-b" id="langfristig" aria-labelledby="h-langfristig">
@@ -228,7 +227,7 @@
 <circle cx="60" cy="105" r="7" fill="#fff" stroke="#1DA300" stroke-width="3"/>
 <circle cx="440" cy="105" r="7" fill="#1F7A5E" stroke="#fff" stroke-width="3"/>
 <path d="M440 46 v-30 l26 8 -26 8" fill="#CF7430"/><line x1="440" y1="16" x2="440" y2="50" stroke="#CF7430" stroke-width="2.5"/>
-<text x="432" y="28" text-anchor="end" font-size="15" font-weight="600" fill="#CF7430">Ziel: Studium</text>
+<text x="432" y="28" text-anchor="end" font-size="15" font-weight="600" fill="#A2561C">Ziel: Studium</text>
 <text x="432" y="45" text-anchor="end" font-size="13" fill="#1F7A5E" font-weight="600">100&nbsp;% zurück</text>
 <text x="60" y="22" font-size="14" fill="#55544F">Zwischendurch schwankt der Kurs –</text><text x="60" y="40" font-size="14" fill="#55544F">egal, du hältst bis 2031.</text>
 <text x="60" y="196" text-anchor="middle" font-size="14" fill="#55544F">2026</text><text x="136" y="196" text-anchor="middle" font-size="14" fill="#55544F">2027</text><text x="212" y="196" text-anchor="middle" font-size="14" fill="#55544F">2028</text><text x="288" y="196" text-anchor="middle" font-size="14" fill="#55544F">2029</text><text x="364" y="196" text-anchor="middle" font-size="14" fill="#55544F">2030</text><text x="440" y="196" text-anchor="middle" font-size="14" fill="#55544F">2031</text>
@@ -245,11 +244,11 @@
 <circle cx="44" cy="165" r="6" fill="#fff" stroke="#1DA300" stroke-width="3"/>
 <circle cx="290" cy="165" r="6" fill="#1F7A5E" stroke="#fff" stroke-width="3"/>
 <line x1="290" y1="72" x2="290" y2="112" stroke="#CF7430" stroke-width="2.5"/><path d="M290 72 l16 6 -16 6z" fill="#CF7430"/>
-<text x="283" y="84" text-anchor="end" font-size="14" font-weight="600" fill="#CF7430">Ziel: Studium</text>
+<text x="283" y="84" text-anchor="end" font-size="14" font-weight="600" fill="#A2561C">Ziel: Studium</text>
 <text x="283" y="101" text-anchor="end" font-size="13" font-weight="600" fill="#1F7A5E">100&nbsp;% zurück</text>
 <text x="44.0" y="252" text-anchor="middle" font-size="13" fill="#55544F">2026</text><text x="93.2" y="252" text-anchor="middle" font-size="13" fill="#55544F">2027</text><text x="142.4" y="252" text-anchor="middle" font-size="13" fill="#55544F">2028</text><text x="191.6" y="252" text-anchor="middle" font-size="13" fill="#55544F">2029</text><text x="240.8" y="252" text-anchor="middle" font-size="13" fill="#55544F">2030</text><text x="290.0" y="252" text-anchor="middle" font-size="13" fill="#55544F">2031</text>
 <text class="axt" x="306" y="278" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Jahr&nbsp;→</text>
-</svg><a class="go leise sb-go" href="staatsanleihen-laufzeit.html">Staatsanleihen nach Restlaufzeit ansehen&nbsp;→</a><a class="sb-bon" href="bonitaet.html">Bonität prüfen&nbsp;→</a></div>
+</svg><a class="go leise sb-go" href="staatsanleihen-laufzeit.html">Staatsanleihen nach Restlaufzeit ansehen&nbsp;→</a><a class="sb-bon" href="bonitaet.html">Bonität bei langer Laufzeit prüfen&nbsp;→</a></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Laufzeit = Zeit bis zum Ziel. Zwischendurch nicht hinschauen.</span></p>
     </section>
     <section class="kap" id="einkommen" aria-labelledby="h-einkommen">
@@ -260,7 +259,7 @@
         <ul class="passt" aria-label="Das passt dazu"><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5c0-1.1 1.1-2 2.5-2s2.5.9 2.5 2-1.1 1.6-2.5 2-2.5.9-2.5 2 1.1 2 2.5 2 2.5-.9 2.5-2M12 6v1.5M12 16.5V18"/></svg></span><span><b>Zins</b> fester Kupon, Zinstermine in verschiedenen Monaten</span></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.2l8.2 3.1v6.1c0 5.1-3.5 8.9-8.2 10.4-4.7-1.5-8.2-5.3-8.2-10.4V5.3z"/><path d="M8.3 12.1l2.6 2.6 4.9-5"/></svg></span><span><b>Schuldner</b> gute Bonität, damit die Zahlung sicher ist</span></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.8v.4"/></svg></span><span><b>Tipp</b> Wird eine Anleihe fällig, die nächste kaufen</span></li></ul>
       </div>
       <div class="k-bild"><p class="sb-k">Zinsen übers Jahr verteilt</p><div class="kal" role="img" aria-label="Kalender: Im Februar, Juni und Oktober kommen je 300 Euro Zinsen – von Anleihe A, B und C. Zusammen 900 Euro im Jahr."><div class=""><span class="m">Jan</span></div><div class="on"><span class="m">Feb</span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5c0-1.1 1.1-2 2.5-2s2.5.9 2.5 2-1.1 1.6-2.5 2-2.5.9-2.5 2 1.1 2 2.5 2 2.5-.9 2.5-2M12 6v1.5M12 16.5V18"/></svg></span><b>300&nbsp;€</b><small>Anleihe A</small></div><div class=""><span class="m">Mär</span></div><div class=""><span class="m">Apr</span></div><div class=""><span class="m">Mai</span></div><div class="on"><span class="m">Jun</span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5c0-1.1 1.1-2 2.5-2s2.5.9 2.5 2-1.1 1.6-2.5 2-2.5.9-2.5 2 1.1 2 2.5 2 2.5-.9 2.5-2M12 6v1.5M12 16.5V18"/></svg></span><b>300&nbsp;€</b><small>Anleihe B</small></div><div class=""><span class="m">Jul</span></div><div class=""><span class="m">Aug</span></div><div class=""><span class="m">Sep</span></div><div class="on"><span class="m">Okt</span><span class="c"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5c0-1.1 1.1-2 2.5-2s2.5.9 2.5 2-1.1 1.6-2.5 2-2.5.9-2.5 2 1.1 2 2.5 2 2.5-.9 2.5-2M12 6v1.5M12 16.5V18"/></svg></span><b>300&nbsp;€</b><small>Anleihe C</small></div><div class=""><span class="m">Nov</span></div><div class=""><span class="m">Dez</span></div></div>
-<p class="kal-sum">Drei Anleihen zu je 10.000&nbsp;€ mit 3&nbsp;% Kupon = <strong>900&nbsp;€ im Jahr</strong>, verteilt auf drei Termine.</p><a class="go leise sb-go" href="anleihen-suche.html?art=0&amp;zins=0&amp;kupon=c,g&amp;w=EUR&amp;stk=a">Euro-Staatsanleihen, Kupon 3 bis 5&nbsp;%, Stückelung bis 1.000&nbsp;€&nbsp;→</a><a class="sb-bon" href="bonitaet.html">Bonität prüfen&nbsp;→</a></div>
+<p class="kal-sum">Drei Anleihen zu je 10.000&nbsp;€ mit 3&nbsp;% Kupon = <strong>900&nbsp;€ im Jahr</strong>, verteilt auf drei Termine.</p><a class="go leise sb-go" href="anleihen-suche.html?art=0&amp;zins=0&amp;kupon=c,g&amp;w=EUR&amp;stk=a">Euro-Staatsanleihen, Kupon 3 bis 5&nbsp;%, Stückelung bis 1.000&nbsp;€&nbsp;→</a><a class="sb-bon" href="bonitaet.html">Bonität der Zinszahler prüfen&nbsp;→</a></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Fester Kupon, feste Termine – planbares Einkommen.</span></p>
     </section>
     <section class="kap kap-b" id="zinsen-sichern" aria-labelledby="h-zinsen-sichern">
@@ -277,7 +276,7 @@
 <path d="M60 65 L440 65" fill="none" stroke="#1DA300" stroke-width="4" stroke-linecap="round"/>
 <path d="M60 65 L108 92 L155 125 L440 125" fill="none" stroke="#CF7430" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 <text x="64" y="55" font-size="15" font-weight="600" fill="#157C00">Deine Anleihe: 3,5&nbsp;% – acht Jahre lang</text>
-<text x="440" y="147" text-anchor="end" font-size="15" font-weight="600" fill="#CF7430">Tagesgeld: nur noch 1,5&nbsp;%</text>
+<text x="440" y="147" text-anchor="end" font-size="15" font-weight="600" fill="#A2561C">Tagesgeld: nur noch 1,5&nbsp;%</text>
 <text x="60" y="196" text-anchor="middle" font-size="13" fill="#55544F">heute</text><text x="155" y="196" text-anchor="middle" font-size="13" fill="#55544F">Jahr 2</text><text x="250" y="196" text-anchor="middle" font-size="13" fill="#55544F">Jahr 4</text><text x="345" y="196" text-anchor="middle" font-size="13" fill="#55544F">Jahr 6</text><text x="440" y="196" text-anchor="middle" font-size="13" fill="#55544F">Jahr 8</text>
 
 <text class="axt" x="4" y="24" font-size="13" font-weight="600" fill="#55544F">↑ Zins pro Jahr in %</text>
@@ -289,7 +288,7 @@
 <path d="M44 65 L290 65" fill="none" stroke="#1DA300" stroke-width="3.5" stroke-linecap="round"/>
 <path d="M44 65 L75.1 92 L105.5 125 L290 125" fill="none" stroke="#CF7430" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
 <text x="44" y="54" font-size="14" font-weight="600" fill="#157C00">Deine Anleihe: 3,5&nbsp;% fest</text>
-<text x="290" y="148" text-anchor="end" font-size="14" font-weight="600" fill="#CF7430">Tagesgeld: nur noch 1,5&nbsp;%</text>
+<text x="290" y="148" text-anchor="end" font-size="14" font-weight="600" fill="#A2561C">Tagesgeld: nur noch 1,5&nbsp;%</text>
 <text x="44.0" y="196" text-anchor="middle" font-size="13" fill="#55544F">heute</text><text x="105.5" y="196" text-anchor="middle" font-size="13" fill="#55544F">Jahr 2</text><text x="167.0" y="196" text-anchor="middle" font-size="13" fill="#55544F">Jahr 4</text><text x="228.5" y="196" text-anchor="middle" font-size="13" fill="#55544F">Jahr 6</text><text x="290.0" y="196" text-anchor="middle" font-size="13" fill="#55544F">Jahr 8</text>
 <text class="axt" x="4" y="24" font-size="13" font-weight="600" fill="#55544F">↑ Zins pro Jahr in %</text>
 <text class="axt" x="308" y="226" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Zeit in Jahren&nbsp;→</text>
@@ -307,7 +306,7 @@
 <div class="st st-a" style="flex: 1"><b>100.000&nbsp;€</b><span>Tagesgeld</span><small>Einlagensicherung schützt</small></div>
 <div class="st st-b" style="flex: 2"><b>200.000&nbsp;€</b><span>Staatsanleihen im Depot</span><small>Dein Eigentum – 3 Länder, fällig in 1, 2, 3 Jahren</small></div>
 </div>
-<p class="sb-f">Bis 100.000&nbsp;€ je Bank schützt die Einlagensicherung, darüber der Staat als Schuldner.</p><a class="go leise sb-go" href="anleihen-laender.html">Staatsanleihen nach Ländern ansehen&nbsp;→</a><a class="sb-bon" href="bonitaet.html">Bonität prüfen&nbsp;→</a></div>
+<p class="sb-f">Bis 100.000&nbsp;€ je Bank schützt die Einlagensicherung, darüber der Staat als Schuldner.</p><a class="go leise sb-go" href="anleihen-laender.html">Staatsanleihen nach Ländern ansehen&nbsp;→</a><a class="sb-bon" href="bonitaet.html">Bonität bei großen Beträgen prüfen&nbsp;→</a></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Über 100.000&nbsp;€: Staatsanleihen bester Bonität statt Bankguthaben.</span></p>
     </section>
     <section class="kap kap-b" id="diversifizieren" aria-labelledby="h-diversifizieren">
@@ -335,16 +334,16 @@
     <nav class="crossnav" aria-label="Weiter">
       <p class="crossnav-t">Weiter</p>
       <ul class="crossnav-l">
-        <li><a href="guide.html">Vier Anleitungen nach Ziel – Schritt für Schritt zur passenden Anleihe</a></li>
+        <li><a href="guide.html">Anleihen-Beispiele nach Ziel – vier Menschen, konkrete Beispiele</a></li>
         <li><a href="anlegerprofile.html">Sind Anleihen etwas für dich?</a></li>
         <li><a href="begriffe.html">Glossar – von Anleihe bis Zinskurve</a></li>
       </ul>
     </nav>
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>

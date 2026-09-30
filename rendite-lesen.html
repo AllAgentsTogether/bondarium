@@ -53,12 +53,9 @@
 
   /* Balken (3, 5) */
   .balken .hb { display: grid; grid-template-columns: 150px minmax(0, 1fr); align-items: center; gap: 10px; }
-  .balken .hb + .hb { margin-top: 7px; }
-  .hb-l { font-size: 13.5px; font-weight: 600; color: var(--ap-ink); line-height: 1.25; }
-  .hb-l small { display: block; font-size: 12px; font-weight: 400; color: var(--text); }
-  .hb-bar { display: flex; align-items: center; justify-content: flex-end; height: 28px; width: var(--w); min-width: max-content; padding: 0 8px 0 10px; border-radius: 6px; background: #1F7A5E; }
-  .hb-bar.o { background: #A3651A; } .hb-bar.r { background: var(--down); } .hb-bar.n { background: #8E8D86; }
-  .hb-bar b { color: #fff; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  /* HTML-Balken: Grundform (.balken .hb, .hb-l, .hb-bar, Farben .o/.r/.n) in base.css; hier nur die Abweichungen */
+  .hb-l { font-size: 13.5px; line-height: 1.25; }
+  .hb-bar { justify-content: flex-end; padding: 0 8px 0 10px; }
   .worst { margin-top: 10px; padding: 9px 12px; border-radius: 10px; background: var(--ink); color: #fff; font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
   .worst b { color: var(--green); font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
 
@@ -70,12 +67,10 @@
   .qt tr:last-child td { border-bottom: 0; }
 
   .sb-f { font-size: 12.5px; color: var(--text); margin-top: 10px; line-height: 1.45; }
-  .sb-go { margin-top: 14px; align-self: flex-start; font-size: 14px; padding: 10px 16px; }
   @media (max-width: 600px) {
     .dk { padding: 10px 8px; } .dk-r { font-size: 20px; } .dk-k { font-size: 12.5px; } .dk-w { font-size: 12px; }
     .balken .hb { grid-template-columns: 108px minmax(0, 1fr); } .hb-l { font-size: 12.5px; }
     .qt { font-size: 12.5px; } .qt td:first-child { white-space: normal; }
-    .sb-go { align-self: stretch; text-align: center; }
   }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Rendite ist nicht gleich Rendite: Renditearten richtig lesen","description":"Kupon, laufende Rendite, Rendite bis Fälligkeit, bis zur Kündigung, Yield to Worst, nach Steuern: Welche Zahl was bedeutet, wo sie herkommt und welche für dich zählt.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-27","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/rendite-lesen.html"}</script>
@@ -129,7 +124,7 @@
           <a href="realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
       </div>
@@ -196,7 +191,7 @@
         <h2 id="h-netto">Nach Steuern und Inflation</h2>
         <p>Von den 3,9&nbsp;% nimmt der Staat 26,375&nbsp;% (Abgeltungsteuer mit Soli, ohne Kirchensteuer) – und zwar <strong>auf den Kupon und auf den Kursgewinn</strong> bis 100, sobald er realisiert ist. Bleiben 2,9&nbsp;% netto, oberhalb des <a href="begriffe.html#sparerpauschbetrag">Sparerpauschbetrags</a>.</p><p>Dann die Inflation: Bei 2&nbsp;% Preissteigerung bleibt <strong>real knapp 0,9&nbsp;%</strong>. Das ist die Zahl, die deine Kaufkraft beschreibt – und die auf Broker-Seiten nirgends steht. Wie sie sich seit 1970 entwickelt hat, zeigt der <a href="realzins.html">Realzins</a>.</p>
       </div>
-      <div class="k-bild"><p class="sb-k">Von brutto zu real</p><div class="balken" role="img" aria-label="Rendite bis Fälligkeit 3,9 Prozent. Nach Abgeltungsteuer 2,9 Prozent. Nach 2 Prozent Inflation real 0,9 Prozent."><div class="hb"><span class="hb-l">Brutto<small>Rendite bis Fälligkeit</small></span><span class="hb-bar" style="--w:100%"><b>3,9&nbsp;%</b></span></div><div class="hb"><span class="hb-l">Nach Steuern<small>−26,375&nbsp;%</small></span><span class="hb-bar o" style="--w:74%"><b>2,9&nbsp;%</b></span></div><div class="hb"><span class="hb-l">Real<small>−2,0 Punkte Inflation</small></span><span class="hb-bar r" style="--w:23%"><b>0,9&nbsp;%</b></span></div></div><p class="sb-f">Faustregel: Zins × 0,74 = netto. Damit netto die Inflation schlägt, braucht es Inflation ÷ 0,74 brutto – bei 2&nbsp;% also 2,7&nbsp;%.</p><a class="go sb-go" href="rechner.html#netto">Rechner: Zinsen netto nach Steuer →</a></div>
+      <div class="k-bild"><p class="sb-k">Von brutto zu real</p><div class="balken" role="img" aria-label="Rendite bis Fälligkeit 3,9 Prozent. Nach Abgeltungsteuer 2,9 Prozent. Nach 2 Prozent Inflation real 0,9 Prozent."><div class="hb"><span class="hb-l">Brutto<small>Rendite bis Fälligkeit</small></span><span class="hb-bar" style="--w:100%"><b>3,9&nbsp;%</b></span></div><div class="hb"><span class="hb-l">Nach Steuern<small>−26,375&nbsp;%</small></span><span class="hb-bar o" style="--w:74%"><b>2,9&nbsp;%</b></span></div><div class="hb"><span class="hb-l">Real<small>Kaufkraft: 2&nbsp;% Teuerung abgezogen</small></span><span class="hb-bar n" style="--w:23%"><b>0,9&nbsp;%</b></span></div></div><p class="sb-f">Faustregel: Zins × 0,74 = netto. Damit netto die Inflation schlägt, braucht es Inflation ÷ 0,74 brutto – bei 2&nbsp;% also 2,7&nbsp;%.</p><a class="go sb-go" href="rechner.html#netto">Rechner: Zinsen netto nach Steuer →</a></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Brutto × 0,74 = netto. Netto minus Inflation = real. Nur die letzte Zahl ist dein Ertrag.</span></p>
     </section>
 
@@ -210,16 +205,14 @@
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Drei Fragen an jede Rendite: bis wann, zu welchem Kurs, was ist abgezogen?</span></p>
     </section>
 
-    <div class="weiter">
-      <a class="go" href="rechner.html#rendite">Rechner: Rendite aus Kurs und Kupon →</a>
-      <a class="go leise" href="kuendbare-anleihen.html">Kündbare Anleihen →</a>
-      <a class="go leise" href="realzins.html">Realzins seit 1970 →</a>
-    </div>
     <p class="klein">Diese Seite erklärt Renditebegriffe. Sie empfiehlt keine Anlage und ist keine Steuerberatung. Die Zahlen sind gerundet.</p>
 
     <nav class="crossnav" aria-label="Weiter">
       <p class="crossnav-t">Weiter</p>
       <ul class="crossnav-l">
+        <li><a href="rechner.html#rendite">Rechner: Rendite aus Kurs und Kupon</a></li>
+        <li><a href="kuendbare-anleihen.html">Kündbare Anleihen</a></li>
+        <li><a href="realzins.html">Realzins seit 1970</a></li>
         <li><a href="duration.html">Duration und Konvexität – den Hebel rechnen</a></li>
         <li><a href="grundlagen.html#kurs">Grundlagen: Kurs und Rendite</a></li>
         <li><a href="anleihen-suche.html">Anleihen-Suche – Rendite je Anleihe</a></li>
@@ -236,9 +229,9 @@
     </details>
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>

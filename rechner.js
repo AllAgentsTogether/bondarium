@@ -1,36 +1,52 @@
 // Anleihen-Rechner (rechner.html, 25.09.2026): vier Rechner, alles im Browser, keine Daten-Requests.
 // 1 Rendite aus Kurs, Kupon, Fälligkeit · 2 Stückzinsen · 3 Netto nach Steuer · 4 Kurs bei verändertem Zinsniveau.
-// Konventionen: Zinstage ACT/ACT, jährliche Verzinsung (ISMA), Valuta = heute + 2 Tage. Ergebnisse gerundet, keine Beratung.
+// Konventionen: Zinstage ACT/ACT, jährliche Verzinsung (ISMA), Valuta = heute + 2 Bankarbeitstage. Ergebnisse gerundet, keine Beratung.
+// Seit 30.09.2026: Rechner 1 nutzt die gemeinsame Anleihen-Mathematik aus bond.js (MC.bond: Kupontermine, Stückzinsen,
+// Barwert); Datumsfelder nehmen auch Ziffernfolgen (15082033, 150833); Prozentfelder lesen den Punkt als Komma (3.125);
+// Plausibilitätsgrenzen je Feld mit aria-invalid; Ergebnis und Fehler werden entprellt über eine Live-Region angesagt.
 (function () {
   "use strict";
   var MCX = window.MC || {};
   var minus = MCX.minus || function (s) { return String(s).replace(/^-/, "−"); };
+  var BOND = MCX.bond;   // bond.js (nach site.js geladen)
   var DAY = 86400000;
   function $(id) { return document.getElementById(id); }
   // Deutsche Zahlen: "10.000" = 10000, "96,5" = 96.5, "1.234,56" = 1234.56; Zeichen wie % oder € werden ignoriert.
-  function parseDe(str) {
-    var v = String(str).replace(/[^\d,.\-]/g, "");
+  // dezimal = true (Prozent- und Jahresfelder): ohne Komma gilt ein einzelner Punkt als Dezimalzeichen ("3.125" = 3,125 %),
+  // denn Tausender kommen dort nicht vor und viele Handys bieten nur den Punkt an.
+  function parseDe(str, dezimal) {
+    var v = String(str).replace(/\u2212/g, "-").replace(/[^\d,.\-]/g, "");
     if (!v) return NaN;
     if (v.indexOf(",") >= 0) v = v.replace(/\./g, "").replace(",", ".");
+    else if (dezimal && (v.match(/\./g) || []).length === 1) { /* Punkt = Dezimalzeichen */ }
     else if (/^\-?\d{1,3}(\.\d{3})+$/.test(v)) v = v.replace(/\./g, "");
     var n = parseFloat(v);
     return isFinite(n) ? n : NaN;
   }
-  function num(id, def) { var el = $(id); if (!el) return def; var n = parseDe(el.value); return isNaN(n) ? def : n; }
+  // Felder, in denen der Punkt Dezimalzeichen ist (Prozent und Jahre)
+  var DEZ = { "r1-kurs": 1, "r1-kupon": 1, "r2-kupon": 1, "r3-rendite": 1, "r3-jahre": 1, "r4-kupon": 1, "r4-jahre": 1, "r4-rendite": 1 };
+  function num(id, def) { var el = $(id); if (!el) return def; var n = parseDe(el.value, !!DEZ[id]); return isNaN(n) ? def : n; }
   function leerFeld(id) { var el = $(id); return !el || !String(el.value).trim(); }
-  // Datum als Text: TT.MM.JJJJ (auch T.M.JJ, TT/MM/JJJJ oder JJJJ-MM-TT) – Textfeld statt Datumswähler, damit z. B. 2070 direkt eingetippt werden kann
-  function dat(id) {
-    var el = $(id); if (!el) return null;
-    var v = String(el.value).trim(), m, d, mo, y;
+  // Datum als Text: TT.MM.JJJJ (auch T.M.JJ, TT/MM/JJJJ, TT-MM-JJJJ oder JJJJ-MM-TT) – Textfeld statt Datumswähler, damit z. B.
+  // 2070 direkt eingetippt werden kann. Seit 30.09.2026 auch reine Ziffern (Handy-Ziffernblock ohne Punkt):
+  // 15082033 = 15.08.2033, 150833 = 15.08.2033, 20330815 = 15.08.2033. Zweistellige Jahre zählen als 20JJ.
+  function datText(v) {
+    v = String(v).trim();
+    var m, d, mo, y;
     if (!v) return null;
-    if ((m = v.match(/^(\d{1,2})[.\/ ](\d{1,2})[.\/ ](\d{2}|\d{4})$/))) { d = +m[1]; mo = +m[2]; y = +m[3]; if (y < 100) y += 2000; }
+    if ((m = v.match(/^(\d{1,2})[.\/ -](\d{1,2})[.\/ -](\d{2}|\d{4})\.?$/))) { d = +m[1]; mo = +m[2]; y = +m[3]; }
     else if ((m = v.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/))) { y = +m[1]; mo = +m[2]; d = +m[3]; }
+    else if ((m = v.match(/^(\d{2})(\d{2})(\d{4})$/)) || (m = v.match(/^(\d{2})(\d{2})(\d{2})$/))) {
+      d = +m[1]; mo = +m[2]; y = +m[3];
+      if (m[3].length === 4 && !gueltig(d, mo, y) && (m = v.match(/^(\d{4})(\d{2})(\d{2})$/))) { y = +m[1]; mo = +m[2]; d = +m[3]; }
+    }
     else return null;
-    var dt = new Date(y, mo - 1, d, 12, 0, 0);
-    if (dt.getFullYear() !== y || dt.getMonth() !== mo - 1 || dt.getDate() !== d) return null;
-    return dt;
+    if (y < 100) y += 2000;
+    return gueltig(d, mo, y) ? new Date(y, mo - 1, d, 12, 0, 0) : null;
   }
-  function fmt(v, dec) { if (!isFinite(v)) return "–"; return minus(v.toLocaleString("de-DE", { minimumFractionDigits: dec, maximumFractionDigits: dec })); }
+  function gueltig(d, mo, y) { var dt = new Date(y, mo - 1, d, 12, 0, 0); return y >= 1900 && dt.getFullYear() === y && dt.getMonth() === mo - 1 && dt.getDate() === d; }
+  function dat(id) { var el = $(id); return el ? datText(el.value) : null; }
+  function fmt(v, dec) { if (MCX.zahl) return MCX.zahl(v, dec); if (!isFinite(v)) return "–"; return minus(v.toLocaleString("de-DE", { minimumFractionDigits: dec, maximumFractionDigits: dec })); }
   function eur(v) { return fmt(v, 2) + "\u00A0€"; }   // geschütztes Leerzeichen vor der Einheit
   // Rechner 1 in der Währung der Anleihe, wenn der Steckbrief sie übergibt (?w=USD, seit 29.09.2026)
   var EINH1 = "€";
@@ -41,37 +57,60 @@
   function addMonths(d, m) { var r = new Date(d.getTime()); var day = r.getDate(); r.setDate(1); r.setMonth(r.getMonth() + m); var last = new Date(r.getFullYear(), r.getMonth() + 1, 0).getDate(); r.setDate(Math.min(day, last)); return r; }
   function days(a, b) { return Math.round((b.getTime() - a.getTime()) / DAY); }
   function setText(id, t) { var el = $(id); if (el) el.textContent = t; }
+  function isoOf(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+
+  // ---------- Fehler und Ansage (Barrierefreiheit) ----------
+  // Jeder Rechner hat ein Hinweisfeld rN-out (per aria-describedby an allen Eingaben) und eine unsichtbare Live-Region rN-live.
+  // Ungültige Felder bekommen aria-invalid="true". Die Live-Region wird erst 900 ms nach der letzten Eingabe gefüllt, damit
+  // Screenreader nicht bei jedem Tastendruck ein Ergebnis vorlesen; beim ersten Rechnen (Seitenaufruf) wird nichts angesagt.
+  var FELDER = {
+    r1: ["r1-kurs", "r1-kupon", "r1-faellig", "r1-nenn", "r1-freq"],
+    r2: ["r2-nenn", "r2-kupon", "r2-letzter", "r2-valuta", "r2-freq"],
+    r3: ["r3-betrag", "r3-rendite", "r3-jahre", "r3-fsa", "r3-kist"],
+    r4: ["r4-kupon", "r4-jahre", "r4-rendite"]
+  };
+  var bereit = false, timer = {};
+  function markiere(r, falsch) {
+    FELDER[r].forEach(function (id) { var el = $(id); if (!el) return; if (falsch.indexOf(id) >= 0) el.setAttribute("aria-invalid", "true"); else el.removeAttribute("aria-invalid"); });
+  }
+  function ansage(r, text) {
+    if (!bereit) return;
+    clearTimeout(timer[r]);
+    timer[r] = setTimeout(function () { var el = $(r + "-live"); if (el) { el.textContent = ""; el.textContent = text; } }, 900);
+  }
+  // Fehler anzeigen: Hinweistext, Markierung, Ansage. felder = Liste der ungültigen Feld-IDs.
+  function fehler(r, felder, msg) {
+    setText(r + "-out", msg);
+    var o = $(r + "-out"); if (o) o.classList.add("fehler");
+    markiere(r, felder);
+    ansage(r, msg);
+  }
+  function ok(r, msg, ansageText) {
+    setText(r + "-out", msg);
+    var o = $(r + "-out"); if (o) o.classList.remove("fehler");
+    markiere(r, []);
+    ansage(r, ansageText);
+  }
+  // Grenzen je Feld: [min, max, Meldung]; min/max eingeschlossen, außer wo „über“ steht (dann > min)
+  function pruefe(r, liste) {
+    for (var i = 0; i < liste.length; i++) {
+      var x = liste[i], v = x[1];
+      if (isNaN(v) || v < x[2] || v > x[3] || (x[5] && v === x[2])) { fehler(r, [x[0]], x[4]); return false; }
+    }
+    return true;
+  }
   function valuta() {   // heute + 2 Bankarbeitstage (Wochenenden übersprungen; Feiertage nicht berücksichtigt)
     var d = new Date(); d.setHours(12, 0, 0, 0); var n = 0;
     while (n < 2) { d = new Date(d.getTime() + DAY); if (d.getDay() !== 0 && d.getDay() !== 6) n++; }
     return d;
   }
 
-  // Kupontermine rückwärts von der Fälligkeit; liefert letzten Termin vor settle und alle folgenden
-  function schedule(maturity, freq, settle) {
-    var step = 12 / freq, dates = [], d = new Date(maturity.getTime());
-    var guard = 0;
-    while (d > settle && guard++ < 2000) { dates.push(d); d = addMonths(d, -step); }
-    dates.reverse();
-    return { prev: d, next: dates };
-  }
-  // Barwert je 100 Nennwert (dirty) bei Rendite y (jährlich, taggenau)
-  function pv(coupon, freq, sched, settle, y) {
-    var p = 0, i, d, t, cf, mat = sched.next[sched.next.length - 1];
-    for (i = 0; i < sched.next.length; i++) {
-      d = sched.next[i]; t = days(settle, d) / 365.25;
-      cf = coupon / freq + (d.getTime() === mat.getTime() ? 100 : 0);
-      p += cf / Math.pow(1 + y, t);
-    }
-    return p;
-  }
-  function accrued(coupon, freq, sched, settle) {
-    var next = sched.next[0], prev = sched.prev, per = days(prev, next);
-    return per > 0 ? coupon / freq * days(prev, settle) / per : 0;
-  }
-  function solveYield(coupon, freq, sched, settle, dirty) {
+  // Kupontermine, Stückzinsen und Barwert kommen aus bond.js (MC.bond, gemeinsame Anleihen-Mathematik der Website).
+  // Die Rendite sucht der Rechner selbst per Halbierung im weiten Bereich −50 … 500 %, damit auch unplausible Eingaben
+  // ein Ergebnis mit Warnhinweis liefern (MC.bond.yieldFromPrice ist auf −2 … 30 % begrenzt).
+  function solveYield(f, clean) {
     var lo = -0.5, hi = 5.0, mid, i;
-    for (i = 0; i < 90; i++) { mid = (lo + hi) / 2; if (pv(coupon, freq, sched, settle, mid) > dirty) lo = mid; else hi = mid; }
+    for (i = 0; i < 90; i++) { mid = (lo + hi) / 2; if (f.price(mid) > clean) lo = mid; else hi = mid; }
     return (lo + hi) / 2;
   }
 
@@ -79,17 +118,26 @@
   function rendite() {
     var kurs = num("r1-kurs", NaN), kupon = num("r1-kupon", NaN), nenn = num("r1-nenn", NaN), freq = num("r1-freq", 1), mat = dat("r1-faellig");
     var settle = valuta();
-    function leer(msg) { ["r1-rendite", "r1-jahre", "r1-kauf", "r1-stz", "r1-gesamt", "r1-zinsen", "r1-rueck", "r1-gewinn"].forEach(function (id) { setText(id, "–"); }); setText("r1-out", msg); }
-    if (leerFeld("r1-kurs") || leerFeld("r1-kupon") || leerFeld("r1-nenn") || leerFeld("r1-faellig")) { leer("Bitte Kurs, Kupon, Fälligkeit und Nennwert eingeben – der Kupon darf 0 sein."); return; }
-    if (isNaN(kurs) || isNaN(kupon) || isNaN(nenn)) { leer("Eine Eingabe ist keine Zahl. Schreibweise: 96,50 oder 10.000."); return; }
-    if (!mat) { leer("Bitte die Fälligkeit als Datum eingeben, zum Beispiel 15.08.2033."); return; }
-    if (mat <= settle) { leer("Die Fälligkeit muss nach der Valuta (" + fmtDate(settle) + ") liegen."); return; }
-    if (kurs <= 0 || nenn <= 0 || kupon < 0 || kupon > 30 || kurs > 300) { leer("Bitte prüfe die Eingaben: Kurs in Prozent (z. B. 96,50), Kupon in Prozent pro Jahr, Nennwert in Euro."); return; }
-    var sched = schedule(mat, freq, settle), acc = accrued(kupon, freq, sched, settle), dirty = kurs + acc;
+    function leer(felder, msg) { ["r1-rendite", "r1-jahre", "r1-kauf", "r1-stz", "r1-gesamt", "r1-zinsen", "r1-rueck", "r1-gewinn"].forEach(function (id) { setText(id, "–"); }); if (msg) fehler("r1", felder, msg); }
+    var fehlt = ["r1-kurs", "r1-kupon", "r1-faellig", "r1-nenn"].filter(leerFeld);
+    if (fehlt.length) { leer(fehlt, "Bitte Kurs, Kupon, Fälligkeit und Nennwert eingeben – der Kupon darf 0 sein."); return; }
+    if (!BOND) { leer([], "Der Rechenbaustein (bond.js) wurde nicht geladen. Bitte die Seite neu laden."); return; }
+    if (!mat) { leer(["r1-faellig"], "Bitte die Fälligkeit als Datum eingeben, zum Beispiel 15.08.2033 oder 15082033."); return; }
+    if (mat <= settle) { leer(["r1-faellig"], "Die Fälligkeit muss nach der Valuta (" + fmtDate(settle) + ") liegen."); return; }
+    if (days(settle, mat) > 120 * 365.25) { leer(["r1-faellig"], "Die Fälligkeit liegt mehr als 120 Jahre in der Zukunft – bitte prüfen."); return; }
+    if (!pruefe("r1", [
+      ["r1-kurs", kurs, 0, 300, "Der Kurs wird in Prozent des Nennwerts angegeben, über 0 und höchstens 300 – zum Beispiel 96,50.", true],
+      ["r1-kupon", kupon, 0, 30, "Der Kupon wird in Prozent pro Jahr angegeben, von 0 bis 30 – zum Beispiel 3,00."],
+      ["r1-nenn", nenn, 0, 1e9, "Der Nennwert muss über 0 liegen (höchstens 1 Milliarde) – zum Beispiel 1.000 oder 10.000.", true]
+    ])) { leer(); return; }
+    var b = { coupon: kupon, freq: freq, maturity: isoOf(mat) }, sIso = isoOf(settle);
+    var cd = BOND.couponDates(b, sIso), f = BOND.pricer(b, sIso);
+    var sched = { prev: new Date(cd.prev), next: cd.dates.map(function (t) { return new Date(t); }) };
+    var acc = f.accrued, dirty = kurs + acc;
     // Marktkonvention: Im letzten Kuponabschnitt (nur noch eine Zahlung) einfache Verzinsung, sonst Rendite mit jährlichem Zinseszins (ISMA)
     var einfach = sched.next.length === 1, y;
     if (einfach) { y = (100 + kupon / freq - dirty) / dirty * 365 / days(settle, mat); }
-    else { y = solveYield(kupon, freq, sched, settle, dirty); }
+    else { y = solveYield(f, kurs); }
     var jahre = days(settle, mat) / 365.25;
     var zinsenSumme = sched.next.length * kupon / freq * nenn / 100;
     var kauf = kurs * nenn / 100, stz = acc * nenn / 100, gesamt = kauf + stz;
@@ -105,31 +153,46 @@
     var hinweis = "";
     if (y > 0.25 || y < -0.05) hinweis = " Die Rendite ist unplausibel – prüfe Kurs und Fälligkeit (Kurs in Prozent des Nennwerts, z. B. 96,50).";
     else if (einfach) hinweis = " Restlaufzeit unter einem Kuponabschnitt: einfache Verzinsung aufs Jahr hochgerechnet, wie am Geldmarkt üblich.";
-    setText("r1-out", "Rendite bei Kauf zu " + pct(kurs) + " mit Valuta " + fmtDate(settle) + ", bis zur Fälligkeit gehalten, vor Steuern und Gebühren. Letzter Zinstermin: " + fmtDate(sched.prev) + ", nächster: " + fmtDate(sched.next[0]) + "." + hinweis);
+    ok("r1", "Rendite bei Kauf zu " + pct(kurs) + " mit Valuta " + fmtDate(settle) + ", bis zur Fälligkeit gehalten, vor Steuern und Gebühren. Letzter Zinstermin: " + fmtDate(sched.prev) + ", nächster: " + fmtDate(sched.next[0]) + "." + hinweis,
+      "Rendite pro Jahr " + pct(y * 100) + ". Du zahlst " + geld1(gesamt) + ", Gewinn vor Steuer " + geld1(gewinn) + "." + hinweis);
     var g = $("r1-gewinn"); if (g) g.className = "big " + (gewinn >= 0 ? "up" : "down");
   }
 
   // ---------- 2 Stückzinsen ----------
   function stueckzinsen() {
     var nenn = num("r2-nenn", NaN), kupon = num("r2-kupon", NaN), freq = num("r2-freq", 1), last = dat("r2-letzter"), val = dat("r2-valuta") || valuta();
-    if (leerFeld("r2-nenn") || leerFeld("r2-kupon") || isNaN(nenn) || isNaN(kupon)) { setText("r2-out", "Bitte Nennwert und Kupon als Zahl eingeben (z. B. 10.000 und 3,00)."); setText("r2-stz", "–"); setText("r2-tage", "–"); setText("r2-next", "–"); return; }
-    if (!last) { setText("r2-out", "Bitte den letzten Zinstermin als Datum eingeben, zum Beispiel 15.08.2026."); setText("r2-stz", "–"); return; }
+    function leer(felder, msg) { setText("r2-stz", "–"); setText("r2-tage", "–"); setText("r2-next", "–"); if (msg) fehler("r2", felder, msg); }
+    var fehlt = ["r2-nenn", "r2-kupon"].filter(leerFeld);
+    if (fehlt.length) { leer(fehlt, "Bitte Nennwert und Kupon als Zahl eingeben (z. B. 10.000 und 3,00)."); return; }
+    if (!pruefe("r2", [
+      ["r2-nenn", nenn, 0, 1e9, "Der Nennwert muss über 0 liegen (höchstens 1 Milliarde) – zum Beispiel 10.000.", true],
+      ["r2-kupon", kupon, 0, 30, "Der Kupon wird in Prozent pro Jahr angegeben, von 0 bis 30 – zum Beispiel 3,00."]
+    ])) { leer(); return; }
+    if (!last) { leer(["r2-letzter"], "Bitte den letzten Zinstermin als Datum eingeben, zum Beispiel 15.08.2026 oder 15082026."); return; }
     if (!$("r2-valuta").value.trim()) val = valuta();
-    if (!dat("r2-valuta") && $("r2-valuta").value.trim()) { setText("r2-out", "Bitte die Valuta als Datum eingeben (TT.MM.JJJJ)."); setText("r2-stz", "–"); return; }
+    if (!dat("r2-valuta") && $("r2-valuta").value.trim()) { leer(["r2-valuta"], "Bitte die Valuta als Datum eingeben (TT.MM.JJJJ oder nur Ziffern, z. B. 02102026)."); return; }
     var next = addMonths(last, 12 / freq), per = days(last, next), t = days(last, val);
-    if (t < 0 || t > per) { setText("r2-out", "Die Valuta muss zwischen dem letzten und dem nächsten Zinstermin (" + fmtDate(next) + ") liegen."); setText("r2-stz", "–"); return; }
+    if (t < 0 || t > per) { leer(["r2-letzter", "r2-valuta"], "Die Valuta muss zwischen dem letzten und dem nächsten Zinstermin (" + fmtDate(next) + ") liegen."); return; }
     var stz = nenn * kupon / 100 / freq * t / per;
     setText("r2-stz", eur(stz));
     setText("r2-tage", t + " von " + per + " Tagen");
     setText("r2-next", eur(nenn * kupon / 100 / freq) + " am " + fmtDate(next));
-    setText("r2-out", "Du zahlst dem Verkäufer die Zinsen für " + t + " Tage seit dem " + fmtDate(last) + ". Am " + fmtDate(next) + " bekommst du den vollen Kupon – die Stückzinsen sind damit zurück. Steuerlich mindern gezahlte Stückzinsen deine Kapitalerträge im Kaufjahr.");
+    ok("r2", "Du zahlst dem Verkäufer die Zinsen für " + t + " Tage seit dem " + fmtDate(last) + ". Am " + fmtDate(next) + " bekommst du den vollen Kupon – die Stückzinsen sind damit zurück. Steuerlich mindern gezahlte Stückzinsen deine Kapitalerträge im Kaufjahr.",
+      "Stückzinsen " + eur(stz) + " für " + t + " von " + per + " Zinstagen.");
   }
 
   // ---------- 3 Netto nach Steuer ----------
   var SATZ = { "0": 0.26375, "8": 0.27819, "9": 0.27995 };   // Abgeltungsteuer 25 % + Soli 5,5 %; mit Kirchensteuer 8 %/9 % (Kirchensteuer mindert die Abgeltungsteuer)
   function netto() {
     var betrag = num("r3-betrag", NaN), rend = num("r3-rendite", NaN), jahre = num("r3-jahre", 1), kist = String(num("r3-kist", 0)), fsa = num("r3-fsa", 0);
-    if (isNaN(betrag) || isNaN(rend)) { ["r3-brutto", "r3-frei", "r3-steuer", "r3-netto", "r3-nrend", "r3-gesamt"].forEach(function (id) { setText(id, "–"); }); setText("r3-out", "Bitte Anlagebetrag und Rendite als Zahl eingeben (z. B. 50.000 und 3,20). Ein leerer Freistellungsauftrag zählt als 0\u00A0€."); return; }
+    function leer(felder, msg) { ["r3-brutto", "r3-frei", "r3-steuer", "r3-netto", "r3-nrend", "r3-gesamt"].forEach(function (id) { setText(id, "–"); }); if (msg) fehler("r3", felder, msg); }
+    if (isNaN(betrag) || isNaN(rend)) { leer(["r3-betrag", "r3-rendite"].filter(function (id) { return isNaN(num(id, NaN)); }), "Bitte Anlagebetrag und Rendite als Zahl eingeben (z. B. 50.000 und 3,20). Ein leerer Freistellungsauftrag zählt als 0\u00A0€."); return; }
+    if (!pruefe("r3", [
+      ["r3-betrag", betrag, 0, 1e9, "Der Anlagebetrag muss über 0 liegen (höchstens 1 Milliarde) – zum Beispiel 50.000.", true],
+      ["r3-rendite", rend, -5, 30, "Die Rendite wird in Prozent pro Jahr angegeben, von −5 bis 30 – zum Beispiel 3,20."],
+      ["r3-jahre", jahre, 0, 100, "Die Laufzeit muss über 0 und höchstens 100 Jahre betragen.", true],
+      ["r3-fsa", fsa, 0, 2000, "Der Freistellungsauftrag liegt zwischen 0 und 2.000\u00A0€ (1.000\u00A0€ je Person, 2.000\u00A0€ bei Zusammenveranlagung)."]
+    ])) { leer(); return; }
     var satz = SATZ[kist] || SATZ["0"];
     var brutto = betrag * rend / 100, pflichtig = Math.max(0, brutto - fsa), steuer = pflichtig * satz, net = brutto - steuer;
     var nettoRend = betrag > 0 ? net / betrag * 100 : 0, eff = brutto > 0 ? steuer / brutto * 100 : 0;
@@ -140,15 +203,26 @@
     setText("r3-nrend", pct(nettoRend));
     setText("r3-gesamt", eur(net * jahre) + " in " + fmt(jahre, jahre % 1 === 0 ? 0 : 1) + (jahre === 1 ? " Jahr" : " Jahren"));   // 2,5 Jahre bleiben 2,5
     var abg = 25 / (1 + 0.25 * (+kist) / 100);   // Kirchensteuer mindert die Abgeltungsteuer: 25 % / (1 + 0,25 × Kirchensteuersatz)
-    setText("r3-out", "Steuersatz auf Zinsen: " + pct(satz * 100, 3).replace(",000", "") + (kist !== "0"
+    ok("r3", "Steuersatz auf Zinsen: " + pct(satz * 100, 3).replace(",000", "") + (kist !== "0"
       ? " (Abgeltungsteuer " + pct(abg, 2) + " – die Kirchensteuer mindert sie –, Solidaritätszuschlag 5,5\u00A0% darauf und Kirchensteuer " + kist + "\u00A0% darauf)"
-      : " (Abgeltungsteuer 25\u00A0% + Solidaritätszuschlag 5,5\u00A0% darauf)") + ". Der Freistellungsauftrag (Sparer-Pauschbetrag 1.000\u00A0€ je Person, 2.000\u00A0€ bei Zusammenveranlagung) gilt je Jahr für alle Kapitalerträge zusammen. Ohne Zinseszins gerechnet; persönliche Umstände (Günstigerprüfung, Verlusttopf) nicht berücksichtigt.");
+      : " (Abgeltungsteuer 25\u00A0% + Solidaritätszuschlag 5,5\u00A0% darauf)") + ". Der Freistellungsauftrag (Sparer-Pauschbetrag 1.000\u00A0€ je Person, 2.000\u00A0€ bei Zusammenveranlagung) gilt je Jahr für alle Kapitalerträge zusammen. Ohne Zinseszins gerechnet; persönliche Umstände (Günstigerprüfung, Verlusttopf) nicht berücksichtigt.",
+      "Zinsen pro Jahr netto " + eur(net) + ", Nettorendite " + pct(nettoRend) + ".");
   }
 
   // ---------- 4 Zinsniveau ----------
   function zinsniveau() {
     var kupon = num("r4-kupon", NaN), jahre = num("r4-jahre", NaN), y0 = num("r4-rendite", NaN) / 100;
-    if (isNaN(kupon) || isNaN(jahre) || isNaN(y0) || jahre <= 0 || jahre > 120) { ["r4-kurs", "r4-dur", "r4-m2", "r4-m1", "r4-p1", "r4-p2"].forEach(function (id) { setText(id, "–"); }); setText("r4-out", "Bitte Kupon, Restlaufzeit (über 0, höchstens 120 Jahre) und Rendite als Zahl eingeben."); return; }
+    function leer(felder, msg) {
+      ["r4-kurs", "r4-dur", "r4-m2", "r4-m1", "r4-p1", "r4-p2"].forEach(function (id) { setText(id, "–"); var b = $(id + "-bar"); if (b) b.style.width = "0"; });
+      if (msg) fehler("r4", felder, msg);
+    }
+    var nan = ["r4-kupon", "r4-jahre", "r4-rendite"].filter(function (id) { return isNaN(num(id, NaN)); });
+    if (nan.length) { leer(nan, "Bitte Kupon, Restlaufzeit (über 0, höchstens 120 Jahre) und Rendite als Zahl eingeben."); return; }
+    if (!pruefe("r4", [
+      ["r4-kupon", kupon, 0, 30, "Der Kupon wird in Prozent pro Jahr angegeben, von 0 bis 30 – zum Beispiel 2,60."],
+      ["r4-jahre", jahre, 0, 120, "Die Restlaufzeit muss über 0 und höchstens 120 Jahre betragen.", true],
+      ["r4-rendite", y0 * 100, -5, 30, "Die Rendite wird in Prozent pro Jahr angegeben, von −5 bis 30 – zum Beispiel 3,50."]
+    ])) { leer(); return; }
     function price(y) { var p = 0, n = Math.ceil(jahre), i, t; for (i = 1; i <= n; i++) { t = jahre - (n - i); p += kupon / Math.pow(1 + y, t); } return p + 100 / Math.pow(1 + y, jahre); }
     // Kurs wie beim Broker: ohne Stückzinsen. Bei gebrochener Restlaufzeit liegt der nächste Kupon in t0 < 1 Jahr, aufgelaufen ist kupon × (1 − t0).
     var t0 = jahre - (Math.ceil(jahre) - 1), acc = kupon * (1 - t0);
@@ -163,12 +237,15 @@
     var dur = (price(y0 - 0.0005) - price(y0 + 0.0005)) / (2 * 0.0005) / price(y0);   // modifizierte Duration auf den vollen Preis (mit Stückzinsen)
     setText("r4-kurs", pct(p0));
     setText("r4-dur", fmt(dur, 1));
-    setText("r4-out", "Kurs heute (ohne Stückzinsen) bei " + pct(y0 * 100) + " Rendite: " + pct(p0) + ". Modifizierte Duration " + fmt(dur, 1) + " – so viel Prozent verliert der Kurs ungefähr je Prozentpunkt, den das allgemeine Zinsniveau steigt. Die Balken zeigen die genaue Rechnung (mit Konvexität: der Gewinn bei fallendem Zinsniveau ist größer als der Verlust bei steigendem).");
+    ok("r4", "Kurs heute (ohne Stückzinsen) bei " + pct(y0 * 100) + " Rendite: " + pct(p0) + ". Modifizierte Duration " + fmt(dur, 1) + " – so viel Prozent verliert der Kurs ungefähr je Prozentpunkt, den das allgemeine Zinsniveau steigt. Die Balken zeigen die genaue Rechnung (mit Konvexität: der Gewinn bei fallendem Zinsniveau ist größer als der Verlust bei steigendem).",
+      "Kurs heute " + pct(p0) + ", modifizierte Duration " + fmt(dur, 1) + ". Zinsniveau plus 1 Punkt: " + $("r4-p1").textContent + ", minus 1 Punkt: " + $("r4-m1").textContent + ".");
   }
 
   function bind(ids, fn) { ids.forEach(function (id) { var el = $(id); if (el) { el.addEventListener("input", fn); el.addEventListener("change", fn); } }); fn(); }
   // Beim Verlassen eines Felds die Zahl sauber schreiben: Euro mit Tausenderpunkt, Prozent mit zwei Nachkommastellen
-  function schoen(id, dec) { var el = $(id); if (!el) return; el.addEventListener("blur", function () { var n = parseDe(el.value); if (!isNaN(n) && el.value.trim()) el.value = n.toLocaleString("de-DE", { minimumFractionDigits: dec, maximumFractionDigits: Math.max(dec, 3) }); }); }
+  function schoen(id, dec) { var el = $(id); if (!el) return; el.addEventListener("blur", function () { var n = parseDe(el.value, !!DEZ[id]); if (!isNaN(n) && el.value.trim()) el.value = n.toLocaleString("de-DE", { minimumFractionDigits: dec, maximumFractionDigits: Math.max(dec, 3) }); }); }
+  // Datumsfelder: gültige Eingaben (auch 15082033) beim Verlassen als TT.MM.JJJJ schreiben
+  function schoenDatum(id) { var el = $(id); if (!el) return; el.addEventListener("blur", function () { var d = datText(el.value); if (d && iso(d) !== el.value) el.value = iso(d); }); }
   function init() {
     var v = valuta(), f = $("r1-faellig"), l = $("r2-letzter"), rv = $("r2-valuta");
     // Vorbelegung aus dem Steckbrief (anleihe.html, seit 29.09.2026): ?kurs=99,99&kupon=1,625&faellig=30.09.2026&freq=2&w=USD
@@ -185,7 +262,9 @@
     bind(["r4-kupon", "r4-jahre", "r4-rendite"], zinsniveau);
     ["r1-nenn", "r2-nenn", "r3-betrag", "r3-fsa"].forEach(function (id) { schoen(id, 0); });
     ["r1-kurs", "r1-kupon", "r2-kupon", "r3-rendite", "r4-kupon", "r4-rendite"].forEach(function (id) { schoen(id, 2); });
+    ["r1-faellig", "r2-letzter", "r2-valuta"].forEach(schoenDatum);
     ["r1-nenn", "r2-nenn", "r3-betrag", "r3-fsa"].forEach(function (id) { var el = $(id); if (el) el.dispatchEvent(new Event("blur")); });
+    bereit = true;   // ab jetzt Ergebnisse und Fehler ansagen (nur nach Eingaben)
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();

@@ -30,8 +30,8 @@
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  /* Anleihen-ETF (24.09.2026): fünf Erklärkarten nach dem Gestaltungssystem (base.css); hier nur die eigenen Schaubilder. */
-  .sb-go { margin-top: 14px; align-self: flex-start; font-size: 14px; padding: 10px 16px; }
+  /* Anleihen-ETF (24.09.2026): fünf Erklärkarten nach dem Gestaltungssystem (base.css); hier nur die eigenen Schaubilder.
+     .sb-go und die Sprungpillen a.lbtn (Tippfläche ≥ 44 px am Touch-Gerät) stehen in base.css. */
   /* Listen mit Symbol (Vorteile, Nachteile, Auswahl) */
   .pl { list-style: none; display: grid; gap: 10px; margin-top: 14px; }
   .pl li { display: grid; grid-template-columns: 38px minmax(0, 1fr); column-gap: 12px; align-items: start; font-size: 15px; line-height: 1.5; color: var(--text); }
@@ -75,7 +75,6 @@
     .korb-t span { padding: 8px 3px; font-size: 12px; }
     .dp { grid-template-columns: 1fr; gap: 4px; }
     .dp-ax { grid-template-columns: 1fr; } .dp-ax .ax-k { display: none; }
-    .sb-go { align-self: stretch; text-align: center; }
   }
   /* Zeitverlauf (3): eigene Handy-Fassung (schmalere viewBox, Schrift effektiv ≥ 11 px) */
   .sb-m { display: none; }
@@ -132,7 +131,7 @@
           <a href="realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
       </div>
@@ -221,7 +220,7 @@
         <h2 id="h-wahl">ETF oder einzelne Anleihe?</h2>
         <p>Beides hat seinen Platz. Die entscheidende Frage: <strong>Brauchst du das Geld an einem festen Tag?</strong> Dann zählt die Fälligkeit – die hat nur die Anleihe.</p><p>Geht es ums Sparen, Streuen oder um einen ruhigen Baustein im Depot, ist der ETF der einfachere Weg.</p>
       </div>
-      <div class="k-bild"><p class="sb-k">Was wozu passt</p><table class="wahl"><thead><tr><th scope="col">Du willst …</th><th scope="col">Passt besser</th></tr></thead><tbody><tr><th scope="row">Geld an einem festen Tag zurück</th><td><span class="pick anleihe">Anleihe</span></td></tr><tr><th scope="row">Den heutigen Zins für Jahre sichern</th><td><span class="pick anleihe">Anleihe</span></td></tr><tr><th scope="row">Kleine Beträge, Sparplan</th><td><span class="pick etf">ETF</span></td></tr><tr><th scope="row">Über viele Unternehmen streuen</th><td><span class="pick etf">ETF</span></td></tr><tr><th scope="row">Baustein fürs Depot, ohne Pflege</th><td><span class="pick etf">ETF</span></td></tr><tr><th scope="row">Große Beträge in beste Bonität</th><td><span class="pick beides">beides</span></td></tr></tbody></table>
+      <div class="k-bild"><p class="sb-k">Was wozu passt</p><table class="wahl"><caption class="sr-only">Was wozu passt: Anleihe oder Anleihen-ETF</caption><thead><tr><th scope="col">Du willst …</th><th scope="col">Passt besser</th></tr></thead><tbody><tr><th scope="row">Geld an einem festen Tag zurück</th><td><span class="pick anleihe">Anleihe</span></td></tr><tr><th scope="row">Den heutigen Zins für Jahre sichern</th><td><span class="pick anleihe">Anleihe</span></td></tr><tr><th scope="row">Kleine Beträge, Sparplan</th><td><span class="pick etf">ETF</span></td></tr><tr><th scope="row">Über viele Unternehmen streuen</th><td><span class="pick etf">ETF</span></td></tr><tr><th scope="row">Baustein fürs Depot, ohne Pflege</th><td><span class="pick etf">ETF</span></td></tr><tr><th scope="row">Große Beträge in beste Bonität</th><td><span class="pick beides">beides</span></td></tr></tbody></table>
 <p class="sb-f">Neu gibt es auch <strong>ETFs mit festem Enddatum</strong> („Laufzeit-ETFs“): Sie halten nur Anleihen, die in einem bestimmten Jahr fällig werden, und zahlen dann aus – eine Mischung aus beidem.</p><a class="go leise sb-go" href="anlageziele.html">Welche Anleihe wozu passt →</a></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Fester Termin → Anleihe. Sparen und streuen → ETF.</span></p>
     </section>
@@ -253,9 +252,9 @@
     </nav>
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>

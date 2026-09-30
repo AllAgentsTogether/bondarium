@@ -9,7 +9,10 @@ Bricht mit Fehler ab (Deploy wird rot, nichts geht live) bei:
 Warnt (Deploy läuft weiter) bei:
   - Platzhaltern wie [VORNAME NACHNAME] oder [E-MAIL-ADRESSE] (Impressum noch nicht befüllt)
   - Anker-Links (#…) auf Ziele, die es auf der Zielseite nicht gibt
+  - Angeboten in broker.json, deren „bis“-Datum abgelaufen ist oder in weniger als 14 Tagen abläuft
 """
+import datetime
+import json
 import os
 import re
 import sys
@@ -18,7 +21,7 @@ site = sys.argv[1] if len(sys.argv) > 1 else "_site"
 seiten = {f for f in os.listdir(site) if f.endswith(".html")}
 ids = {}
 fehler, warnungen = [], []
-HREF = re.compile(r'href="(?!https?:|mailto:|tel:|data:|javascript:|#)/?([^"#?]+\.html)?(?:\?[^"#]*)?(?:#([^"]+))?"')
+HREF = re.compile(r'href="(?!https?:|mailto:|tel:|data:|javascript:|#)(/|\./)?([^"#?]+\.html)?(?:\?[^"#]*)?(?:#([^"]+))?"')
 PLATZ = re.compile(r'\[(?:VORNAME|NACHNAME|STRASSE|PLZ|E-MAIL|TELEFON)[^\]]*\]')
 
 for f in seiten:
@@ -28,7 +31,9 @@ for f in seiten:
 for f in sorted(seiten):
     html = open(os.path.join(site, f), encoding="utf-8").read()
     ohne_skript = re.sub(r"<script\b[^>]*>.*?</script>", "", html, flags=re.S)
-    for ziel, anker in HREF.findall(ohne_skript):
+    for wurzel, ziel, anker in HREF.findall(ohne_skript):
+        if not ziel and wurzel:   # „/#akademie“ oder „./#akademie“ = Startseite
+            ziel = "index.html"
         if ziel and ziel not in seiten:
             fehler.append(f"{f}: Link auf fehlende Seite {ziel}")
         elif anker and "$" not in anker and anker not in ids.get(ziel or f, set()):
@@ -37,6 +42,15 @@ for f in sorted(seiten):
         fehler.append(f"{f}: alter Name METALCONCRETE im Text")
     for p in sorted(set(PLATZ.findall(ohne_skript))):
         warnungen.append(f"{f}: Platzhalter {p}")
+
+# Broker-Angebote mit Ablaufdatum (broker.json, Feld „bis“ im Format JJJJ-MM-TT)
+bj = os.path.join(site, "broker.json")
+if os.path.isfile(bj):
+    heute = datetime.date.today()
+    for bis in re.findall(r'"bis"\s*:\s*"(\d{4}-\d{2}-\d{2})"', open(bj, encoding="utf-8").read()):
+        rest = (datetime.date.fromisoformat(bis) - heute).days
+        if rest < 14:
+            warnungen.append(f"broker.json: Angebot bis {bis} " + ("abgelaufen – Eintrag pflegen" if rest < 0 else f"läuft in {rest} Tagen ab"))
 
 for w in warnungen:
     print(f"::warning::{w}")

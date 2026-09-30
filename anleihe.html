@@ -35,9 +35,6 @@
      Regel (Nutzerentscheid 29.09.2026, Konzept claude/detailansicht-ux-2026-09-29.md): Die Seite zeigt nur Werte aus den genannten
      Quellen und einfache, gekennzeichnete Berechnungen daraus – keine Bewertung, keine Handlungsaufforderung, keine Signalfarben.
      Prüfung: python3 scripts/neutral_check.py */
-  .zurueck { font-size: 14px; margin: 0 0 14px; }
-  .zurueck a { color: var(--green-text); text-decoration: none; }
-  .zurueck a:hover { text-decoration: underline; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; list-style: none; padding: 0; }
   .chips:empty { display: none; }
   .chips li { font-size: 12.5px; font-weight: 600; line-height: 1; padding: 6px 10px; border-radius: 999px; background: #fff; border: 1px solid rgba(26,26,25,0.16); color: var(--ink); white-space: nowrap; }
@@ -90,6 +87,10 @@
   a.hilf { display: inline-grid; place-items: center; width: 18px; height: 18px; margin-left: 5px; border-radius: 50%; border: 1px solid rgba(26,26,25,0.3); font-size: 11px; font-weight: 700; line-height: 1; color: var(--text); text-decoration: none; vertical-align: 0; }
   a.hilf:hover { border-color: var(--ink); color: var(--ink); }
   a.hilf:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  /* Tippfläche am Touch-Gerät: unsichtbar auf 44 × 44 px vergrößert, das Layout bleibt gleich (seit 30.09.2026) */
+  @media (pointer: coarse) { a.hilf { position: relative; } a.hilf::after { content: ""; position: absolute; inset: -13px; } }
+  .kopie-hinweis { font-size: 13px; color: var(--text); }
+  .kopie-hinweis:empty { display: none; }
   /* Kursverlauf: Veränderung nur mit Vorzeichen, ohne Signalfarbe */
   #inhalt[hidden] { display: grid; visibility: hidden; min-height: 100vh; }   /* unsichtbar, aber Platzhalter gegen Layoutspringen */
   .kv { margin-top: 0; min-height: calc(min(100vw - 48px, 658px) * 0.39 + 40px); }
@@ -215,7 +216,7 @@
           <a href="realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
       </div>
@@ -225,7 +226,6 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="anleihen.html">Anleihen</a></li><li><a href="anleihen-suche.html">Anleihen-Suche</a></li><li><span aria-current="page">Anleihe</span></li></ol></nav>
   <main id="main">
-    <p class="zurueck"><a href="anleihen-suche.html" id="zurueck">← Zur Anleihen-Suche</a></p>
     <ul class="chips" id="chips" aria-label="Merkmale"></ul>
     <h1 id="titel">Anleihe</h1>
     <p class="reg" id="reg"></p>
@@ -287,7 +287,7 @@
         <p><strong>Grundsatz.</strong> Der Steckbrief zeigt Werte aus den unten genannten Quellen und einfache Berechnungen daraus; Berechnetes ist mit „berechnet“ markiert. Er bewertet die Anleihe nicht und empfiehlt keinen Kauf oder Verkauf. Begriffe erklärt das <a href="begriffe.html">Glossar</a>.</p>
         <p><strong>Kurse und Handel.</strong> Deutsche Börse, Nachhandelsdaten nach MiFIR Art. 13 (Börse Frankfurt, Tradegate; 15 Minuten verzögert, kostenlos veröffentlicht): jede Kursfeststellung mit Zeitpunkt, Kurs, Stückzahl und Handelsplatz. Daraus stammen Schlusskurs, Eröffnung, Hoch, Tief, die Zahl der Feststellungen und der Abschlüsse – alle vom Kursplatz (in der Regel Frankfurt); der Umsatz zählt Frankfurt und Tradegate zusammen, deshalb kann es Umsatz auf Tradegate geben, obwohl in Frankfurt kein Abschluss zustande kam. Ohne Abschluss ist der Kurs die Feststellung des Spezialisten (Taxe). Bundeswertpapiere: Kurs und Rendite der Deutschen Bundesbank. Täglich aktualisiert; der Kursverlauf wird seit dem 24.09.2026 gesammelt, für Bundeswertpapiere reicht er laut Bundesbank bis zur Ausgabe zurück.</p>
         <p><strong>Ältere Kurse von US-Staatsanleihen.</strong> Vor dem 24.09.2026 stammt der Kursverlauf der US-Treasuries vom U.S. Department of the Treasury (Bureau of the Fiscal Service, TreasuryDirect „FedInvest – Security Price Detail“): Preis zum Tagesende je 100 Dollar Nennwert, ohne Stückzinsen, bei TIPS ohne Inflationsfaktor; bis Ende 2023 ein Wert je Woche, danach täglich. Als Werk der US-Regierung frei nutzbar. Die Frankfurter Kurse lagen beim Vergleich am 25.09.2026 im Mittel rund 0,2 Punkte darunter (andere Uhrzeit und Preisermittlung) – daher kann der Verlauf am 24.09.2026 eine kleine Stufe zeigen.</p>
-        <p><strong>Stammdaten.</strong> ESMA-Register FIRDS, gemeldet vom Handelsplatz (unverändert übernommen; weicht der Kurzname im Register – Kupon und Fälligkeit nach ISO 18774 – oder der Name vom Registerwert ab, steht der Widerspruch daneben, und es gibt weder Rendite noch Rechenbeispiel): Name, Währung, Kupon oder Zinsformel, Fälligkeit, ausgegebener Betrag, Stückelung, Rang (Seniorität), Besicherung oder Garantie und Rückzahlungsart (aus dem CFI-Code), erster Handelstag. Fehlt eine Angabe, steht „nicht gemeldet“. Emittent und Konzernsitz laut LEI-Register (GLEIF). Die ESMA steht in keiner Verbindung zu dieser Seite. Der Titel über dem Registernamen ist aus Emittent (bei Staaten: Land), Kupon und Fälligkeit zusammengesetzt.</p>
+        <p><strong>Stammdaten.</strong> ESMA-Register FIRDS, gemeldet vom Handelsplatz (unverändert übernommen; weicht der Kurzname im Register – Kupon und Fälligkeit nach ISO 18774 – oder der Name vom Registerwert ab, steht der Widerspruch daneben, und es gibt weder Rendite noch Rechenbeispiel): Name, Währung, Kupon oder Zinsformel, Fälligkeit, ausgegebener Betrag, Stückelung, Rang (Seniorität), Besicherung oder Garantie und Rückzahlungsart (aus dem CFI-Code), erster Handelstag. Fehlt eine Angabe, steht „nicht gemeldet“. Emittent und Konzernsitz laut LEI-Register (GLEIF); Namen, die das Register nur in Großbuchstaben meldet, zeigen wir in üblicher Groß- und Kleinschreibung (die Originalschreibweise erscheint beim Überfahren des Namens). Die ESMA steht in keiner Verbindung zu dieser Seite. Der Titel über dem Registernamen ist aus Emittent (bei Staaten: Land), Kupon und Fälligkeit zusammengesetzt.</p>
         <p><strong>Kündigungsrecht.</strong> Gelesen aus dem Namen – die Klammer „Ausgabejahr(erstes Kündigungsjahr/Fälligkeitsjahr)“, „Und.“ für ohne Fälligkeit – und aus der Rückzahlungsart im ESMA-Register; der Name hat Vorrang, weil das Register die Rückzahlungsart oft ungenau meldet. Kündigungsjahr gleich Ausgabejahr: Make-Whole; ohne Jahr im Namen, aber laut Register kündbar: Termin nicht gemeldet. Kündigungsrecht des Gläubigers (Put) laut Register. Verbindlich sind nur die Anleihebedingungen; die Arten erklärt die Seite <a href="kuendbare-anleihen.html">Kündbare Anleihen</a>.</p>
         <p><strong>Von uns berechnet</strong> (alles andere steht so bei der Börse, der Deutschen Bundesbank oder im ESMA-Register):
           Rendite bis Fälligkeit (jährliche Verzinsung, taggenau, Stückzinsen eingerechnet, Valuta zwei Börsentage nach dem Handelstag; Zinstermin am Jahrestag der Fälligkeit, bei Dollar-, Pfund- und einigen weiteren Währungen sowie italienischen Staatsanleihen halbjährlich; bei Bundeswertpapieren die Rendite der Bundesbank; keine Rendite bei variablem oder später wechselndem Kupon, Stufenzins, Wandel- und Tilgungsanleihen, bei Valuta nach der Fälligkeit und bei widersprüchlichen Registerangaben; keine Rendite und kein Aufschlag, wenn der Kurs eine Taxe ohne Umsatz ist und die berechnete Rendite unter 0 oder über 15 % liegt, mehr als einen Punkt unter Bund oder bei unter drei Monaten Restlaufzeit über 8 %) ·
@@ -302,17 +302,19 @@
       </div>
     </details>
   </main>
+  <p class="sr-only" id="kopie-status" role="status" aria-live="polite"></p>
   <div class="leiste" id="leiste" hidden><button type="button" id="leiste-kopie">ISIN kopieren</button><a href="#rechnung">Rechenbeispiel</a></div>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
 </div>
 
 <script src="site.js"></script>
+<script src="bond.js"></script>
 <script src="chart.js"></script>
 <script>
 // Rückfall, falls site.js nicht lädt (Netzfehler): Minimalform, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
@@ -333,19 +335,16 @@ const T = {
   halbjahr: ["USD", "GBP", "CAD", "AUD", "NZD", "JPY", "MXN", "ZAR", "HKD", "SGD"],
   wtag: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
 };
-const ALT_AB = 5;   // ab so vielen Börsentagen Alter steht der Kurs im Datenhinweis
 const p = new URLSearchParams(location.search);
 const ISIN = (p.get("isin") || "").trim().toUpperCase();
 const HEUTE = Date.now();
 const NAMEN = (() => { try { return { land: new Intl.DisplayNames(["de"], { type: "region" }), w: new Intl.DisplayNames(["de"], { type: "currency" }) }; } catch (e) { return {}; } })();
 const landName = c => c === "INT" ? "International (supranational)" : ((NAMEN.land && (() => { try { return NAMEN.land.of(c); } catch (e) { return ""; } })()) || c);
-function fmt(v, dec = 0) {
-  if (typeof v !== "number" || !isFinite(v)) return "–";
-  return MC.minus(v.toLocaleString("de-DE", { minimumFractionDigits: dec, maximumFractionDigits: dec }));
-}
-const fmtDate = iso => iso ? `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}` : "–";
+// Zahlen und Daten: gemeinsame Formate (site.js MC.zahl/MC.datum, bond.js MC.bond.fmtCoupon) – seit 30.09.2026 statt eigener Kopien
+const fmt = (v, dec = 0) => MC.zahl(v, dec);
+const fmtDate = iso => MC.datum ? MC.datum(iso) : (iso ? `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}` : "–");
 const isoOf = d => d.toISOString().slice(0, 10);
-const fmtCoupon = c => c === "var" ? "variabel" : typeof c === "number" ? `${fmt(c, Math.round(c * 1000) % 10 ? 3 : 2)} %` : "–";
+const fmtCoupon = c => c === "var" ? "variabel" : typeof c === "number" ? `${MC.bond ? MC.bond.fmtCoupon(c) : fmt(c, 2)} %` : "–";
 const fmtVol = v => typeof v === "number" ? (v >= 1e9 ? `${(v / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 })} Mrd.` : `${(v / 1e6).toLocaleString("de-DE", { maximumSignificantDigits: 3 })} Mio.`) : "–";
 const fmtStk = v => typeof v === "number" ? v.toLocaleString("de-DE", { maximumFractionDigits: 3 }) : "–";
 const jahre = iso => iso ? (new Date(iso + "T12:00:00Z").getTime() - HEUTE) / (365.25 * 86400000) : Infinity;
@@ -358,49 +357,66 @@ const kv = (dt, dd, klein) => `<div><dt>${dt}</dt><dd>${dd}${klein ? `<small>${k
 // Vorzeichen-Zahl mit zwei Stellen; gerundet 0 → „0,00“ ohne Vorzeichen (nicht „−0,00“)
 const rund2 = x => Math.round(x * 100) / 100 || 0;
 const vz = (x, dec = 2) => { const r = Math.round(x * 10 ** dec) / 10 ** dec || 0; return (r > 0 ? "+" : "") + fmt(r, dec); };
-function json(url) { return fetch(url).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }); }
+// Laden über den gemeinsamen Fetch-Cache (site.js MC.json): MC.verlauf nutzt dieselbe Kursdatei, sie wird nur einmal geladen
+const json = url => MC.json ? MC.json(url) : MC.load(url);
 const parseZahl = s => Math.max(0, parseFloat(String(s).replace(/\./g, "").replace(",", ".")) || 0);
 
-// ---------- Zinstermine, Stückzinsen, Börsentage (von uns berechnet; Zinstermin am Jahrestag der Fälligkeit angenommen) ----------
-// Zinstermin „monate“ Monate vor der Fälligkeit f – vom Fälligkeitstag aus gerechnet, ein Monatsende bleibt Monatsende
-// (31.08. → 28.02. → 31.08.) – wie scripts/update_kurse.py
-function zinstermin(f, monate) {
-  const d = new Date(Date.UTC(f.getUTCFullYear(), f.getUTCMonth() - monate, 1, 12));
-  d.setUTCDate(Math.min(f.getUTCDate(), new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0, 12)).getUTCDate()));
-  return d;
-}
-// Zinstermine nach „ab“ bis einschließlich Fälligkeit (aufsteigend)
-function kommendeTermine(faellig, freq, ab) {
-  const f = new Date(faellig + "T12:00:00Z"), schritt = 12 / freq, out = [];
-  for (let k = 0; k < 2000; k++) { const t = zinstermin(f, k * schritt); if (t <= ab) break; out.unshift(t); }
-  return out;
-}
+// ---------- Zinstermine und Stückzinsen (bond.js, MC.bond; Zinstermin am Jahrestag der Fälligkeit angenommen) ----------
+// Termine vom Fälligkeitstag aus rückwärts, ein Monatsende bleibt Monatsende (31.08. → 28.02. → 31.08.) – wie scripts/update_kurse.py
+const anleiheB = (kupon, faellig, freq) => ({ coupon: kupon, freq, maturity: faellig });
+// Zinstermine nach „ab“ (Date) bis einschließlich Fälligkeit, aufsteigend
+function kommendeTermine(faellig, freq, ab) { return MC.bond.couponDates(anleiheB(0, faellig, freq), isoOf(ab)).dates.map(t => new Date(t)); }
 // Stückzinsen: Anteil des laufenden Kupons seit dem letzten Zinstermin (act/act), in % des Nennwerts.
-// Nur für Valuta VOR der Fälligkeit aufrufen (vorher lief die Suche über die Fälligkeit hinaus – Fehler behoben 29.09.2026).
+// Nur für Valuta VOR der Fälligkeit aufrufen.
 function stueckzins(kupon, faellig, freq, valuta) {
-  const f = new Date(faellig + "T12:00:00Z"), schritt = 12 / freq;
-  let k = 0, t = f;
-  while (t > valuta) t = zinstermin(f, ++k * schritt);
-  const naechster = zinstermin(f, (k - 1) * schritt);
-  return { anteil: kupon / freq * (valuta - t) / (naechster - t), letzter: t, naechster, tage: Math.round((valuta - t) / 86400000), periode: Math.round((naechster - t) / 86400000) };
+  const b = anleiheB(kupon, faellig, freq), v = isoOf(valuta), cd = MC.bond.couponDates(b, v);
+  const letzter = new Date(cd.prev), naechster = new Date(cd.dates[0]);
+  return { anteil: MC.bond.accrued(b, v), letzter, naechster, tage: Math.round((valuta - letzter) / 86400000), periode: Math.round((naechster - letzter) / 86400000) };
 }
 function plusBoersentage(d, n) { const x = new Date(d); while (n) { x.setUTCDate(x.getUTCDate() + 1); if (x.getUTCDay() % 6) n--; } return x; }
-function boersentageSeit(iso, bis) {   // Werktage (Mo–Fr) nach dem Kursdatum bis heute einschließlich
-  let n = 0; const d = new Date(iso + "T12:00:00Z");
-  while (d < bis) { d.setUTCDate(d.getUTCDate() + 1); if (d <= bis && d.getUTCDay() % 6) n++; }
-  return n;
-}
 // Warum keine Rendite bis Fälligkeit? Dieselbe Regel wie scripts/_common.py (ohne_rendite) – als Tatsache formuliert
 const ohneRendite = n => /FLR\b|floating|\bFRN\b|variab|\bvar\./i.test(n) ? "Kupon laut Name variabel"
   : /stufenz|step[ -]?up|step[ -]?down|\bstep\b/i.test(n) ? "Stufenzins laut Name"
   : /wandel|umtausch|\bconv\.|\bconvertible|\bexch\.|\bexchang\.|\bexchangeable/i.test(n) ? "Wandel- oder Umtauschanleihe laut Name"
   : /\(\s*(?:\d{2,4}\s*\/\s*)?\d{2,4}\s*-\s*\d{2,4}\s*\)|tilg/i.test(n) ? "Tilgung in Raten laut Name"
   : "keine Rendite in den Kursdaten";
+// Emittent lesbar (seit 30.09.2026): Das LEI-Register (GLEIF) meldet viele Namen in Versalien („SIEMENS FINANCIERINGSMAATSCHAPPIJ N.V.“).
+// Nur reine Versalien-Namen werden umgesetzt: Wörter mit großem Anfangsbuchstaben, Rechtsformen in üblicher Schreibung (N.V., AG, SE,
+// GmbH, S.p.A., Inc.), kurze Kürzel und Wörter ohne Vokal bleiben groß (BNP, HSBC, ING), Bindewörter klein (of, de, für).
+// Gleiche Regel in scripts/suchindex.py (Emittenten der Anleihen-Suche) – bei Änderungen beide anpassen.
+const RF_SCHREIB = { "AG": "AG", "SE": "SE", "KG": "KG", "KGAA": "KGaA", "GMBH": "GmbH", "MBH": "mbH", "N.V.": "N.V.", "B.V.": "B.V.", "S.A.": "S.A.", "S.A": "S.A.",
+  "S.P.A.": "S.p.A.", "SPA": "S.p.A.", "S.A.S.": "S.A.S.", "S.À": "S.à", "R.L.": "r.l.", "S.R.L.": "S.r.l.", "SRL": "S.r.l.", "S.L.": "S.L.", "SARL": "S.à r.l.",
+  "INC.": "Inc.", "INC": "Inc.", "LTD.": "Ltd.", "LTD": "Ltd", "CORP.": "Corp.", "CORP": "Corp.", "CO.": "Co.", "CO": "Co.", "PTE.": "Pte.", "PTE": "Pte.", "PTY": "Pty",
+  "OYJ": "Oyj", "P.L.C.": "p.l.c.", "L.P.": "L.P.", "LLP": "LLP", "LLC": "LLC", "PLC": "PLC", "A/S": "A/S", "ASA": "ASA", "AB": "AB", "AS": "AS", "SA": "SA",
+  "NV": "NV", "BV": "BV", "SAS": "SAS", "C.V.": "C.V.", "S.A.B.": "S.A.B.", "KFW": "KfW", "ENBW": "EnBW", "E.ON": "E.ON", "AT&T": "AT&T" };
+const RF_IMMER = ["KFW", "ENBW", "E.ON", "AT&T"];
+const KLEINWORT = new Set("OF AND THE FOR DE DI DEL DELLA DES DU LA LE LES Y E ET EN IN FÜR UND DER DIE DAS DEN VON VAN ZU AM IM AUF PER DA DO DOS".split(" "));
+const KUERZEL = new Set("BASF BBVA AMRO BAWAG NIBC RATP SICAV SOFOM HSBC LBBW NRW USA UK US EU".split(" "));
+const WORT3 = new Set("OIL GAS NEW AIR SEA SUN BAY CAR ONE TWO TEN BIG RED OWL TOP WAY KEY AID ART BIO BOX CAP FIN LAB LAW MAX NET PAY PRO RIO SKY SOL TEA TEL WEB BAU".split(" "));
+function lesbarWort(w, erstes, nachApostroph) {
+  const u = w.toUpperCase();
+  if (w.length === 1) return nachApostroph ? w.toLowerCase() : w;
+  if (!erstes && KLEINWORT.has(u)) return w.toLowerCase();
+  if (KUERZEL.has(u) || !/[AEIOUYÄÖÜÉÈÀÁÍÓÚÂÊÎÔÛİ]/.test(u)) return w;
+  if (w.length <= 3 && !WORT3.has(u) && !KLEINWORT.has(u)) return w;
+  return w[0] + w.slice(1).replace(/İ/g, "i").toLowerCase();
+}
+function lesbar(name) {
+  const s = String(name || "").trim();
+  if (!s || /[a-zß-ÿ]/.test(s) || !/[A-Z]/.test(s)) return s;   // schon gemischt geschrieben oder keine lateinische Schrift
+  return s.split(/\s+/).map((tok, i) => {
+    const kern = tok.replace(/^[,;()"']+|[,;()"']+$/g, ""), vor = kern ? tok.slice(0, tok.indexOf(kern)) : tok, nach = kern ? tok.slice(vor.length + kern.length) : "";
+    const K = kern.toUpperCase();
+    if (RF_SCHREIB[K] && (i > 0 || RF_IMMER.includes(K))) return vor + RF_SCHREIB[K] + nach;
+    const teile = tok.split(/([A-Za-zÀ-ÖØ-öø-ÿİŞĞÇ]+)/);
+    return teile.map((t, j) => j % 2 ? lesbarWort(t, i === 0 && j === 1, /'$/.test(teile[j - 1] || "")) : t).join("");
+  }).join(" ");
+}
 // Lesbarer Titel: Emittent (bei Staaten das Land) ohne Rechtsform, Kupon, Fälligkeit
-const RECHTSFORM = /[\s,]+(AG|SE|KGaA|GmbH|mbH|S\.?A\.?|S\.?p\.?A\.?|N\.?V\.?|B\.?V\.?|plc|PLC|Inc\.?|Corp\.?|Corporation|Ltd\.?|Limited|LLC|L\.?P\.?|A\/S|AB|ASA|Oyj|S\.?A\.?S\.?|S\.?à r\.?l\.?|Co\.?)\.?$/;
+const RECHTSFORM = /[\s,]+(AG|SE|KGaA|GmbH|mbH|S\.?A\.?|S\.?p\.?A\.?|N\.?V\.?|B\.?V\.?|plc|PLC|p\.l\.c\.|Inc\.?|Corp\.?|Corporation|Ltd\.?|Limited|LLC|LLP|L\.?P\.?|A\/S|AB|ASA|Oyj|S\.?A\.?S\.?|S\.?à r\.?l\.?|S\.r\.l\.|Co\.?|Pte\.?|Pty|Designated Activity Company|DAC|Aktiengesellschaft|Public Limited Company|Societa' per Azioni|Sociedad Anónima)\.?$/;
 function kurzName(emittent, art, land) {
   if (art === 0 && land && land !== "INT") return landName(land);
-  let e = String(emittent || "").trim();
+  let e = lesbar(emittent);
   for (let i = 0; i < 3; i++) e = e.replace(RECHTSFORM, "").trim();
   return e;
 }
@@ -431,25 +447,42 @@ function zeige(r, k, meta) {
   const freq = T.halbjahr.includes(ccy) || (ISIN.startsWith("IT") && art === 0) ? 2 : 1;   // BTP halbjährlich (wie _common.zinsfrequenz)
   const wName = (() => { try { const n = NAMEN.w && NAMEN.w.of(ccy); return n && n !== ccy ? n : ""; } catch (e) { return ""; } })();
   const wkn = /^DE/.test(ISIN) ? ISIN.slice(5, 11) : "";
-  const alter = datum ? boersentageSeit(datum, heuteUTC) : null;
+  const alter = datum && MC.boersentage ? MC.boersentage(datum, heute) : null;   // Börsentage seit dem Kursdatum (gemeinsame Regel, site.js)
+  const veraltet = !!(datum && MC.veraltet && MC.veraltet(datum, heute));
 
   // --- Kopf: Chips, lesbarer Titel, Registername, ISIN und Datenstand ---
   const kurz = kurzName(emittent, art, land);
   const titel = kurz ? `${kurz}${zinsart === 1 ? " variabel" : zinsart === 2 ? " Nullkupon" : typeof kupon === "number" ? " " + fmtCoupon(kupon) : ""}` : name;
   const titelFa = faellig ? `fällig ${fmtDate(faellig)}` : "ohne Fälligkeit";
-  document.title = `${(titel + " · " + titelFa).slice(0, 44)} – Bondarium`;   // höchstens 60 Zeichen
-  const can = document.querySelector('link[rel="canonical"]'); if (can) can.href = `https://www.bondarium.de/anleihe.html?isin=${ISIN}`;
+  // Seitentitel höchstens ~60 Zeichen: gekürzt wird der Emittent (an einer Wortgrenze), nie Kupon oder Fälligkeit (seit 30.09.2026;
+  // vorher schnitt slice(0, 44) mitten in der Angabe ab: „SIEMENS FINANCIERINGSMAATSCHAPPIJ 3,625 % · –“)
+  const zusatz = kurz ? titel.slice(kurz.length) : "", MAXT = 48;
+  let kopf = kurz || name, ende = ` · ${faellig ? fmtDate(faellig) : "ohne Fälligkeit"}`;
+  if (kopf.length + zusatz.length + ende.length > MAXT && faellig) ende = ` · ${faellig.slice(0, 4)}`;   // zuerst: nur das Fälligkeitsjahr
+  if (kopf.length + zusatz.length + ende.length > MAXT) {   // dann: Emittent an einer Wortgrenze kürzen – nie mitten im Wort
+    const platz = MAXT - zusatz.length - ende.length - 1, cut = kopf.lastIndexOf(" ", platz);
+    if (cut > 3) kopf = kopf.slice(0, cut).replace(/[\s,.;:–-]+$/, "") + " …";
+  }
+  const seitentitel = `${kopf}${zusatz}${ende}`;
+  document.title = `${seitentitel} – Bondarium`;
+  // Kanonische Adresse, og:url und og:title für diese ISIN (geteilte Links zeigen die Anleihe, nicht den allgemeinen Titel)
+  const url = `https://www.bondarium.de/anleihe.html?isin=${encodeURIComponent(ISIN)}`;
+  const setze = (sel, attr, wert) => { const el = document.querySelector(sel); if (el) el.setAttribute(attr, wert); };
+  setze('link[rel="canonical"]', "href", url);
+  setze('meta[property="og:url"]', "content", url);
+  setze('meta[property="og:title"]', "content", `${seitentitel} – Bondarium`);
+  setze('meta[name="twitter:title"]', "content", `${seitentitel} – Bondarium`);
   document.getElementById("titel").innerHTML = `${MC.esc(titel)} <span class="fa">· ${titelFa}</span>`;
-  document.getElementById("reg").innerHTML = `Registername <b>${MC.esc(name)}</b>${emittent ? ` · Emittent <b>${MC.esc(emittent)}</b>` : ""}`;
+  const emiL = lesbar(emittent);
+  document.getElementById("reg").innerHTML = `Registername <b>${MC.esc(name)}</b>${emittent ? ` · Emittent <b${emiL !== emittent ? ` title="${MC.esc(emittent)} (Schreibweise im LEI-Register)"` : ""}>${MC.esc(emiL)}</b>` : ""}`;
   const kueChip = { n: kue.put ? "Kündigungsrecht Gläubiger (Put)" : "Ohne Kündigungsrecht", m: "Make-Whole-Kündigung", p: `Kündigungsrecht ${kueAb}`, t: `Kündigungsrecht ${kueAb}`, e: `Kündigungsrecht ${kueAb}`, u: "Kündbar laut Register" }[kue.k] || "";
   const chips = [T.artChip[art], ccy, T.zinsChip[zinsart], inflIdx ? "Inflationsindexiert" : "",
     rs === "U" || rs === "J" || gar === "O" || gar === "Q" || gar === "J" ? "Rang: nachrangig" : "", kueChip,
     faellig ? (abgelaufen ? "Fälligkeit erreicht" : `Restlaufzeit ${RL(jahre(faellig))}`) : "Ohne Fälligkeit"].filter(Boolean);
   document.getElementById("chips").innerHTML = chips.map(c => `<li>${MC.esc(c)}</li>`).join("");
   const wtag = datum ? T.wtag[new Date(datum + "T12:00:00Z").getUTCDay()] : "";
-  document.getElementById("idz").innerHTML = `<span class="isin">ISIN <b>${MC.esc(ISIN)}</b>${wkn ? ` · WKN <b>${wkn}</b>` : ""}</span><button type="button" class="kopie" id="kopie" data-isin="${MC.esc(ISIN)}">ISIN kopieren</button>` +
-    (k ? `<span>${bund ? "Kurs der Bundesbank" : "Schlusskurs"} <b>${wtag} ${fmtDate(datum)}</b>${alter ? ` · ${alter} ${alter === 1 ? "Börsentag" : "Börsentage"} alt` : ""} · ${MC.esc(T.boersen[k[3]] || "")}${bund ? "" : " · 15 Min. verzögert"}</span>` : "<span>kein aktueller Kurs</span>");
-  document.getElementById("zurueck").href = `anleihen-suche.html?q=${encodeURIComponent(ISIN)}`;
+  // Kopfzeile: nur Kennung und Kopierknopf – Kursdatum und Quelle stehen seit 30.09.2026 nur noch in der Kachel „Kurs“ (vorher doppelt)
+  document.getElementById("idz").innerHTML = `<span class="isin">ISIN <b>${MC.esc(ISIN)}</b>${wkn ? ` · WKN <b>${wkn}</b>` : ""}</span><button type="button" class="kopie" id="kopie" data-isin="${MC.esc(ISIN)}">ISIN kopieren</button><span class="kopie-hinweis" id="kopie-hinweis"></span>`;
 
   // --- Datenhinweis: nur Tatsachen und Rechenregeln ---
   const wKupon = [pruef.kuponFisn != null ? `Kurzname im Register: ${fmtCoupon(pruef.kuponFisn)}` : "", pruef.zinsName ? "Name: variabel (FLR)" : "", pruef.kuponHoch ? "Registerwert über den Plausibilitätsgrenzen (vermutlich Faktor 10 oder 1000)" : ""].filter(Boolean);
@@ -459,7 +492,7 @@ function zeige(r, k, meta) {
     ? `<b>Fälligkeit ${fmtDate(faellig)}</b> – der Termin liegt in der Vergangenheit. Für diesen Fall berechnen wir keine Rendite und kein Rechenbeispiel.`
     : `<b>Fälligkeit ${fmtDate(faellig)}, Restlaufzeit ${RL(jahre(faellig))}.</b> Bei einer Order am ${fmtDate(isoOf(heuteUTC))} wäre die Valuta der ${fmtDate(isoOf(valuta))} – nach der Fälligkeit. Für diesen Fall berechnen wir keine Rendite und kein Rechenbeispiel.`);
   if (befund) hinw.push(`<b>Registerangaben widersprüchlich:</b> ${MC.esc(wKupon.concat(wFaellig).join("; "))}. Wir zeigen die Registerwerte unverändert und berechnen daraus weder Rendite noch Rechenbeispiel; maßgeblich sind die Anleihebedingungen.`);
-  if (k && alter != null && alter >= ALT_AB) hinw.push(`<b>Letzter Kurs vom ${fmtDate(datum)}</b> (${alter} Börsentage alt). Kurs und Rendite beziehen sich auf diesen Tag.`);
+  if (k && veraltet) hinw.push(`<b>Letzter Kurs vom ${fmtDate(datum)}</b> (${alter} Börsentage alt). Kurs und Rendite beziehen sich auf diesen Tag.`);
   if (!k) hinw.push("<b>Kein aktueller Kurs.</b> In den Kursdaten der letzten Wochen gibt es für diese ISIN keine Kursfeststellung; Rendite und Rechenbeispiel entfallen.");
   if (hinw.length) { document.getElementById("hinw-text").innerHTML = hinw.map(s => `<p>${s}</p>`).join(""); document.getElementById("hinw").hidden = false; }
 
@@ -481,7 +514,7 @@ function zeige(r, k, meta) {
   const faelligU = faellig ? (abgelaufen ? "Termin erreicht" : `Restlaufzeit ${RL(jahre(faellig))}${raten ? " · Tilgung in Raten" : ""}`) : kue.jahr ? `Kündigungsrecht Emittent ${kueAb}` : "kein Endtermin im Register";
   const kachel = (kk, w, u, leise, ber) => `<div class="kachel"><div class="k">${kk}</div><div class="w${leise ? " leise" : ""}">${w}</div><div class="u">${ber ? BER + " " : ""}${u}</div></div>`;
   document.getElementById("kacheln").innerHTML = [
-    kachel("Kurs", kurs != null ? `${fmt(kurs, 2)} %` : "kein Kurs", k ? `${bund ? "Kurs der Bundesbank" : "Schlusskurs"} ${fmtDate(datum)}` : "keine Kursfeststellung", kurs == null),
+    kachel("Kurs", kurs != null ? `${fmt(kurs, 2)} %` : "kein Kurs", k ? `${bund ? "Kurs der Bundesbank" : "Schlusskurs"} ${wtag} ${fmtDate(datum)}${alter ? ` · ${alter} ${alter === 1 ? "Börsentag" : "Börsentage"} alt` : ""}${bund ? "" : ` · ${MC.esc(T.boersen[k[3]] || "")}, 15 Min. verzögert`}` : "keine Kursfeststellung", kurs == null),
     kachel("Rendite", rend != null ? `${fmt(rend, 2)} %` : "nicht berechnet", rendU, rend == null, rend != null && !bund),
     kachel(zinsart === 1 ? "Kupon" : "Kupon", kuponWert, kuponU, false),
     kachel("Fälligkeit", faellig ? fmtDate(faellig) : "keine", faelligU, !faellig),
@@ -517,7 +550,7 @@ function zeige(r, k, meta) {
       kv("Erster Handelstag", m[1] ? fmtDate(m[1]) : "nicht gemeldet", m[1] ? "an einer deutschen Börse" : ""),
     ]),
     grp("Schuldner", [
-      kv(`Emittent${hilf("emittent", "Emittent")}`, MC.esc(emittent || "nicht gemeldet"), ""),
+      kv(`Emittent${hilf("emittent", "Emittent")}`, MC.esc(emiL || "nicht gemeldet"), emittent ? "laut LEI-Register (GLEIF)" : ""),
       kv("Art · Land", MC.esc([T.art[art], land ? landName(land) : ""].filter(Boolean).join(" · ")), ""),
       kv(`Rang${hilf(rs === "U" || rs === "J" ? "nachranganleihe" : "senior", "Rang")}`, rangTxt ? MC.esc(rangTxt) : "nicht gemeldet", "laut ESMA-Register"),
       kv("Garantie · Besicherung", garTxt ? MC.esc(garTxt) : "nicht gemeldet", garTxt ? "laut ESMA-Register" : ""),
@@ -627,11 +660,22 @@ function zeige(r, k, meta) {
   document.getElementById("datastand").textContent = `Daten-Stand: Kurse ${k ? fmtDate(datum) : "–"} · Stammdaten ${fmtDate(meta.stand)}`;
   document.getElementById("inhalt").hidden = false;
 
-  // ISIN kopieren (Kopf, Werkzeuge, Leiste am Handy)
+  // ISIN kopieren (Kopf, Werkzeuge, Leiste am Handy) – seit 30.09.2026 mit Rückfall (ohne Clipboard-API, z. B. ohne HTTPS:
+  // execCommand) und Rückmeldung; klappt beides nicht, wird die ISIN im Kopf markiert und der Hinweis sagt, wie man kopiert
+  const meldung = txt => {
+    const st = document.getElementById("kopie-status"); if (st) st.textContent = txt;
+    const h = document.getElementById("kopie-hinweis"); if (h) { h.textContent = txt; clearTimeout(meldung.t); meldung.t = setTimeout(() => { h.textContent = ""; }, 4000); }
+  };
+  const alterWeg = () => { try { const ta = document.createElement("textarea"); ta.value = ISIN; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select(); const ok = document.execCommand("copy"); ta.remove(); return ok; } catch (err) { return false; } };
+  const markiere = () => { const el = document.querySelector("#idz .isin b"); if (!el || !window.getSelection) return; const r = document.createRange(); r.selectNodeContents(el); const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r); };
   const kopiere = b => {
-    if (!navigator.clipboard) return;
     const alt = b.dataset.txt || b.innerHTML; b.dataset.txt = alt;
-    navigator.clipboard.writeText(ISIN).then(() => { b.textContent = "kopiert ✓"; setTimeout(() => { b.innerHTML = alt; }, 1800); });
+    const fertig = ok => {
+      if (ok) { b.textContent = "kopiert ✓"; meldung(`ISIN ${ISIN} kopiert`); setTimeout(() => { b.innerHTML = alt; }, 1800); }
+      else { markiere(); meldung("Kopieren nicht möglich – ISIN ist markiert, bitte selbst kopieren"); }
+    };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(ISIN).then(() => fertig(true), () => fertig(alterWeg()));
+    else fertig(alterWeg());
   };
   document.querySelectorAll("#kopie, .kopie-w, #leiste-kopie").forEach(b => b.addEventListener("click", e => kopiere(e.currentTarget)));
   const leiste = document.getElementById("leiste");
@@ -655,7 +699,12 @@ function zeige(r, k, meta) {
     json(`kurse/${jahr}/${t}.json`).catch(() => json(`kurse/${jahr - 1}/${t}.json`)).catch(() => null),
   ]).then(([ix, kf]) => {
     const r = ix.rows[ISIN];
-    if (!r) { nix(); document.getElementById("datastand").textContent = `Daten-Stand: Stammdaten ${fmtDate(ix.stand)}`; return; }
+    if (!r) {
+      nix(); document.getElementById("datastand").textContent = `Daten-Stand: Stammdaten ${fmtDate(ix.stand)}`;
+      document.getElementById("nix-text").innerHTML = `<b>Die ISIN ${MC.esc(ISIN)} kennen wir nicht.</b> Entweder ist die Anleihe nicht an einer deutschen Börse gelistet oder sie ist fällig. Die Suche findet sie auch über Name, Emittent oder WKN:`;
+      document.getElementById("nix-q").value = ISIN;
+      return;
+    }
     const k = kf && kf.aktuell ? kf.aktuell[ISIN] || null : null;
     zeige(r, k, ix);
   }).catch(e => {

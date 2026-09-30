@@ -31,13 +31,12 @@
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Legende: Einträge sind Buttons (Hover/Fokus hebt die Linie hervor, Klick blendet sie aus) */
-  .legend { display: flex; gap: 10px 22px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--muted); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 10px 0; margin-bottom: 24px; min-height: 65px; /* gemessen: 8 Einträge + Hinweiszeile */ }
-  .legend .leg { display: inline-flex; align-items: center; gap: 7px; font: inherit; color: inherit; background: none; border: 0; padding: 2px 0; cursor: pointer; border-radius: 3px; }
+  /* Grundform .legend.linie und button.leg in base.css; hier Höhe, Farben und Fixierung */
+  .legend { min-height: 65px; /* gemessen: 8 Einträge + Hinweiszeile */ }
+  .legend .leg { color: inherit; padding: 2px 0; }
   .legend .leg:hover { color: var(--ink); }
-  .legend .leg:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   .legend .leg.on { color: var(--ink); }
   .legend .leg[aria-pressed="true"] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
-  .legend .leg-hint { font-size: 12px; flex-basis: 100%; }
   .sw-line { width: 20px; height: 3px; border-radius: 2px; background: var(--c, var(--line)); }
   .sw-line.dashed { background: repeating-linear-gradient(90deg, var(--c, var(--line)) 0 6px, transparent 6px 9px); }
   svg { width: 100%; height: auto; display: block; }
@@ -75,27 +74,39 @@
   /* Handy: Tabelle scrollt quer – Titel, Währungsfilter und Hinweis bleiben links im Bild */
   @media (max-width: 899px) { caption .cap-row { position: sticky; left: 0; width: min(100%, calc(100vw - 32px)); justify-content: flex-start; } }
   caption select:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  @media (pointer: coarse) { caption select { min-height: 44px; padding: 8px 10px; } }   /* Währungsfilter: Fingerfläche ≥ 44 px */
   /* Spaltenköpfe: Klick sortiert (auf-/absteigend), Richtung per aria-sort */
-  thead th .sortbtn { font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
-  thead th .sortbtn::after { content: "↕"; font-size: 12px; opacity: 0.45; }
-  thead th .sortbtn:hover, thead th[aria-sort="ascending"] .sortbtn, thead th[aria-sort="descending"] .sortbtn { color: var(--ink); }
-  thead th[aria-sort="ascending"] .sortbtn::after { content: "↑"; opacity: 1; }
-  thead th[aria-sort="descending"] .sortbtn::after { content: "↓"; opacity: 1; }
-  thead th .sortbtn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  thead th .sortbtn { gap: 5px; }   /* Sortierknopf: Grundform in base.css */
   tbody td.empty { color: var(--muted); }
   #rthead th:first-child { width: 24%; }   /* feste Breite: Spalten springen beim Filtern nicht */
   .tag { display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 7px; }
+  .cur-m { display: none; }
   @media (max-width: 600px) {
     .legend { gap: 10px 14px; min-height: 94px; }
+    /* Handy (30.09.2026): Tabelle ohne Mindestbreite – Währung als Zusatz unter dem Land, Werte dürfen umbrechen */
+    table { font-size: 12.5px; margin-top: 28px; }
+    th, td { padding: 8px 6px 8px 0; }
+    th:last-child, td:last-child { padding-right: 0; }
+    thead th { font-size: 12px; letter-spacing: 0.02em; }
+    thead th .sortbtn { white-space: normal; text-align: left; }
+    tbody th { white-space: normal; }
+    td.num { white-space: normal; }
+    th[data-col="cur"], td.cur, th[data-col="stand"], td.stand { display: none; }
+    .cur-m { display: block; font-size: 12px; color: var(--muted); }
+    #rthead th:first-child { width: auto; }
+    caption { font-size: 17px; }
   }
-  @media (max-width: 900px) {
-    table { min-width: 820px; }
-  }
+  /* Einordnung „Was heißt das für dich?“ */
+  .ein { width: 100%; border-collapse: collapse; margin: 0; font-size: 14px; }
+  .ein th, .ein td { padding: 8px 8px 8px 0; border-bottom: 1px solid var(--rule); }
+  .ein th { font-weight: 400; color: var(--ink); }
+  .ein td { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; padding-right: 0; }
+  .ein th small { display: block; font-size: 12px; color: var(--text); }
   /* Unter 900 px zeichnet das Skript eine schmale Fassung in Containerbreite (Seitenverhältnis
      setzt es selbst); bis dahin grob reservieren, damit nichts springt */
   @media (max-width: 899px) { #chart-renditen { aspect-ratio: 100 / 95; } }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Staatsanleihen seit 1970: Renditen der acht größten Volkswirtschaften","description":"Renditen 10-jähriger Staatsanleihen der acht größten Volkswirtschaften seit 1970: USA, China, Deutschland, Indien, Japan, UK, Frankreich und Italien.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-25","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/renditen.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Staatsanleihen seit 1970: Renditen der acht größten Volkswirtschaften","description":"Renditen 10-jähriger Staatsanleihen der acht größten Volkswirtschaften seit 1970: USA, China, Deutschland, Indien, Japan, UK, Frankreich und Italien.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-30","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/renditen.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Zinsen","item":"https://www.bondarium.de/beobachten.html"},{"@type":"ListItem","position":3,"name":"Staatsanleihen seit 1970","item":"https://www.bondarium.de/renditen.html"}]}</script>
 </head>
 <body>
@@ -147,7 +158,7 @@
           <a href="realzins.html">Realzins seit 1970</a>
           <span class="nav-cap">Risiko</span>
           <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1970</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1953</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
       </div>
@@ -160,8 +171,8 @@
     <h1>Staatsanleihen seit 1970</h1>
     <p class="sub">Die Renditen 10-jähriger Staatsanleihen der acht größten Volkswirtschaften – von 1970 bis heute. Mit einer Staatsanleihe leihst du einem Staat Geld, für eine feste Laufzeit zu einem festen Zins. Weil Laufzeiten von wenigen Monaten bis zu 100 Jahren reichen, vergleicht man Länder an der 10-jährigen Anleihe: Ihre Rendite ist der Referenzzins einer Volkswirtschaft und spiegelt Inflation, Geldpolitik und das Vertrauen in den Staat.</p>
 
-    <p class="eyebrow" id="eyebrow-renditen">10-jährige Staatsanleihen · 1970 – 2026 · Stand: 27.08.2026</p>
-    <div class="legend" id="legend-renditen"></div>
+    <p class="eyebrow" id="eyebrow-renditen">10-jährige Staatsanleihen · 1970 – 2026 · Stand: 25.09.2026</p>
+    <div class="legend linie" id="legend-renditen"></div>
 
     <div id="chart-renditen" class="chart-scroll"></div>
 
@@ -174,72 +185,83 @@
         <tr><th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Land</button></th><th scope="col" data-col="current"><button type="button" class="sortbtn" data-col="current">Aktuelle Rendite</button></th><th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th><th scope="col" data-col="stand"><button type="button" class="sortbtn" data-col="stand">Stand</button></th><th scope="col" data-col="high"><button type="button" class="sortbtn" data-col="high">Hoch seit 1970</button></th><th scope="col" data-col="low"><button type="button" class="sortbtn" data-col="low">Tief seit 1970</button></th><th scope="col" data-col="avg"><button type="button" class="sortbtn" data-col="avg">Ø seit 1970</button></th></tr>
       </thead>
       <tbody id="rtable"><tr>
-      <th scope="row"><i class="tag" style="background:#1D5FA0"></i>USA</th>
-      <td class="num">4,66&nbsp;%</td>
+      <th scope="row"><i class="tag" style="background:#1D5FA0"></i>USA<small class="cur-m">USD</small></th><td class="num">5,17&nbsp;%<small class="cur-m">25.09.2026</small></td>
       <td class="cur">USD <span class="sym">$</span></td>
-      <td class="num">26.08.2026</td>
+      <td class="num stand">25.09.2026</td>
       <td class="num">13,91&nbsp;% (1981)</td>
       <td class="num">0,89&nbsp;% (2020)</td>
       <td class="num">5,96&nbsp;%</td>
     </tr><tr>
-      <th scope="row"><i class="tag" style="background:#B23B2E"></i>China (ab 2002)</th>
-      <td class="num">1,70&nbsp;%</td>
+      <th scope="row"><i class="tag" style="background:#B23B2E"></i>China (ab 2002)<small class="cur-m">CNY</small></th><td class="num">1,67&nbsp;%<small class="cur-m">24.09.2026</small></td>
       <td class="cur">CNY <span class="sym">¥</span></td>
-      <td class="num">27.08.2026</td>
+      <td class="num stand">24.09.2026</td>
       <td class="num">4,55&nbsp;% (2004)</td>
       <td class="num">1,75&nbsp;% (2025)</td>
       <td class="num">3,31&nbsp;%</td>
     </tr><tr>
-      <th scope="row"><i class="tag" style="background:#2C2C2A"></i>Deutschland</th>
-      <td class="num">3,18&nbsp;%</td>
+      <th scope="row"><i class="tag" style="background:#2C2C2A"></i>Deutschland<small class="cur-m">EUR</small></th><td class="num">3,60&nbsp;%<small class="cur-m">25.09.2026</small></td>
       <td class="cur">EUR <span class="sym">€</span></td>
-      <td class="num">27.08.2026</td>
+      <td class="num stand">25.09.2026</td>
       <td class="num">10,44&nbsp;% (1974)</td>
       <td class="num">−0,51&nbsp;% (2020)</td>
       <td class="num">5,06&nbsp;%</td>
     </tr><tr>
-      <th scope="row"><i class="tag" style="background:#C07E28"></i>Indien (Lücke 1986–95)</th>
-      <td class="num">6,89&nbsp;%</td>
+      <th scope="row"><i class="tag" style="background:#C07E28"></i>Indien (Lücke 1986–95)<small class="cur-m">INR</small></th><td class="num">6,78&nbsp;%<small class="cur-m">07.2026</small></td>
       <td class="cur">INR <span class="sym">₹</span></td>
-      <td class="num">06.2026</td>
+      <td class="num stand">07.2026</td>
       <td class="num">13,60&nbsp;% (1996)</td>
       <td class="num">5,00&nbsp;% (1970)</td>
       <td class="num">7,61&nbsp;%</td>
     </tr><tr>
-      <th scope="row"><i class="tag" style="background:#8A5FBF"></i>Japan</th>
-      <td class="num">2,89&nbsp;%</td>
+      <th scope="row"><i class="tag" style="background:#8A5FBF"></i>Japan<small class="cur-m">JPY</small></th><td class="num">3,07&nbsp;%<small class="cur-m">24.09.2026</small></td>
       <td class="cur">JPY <span class="sym">¥</span></td>
-      <td class="num">26.08.2026</td>
+      <td class="num stand">24.09.2026</td>
       <td class="num">8,87&nbsp;% (1980)</td>
       <td class="num">−0,11&nbsp;% (2019)</td>
       <td class="num">3,65&nbsp;%</td>
     </tr><tr>
-      <th scope="row"><i class="tag" style="background:#1F7A5E"></i>Großbritannien</th>
-      <td class="num">4,80&nbsp;%</td>
+      <th scope="row"><i class="tag" style="background:#1F7A5E"></i>Großbritannien<small class="cur-m">GBP</small></th><td class="num">4,99&nbsp;%<small class="cur-m">08.2026</small></td>
       <td class="cur">GBP <span class="sym">£</span></td>
-      <td class="num">06.2026</td>
+      <td class="num stand">08.2026</td>
       <td class="num">14,88&nbsp;% (1981)</td>
       <td class="num">0,37&nbsp;% (2020)</td>
       <td class="num">7,00&nbsp;%</td>
     </tr><tr>
-      <th scope="row"><i class="tag" style="background:#2F8A9A"></i>Frankreich</th>
-      <td class="num">3,68&nbsp;%</td>
+      <th scope="row"><i class="tag" style="background:#2F8A9A"></i>Frankreich<small class="cur-m">EUR</small></th><td class="num">4,00&nbsp;%<small class="cur-m">08.2026</small></td>
       <td class="cur">EUR <span class="sym">€</span></td>
-      <td class="num">06.2026</td>
+      <td class="num stand">08.2026</td>
       <td class="num">16,29&nbsp;% (1981)</td>
       <td class="num">−0,15&nbsp;% (2020)</td>
       <td class="num">6,43&nbsp;%</td>
     </tr><tr>
-      <th scope="row"><i class="tag" style="background:#A0386E"></i>Italien</th>
-      <td class="num">3,73&nbsp;%</td>
+      <th scope="row"><i class="tag" style="background:#A0386E"></i>Italien<small class="cur-m">EUR</small></th><td class="num">3,99&nbsp;%<small class="cur-m">08.2026</small></td>
       <td class="cur">EUR <span class="sym">€</span></td>
-      <td class="num">06.2026</td>
+      <td class="num stand">08.2026</td>
       <td class="num">20,21&nbsp;% (1982)</td>
       <td class="num">0,81&nbsp;% (2021)</td>
       <td class="num">7,92&nbsp;%</td>
     </tr></tbody>
     </table>
     </div>
+
+    <section class="kap" id="einordnung" aria-labelledby="h-einordnung">
+      <div class="k-text">
+        <h2 id="h-einordnung">Was heißt das für dich?</h2>
+        <p>Die Rendite der 10-jährigen Staatsanleihe ist das <strong>allgemeine Zinsniveau</strong> eines Landes – daran misst sich jede Anleihe in dieser Währung. Deutschland liegt heute bei <span id="e-de">3,60</span>&nbsp;%, also <span id="e-lage">unter</span> dem Durchschnitt seit 1970 von <span id="e-avg2">5,06</span>&nbsp;%.</p>
+        <p><strong>Die Länder sind nicht direkt vergleichbar:</strong> Jede Rendite gilt in ihrer Landeswährung. Eine US-Staatsanleihe bringt dir in Euro nur dann ihren Zins, wenn der Dollar hält – das <a href="risiko.html#waehrung">Währungsrisiko</a> trägst du. In Euro zahlen Deutschland, Frankreich und Italien; ihr Abstand zum Bund ist der <a href="risikoaufschlaege.html">Risikoaufschlag</a>.</p>
+        <p>Ein hohes Zinsniveau ist nicht automatisch ein gutes Geschäft: Was nach der Inflation bleibt, zeigt der <a href="realzins.html">Realzins</a>. Warum das Zinsniveau steigt und fällt, erklärt die Seite <a href="zinsniveau.html">Zinsniveau</a>.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Deutschland: heute und seit 1970</p>
+        <table class="ein"><tbody>
+          <tr><th scope="row">Aktuell<small id="e-akt-d">Tageswert 25.09.2026</small></th><td id="e-akt">3,60&nbsp;%</td></tr>
+          <tr><th scope="row">Durchschnitt seit 1970</th><td id="e-avg">5,06&nbsp;%</td></tr>
+          <tr><th scope="row">Höchster Jahreswert</th><td id="e-hoch">10,44&nbsp;% (1974)</td></tr>
+          <tr><th scope="row">Tiefster Jahreswert</th><td id="e-tief">−0,51&nbsp;% (2020)</td></tr>
+        </tbody></table>
+        <p class="sb-f">Rendite der 10-jährigen Bundesanleihe; Durchschnitt, Hoch und Tief aus den Jahresdurchschnitten ohne das laufende Jahr.</p>
+        <a class="go sb-go" href="staatsanleihen-laufzeit.html">Bundesanleihen nach Laufzeit →</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Vergleiche eine Anleihe mit dem Zinsniveau ihrer Währung – als Euro-Anleger mit der Bundesanleihe gleicher Laufzeit.</span></p>
+    </section>
 
     <nav class="crossnav" aria-label="Weiter">
       <p class="crossnav-t">Weiter</p>
@@ -249,6 +271,8 @@
         <li><a href="risikoaufschlaege.html">Risikoaufschläge seit 1953 – Italien, Frankreich, Spanien gegen Bund</a></li>
         <li><a href="unternehmensanleihen.html">Unternehmensanleihen – Bonität und Land im Vergleich</a></li>
         <li><a href="langlaeufer.html">Langläufer – wenn eine Anleihe 30, 50 oder 100 Jahre läuft</a></li>
+        <li><a href="zinsniveau.html">Zinsniveau: warum es steigt und fällt</a></li>
+        <li><a href="markttechnik.html">Markttechnik lesen: Auktionen, Leitzins-Erwartung, Breakeven</a></li>
       </ul>
     </nav>
     <details class="quellen" id="quellen">
@@ -256,14 +280,14 @@
       <div class="quellen-body">
         <p><strong>Methodik.</strong> Der Chart zeigt die Rendite 10-jähriger Staatsanleihen der acht größten Volkswirtschaften als Jahresdurchschnitt, ergänzt um den aktuellen Wert – für USA, Deutschland, Japan und China börsentäglich, für die übrigen Länder monatlich. Alle Renditen gelten in der jeweiligen Landeswährung; Wechselkurseffekte sind nicht enthalten. China erscheint erst ab 2002: Vorher existierte kein liquider Markt für 10-jährige Staatsanleihen. Indiens Linie ist 1986–1995 unterbrochen: Damals legte der Staat die Zinsen fest, Marktrenditen gibt es erst seit den Reformen der 1990er Jahre. Die schattierte Fläche um jede Linie zeigt die Spanne des Jahres – vom niedrigsten bis zum höchsten Monatsmittel (OECD; Japan ab 1989, Italien ab 1992, China ab 2014, Indien ab 2012).</p>
         <p><strong>Datenquellen.</strong> Historie (Jahresdurchschnitte): OECD-Langfristzinsen via <a href="https://fred.stlouisfed.org/series/IRLTLT01DEM156N">FRED</a> (USA, Deutschland, Frankreich, Großbritannien; Japan ab 1989, Italien ab 1992), OECD Economic Outlook (Japan 1970–1988, Italien 1970–1991, Indien 1996–2011), IWF International Financial Statistics (Indien 1970–1985), ChinaBond-Renditekurve (China ab 2002), <a href="https://data-explorer.oecd.org/">OECD</a> (Indien ab 2012); ab 2024 OECD-Jahresmittel aus Monatswerten. Aktuelle Werte, börsentäglich: <a href="https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve">U.S. Treasury</a> (USA), <a href="https://www.bundesbank.de/de/statistiken/geld-und-kapitalmaerkte">Deutsche Bundesbank</a> (Deutschland: 10-jährige Bundesanleihe mit jährlichem Kupon, aus der Zinsstruktur abgeleitet – derselbe Tageswert wie auf der Seite Realzins; die Zinskurve nutzt die meist etwas höhere Nullkupon-Rendite der Svensson-Kurve), <a href="https://www.mof.go.jp/english/policy/jgbs/reference/interest_rate/index.htm">Finanzministerium Japan</a> (Japan), ChinaBond (China); übrige Länder monatlich (OECD).</p>
-        <p id="datastand">Daten-Stand: 27.08.2026</p>
+        <p id="datastand">Daten-Stand: 25.09.2026</p>
       </div>
     </details>
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html" aria-current="page">Renditen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html" aria-current="page">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
@@ -278,26 +302,13 @@ const SANS = 'Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Ne
 const X0 = 70, X1 = 930, YTOP = 20, YBOT = 465, YEAR0 = 1970;   // X1 = Standard-Rechtsrand der Zeitachse (je Chart überschreibbar: x1)
 
 // ---------- Texte ----------
-const T = {
-  skipLink: "Zum Inhalt springen",
-  title: "Staatsanleihen seit 1970: Renditen weltweit – Bondarium",
-  metaDesc: "Renditen 10-jähriger Staatsanleihen der acht größten Volkswirtschaften seit 1970: USA, China, Deutschland, Indien, Japan, UK, Frankreich und Italien.",
-  footerLegal: "Rechtliches", footerImprint: "Impressum", footerPrivacy: "Datenschutz",
-  crossNav: 'Weiter: <a href="unternehmensanleihen.html">Unternehmensanleihen – Bonität und Land im Vergleich →</a> · <a href="langlaeufer.html">Langläufer – wenn eine Anleihe 30, 50 oder 100 Jahre läuft →</a>',
-  pageH1: "Staatsanleihen",
-  pageSub: "Die Renditen 10-jähriger Staatsanleihen der acht größten Volkswirtschaften – von 1970 bis heute. Mit einer Staatsanleihe leihst du einem Staat Geld, für eine feste Laufzeit zu einem festen Zins. Weil Laufzeiten von wenigen Monaten bis zu 100 Jahren reichen, vergleicht man Länder an der 10-jährigen Anleihe: Ihre Rendite ist der Referenzzins einer Volkswirtschaft und spiegelt Inflation, Geldpolitik und das Vertrauen in den Staat.",
-  noteGaps: "Jahresdurchschnitte in der jeweiligen Landeswährung, ergänzt um den aktuellen Wert; die Fläche um jede Linie zeigt die Spanne des Jahres.",
-  tblCaption: "10-jährige Staatsanleihen: die acht größten Volkswirtschaften im Überblick",
-  thCountry: "Land", thCurrency: "Währung", thCurrent: "Aktuelle Rendite", thStand: "Stand", thHigh: "Hoch seit 1970", thLow: "Tief seit 1970", thAvg: "Ø seit 1970",
+const T = {   // nur noch Texte, die das Skript wirklich nutzt (30.09.2026: 22 ungenutzte Einträge entfernt)
   filterAll: "Alle Währungen", tblEmpty: "Keine Länder mit dieser Währung.",
-  noteSources: '<strong>Datenquellen.</strong> Historie (Jahresdurchschnitte): OECD-Langfristzinsen via <a href="https://fred.stlouisfed.org/series/IRLTLT01DEM156N">FRED</a> (USA, Deutschland, Frankreich, Großbritannien; Japan ab 1989, Italien ab 1992), OECD Economic Outlook (Japan 1970–1988, Italien 1970–1991, Indien 1996–2011), IWF International Financial Statistics (Indien 1970–1985), ChinaBond-Renditekurve (China ab 2002), <a href="https://data-explorer.oecd.org/">OECD</a> (Indien ab 2012); ab 2024 OECD-Jahresmittel aus Monatswerten. Aktuelle Werte, börsentäglich: <a href="https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve">U.S. Treasury</a> (USA), <a href="https://www.bundesbank.de/de/statistiken/geld-und-kapitalmaerkte">Deutsche Bundesbank</a> (Deutschland: 10-jährige Bundesanleihe mit jährlichem Kupon, aus der Zinsstruktur abgeleitet – derselbe Tageswert wie auf der Seite Realzins; die Zinskurve nutzt die meist etwas höhere Nullkupon-Rendite der Svensson-Kurve), <a href="https://www.mof.go.jp/english/policy/jgbs/reference/interest_rate/index.htm">Finanzministerium Japan</a> (Japan), ChinaBond (China); übrige Länder monatlich (OECD).',
-  noteMethod: '<strong>Methodik.</strong> Der Chart zeigt die Rendite 10-jähriger Staatsanleihen der acht größten Volkswirtschaften als Jahresdurchschnitt, ergänzt um den aktuellen Wert – für USA, Deutschland, Japan und China börsentäglich, für die übrigen Länder monatlich. Alle Renditen gelten in der jeweiligen Landeswährung; Wechselkurseffekte sind nicht enthalten. China erscheint erst ab 2002: Vorher existierte kein liquider Markt für 10-jährige Staatsanleihen. Indiens Linie ist 1986–1995 unterbrochen: Damals legte der Staat die Zinsen fest, Marktrenditen gibt es erst seit den Reformen der 1990er Jahre. Die schattierte Fläche um jede Linie zeigt die Spanne des Jahres – vom niedrigsten bis zum höchsten Monatsmittel (OECD; Japan ab 1989, Italien ab 1992, China ab 2014, Indien ab 2012).',
-  footerDisclaimer: "Keine Anlageberatung.",
   dataAsOf: "Daten-Stand:", outdated: "veraltet", standOld: "(älter)",
   legendHint: "Legende: Überfahren hebt hervor, Klick fixiert (Esc löst).",
   legendHintTouch: "Legende: Antippen hebt eine Linie hervor, erneutes Antippen löst sie.",
   axisY: "↑ Rendite in % (Jahresdurchschnitt)", axisX: "Jahr →",
-  chartHintBase: "JAHRESDURCHSCHNITTE IN %", chartHintHover: "LINIE PER LEGENDE ODER MAUS HERVORHEBEN", chartHintTouch: "LINIE PER LEGENDE HERVORHEBEN",
+  chartHintHover: "LINIE PER LEGENDE ODER MAUS HERVORHEBEN", chartHintTouch: "LINIE PER LEGENDE HERVORHEBEN",
   tipRange: "Spanne",
   eyebrow: "10-jährige Staatsanleihen", asOf: "Stand:",
   cUs: "USA", cCn: "China", cDe: "Deutschland", cIn: "Indien", cJp: "Japan", cGb: "Großbritannien", cFr: "Frankreich", cIt: "Italien",
@@ -311,10 +322,7 @@ const T = {
 function L(k) { return T[k] != null ? T[k] : k; }
 function loc() { return "de-DE"; }
 
-function fmt(v, dec = 0) {
-  if (typeof v !== "number" || !isFinite(v)) return "–";
-  return MC.minus(v.toLocaleString(loc(), { minimumFractionDigits: dec, maximumFractionDigits: dec }));
-}
+function fmt(v, dec = 0) { return MC.zahl(v, dec); }   // de-DE, echtes Minus, keine Zahl → „–“
 const isDay = d => /^\d{4}-\d{2}-\d{2}$/.test(String(d));
 const isMonth = d => /^\d{4}-\d{2}$/.test(String(d));
 // Liegt ein Stand ("JJJJ-MM-TT" bzw. "JJJJ-MM") nach dem heutigen Tag bzw. Monat (Ortszeit)?
@@ -323,10 +331,7 @@ function isFuture(d) {
   const today = `${n.getFullYear()}-${p(n.getMonth() + 1)}-${p(n.getDate())}`;
   return isMonth(d) ? d > today.slice(0, 7) : String(d) > today;
 }
-function fmtDate(iso) {
-  const d = new Date(String(iso).slice(0, 10) + "T12:00:00");
-  return isNaN(d) ? "–" : d.toLocaleDateString(loc(), { day: "2-digit", month: "2-digit", year: "numeric" });
-}
+function fmtDate(iso) { return MC.datum(String(iso).slice(0, 10)); }
 // "Stand"-Angabe: Tageswerte als Datum, Monatswerte ("JJJJ-MM", OECD) als
 // MM.JJJJ; Ungültiges → "–"
 function fmtStand(d) {
@@ -371,32 +376,33 @@ const CUR_SYM = { USD: "$", CNY: "¥", EUR: "€", INR: "₹", JPY: "¥", GBP: "
 // Länder mit börsentäglicher Quelle (bestimmen den Daten-Stand)
 const DAILY = ["us", "de", "jp", "cn"];
 
-// Eingebettete Basisdaten (Jahresdurchschnitte, % p. a.; ab 2024 OECD-Jahresmittel);
-// "latest" und neue Jahre werden beim Seitenaufruf aus renditen.json
-// überschrieben (börsentäglich per GitHub Action). Stand: 27.08.2026.
+// Eingebettete Basisdaten: Jahresdurchschnitte 1970–2023 (% p. a.). Die Jahre ab 2024 (OECD-Jahresmittel),
+// die Jahresspannen und die aktuellen Werte liefert allein renditen.json (börsentäglich per GitHub Action,
+// beim Deploy eingebettet) – seit 30.09.2026 ohne doppelte Jahreswerte hier. „latest“ unten ist nur der
+// Rückfall, falls renditen.json fehlt; Stand 25.09.2026 wie die statische Tabelle im HTML.
 const RY = {
   // Jahresspanne [Tief, Hoch] der Monatsmittel je Land und Jahr – kommt
   // ausschließlich aus renditen.json (countries.<land>.range, seit 09/2026)
   range: {},
   latest: {
-    us: { date: "2026-08-26", yield: 4.66 },
-    cn: { date: "2026-08-27", yield: 1.70 },
-    de: { date: "2026-08-27", yield: 3.18 },
-    in: { date: "2026-06", yield: 6.89 },
-    jp: { date: "2026-08-26", yield: 2.89 },
-    gb: { date: "2026-06", yield: 4.80 },
-    fr: { date: "2026-06", yield: 3.68 },
-    it: { date: "2026-06", yield: 3.73 }
+    us: { date: "2026-09-25", yield: 5.17 },
+    cn: { date: "2026-09-24", yield: 1.67 },
+    de: { date: "2026-09-25", yield: 3.60 },
+    in: { date: "2026-07", yield: 6.78 },
+    jp: { date: "2026-09-24", yield: 3.07 },
+    gb: { date: "2026-08", yield: 4.99 },
+    fr: { date: "2026-08", yield: 4.00 },
+    it: { date: "2026-08", yield: 3.99 }
   },
   annual: {
-  us: { 1970: 7.35, 1971: 6.16, 1972: 6.21, 1973: 6.84, 1974: 7.56, 1975: 7.99, 1976: 7.61, 1977: 7.42, 1978: 8.41, 1979: 9.44, 1980: 11.46, 1981: 13.91, 1982: 13.0, 1983: 11.11, 1984: 12.44, 1985: 10.62, 1986: 7.68, 1987: 8.38, 1988: 8.85, 1989: 8.5, 1990: 8.55, 1991: 7.86, 1992: 7.01, 1993: 5.87, 1994: 7.08, 1995: 6.58, 1996: 6.44, 1997: 6.35, 1998: 5.26, 1999: 5.64, 2000: 6.03, 2001: 5.02, 2002: 4.61, 2003: 4.01, 2004: 4.27, 2005: 4.29, 2006: 4.79, 2007: 4.63, 2008: 3.67, 2009: 3.26, 2010: 3.21, 2011: 2.79, 2012: 1.8, 2013: 2.35, 2014: 2.54, 2015: 2.14, 2016: 1.84, 2017: 2.33, 2018: 2.91, 2019: 2.14, 2020: 0.89, 2021: 1.44, 2022: 2.95, 2023: 3.96, 2024: 4.21, 2025: 4.29 },
-  cn: { 2002: 2.99, 2003: 3.15, 2004: 4.55, 2005: 3.77, 2006: 3.04, 2007: 3.99, 2008: 3.92, 2009: 3.34, 2010: 3.47, 2011: 3.86, 2012: 3.46, 2013: 3.83, 2014: 4.16, 2015: 3.37, 2016: 2.86, 2017: 3.58, 2018: 3.62, 2019: 3.18, 2020: 2.94, 2021: 3.03, 2022: 2.77, 2023: 2.72, 2024: 2.18, 2025: 1.75 },
-  de: { 1970: 8.32, 1971: 7.99, 1972: 7.88, 1973: 9.31, 1974: 10.44, 1975: 8.67, 1976: 8.03, 1977: 6.53, 1978: 6.13, 1979: 7.57, 1980: 8.42, 1981: 10.13, 1982: 8.91, 1983: 8.08, 1984: 7.96, 1985: 7.04, 1986: 6.16, 1987: 6.25, 1988: 6.49, 1989: 7.02, 1990: 8.73, 1991: 8.45, 1992: 7.84, 1993: 6.5, 1994: 6.88, 1995: 6.85, 1996: 6.22, 1997: 5.64, 1998: 4.57, 1999: 4.49, 2000: 5.26, 2001: 4.8, 2002: 4.78, 2003: 4.07, 2004: 4.04, 2005: 3.35, 2006: 3.76, 2007: 4.22, 2008: 3.98, 2009: 3.22, 2010: 2.74, 2011: 2.61, 2012: 1.5, 2013: 1.57, 2014: 1.16, 2015: 0.5, 2016: 0.09, 2017: 0.32, 2018: 0.4, 2019: -0.25, 2020: -0.51, 2021: -0.37, 2022: 1.14, 2023: 2.43, 2024: 2.32, 2025: 2.61 },
-  in: { 1970: 5.0, 1971: 5.64, 1972: 5.65, 1973: 5.65, 1974: 6.03, 1975: 6.35, 1976: 6.29, 1977: 6.31, 1978: 6.37, 1979: 6.45, 1980: 6.7, 1981: 7.15, 1982: 7.59, 1983: 7.99, 1984: 8.64, 1985: 8.99, 1996: 13.6, 1997: 12.04, 1998: 12.18, 1999: 11.41, 2000: 10.96, 2001: 8.69, 2002: 6.89, 2003: 5.39, 2004: 6.29, 2005: 7.16, 2006: 7.78, 2007: 7.88, 2008: 7.59, 2009: 7.32, 2010: 7.91, 2011: 8.45, 2012: 8.26, 2013: 8.11, 2014: 8.59, 2015: 7.78, 2016: 7.21, 2017: 6.92, 2018: 7.7, 2019: 7.0, 2020: 6.19, 2021: 6.26, 2022: 7.19, 2023: 7.22, 2024: 6.98, 2025: 6.53 },
-  jp: { 1970: 7.04, 1971: 7.05, 1972: 6.88, 1973: 7.14, 1974: 8.19, 1975: 8.46, 1976: 8.59, 1977: 7.47, 1978: 6.37, 1979: 8.33, 1980: 8.87, 1981: 8.38, 1982: 8.33, 1983: 7.83, 1984: 7.25, 1985: 6.51, 1986: 5.35, 1987: 4.64, 1988: 4.77, 1989: 5.13, 1990: 6.96, 1991: 6.34, 1992: 5.33, 1993: 4.32, 1994: 4.36, 1995: 3.44, 1996: 3.1, 1997: 2.37, 1998: 1.54, 1999: 1.75, 2000: 1.74, 2001: 1.32, 2002: 1.26, 2003: 1.0, 2004: 1.49, 2005: 1.35, 2006: 1.74, 2007: 1.67, 2008: 1.47, 2009: 1.33, 2010: 1.15, 2011: 1.1, 2012: 0.84, 2013: 0.69, 2014: 0.52, 2015: 0.35, 2016: -0.07, 2017: 0.05, 2018: 0.06, 2019: -0.11, 2020: -0.01, 2021: 0.07, 2022: 0.23, 2023: 0.56, 2024: 0.92, 2025: 1.55 },
-  gb: { 1970: 8.63, 1971: 7.87, 1972: 8.37, 1973: 10.56, 1974: 14.21, 1975: 13.18, 1976: 13.61, 1977: 12.03, 1978: 12.06, 1979: 12.95, 1980: 13.91, 1981: 14.88, 1982: 13.09, 1983: 11.27, 1984: 11.13, 1985: 10.97, 1986: 10.13, 1987: 9.57, 1988: 9.68, 1989: 10.19, 1990: 11.8, 1991: 10.1, 1992: 9.06, 1993: 7.48, 1994: 8.12, 1995: 8.2, 1996: 7.81, 1997: 7.05, 1998: 5.55, 1999: 5.09, 2000: 5.33, 2001: 4.93, 2002: 4.89, 2003: 4.53, 2004: 4.88, 2005: 4.41, 2006: 4.5, 2007: 5.01, 2008: 4.59, 2009: 3.65, 2010: 3.62, 2011: 3.14, 2012: 1.92, 2013: 2.39, 2014: 2.57, 2015: 1.9, 2016: 1.31, 2017: 1.24, 2018: 1.46, 2019: 0.94, 2020: 0.37, 2021: 0.79, 2022: 2.45, 2023: 4.06, 2024: 4.14, 2025: 4.58 },
-  fr: { 1970: 8.55, 1971: 8.42, 1972: 8.01, 1973: 9.0, 1974: 11.0, 1975: 10.31, 1976: 10.51, 1977: 10.99, 1978: 10.61, 1979: 10.85, 1980: 13.78, 1981: 16.29, 1982: 16.0, 1983: 14.37, 1984: 13.4, 1985: 11.87, 1986: 9.12, 1987: 9.47, 1988: 9.09, 1989: 8.78, 1990: 9.92, 1991: 9.04, 1992: 8.59, 1993: 6.79, 1994: 7.22, 1995: 7.53, 1996: 6.33, 1997: 5.59, 1998: 4.65, 1999: 4.62, 2000: 5.39, 2001: 4.94, 2002: 4.86, 2003: 4.13, 2004: 4.1, 2005: 3.41, 2006: 3.8, 2007: 4.3, 2008: 4.23, 2009: 3.65, 2010: 3.12, 2011: 3.32, 2012: 2.54, 2013: 2.2, 2014: 1.67, 2015: 0.84, 2016: 0.47, 2017: 0.81, 2018: 0.78, 2019: 0.13, 2020: -0.15, 2021: 0.01, 2022: 1.7, 2023: 2.99, 2024: 2.97, 2025: 3.37 },
-  it: { 1970: 7.73, 1971: 7.0, 1972: 6.59, 1973: 6.92, 1974: 9.61, 1975: 10.04, 1976: 12.66, 1977: 14.71, 1978: 13.05, 1979: 13.02, 1980: 15.25, 1981: 19.36, 1982: 20.21, 1983: 18.3, 1984: 15.6, 1985: 13.71, 1986: 11.47, 1987: 10.64, 1988: 10.9, 1989: 12.79, 1990: 13.54, 1991: 13.28, 1992: 13.27, 1993: 11.19, 1994: 10.52, 1995: 12.21, 1996: 9.4, 1997: 6.86, 1998: 4.88, 1999: 4.73, 2000: 5.58, 2001: 5.19, 2002: 5.03, 2003: 4.25, 2004: 4.26, 2005: 3.56, 2006: 4.05, 2007: 4.49, 2008: 4.68, 2009: 4.31, 2010: 4.04, 2011: 5.42, 2012: 5.49, 2013: 4.32, 2014: 2.89, 2015: 1.71, 2016: 1.49, 2017: 2.11, 2018: 2.61, 2019: 1.95, 2020: 1.17, 2021: 0.81, 2022: 3.16, 2023: 4.28, 2024: 3.71, 2025: 3.59 }
+  us: { 1970: 7.35, 1971: 6.16, 1972: 6.21, 1973: 6.84, 1974: 7.56, 1975: 7.99, 1976: 7.61, 1977: 7.42, 1978: 8.41, 1979: 9.44, 1980: 11.46, 1981: 13.91, 1982: 13.0, 1983: 11.11, 1984: 12.44, 1985: 10.62, 1986: 7.68, 1987: 8.38, 1988: 8.85, 1989: 8.5, 1990: 8.55, 1991: 7.86, 1992: 7.01, 1993: 5.87, 1994: 7.08, 1995: 6.58, 1996: 6.44, 1997: 6.35, 1998: 5.26, 1999: 5.64, 2000: 6.03, 2001: 5.02, 2002: 4.61, 2003: 4.01, 2004: 4.27, 2005: 4.29, 2006: 4.79, 2007: 4.63, 2008: 3.67, 2009: 3.26, 2010: 3.21, 2011: 2.79, 2012: 1.8, 2013: 2.35, 2014: 2.54, 2015: 2.14, 2016: 1.84, 2017: 2.33, 2018: 2.91, 2019: 2.14, 2020: 0.89, 2021: 1.44, 2022: 2.95, 2023: 3.96 },
+  cn: { 2002: 2.99, 2003: 3.15, 2004: 4.55, 2005: 3.77, 2006: 3.04, 2007: 3.99, 2008: 3.92, 2009: 3.34, 2010: 3.47, 2011: 3.86, 2012: 3.46, 2013: 3.83, 2014: 4.16, 2015: 3.37, 2016: 2.86, 2017: 3.58, 2018: 3.62, 2019: 3.18, 2020: 2.94, 2021: 3.03, 2022: 2.77, 2023: 2.72 },
+  de: { 1970: 8.32, 1971: 7.99, 1972: 7.88, 1973: 9.31, 1974: 10.44, 1975: 8.67, 1976: 8.03, 1977: 6.53, 1978: 6.13, 1979: 7.57, 1980: 8.42, 1981: 10.13, 1982: 8.91, 1983: 8.08, 1984: 7.96, 1985: 7.04, 1986: 6.16, 1987: 6.25, 1988: 6.49, 1989: 7.02, 1990: 8.73, 1991: 8.45, 1992: 7.84, 1993: 6.5, 1994: 6.88, 1995: 6.85, 1996: 6.22, 1997: 5.64, 1998: 4.57, 1999: 4.49, 2000: 5.26, 2001: 4.8, 2002: 4.78, 2003: 4.07, 2004: 4.04, 2005: 3.35, 2006: 3.76, 2007: 4.22, 2008: 3.98, 2009: 3.22, 2010: 2.74, 2011: 2.61, 2012: 1.5, 2013: 1.57, 2014: 1.16, 2015: 0.5, 2016: 0.09, 2017: 0.32, 2018: 0.4, 2019: -0.25, 2020: -0.51, 2021: -0.37, 2022: 1.14, 2023: 2.43 },
+  in: { 1970: 5.0, 1971: 5.64, 1972: 5.65, 1973: 5.65, 1974: 6.03, 1975: 6.35, 1976: 6.29, 1977: 6.31, 1978: 6.37, 1979: 6.45, 1980: 6.7, 1981: 7.15, 1982: 7.59, 1983: 7.99, 1984: 8.64, 1985: 8.99, 1996: 13.6, 1997: 12.04, 1998: 12.18, 1999: 11.41, 2000: 10.96, 2001: 8.69, 2002: 6.89, 2003: 5.39, 2004: 6.29, 2005: 7.16, 2006: 7.78, 2007: 7.88, 2008: 7.59, 2009: 7.32, 2010: 7.91, 2011: 8.45, 2012: 8.26, 2013: 8.11, 2014: 8.59, 2015: 7.78, 2016: 7.21, 2017: 6.92, 2018: 7.7, 2019: 7.0, 2020: 6.19, 2021: 6.26, 2022: 7.19, 2023: 7.22 },
+  jp: { 1970: 7.04, 1971: 7.05, 1972: 6.88, 1973: 7.14, 1974: 8.19, 1975: 8.46, 1976: 8.59, 1977: 7.47, 1978: 6.37, 1979: 8.33, 1980: 8.87, 1981: 8.38, 1982: 8.33, 1983: 7.83, 1984: 7.25, 1985: 6.51, 1986: 5.35, 1987: 4.64, 1988: 4.77, 1989: 5.13, 1990: 6.96, 1991: 6.34, 1992: 5.33, 1993: 4.32, 1994: 4.36, 1995: 3.44, 1996: 3.1, 1997: 2.37, 1998: 1.54, 1999: 1.75, 2000: 1.74, 2001: 1.32, 2002: 1.26, 2003: 1.0, 2004: 1.49, 2005: 1.35, 2006: 1.74, 2007: 1.67, 2008: 1.47, 2009: 1.33, 2010: 1.15, 2011: 1.1, 2012: 0.84, 2013: 0.69, 2014: 0.52, 2015: 0.35, 2016: -0.07, 2017: 0.05, 2018: 0.06, 2019: -0.11, 2020: -0.01, 2021: 0.07, 2022: 0.23, 2023: 0.56 },
+  gb: { 1970: 8.63, 1971: 7.87, 1972: 8.37, 1973: 10.56, 1974: 14.21, 1975: 13.18, 1976: 13.61, 1977: 12.03, 1978: 12.06, 1979: 12.95, 1980: 13.91, 1981: 14.88, 1982: 13.09, 1983: 11.27, 1984: 11.13, 1985: 10.97, 1986: 10.13, 1987: 9.57, 1988: 9.68, 1989: 10.19, 1990: 11.8, 1991: 10.1, 1992: 9.06, 1993: 7.48, 1994: 8.12, 1995: 8.2, 1996: 7.81, 1997: 7.05, 1998: 5.55, 1999: 5.09, 2000: 5.33, 2001: 4.93, 2002: 4.89, 2003: 4.53, 2004: 4.88, 2005: 4.41, 2006: 4.5, 2007: 5.01, 2008: 4.59, 2009: 3.65, 2010: 3.62, 2011: 3.14, 2012: 1.92, 2013: 2.39, 2014: 2.57, 2015: 1.9, 2016: 1.31, 2017: 1.24, 2018: 1.46, 2019: 0.94, 2020: 0.37, 2021: 0.79, 2022: 2.45, 2023: 4.06 },
+  fr: { 1970: 8.55, 1971: 8.42, 1972: 8.01, 1973: 9.0, 1974: 11.0, 1975: 10.31, 1976: 10.51, 1977: 10.99, 1978: 10.61, 1979: 10.85, 1980: 13.78, 1981: 16.29, 1982: 16.0, 1983: 14.37, 1984: 13.4, 1985: 11.87, 1986: 9.12, 1987: 9.47, 1988: 9.09, 1989: 8.78, 1990: 9.92, 1991: 9.04, 1992: 8.59, 1993: 6.79, 1994: 7.22, 1995: 7.53, 1996: 6.33, 1997: 5.59, 1998: 4.65, 1999: 4.62, 2000: 5.39, 2001: 4.94, 2002: 4.86, 2003: 4.13, 2004: 4.1, 2005: 3.41, 2006: 3.8, 2007: 4.3, 2008: 4.23, 2009: 3.65, 2010: 3.12, 2011: 3.32, 2012: 2.54, 2013: 2.2, 2014: 1.67, 2015: 0.84, 2016: 0.47, 2017: 0.81, 2018: 0.78, 2019: 0.13, 2020: -0.15, 2021: 0.01, 2022: 1.7, 2023: 2.99 },
+  it: { 1970: 7.73, 1971: 7.0, 1972: 6.59, 1973: 6.92, 1974: 9.61, 1975: 10.04, 1976: 12.66, 1977: 14.71, 1978: 13.05, 1979: 13.02, 1980: 15.25, 1981: 19.36, 1982: 20.21, 1983: 18.3, 1984: 15.6, 1985: 13.71, 1986: 11.47, 1987: 10.64, 1988: 10.9, 1989: 12.79, 1990: 13.54, 1991: 13.28, 1992: 13.27, 1993: 11.19, 1994: 10.52, 1995: 12.21, 1996: 9.4, 1997: 6.86, 1998: 4.88, 1999: 4.73, 2000: 5.58, 2001: 5.19, 2002: 5.03, 2003: 4.25, 2004: 4.26, 2005: 3.56, 2006: 4.05, 2007: 4.49, 2008: 4.68, 2009: 4.31, 2010: 4.04, 2011: 5.42, 2012: 5.49, 2013: 4.32, 2014: 2.89, 2015: 1.71, 2016: 1.49, 2017: 2.11, 2018: 2.61, 2019: 1.95, 2020: 1.17, 2021: 0.81, 2022: 3.16, 2023: 4.28 }
   }
 };
 
@@ -707,10 +713,11 @@ function cmpRows(a, b, col, dir) {
 }
 // Gemeinsame Zellen: Stand (ggf. gedämpft), aktueller Wert, Hoch/Tief/Ø
 // Aktuelle Rendite steht seit 28.09.2026 direkt hinter der Zeilenüberschrift (Nutzerwunsch: Rendite immer in Spalte 2)
-function curYieldCell(r) { return `<td class="num">${r.current !== null ? fmt(r.current, 2) + "\u00A0%" : "–"}</td>`; }
+// Am Handy (≤ 600 px) steht der Stand klein unter der Rendite, die Spalte „Stand“ ist dort ausgeblendet
+function curYieldCell(r) { return `<td class="num">${r.current !== null ? fmt(r.current, 2) + "\u00A0%" : "–"}${r.standTxt !== null ? `<small class="cur-m">${MC.esc(r.standTxt)}</small>` : ""}</td>`; }
 function statCells(r) {
   const stand = r.standTxt !== null ? (r.old ? `<span class="old">${MC.esc(r.standTxt)} ${L("standOld")}</span>` : MC.esc(r.standTxt)) : "–";
-  return `<td class="num">${stand}</td>
+  return `<td class="num stand">${stand}</td>
       <td class="num">${r.high !== null ? `${fmt(r.high, 2)}\u00A0% (${r.hiYr})` : "–"}</td>
       <td class="num">${r.low !== null ? `${fmt(r.low, 2)}\u00A0% (${r.loYr})` : "–"}</td>
       <td class="num">${r.avg !== null ? fmt(r.avg, 2) + "\u00A0%" : "–"}</td>`;
@@ -723,7 +730,7 @@ function buildTable() {
   return rows.map(r => {
     const sym = CUR_SYM[r.cur] ? ` <span class="sym">${CUR_SYM[r.cur]}</span>` : "";
     return `<tr>
-      <th scope="row"><i class="tag" style="background:${r.c.color}"></i>${MC.esc(r.name)}</th>${curYieldCell(r)}
+      <th scope="row"><i class="tag" style="background:${r.c.color}"></i>${MC.esc(r.name)}<small class="cur-m">${r.cur}</small></th>${curYieldCell(r)}
       <td class="cur">${r.cur}${sym}</td>
       ${statCells(r)}
     </tr>`;
@@ -777,18 +784,31 @@ function renderAll() {
     highlight(ch, ch.pinned);
   }
   renderTable();
+  renderEinordnung();
   setEyebrow("eyebrow-renditen", "eyebrow", CHARTS.renditen);
 }
+// Einordnung „Was heißt das für dich?“: Deutschland heute gegen die eigene Geschichte (aus denselben Kennzahlen wie die Tabelle)
+function renderEinordnung() {
+  const ch = CHARTS.renditen, de = ch.defs.find(c => c.key === "de");
+  if (!de) return;
+  const r = rowStats(ch, de, newestDaily(ch)), l = ch.data.latest.de || {};
+  const set = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+  if (r.current !== null) { set("e-de", fmt(r.current, 2)); set("e-akt", fmt(r.current, 2) + "\u00A0%"); set("e-akt-d", (isDay(l.date) ? "Tageswert " : "Monatswert ") + fmtStand(l.date)); }
+  if (r.avg !== null) { set("e-avg", fmt(r.avg, 2) + "\u00A0%"); set("e-avg2", fmt(r.avg, 2)); }
+  if (r.high !== null) set("e-hoch", `${fmt(r.high, 2)}\u00A0% (${r.hiYr})`);
+  if (r.low !== null) set("e-tief", `${fmt(r.low, 2)}\u00A0% (${r.loYr})`);
+  if (r.current !== null && r.avg !== null) set("e-lage", r.current < r.avg ? "unter" : "über");
+}
 
-// Fußzeile: jüngster Tageswert der börsentäglichen Quellen; ab 5 Tagen „veraltet“ (Klasse „stale“, base.css)
-const STALE_DAYS = 5;
+// Fußzeile: jüngster Tageswert der börsentäglichen Quellen; „veraltet“ nach der gemeinsamen Regel MC.veraltet
+// (ab MC.STALE_TAGE Börsentagen; Klasse „stale“, base.css)
 function updateDatastand() {
   const el = document.getElementById("datastand");
   const d = newestDaily(CHARTS.renditen);
   if (!el || !d) return;
-  const dd = ageDays(d);
-  el.textContent = L("dataAsOf") + " " + fmtStand(d) + (dd > STALE_DAYS ? " · " + L("outdated") : "");
-  el.classList.toggle("stale", dd > STALE_DAYS);
+  const alt = isDay(d) && !!(MC.veraltet && MC.veraltet(d));
+  el.textContent = L("dataAsOf") + " " + fmtStand(d) + (alt ? " · " + L("outdated") : "");
+  el.classList.toggle("stale", alt);
 }
 // Erst-Render
 (function () {
