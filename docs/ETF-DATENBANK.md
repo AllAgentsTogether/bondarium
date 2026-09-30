@@ -1,6 +1,6 @@
 # ETF-Datenbank — Strategie und Umsetzungsstand
 
-Stand: 30.09.2026, vierte Fassung · Register, Kursabruf und die ETF-Seiten ohne Handpflege sind gebaut und lokal getestet, aber noch nicht veröffentlicht. Suche und Steckbrief fehlen noch.
+Stand: 30.09.2026, vierte Fassung · Register, Kursabruf und die ETF-Seiten ohne Handpflege sind seit dem 30.09.2026 veröffentlicht. Der erste Datenlauf bei GitHub steht noch aus (01.10.2026). Suche und Steckbrief fehlen noch.
 Ziel: eine Datenbank aller Anleihen-ETFs, die in Deutschland handelbar sind – mit Suche und Steckbrief, so wie es sie für die rund 33.000 Anleihen schon gibt.
 
 **Grundsatz seit 30.09.2026 (Nutzerentscheid): Kein ETF wird von Hand gepflegt.** Keine handverlesenen Listen, keine Kennzahlen von Anbieterseiten, keine Korrekturliste. Was sich nicht automatisch aktualisieren lässt, steht nicht auf der Seite.
@@ -13,7 +13,7 @@ Ziel: eine Datenbank aller Anleihen-ETFs, die in Deutschland handelbar sind – 
 2. **Umfang: 908 Anleihen-ETFs** mit zusammen 387 Mrd. € Fondsvermögen.
 3. **Die Deutsche Börse liefert fast alles selbst.** Ihre ETF-Liste bringt Namen, Kosten und Index; ihre Monatsstatistik bringt Anlageklasse, Fondsvermögen, Umsatz und Handelskosten; ihre Nachhandelsdaten bringen die Kurse.
 4. **Was dadurch wegfällt:** Rendite des Bestands und Duration gibt es nur bei den Fondsanbietern. Sie stehen nicht mehr auf der Seite, bis es dafür eine automatische Quelle gibt (Zustimmung der Anbieter).
-5. **Offen vor der Veröffentlichung:** die Erlaubnis der Deutschen Börse für Liste und Monatsstatistik (sie sind das Rückgrat).
+5. **Offen:** die Erlaubnis der Deutschen Börse für Liste und Monatsstatistik (sie sind das Rückgrat). Veröffentlicht wurde ohne sie.
 
 ---
 
@@ -29,9 +29,10 @@ Ziel: eine Datenbank aller Anleihen-ETFs, die in Deutschland handelbar sind – 
 | Startseite und `etf-oder-anleihe.html` | Zahl der ETFs und Kostenspanne setzt der Deploy aus den Daten ein |
 | Handgepflegte Datei `etfs.json` | gelöscht; nichts liest sie mehr |
 | Hinweis „Angaben ohne Gewähr“ in `rechtliches.html` | angepasst: „Kennzahlen von Fondsanbietern“ stehen nicht mehr unter den von Hand erfassten Angaben |
-| Lücken nachtragen | gebaut: `update_kurse.py --nachtragen` mit den gesicherten Rohdateien; der 29.09. ist lokal nachgetragen |
+| Lücken nachtragen | gebaut: `update_kurse.py --nachtragen` mit den gesicherten Rohdateien; der 29.09. ist nachgetragen |
 | Alarm bei veralteten Daten | ergänzt (Frische-Prüfung für `etf-index.json` und `etf-kurse.json`) |
-| Veröffentlichung | **offen** – erst mit „push“. Dann liegen die Dateien im öffentlichen GitHub-Repo und auf dem Webserver |
+| Veröffentlichung | am 30.09.2026 (Commit 4b4b892). Die Dateien liegen im öffentlichen GitHub-Repo und auf dem Webserver |
+| Erster Datenlauf bei GitHub | **offen** – 01.10.2026, 10:15 Uhr |
 | Steckbrief `etf.html`, Suche `etf-suche.html` | offen (Phase 3) |
 | Rendite und Duration | offen (Phase 4, braucht eine automatische Quelle) |
 
@@ -54,10 +55,12 @@ Ziel: eine Datenbank aller Anleihen-ETFs, die in Deutschland handelbar sind – 
 - **Seiten:** ETF-Seite (Desktop und Handy), Guide und Startseite in der Vorschau ohne Konsolenfehler; Veröffentlichungsschritte (`kennzahlen.py`, `inline_data.py`, `pruefen.py`) in einer Kopie ohne Fehler.
 - **Nicht geprüft:** ein echter Lauf in GitHub Actions. Lokal lief alles unter Python 3.9 mit einem Hilfsstarter, der Workflow nutzt 3.12. Ob die Seiten der Börse Abrufe von GitHub-Servern zulassen, zeigt erst der erste Lauf.
 
-### Beim Veröffentlichen zu beachten
+### Nach der Veröffentlichung (30.09.2026)
 
-- Lokal sind `kurse/2026/`, `kurse-auswahl.json` und `etf-kurse.json` um die ETF-Kurse vom 29.09. ergänzt. Kommt vor dem Push ein neuer Datenlauf, müssen diese Dateien verworfen und der Nachtrag wiederholt werden.
-- Für spätere Tage liegen die Rohdateien im Artefakt `kurse-roh-…` des jeweiligen Laufs (90 Tage).
+- **Live geprüft:** ETF-Seite mit 70 ETFs, alle mit Kurs; sechs ETF-Karten im Guide mit Daten und Kurs; Startseite, `etf-oder-anleihe.html` und `rechtliches.html` mit den neuen Angaben; die vier Datendateien sind abrufbar.
+- **Noch zu prüfen:** das Protokoll des ersten 10:15-Uhr-Laufs – holt der Schritt „ETF-Register aktualisieren“ die Börsenliste, schreibt der Kursabruf `etf-kurse.json` mit dem neuen Tag?
+- **Alte Datei auf dem Webserver:** `etfs.json` liegt dort weiter, weil der Deploy nichts löscht. Keine Seite lädt sie mehr.
+- **Nachtrag fehlender ETF-Tage:** Die Rohdateien liegen im Artefakt `kurse-roh-…` des jeweiligen Laufs (90 Tage).
 
 ---
 
@@ -202,7 +205,7 @@ Jede Phase endet mit einem Ergebnis, das du in der Vorschau ansehen kannst. Ver�
 
 ### Phase 0 · Klären und reparieren
 
-- ✅ **Fehler behoben:** Der Kursabruf erfasst die ETFs der ETF-Seite wieder (im Datenstand vom 29.09. haben live nur 2 der 70 einen Kurs).
+- ✅ **Fehler behoben:** Der Kursabruf erfasst die ETFs der ETF-Seite wieder (im Datenstand vom 29.09. hatten live nur 2 der 70 einen Kurs).
 - **Erlaubnis einholen:** Anfrage an die Deutsche Börse für ETF-Liste und Monatsstatistik. Den Text entwerfe ich, du schickst ihn.
 
 ### Phase 1 · Register und Monatswerte
@@ -247,7 +250,7 @@ Jede Phase endet mit einem Ergebnis, das du in der Vorschau ansehen kannst. Ver�
 
 ## Risiken
 
-- **Rechte.** Für ETF-Liste und Monatsstatistik habe ich keine Nutzungsbedingungen gefunden. In den Dateien steht nur „Data is provided with the condition of no liability“; der Haftungsausschluss der Seite regelt die Weiterverwendung nicht. Die Erlaubnis für die Kursdaten deckt das nicht ab. Mit dem Push stehen Daten aus beiden Dateien im öffentlichen GitHub-Repo und auf dem Webserver. Ohne Zusage bliebe als Grundlage das EU-Register – dort stehen aber nur abgekürzte Namen, keine Kosten, kein Fondsvermögen.
+- **Rechte.** Für ETF-Liste und Monatsstatistik habe ich keine Nutzungsbedingungen gefunden. In den Dateien steht nur „Data is provided with the condition of no liability“; der Haftungsausschluss der Seite regelt die Weiterverwendung nicht. Die Erlaubnis für die Kursdaten deckt das nicht ab. Seit dem 30.09.2026 stehen Daten aus beiden Dateien im öffentlichen GitHub-Repo und auf dem Webserver. Ohne Zusage bliebe als Grundlage das EU-Register – dort stehen aber nur abgekürzte Namen, keine Kosten, kein Fondsvermögen.
 - **Rendite und Duration fehlen.** Die ETF-Seite ist stark bei Kosten, Handel, Größe und Laufzeit, zeigt aber nicht mehr die Zahl, die Leser zuerst suchen.
 - **Fehler in den Quellen werden sichtbar.** Ohne Handpflege korrigiert niemand eine veraltete Kostenangabe der Börsenliste. Gegenmittel: die Quelle dazuschreiben; später ein zweiter automatischer Kostenwert vom Anbieter.
 - **Kategorien sind aus Namen abgeleitet.** Ob ein ETF ein Anleihen-ETF ist, entscheidet weitgehend die Börse; Kategorie, Laufzeit und Absicherung bleiben eine Näherung. Gegenmittel: Kennzeichnung, Regeln verbessern.
