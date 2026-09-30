@@ -11,7 +11,8 @@ In den Quell-HTML stehen die Werte als lesbarer Rückfall, markiert mit data-kz:
     <span data-kz="anleihen-gesamt">über 43.000</span>      alle Anleihen im Register
     <span data-kz="spanne-sl">3,0–5,0&nbsp;%</span>        Renditespanne (10.–90. Perzentil) je Top-10-Datei:
          sl = Staatsanleihen nach Laufzeit, ul = Unternehmensanleihen nach Laufzeit,
-         sland = Staatsanleihen nach Ländern, uland = Unternehmensanleihen nach Ländern
+         sland = Staatsanleihen nach Ländern, uland = Unternehmensanleihen nach Ländern,
+         etf = Anleihen-ETFs (Rendite des Anleihebestands laut Anbieter, etfs.json)
 
 Außerdem wird in Meta-/og-/JSON-LD-Texten die Wendung „Suche über rund NN.000 Anleihen“ auf die aktuelle Zahl gesetzt
 (nur diese Wendung – Zahlen wie „Börse Frankfurt rund 27.700 Anleihen“ bleiben unberührt).
@@ -63,6 +64,11 @@ def main():
         r = sorted(a["rendite"] for g in d.get("gruppen", {}).values() for a in g if isinstance(a.get("rendite"), (int, float)))
         if len(r) >= 3:
             werte["spanne-" + key] = f"{de(perzentil(r, 0.1))}–{de(perzentil(r, 0.9))}&nbsp;%"
+    e = lade(site, "etfs.json")   # Rendite des Anleihebestands je ETF (Feld y, laut Anbieter) – seit 30.09.2026
+    if e:
+        r = sorted(x["y"] for g in e.get("gruppen", {}).values() for x in g if isinstance(x.get("y"), (int, float)))
+        if len(r) >= 3:
+            werte["spanne-etf"] = f"{de(perzentil(r, 0.1))}–{de(perzentil(r, 0.9))}&nbsp;%"
     print("Kennzahlen:", werte)
 
     span_re = re.compile(r'(<span data-kz="([a-z-]+)">)([^<]*)(</span>)')
