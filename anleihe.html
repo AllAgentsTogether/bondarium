@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -224,9 +225,14 @@
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="anleihen.html">Anleihen</a></li><li><a href="anleihen-suche.html">Anleihen-Suche</a></li><li><span aria-current="page">Anleihe</span></li></ol></nav>
   <main id="main">
     <ul class="chips" id="chips" aria-label="Merkmale"></ul>
-    <h1 id="titel">Anleihe</h1>
-    <p class="reg" id="reg"></p>
-    <p class="idz" id="idz"><span>Der Steckbrief wird geladen …</span></p>
+    <div class="b2-kopf">
+      <div>
+        <h1 id="titel">Anleihe</h1>
+        <p class="reg" id="reg"></p>
+        <p class="idz" id="idz"><span>Der Steckbrief wird geladen …</span></p>
+      </div>
+      <div class="b2-spot"><img src="spot-anleihe.svg" alt="" width="232" height="160"></div>
+    </div>
     <noscript><p class="note">Der Steckbrief braucht JavaScript. Die Anleihe findest du auch in der <a href="anleihen-suche.html">Anleihen-Suche</a>.</p></noscript>
 
     <div id="inhalt" class="stb" hidden>
@@ -650,6 +656,10 @@ function zeige(r, k, meta) {
   const quelle = document.getElementById("verlauf-quelle");
   quelle.textContent = bund ? "Quelle: Deutsche Bundesbank, seit Ausgabe." : "Quelle: Börse Frankfurt bzw. Tradegate, gesammelt seit 24.09.2026.";
   const optKv = { name, waehrung: ccy, kopf: "zeitraum", neutral: true, kupon: zinsart === 0 && typeof kupon === "number" && !inflIdx ? kupon : zinsart === 2 ? 0 : null, faellig };
+  // Bildwelt 2.0 (30.09.2026): Kupontermine als Punktreihe unter dem Kursverlauf (fester Kupon; Termine aus der Fälligkeit abgeleitet wie oben)
+  if (zinsart === 0 && typeof kupon === "number" && kupon > 0 && faellig) {
+    try { optKv.termine = kommendeTermine(faellig, freq, new Date(Date.now() - 40 * 365 * 86400000)).map(isoOf); } catch (e) { /* ohne Punktreihe */ }
+  }
   if (MC.verlauf) MC.verlauf(ISIN, bund).then(v => {
     // US-Staatsanleihen (seit 29.09.2026): vor dem 24.09.2026 Tagespreise des U.S. Treasury (FedInvest, End of Day), danach Börse Frankfurt
     if (!v.bund && v.t && v.t.length && v.t[0] < "2026-09-24")

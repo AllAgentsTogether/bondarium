@@ -11,6 +11,7 @@
      o.neutral  Veränderung ohne Signalfarbe
      o.kupon    Kupon in % p. a. → zusätzlich „inkl. Kupons“
      o.faellig  Fälligkeit (ISO) → Rückzahlungskreis, wenn sie knapp hinter dem letzten Kurs liegt
+     o.termine  Kupontermine (ISO-Daten) → Punktreihe auf der Zeitachse (seit 30.09.2026, Bildwelt 2.0)
    Zeitraum-Knöpfe erscheinen nur, wenn der Verlauf länger ist als der Zeitraum. */
 (function (MC) {
   "use strict";
@@ -117,10 +118,10 @@
     g.push('<text x="' + (W - mr) + '" y="' + (H - 4) + '" text-anchor="end" font-size="' + FS + '" font-weight="600" fill="#55544F">Datum →</text>');
     var xs = T.map(function (t) { return +X(zeitOf(t)).toFixed(1); }), ys = K.map(function (k) { return +Y(k).toFixed(1); });
     var d = xs.map(function (x, i) { return (i ? "L" : "M") + x + " " + ys[i]; }).join("");
-    g.push('<path d="' + d + '" fill="none" stroke="#1DA300" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>');
+    g.push('<path d="' + d + '" fill="none" stroke="#157C00" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>');
     if (mitF) {
       var fx = X(tF).toFixed(1), fy = Y(100).toFixed(1);
-      g.push('<line x1="' + xs[xs.length - 1] + '" y1="' + ys[ys.length - 1] + '" x2="' + fx + '" y2="' + fy + '" stroke="#1DA300" stroke-width="2" stroke-dasharray="2 4"/>' +
+      g.push('<line x1="' + xs[xs.length - 1] + '" y1="' + ys[ys.length - 1] + '" x2="' + fx + '" y2="' + fy + '" stroke="#157C00" stroke-width="2" stroke-dasharray="2 4"/>' +
         '<circle cx="' + fx + '" cy="' + fy + '" r="5" fill="#fff" stroke="#1A1A19" stroke-width="1.5"/>' +
         '<text x="' + fx + '" y="' + (+fy - 11) + '" text-anchor="end" font-size="' + FS + '" fill="#1A1A19" stroke="#FBFAF7" stroke-width="4" stroke-linejoin="round" paint-order="stroke">Fälligkeit ' + datumLang(o.faellig).slice(0, 6) + '</text>');
       label100 = label100.replace('x="' + (W - mr) + '" y="' + (+Y(100).toFixed(1) - 5) + '" text-anchor="end"', 'x="' + (ml + 6) + '" y="' + (+Y(100).toFixed(1) - 5) + '" text-anchor="start"');
@@ -128,6 +129,16 @@
     if (label100) g.push(label100);   // über der Linie, mit Hof lesbar
     var mitUmsatz = 0;
     U.forEach(function (u, i) { if (u > 0) { mitUmsatz++; g.push('<circle cx="' + xs[i] + '" cy="' + ys[i] + '" r="2.6" fill="#1A1A19"/>'); } });
+    // Bildwelt 2.0 (30.09.2026): Kupontermine im gezeigten Zeitraum als Punktreihe auf der Zeitachse (o.termine, ISO-Daten),
+    // aktueller Kurs als Kupon-Punkt (Neon mit Tinten-Rand)
+    var mitTerminen = 0;
+    (o.termine || []).forEach(function (d) {
+      var t = zeitOf(d);
+      if (t < t0 || t > tLetzt) return;
+      mitTerminen++;
+      g.push('<circle cx="' + X(t).toFixed(1) + '" cy="' + (H - mb) + '" r="3.2" fill="#157C00" stroke="#FBFAF7" stroke-width="1.5"><title>Kupontermin ' + datumLang(d) + '</title></circle>');
+    });
+    g.push('<circle cx="' + xs[xs.length - 1] + '" cy="' + ys[ys.length - 1] + '" r="5" fill="#39FF14" stroke="#1A1A19" stroke-width="1.5"/>');
     var tips = T.map(function (t, i) {
       return datumLang(t) + ": " + fmtK(K[i]) + (U[i] > 0 ? " · Umsatz " + zahl(U[i], 0) + (o.waehrung ? " " + o.waehrung : "") : "");
     });
@@ -152,8 +163,9 @@
     el.innerHTML = '<div class="kv-kopf"><span class="kv-titel">' + titel +
       ' <span class="kv-ver ' + cls(ver) + '">' + (ver > 0 ? "+" : "") + zahl(ver, 1) + "\u00a0%</span>" + inkl + (o.neutral && inkl ? ' <span class="ber">berechnet</span>' : "") + "</span>" + knoepfe + "</div>" +
       hoverWrap(svg, [{ x: xs, y: ys, tips: tips }]) +
-      (mitUmsatz || inkl || mitF ? '<p class="kv-legende">' + (mitUmsatz ? '<span class="kv-punkt" aria-hidden="true"></span>Tag mit Umsatz; die Linie verbindet die täglichen Schlusskurse.' : "") +
+      (mitUmsatz || inkl || mitF || mitTerminen ? '<p class="kv-legende">' + (mitUmsatz ? '<span class="kv-punkt" aria-hidden="true"></span>Tag mit Umsatz; die Linie verbindet die täglichen Schlusskurse.' : "") +
         (mitF ? " Kreis: Fälligkeit zum Rückzahlungskurs 100\u00a0%." : "") +
+        (mitTerminen ? " Grüne Punkte auf der Zeitachse: Kupontermine." : "") +
         (inkl ? " „Inkl. Kupons“: Kursänderung plus Kupon × Tage ÷ 365 im Zeitraum, bezogen auf den Anfangskurs, ohne Wiederanlage." : "") + "</p>" : "");
     el.onclick = function (e) {
       var b = e.target.closest ? e.target.closest(".kv-btn") : null;

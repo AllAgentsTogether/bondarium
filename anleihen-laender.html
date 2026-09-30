@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -40,11 +41,12 @@
   .map-svg { aspect-ratio: 1000 / 440; }
   .map svg { display: block; width: 100%; height: auto; aspect-ratio: 1000 / 440; }
   .map .land { fill: #E7E3DA; }
-  .map .pick { cursor: pointer; fill: var(--accent-text); fill-opacity: 0.32; stroke: #FBFAF7; stroke-width: 0.6; transition: fill-opacity 0.15s ease; }
-  .map .pick:hover, .map .pick.hot { fill-opacity: 0.6; }
-  .map .pick.on { fill-opacity: 1; }
+  /* Bildwelt 2.0 (30.09.2026): Länder mit Daten in Hauch-Grün, gewähltes Land Tiefgrün, Marker = Kupon-Punkt */
+  .map .pick { cursor: pointer; fill: #DCFBD3; stroke: #157C00; stroke-width: 0.6; stroke-opacity: 0.5; transition: fill 0.15s ease; }
+  .map .pick:hover, .map .pick.hot { fill: #C1FCB3; }
+  .map .pick.on { fill: #157C00; stroke-opacity: 1; }
   .map .hit { fill: none; stroke: transparent; stroke-width: 7; stroke-linejoin: round; pointer-events: stroke; cursor: pointer; }
-  .map .mark { fill: #fff; stroke: var(--ink); stroke-width: 1.5; vector-effect: non-scaling-stroke; pointer-events: none; }
+  .map .mark { fill: #39FF14; stroke: var(--ink); stroke-width: 1.5; vector-effect: non-scaling-stroke; pointer-events: none; }
   .map svg.zoom .land, .map svg.zoom .pick { stroke-width: 0.25; }
   .map svg.zoom .hit { stroke-width: 2.5; }
   .maptip { position: absolute; pointer-events: none; font-size: 12px; line-height: 1.4; padding: 3px 8px; border-radius: 5px; background: var(--ink); color: #fff; white-space: nowrap; transform: translate(-50%, calc(-100% - 10px)); z-index: 2; }
@@ -134,8 +136,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="anleihen.html">Anleihen</a></li><li><span aria-current="page">Staatsanleihen nach Ländern</span></li></ol></nav>
   <main id="main">
-    <h1>Staatsanleihen nach Ländern: die meistgehandelten je Land</h1>
-    <p class="sub">Welche Staatsanleihen handeln Anleger am häufigsten? Ein Klick auf die Karte zeigt für <span data-anzahl-laender>20</span> Länder – von Kanada über Europa bis Australien – die meistgehandelten Anleihen, mit Kurs, Kupon, Rendite, Restlaufzeit, Volumen und Stückelung.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Staatsanleihen nach Ländern: die meistgehandelten je Land</h1>
+        <p class="sub">Welche Staatsanleihen handeln Anleger am häufigsten? Ein Klick auf die Karte zeigt für <span data-anzahl-laender>20</span> Länder – von Kanada über Europa bis Australien – die meistgehandelten Anleihen, mit Kurs, Kupon, Rendite, Restlaufzeit, Volumen und Stückelung.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-anleihen-laender.svg" alt="" width="232" height="160"></div>
+    </div>
 
     <div class="map" id="map">
       <div class="map-svg"></div>

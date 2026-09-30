@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -35,6 +36,10 @@
   .lzjump { margin-top: 4px; }
   .lbtn .rng { font-size: 12px; font-weight: 400; color: var(--muted); }
   .lbtn:hover .rng { color: inherit; }
+  /* Bildwelt 2.0 (30.09.2026): Balkensymbol je Laufzeit-Tab, kurz → lang (wie die Illustration) */
+  .lzjump .lbtn::before { content: ""; flex: none; width: 16px; height: 6px; border-radius: 3px; background: linear-gradient(to right, #157C00 var(--l), #E4E3DF var(--l)); }
+  .lzjump .lbtn:nth-child(1) { --l: 20%; } .lzjump .lbtn:nth-child(2) { --l: 40%; } .lzjump .lbtn:nth-child(3) { --l: 60%; }
+  .lzjump .lbtn:nth-child(4) { --l: 80%; } .lzjump .lbtn:nth-child(5) { --l: 100%; }
   .lznote { margin-top: 16px; }
   .lzsec { margin-top: 40px; border-top: 1px solid var(--rule); padding-top: 26px; scroll-margin-top: 12px; }
   .lzsec table { margin-top: 6px; }
@@ -111,8 +116,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="anleihen.html">Anleihen</a></li><li><span aria-current="page">Staatsanleihen nach Laufzeit</span></li></ol></nav>
   <main id="main">
-    <h1>Staatsanleihen nach Laufzeit: die meistgehandelten je Restlaufzeit</h1>
-    <p class="sub">Welche Staatsanleihen handeln Anleger am häufigsten – von Bundesschatzanweisungen, die in wenigen Monaten fällig werden, bis zur 100-jährigen Anleihe Österreichs? Fünf Tabellen mit den meistgehandelten Anleihen je Restlaufzeit, Staaten aus aller Welt – mit Kurs, Kupon, Rendite, Volumen und Stückelung.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Staatsanleihen nach Laufzeit: die meistgehandelten je Restlaufzeit</h1>
+        <p class="sub">Welche Staatsanleihen handeln Anleger am häufigsten – von Bundesschatzanweisungen, die in wenigen Monaten fällig werden, bis zur 100-jährigen Anleihe Österreichs? Fünf Tabellen mit den meistgehandelten Anleihen je Restlaufzeit, Staaten aus aller Welt – mit Kurs, Kupon, Rendite, Volumen und Stückelung.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-staatsanleihen-laufzeit.svg" alt="" width="232" height="160"></div>
+    </div>
     <nav class="lands lzjump" aria-label="Zur Laufzeit springen">
       <a class="lbtn" href="#sehr-kurzfristig">Sehr kurzfristig <span class="rng">bis 1 J.</span></a>
       <a class="lbtn" href="#kurzfristig">Kurzfristig <span class="rng">1–3 J.</span></a>
