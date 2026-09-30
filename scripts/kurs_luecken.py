@@ -7,7 +7,8 @@ Sammlung (24.09.2026) – Wochenenden und die Feiertage der Frankfurter Börse a
 Ostermontag, 1. Mai, 24.–26.12., 31.12.) – und prüft, ob der letzte Börsentag vor heute schon da ist.
 
 Aufruf:
-  python scripts/kurs_luecken.py            Bericht; Rückgabe 1 bei Lücken (für die Alarm-Prüfung im Workflow)
+  python scripts/kurs_luecken.py            Bericht; Rückgabe 1 bei Lücken (für die Alarm-Prüfung im Workflow);
+                                             Tage in BEKANNTE_LUECKEN zählen nicht als Alarm
   python scripts/kurs_luecken.py --fehlt-neu Rückgabe 0, wenn der letzte Börsentag vor heute fehlt (Nachhol-Lauf nötig),
                                              sonst 1 – für den Nachhol-Workflow
 """
@@ -19,6 +20,10 @@ from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parent.parent
 BEGINN = datetime.date(2026, 9, 24)
+# Bekannte, nicht mehr nachholbare Lücken – lösen keinen Alarm aus, werden im Bericht aber genannt.
+#   2026-09-28: Umzug ins neue Repository (Bondarium); am 29.09. lief kein Abruf, die Tagesdateien der Deutschen Börse
+#               waren danach nicht mehr online (geprüft am 30.09.2026: DaysToKeepOnWebpage = 1, Direktabruf 404).
+BEKANNTE_LUECKEN = {datetime.date(2026, 9, 28)}
 
 
 def ostern(j: int) -> datetime.date:
@@ -70,9 +75,12 @@ def main() -> int:
         if boersentag(d):
             soll.append(d)
         d += datetime.timedelta(days=1)
-    fehlend = [x for x in soll if x not in da]
+    offen = [x for x in soll if x not in da]
+    fehlend = [x for x in offen if x not in BEKANNTE_LUECKEN]
+    bekannt = [x for x in offen if x in BEKANNTE_LUECKEN]
     print(f"Kursverlauf: {len(da)} Tage gespeichert, {len(soll)} Börsentage seit {BEGINN}, fehlend: "
-          + (", ".join(x.isoformat() for x in fehlend) or "keine"))
+          + (", ".join(x.isoformat() for x in fehlend) or "keine")
+          + (f" (bekannte Lücken: {', '.join(x.isoformat() for x in bekannt)})" if bekannt else ""))
     return 1 if fehlend else 0
 
 
