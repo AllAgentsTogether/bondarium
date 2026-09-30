@@ -76,6 +76,17 @@
   .kto-leise:hover { border-color: var(--ink); }
   .kto-leise[disabled] { opacity: 0.6; cursor: default; }
   .kto-status { margin: 18px 0 0; font-size: 14px; color: var(--text); min-height: 1.6em; }
+  /* Leiste über der Tabelle: Anzahl links, „Depot teilen“ rechts (seit 30.09.2026) */
+  .kto-leiste { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 18px; margin-top: 18px; }
+  .kto-leiste .kto-status { margin: 0; }
+  .kto-teilen { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+  .kto-teilen[hidden] { display: none; }
+  .kto-teilen-btn { display: inline-flex; align-items: center; gap: 7px; }
+  .kto-teilen-btn svg { width: 16px; height: 16px; flex: none; }
+  .kto-teilen .kto-textbtn { font-size: 14px; }
+  .kto-teilen-status { font-size: 13.5px; line-height: 1.5; color: var(--text); margin: 6px 0 0; }
+  .kto-teilen-status:empty { display: none; }
+  .kto-teilen-status.fehler { color: var(--down); }
   .kto-status strong { color: var(--ink); font-weight: 600; }
   .kto-t { width: 100%; min-width: 780px; border-collapse: collapse; margin-top: 8px; font-size: 14px; }
   .kto-t th, .kto-t td { padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
@@ -254,7 +265,14 @@
 
     <div id="depot" hidden>
       <div class="kto-kopf"><p>Angemeldet als <b id="wer"></b></p><button type="button" class="kto-leise" id="abmelden">Abmelden</button></div>
-      <p class="kto-status" id="status" role="status" aria-live="polite"></p>
+      <div class="kto-leiste">
+        <p class="kto-status" id="status" role="status" aria-live="polite"></p>
+        <div class="kto-teilen" id="teilen-box" hidden>
+          <button type="button" class="kto-leise kto-teilen-btn" id="teilen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12"/><path d="M7.5 7.5 12 3l4.5 4.5"/><path d="M5 11.5V19a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7.5"/></svg>Depot teilen</button>
+          <button type="button" class="kto-textbtn" id="als-pdf">Als PDF speichern</button>
+        </div>
+      </div>
+      <p class="kto-teilen-status" id="teilen-status" role="status" aria-live="polite"></p>
       <div class="table-scroll" id="liste" hidden>
         <table class="kto-t">
           <caption class="sr-only">Deine gemerkten Anleihen</caption>
@@ -312,6 +330,7 @@
 
 <script src="site.js"></script>
 <script src="konto.js"></script>
+<script src="pdf.js"></script>
 <script>
 // Rückfall, falls site.js nicht lädt (Netzfehler): Minimalform, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
 window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, minus: function (s) { return String(s).replace(/^-/, "\u2212"); }, zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\u2212") : "\u2013"; }, load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, hoverWrap: function (s) { return s; }, navInit: function () {} };
@@ -471,15 +490,18 @@ MC.navInit();
       `<td class="num leise" data-l="Gemerkt">${MC.esc(new Date(o.seit * 1000).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }))}</td>` +
       `<td><button type="button" class="kto-x" data-weg="${MC.esc(o.isin)}" aria-label="${MC.esc(o.name)} aus dem Depot entfernen">Entfernen</button></td></tr>`;
   }
-  function zeichne() {
+  // Liste in der gewählten Sortierung – für die Tabelle und den PDF-Auszug
+  function sortiert() {
     const key = KEY[S.col] || KEY.seit;
-    const l = LISTE.slice().sort((a, b) => {
+    return LISTE.slice().sort((a, b) => {
       const x = key(a), y = key(b);
       if (x == null || y == null) { if (x != null) return -1; if (y != null) return 1; }   // ohne Wert immer ans Ende
       const c = x == null ? 0 : typeof x === "string" ? x.localeCompare(y, "de", { numeric: true }) : x - y;
       return c * S.dir || b.seit - a.seit || a.isin.localeCompare(b.isin);
     });
-    $("zeilen").innerHTML = l.map(zeile).join("");
+  }
+  function zeichne() {
+    $("zeilen").innerHTML = sortiert().map(zeile).join("");
     document.querySelectorAll(".kto-t thead th[data-col]").forEach(th => { if (th.dataset.col === S.col) th.setAttribute("aria-sort", S.dir > 0 ? "ascending" : "descending"); else th.removeAttribute("aria-sort"); });
     if (MC.wischPruefen) MC.wischPruefen();
   }
@@ -495,19 +517,20 @@ MC.navInit();
     if (["bestaetigen", "neu", "gesendet"].includes(MODUS)) modus("anmelden");
     zeigeTeil("depot");
     $("leer").hidden = fav.length > 0;
-    if (!fav.length) { LISTE = []; $("liste").hidden = true; $("datastand").textContent = ""; statusText(); return; }
+    $("teilen-status").textContent = "";
+    if (!fav.length) { LISTE = []; $("liste").hidden = true; $("teilen-box").hidden = true; $("datastand").textContent = ""; statusText(); return; }
     if (!LISTE.length) $("status").textContent = "Kurse werden geladen …";
     ladeDaten().then(D => ladeStamm(fav.map(f => f[0]).filter(i => !D.idx.has(i))).then(() => D)).then(D => {
       if (nr !== lauf) return;
       LISTE = fav.map(f => anleihe(f[0], f[1], D)); KSTAND = D.kstand;
-      $("liste").hidden = false; zeichne(); statusText();
+      $("liste").hidden = false; $("teilen-box").hidden = false; zeichne(); statusText();
       $("datastand").innerHTML = `Kurs: Schlusskurs vom ${MC.esc(MC.datum(D.kstand))} in % des Nennwerts (Börse Frankfurt, Tradegate; Bundeswertpapiere: Deutsche Bundesbank) – ein älterer Kurs trägt sein Datum. Rendite: bis zur Fälligkeit, von uns aus dem Kurs berechnet. Alle Einzelheiten, Kursverlauf und Rechenbeispiel stehen im Steckbrief – ein Klick auf den Namen. Keine Anlageberatung.`;
     }).catch(err => {
       if (nr !== lauf) return;
       console.warn("Depot: Anleihedaten nicht geladen:", err);
       // ohne Kursdaten wenigstens die Liste zeigen (ISIN mit Link zum Steckbrief)
       LISTE = fav.map(f => ({ isin: f[0], seit: f[1], name: f[0], reg: "", rendite: null, kurs: null, kupon: null, faellig: "", cur: "", hinweis: "Kursdaten gerade nicht erreichbar" }));
-      $("liste").hidden = false; zeichne(); statusText(); $("datastand").textContent = "";
+      $("liste").hidden = false; $("teilen-box").hidden = false; zeichne(); statusText(); $("datastand").textContent = "";
     });
   }
   function zeige(stand) {
@@ -533,6 +556,97 @@ MC.navInit();
     const isin = ZULETZT; ZULETZT = "";
     K.merken(isin).catch(a => { if (a && a.status !== "anmelden") hinweis(TEXT.fehler, true); });
   });
+
+
+  // ---------- Depot teilen: PDF-Auszug im Browser (pdf.js), dann Teilen-Menü des Geräts oder Download ----------
+  // Nutzerentscheid 30.09.2026: Das PDF entsteht auf dem Gerät und geht nicht über unseren Server; es enthält nichts
+  // Persönliches (weder Name noch E-Mail-Adresse) – nur die Anleihen in der gewählten Sortierung, Datenstand und Hinweise.
+  const INK = [0.102, 0.102, 0.098], GRAU = [0.333, 0.329, 0.31], GRUEN = [0.224, 1, 0.078], LINIE = [0.86, 0.86, 0.84];
+  const zwei = n => (n < 10 ? "0" : "") + n;
+  function depotPdf() {
+    const P = MC.pdf(), B = P.B, H = P.H, R = 40, liste = sortiert(), n = liste.length, jetzt = new Date();
+    const datum = `${zwei(jetzt.getDate())}.${zwei(jetzt.getMonth() + 1)}.${jetzt.getFullYear()}`, uhr = `${zwei(jetzt.getHours())}:${zwei(jetzt.getMinutes())}`;
+    // Spalten: x = linker Rand, b = Breite; Zahlen rechtsbündig mit 6 pt Abstand zur nächsten Spalte
+    const SP = [{ t: "Anleihe", x: R, b: 212 }, { t: "Rendite", x: 252, b: 58, r: 1 }, { t: "Kurs", x: 310, b: 58, r: 1 },
+      { t: "Kupon", x: 368, b: 58, r: 1 }, { t: "Fälligkeit", x: 426, b: 74, r: 1 }, { t: "Währung", x: 512, b: 43 }];
+    const rx = i => SP[i].x + SP[i].b - 6, NAME = 206, LINK = "https://www.bondarium.de/";
+    // Hinweise unten auf jeder Seite; ihre Höhe bestimmt, wie weit die Tabelle reicht
+    const noten = [];
+    if (liste.some(o => o.real)) noten.push("* Realrendite (inflationsindexierte Anleihe).");
+    if (liste.some(o => o.fraglich != null)) noten.push("? Kurs ohne Umsatz, Rendite weit über Bund – die Taxe ist vermutlich veraltet.");
+    noten.push("Kurs: Schlusskurs in % des Nennwerts (Börse Frankfurt, Tradegate; Bundeswertpapiere: Deutsche Bundesbank), ein älterer Kurs trägt sein Datum. " +
+      "Rendite: bis zur Fälligkeit, von Bondarium aus dem Kurs berechnet. Einzelheiten zu jeder Anleihe: Klick auf den Namen.");
+    noten.push("Keine Anlageberatung: Dieser Auszug ist eine Merkliste und keine Empfehlung zum Kauf oder Verkauf. Alle Angaben ohne Gewähr.");
+    const fuss = [].concat(...noten.map(t => P.umbrechen(t, B - 2 * R, 7)));
+    const UNTEN = H - 34 - fuss.length * 9 - 14;
+    let y = 0;
+    function kopf() {
+      const nr = P.seite();
+      P.rechteck(0, 0, B, 56, GRUEN);   // grünes Band wie die Kopfzeile der Website
+      P.text(R, 36, "bondarium", { gr: 21, fett: true, farbe: INK });
+      P.text(B - R, 35, "www.bondarium.de", { gr: 9, farbe: INK, rechts: true });
+      P.link(B - R - P.weite("www.bondarium.de", 9), 24, P.weite("www.bondarium.de", 9), 14, LINK);
+      y = 98;
+      if (nr === 0) {
+        P.text(R, y, "Depot-Auszug", { gr: 24, fett: true });
+        y += 20;
+        P.text(R, y, `Erstellt am ${datum} um ${uhr} Uhr · ${n} ${n === 1 ? "Anleihe" : "Anleihen"}${KSTAND ? ` · Kurse vom ${MC.datum(KSTAND)}` : ""}`, { gr: 9.5, farbe: GRAU });
+        y += 32;
+      } else { P.text(R, y, "Depot-Auszug – Fortsetzung", { gr: 12, fett: true }); y += 24; }
+      SP.forEach((s, i) => P.text(s.r ? rx(i) : s.x, y, s.t.toUpperCase(), { gr: 7.5, fett: true, farbe: GRAU, rechts: !!s.r }));
+      y += 6; P.linie(R, y, B - R, y, INK, 0.8);
+    }
+    kopf();
+    liste.forEach(o => {
+      if (y + 30 > UNTEN) kopf();
+      const z1 = y + 14, z2 = y + 25;
+      P.text(R, z1, o.name, { gr: 9.5, fett: true, max: NAME });
+      P.link(R, y + 4, Math.min(NAME, P.weite(o.name, 9.5, true)), 13, `${LINK}anleihe.html?isin=${encodeURIComponent(o.isin)}`);
+      P.text(R, z2, [o.isin !== o.name ? o.isin : "", o.hinweis, o.reg].filter(Boolean).join(" · "), { gr: 7.5, farbe: GRAU, max: NAME });   // ISIN zuerst – sie soll nie abgeschnitten werden
+      P.text(rx(1), z1, o.rendite != null ? `${fmt(o.rendite, 2)} %${o.real ? "*" : o.fraglich != null ? "?" : ""}` : "–", { gr: 9.5, rechts: true });
+      P.text(rx(2), z1, o.kurs != null ? fmt(o.kurs, 2) : "–", { gr: 9.5, rechts: true });
+      if (o.kurs != null && o.datum && o.datum !== KSTAND) P.text(rx(2), z2, `vom ${MC.tag(o.datum)}`, { gr: 7.5, farbe: GRAU, rechts: true });
+      P.text(rx(3), z1, fmtCoupon(o.kupon), { gr: 9.5, rechts: true });
+      P.text(rx(4), z1, o.faellig ? MC.datum(o.faellig) : o.cur ? "unbefristet" : "–", { gr: 9.5, rechts: true });
+      if (o.faellig) P.text(rx(4), z2, jahre(o.faellig) > 0 ? MC.restlaufzeit(jahre(o.faellig)) : "fällig", { gr: 7.5, farbe: GRAU, rechts: true });
+      P.text(SP[5].x, z1, o.cur || "–", { gr: 9.5 });
+      y += 31; P.linie(R, y, B - R, y, LINIE, 0.5);
+    });
+    for (let i = 0, gesamt = P.anzahl(); i < gesamt; i++) {
+      P.auf(i);
+      let fy = H - 34 - fuss.length * 9;
+      P.linie(R, fy - 12, B - R, fy - 12, LINIE, 0.5);
+      fuss.forEach(z => { P.text(R, fy, z, { gr: 7, farbe: GRAU }); fy += 9; });
+      P.text(R, H - 22, "Bondarium – Anleihen verstehen und finden · www.bondarium.de", { gr: 7, farbe: GRAU });
+      P.text(B - R, H - 22, `Seite ${i + 1} von ${gesamt}`, { gr: 7, farbe: GRAU, rechts: true });
+    }
+    return { blob: P.blob("Depot-Auszug – Bondarium"), name: `Bondarium-Depot-${jetzt.getFullYear()}-${zwei(jetzt.getMonth() + 1)}-${zwei(jetzt.getDate())}.pdf` };
+  }
+  function teilenStatus(text, fehler) { const el = $("teilen-status"); el.className = "kto-teilen-status" + (fehler ? " fehler" : ""); el.textContent = text; }
+  function speichere(d, stattTeilen) {
+    const url = URL.createObjectURL(d.blob), a = document.createElement("a");
+    a.href = url; a.download = d.name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+    teilenStatus(stattTeilen ? `Dieser Browser kann nicht direkt teilen – das PDF „${d.name}“ ist heruntergeladen. Du kannst es jetzt per E-Mail oder Nachricht verschicken.`
+      : `Das PDF „${d.name}“ ist heruntergeladen.`);
+  }
+  // Teilen-Menü nur, wo der Browser Dateien teilen kann (Handy, Tablet, Safari); sonst Download. navigator.share muss direkt im
+  // Klick aufgerufen werden – das PDF entsteht deshalb ohne Warten (pdf.js rechnet synchron).
+  function teilen(nurSpeichern) {
+    let d;
+    try { d = depotPdf(); } catch (err) { console.warn("Depot-PDF:", err); teilenStatus("Das PDF ließ sich nicht erstellen. Bitte versuch es noch einmal.", true); return; }
+    let datei = null;
+    try { datei = new File([d.blob], d.name, { type: "application/pdf" }); } catch (e) { datei = null; }
+    if (!nurSpeichern && datei && navigator.canShare && navigator.canShare({ files: [datei] })) {
+      teilenStatus("");
+      navigator.share({ files: [datei], title: "Depot-Auszug – Bondarium" })
+        .then(() => teilenStatus("Dein Depot-Auszug ist geteilt."), err => { if (!err || err.name !== "AbortError") speichere(d, true); });
+      return;
+    }
+    speichere(d, !nurSpeichern);
+  }
+  $("teilen").addEventListener("click", () => teilen(false));
+  $("als-pdf").addEventListener("click", () => teilen(true));
 
   // Abmelden, Passwort ändern, Konto löschen
   $("abmelden").addEventListener("click", e => {

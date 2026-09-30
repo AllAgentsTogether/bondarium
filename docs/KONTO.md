@@ -12,6 +12,7 @@ man sich anmeldet. Es ist eine Merkliste, kein Wertpapierdepot: keine Bestände,
 | `konto.js` | Spricht mit `konto.php` (`MC.konto`), zeichnet den Merken-Knopf. Geladen auf `konto.html`, `anleihe.html`, `anleihen-suche.html`. |
 | `konto.php` | Schnittstelle auf dem Server (PHP bei STRATO), Antwort immer JSON. |
 | `konto-daten/` | Entsteht nur auf dem Server: SQLite-Datei mit zufälligem Namen. Nicht im Repository, nicht im Bau. |
+| `pdf.js` | Kleiner PDF-Schreiber im Browser (`MC.pdf`, Standardschriften Helvetica, WinAnsi) für den Depot-Auszug. Nur auf `konto.html`. |
 | `base.css` | `.merkbtn` (Merken-Knopf). |
 | `scripts/nav.py` | Menüpunkt „Mein Depot“ (`LINKS`). |
 | `rechtliches.html#konto` | Abschnitt der Datenschutzerklärung. |
@@ -40,6 +41,16 @@ Merker `bondarium-angemeldet` da ist. Klickt ein nicht angemeldeter Besucher auf
 `konto.html?merken=<ISIN>`; die ISIN geht mit der Anmeldung oder Registrierung mit und liegt danach im Depot. Ist jemand
 schon angemeldet, legt `?merken=` nichts von selbst ab (ein fremder Link soll nichts ins Depot legen können) – die
 Seite zeigt dann einen Knopf.
+
+## Depot teilen (PDF)
+
+Seit 30.09.2026 abends. Über der Tabelle stehen „Depot teilen“ und „Als PDF speichern“. Der Browser erzeugt einen
+PDF-Auszug (A4, grünes Band wie die Kopfzeile, „Depot-Auszug“, Datum, Anzahl, Kursstand; je Anleihe Name mit Link auf
+den Steckbrief, ISIN, Rendite, Kurs, Kupon, Fälligkeit, Währung – in der gewählten Sortierung; unten Quellen und
+„Keine Anlageberatung“, Seitenzahlen). „Depot teilen“ öffnet das Teilen-Menü des Geräts (Web Share API mit Datei –
+Handy, Tablet, Safari); wo der Browser keine Dateien teilen kann, wird das PDF heruntergeladen. Nutzerentscheid:
+nichts Persönliches im PDF (kein Name, keine E-Mail-Adresse), und das PDF geht nicht über den Server. Dateiname
+`Bondarium-Depot-JJJJ-MM-TT.pdf`.
 
 ## Was gespeichert wird
 
