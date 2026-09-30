@@ -126,7 +126,7 @@ ZINSEN = ("Zinsen", "beobachten.html", [
     ("Zinskurve seit 1972", "zinskurve.html"),
     ("Realzins seit 1970", "realzins.html"),
     "Risiko",
-    ("Unternehmensanleihen seit 1970", "unternehmensanleihen.html"),
+    ("Unternehmensanleihen seit 1984", "unternehmensanleihen.html"),
     ("Risikoaufschläge", "risikoaufschlaege.html"),
     ("Langläufer", "langlaeufer.html"),
 ])

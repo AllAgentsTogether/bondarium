@@ -1,18 +1,15 @@
 #!/usr/bin/env python3
 """Aktualisiert unternehmen.json – Renditen von Unternehmensanleihen-Segmenten
-(Bonität × Land), zweiter Chart auf renditen.html.
+(Bonität × Land), Chart auf unternehmensanleihen.html.
 
 Läuft wie update_renditen.py nur im vollen Lauf (Workflow: VOLL=1). Die
 FAST-Selbstdrosselung (höchstens ein Abruf pro Tag, gemessen an checkedAt)
 bleibt als Schutz erhalten, falls das Skript doch in einem FAST-Lauf startet.
 
-Sieben Reihen (Schlüssel → Quelle):
+Sechs Reihen (Schlüssel → Quelle) – seit 30.09.2026 ausschließlich 10 Jahre Laufzeit:
 - us_hqm   USA, Unternehmensanleihen hoher Bonität (AAA/AA/A), 10 Jahre:
            HQM-Kurve des US-Finanzministeriums (Spot-Rendite), via FRED
            HQMCB10YR – monatlich seit 1984.
-- de_corp  Deutschland, Anleihen von Unternehmen (Nicht-MFIs), Umlaufsrendite
-           über alle Laufzeiten (Ø Restlaufzeit ≈ 7 J.): Bundesbank BBSIS,
-           Monatswerte seit 1957, Tageswerte seit 1979.
 - jp_aa    Japan, Unternehmensanleihen mit Rating AA (R&I), Restlaufzeit 10 Jahre:
            JSDA-Rating-Matrix (公社債店頭売買参考統計値 格付マトリクス), börsentäglich
            seit 08/2002. Historie als Monatsendwerte (letzter Handelstag) – siehe unten.
@@ -28,6 +25,10 @@ Nicht aufgenommen (bewusst): ICE-BofA-Indizes über FRED – seit 04/2026 nur
 noch drei Jahre Historie, und die Lizenz untersagt die Veröffentlichung.
 Gestrichen 30.09.2026: Moody's Baa (FRED BAA/DBAA) – Moody's untersagt in den
 Reihen-Notizen bei FRED jede Weiterverbreitung ohne schriftliche Zustimmung.
+Gestrichen 30.09.2026: de_corp (Bundesbank BBSIS, Anleihen von Unternehmen/Nicht-MFIs,
+Emittentenklasse X2000) – die Reihe gibt es nur über alle Laufzeiten (Ø Restlaufzeit
+≈ 7 J.), eine 10-Jahres-Variante führt die Bundesbank nicht (an der SDMX-Schnittstelle
+geprüft). Nutzerentscheidung: auf der Seite stehen nur noch 10-jährige Reihen.
 Gestrichen 09/2026: Moody's Aaa (Dublette zu HQM), Hypothekenpfandbriefe
 (gedeckte Bankanleihen) und Bankschuldverschreibungen 9–10 J. (reiner
 Finanzsektor – passte nicht zu den übrigen Unternehmenssegmenten).
@@ -41,8 +42,8 @@ Struktur von unternehmen.json (analog renditen.json):
 Zeitstempel checkedAt (jeder Abruf-Lauf) sowie updated/updatedAt (nur bei
 Wertänderung) wie in renditen.json.
 
-Monatswerte sind bei der Bundesbank Monatsdurchschnitte, bei HQM, RBA, JSDA
-und ChinaBond Monatsend- bzw. Monatspunktwerte. Jahresdurchschnitt =
+Monatswerte sind bei HQM, RBA, JSDA und ChinaBond Monatsend- bzw.
+Monatspunktwerte. Jahresdurchschnitt =
 Mittel der zwölf Monatswerte; Jahresspanne = [min, max] der Monatswerte.
 
 Japan/China werden „gesampelt“: Je Monat wird der Wert des letzten Handelstags
@@ -55,7 +56,7 @@ Viertelstunde – dort werden je Lauf nur wenige Monate mit 12 s Pause geholt, d
 Historie ab 2002 füllt sich über die täglichen Läufe rückwärts auf (Jahresmittel
 erscheinen im Chart, sobald ein Jahr zwölf Monatswerte hat).
 
-Einmaliges Nachladen (FRED/Bundesbank/RBA komplett, Japan/China mit großem Budget):
+Einmaliges Nachladen (FRED/RBA komplett, Japan/China mit großem Budget):
 
     python3 scripts/update_unternehmen.py --backfill
     SAMPLE_BUDGET_CN=300 SAMPLE_BUDGET_JP=30 python3 scripts/update_unternehmen.py --backfill
@@ -81,7 +82,7 @@ from update_renditen import darf_ersetzen, month_of, update_ranges
 
 DATA_FILE = Path(__file__).resolve().parent.parent / "unternehmen.json"
 
-RANGE_START = 1970   # Beginn der Chart-Zeitachse (renditen.html, YEAR0)
+RANGE_START = 1984   # Beginn der Chart-Zeitachse (unternehmensanleihen.html, YEAR0) = Beginn der HQM-Kurve; bis 30.09.2026: 1970
 
 FRED_CSV = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}&cosd={cosd}"
 BUBA_SDMX = "https://api.statistiken.bundesbank.de/rest/data/BBSIS/{key}?detail=dataonly{extra}"
@@ -112,9 +113,7 @@ FRED_HEADERS = {**UA, "Accept": "text/csv,*/*"}
 
 # Bundesbank-Zeitreihenschlüssel (BBSIS, 15 Dimensionen). Frequenz D/M wird
 # vorn eingesetzt: "{f}.I.UMR.RD.EUR.<Emittent>.B.<Gattung>.<RLZ>.R.A.A._Z._Z.A"
-BUBA_KEYS = {
-    "de_corp": "I.UMR.RD.EUR.X2000.B.A.A.R.A.A._Z._Z.A",       # Unternehmen (Nicht-MFIs), alle RLZ
-}
+BUBA_KEYS: dict[str, str] = {}   # seit 30.09.2026 leer (de_corp gestrichen – nur „alle RLZ“ verfügbar: I.UMR.RD.EUR.X2000.B.A.A.R.A.A._Z._Z.A); Mechanik bleibt
 FRED_MONTHLY = {"us_hqm": "HQMCB10YR"}   # U.S. Treasury, gemeinfrei (FRED: „Public Domain: Citation Requested“)
 FRED_DAILY: dict[str, str] = {}             # seit 30.09.2026 leer (Moody's DBAA gestrichen); Mechanik bleibt für freie Tagesreihen
 RBA_IDS = {"au_a": "FNFYA10M", "au_bbb": "FNFYBBB10M"}
@@ -129,7 +128,7 @@ SAMPLED = {
     "cn_aaa": {"start": "2006-03", "budget": int(os.environ.get("SAMPLE_BUDGET_CN", "40")), "pause": 0.3},
 }
 
-KEYS = ["us_hqm", "de_corp", "jp_aa", "jp_a", "cn_aaa", "au_a", "au_bbb"]
+KEYS = ["us_hqm", "jp_aa", "jp_a", "cn_aaa", "au_a", "au_bbb"]
 
 
 def _plausibel(key: str, new: float, old) -> bool:
@@ -578,7 +577,7 @@ def update(data: dict, backfill: bool = False) -> tuple[bool, int]:
         print(f"{key}: {value} % (Stand {date}).")
         changed = True
 
-    # Reihen, die nicht mehr angezeigt werden (z. B. us_aaa, de_pfand seit 09/2026), entfernen
+    # Reihen, die nicht mehr angezeigt werden (z. B. us_aaa, de_pfand, us_baa, de_corp seit 09/2026), entfernen
     for stale in [k for k in series if k not in KEYS]:
         del series[stale]
         print(f"{stale}: nicht mehr Teil der Auswahl – aus unternehmen.json entfernt.")
