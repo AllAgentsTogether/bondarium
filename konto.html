@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mein Depot – Bondarium</title>
+<meta name="description" content="Dein Benutzerbereich bei Bondarium: Anleihen merken und mit Kurs und Rendite vom letzten Börsentag wiedersehen. Anmeldung per E-Mail-Link, ohne Passwort.">
+<link rel="canonical" href="https://www.bondarium.de/konto.html">
+<meta name="robots" content="noindex, follow">
+<meta name="author" content="Bondarium">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+ <style>
+  /* Benutzerbereich „Mein Depot“ (seit 30.09.2026): Anmeldung per E-Mail-Link und Merkliste. Schnittstelle konto.php, Skript konto.js,
+     Beschreibung docs/KONTO.md. Die Seite ist für alle gleich (kein Inhalt vom Server im HTML) und steht nicht im Suchindex (noindex).
+     Farbvariablen, .go, .sortbtn, .table-scroll und .sr-only kommen aus base.css. */
+  h1 { margin-bottom: 10px; }
+  .sub { margin-bottom: 22px; }
+  .kto-lade { font-size: 15px; color: var(--text); min-height: 320px; }
+  .kto-hinweis { display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: start; max-width: 720px; background: var(--green-tint); border: 1px solid var(--green-line); border-radius: 12px; padding: 11px 14px; margin-bottom: 18px; font-size: 15px; line-height: 1.5; }
+  .kto-hinweis[hidden] { display: none; }
+  .kto-hinweis::before { content: "✓"; width: 24px; height: 24px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 700; color: var(--green-text); }
+  .kto-hinweis.fehler { background: #FBEDE7; border-color: rgba(153,60,29,0.35); }
+  .kto-hinweis.fehler::before { content: "!"; color: var(--down); }
+  .kto-hinweis .merkbtn { margin-left: 6px; vertical-align: 1px; }
+  .kto-textbtn { font: inherit; color: var(--green-text); background: none; border: 0; padding: 0; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; cursor: pointer; }
+  .kto-textbtn:hover { color: var(--ink); }
+  .kto-textbtn:focus-visible, .kto-leise:focus-visible, .kto-x:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 3px; }
+
+  /* Anmelden: Formular links, drei Schritte rechts */
+  .kto-anm { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 28px 40px; align-items: start; }
+  .kto-anm[hidden], #depot[hidden] { display: none; }
+  .kto-karte { background: #fff; border: 1px solid var(--rule); border-top: 4px solid var(--green); border-radius: 16px; box-shadow: var(--shadow); padding: 22px 24px 22px; }
+  .kto-karte h2 { font-size: 24px; margin-bottom: 12px; }
+  .kto-vor { font-size: 15px; line-height: 1.5; background: var(--green-tint); border-radius: 10px; padding: 9px 12px; margin-bottom: 14px; }
+  .kto-vor[hidden] { display: none; }
+  .kf { display: grid; gap: 14px; }
+  .kf[hidden] { display: none; }
+  .kf label { display: block; font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 5px; }
+  .kf input { width: 100%; font: inherit; font-size: 16px; color: var(--ink); background: #fff; border: 1.5px solid rgba(26,26,25,0.55); border-radius: 10px; padding: 11px 13px; }
+  .kf input:focus-visible { outline: 0; border-color: var(--green-text); box-shadow: 0 0 0 3px var(--green-tint-2); }
+  .kf-falle { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }   /* Honigtopf gegen Bots – für Menschen unsichtbar */
+  .kf-hinweis { font-size: 14px; line-height: 1.55; color: var(--text); margin: 0; }
+  .kf .go { justify-self: start; border: 0; cursor: pointer; font-family: inherit; }
+  .kf .go[disabled] { opacity: 0.6; cursor: default; }
+  .kf-status { font-size: 15px; font-weight: 600; margin: 0; }
+  .kf-status:empty { display: none; }
+  .kf-status.fehler { color: var(--down); }
+  .kto-post { font-size: 16.5px; line-height: 1.55; margin-bottom: 10px; }
+  .kto-post b { font-weight: 700; overflow-wrap: anywhere; }
+  .kto-schritte { list-style: none; counter-reset: s; display: grid; gap: 16px; margin: 6px 0 0; padding: 0; }
+  .kto-schritte li { counter-increment: s; display: grid; grid-template-columns: 34px 1fr; gap: 2px 14px; font-size: 15.5px; line-height: 1.55; color: var(--text); }
+  .kto-schritte li::before { content: counter(s); grid-row: 1 / span 2; width: 34px; height: 34px; border-radius: 50%; background: var(--green); color: var(--ink); font-weight: 700; font-size: 15px; display: grid; place-items: center; }
+  .kto-schritte b { display: block; font-size: 17px; font-weight: 700; color: var(--ink); }
+  .kto-schritte span { grid-column: 2; }
+  .kto-klein { font-size: 13.5px; line-height: 1.6; color: var(--text); margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--rule); }
+
+  /* Depot: Kopfzeile, Tabelle, leere Liste, Konto */
+  .kto-kopf { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 18px; padding: 12px 16px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); font-size: 15px; }
+  .kto-kopf p { margin: 0; min-width: 0; overflow-wrap: anywhere; color: var(--text); }
+  .kto-kopf b { color: var(--ink); font-weight: 600; }
+  .kto-leise { font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.25); border-radius: 999px; padding: 7px 15px; cursor: pointer; }
+  .kto-leise:hover { border-color: var(--ink); }
+  .kto-leise[disabled] { opacity: 0.6; cursor: default; }
+  .kto-status { margin: 18px 0 0; font-size: 14px; color: var(--text); min-height: 1.6em; }
+  .kto-status strong { color: var(--ink); font-weight: 600; }
+  .kto-t { width: 100%; min-width: 780px; border-collapse: collapse; margin-top: 8px; font-size: 14px; }
+  .kto-t th, .kto-t td { padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+  .kto-t thead th { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); border-bottom: 1px solid rgba(26,26,25,0.35); white-space: nowrap; }
+  .kto-t .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .kto-t thead .num .sortbtn { flex-direction: row-reverse; }
+  .kto-t tbody th { font-weight: 400; line-height: 1.4; min-width: 200px; }
+  .kto-t tbody th a { font-weight: 600; color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
+  .kto-t tbody th a:hover { color: var(--green-text); text-decoration: underline; }
+  .kto-t small { display: block; font-size: 12.5px; color: var(--text); font-variant-numeric: tabular-nums; }
+  .kto-t td small { font-size: 12px; }
+  .kto-t td.leise { color: var(--text); }
+  .kto-t .fraglich { color: var(--text); border-bottom: 1px dotted currentColor; cursor: help; }
+  .kto-t td:last-child, .kto-t th:last-child { padding-right: 0; text-align: right; width: 1%; }
+  .kto-x { font: inherit; font-size: 13px; color: var(--text); background: none; border: 1px solid rgba(44,44,42,0.22); border-radius: 999px; padding: 3px 11px; cursor: pointer; white-space: nowrap; }
+  .kto-x:hover { color: var(--down); border-color: var(--down); }
+  .kto-x[disabled] { opacity: 0.5; cursor: default; }
+  .kto-leer { max-width: 640px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); padding: 20px 22px; margin-top: 14px; font-size: 16px; line-height: 1.6; }
+  .kto-leer[hidden], #liste[hidden] { display: none; }
+  .kto-leer p + p { margin-top: 12px; }
+  .kto-stand { font-size: 13px; line-height: 1.6; color: var(--text); margin-top: 16px; max-width: 820px; }
+  .kto-konto { margin-top: 40px; border-top: 1px solid var(--rule); padding-top: 16px; font-size: 14.5px; color: var(--text); }
+  .kto-konto summary { cursor: pointer; font-weight: 600; color: var(--ink); width: max-content; max-width: 100%; }
+  .kto-konto summary:focus-visible { outline: 2px solid var(--line); outline-offset: 3px; border-radius: 3px; }
+  .kto-konto p { max-width: 640px; line-height: 1.6; margin-top: 10px; }
+  .kto-konto .kto-reihe { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .kto-weg { font: inherit; font-size: 14px; font-weight: 600; color: #fff; background: var(--down); border: 1px solid var(--down); border-radius: 999px; padding: 8px 16px; cursor: pointer; }
+  .kto-weg:hover { background: #7E2F15; }
+  .kto-weg:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .kto-weg[disabled] { opacity: 0.6; cursor: default; }
+  @media (max-width: 860px) {
+    .kto-anm { grid-template-columns: minmax(0, 1fr); }
+    .kto-karte { padding: 18px 16px 18px; }
+  }
+  /* Handy: jede Anleihe als Karte – dieselben Zellen, per CSS umgebrochen (Name oben, darunter beschriftete Werte) */
+  @media (max-width: 680px) {
+    #liste.table-scroll { overflow: visible; background: none; }
+    .kto-t { min-width: 0; margin-top: 12px; }
+    .kto-t thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+    .kto-t tbody tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 12px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); padding: 14px 14px 12px; margin-bottom: 12px; }
+    .kto-t tbody tr:hover > :is(td, th) { background: none; }
+    .kto-t tbody th, .kto-t tbody td { display: block; padding: 0; border: 0; text-align: left; white-space: normal; min-width: 0; width: auto; }
+    .kto-t tbody th { grid-column: 1 / -1; font-size: 15.5px; }
+    .kto-t tbody td[data-l]::before { content: attr(data-l); display: block; font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
+    .kto-t tbody td[data-l] { font-size: 15px; font-weight: 600; text-align: left; }
+    .kto-t tbody td small { font-weight: 400; }
+    .kto-t tbody td:last-child { grid-column: 1 / -1; text-align: right; width: auto; }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Mein Depot","item":"https://www.bondarium.de/konto.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="start">
+    <a class="brand" href="index.html" aria-label="bondarium – Startseite"><svg class="brand-z" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect width="100" height="100" rx="24" fill="#1A1A19"/><mask id="bnd-cut" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><circle cx="65.4" cy="47.6" r="11.5" fill="#000"/></mask><g mask="url(#bnd-cut)" fill="none" stroke="#FBFAF7" stroke-width="12"><path d="M29 20V78" stroke-linecap="round"/><circle cx="52" cy="61" r="19"/></g><circle cx="65.4" cy="47.6" r="7.5" fill="#39FF14"/></svg><svg class="brand-w" viewBox="0 330 5362 780" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path fill="currentColor" d="M398 1108Q331 1108 280.0 1079.5Q229 1051 200.0 996.0Q171 941 168 863H189V1090H79V360H218V725L181 782Q185 698 214.5 642.0Q244 586 294.0 558.0Q344 530 407 530Q463 530 509.0 551.0Q555 572 588.0 609.5Q621 647 638.5 697.0Q656 747 656 806V827Q656 886 638.0 937.0Q620 988 586.0 1026.5Q552 1065 504.5 1086.5Q457 1108 398 1108ZM367 991Q412 991 445.5 968.5Q479 946 498.0 907.0Q517 868 517 817Q517 765 498.0 727.0Q479 689 445.5 668.0Q412 647 367 647Q326 647 291.5 665.0Q257 683 235.5 718.0Q214 753 214 802V842Q214 889 236.0 922.0Q258 955 293.0 973.0Q328 991 367 991Z M1009 1109Q937 1109 882.0 1086.0Q827 1063 789.0 1023.5Q751 984 731.5 934.0Q712 884 712 830V809Q712 753 732.5 702.5Q753 652 791.5 612.5Q830 573 885.0 550.5Q940 528 1009 528Q1078 528 1133.0 550.5Q1188 573 1226.5 612.5Q1265 652 1285.0 702.5Q1305 753 1305 809V830Q1305 884 1285.5 934.0Q1266 984 1228.0 1023.5Q1190 1063 1135.0 1086.0Q1080 1109 1009 1109ZM1009 990Q1060 990 1095.0 967.5Q1130 945 1148.0 906.5Q1166 868 1166 819Q1166 769 1147.5 730.5Q1129 692 1093.5 669.5Q1058 647 1009 647Q960 647 924.5 669.5Q889 692 870.0 730.5Q851 769 851 819Q851 868 869.5 906.5Q888 945 923.0 967.5Q958 990 1009 990Z M1397 1090V547H1507V780H1497Q1497 697 1519.0 641.5Q1541 586 1584.5 558.0Q1628 530 1693 530H1699Q1796 530 1846.0 592.5Q1896 655 1896 779V1090H1757V767Q1757 717 1728.5 686.0Q1700 655 1650 655Q1599 655 1567.5 686.5Q1536 718 1536 771V1090Z M2240 1108Q2183 1108 2135.0 1087.0Q2087 1066 2052.0 1028.0Q2017 990 1998.0 939.5Q1979 889 1979 830V809Q1979 751 1997.5 700.0Q2016 649 2049.5 611.0Q2083 573 2130.5 551.5Q2178 530 2236 530Q2300 530 2348.5 557.5Q2397 585 2426.0 640.0Q2455 695 2458 778L2417 730V360H2556V1090H2446V859H2470Q2467 942 2436.0 997.5Q2405 1053 2354.5 1080.5Q2304 1108 2240 1108ZM2271 991Q2312 991 2346.0 972.5Q2380 954 2400.5 918.5Q2421 883 2421 835V795Q2421 747 2400.0 714.5Q2379 682 2345.0 664.5Q2311 647 2271 647Q2226 647 2191.5 668.5Q2157 690 2137.5 729.0Q2118 768 2118 820Q2118 872 2138.0 910.5Q2158 949 2192.5 970.0Q2227 991 2271 991Z M3013 1090V929H2990V750Q2990 703 2967.0 680.0Q2944 657 2896 657Q2871 657 2836.0 658.0Q2801 659 2765.5 660.5Q2730 662 2702 664V546Q2725 544 2754.0 542.0Q2783 540 2813.5 539.5Q2844 539 2871 539Q2955 539 3010.5 561.0Q3066 583 3094.5 630.0Q3123 677 3123 753V1090ZM2838 1104Q2779 1104 2734.5 1083.0Q2690 1062 2665.5 1023.0Q2641 984 2641 929Q2641 869 2670.5 831.0Q2700 793 2753.5 774.0Q2807 755 2879 755H3005V838H2877Q2829 838 2803.5 861.5Q2778 885 2778 922Q2778 959 2803.5 982.0Q2829 1005 2877 1005Q2906 1005 2930.5 994.5Q2955 984 2971.5 958.5Q2988 933 2990 889L3024 928Q3019 985 2996.5 1024.0Q2974 1063 2934.5 1083.5Q2895 1104 2838 1104Z M3242 1090V547H3352V777H3349Q3349 660 3399.0 600.0Q3449 540 3546 540H3566V661H3528Q3458 661 3419.5 698.5Q3381 736 3381 807V1090Z M3655 1090V547H3794V1090ZM3579 651V547H3794V651Z M4109 1107Q4015 1107 3963.5 1045.0Q3912 983 3912 861V546H4051V873Q4051 923 4079.0 952.5Q4107 982 4155 982Q4203 982 4233.5 951.0Q4264 920 4264 867V546H4403V1090H4293V859H4304Q4304 941 4283.0 996.0Q4262 1051 4220.0 1079.0Q4178 1107 4115 1107Z M4533 1090V547H4643V780H4633Q4633 698 4654.0 642.5Q4675 587 4716.5 558.5Q4758 530 4820 530H4826Q4889 530 4930.5 558.5Q4972 587 4992.5 642.5Q5013 698 5013 780H4978Q4978 698 4999.5 642.5Q5021 587 5062.5 558.5Q5104 530 5166 530H5172Q5235 530 5277.0 558.5Q5319 587 5340.5 642.5Q5362 698 5362 780V1090H5223V767Q5223 716 5197.0 685.5Q5171 655 5123 655Q5075 655 5046.0 686.5Q5017 718 5017 771V1090H4878V767Q4878 716 4852.0 685.5Q4826 655 4778 655Q4730 655 4701.0 686.5Q4672 718 4672 771V1090Z"/><circle class="brand-i" cx="3705.5" cy="406.5" r="85"/></svg></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="./#akademie" class="nav-group-btn" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="wissen.html" class="nav-stufe">Verstehen</a>
+          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
+          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
+          <span class="nav-cap">Vertiefen</span>
+          <a href="duration.html">Duration und Konvexität</a>
+          <a href="rendite-lesen.html">Rendite richtig lesen</a>
+          <a href="anleihenleiter.html">Leiter, Hantel, Roll-down</a>
+          <a href="markttechnik.html">Markttechnik lesen</a>
+          <span class="nav-cap">Werkzeuge</span>
+          <a href="rechner.html">Anleihen-Rechner</a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <a href="anleihen-etf-erklaert.html">Anleihen-ETF: Vor- und Nachteile</a>
+          <span class="nav-cap">Beispiele</span>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <span class="nav-cap">Zins</span>
+          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <span class="nav-cap">Risiko</span>
+          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1984</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="ueber-uns.html">Über uns</a>
+      <a href="konto.html" class="current">Mein Depot</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+  </header>
+  <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><span aria-current="page">Mein Depot</span></li></ol></nav>
+  <main id="main">
+    <h1>Mein Depot</h1>
+    <p class="sub">Merke dir Anleihen und sieh sie hier wieder – mit Kurs und Rendite vom letzten Börsentag, auf jedem Gerät.</p>
+    <noscript><p class="note">Der Benutzerbereich braucht JavaScript.</p></noscript>
+    <p class="kto-hinweis" id="hinweis" role="status" aria-live="polite" hidden></p>
+    <p class="kto-lade" id="lade">Wird geladen …</p>
+
+    <div class="kto-anm" id="anmelden" hidden>
+      <section class="kto-karte" aria-labelledby="h-anm">
+        <h2 id="h-anm">Anmelden</h2>
+        <p class="kto-vor" id="vormerk" hidden></p>
+        <form class="kf" id="anmeldeform" action="konto.php" method="post">
+          <div><label for="kto-email">E-Mail-Adresse</label><input id="kto-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" required></div>
+          <p class="kf-falle" aria-hidden="true"><label for="kto-web">Website</label><input id="kto-web" name="website" type="text" tabindex="-1" autocomplete="off"></p>
+          <button type="submit" class="go">Anmelde-Link schicken</button>
+          <p class="kf-status" id="anm-status" role="status" aria-live="polite"></p>
+          <p class="kf-hinweis">Du bekommst einen Link per E-Mail. Ein Klick darauf meldet dich an – ohne Passwort. Beim ersten Mal entsteht dabei dein Konto. Was wir speichern, steht in der <a href="rechtliches.html#konto">Datenschutzerklärung</a>.</p>
+        </form>
+        <div id="gesendet" hidden>
+          <p class="kto-post"><b>Schau in dein Postfach.</b> Wir haben einen Link an <b id="gesendet-an"></b> geschickt. Er gilt <span id="gesendet-min">30</span> Minuten und nur einmal.</p>
+          <p class="kf-hinweis">Nichts angekommen? Sieh im Spam-Ordner nach oder <button type="button" class="kto-textbtn" id="nochmal">fordere einen neuen Link an</button>.</p>
+        </div>
+      </section>
+      <div>
+      <ol class="kto-schritte" aria-label="So funktioniert das Depot">
+        <li><b>Anmelden</b><span>E-Mail-Adresse eingeben, Link in der E-Mail anklicken. Ein Passwort gibt es nicht.</span></li>
+        <li><b>Merken</b><span>In der <a href="anleihen-suche.html">Anleihen-Suche</a> und auf jedem Steckbrief steht der Knopf „Merken“.</span></li>
+        <li><b>Wiedersehen</b><span>Hier stehen deine Anleihen mit Kurs und Rendite vom letzten Börsentag – auf jedem Gerät, auf dem du dich anmeldest.</span></li>
+      </ol>
+      <p class="kto-klein">Das Depot ist eine Merkliste. Hier wird nichts gekauft oder verkauft, und es ist kein Wertpapierdepot bei einer Bank. Keine Anlageberatung.</p>
+      </div>
+    </div>
+
+    <div id="depot" hidden>
+      <div class="kto-kopf"><p>Angemeldet als <b id="wer"></b></p><button type="button" class="kto-leise" id="abmelden">Abmelden</button></div>
+      <p class="kto-status" id="status" role="status" aria-live="polite"></p>
+      <div class="table-scroll" id="liste" hidden>
+        <table class="kto-t">
+          <caption class="sr-only">Deine gemerkten Anleihen</caption>
+          <thead><tr>
+            <th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Anleihe</button></th>
+            <th scope="col" data-col="rendite" class="num"><button type="button" class="sortbtn" data-col="rendite" title="Rendite bis Fälligkeit in % pro Jahr – von uns aus dem Schlusskurs berechnet (Bundeswertpapiere: Rendite der Deutschen Bundesbank)">Rendite</button></th>
+            <th scope="col" data-col="kurs" class="num"><button type="button" class="sortbtn" data-col="kurs" title="Schlusskurs in % des Nennwerts">Kurs</button></th>
+            <th scope="col" data-col="kupon" class="num"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
+            <th scope="col" data-col="faellig" class="num"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th>
+            <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th>
+            <th scope="col" data-col="seit" class="num" aria-sort="descending"><button type="button" class="sortbtn" data-col="seit">Gemerkt</button></th>
+            <th scope="col"><span class="sr-only">Entfernen</span></th>
+          </tr></thead>
+          <tbody id="zeilen"></tbody>
+        </table>
+      </div>
+      <div class="kto-leer" id="leer" hidden>
+        <p><b>Dein Depot ist noch leer.</b> In der Anleihen-Suche und auf jedem Steckbrief steht der Knopf „Merken“ – ein Klick legt die Anleihe hierher.</p>
+        <p><a class="go" href="anleihen-suche.html">Zur Anleihen-Suche</a></p>
+      </div>
+      <p class="kto-stand" id="datastand"></p>
+      <details class="kto-konto" id="konto">
+        <summary>Konto löschen</summary>
+        <p>Dein Konto, deine E-Mail-Adresse und deine Merkliste werden sofort und endgültig gelöscht. Du kannst dich danach jederzeit neu anmelden – mit leerem Depot.</p>
+        <div class="kto-reihe"><button type="button" class="kto-weg" id="loeschen">Konto endgültig löschen</button></div>
+        <p class="kf-status fehler" id="loesch-status" role="status" aria-live="polite"></p>
+      </details>
+    </div>
+  </main>
+  <footer class="fuss">
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
+    <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
+  </footer>
+</div>
+
+<script src="site.js"></script>
+<script src="konto.js"></script>
+<script>
+// Rückfall, falls site.js nicht lädt (Netzfehler): Minimalform, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, minus: function (s) { return String(s).replace(/^-/, "\u2212"); }, zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\u2212") : "\u2013"; }, load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, hoverWrap: function (s) { return s; }, navInit: function () {} };
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+
+// ---------- Benutzerbereich (konto.js → konto.php) ----------
+// Drei Zustände: „lade“ (Stand wird geholt oder Link eingelöst), „anmelden“ (Formular), „depot“ (Merkliste).
+// Der Anmelde-Link führt auf konto.html#anmelden=<Kennwort>; „?merken=<ISIN>“ kommt vom Merken-Knopf, wenn niemand angemeldet ist.
+(function () {
+  const K = MC.konto, $ = id => document.getElementById(id);
+  if (!K || !window.fetch || !window.URLSearchParams) { $("lade").textContent = "Der Benutzerbereich ist gerade nicht erreichbar. Bitte lade die Seite neu."; return; }
+  const ISIN_RE = /^[A-Z]{2}[A-Z0-9]{9}\d$/;
+  const par = new URLSearchParams(location.search);
+  let VOR = (par.get("merken") || "").trim().toUpperCase(); if (!ISIN_RE.test(VOR)) VOR = "";
+  const TEXT = {
+    email: "Bitte prüfe deine E-Mail-Adresse.",
+    zuviel: "Für diese Adresse wurden gerade schon mehrere Links angefordert. Bitte sieh in dein Postfach oder versuch es später noch einmal.",
+    versand: "Die E-Mail ließ sich nicht verschicken. Bitte versuch es später noch einmal.",
+    link: "Dieser Link ist abgelaufen oder wurde schon benutzt. Fordere unten einen neuen an.",
+    fehler: "Das hat nicht geklappt. Bitte versuch es noch einmal.",
+  };
+  const zeigeTeil = t => { $("lade").hidden = t !== "lade"; $("anmelden").hidden = t !== "anmelden"; $("depot").hidden = t !== "depot"; };
+  function hinweis(html, fehler) { const h = $("hinweis"); h.className = "kto-hinweis" + (fehler ? " fehler" : ""); h.innerHTML = `<span>${html}</span>`; h.hidden = !html; }
+  const steckbrief = isin => `<a href="anleihe.html?isin=${encodeURIComponent(isin)}">${MC.esc(isin)}</a>`;
+
+  // ---------- Anmelden ----------
+  const form = $("anmeldeform"), knopf = form.querySelector("button[type=submit]"), st = $("anm-status");
+  if (VOR) { $("vormerk").innerHTML = `Nach dem Anmelden liegt die Anleihe <b>${MC.esc(VOR)}</b> in deinem Depot.`; $("vormerk").hidden = false; }
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    const email = form.email.value.trim();
+    knopf.disabled = true; st.className = "kf-status"; st.textContent = "Wird gesendet …";
+    K.link(email, VOR, form.website.value).then(a => {
+      knopf.disabled = false;
+      if (!a.ok) { st.className = "kf-status fehler"; st.textContent = TEXT[a.status] || TEXT.fehler; return; }
+      st.textContent = ""; hinweis("");
+      $("gesendet-an").textContent = email; if (a.minuten) $("gesendet-min").textContent = a.minuten;
+      form.hidden = true; $("vormerk").hidden = true; $("gesendet").hidden = false;
+    });
+  });
+  $("nochmal").addEventListener("click", () => { $("gesendet").hidden = true; form.hidden = false; $("vormerk").hidden = !VOR; form.email.focus(); });
+
+  // ---------- Depot: Daten ----------
+  // suchindex.json (scripts/suchindex.py, dieselbe Datei wie die Anleihen-Suche): nur Anleihen mit Kurs aus den letzten 14 Tagen, je Zeile
+  // [isin, name, art, waehrung, kupon, faellig, volumen, stueckelung, boerse, emittent (Index), zinsart, land, extra, rz+jahr, pruef,
+  //  kurs, rendite, tag (Index in tage), boerse_kurs, umsatz, vortag, aufschlag]. Was dort fehlt (kein Kurs seit 14 Tagen oder fällig),
+  // kommt mit den Stammdaten aus anleihen/<teil>.json: rows[ISIN] = [name, art, waehrung, kupon, faellig, …] – dann ohne Kurs.
+  const fmt = (v, dec = 0) => MC.zahl(v, dec);
+  const fmtCoupon = c => c === "var" ? "variabel" : typeof c === "number" ? `${fmt(c, Math.round(c * 1000) % 10 ? 3 : 2)} %` : "–";
+  const HEUTE = Date.now();
+  const jahre = iso => iso ? (new Date(iso + "T12:00:00Z").getTime() - HEUTE) / (365.25 * 86400000) : Infinity;
+  const NAMEN = (() => { try { return new Intl.DisplayNames(["de"], { type: "region" }); } catch (e) { return null; } })();
+  const landName = c => { try { return (NAMEN && NAMEN.of(c)) || c; } catch (e) { return c; } };
+  // Angezeigter Name, Rendite-Regeln und Kennzeichnung „fraglich“: wie anleihen-suche.html (anzeigeName, unsicher, befund, fraglich) –
+  // bei Änderungen dort hier nachziehen, damit Depot und Suche dieselben Zahlen zeigen
+  const RF_ENDE = /[\s,]+(AG|SE|KGaA|GmbH|N\.V\.|B\.V\.|S\.A\.|S\.p\.A\.|S\.r\.l\.|PLC|p\.l\.c\.|Inc\.|Ltd\.?|Limited|LLC|Corp\.|Corporation|SA|NV|BV|AB|ASA|A\/S|Oyj|Aktiengesellschaft|Designated Activity Company)$/;
+  const FRAGLICH_AB = [2, 1.5, 3];
+  let DATEN = null;   // { idx: Map ISIN → Zeile, emi, tage, kstand, boersen, stand }
+  const STAMM = {};   // ISIN → Stammdaten-Zeile oder null (nicht gelistet)
+  function ladeDaten() {
+    if (!DATEN) DATEN = MC.json("suchindex.json").then(d => ({ idx: new Map(d.rows.map(r => [r[0], r])), emi: d.emittenten || [], tage: d.tage || [], kstand: d.kstand || "", boersen: d.boersen || {}, stand: d.stand || "" }));
+    DATEN.catch(() => { DATEN = null; });
+    return DATEN;
+  }
+  function ladeStamm(isins) {
+    const teile = {};
+    isins.filter(i => !(i in STAMM)).forEach(i => { (teile[MC.teil(i)] = teile[MC.teil(i)] || []).push(i); });
+    return Promise.all(Object.keys(teile).map(t => MC.json(`anleihen/${t}.json`).then(d => { teile[t].forEach(i => { STAMM[i] = (d.rows && d.rows[i]) || null; }); }, () => { teile[t].forEach(i => { STAMM[i] = null; }); })));
+  }
+  // Eine Anleihe der Merkliste als Objekt für Tabelle und Sortierung
+  function anleihe(isin, seit, D) {
+    const r = D.idx.get(isin), o = { isin, seit, name: isin, reg: "", rendite: null, kurs: null, kupon: null, faellig: "", cur: "", hinweis: "" };
+    if (r) {
+      const pruef = r[14] && typeof r[14] === "object" && Object.keys(r[14]).length > 0, y = r[16], auf = typeof r[21] === "number" ? r[21] : null;
+      const taxe = !r[19] && r[18] !== "B", t = r[5] ? jahre(r[5]) : 99;
+      const unsicher = taxe && typeof y === "number" && (y < 0 || y > 15 || (auf != null && auf < -1) || (t < 0.25 && y > 8));
+      o.name = r[2] === 0 && r[11] && r[11] !== "INT" ? landName(r[11]) : D.emi[r[9]] ? D.emi[r[9]].replace(RF_ENDE, "").replace(RF_ENDE, "") || D.emi[r[9]] : r[1];
+      o.reg = o.name !== r[1] ? r[1] : "";
+      o.kurs = typeof r[15] === "number" ? r[15] : null; o.datum = D.tage[r[17]] || ""; o.boerse = D.boersen[r[18]] || "";
+      o.rendite = typeof y === "number" && !unsicher && !pruef ? y : null;
+      o.real = o.rendite != null && r[18] === "B" && /inflation|infl\./i.test(r[1]);
+      o.fraglich = o.rendite != null && taxe && r[5] && t < 1 && auf != null && auf > (FRAGLICH_AB[r[2]] ?? 3) ? auf : null;
+      o.kupon = r[4]; o.faellig = r[5] || ""; o.cur = r[3] || "";
+    } else if (STAMM[isin]) {
+      const s = STAMM[isin];
+      o.name = s[0] || isin; o.kupon = s[3]; o.faellig = s[4] || ""; o.cur = s[2] || "";
+      o.hinweis = o.faellig && jahre(o.faellig) <= 0 ? "Fälligkeit erreicht" : "kein Kurs in den letzten 14 Tagen";
+    } else o.hinweis = "nicht an einer deutschen Börse gelistet oder fällig";
+    return o;
+  }
+
+  // ---------- Depot: Anzeige ----------
+  const S = { col: "seit", dir: -1 };
+  const KEY = { name: o => o.name.toLowerCase(), rendite: o => o.rendite, kurs: o => o.kurs, kupon: o => typeof o.kupon === "number" ? o.kupon : null, faellig: o => o.faellig || null, cur: o => o.cur || null, seit: o => o.seit };
+  let LISTE = [], KSTAND = "", ZULETZT = "";   // ZULETZT: eben entfernte ISIN (für „Rückgängig“)
+  function zeile(o) {
+    const kurs = o.kurs != null ? `${fmt(o.kurs, 2)}${o.datum && o.datum !== KSTAND ? `<small>${MC.esc(MC.tag(o.datum))}</small>` : ""}` : "–";
+    const rend = o.rendite != null ? (o.fraglich != null
+      ? `<span class="fraglich" title="Kurs ohne Umsatz: Die Rendite liegt ${fmt(o.fraglich, 1)} Punkte über Bund – bei unter einem Jahr Restlaufzeit ist die Taxe meist veraltet.">${fmt(o.rendite, 2)} %<sup>?</sup></span>`
+      : `<span${o.real ? ' title="Realrendite (inflationsindexiert)"' : ""}>${fmt(o.rendite, 2)} %${o.real ? "*" : ""}</span>`) : "–";
+    const unter = [o.reg, o.isin !== o.name ? o.isin : "", o.hinweis].filter(Boolean).map(MC.esc).join(" · ");
+    return `<tr><th scope="row"><a href="anleihe.html?isin=${encodeURIComponent(o.isin)}">${MC.esc(o.name)}</a>${unter ? `<small>${unter}</small>` : ""}</th>` +
+      `<td class="num" data-l="Rendite">${rend}</td><td class="num" data-l="Kurs"${o.kurs != null ? ` title="${MC.esc(`Schlusskurs vom ${MC.datum(o.datum)}${o.boerse ? ", " + o.boerse : ""}`)}"` : ""}>${kurs}</td>` +
+      `<td class="num" data-l="Kupon">${fmtCoupon(o.kupon)}</td>` +
+      `<td class="num" data-l="Fälligkeit">${o.faellig ? MC.datum(o.faellig) : (o.cur ? "unbefristet" : "–")}${o.faellig ? `<small>${jahre(o.faellig) > 0 ? MC.esc(MC.restlaufzeit(jahre(o.faellig))) : "fällig"}</small>` : ""}</td>` +
+      `<td data-l="Währung">${MC.esc(o.cur || "–")}</td>` +
+      `<td class="num leise" data-l="Gemerkt">${MC.esc(new Date(o.seit * 1000).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }))}</td>` +
+      `<td><button type="button" class="kto-x" data-weg="${MC.esc(o.isin)}" aria-label="${MC.esc(o.name)} aus dem Depot entfernen">Entfernen</button></td></tr>`;
+  }
+  function zeichne() {
+    const key = KEY[S.col] || KEY.seit;
+    const l = LISTE.slice().sort((a, b) => {
+      const x = key(a), y = key(b);
+      if (x == null || y == null) { if (x != null) return -1; if (y != null) return 1; }   // ohne Wert immer ans Ende
+      const c = x == null ? 0 : typeof x === "string" ? x.localeCompare(y, "de", { numeric: true }) : x - y;
+      return c * S.dir || b.seit - a.seit || a.isin.localeCompare(b.isin);
+    });
+    $("zeilen").innerHTML = l.map(zeile).join("");
+    document.querySelectorAll(".kto-t thead th[data-col]").forEach(th => { if (th.dataset.col === S.col) th.setAttribute("aria-sort", S.dir > 0 ? "ascending" : "descending"); else th.removeAttribute("aria-sort"); });
+    if (MC.wischPruefen) MC.wischPruefen();
+  }
+  function statusText() {
+    const n = LISTE.length;
+    $("status").innerHTML = (n ? `<strong>${n} ${n === 1 ? "Anleihe" : "Anleihen"}</strong> in deinem Depot.` : "") +
+      (ZULETZT ? ` ${MC.esc(ZULETZT)} entfernt – <button type="button" class="kto-textbtn" id="zurueck">rückgängig</button>.` : "");
+  }
+  let lauf = 0;
+  function zeigeDepot(stand) {
+    const nr = ++lauf, fav = stand.favoriten;
+    $("wer").textContent = stand.email;
+    zeigeTeil("depot");
+    $("leer").hidden = fav.length > 0;
+    if (!fav.length) { LISTE = []; $("liste").hidden = true; $("datastand").textContent = ""; statusText(); return; }
+    if (!LISTE.length) $("status").textContent = "Kurse werden geladen …";
+    ladeDaten().then(D => ladeStamm(fav.map(f => f[0]).filter(i => !D.idx.has(i))).then(() => D)).then(D => {
+      if (nr !== lauf) return;
+      LISTE = fav.map(f => anleihe(f[0], f[1], D)); KSTAND = D.kstand;
+      $("liste").hidden = false; zeichne(); statusText();
+      $("datastand").innerHTML = `Kurs: Schlusskurs vom ${MC.esc(MC.datum(D.kstand))} in % des Nennwerts (Börse Frankfurt, Tradegate; Bundeswertpapiere: Deutsche Bundesbank) – ein älterer Kurs trägt sein Datum. Rendite: bis zur Fälligkeit, von uns aus dem Kurs berechnet. Alle Einzelheiten, Kursverlauf und Rechenbeispiel stehen im Steckbrief – ein Klick auf den Namen. Keine Anlageberatung.`;
+    }).catch(err => {
+      if (nr !== lauf) return;
+      console.warn("Depot: Anleihedaten nicht geladen:", err);
+      // ohne Kursdaten wenigstens die Liste zeigen (ISIN mit Link zum Steckbrief)
+      LISTE = fav.map(f => ({ isin: f[0], seit: f[1], name: f[0], reg: "", rendite: null, kurs: null, kupon: null, faellig: "", cur: "", hinweis: "Kursdaten gerade nicht erreichbar" }));
+      $("liste").hidden = false; zeichne(); statusText(); $("datastand").textContent = "";
+    });
+  }
+  function zeige(stand) {
+    if (stand.angemeldet) zeigeDepot(stand);
+    else { lauf++; LISTE = []; ZULETZT = ""; form.hidden = false; $("gesendet").hidden = true; zeigeTeil("anmelden"); }
+  }
+  K.beiAenderung(zeige);
+
+  // Sortieren, Entfernen, Rückgängig
+  document.querySelector(".kto-t thead").addEventListener("click", e => {
+    const b = e.target.closest(".sortbtn"); if (!b) return;
+    if (S.col === b.dataset.col) S.dir = -S.dir; else { S.col = b.dataset.col; S.dir = ["rendite", "kupon", "seit"].includes(S.col) ? -1 : 1; }
+    zeichne();
+  });
+  $("zeilen").addEventListener("click", e => {
+    const b = e.target.closest("[data-weg]"); if (!b) return;
+    const isin = b.dataset.weg;
+    b.disabled = true; ZULETZT = isin;
+    K.entfernen(isin).catch(a => { ZULETZT = ""; b.disabled = false; if (a && a.status !== "anmelden") hinweis(TEXT.fehler, true); });
+  });
+  $("status").addEventListener("click", e => {
+    if (!e.target.closest("#zurueck") || !ZULETZT) return;
+    const isin = ZULETZT; ZULETZT = "";
+    K.merken(isin).catch(a => { if (a && a.status !== "anmelden") hinweis(TEXT.fehler, true); });
+  });
+
+  // Abmelden, Konto löschen
+  $("abmelden").addEventListener("click", e => {
+    e.currentTarget.disabled = true;
+    K.abmelden().then(a => { $("abmelden").disabled = false; if (a.ok) hinweis("Du bist abgemeldet."); else hinweis(TEXT.fehler, true); });
+  });
+  $("loeschen").addEventListener("click", e => {
+    const b = e.currentTarget;
+    if (!b.dataset.sicher) { b.dataset.sicher = "1"; b.textContent = "Ja, jetzt endgültig löschen"; return; }
+    b.disabled = true; $("loesch-status").textContent = "";
+    K.loeschen().then(a => {
+      b.disabled = false; delete b.dataset.sicher; b.textContent = "Konto endgültig löschen"; $("konto").open = false;
+      if (a.ok) hinweis("Dein Konto und deine Merkliste sind gelöscht.");
+      else $("loesch-status").textContent = TEXT.fehler;
+    });
+  });
+  $("konto").addEventListener("toggle", () => { const b = $("loeschen"); delete b.dataset.sicher; b.textContent = "Konto endgültig löschen"; });
+
+  // ---------- Start: Link einlösen, vorgemerkte Anleihe ablegen oder Stand zeigen ----------
+  const ohneZusatz = () => { try { history.replaceState(null, "", location.pathname); } catch (e) {} };
+  function einloesen() {
+    const m = /^#anmelden=([A-Za-z0-9_-]{43})$/.exec(location.hash);
+    if (!m) return false;
+    ohneZusatz();   // Kennwort sofort aus der Adresse nehmen (Verlauf, Lesezeichen)
+    $("lade").textContent = "Du wirst angemeldet …"; zeigeTeil("lade"); hinweis("");
+    K.einloesen(m[1]).then(a => {
+      if (a.ok) hinweis(a.gemerkt ? `Du bist angemeldet. Die Anleihe ${steckbrief(a.gemerkt)} liegt in deinem Depot.` : "Du bist angemeldet.");
+      else K.bereit().then(stand => {   // Link verbraucht oder abgelaufen – wer schon angemeldet ist, sieht einfach sein Depot
+        if (!stand.angemeldet) hinweis(a.status === "link" ? TEXT.link : TEXT.fehler, true);
+        zeige(stand);
+      });
+    });
+    return true;
+  }
+  window.addEventListener("hashchange", einloesen);   // Link in einem Tab geöffnet, in dem die Seite schon steht: kein Neuladen, nur „#…“ ändert sich
+  if (!einloesen()) {
+    K.bereit().then(stand => {
+      if (stand.angemeldet && VOR) {
+        // Schon angemeldet: nicht von selbst ablegen – sonst könnte ein fremder Link etwas ins Depot legen. Der Knopf im Hinweis tut es.
+        const isin = VOR; VOR = ""; ohneZusatz();
+        hinweis(K.hat(isin) ? `Die Anleihe ${steckbrief(isin)} liegt schon in deinem Depot.` : `Anleihe ${steckbrief(isin)} ins Depot legen? ${K.knopf(isin)}`);
+      }
+      zeige(stand);
+    });
+  }
+})();
+</script>
+</body>
+</html>

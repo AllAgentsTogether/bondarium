@@ -265,6 +265,7 @@
         </div>
       </div>
       <a href="ueber-uns.html">Über uns</a>
+      <a href="konto.html">Mein Depot</a>
     </nav>
     <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
   </header>
@@ -362,6 +363,7 @@
 </div>
 
 <script src="site.js"></script>
+<script src="konto.js"></script>
 <script>
 // Rückfall, falls site.js nicht lädt (Netzfehler): Minimalform, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
 window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, minus: function (s) { return String(s).replace(/^-/, "\u2212"); }, zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\u2212") : "\u2013"; }, load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, hoverWrap: function (s) { return s; }, navInit: function () {} };
@@ -589,6 +591,7 @@ function zeile(r) {
 // Kurzansicht (seit 26.09.2026): vier Kennzahlen zum Einordnen – alles Weitere (Kursverlauf, Handel, Aufschlag zu Bund, Rang,
 // Rückzahlung, Zinsformel, Kaufrechnung) steht auf dem Steckbrief anleihe.html?isin=…
 // Die Veränderung zum Vortag steht seit 26.09.2026 als +/− direkt hinter dem Kurs (eigene Kachel und Kurzlegende entfallen).
+// Neben „ISIN kopieren“ steht seit 30.09.2026 der Merken-Knopf (konto.js): legt die Anleihe ins Depot des angemeldeten Nutzers (konto.html).
 function detailZeile(r) {
   const D = L("det"), k = KURSE[r[0]], rd = rendite(r), real = rd != null && istReal(r, k), pw = pruefVon(r);
   const wkn = /^DE/.test(r[0]) ? ` · WKN <b>${r[0].slice(5, 11)}</b>` : "";
@@ -615,7 +618,7 @@ function detailZeile(r) {
   const href = `anleihe.html?isin=${encodeURIComponent(r[0])}`;
   return `<tr class="zdet" id="det-${MC.esc(r[0])}"><td colspan="11"><div class="det">` +
     `<div class="det-kopf"><b>${MC.esc(EMI[r[9]] || r[1])}</b>${EMI[r[9]] ? `<span class="det-emi">${MC.esc(r[1])}</span>` : ""}` +
-    `<span class="det-id">ISIN <b>${MC.esc(r[0])}</b>${wkn}<button type="button" class="kopie" data-isin="${MC.esc(r[0])}">${D.kopie}</button></span></div>` +
+    `<span class="det-id">ISIN <b>${MC.esc(r[0])}</b>${wkn}<button type="button" class="kopie" data-isin="${MC.esc(r[0])}">${D.kopie}</button>${MC.konto ? MC.konto.knopf(r[0]) : ""}</span></div>` +
     `<dl class="det-kpi${kueF ? " fuenf" : ""}">${kpi}</dl>` +
     `<p class="det-mehr"><a class="det-link" href="${href}">${D.alle}</a></p>` +
     `</div></td></tr>`;

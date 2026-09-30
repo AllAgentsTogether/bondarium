@@ -221,6 +221,7 @@
         </div>
       </div>
       <a href="ueber-uns.html">Über uns</a>
+      <a href="konto.html">Mein Depot</a>
     </nav>
     <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
   </header>
@@ -316,6 +317,7 @@
 <script src="site.js"></script>
 <script src="bond.js"></script>
 <script src="chart.js"></script>
+<script src="konto.js"></script>
 <script>
 // Rückfall, falls site.js nicht lädt (Netzfehler): Minimalform, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
 window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, minus: function (s) { return String(s).replace(/^-/, "\u2212"); }, zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\u2212") : "\u2013"; }, load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, hoverWrap: function (s) { return s; }, navInit: function () {} };
@@ -481,8 +483,9 @@ function zeige(r, k, meta) {
     faellig ? (abgelaufen ? "Fälligkeit erreicht" : `Restlaufzeit ${RL(jahre(faellig))}`) : "Ohne Fälligkeit"].filter(Boolean);
   document.getElementById("chips").innerHTML = chips.map(c => `<li>${MC.esc(c)}</li>`).join("");
   const wtag = datum ? T.wtag[new Date(datum + "T12:00:00Z").getUTCDay()] : "";
-  // Kopfzeile: nur Kennung und Kopierknopf – Kursdatum und Quelle stehen seit 30.09.2026 nur noch in der Kachel „Kurs“ (vorher doppelt)
-  document.getElementById("idz").innerHTML = `<span class="isin">ISIN <b>${MC.esc(ISIN)}</b>${wkn ? ` · WKN <b>${wkn}</b>` : ""}</span><button type="button" class="kopie" id="kopie" data-isin="${MC.esc(ISIN)}">ISIN kopieren</button><span class="kopie-hinweis" id="kopie-hinweis"></span>`;
+  // Kopfzeile: nur Kennung und Kopierknopf – Kursdatum und Quelle stehen seit 30.09.2026 nur noch in der Kachel „Kurs“ (vorher doppelt).
+  // Dazu der Merken-Knopf (konto.js, seit 30.09.2026): legt die Anleihe ins Depot des angemeldeten Nutzers (konto.html).
+  document.getElementById("idz").innerHTML = `<span class="isin">ISIN <b>${MC.esc(ISIN)}</b>${wkn ? ` · WKN <b>${wkn}</b>` : ""}</span><button type="button" class="kopie" id="kopie" data-isin="${MC.esc(ISIN)}">ISIN kopieren</button>${MC.konto ? MC.konto.knopf(ISIN) : ""}<span class="kopie-hinweis" id="kopie-hinweis"></span>`;
 
   // --- Datenhinweis: nur Tatsachen und Rechenregeln ---
   const wKupon = [pruef.kuponFisn != null ? `Kurzname im Register: ${fmtCoupon(pruef.kuponFisn)}` : "", pruef.zinsName ? "Name: variabel (FLR)" : "", pruef.kuponHoch ? "Registerwert über den Plausibilitätsgrenzen (vermutlich Faktor 10 oder 1000)" : ""].filter(Boolean);
@@ -643,7 +646,8 @@ function zeige(r, k, meta) {
   document.getElementById("werkz").innerHTML =
     `<li><button type="button" class="kopie-w" data-isin="${MC.esc(ISIN)}"><span>ISIN kopieren<small>${MC.esc(ISIN)}</small></span><span class="pf" aria-hidden="true">⧉</span></button></li>` +
     (rechnerUrl ? `<li><a href="${rechnerUrl}"><span>Im Rechner öffnen<small>Kurs, Kupon und Fälligkeit übernommen</small></span><span class="pf" aria-hidden="true">→</span></a></li>` : "") +
-    `<li><a href="${suche}"><span>Anleihen mit gleichen Merkmalen<small>${MC.esc([T.art[art], ccy, T.zinsChip[zinsart]].join(" · "))}</small></span><span class="pf" aria-hidden="true">→</span></a></li>`;
+    `<li><a href="${suche}"><span>Anleihen mit gleichen Merkmalen<small>${MC.esc([T.art[art], ccy, T.zinsChip[zinsart]].join(" · "))}</small></span><span class="pf" aria-hidden="true">→</span></a></li>` +
+    (MC.konto ? `<li><a href="konto.html"><span>Mein Depot<small>Gemerkte Anleihen ansehen</small></span><span class="pf" aria-hidden="true">→</span></a></li>` : "");
 
   // --- Kursverlauf ---
   const el = document.getElementById("kv");

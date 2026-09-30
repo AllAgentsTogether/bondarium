@@ -1,0 +1,130 @@
+/* konto.js – Benutzerbereich „Mein Depot“ im Browser (seit 30.09.2026): Anmeldung per E-Mail-Link und Merkliste.
+   Spricht mit konto.php (Beschreibung dort und in docs/KONTO.md). Geladen auf konto.html, anleihe.html und
+   anleihen-suche.html – nach site.js:
+     <script src="site.js"></script><script src="konto.js"></script>
+
+   Wer nicht angemeldet ist, löst keine Anfrage an den Server aus: konto.php setzt beim Anmelden neben dem eigentlichen
+   Anmelde-Cookie (für Skripte unsichtbar) den Merker „bondarium-angemeldet=1“. Nur wenn er da ist, fragt die Seite den
+   Stand ab.
+
+   API (window.MC.konto):
+     bereit()                 Promise mit dem Stand { angemeldet, email, favoriten: [[isin, zeit], …] } – fragt höchstens einmal
+     stand()                  derselbe Stand, sofort (vor bereit(): nicht angemeldet)
+     hat(isin)                true, wenn die Anleihe in der Merkliste steht
+     knopf(isin[, klasse])    HTML des Merken-Knopfs; Klick, Beschriftung und Zustand übernimmt dieses Skript –
+                              auch für Knöpfe, die eine Seite später ins Dokument schreibt
+     merken(isin), entfernen(isin)            Promise mit dem neuen Stand; abgelehnt mit { status } bei Fehlern
+     link(email[, isin])      Anmelde-Link anfordern → Promise { ok, status, minuten }
+     einloesen(kennwort)      Anmelde-Link einlösen → Promise { ok, status, gemerkt }
+     abmelden(), loeschen()   Promise { ok, status }
+     beiAenderung(fn)         fn(stand) nach jeder Änderung des Stands */
+(function (MC) {
+  "use strict";
+  MC = window.MC = MC || {};
+
+  var API = "konto.php", SEITE = "konto.html";
+  var st = { angemeldet: false, email: "", favoriten: [] }, menge = {}, hoerer = [], abfrage = null;
+
+  function markiert() { return /(?:^|;\s*)bondarium-angemeldet=1(?:;|$)/.test(document.cookie); }
+  function esc(s) { return MC.esc ? MC.esc(s) : String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
+
+  function uebernimm(j) {
+    st = { angemeldet: !!(j && j.angemeldet), email: (j && j.email) || "", favoriten: (j && j.angemeldet && j.favoriten) || [] };
+    menge = {};
+    st.favoriten.forEach(function (f) { menge[f[0]] = true; });
+    knoepfe();
+    hoerer.forEach(function (fn) { try { fn(st); } catch (e) { console.warn(e); } });
+    return st;
+  }
+
+  // Antwort von konto.php → { ok, code, status, … }; Netzfehler → { ok: false, status: "netz" }
+  function sende(methode, felder) {
+    var opt = { method: methode, credentials: "same-origin", cache: "no-store", headers: { "Accept": "application/json" } }, url = API;
+    if (methode === "POST") { opt.headers["X-Requested-With"] = "bondarium-konto"; opt.body = new URLSearchParams(felder); }
+    else url += "?" + new URLSearchParams(felder);
+    return fetch(url, opt).then(function (r) {
+      return r.json().then(function (j) { j = j || {}; j.code = r.status; j.ok = r.ok && j.status === "ok"; return j; });
+    }).catch(function () { return { ok: false, code: 0, status: "netz" }; });
+  }
+
+  function bereit() {
+    if (!abfrage) {
+      abfrage = markiert()
+        ? sende("GET", { aktion: "status" }).then(function (j) { return j.ok ? uebernimm(j) : st; })
+        : Promise.resolve(st);
+    }
+    return abfrage;
+  }
+
+  function aendere(aktion, isin) {
+    return sende("POST", { aktion: aktion, isin: isin }).then(function (j) {
+      if (j.ok) return uebernimm(j);
+      if (j.status === "anmelden") uebernimm(null);   // Anmeldung abgelaufen
+      throw j;
+    });
+  }
+
+  // ---------- Merken-Knopf ----------
+  var STERN = '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false"><path d="M12 3.2l2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 17.1 6.6 20l1.1-6.1-4.5-4.3 6.1-.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+  function inhalt(drin) { return STERN + "<span>" + (drin ? "Im Depot" : "Merken") + "</span>"; }
+  function zeichne(b) {
+    var drin = !!menge[b.getAttribute("data-merk")];
+    b.setAttribute("aria-pressed", drin ? "true" : "false");
+    b.title = drin ? "Aus deinem Depot entfernen" : "In dein Depot legen";
+    b.innerHTML = inhalt(drin);
+  }
+  function knoepfe() { Array.prototype.forEach.call(document.querySelectorAll("button[data-merk]"), zeichne); }
+  function knopf(isin, klasse) {
+    var drin = !!menge[isin];
+    return '<button type="button" class="merkbtn' + (klasse ? " " + esc(klasse) : "") + '" data-merk="' + esc(isin) + '" aria-pressed="' + drin +
+      '" title="' + (drin ? "Aus deinem Depot entfernen" : "In dein Depot legen") + '">' + inhalt(drin) + "</button>";
+  }
+  function melde(text) {
+    var el = document.getElementById("merk-status");
+    if (!el) {
+      el = document.createElement("p"); el.id = "merk-status"; el.className = "sr-only";
+      el.setAttribute("role", "status"); el.setAttribute("aria-live", "polite"); document.body.appendChild(el);
+    }
+    el.textContent = text;
+  }
+  function klick(b) {
+    var isin = b.getAttribute("data-merk");
+    if (b.disabled) return;
+    b.disabled = true;
+    bereit().then(function () {
+      if (!st.angemeldet) { location.href = SEITE + "?merken=" + encodeURIComponent(isin); return; }
+      var weg = !!menge[isin];
+      return aendere(weg ? "entfernen" : "merken", isin).then(function () {
+        melde(weg ? "Anleihe " + isin + " aus dem Depot entfernt" : "Anleihe " + isin + " ins Depot gelegt");
+      }, function (j) {
+        if (j && j.status === "anmelden") { location.href = SEITE + "?merken=" + encodeURIComponent(isin); return; }
+        var text = j && j.status === "voll" ? "Depot voll (" + (j.max || 200) + " Anleihen)" : "Hat nicht geklappt";
+        b.querySelector("span").textContent = text; melde(text);
+        setTimeout(function () { zeichne(b); }, 3000);
+      });
+    }).then(function () { b.disabled = false; });
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target && e.target.closest ? e.target.closest("button[data-merk]") : null;
+    if (b) klick(b);
+  });
+
+  MC.konto = {
+    bereit: bereit,
+    stand: function () { return st; },
+    hat: function (isin) { return !!menge[isin]; },
+    knopf: knopf,
+    merken: function (isin) { return aendere("merken", isin); },
+    entfernen: function (isin) { return aendere("entfernen", isin); },
+    link: function (email, isin, falle) { return sende("POST", { aktion: "link", email: email, isin: isin || "", website: falle || "" }); },
+    einloesen: function (kennwort) {
+      return sende("POST", { aktion: "einloesen", token: kennwort }).then(function (j) { if (j.ok) { abfrage = Promise.resolve(uebernimm(j)); } return j; });
+    },
+    abmelden: function () { return sende("POST", { aktion: "abmelden" }).then(function (j) { if (j.ok) { abfrage = Promise.resolve(uebernimm(null)); } return j; }); },
+    loeschen: function () { return sende("POST", { aktion: "loeschen" }).then(function (j) { if (j.ok) { abfrage = Promise.resolve(uebernimm(null)); } return j; }); },
+    beiAenderung: function (fn) { hoerer.push(fn); }
+  };
+
+  // Stand holen (nur mit Merker, siehe oben) – danach zeigen schon gezeichnete Knöpfe den richtigen Zustand
+  bereit();
+})(window.MC);

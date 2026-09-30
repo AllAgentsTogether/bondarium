@@ -14,10 +14,11 @@
  * Gespeichert wird in einer SQLite-Datei im Ordner konto-daten/ (per .htaccess gesperrt, Dateiname zufällig):
  *   nutzer     E-Mail-Adresse, angelegt am, zuletzt angemeldet
  *   favoriten  ISIN und Zeitpunkt je Nutzer
- *   links      offene Anmelde-Links (nur der Hashwert des Kennworts, die Adresse, Ablauf) – nach Ablauf gelöscht
+ *   links      offene Anmelde-Links (nur der Hashwert des Kennworts, die Adresse, Ablauf) – nach Ablauf gelöscht (aufraeumen)
  *   sitzungen  Anmeldungen (nur der Hashwert des Cookies, Ablauf)
- *   zaehler    Schutz vor Missbrauch: verschlüsselte Hashwerte von Adresse und IP-Adresse, nach 24 Stunden gelöscht
- *   meta       zufälliger Schlüssel für diese Hashwerte
+ *   zaehler    Schutz vor Missbrauch: verschlüsselte Hashwerte von Adresse und IP-Adresse, gezählt werden 24 Stunden,
+ *              danach gelöscht (aufraeumen)
+ *   meta       zufälliger Schlüssel für diese Hashwerte, Zeitpunkt des letzten Aufräumens
  * Kennwörter von Links und Cookies stehen nie im Klartext in der Datei. Konten ohne Anmeldung seit zwei Jahren
  * werden gelöscht. Es gibt keine Passwörter.
  *
@@ -227,11 +228,20 @@ function merke(int $id, string $isin): bool
     return true;
 }
 
-/** Abgelaufenes löschen: Links, Anmeldungen, Zähler; Konten ohne Anmeldung seit RUHE_TAGE. */
+/**
+ * Abgelaufenes löschen: Links, Anmeldungen, Zähler; Konten ohne Anmeldung seit RUHE_TAGE. Läuft höchstens einmal je
+ * Stunde – bei jeder Anfrage, die die Datenbank öffnet. Dazu gehört die Nach-Deploy-Prüfung des Workflows (mindestens
+ * einmal je Werktag), sodass auch ohne Besucher nichts Abgelaufenes länger als ein Wochenende liegen bleibt.
+ */
 function aufraeumen(): void
 {
     $db = db();
     $jetzt = time();
+    $zuletzt = (int)$db->query("SELECT v FROM meta WHERE k = 'aufgeraeumt'")->fetchColumn();
+    if ($jetzt - $zuletzt < 3600) {
+        return;
+    }
+    $db->prepare("INSERT OR REPLACE INTO meta (k, v) VALUES ('aufgeraeumt', ?)")->execute([(string)$jetzt]);
     $db->prepare('DELETE FROM links WHERE ablauf < ?')->execute([$jetzt]);
     $db->prepare('DELETE FROM sitzungen WHERE ablauf < ?')->execute([$jetzt]);
     $db->prepare('DELETE FROM zaehler WHERE zeit < ?')->execute([$jetzt - 86400]);
@@ -286,7 +296,7 @@ if ($methode === 'GET') {
 try {
     switch ($aktion) {
         case 'status':
-            db();   // auch ohne Anmeldung öffnen: So meldet die Nach-Deploy-Prüfung eine gestörte Datenbank (503 „speicher“)
+            aufraeumen();   // öffnet die Datenbank auch ohne Anmeldung: So meldet die Nach-Deploy-Prüfung eine Störung (503 „speicher“)
             $n = nutzer();
             antwort(200, 'ok', $n === null ? ['angemeldet' => false] : ['angemeldet' => true, 'email' => $n['email'], 'favoriten' => favoriten($n['id'])]);
             // no break – antwort() beendet das Skript

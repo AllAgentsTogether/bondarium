@@ -37,7 +37,7 @@
   section p a { overflow-wrap: anywhere; }
   .stand { color: var(--muted); font-size: 13px; }
   .lands { margin-bottom: 30px; }
-  section[id] { scroll-margin-top: 90px; }   /* Sprungmarken: Überschrift nicht unter der festen Kopfzeile */
+  section[id], h3[id] { scroll-margin-top: 90px; }   /* Sprungmarken: Überschrift nicht unter der festen Kopfzeile */
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Rechtliches","item":"https://www.bondarium.de/rechtliches.html"}]}</script>
 </head>
@@ -94,6 +94,7 @@
         </div>
       </div>
       <a href="ueber-uns.html">Über uns</a>
+      <a href="konto.html">Mein Depot</a>
     </nav>
     <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
   </header>
@@ -110,8 +111,9 @@
 
   <!-- Impressum und Datenschutzerklärung (seit 30.09.2026): Betreiber urbanelo GmbH, Stuttgart.
        Die E-Mail-Adresse steht zusätzlich auf ueber-uns.html (Abschnitt Kontakt), dort auch das Kontaktformular
-       (kontakt.php, seit 30.09.2026). Ändern sich Technik oder Funktionen (Cookies, Formulare, Speicherung im
-       Browser, fremde Server), muss die Datenschutzerklärung mit. -->
+       (kontakt.php, seit 30.09.2026). Der Benutzerbereich „Mein Depot“ (konto.html, konto.php, seit 30.09.2026) hat
+       den eigenen Abschnitt #konto. Ändern sich Technik oder Funktionen (Cookies, Formulare, Speicherung im
+       Browser oder auf dem Server, fremde Server), muss die Datenschutzerklärung mit. -->
   <section id="impressum">
     <h2>Impressum</h2>
     <p>Bondarium ist ein Angebot der urbanelo GmbH.</p>
@@ -128,7 +130,7 @@
 
   <section id="datenschutz">
     <h2>Datenschutzerklärung</h2>
-    <p>Bondarium kommt ohne Cookies, ohne Tracking und ohne Inhalte von fremden Servern aus. Personenbezogene Daten verarbeiten wir nur, soweit es technisch nötig ist, um dir die Seiten auszuliefern – und wenn du uns eine E-Mail oder eine Nachricht über das Kontaktformular schreibst.</p>
+    <p>Bondarium kommt ohne Tracking und ohne Inhalte von fremden Servern aus. Cookies setzen wir nur, wenn du dich im Benutzerbereich „Mein Depot“ anmeldest. Personenbezogene Daten verarbeiten wir nur, soweit es technisch nötig ist, um dir die Seiten auszuliefern – und wenn du uns eine E-Mail oder eine Nachricht über das Kontaktformular schreibst oder ein Konto im Benutzerbereich anlegst.</p>
     <h3>Verantwortlicher</h3>
     <p>Verantwortlich im Sinne der Datenschutz-Grundverordnung (DSGVO) ist die urbanelo GmbH, Heinrich-Baumann-Straße 38, 70190 Stuttgart, vertreten durch den Geschäftsführer Philipp Osterwald. Für alle Fragen zum Datenschutz erreichst du uns unter <a href="mailto:info@bondarium.com">info@bondarium.com</a>.</p>
     <p>Ein Datenschutzbeauftragter ist nicht benannt, weil dazu keine gesetzliche Pflicht besteht.</p>
@@ -138,17 +140,24 @@
     <p>STRATO speichert die IP-Adressen der Besucher nach eigenen Angaben höchstens sieben Tage, um Angriffe zu erkennen und abzuwehren. Wir führen die Logdaten nicht mit anderen Daten zusammen und erstellen keine Nutzungsprofile.</p>
     <p>STRATO verarbeitet die Daten in unserem Auftrag auf Grundlage eines Vertrags über Auftragsverarbeitung (Art. 28 DSGVO), und zwar in Rechenzentren in Deutschland. Eine Übermittlung in Länder außerhalb der Europäischen Union findet nicht statt. Alle Seiten werden verschlüsselt über HTTPS ausgeliefert.</p>
     <h3>Cookies und Speicherung in deinem Browser</h3>
-    <p>Bondarium setzt keine Cookies. Eine einzige Funktion legt etwas in deinem Browser ab: Die Checkliste auf der Seite „<a href="erste-anleihe.html#checkliste">Deine erste Anleihe in neun Schritten</a>“ merkt sich im lokalen Speicher deines Browsers (localStorage), welche Schritte du abgehakt hast, damit der Stand beim nächsten Besuch noch da ist.</p>
+    <p>Solange du dich nicht anmeldest, setzt Bondarium keine Cookies. Zwei Funktionen legen etwas in deinem Browser ab, beide erst, wenn du sie nutzt: die Anmeldung im Benutzerbereich (siehe „<a href="#konto">Benutzerbereich „Mein Depot“</a>“) und die Checkliste. Die Checkliste auf der Seite „<a href="erste-anleihe.html#checkliste">Deine erste Anleihe in neun Schritten</a>“ merkt sich im lokalen Speicher deines Browsers (localStorage), welche Schritte du abgehakt hast, damit der Stand beim nächsten Besuch noch da ist.</p>
     <p>Der Eintrag entsteht erst, wenn du ein Kästchen anklickst. Er bleibt auf deinem Gerät, wird nicht an uns übertragen und enthält keine Angaben zu deiner Person. Löschen kannst du ihn jederzeit über die Einstellungen deines Browsers (Websitedaten löschen). Rechtsgrundlage ist § 25 Abs. 2 Nr. 2 TDDDG: Die Speicherung ist unbedingt erforderlich, um eine von dir ausdrücklich gewünschte Funktion bereitzustellen. Eine Einwilligung – und damit ein Cookie-Banner – ist dafür nicht nötig.</p>
     <h3>Anleihen-Suche, Filter und Rechner</h3>
     <p>Suche, Filter und Rechner laufen in deinem Browser: Die Seite lädt die Anleihedaten von unserem Server und wertet deine Eingaben auf deinem Gerät aus. Wir speichern keine Eingaben und keine Suchverläufe. Steht ein Suchbegriff in der Adresse der Seite (zum Beispiel nach einer Suche über das Feld in der Kopfzeile), erscheint er wie jede aufgerufene Adresse im Server-Logfile.</p>
     <h3>Kontakt per E-Mail und Kontaktformular</h3>
     <p>Wenn du uns eine E-Mail schreibst, verarbeiten wir deine E-Mail-Adresse und den Inhalt deiner Nachricht, um dein Anliegen zu bearbeiten und dir zu antworten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO; unser berechtigtes Interesse ist die Beantwortung von Anfragen. Wir löschen die Nachricht, sobald dein Anliegen erledigt ist und keine gesetzlichen Aufbewahrungspflichten entgegenstehen.</p>
     <p>Dasselbe gilt für das <a href="ueber-uns.html#kontakt">Kontaktformular</a>. Es fragt nach deiner E-Mail-Adresse und deiner Nachricht; der Name ist freiwillig. Beim Absenden gehen diese Angaben verschlüsselt an unseren Server bei STRATO und von dort als E-Mail an unser Postfach. Auf dem Webserver speichern wir die Nachricht nicht; der Aufruf erscheint wie jeder andere im Server-Logfile, ohne den Inhalt des Formulars. Das Formular setzt keine Cookies und bindet keine fremden Dienste ein, auch kein Captcha.</p>
+    <h3 id="konto">Benutzerbereich „Mein Depot“</h3>
+    <p>Im Benutzerbereich „<a href="konto.html">Mein Depot</a>“ kannst du ein Konto anlegen und dir Anleihen merken. Das ist freiwillig; alle anderen Seiten funktionieren ohne Konto.</p>
+    <p><strong>Welche Daten wir speichern.</strong> Deine E-Mail-Adresse, die Kennnummern (ISIN) der gemerkten Anleihen mit dem Zeitpunkt des Merkens sowie den Zeitpunkt, zu dem dein Konto entstanden ist und zu dem du dich zuletzt angemeldet hast. Ein Passwort gibt es nicht. Namen, Anschrift, Bestände oder Kaufpreise erheben wir nicht. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO: Wir verarbeiten die Daten, um dir den Benutzerbereich bereitzustellen, den du mit der Anmeldung verlangst.</p>
+    <p><strong>Anmeldung per E-Mail.</strong> Zum Anmelden schicken wir dir einen Link an deine E-Mail-Adresse. Er gilt 30 Minuten und nur einmal. Dein Konto entsteht erst, wenn du den Link anklickst; nutzt du ihn nicht, löschen wir die Adresse nach Ablauf des Links wieder, spätestens nach wenigen Tagen. Die E-Mail geht über die Mailserver von STRATO. Andere E-Mails – Newsletter oder Werbung – schicken wir dir nicht.</p>
+    <p><strong>Cookies.</strong> Nach dem Anmelden setzt die Seite zwei Cookies: eines mit einer zufälligen Kennung, an der unser Server deine Anmeldung erkennt, und eines mit dem Wert „1“, an dem die Seite sieht, dass du angemeldet bist. Beide gelten 90 Tage ab der letzten Nutzung und werden beim Abmelden gelöscht. Sie dienen allein der Anmeldung; dein Verhalten werten wir damit nicht aus. Rechtsgrundlage ist § 25 Abs. 2 Nr. 2 TDDDG: Die Cookies sind unbedingt erforderlich, um den von dir ausdrücklich gewünschten Benutzerbereich bereitzustellen. Eine Einwilligung – und damit ein Cookie-Banner – ist dafür nicht nötig.</p>
+    <p><strong>Schutz vor Missbrauch.</strong> Damit niemand über das Anmeldeformular massenhaft E-Mails verschicken kann, zählen wir, wie viele Links für eine Adresse und von einem Anschluss angefordert werden. Dafür speichern wir verschlüsselte Prüfwerte (Hashwerte) der E-Mail-Adresse und der IP-Adresse, nicht die IP-Adresse selbst. Gezählt wird über 24 Stunden; danach löschen wir die Prüfwerte, spätestens nach wenigen Tagen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO; unser berechtigtes Interesse ist der Schutz des Dienstes und fremder Postfächer.</p>
+    <p><strong>Speicherort und Löschung.</strong> Die Daten liegen auf unserem Webserver bei STRATO in Deutschland (siehe „Hosting und Server-Logfiles“); wir geben sie an niemanden weiter. Einzelne Anleihen entfernst du jederzeit selbst. Dein Konto löschst du im Benutzerbereich unter „Konto löschen“ – E-Mail-Adresse und Merkliste sind dann sofort gelöscht. Konten, bei denen sich zwei Jahre lang niemand angemeldet hat, löschen wir von uns aus.</p>
     <h3>Links zu anderen Websites</h3>
     <p>Unsere Seiten verlinken auf Datenquellen und Anbieter, zum Beispiel Bundesbank, EZB oder Broker. Erst wenn du einen solchen Link anklickst, erhält der Betreiber der Zielseite Daten von dir; was er damit tut, steht in dessen Datenschutzerklärung. Als Herkunft nennt dein Browser dabei höchstens die Adresse www.bondarium.de, nicht die einzelne Seite, von der du kommst.</p>
     <h3>Keine Analyse-Tools, keine Werbung, keine Drittanbieter</h3>
-    <p>Wir setzen keine Analyse- oder Tracking-Dienste ein, schalten keine Werbung und binden keine sozialen Netzwerke, Videos, Karten oder Schriften von fremden Servern ein. Es gibt weder Newsletter noch Nutzerkonten. Die Marktdaten werden automatisiert bei den Datenquellen abgerufen und ausschließlich von dieser Domain ausgeliefert; dein Browser baut beim Besuch keine Verbindung zu diesen Quellen auf. Eine automatisierte Entscheidungsfindung oder ein Profiling (Art. 22 DSGVO) findet nicht statt.</p>
+    <p>Wir setzen keine Analyse- oder Tracking-Dienste ein, schalten keine Werbung und binden keine sozialen Netzwerke, Videos, Karten oder Schriften von fremden Servern ein. Einen Newsletter gibt es nicht; das Konto im Benutzerbereich ist freiwillig. Die Marktdaten werden automatisiert bei den Datenquellen abgerufen und ausschließlich von dieser Domain ausgeliefert; dein Browser baut beim Besuch keine Verbindung zu diesen Quellen auf. Eine automatisierte Entscheidungsfindung oder ein Profiling (Art. 22 DSGVO) findet nicht statt.</p>
     <h3>Deine Rechte</h3>
     <p>Du hast nach der DSGVO das Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18) und Datenübertragbarkeit (Art. 20). Eine E-Mail an die oben genannte Adresse genügt.</p>
     <p><strong>Widerspruchsrecht (Art. 21 DSGVO):</strong> Soweit wir Daten auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO verarbeiten, kannst du dieser Verarbeitung jederzeit aus Gründen widersprechen, die sich aus deiner besonderen Situation ergeben.</p>
