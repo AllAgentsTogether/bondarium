@@ -71,7 +71,6 @@
   .bsp-l a { font-size: 13.5px; line-height: 1.2; color: var(--green-text); background: var(--green-tint); border: 1px solid transparent; border-radius: 999px; padding: 8px 13px; text-decoration: none; }
   .bsp-l a:hover { border-color: var(--green-text); color: var(--ink); }
   .bsp-l a:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
-  .bsp-ill { display: block; width: 160px; height: 110px; margin: 36px auto 4px; }   /* Bildwelt 2.0: leerer Zustand – Such-Illustration, solange nichts gesucht ist (#bsp wird dann ausgeblendet) */
   #treffer { margin-top: 6px; }
   /* Unter der Liste: Trefferhinweis wiederholen, Rückweg zu Suche und Filtern */
   .status-unten { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin-top: 14px; font-size: 14px; color: var(--text); }
@@ -340,7 +339,7 @@
 
     <p class="note status" id="status" aria-live="polite">Suchbegriff eingeben oder Filter wählen – <span data-kz="anleihen-kurs">rund 33.000</span> Anleihen mit aktuellem Kurs an deutschen Börsen.</p>
     <noscript><p class="note">Die Suche braucht JavaScript.</p></noscript>
-    <div class="bsp" id="bsp"><p class="bsp-t">Beispiele zum Loslegen</p><p class="bsp-l"><a href="?art=0&amp;w=EUR&amp;zins=0&amp;rest=a">Staatsanleihen in Euro, unter 1 Jahr</a><a href="?art=2&amp;w=EUR&amp;rest=b">Unternehmensanleihen in Euro, 1–3 Jahre</a><a href="?zins=0&amp;kupon=g,d,e">Fester Kupon über 4&nbsp;%</a><a href="?rest=e">Über 30 Jahre</a><a href="?zins=2">Nullkupon-Anleihen</a></p><img class="bsp-ill" src="spot-anleihen-suche.svg" alt="" width="160" height="110"></div>
+    <div class="bsp" id="bsp"><p class="bsp-t">Beispiele zum Loslegen</p><p class="bsp-l"><a href="?art=0&amp;w=EUR&amp;zins=0&amp;rest=a">Staatsanleihen in Euro, unter 1 Jahr</a><a href="?art=2&amp;w=EUR&amp;rest=b">Unternehmensanleihen in Euro, 1–3 Jahre</a><a href="?zins=0&amp;kupon=g,d,e">Fester Kupon über 4&nbsp;%</a><a href="?rest=e">Über 30 Jahre</a><a href="?zins=2">Nullkupon-Anleihen</a></p></div>
 
     <h2 class="sr-only" id="h-treffer">Suchergebnisse</h2>
     <div class="table-scroll" id="treffer" hidden>
