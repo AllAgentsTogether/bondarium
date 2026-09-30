@@ -12,7 +12,8 @@ man sich anmeldet. Es ist eine Merkliste, kein Wertpapierdepot: keine Bestände,
 | `konto.js` | Spricht mit `konto.php` (`MC.konto`), zeichnet den Merken-Knopf. Geladen auf `konto.html`, `anleihe.html`, `anleihen-suche.html`. |
 | `konto.php` | Schnittstelle auf dem Server (PHP bei STRATO), Antwort immer JSON. |
 | `konto-daten/` | Entsteht nur auf dem Server: SQLite-Datei mit zufälligem Namen. Nicht im Repository, nicht im Bau. |
-| `pdf.js` | Kleiner PDF-Schreiber im Browser (`MC.pdf`, Standardschriften Helvetica, WinAnsi) für den Depot-Auszug. Nur auf `konto.html`. |
+| `pdf.js` | Kleiner PDF-Schreiber im Browser (`MC.pdf`: Text, Flächen mit runden Ecken, SVG-Pfade, Links; WinAnsi) für den Depot-Auszug. Nur auf `konto.html`. |
+| `pdf-schrift.json` | Manrope (400/600/700) fürs PDF, aus den WOFF2-Dateien der Website erzeugt mit `scripts/pdf_schrift.py` (fontTools; nur neu erzeugen, wenn sich die Schriftdateien ändern). Fehlt sie, schreibt `pdf.js` in Helvetica. |
 | `base.css` | `.merkbtn` (Merken-Knopf). |
 | `scripts/nav.py` | Menüpunkt „Mein Depot“ (`LINKS`). |
 | `rechtliches.html#konto` | Abschnitt der Datenschutzerklärung. |
@@ -44,13 +45,19 @@ Seite zeigt dann einen Knopf.
 
 ## Depot teilen (PDF)
 
-Seit 30.09.2026 abends. Über der Tabelle stehen „Depot teilen“ und „Als PDF speichern“. Der Browser erzeugt einen
-PDF-Auszug (A4, grünes Band wie die Kopfzeile, „Depot-Auszug“, Datum, Anzahl, Kursstand; je Anleihe Name mit Link auf
-den Steckbrief, ISIN, Rendite, Kurs, Kupon, Fälligkeit, Währung – in der gewählten Sortierung; unten Quellen und
-„Keine Anlageberatung“, Seitenzahlen). „Depot teilen“ öffnet das Teilen-Menü des Geräts (Web Share API mit Datei –
-Handy, Tablet, Safari); wo der Browser keine Dateien teilen kann, wird das PDF heruntergeladen. Nutzerentscheid:
-nichts Persönliches im PDF (kein Name, keine E-Mail-Adresse), und das PDF geht nicht über den Server. Dateiname
-`Bondarium-Depot-JJJJ-MM-TT.pdf`.
+Seit 30.09.2026 abends. Über der Tabelle stehen „Depot teilen“ und „Als PDF speichern“. „Depot teilen“ öffnet das
+Teilen-Menü des Geräts (Web Share API mit Datei – Handy, Tablet, Safari); wo der Browser keine Dateien teilen kann, wird
+das PDF heruntergeladen. Nutzerentscheid: nichts Persönliches im PDF (kein Name, keine E-Mail-Adresse), und das PDF geht
+nicht über den Server. Dateiname `Bondarium-Depot-JJJJ-MM-TT.pdf`.
+
+Gestaltung wie die Startseite (Nutzerwunsch „UX-optimiert, am Design der Homepage orientiert“; Vorbild ist die Tabelle
+„Sechs Beispiele“): warmer Grund, grünes Kopfband mit Kante und dem Logo „Orbit“ (Bildzeichen und Wortmarke als Vektor,
+die Wortmarke aus der Kopfzeile der Seite gelesen), Überschrift „Depot-Auszug“ in Manrope, vier Kacheln (Anzahl mit Art,
+Renditespanne, nächste Fälligkeit, Währungen), die Anleihen auf einer weißen Karte mit runden Ecken – Name bis zwei Zeilen
+mit Link auf den Steckbrief, darunter ISIN und Registername, Rendite p. a. grün, Zahlen rechtsbündig, Art als Pille (Staat
+grün, Unternehmen grau), in der gewählten Sortierung –, darunter die Erklärung zu Rendite und Kurs und ein dunkles Band
+„Mehr zu jeder Anleihe“ mit grünem Knopf. Lange Listen laufen über mehrere Seiten (Karte je Seite mit Tabellenkopf);
+jede Seite trägt unten „Keine Anlageberatung …“ und die Seitenzahl.
 
 ## Was gespeichert wird
 
