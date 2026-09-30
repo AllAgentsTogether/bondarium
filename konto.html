@@ -88,12 +88,17 @@
   .kto-teilen-status:empty { display: none; }
   .kto-teilen-status.fehler { color: var(--down); }
   .kto-status strong { color: var(--ink); font-weight: 600; }
-  .kto-t { width: 100%; min-width: 780px; border-collapse: collapse; margin-top: 8px; font-size: 14px; }
-  .kto-t th, .kto-t td { padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
-  .kto-t thead th { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); border-bottom: 1px solid rgba(26,26,25,0.35); white-space: nowrap; }
+  .kto-t { width: 100%; min-width: 1180px; border-collapse: collapse; margin-top: 8px; font-size: 13.5px; }   /* Spalten wie die Anleihen-Suche; schmaler Bildschirm: querwischen */
+  .kto-t th, .kto-t td { padding: 10px 10px 10px 0; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+  .kto-t thead th { font-size: 11px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; color: var(--text); border-bottom: 1px solid rgba(26,26,25,0.35); white-space: nowrap; }
   .kto-t .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .kto-t thead .num .sortbtn { flex-direction: row-reverse; }
-  .kto-t tbody th { font-weight: 400; line-height: 1.4; min-width: 200px; }
+  .kto-t tbody th { font-weight: 400; line-height: 1.4; min-width: 190px; }
+  .kto-t td.isin { font-variant-numeric: tabular-nums; white-space: nowrap; letter-spacing: 0.01em; }
+  /* Breiter Bildschirm: Die Tabelle ragt links und rechts über die 1000-px-Spalte hinaus, damit alle Spalten ohne Wischen zu sehen sind */
+  @media (min-width: 1240px) { #liste.table-scroll { width: 1180px; margin-left: -90px; overflow: visible; background: none; } }
+  .kto-t td.isin a { color: var(--green-text); }
+  .kto-pruef { display: inline-block; font-size: 11px; line-height: 1.2; color: var(--orange-text); border: 1px solid var(--orange); border-radius: 3px; padding: 0 4px; margin-left: 6px; vertical-align: 1px; white-space: nowrap; cursor: help; }
   .kto-t tbody th a { font-weight: 600; color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
   .kto-t tbody th a:hover { color: var(--green-text); text-decoration: underline; }
   .kto-t small { display: block; font-size: 12.5px; color: var(--text); font-variant-numeric: tabular-nums; }
@@ -101,7 +106,8 @@
   .kto-t td.leise { color: var(--text); }
   .kto-t .fraglich { color: var(--text); border-bottom: 1px dotted currentColor; cursor: help; }
   .kto-t td:last-child, .kto-t th:last-child { padding-right: 0; text-align: right; width: 1%; }
-  .kto-x { font: inherit; font-size: 13px; color: var(--text); background: none; border: 1px solid rgba(44,44,42,0.22); border-radius: 999px; padding: 3px 11px; cursor: pointer; white-space: nowrap; }
+  .kto-x { font: inherit; font-size: 13px; line-height: 1; color: var(--text); background: none; border: 1px solid rgba(44,44,42,0.22); border-radius: 999px; width: 28px; height: 28px; padding: 0; cursor: pointer; display: inline-grid; place-items: center; }
+  .kto-x span { display: none; }
   .kto-x:hover { color: var(--down); border-color: var(--down); }
   .kto-x[disabled] { opacity: 0.5; cursor: default; }
   .kto-leer { max-width: 640px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); padding: 20px 22px; margin-top: 14px; font-size: 16px; line-height: 1.6; }
@@ -136,6 +142,10 @@
     .kto-t tbody td[data-l] { font-size: 15px; font-weight: 600; text-align: left; }
     .kto-t tbody td small { font-weight: 400; }
     .kto-t tbody td:last-child { grid-column: 1 / -1; text-align: right; width: auto; }
+    .kto-t tbody td.isin { grid-column: span 2; }   /* zwölf Zeichen passen nicht in ein Drittel */
+    #liste.table-scroll.ueberlauf::before { display: none; }   /* Karten statt Tabelle: nichts zu wischen */
+    .kto-x { width: auto; height: auto; padding: 6px 12px; display: inline-flex; gap: 2px; }
+    .kto-x span { display: inline; }
   }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Mein Depot","item":"https://www.bondarium.de/konto.html"}]}</script>
@@ -282,7 +292,12 @@
             <th scope="col" data-col="kurs" class="num"><button type="button" class="sortbtn" data-col="kurs" title="Schlusskurs in % des Nennwerts">Kurs</button></th>
             <th scope="col" data-col="kupon" class="num"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
             <th scope="col" data-col="faellig" class="num"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th>
+            <th scope="col" data-col="rest" class="num"><button type="button" class="sortbtn" data-col="rest">Restlaufzeit</button></th>
+            <th scope="col" data-col="art"><button type="button" class="sortbtn" data-col="art" title="Staat: Zentralstaat · Öffentlich: Bundesländer, Regionen, Städte, Förderbanken, supranationale Institutionen · Unternehmen: alle übrigen einschließlich Banken">Art</button></th>
+            <th scope="col" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th>
             <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th>
+            <th scope="col" data-col="vol" class="num"><button type="button" class="sortbtn" data-col="vol" title="Ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe (Mrd. = Milliarden)">Volumen</button></th>
+            <th scope="col" data-col="stk" class="num"><button type="button" class="sortbtn" data-col="stk" title="Kleinster Nennwert (zugleich Mindestanlage) in der Währung der Anleihe">Stückelung</button></th>
             <th scope="col" data-col="seit" class="num" aria-sort="descending"><button type="button" class="sortbtn" data-col="seit">Gemerkt</button></th>
             <th scope="col"><span class="sr-only">Entfernen</span></th>
           </tr></thead>
@@ -429,6 +444,9 @@ MC.navInit();
   //  kurs, rendite, tag (Index in tage), boerse_kurs, umsatz, vortag, aufschlag]. Was dort fehlt (kein Kurs seit 14 Tagen oder fällig),
   // kommt mit den Stammdaten aus anleihen/<teil>.json: rows[ISIN] = [name, art, waehrung, kupon, faellig, …] – dann ohne Kurs.
   const fmt = (v, dec = 0) => MC.zahl(v, dec);
+  const ART_NAME = ["Staat", "Öffentlich", "Unternehmen"];   // wie die Anleihen-Suche (suchindex.json „art“)
+  const fmtVol = (v, w) => typeof v === "number" ? `${(v / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 })} Mrd.${w ? " " + w : ""}` : "–";   // wie anleihen-suche.html
+  const fmtStk = v => typeof v === "number" ? v.toLocaleString("de-DE", { maximumFractionDigits: 3 }) : "–";
   const fmtCoupon = c => c === "var" ? "variabel" : typeof c === "number" ? `${fmt(c, Math.round(c * 1000) % 10 ? 3 : 2)} %` : "–";
   const HEUTE = Date.now();
   const jahre = iso => iso ? (new Date(iso + "T12:00:00Z").getTime() - HEUTE) / (365.25 * 86400000) : Infinity;
@@ -452,7 +470,7 @@ MC.navInit();
   }
   // Eine Anleihe der Merkliste als Objekt für Tabelle und Sortierung
   function anleihe(isin, seit, D) {
-    const r = D.idx.get(isin), o = { isin, seit, name: isin, reg: "", rendite: null, kurs: null, kupon: null, faellig: "", cur: "", hinweis: "", art: null };
+    const r = D.idx.get(isin), o = { isin, seit, name: isin, reg: "", rendite: null, kurs: null, kupon: null, faellig: "", cur: "", hinweis: "", art: null, vol: null, stk: null, befund: false };
     if (r) {
       const pruef = r[14] && typeof r[14] === "object" && Object.keys(r[14]).length > 0, y = r[16], auf = typeof r[21] === "number" ? r[21] : null;
       const taxe = !r[19] && r[18] !== "B", t = r[5] ? jahre(r[5]) : 99;
@@ -463,10 +481,11 @@ MC.navInit();
       o.rendite = typeof y === "number" && !unsicher && !pruef ? y : null;
       o.real = o.rendite != null && r[18] === "B" && /inflation|infl\./i.test(r[1]);
       o.fraglich = o.rendite != null && taxe && r[5] && t < 1 && auf != null && auf > (FRAGLICH_AB[r[2]] ?? 3) ? auf : null;
-      o.kupon = r[4]; o.faellig = r[5] || ""; o.cur = r[3] || ""; o.art = r[2];
+      o.kupon = r[4]; o.faellig = r[5] || ""; o.cur = r[3] || ""; o.art = r[2]; o.vol = r[6]; o.stk = r[7]; o.befund = pruef;
     } else if (STAMM[isin]) {
       const s = STAMM[isin];
-      o.name = s[0] || isin; o.kupon = s[3]; o.faellig = s[4] || ""; o.cur = s[2] || ""; o.art = s[1];
+      o.name = s[0] || isin; o.kupon = s[3]; o.faellig = s[4] || ""; o.cur = s[2] || ""; o.art = s[1]; o.vol = s[5]; o.stk = s[6];
+      o.befund = !!(s[13] && typeof s[13] === "object" && Object.keys(s[13]).length);
       o.hinweis = o.faellig && jahre(o.faellig) <= 0 ? "Fälligkeit erreicht" : "kein Kurs in den letzten 14 Tagen";
     } else o.hinweis = "nicht an einer deutschen Börse gelistet oder fällig";
     return o;
@@ -474,21 +493,30 @@ MC.navInit();
 
   // ---------- Depot: Anzeige ----------
   const S = { col: "seit", dir: -1 };
-  const KEY = { name: o => o.name.toLowerCase(), rendite: o => o.rendite, kurs: o => o.kurs, kupon: o => typeof o.kupon === "number" ? o.kupon : null, faellig: o => o.faellig || null, cur: o => o.cur || null, seit: o => o.seit };
+  const KEY = { name: o => o.name.toLowerCase(), rendite: o => o.rendite, kurs: o => o.kurs, kupon: o => typeof o.kupon === "number" ? o.kupon : null, faellig: o => o.faellig || null,
+    rest: o => o.faellig || null, art: o => o.art, isin: o => o.isin, cur: o => o.cur || null, vol: o => typeof o.vol === "number" ? o.vol : null,
+    stk: o => typeof o.stk === "number" ? o.stk : null, seit: o => o.seit };
   let LISTE = [], KSTAND = "", ZULETZT = "";   // ZULETZT: eben entfernte ISIN (für „Rückgängig“)
   function zeile(o) {
     const kurs = o.kurs != null ? `${fmt(o.kurs, 2)}${o.datum && o.datum !== KSTAND ? `<small>${MC.esc(MC.tag(o.datum))}</small>` : ""}` : "–";
     const rend = o.rendite != null ? (o.fraglich != null
       ? `<span class="fraglich" title="Kurs ohne Umsatz: Die Rendite liegt ${fmt(o.fraglich, 1)} Punkte über Bund – bei unter einem Jahr Restlaufzeit ist die Taxe meist veraltet.">${fmt(o.rendite, 2)} %<sup>?</sup></span>`
       : `<span${o.real ? ' title="Realrendite (inflationsindexiert)"' : ""}>${fmt(o.rendite, 2)} %${o.real ? "*" : ""}</span>`) : "–";
-    const unter = [o.reg, o.isin !== o.name ? o.isin : "", o.hinweis].filter(Boolean).map(MC.esc).join(" · ");
-    return `<tr><th scope="row"><a href="anleihe.html?isin=${encodeURIComponent(o.isin)}">${MC.esc(o.name)}</a>${unter ? `<small>${unter}</small>` : ""}</th>` +
+    const unter = [o.reg, o.hinweis].filter(Boolean).map(MC.esc).join(" · ");
+    const pruef = o.befund ? ' <span class="kto-pruef" title="Widerspruch im ESMA-Register – Registerwerte unverändert gezeigt, keine Rendite">Daten?</span>' : "";
+    const steck = `anleihe.html?isin=${encodeURIComponent(o.isin)}`;
+    return `<tr><th scope="row"><a href="${steck}">${MC.esc(o.name)}</a>${pruef}${unter ? `<small>${unter}</small>` : ""}</th>` +
       `<td class="num" data-l="Rendite">${rend}</td><td class="num" data-l="Kurs"${o.kurs != null ? ` title="${MC.esc(`Schlusskurs vom ${MC.datum(o.datum)}${o.boerse ? ", " + o.boerse : ""}`)}"` : ""}>${kurs}</td>` +
       `<td class="num" data-l="Kupon">${fmtCoupon(o.kupon)}</td>` +
-      `<td class="num" data-l="Fälligkeit">${o.faellig ? MC.datum(o.faellig) : (o.cur ? "unbefristet" : "–")}${o.faellig ? `<small>${jahre(o.faellig) > 0 ? MC.esc(MC.restlaufzeit(jahre(o.faellig))) : "fällig"}</small>` : ""}</td>` +
+      `<td class="num" data-l="Fälligkeit">${o.faellig ? MC.datum(o.faellig) : (o.cur ? "unbefristet" : "–")}</td>` +
+      `<td class="num" data-l="Restlaufzeit">${o.faellig ? (jahre(o.faellig) > 0 ? MC.esc(MC.restlaufzeit(jahre(o.faellig))) : "fällig") : "–"}</td>` +
+      `<td data-l="Art">${MC.esc(ART_NAME[o.art] || "–")}</td>` +
+      `<td class="isin" data-l="ISIN"><a href="${steck}">${MC.esc(o.isin)}</a></td>` +
       `<td data-l="Währung">${MC.esc(o.cur || "–")}</td>` +
+      `<td class="num" data-l="Volumen">${MC.esc(fmtVol(o.vol, o.cur))}</td>` +
+      `<td class="num" data-l="Stückelung">${MC.esc(fmtStk(o.stk))}</td>` +
       `<td class="num leise" data-l="Gemerkt">${MC.esc(new Date(o.seit * 1000).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }))}</td>` +
-      `<td><button type="button" class="kto-x" data-weg="${MC.esc(o.isin)}" aria-label="${MC.esc(o.name)} aus dem Depot entfernen">Entfernen</button></td></tr>`;
+      `<td><button type="button" class="kto-x" data-weg="${MC.esc(o.isin)}" aria-label="${MC.esc(o.name)} aus dem Depot entfernen" title="Aus dem Depot entfernen">×<span> Entfernen</span></button></td></tr>`;
   }
   // Liste in der gewählten Sortierung – für die Tabelle und den PDF-Auszug
   function sortiert() {
@@ -523,7 +551,7 @@ MC.navInit();
     ladeDaten().then(D => ladeStamm(fav.map(f => f[0]).filter(i => !D.idx.has(i))).then(() => D)).then(D => {
       if (nr !== lauf) return;
       LISTE = fav.map(f => anleihe(f[0], f[1], D)); KSTAND = D.kstand;
-      $("liste").hidden = false; $("teilen-box").hidden = false; ladeSchrift(); zeichne(); statusText();
+      $("liste").hidden = false; $("teilen-box").hidden = false; zeichne(); statusText();
       $("datastand").innerHTML = `Kurs: Schlusskurs vom ${MC.esc(MC.datum(D.kstand))} in % des Nennwerts (Börse Frankfurt, Tradegate; Bundeswertpapiere: Deutsche Bundesbank) – ein älterer Kurs trägt sein Datum. Rendite: bis zur Fälligkeit, von uns aus dem Kurs berechnet. Alle Einzelheiten, Kursverlauf und Rechenbeispiel stehen im Steckbrief – ein Klick auf den Namen. Keine Anlageberatung.`;
     }).catch(err => {
       if (nr !== lauf) return;
@@ -542,7 +570,7 @@ MC.navInit();
   // Sortieren, Entfernen, Rückgängig
   document.querySelector(".kto-t thead").addEventListener("click", e => {
     const b = e.target.closest(".sortbtn"); if (!b) return;
-    if (S.col === b.dataset.col) S.dir = -S.dir; else { S.col = b.dataset.col; S.dir = ["rendite", "kupon", "seit"].includes(S.col) ? -1 : 1; }
+    if (S.col === b.dataset.col) S.dir = -S.dir; else { S.col = b.dataset.col; S.dir = ["rendite", "kupon", "seit", "rest", "vol"].includes(S.col) ? -1 : 1; }
     zeichne();
   });
   $("zeilen").addEventListener("click", e => {
@@ -561,164 +589,88 @@ MC.navInit();
   // ---------- Depot teilen: PDF-Auszug im Browser (pdf.js), dann Teilen-Menü des Geräts oder Download ----------
   // Nutzerentscheid 30.09.2026: Das PDF entsteht auf dem Gerät und geht nicht über unseren Server; es enthält nichts
   // Persönliches (weder Name noch E-Mail-Adresse) – nur die Anleihen in der gewählten Sortierung, Datenstand und Hinweise.
-  // Gestaltung wie die Startseite (Tabelle „Sechs Beispiele“): warmer Grund, grünes Kopfband mit Logo, Überschrift in Manrope,
-  // vier Kacheln zum Überblick, die Anleihen auf einer weißen Karte mit runden Ecken, Rendite in Grün, Art als Pille, dunkles
-  // Band mit dem Weg zu den Steckbriefen. Schrift: pdf-schrift.json (Manrope, wird geladen, sobald das Depot Anleihen hat);
-  // fehlt sie noch, nimmt das PDF Helvetica.
-  const F = { ink: "#1A1A19", text: "#55544F", grund: "#FBFAF7", gruen: "#39FF14", kante: "#178500", gtext: "#157C00", weiss: "#FFFFFF",
-    linie: "#E8E8E7", kopf: "#D1D1D0", rand: "#E4E3DF", staat: "#E8FFE3", unt: "#F0EEE8", untText: "#4A4943", hell: "#BDBDB8" };
-  const ART_NAME = ["Staat", "Öffentlich", "Unternehmen"];
-  let SCHRIFT = null;
-  function ladeSchrift() { if (!SCHRIFT && MC.json) MC.json("pdf-schrift.json").then(d => { SCHRIFT = d; }, () => {}); }
+  // Schlichte Gestaltung (Helvetica, grünes Band) mit dem Logo der Website; die Tabelle hat dieselben Spalten wie die
+  // Anleihen-Suche (Nutzerwunsch) – dafür ist die Seite quer.
+  const INK = [0.102, 0.102, 0.098], GRAU = [0.333, 0.329, 0.31], GRUEN = [0.224, 1, 0.078], LINIE = [0.86, 0.86, 0.84];
   const zwei = n => (n < 10 ? "0" : "") + n;
-  // Pfeil „→“ (nicht in WinAnsi) als kleine Linie: x = linker Rand, y = Grundlinie des Texts daneben
-  const pfeil = (P, x, y, gr, farbe) => P.svg("M0 5H9M5.5 1.5L9 5L5.5 8.5", x, y - gr * 0.62, gr / 13, farbe, { strich: 1.6 });
   function depotPdf() {
-    const P = MC.pdf(SCHRIFT), B = P.B, H = P.H, R = 40, liste = sortiert(), n = liste.length, jetzt = new Date();
+    const P = MC.pdf({ quer: true }), B = P.B, H = P.H, R = 40, liste = sortiert(), n = liste.length, jetzt = new Date();
     const datum = `${zwei(jetzt.getDate())}.${zwei(jetzt.getMonth() + 1)}.${jetzt.getFullYear()}`, uhr = `${zwei(jetzt.getHours())}:${zwei(jetzt.getMinutes())}`;
-    const LINK = "https://www.bondarium.de/", steck = o => `${LINK}anleihe.html?isin=${encodeURIComponent(o.isin)}`;
-    const FUSS_Y = H - 40;   // Oberkante der Fußzeile
-
-    // --- Seite: Grund, Kopfband mit Logo (Bildzeichen „Orbit“ und Wortmarke wie in der Kopfzeile der Website) ---
-    const wort = document.querySelector(".topbar .brand-w path"), punkt = document.querySelector(".topbar .brand-w .brand-i");
-    function neueSeite() {
-      const nr = P.seite();
-      P.rechteck(0, 0, B, H, F.grund);
-      P.rechteck(0, 0, B, 58, F.gruen);
-      P.rechteck(0, 58, B, 2.5, F.kante);
-      const m = 28 / 100, bx = R, by = 15;   // Bildzeichen 28 × 28 pt, SVG-Maß 100 × 100
-      P.rechteck(bx, by, 28, 28, F.ink, 24 * m);
-      P.svg("M29 20V78", bx, by, m, "#FBFAF7", { strich: 12 });
-      P.rechteck(bx + 33 * m, by + 42 * m, 38 * m, 38 * m, null, 19 * m, "#FBFAF7", 12 * m);   // Ring des „b“
-      P.kreis(bx + 65.4 * m, by + 47.6 * m, 11.5 * m, F.ink);   // Aussparung um den Punkt
-      P.kreis(bx + 65.4 * m, by + 47.6 * m, 7.5 * m, F.gruen);
-      if (wort) {   // Wortmarke „bondarium“ (Schrift Sora, als Pfad) – viewBox 0 330 5362 780
-        const s = 19.5 / 780, wx = bx + 37, wy = 29 - 19.5 / 2 - 330 * s;
-        P.svg(wort.getAttribute("d"), wx, wy, s, F.ink);
-        if (punkt) P.kreis(wx + +punkt.getAttribute("cx") * s, wy + +punkt.getAttribute("cy") * s, +punkt.getAttribute("r") * s, F.gtext);
-      } else P.text(bx + 37, 36, "bondarium", { gr: 20, schnitt: "b" });
-      const w = P.text(B - R, 33, "WWW.BONDARIUM.DE", { gr: 7.5, schnitt: "s", sperren: 80, farbe: "#3F3F3D", rechts: true });
-      P.link(B - R - w, 24, w, 13, LINK);
-      return nr;
-    }
-
-    // --- Kopf der ersten Seite: Überschrift, Unterzeile, vier Kacheln ---
-    neueSeite();
-    let y = 104;
-    P.text(R, y, "Depot-Auszug", { gr: 28, schnitt: "b", sperren: -25 });
-    y += 20;
-    P.text(R, y, `${n} ${n === 1 ? "Anleihe" : "Anleihen"}${KSTAND ? ` · Kurse und Renditen vom ${MC.datum(KSTAND)}` : ""} · erstellt am ${datum} um ${uhr} Uhr`, { gr: 10, farbe: F.text });
-    y += 18;
-    const heute = new Date().toISOString().slice(0, 10);
-    const arten = [0, 1, 2].map(a => [a, liste.filter(o => o.art === a).length]).filter(z => z[1]).map(z => `${z[1]} ${ART_NAME[z[0]]}`);
-    const rend = liste.filter(o => o.rendite != null).map(o => o.rendite);
-    const naechste = liste.filter(o => o.faellig && o.faellig > heute).sort((a, b) => a.faellig.localeCompare(b.faellig))[0];
-    const waehr = Object.entries(liste.reduce((m, o) => { if (o.cur) m[o.cur] = (m[o.cur] || 0) + 1; return m; }, {})).sort((a, b) => b[1] - a[1]).map(z => z[0]);
-    const kacheln = [
-      ["Anleihen", String(n), arten.join(" · ")],
-      ["Rendite p. a.", !rend.length ? "–" : Math.min(...rend) === Math.max(...rend) ? `${fmt(rend[0], 2)} %` : `${fmt(Math.min(...rend), 2)} – ${fmt(Math.max(...rend), 2)} %`, rend.length > 1 ? "Spanne, bis zur Fälligkeit" : "bis zur Fälligkeit"],
-      ["Nächste Fälligkeit", naechste ? MC.datum(naechste.faellig) : "–", naechste ? `in ${MC.restlaufzeit(jahre(naechste.faellig))} · ${naechste.name}` : ""],
-      waehr.length > 2 ? ["Währungen", String(waehr.length), waehr.join(", ")]
-        : [waehr.length > 1 ? "Währungen" : "Währung", waehr.join(" · ") || "–", "Kurse in % des Nennwerts"],
-    ];
-    const kb = (B - 2 * R - 3 * 10) / 4;
-    kacheln.forEach((k, i) => {
-      const kx = R + i * (kb + 10);
-      P.rechteck(kx, y, kb, 60, F.weiss, 12, F.rand, 0.75);
-      P.text(kx + 12, y + 17, k[0].toUpperCase(), { gr: 6.5, schnitt: "s", sperren: 80, farbe: F.text, max: kb - 24 });
-      P.text(kx + 12, y + 36, k[1], { gr: k[1].length > 14 ? 12.5 : 15, schnitt: "b", sperren: -10, max: kb - 24 });
-      P.text(kx + 12, y + 50, k[2], { gr: 7, farbe: F.text, max: kb - 24 });
-    });
-    y += 60 + 30;
-
-    // --- Tabelle: Spalten innerhalb der Karte (16 pt Innenabstand); Zahlen rechtsbündig wie auf der Startseite ---
-    const X0 = R + 16, X1 = B - R - 16;
-    const SP = { name: X0, nameB: 152, rendite: X0 + 212, kupon: X0 + 260, kurs: X0 + 304, faellig: X0 + 366, art: X0 + 378, cur: X1 - 40 };
+    // Spalten wie die Anleihen-Suche: x = linker Rand, b = Breite; Zahlen rechtsbündig (r), Text mit 8 pt Einzug nach einer Zahlenspalte
+    const SP = [];
+    [["Anleihe", 164], ["Rendite", 54, 1], ["Kurs", 50, 1], ["Kupon", 52, 1], ["Fälligkeit", 58, 1], ["Restlaufzeit", 60, 1],
+      ["Art", 72], ["ISIN", 76], ["Währung", 46], ["Volumen", 70, 1], ["Stückelung", 60, 1]]
+      .reduce((x, [t, b, r]) => { SP.push({ t, x, b, r: !!r }); return x + b; }, R);
+    const rx = i => SP[i].x + SP[i].b - 6, lx = i => SP[i].x + (i && SP[i - 1].r ? 8 : 0), NAME = 156, LINK = "https://www.bondarium.de/";
+    // Hinweise unten auf jeder Seite; ihre Höhe bestimmt, wie weit die Tabelle reicht
     const noten = [];
     if (liste.some(o => o.real)) noten.push("* Realrendite (inflationsindexierte Anleihe).");
     if (liste.some(o => o.fraglich != null)) noten.push("? Kurs ohne Umsatz, Rendite weit über Bund – die Taxe ist vermutlich veraltet.");
-    noten.push("Rendite p. a. = jährliche Rendite bis zur Fälligkeit beim Kauf zum Schlusskurs des letzten Börsentags, von Bondarium berechnet. " +
-      "Kurs = Schlusskurs in % des Nennwerts (Börse Frankfurt, Tradegate; Bundeswertpapiere: Deutsche Bundesbank); ein älterer Kurs trägt sein Datum.");
-    const notenZ = [].concat(...noten.map(t => P.umbrechen(t, B - 2 * R, 7.5)));
-    // Zeilen vorbereiten: Name bis zu zwei Zeilen, darunter ISIN · Registername
-    const zeilen = liste.map(o => {
-      let nz = P.umbrechen(o.name, SP.nameB, 9.5, "b");
-      if (nz.length > 2) nz = [nz[0], P.kuerzen(nz.slice(1).join(" "), SP.nameB, 9.5, "b")];
-      nz = nz.map(z => P.kuerzen(z, SP.nameB, 9.5, "b"));
-      return { o, nz, h: 12 + 11 + (nz.length - 1) * 11.5 + 11 + 6 };
+    if (liste.some(o => o.befund)) noten.push("Daten? Widerspruch im ESMA-Register – Registerwerte unverändert gezeigt, keine Rendite.");
+    noten.push("Kurs: Schlusskurs in % des Nennwerts (Börse Frankfurt, Tradegate; Bundeswertpapiere: Deutsche Bundesbank), ein älterer Kurs trägt sein Datum. " +
+      "Rendite: bis zur Fälligkeit, von Bondarium aus dem Kurs berechnet. Volumen: ausgegebener Nennbetrag laut ESMA-Register (Mrd. = Milliarden). " +
+      "Stückelung: kleinster Nennwert, zugleich Mindestanlage, in der Währung der Anleihe. Einzelheiten zu jeder Anleihe: Klick auf den Namen.");
+    noten.push("Keine Anlageberatung: Dieser Auszug ist eine Merkliste und keine Empfehlung zum Kauf oder Verkauf. Alle Angaben ohne Gewähr.");
+    const fuss = [].concat(...noten.map(t => P.umbrechen(t, B - 2 * R, 7)));
+    const UNTEN = H - 34 - fuss.length * 9 - 14;
+    // Logo wie in der Kopfzeile der Website: Bildzeichen „Orbit“ (SVG-Maß 100 × 100) und Wortmarke „bondarium“ (Pfad aus der Seite)
+    const wort = document.querySelector(".topbar .brand-w path"), punkt = document.querySelector(".topbar .brand-w .brand-i");
+    function logo(x, yo) {
+      const m = 28 / 100;
+      P.rechteck(x, yo, 28, 28, INK, 24 * m);
+      P.svg("M29 20V78", x, yo, m, "#FBFAF7", { strich: 12 });
+      P.rechteck(x + 33 * m, yo + 42 * m, 38 * m, 38 * m, null, 19 * m, "#FBFAF7", 12 * m);   // Ring des „b“
+      P.kreis(x + 65.4 * m, yo + 47.6 * m, 11.5 * m, INK);   // Aussparung um den Punkt
+      P.kreis(x + 65.4 * m, yo + 47.6 * m, 7.5 * m, GRUEN);
+      if (!wort) { P.text(x + 37, yo + 21, "bondarium", { gr: 21, fett: true, farbe: INK }); return; }
+      const s = 19.5 / 780, wx = x + 37, wy = yo + 14 - 19.5 / 2 - 330 * s;   // viewBox 0 330 5362 780, mittig zum Bildzeichen
+      P.svg(wort.getAttribute("d"), wx, wy, s, INK);
+      if (punkt) P.kreis(wx + +punkt.getAttribute("cx") * s, wy + +punkt.getAttribute("cy") * s, +punkt.getAttribute("r") * s, "#157C00");
+    }
+    let y = 0;
+    function kopf() {
+      const nr = P.seite();
+      P.rechteck(0, 0, B, 56, GRUEN);   // grünes Band wie die Kopfzeile der Website
+      logo(R, 14);
+      P.text(B - R, 35, "www.bondarium.de", { gr: 9, farbe: INK, rechts: true });
+      P.link(B - R - P.weite("www.bondarium.de", 9), 24, P.weite("www.bondarium.de", 9), 14, LINK);
+      y = 94;
+      if (nr === 0) {
+        P.text(R, y, "Depot-Auszug", { gr: 24, fett: true });
+        y += 20;
+        P.text(R, y, `Erstellt am ${datum} um ${uhr} Uhr · ${n} ${n === 1 ? "Anleihe" : "Anleihen"}${KSTAND ? ` · Kurse vom ${MC.datum(KSTAND)}` : ""}`, { gr: 9.5, farbe: GRAU });
+        y += 30;
+      } else { P.text(R, y, "Depot-Auszug – Fortsetzung", { gr: 12, fett: true }); y += 22; }
+      SP.forEach((s, i) => P.text(s.r ? rx(i) : lx(i), y, s.t.toUpperCase(), { gr: 6.5, fett: true, farbe: GRAU, rechts: s.r }));
+      y += 6; P.linie(R, y, B - R, y, INK, 0.8);
+    }
+    kopf();
+    liste.forEach(o => {
+      if (y + 30 > UNTEN) kopf();
+      const z1 = y + 14, z2 = y + 25, klein = { gr: 7, farbe: GRAU };
+      P.text(R, z1, o.name, { gr: 9, fett: true, max: NAME });
+      P.link(R, y + 4, Math.min(NAME, P.weite(o.name, 9, true)), 13, `${LINK}anleihe.html?isin=${encodeURIComponent(o.isin)}`);
+      P.text(R, z2, [o.reg, o.hinweis, o.befund ? "Daten?" : ""].filter(Boolean).join(" · "), Object.assign({ max: NAME }, klein));
+      P.text(rx(1), z1, o.rendite != null ? `${fmt(o.rendite, 2)} %${o.real ? "*" : o.fraglich != null ? "?" : ""}` : "–", { gr: 8.5, rechts: true });
+      P.text(rx(2), z1, o.kurs != null ? fmt(o.kurs, 2) : "–", { gr: 8.5, rechts: true });
+      if (o.kurs != null && o.datum && o.datum !== KSTAND) P.text(rx(2), z2, `vom ${MC.tag(o.datum)}`, Object.assign({ rechts: true }, klein));
+      P.text(rx(3), z1, fmtCoupon(o.kupon), { gr: 8.5, rechts: true });
+      P.text(rx(4), z1, o.faellig ? MC.datum(o.faellig) : o.cur ? "unbefristet" : "–", { gr: 8.5, rechts: true });
+      P.text(rx(5), z1, o.faellig ? (jahre(o.faellig) > 0 ? MC.restlaufzeit(jahre(o.faellig)) : "fällig") : "–", { gr: 8.5, rechts: true });
+      P.text(lx(6), z1, ART_NAME[o.art] || "–", { gr: 8.5, max: SP[6].b - 12 });
+      P.text(lx(7), z1, o.isin, { gr: 8.5 });
+      P.text(lx(8), z1, o.cur || "–", { gr: 8.5 });
+      P.text(rx(9), z1, fmtVol(o.vol, o.cur), { gr: 8.5, rechts: true });
+      P.text(rx(10), z1, fmtStk(o.stk), { gr: 8.5, rechts: true });
+      y += 31; P.linie(R, y, B - R, y, LINIE, 0.5);
     });
-    // Seiten füllen: Karte je Seite; auf der letzten Seite folgen Hinweise und das dunkle Band
-    const KOPF_H = 26;
-    let i = 0, erste = true;
-    while (i < zeilen.length || erste) {
-      if (!erste) { neueSeite(); y = 96; P.text(R, y, "Depot-Auszug – Fortsetzung", { gr: 13, schnitt: "b", sperren: -15 }); y += 20; }
-      else {
-        P.text(R, y, "Anleihen im Depot", { gr: 15, schnitt: "b", sperren: -20 });
-        const w = P.text(B - R - 11, y, "Zur Anleihen-Suche", { gr: 8.5, schnitt: "s", farbe: F.gtext, rechts: true });
-        pfeil(P, B - R - 7.5, y, 8.5, F.gtext);
-        P.link(B - R - 11 - w, y - 10, w + 11, 13, `${LINK}anleihen-suche.html`);
-        y += 12;
-      }
-      erste = false;
-      const platz = FUSS_Y - 16 - y - KOPF_H - 12;
-      let h = 0, bis = i;
-      while (bis < zeilen.length && h + zeilen[bis].h <= platz) h += zeilen[bis++].h;
-      if (bis === i && i < zeilen.length) { h = zeilen[i].h; bis = i + 1; }   // eine Zeile passt immer
-      const kartenH = KOPF_H + h + 6;
-      P.rechteck(R, y, B - 2 * R, kartenH, F.weiss, 14, F.rand, 0.75);
-      // Tabellenkopf
-      const ky = y + 17, kopfText = (x, t, o) => P.text(x, ky, t, Object.assign({ gr: 6.5, schnitt: "s", sperren: 60, farbe: F.text }, o));
-      kopfText(SP.name, "ANLEIHE"); kopfText(SP.rendite, "RENDITE P. A.", { rechts: true }); kopfText(SP.kupon, "KUPON", { rechts: true });
-      kopfText(SP.kurs, "KURS", { rechts: true }); kopfText(SP.faellig, "FÄLLIGKEIT", { rechts: true }); kopfText(SP.art, "ART"); kopfText(SP.cur, "WÄHRUNG");
-      P.linie(X0, y + KOPF_H, X1, y + KOPF_H, F.kopf, 0.75);
-      let zy = y + KOPF_H;
-      for (let k = i; k < bis; k++) {
-        const { o, nz, h: zh } = zeilen[k], b1 = zy + 12 + 9.5;
-        nz.forEach((z, j) => P.text(SP.name, b1 + j * 11.5, z, { gr: 9.5, schnitt: "b" }));
-        P.link(SP.name, zy + 10, SP.nameB, nz.length * 11.5 + 2, steck(o));
-        P.text(SP.name, b1 + (nz.length - 1) * 11.5 + 11, [o.isin !== o.name ? o.isin : "", o.hinweis, o.reg].filter(Boolean).join(" · "), { gr: 7, farbe: F.text, max: SP.art - SP.name - 12 });
-        const renditeT = o.rendite != null ? `${fmt(o.rendite, 2)} %${o.real ? "*" : o.fraglich != null ? "?" : ""}` : "–";
-        P.text(SP.rendite, b1, renditeT, { gr: 9.5, schnitt: o.rendite != null ? "b" : "r", farbe: o.rendite != null && o.fraglich == null ? F.gtext : F.text, rechts: true });
-        P.text(SP.kupon, b1, fmtCoupon(o.kupon), { gr: 9.5, rechts: true });
-        P.text(SP.kurs, b1, o.kurs != null ? fmt(o.kurs, 2) : "–", { gr: 9.5, rechts: true });
-        if (o.kurs != null && o.datum && o.datum !== KSTAND) P.text(SP.kurs, b1 + 11, `vom ${MC.tag(o.datum)}`, { gr: 7, farbe: F.text, rechts: true });
-        P.text(SP.faellig, b1, o.faellig ? MC.datum(o.faellig) : o.cur ? "unbefristet" : "–", { gr: 9.5, rechts: true });
-        if (o.faellig) P.text(SP.faellig, b1 + 11, jahre(o.faellig) > 0 ? MC.restlaufzeit(jahre(o.faellig)) : "fällig", { gr: 7, farbe: F.text, rechts: true });
-        if (o.art != null && ART_NAME[o.art]) {   // Art als Pille wie auf der Startseite: Staat grün, Unternehmen grau
-          const t = ART_NAME[o.art], u = o.art === 2, pw = P.weite(t, 6.5, "s") + 12;
-          P.rechteck(SP.art, b1 - 8.5, pw, 12, u ? F.unt : F.staat, 6);
-          P.text(SP.art + 6, b1 - 0.5, t, { gr: 6.5, schnitt: "s", farbe: u ? F.untText : F.gtext });
-        }
-        P.text(SP.cur, b1, o.cur || "–", { gr: 9, farbe: F.ink });
-        zy += zh;
-        if (k < bis - 1) P.linie(X0, zy, X1, zy, F.linie, 0.6);
-      }
-      y += kartenH;
-      i = bis;
-    }
-    // Hinweise unter der Karte, dann das dunkle Band (wenn es auf die Seite passt)
-    y += 14;
-    if (y + notenZ.length * 9.5 > FUSS_Y - 10) { neueSeite(); y = 96; }
-    notenZ.forEach(z => { P.text(R, y, z, { gr: 7.5, farbe: F.text }); y += 9.5; });
-    y += 16;
-    if (y + 64 <= FUSS_Y - 12) {
-      P.rechteck(R, y, B - 2 * R, 64, F.ink, 16);
-      P.text(R + 20, y + 26, "Mehr zu jeder Anleihe", { gr: 12.5, schnitt: "b", sperren: -10, farbe: F.weiss });
-      const kn = "bondarium.de", kw = P.weite(kn, 9.5, "s") + 44, kx = B - R - 20 - kw;
-      P.umbrechen("Klick auf den Namen: Steckbrief mit Kursverlauf, Handel und Rechenbeispiel.", kx - R - 40, 8.5)
-        .slice(0, 2).forEach((z, j, alle) => P.text(R + 20, y + (alle.length > 1 ? 40 : 43) + j * 10.5, z, { gr: 8.5, farbe: F.hell }));
-      P.rechteck(kx, y + 18, kw, 28, F.gruen, 8);
-      P.text(kx + 16, y + 35.5, kn, { gr: 9.5, schnitt: "s" });
-      pfeil(P, kx + kw - 24, y + 35.5, 9.5, F.ink);
-      P.link(kx, y + 18, kw, 28, LINK);
-    }
-    // Fußzeile jeder Seite (wie die Website: „Keine Anlageberatung …“) und Seitenzahl
-    for (let s = 0, gesamt = P.anzahl(); s < gesamt; s++) {
-      P.auf(s);
-      P.linie(R, FUSS_Y, B - R, FUSS_Y, F.rand, 0.75);
-      P.text(R, FUSS_Y + 14, "Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15 Minuten verzögert.", { gr: 7, farbe: F.text });
-      P.text(R, FUSS_Y + 24, `Depot-Auszug vom ${datum} · www.bondarium.de`, { gr: 7, farbe: F.text });
-      P.text(B - R, FUSS_Y + 14, `Seite ${s + 1} von ${gesamt}`, { gr: 7, farbe: F.text, rechts: true });
+    for (let i = 0, gesamt = P.anzahl(); i < gesamt; i++) {
+      P.auf(i);
+      let fy = H - 34 - fuss.length * 9;
+      P.linie(R, fy - 12, B - R, fy - 12, LINIE, 0.5);
+      fuss.forEach(z => { P.text(R, fy, z, { gr: 7, farbe: GRAU }); fy += 9; });
+      P.text(R, H - 22, "Bondarium – Anleihen verstehen und finden · www.bondarium.de", { gr: 7, farbe: GRAU });
+      P.text(B - R, H - 22, `Seite ${i + 1} von ${gesamt}`, { gr: 7, farbe: GRAU, rechts: true });
     }
     return { blob: P.blob("Depot-Auszug – Bondarium"), name: `Bondarium-Depot-${jetzt.getFullYear()}-${zwei(jetzt.getMonth() + 1)}-${zwei(jetzt.getDate())}.pdf` };
   }
