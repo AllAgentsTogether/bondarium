@@ -113,7 +113,8 @@
   .kto-leer { max-width: 640px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); padding: 20px 22px; margin-top: 14px; font-size: 16px; line-height: 1.6; }
   .kto-leer[hidden], #liste[hidden] { display: none; }
   .kto-leer p + p { margin-top: 12px; }
-  .kto-stand { font-size: 13px; line-height: 1.6; color: var(--text); margin-top: 16px; max-width: 820px; }
+  .kto-quellen { margin-top: 22px; }
+  .kto-quellen[hidden] { display: none; }
   .kto-konto { margin-top: 40px; border-top: 1px solid var(--rule); padding-top: 16px; font-size: 14.5px; color: var(--text); }
   .kto-konto details + details { margin-top: 10px; }
   .kto-konto .kf { max-width: 420px; margin-top: 12px; }
@@ -308,7 +309,16 @@
         <p><b>Dein Depot ist noch leer.</b> In der Anleihen-Suche und auf jedem Steckbrief steht der Knopf „Merken“ – ein Klick legt die Anleihe hierher.</p>
         <p><a class="go" href="anleihen-suche.html">Zur Anleihen-Suche</a></p>
       </div>
-      <p class="kto-stand" id="datastand"></p>
+      <details class="quellen kto-quellen" id="quellen" hidden>
+        <summary>Datenquellen und Methodik</summary>
+        <div class="quellen-body">
+          <p><strong>Kurs.</strong> Schlusskurs des letzten Börsentags in % des Nennwerts – Börse Frankfurt bzw. Tradegate (Deutsche Börse), bei Bundeswertpapieren die Deutsche Bundesbank. Ist der letzte Kurs älter, steht sein Datum darunter.</p>
+          <p><strong>Rendite.</strong> Rendite bis zur Fälligkeit in % pro Jahr, von uns aus Kurs, Kupon und Fälligkeit berechnet – nach denselben Regeln wie in der <a href="anleihen-suche.html">Anleihen-Suche</a>, wo unter „Datenquellen und Methodik“ alle Einzelheiten stehen.</p>
+          <p><strong>Stammdaten.</strong> Kupon, Fälligkeit, Art, Währung, Volumen und Stückelung aus dem Register der europäischen Wertpapieraufsicht ESMA (FIRDS). Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage, beide in der Währung der Anleihe.</p>
+          <p><strong>Steckbrief.</strong> Ein Klick auf Name oder ISIN öffnet den Steckbrief der Anleihe mit Kursverlauf, Handel und Rechenbeispiel.</p>
+          <p id="datastand"></p>
+        </div>
+      </details>
       <div class="kto-konto" id="konto">
         <details id="d-pw">
           <summary>Passwort ändern</summary>
@@ -535,7 +545,7 @@ MC.navInit();
   }
   function statusText() {
     const n = LISTE.length;
-    $("status").innerHTML = (n ? `<strong>${n} ${n === 1 ? "Anleihe" : "Anleihen"}</strong> in deinem Depot.` : "") +
+    $("status").innerHTML = (n ? `<strong>${n} ${n === 1 ? "Anleihe" : "Anleihen"}</strong> in deinem Depot${KSTAND ? ` · Kurse vom ${MC.esc(MC.datum(KSTAND))}` : ""}.` : "") +
       (ZULETZT ? ` ${MC.esc(ZULETZT)} entfernt – <button type="button" class="kto-textbtn" id="zurueck">rückgängig</button>.` : "");
   }
   let lauf = 0;
@@ -546,19 +556,20 @@ MC.navInit();
     zeigeTeil("depot");
     $("leer").hidden = fav.length > 0;
     $("teilen-status").textContent = "";
-    if (!fav.length) { LISTE = []; $("liste").hidden = true; $("teilen-box").hidden = true; $("datastand").textContent = ""; statusText(); return; }
+    if (!fav.length) { LISTE = []; $("liste").hidden = true; $("teilen-box").hidden = true; $("quellen").hidden = true; statusText(); return; }
     if (!LISTE.length) $("status").textContent = "Kurse werden geladen …";
     ladeDaten().then(D => ladeStamm(fav.map(f => f[0]).filter(i => !D.idx.has(i))).then(() => D)).then(D => {
       if (nr !== lauf) return;
       LISTE = fav.map(f => anleihe(f[0], f[1], D)); KSTAND = D.kstand;
       $("liste").hidden = false; $("teilen-box").hidden = false; zeichne(); statusText();
-      $("datastand").innerHTML = `Kurs: Schlusskurs vom ${MC.esc(MC.datum(D.kstand))} in % des Nennwerts (Börse Frankfurt, Tradegate; Bundeswertpapiere: Deutsche Bundesbank) – ein älterer Kurs trägt sein Datum. Rendite: bis zur Fälligkeit, von uns aus dem Kurs berechnet. Alle Einzelheiten, Kursverlauf und Rechenbeispiel stehen im Steckbrief – ein Klick auf den Namen. Keine Anlageberatung.`;
+      $("datastand").textContent = `Daten-Stand: Kurse vom ${MC.datum(D.kstand)} (Deutsche Börse, Bundesbank) · Stammdaten vom ${MC.datum(D.stand)} (ESMA-Register)`;
+      $("quellen").hidden = false;
     }).catch(err => {
       if (nr !== lauf) return;
       console.warn("Depot: Anleihedaten nicht geladen:", err);
       // ohne Kursdaten wenigstens die Liste zeigen (ISIN mit Link zum Steckbrief)
       LISTE = fav.map(f => ({ isin: f[0], seit: f[1], name: f[0], reg: "", rendite: null, kurs: null, kupon: null, faellig: "", cur: "", hinweis: "Kursdaten gerade nicht erreichbar" }));
-      $("liste").hidden = false; $("teilen-box").hidden = false; zeichne(); statusText(); $("datastand").textContent = "";
+      $("liste").hidden = false; $("teilen-box").hidden = false; $("quellen").hidden = true; zeichne(); statusText();
     });
   }
   function zeige(stand) {
@@ -589,26 +600,27 @@ MC.navInit();
   // ---------- Depot teilen: PDF-Auszug im Browser (pdf.js), dann Teilen-Menü des Geräts oder Download ----------
   // Nutzerentscheid 30.09.2026: Das PDF entsteht auf dem Gerät und geht nicht über unseren Server; es enthält nichts
   // Persönliches (weder Name noch E-Mail-Adresse) – nur die Anleihen in der gewählten Sortierung, Datenstand und Hinweise.
-  // Schlichte Gestaltung (Helvetica, grünes Band) mit dem Logo der Website; die Tabelle hat dieselben Spalten wie die
-  // Anleihen-Suche (Nutzerwunsch) – dafür ist die Seite quer.
+  // Schlichte Gestaltung (Helvetica, grünes Band) mit dem Logo der Website; die Tabelle hat dieselben Angaben wie die
+  // Anleihen-Suche (Nutzerwunsch). A4 hochkant: je zwei Angaben stehen übereinander (Nutzerwunsch, vorher quer mit elf Spalten).
   const INK = [0.102, 0.102, 0.098], GRAU = [0.333, 0.329, 0.31], GRUEN = [0.224, 1, 0.078], LINIE = [0.86, 0.86, 0.84];
   const zwei = n => (n < 10 ? "0" : "") + n;
   function depotPdf() {
-    const P = MC.pdf({ quer: true }), B = P.B, H = P.H, R = 40, liste = sortiert(), n = liste.length, jetzt = new Date();
+    const P = MC.pdf(), B = P.B, H = P.H, R = 40, liste = sortiert(), n = liste.length, jetzt = new Date();
     const datum = `${zwei(jetzt.getDate())}.${zwei(jetzt.getMonth() + 1)}.${jetzt.getFullYear()}`, uhr = `${zwei(jetzt.getHours())}:${zwei(jetzt.getMinutes())}`;
-    // Spalten wie die Anleihen-Suche: x = linker Rand, b = Breite; Zahlen rechtsbündig (r), Text mit 8 pt Einzug nach einer Zahlenspalte
+    // Angaben wie die Anleihen-Suche, je Spalte oben und darunter (t2): x = linker Rand, b = Breite; Zahlen rechtsbündig (r),
+    // Text mit 8 pt Einzug nach einer Zahlenspalte. Unter dem Namen stehen ISIN und Registername.
     const SP = [];
-    [["Anleihe", 164], ["Rendite", 54, 1], ["Kurs", 50, 1], ["Kupon", 52, 1], ["Fälligkeit", 58, 1], ["Restlaufzeit", 60, 1],
-      ["Art", 72], ["ISIN", 76], ["Währung", 46], ["Volumen", 70, 1], ["Stückelung", 60, 1]]
-      .reduce((x, [t, b, r]) => { SP.push({ t, x, b, r: !!r }); return x + b; }, R);
-    const rx = i => SP[i].x + SP[i].b - 6, lx = i => SP[i].x + (i && SP[i - 1].r ? 8 : 0), NAME = 156, LINK = "https://www.bondarium.de/";
+    [["Anleihe", 176, 0, "ISIN · Registername"], ["Rendite", 46, 1], ["Kurs", 46, 1], ["Kupon", 48, 1], ["Fälligkeit", 64, 1, "Restlaufzeit"],
+      ["Art", 72, 0, "Währung"], ["Volumen", 63, 1, "Stückelung"]]
+      .reduce((x, [t, b, r, t2]) => { SP.push({ t, t2, x, b, r: !!r }); return x + b; }, R);
+    const rx = i => SP[i].x + SP[i].b - 6, lx = i => SP[i].x + (i && SP[i - 1].r ? 8 : 0), NAME = 168, LINK = "https://www.bondarium.de/";
     // Hinweise unten auf jeder Seite; ihre Höhe bestimmt, wie weit die Tabelle reicht
     const noten = [];
     if (liste.some(o => o.real)) noten.push("* Realrendite (inflationsindexierte Anleihe).");
     if (liste.some(o => o.fraglich != null)) noten.push("? Kurs ohne Umsatz, Rendite weit über Bund – die Taxe ist vermutlich veraltet.");
     if (liste.some(o => o.befund)) noten.push("Daten? Widerspruch im ESMA-Register – Registerwerte unverändert gezeigt, keine Rendite.");
     noten.push("Kurs: Schlusskurs in % des Nennwerts (Börse Frankfurt, Tradegate; Bundeswertpapiere: Deutsche Bundesbank), ein älterer Kurs trägt sein Datum. " +
-      "Rendite: bis zur Fälligkeit, von Bondarium aus dem Kurs berechnet. Volumen: ausgegebener Nennbetrag laut ESMA-Register (Mrd. = Milliarden). " +
+      "Rendite: bis zur Fälligkeit, von Bondarium aus dem Kurs berechnet. Volumen: ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe (Mrd. = Milliarden). " +
       "Stückelung: kleinster Nennwert, zugleich Mindestanlage, in der Währung der Anleihe. Einzelheiten zu jeder Anleihe: Klick auf den Namen.");
     noten.push("Keine Anlageberatung: Dieser Auszug ist eine Merkliste und keine Empfehlung zum Kauf oder Verkauf. Alle Angaben ohne Gewähr.");
     const fuss = [].concat(...noten.map(t => P.umbrechen(t, B - 2 * R, 7)));
@@ -641,8 +653,11 @@ MC.navInit();
         P.text(R, y, `Erstellt am ${datum} um ${uhr} Uhr · ${n} ${n === 1 ? "Anleihe" : "Anleihen"}${KSTAND ? ` · Kurse vom ${MC.datum(KSTAND)}` : ""}`, { gr: 9.5, farbe: GRAU });
         y += 30;
       } else { P.text(R, y, "Depot-Auszug – Fortsetzung", { gr: 12, fett: true }); y += 22; }
-      SP.forEach((s, i) => P.text(s.r ? rx(i) : lx(i), y, s.t.toUpperCase(), { gr: 6.5, fett: true, farbe: GRAU, rechts: s.r }));
-      y += 6; P.linie(R, y, B - R, y, INK, 0.8);
+      SP.forEach((s, i) => {
+        P.text(s.r ? rx(i) : lx(i), y, s.t.toUpperCase(), { gr: 6.5, fett: true, farbe: GRAU, rechts: s.r });
+        if (s.t2) P.text(s.r ? rx(i) : lx(i), y + 8.5, s.t2, { gr: 6.5, farbe: GRAU, rechts: s.r });
+      });
+      y += 14; P.linie(R, y, B - R, y, INK, 0.8);
     }
     kopf();
     liste.forEach(o => {
@@ -650,18 +665,17 @@ MC.navInit();
       const z1 = y + 14, z2 = y + 25, klein = { gr: 7, farbe: GRAU };
       P.text(R, z1, o.name, { gr: 9, fett: true, max: NAME });
       P.link(R, y + 4, Math.min(NAME, P.weite(o.name, 9, true)), 13, `${LINK}anleihe.html?isin=${encodeURIComponent(o.isin)}`);
-      P.text(R, z2, [o.reg, o.hinweis, o.befund ? "Daten?" : ""].filter(Boolean).join(" · "), Object.assign({ max: NAME }, klein));
+      P.text(R, z2, [o.isin !== o.name ? o.isin : "", o.hinweis, o.befund ? "Daten?" : "", o.reg].filter(Boolean).join(" · "), Object.assign({ max: NAME }, klein));   // ISIN zuerst – nie abgeschnitten
       P.text(rx(1), z1, o.rendite != null ? `${fmt(o.rendite, 2)} %${o.real ? "*" : o.fraglich != null ? "?" : ""}` : "–", { gr: 8.5, rechts: true });
       P.text(rx(2), z1, o.kurs != null ? fmt(o.kurs, 2) : "–", { gr: 8.5, rechts: true });
       if (o.kurs != null && o.datum && o.datum !== KSTAND) P.text(rx(2), z2, `vom ${MC.tag(o.datum)}`, Object.assign({ rechts: true }, klein));
       P.text(rx(3), z1, fmtCoupon(o.kupon), { gr: 8.5, rechts: true });
       P.text(rx(4), z1, o.faellig ? MC.datum(o.faellig) : o.cur ? "unbefristet" : "–", { gr: 8.5, rechts: true });
-      P.text(rx(5), z1, o.faellig ? (jahre(o.faellig) > 0 ? MC.restlaufzeit(jahre(o.faellig)) : "fällig") : "–", { gr: 8.5, rechts: true });
-      P.text(lx(6), z1, ART_NAME[o.art] || "–", { gr: 8.5, max: SP[6].b - 12 });
-      P.text(lx(7), z1, o.isin, { gr: 8.5 });
-      P.text(lx(8), z1, o.cur || "–", { gr: 8.5 });
-      P.text(rx(9), z1, fmtVol(o.vol, o.cur), { gr: 8.5, rechts: true });
-      P.text(rx(10), z1, fmtStk(o.stk), { gr: 8.5, rechts: true });
+      if (o.faellig) P.text(rx(4), z2, jahre(o.faellig) > 0 ? MC.restlaufzeit(jahre(o.faellig)) : "fällig", Object.assign({ rechts: true }, klein));
+      P.text(lx(5), z1, ART_NAME[o.art] || "–", { gr: 8.5, max: SP[5].b - 14 });
+      P.text(lx(5), z2, o.cur || "–", klein);
+      P.text(rx(6), z1, fmtVol(o.vol), { gr: 8.5, rechts: true });
+      P.text(rx(6), z2, fmtStk(o.stk), Object.assign({ rechts: true }, klein));
       y += 31; P.linie(R, y, B - R, y, LINIE, 0.5);
     });
     for (let i = 0, gesamt = P.anzahl(); i < gesamt; i++) {

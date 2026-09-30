@@ -48,7 +48,9 @@ Seite zeigt dann einen Knopf.
 darunter der Registername), Rendite, Kurs, Kupon, Fälligkeit, Restlaufzeit, Art, ISIN, Währung, Volumen, Stückelung;
 „Mein Depot“ dazu „Gemerkt“ und „Entfernen“. Formate und Regeln wie in `anleihen-suche.html` (Rendite ohne Befund und ohne
 unplausible Taxe, „?“ bei fraglicher Taxe, „*“ bei Realrendite, „Daten?“ bei Widerspruch im ESMA-Register). Die Tabelle
-ist breit; auf schmalen Bildschirmen wischt man quer, am Handy erscheint jede Anleihe als Karte mit allen Werten.
+ist breit; auf schmalen Bildschirmen wischt man quer, am Handy erscheint jede Anleihe als Karte mit allen Werten. Über der
+Tabelle stehen Anzahl und Kursdatum, darunter wie auf den übrigen Datenseiten der Aufklapper „Datenquellen und Methodik“
+mit dem Daten-Stand („Keine Anlageberatung“ steht in der Fußzeile jeder Seite).
 
 ## Depot teilen (PDF)
 
@@ -57,9 +59,11 @@ Share API mit Datei – Handy, Tablet, Safari); wo der Browser keine Dateien tei
 Nutzerentscheid: nichts Persönliches im PDF (kein Name, keine E-Mail-Adresse), und das PDF geht nicht über den Server.
 Dateiname `Bondarium-Depot-JJJJ-MM-TT.pdf`.
 
-Gestaltung schlicht: A4 quer (elf Spalten), Helvetica, grünes Band mit dem Logo der Website (Bildzeichen „Orbit“ und
+Gestaltung schlicht: A4 hochkant, Helvetica, grünes Band mit dem Logo der Website (Bildzeichen „Orbit“ und
 Wortmarke als Vektor, die Wortmarke aus der Kopfzeile der Seite gelesen), „Depot-Auszug“ mit Datum, Anzahl und Kursstand,
-die Tabelle in der gewählten Sortierung (Name mit Link auf den Steckbrief), unten Erklärungen, „Keine Anlageberatung“ und
+die Tabelle in der gewählten Sortierung (Name mit Link auf den Steckbrief). Damit alle Angaben der Suche hochkant passen, stehen
+je zwei übereinander: Name über ISIN · Registername, Fälligkeit über Restlaufzeit, Art über Währung, Volumen über Stückelung
+(Nutzerwunsch; kurz vorher war der Auszug quer mit elf Spalten). Unten Erklärungen, „Keine Anlageberatung“ und
 die Seitenzahl. Eine Fassung im Design der Startseite (Kacheln, Karte, eingebettete Manrope) war kurz live und ist auf
 Wunsch des Nutzers wieder entfernt (Commit 684be7e).
 
