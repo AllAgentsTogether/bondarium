@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -43,7 +44,7 @@
   .welt-z small { display: block; font-size: 12.5px; font-weight: 400; letter-spacing: 0; color: var(--text); margin-top: 2px; }
   .welt ul { list-style: none; margin: 2px 0 0; padding: 0; display: grid; gap: 4px; font-size: 13.5px; line-height: 1.35; color: var(--ink); }
   .welt li { padding-left: 14px; position: relative; }
-  .welt li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--green-graph, #1DA300); }
+  .welt li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--green-graph, #157C00); }
   .welt-pfeil { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); justify-content: center; }
   .welt-pfeil b { color: var(--green-text); font-weight: 600; }
 
@@ -73,13 +74,13 @@
   .hp-t td.n { white-space: nowrap; font-variant-numeric: tabular-nums; }
   .hp-t td.b { white-space: nowrap; }
   .hp-t .bd { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
-  .hp-t .bd.s { background: #DFFFD9; color: var(--green-text); }
-  .hp-t .bd.g { background: rgba(31,122,94,0.12); color: #1F7A5E; }
+  .hp-t .bd.s { background: #DCFBD3; color: var(--green-text); }
+  .hp-t .bd.g { background: rgba(31,122,94,0.12); color: #1A1A19; }
   .hp-t .bd.m { background: rgba(29,95,160,0.10); color: var(--blue); }
   .hp-t .bd.k { background: rgba(26,26,25,0.07); color: var(--text); }
   .dots { display: inline-flex; gap: 3px; vertical-align: middle; }
   .dots i { width: 9px; height: 9px; border-radius: 50%; background: rgba(26,26,25,0.13); }
-  .dots i.on { background: var(--green-graph, #1DA300); }
+  .dots i.on { background: var(--green-graph, #157C00); }
   .hp-t tbody tr.dim > * { color: var(--text); }
   .hp-t tbody tr.dim th { color: var(--text); }
   .hp .klein { margin-top: 14px; }
@@ -87,7 +88,7 @@
   /* Platz wählen (4) */
   .schritte { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: s; }
   .schritte li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 12px; border-radius: 12px; background: var(--ap-soft); counter-increment: s; }
-  .schritte li::before { content: counter(s); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--green-graph, #1DA300); color: #fff; font-weight: 600; font-size: 14px; }
+  .schritte li::before { content: counter(s); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--green-graph, #157C00); color: #fff; font-weight: 600; font-size: 14px; }
   .schritte b { display: block; font-size: 14.5px; font-weight: 600; }
   .schritte span { display: block; font-size: 13px; color: var(--text); line-height: 1.4; margin-top: 1px; }
 
@@ -170,8 +171,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="wissen.html">Verstehen</a></li><li><span aria-current="page">Handelsplätze verstehen</span></li></ol></nav>
   <main id="main">
-    <h1>Handelsplätze verstehen</h1>
-    <p class="sub">Wo Anleihen gehandelt werden, wer dir den Kurs stellt und welcher Platz für dich taugt. Drei Karten und eine Tabelle mit elf Handelsplätzen. Lesezeit: etwa 5 Minuten.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Handelsplätze verstehen</h1>
+        <p class="sub">Wo Anleihen gehandelt werden, wer dir den Kurs stellt und welcher Platz für dich taugt. Drei Karten und eine Tabelle mit elf Handelsplätzen. Lesezeit: etwa 5 Minuten.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-handelsplaetze.svg" alt="" width="232" height="160"></div>
+    </div>
     <nav class="lands" aria-label="Zum Thema springen">
       <a class="lbtn" href="#welten"><span class="n">1</span>Zwei Welten</a>
       <a class="lbtn" href="#kurs"><span class="n">2</span>Wer den Kurs stellt</a>

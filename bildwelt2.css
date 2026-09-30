@@ -6,7 +6,7 @@
    ========================================================================================== */
 :root { --up: #157C00; --down: #A2561C; }
 /* Abschnittskarten: weiß statt Grünverlauf */
-.kap, .kap-b { background: #fff; border: 1px solid #E4E3DF; box-shadow: var(--shadow); }
+.kap, .kap.kap-b { background: #fff; border: 1px solid #E4E3DF; box-shadow: var(--shadow); }
 .k-bild { border-color: #E4E3DF; }
 /* Abschnittsnummer wie auf der Startseite */
 .knr { background: #39FF14; color: #1A1A19; border: 2px solid #1A1A19; box-shadow: none; box-sizing: border-box; }

@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -80,7 +81,7 @@
   /* 5 – Rating */
   .skala { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; }
   .skala span { display: block; text-align: center; font-size: 14px; font-weight: 600; color: #fff; padding: 11px 0; border-radius: 6px; }
-  .skala .s1 { background: #1F7A5E; } .skala .s2 { background: #35805A; } .skala .s3 { background: #A3651A; } .skala .s4 { background: #993C1D; }
+  .skala .s1 { background: #1A1A19; } .skala .s2 { background: #157C00; } .skala .s3 { background: #A2561C; } .skala .s4 { background: #A2561C; }
   .marker { position: relative; height: 30px; }
   .marker span { position: absolute; left: var(--p); transform: translateX(calc(-1 * var(--a, 50%))); font-size: 12.5px; font-weight: 600; color: var(--ap-ink); white-space: nowrap; padding-top: 10px; }
   .marker span::before { content: ''; position: absolute; left: var(--a, 50%); top: 0; width: 0; height: 0; border: 5px solid transparent; border-bottom-color: var(--ap-ink); transform: translate(-50%, -2px); }
@@ -92,7 +93,7 @@
   .tb-l { font-size: 14px; font-weight: 600; color: var(--ap-ink); line-height: 1.2; }
   .tb-l small { display: block; font-size: 12px; font-weight: 600; color: var(--ap-text); }
   .tb-bar { display: flex; align-items: center; padding-left: 10px; height: 30px; width: var(--w); min-width: 66px; white-space: nowrap; border-radius: 6px; color: #fff; font-size: 14px; font-weight: 600; }
-  .tb-bar.s1 { background: #1F7A5E; } .tb-bar.s2 { background: #A3651A; } .tb-bar.s3 { background: #993C1D; }
+  .tb-bar.s1 { background: #1A1A19; } .tb-bar.s2 { background: #A2561C; } .tb-bar.s3 { background: #A2561C; }
 
   /* 6 – Vergleich */
   .vgl { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 1.4; }
@@ -182,8 +183,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="wissen.html">Verstehen</a></li><li><span aria-current="page">Anleihen einfach erklärt</span></li></ol></nav>
   <main id="main">
-    <h1>Anleihen einfach erklärt</h1>
-    <p class="sub">Sechs kurze Schritte, jeder mit Schaubild. Lesezeit: etwa 5 Minuten.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Anleihen einfach erklärt</h1>
+        <p class="sub">Sechs kurze Schritte, jeder mit Schaubild. Lesezeit: etwa 5 Minuten.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-grundlagen.svg" alt="" width="232" height="160"></div>
+    </div>
     <nav class="lands" aria-label="Zum Schritt springen">
       <a class="lbtn" href="#was"><span class="n">1</span>Was ist eine Anleihe?</a>
       <a class="lbtn" href="#steckbrief"><span class="n">2</span>Steckbrief</a>
@@ -200,29 +206,29 @@
         <p>Eine Anleihe ist ein Kredit. <strong>Nur leihst du das Geld – nicht die Bank.</strong> Du gibst es einem Staat oder einem Unternehmen. Dafür bekommst du jedes Jahr Zinsen. Am Ende bekommst du dein Geld zurück.</p><p>Staaten wie Deutschland oder die USA geben Anleihen aus. Unternehmen wie Volkswagen oder Coca-Cola auch.</p>
       </div>
       <div class="k-bild"><svg class="sb sb-d" viewBox="0 0 480 258" role="img" aria-labelledby="sb1t"><title id="sb1t">Du gibst heute 1.000 Euro. Jedes Jahr kommen 30 Euro Zinsen zurück. Nach fünf Jahren kommen die 1.000 Euro zurück.</title>
-<defs><marker id="pfb" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1DA300"/></marker>
-<marker id="pfg" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1F7A5E"/></marker></defs>
-<circle cx="62" cy="150" r="46" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.5"/>
-<circle cx="62" cy="134" r="13" fill="#1DA300"/><path d="M36 184 a26 26 0 0 1 52 0z" fill="#1DA300"/>
+<defs><marker id="pfb" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#157C00"/></marker>
+<marker id="pfg" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1A1A19"/></marker></defs>
+<circle cx="62" cy="150" r="46" fill="#DCFBD3" stroke="#157C00" stroke-width="2.5"/>
+<circle cx="62" cy="134" r="13" fill="#157C00"/><path d="M36 184 a26 26 0 0 1 52 0z" fill="#157C00"/>
 <text x="62" y="224" text-anchor="middle" font-size="18" font-weight="600" fill="#1A1A19">Du</text>
-<rect x="374" y="106" width="94" height="88" rx="12" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.5"/>
-<path d="M390 176 v-32 h16 v-14 h16 v14 h16 v-24 h16 v56z" fill="#1DA300"/>
+<rect x="374" y="106" width="94" height="88" rx="12" fill="#DCFBD3" stroke="#157C00" stroke-width="2.5"/>
+<path d="M390 176 v-32 h16 v-14 h16 v14 h16 v-24 h16 v56z" fill="#157C00"/>
 <text x="421" y="224" text-anchor="middle" font-size="16" font-weight="600" fill="#1A1A19">Staat oder</text><text x="421" y="244" text-anchor="middle" font-size="16" font-weight="600" fill="#1A1A19">Unternehmen</text>
-<path d="M118 88 H362" stroke="#1DA300" stroke-width="4" stroke-linecap="round" marker-end="url(#pfb)"/><text x="240" y="62" text-anchor="middle" font-size="18" font-weight="600" fill="#157C00">1.000&nbsp;€</text><text x="240" y="80" text-anchor="middle" font-size="14" fill="#55544F">Du gibst das Geld – heute</text>
-<path d="M362 158 H118" stroke="#1F7A5E" stroke-width="4" stroke-linecap="round" marker-end="url(#pfg)"/><text x="240" y="132" text-anchor="middle" font-size="18" font-weight="600" fill="#1F7A5E">30&nbsp;€ Zinsen</text><text x="240" y="150" text-anchor="middle" font-size="14" fill="#55544F">jedes Jahr</text>
-<path d="M362 228 H118" stroke="#1F7A5E" stroke-width="4" stroke-linecap="round" marker-end="url(#pfg)"/><text x="240" y="202" text-anchor="middle" font-size="18" font-weight="600" fill="#1F7A5E">1.000&nbsp;€ zurück</text><text x="240" y="220" text-anchor="middle" font-size="14" fill="#55544F">nach 5 Jahren</text>
+<path d="M118 88 H362" stroke="#157C00" stroke-width="4" stroke-linecap="round" marker-end="url(#pfb)"/><text x="240" y="62" text-anchor="middle" font-size="18" font-weight="600" fill="#157C00">1.000&nbsp;€</text><text x="240" y="80" text-anchor="middle" font-size="14" fill="#55544F">Du gibst das Geld – heute</text>
+<path d="M362 158 H118" stroke="#1A1A19" stroke-width="4" stroke-linecap="round" marker-end="url(#pfg)"/><text x="240" y="132" text-anchor="middle" font-size="18" font-weight="600" fill="#1A1A19">30&nbsp;€ Zinsen</text><text x="240" y="150" text-anchor="middle" font-size="14" fill="#55544F">jedes Jahr</text>
+<path d="M362 228 H118" stroke="#1A1A19" stroke-width="4" stroke-linecap="round" marker-end="url(#pfg)"/><text x="240" y="202" text-anchor="middle" font-size="18" font-weight="600" fill="#1A1A19">1.000&nbsp;€ zurück</text><text x="240" y="220" text-anchor="middle" font-size="14" fill="#55544F">nach 5 Jahren</text>
 </svg><svg class="sb sb-m" viewBox="0 0 330 222" role="img" aria-labelledby="sb1tm"><title id="sb1tm">Du gibst heute 1.000 Euro. Jedes Jahr kommen 30 Euro Zinsen zurück. Nach fünf Jahren kommen die 1.000 Euro zurück.</title>
-<defs><marker id="pfbm" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1DA300"/></marker>
-<marker id="pfgm" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1F7A5E"/></marker></defs>
-<circle cx="34" cy="138" r="30" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.5"/>
-<circle cx="34" cy="128" r="9" fill="#1DA300"/><path d="M17 160 a17 17 0 0 1 34 0z" fill="#1DA300"/>
+<defs><marker id="pfbm" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#157C00"/></marker>
+<marker id="pfgm" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1A1A19"/></marker></defs>
+<circle cx="34" cy="138" r="30" fill="#DCFBD3" stroke="#157C00" stroke-width="2.5"/>
+<circle cx="34" cy="128" r="9" fill="#157C00"/><path d="M17 160 a17 17 0 0 1 34 0z" fill="#157C00"/>
 <text x="34" y="190" text-anchor="middle" font-size="15" font-weight="600" fill="#1A1A19">Du</text>
-<rect x="266" y="109" width="58" height="58" rx="10" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.5"/>
-<path d="M275 157 v-20 h10 v-9 h10 v9 h10 v-15 h10 v35z" fill="#1DA300"/>
+<rect x="266" y="109" width="58" height="58" rx="10" fill="#DCFBD3" stroke="#157C00" stroke-width="2.5"/>
+<path d="M275 157 v-20 h10 v-9 h10 v9 h10 v-15 h10 v35z" fill="#157C00"/>
 <text x="328" y="187" text-anchor="end" font-size="13" font-weight="600" fill="#1A1A19">Staat oder</text><text x="328" y="203" text-anchor="end" font-size="13" font-weight="600" fill="#1A1A19">Unternehmen</text>
-<path d="M70 72 H256" stroke="#1DA300" stroke-width="4" stroke-linecap="round" marker-end="url(#pfbm)"/><text x="163" y="44" text-anchor="middle" font-size="15" font-weight="600" fill="#157C00">1.000&nbsp;€</text><text x="163" y="62" text-anchor="middle" font-size="14" fill="#55544F">Du gibst das Geld – heute</text>
-<path d="M256 136 H70" stroke="#1F7A5E" stroke-width="4" stroke-linecap="round" marker-end="url(#pfgm)"/><text x="163" y="108" text-anchor="middle" font-size="15" font-weight="600" fill="#1F7A5E">30&nbsp;€ Zinsen</text><text x="163" y="126" text-anchor="middle" font-size="14" fill="#55544F">jedes Jahr</text>
-<path d="M256 212 H70" stroke="#1F7A5E" stroke-width="4" stroke-linecap="round" marker-end="url(#pfgm)"/><text x="163" y="184" text-anchor="middle" font-size="15" font-weight="600" fill="#1F7A5E">1.000&nbsp;€ zurück</text><text x="163" y="202" text-anchor="middle" font-size="14" fill="#55544F">nach 5 Jahren</text>
+<path d="M70 72 H256" stroke="#157C00" stroke-width="4" stroke-linecap="round" marker-end="url(#pfbm)"/><text x="163" y="44" text-anchor="middle" font-size="15" font-weight="600" fill="#157C00">1.000&nbsp;€</text><text x="163" y="62" text-anchor="middle" font-size="14" fill="#55544F">Du gibst das Geld – heute</text>
+<path d="M256 136 H70" stroke="#1A1A19" stroke-width="4" stroke-linecap="round" marker-end="url(#pfgm)"/><text x="163" y="108" text-anchor="middle" font-size="15" font-weight="600" fill="#1A1A19">30&nbsp;€ Zinsen</text><text x="163" y="126" text-anchor="middle" font-size="14" fill="#55544F">jedes Jahr</text>
+<path d="M256 212 H70" stroke="#1A1A19" stroke-width="4" stroke-linecap="round" marker-end="url(#pfgm)"/><text x="163" y="184" text-anchor="middle" font-size="15" font-weight="600" fill="#1A1A19">1.000&nbsp;€ zurück</text><text x="163" y="202" text-anchor="middle" font-size="14" fill="#55544F">nach 5 Jahren</text>
 </svg></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Du bist der Kreditgeber. Der Staat oder das Unternehmen ist dein Schuldner.</span></p>
     </section>

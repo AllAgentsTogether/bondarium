@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -41,8 +42,8 @@
   .balken .hb + .hb { margin-top: 7px; }
   .hb-l { font-size: 13.5px; font-weight: 600; color: var(--ap-ink); line-height: 1.25; }
   .hb-l small { display: block; font-size: 12px; font-weight: 400; color: var(--text); }
-  .hb-bar { display: flex; align-items: center; justify-content: flex-end; height: 28px; width: var(--w); min-width: max-content; padding: 0 8px 0 10px; border-radius: 6px; background: #1F7A5E; }
-  .hb-bar.o { background: #A3651A; } .hb-bar.r { background: var(--down); } .hb-bar.n { background: #8E8D86; } .hb-bar.g { background: #1DA300; }
+  .hb-bar { display: flex; align-items: center; justify-content: flex-end; height: 28px; width: var(--w); min-width: max-content; padding: 0 8px 0 10px; border-radius: 6px; background: #1A1A19; }
+  .hb-bar.o { background: #A2561C; } .hb-bar.r { background: var(--down); } .hb-bar.n { background: #8E8D86; } .hb-bar.g { background: #157C00; }
   .hb-bar b { color: #fff; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .erg { margin-top: 10px; padding: 9px 12px; border-radius: 10px; background: #fff; border: 1.5px solid var(--green-line); font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
   .erg b { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; color: var(--green-text); }
@@ -63,14 +64,14 @@
   .zs .ev b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
   .zs .ev.minus b { color: var(--down); } .zs .ev.plus b { color: var(--up); }
   .zs .ev::after { content: ""; position: absolute; left: 50%; top: 52px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: #1A1A19; border: 3px solid #fff; box-shadow: 0 0 0 1.5px rgba(26,26,25,0.25); }
-  .zs .ev.plus::after { background: #1DA300; } .zs .ev.minus::after { background: var(--down); }
+  .zs .ev.plus::after { background: #157C00; } .zs .ev.minus::after { background: var(--down); }
   .zs .ev .u { position: absolute; left: 0; right: 0; top: 74px; font-size: 12px; color: var(--text); }
   .zs .jahr { position: absolute; top: 112px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); }
 
   /* Stückelung (6) */
   .stk { display: flex; height: 40px; border-radius: 8px; overflow: hidden; }
   .stk span { display: grid; place-items: center; color: #fff; font-size: 13.5px; font-weight: 600; font-variant-numeric: tabular-nums; width: var(--w); }
-  .stk .a { background: #1DA300; } .stk .b { background: #A3651A; } .stk .c { background: #55544F; }
+  .stk .a { background: #157C00; } .stk .b { background: #A2561C; } .stk .c { background: #55544F; }
   .stk-leg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 8px; font-size: 12.5px; line-height: 1.35; color: var(--text); }
   .stk-leg b { display: block; color: var(--ink); font-weight: 600; }
 
@@ -142,8 +143,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="wissen.html">Verstehen</a></li><li><span aria-current="page">Steuern und Handelskosten</span></li></ol></nav>
   <main id="main">
-    <h1>Steuern und Handelskosten: Was von der Rendite bleibt</h1>
-    <p class="sub">Zwischen 3,9&nbsp;% auf dem Kurszettel und dem Geld auf deinem Konto liegen Abgeltungsteuer, Ordergebühr und Geld-Brief-Spanne. Wer sie kennt, holt bei gleicher Anleihe mehr heraus. Lesezeit: etwa 6 Minuten.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Steuern und Handelskosten: Was von der Rendite bleibt</h1>
+        <p class="sub">Zwischen 3,9&nbsp;% auf dem Kurszettel und dem Geld auf deinem Konto liegen Abgeltungsteuer, Ordergebühr und Geld-Brief-Spanne. Wer sie kennt, holt bei gleicher Anleihe mehr heraus. Lesezeit: etwa 6 Minuten.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-steuern-handelskosten.svg" alt="" width="232" height="160"></div>
+    </div>
     <p class="stand"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg><span><b>Keine Steuerberatung.</b> Regeln für deutsche Privatanleger, Stand September 2026.</span></p>
     <nav class="lands" aria-label="Zum Thema springen">
       <a class="lbtn" href="#zins"><span class="n">1</span>Steuer auf Zinsen</a>

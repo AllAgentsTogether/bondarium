@@ -27,14 +27,15 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Bonität und Ratings (24.09.2026): fünf Erklärkarten nach dem Gestaltungssystem (base.css); hier nur die eigenen Bausteine. */
   /* Notenfarben: von Grün (beste) über Gelb bis Rot (Ausfall), dunkle Schrift auf hellem Grund */
   .rc { display: inline-block; white-space: nowrap; min-width: 50px; text-align: center; font-size: 14px; font-weight: 600; letter-spacing: 0.02em; border-radius: 7px; padding: 4px 8px; font-variant-numeric: tabular-nums; }
-  .r1 { background: #D8EEE4; color: #14553F; } .r2 { background: #E3F1EC; color: #1B6B52; } .r3 { background: #EAF2E3; color: #2F6326; }
-  .r4 { background: #F2F0D8; color: #5A560F; } .r5 { background: #FBEADB; color: #8E4A17; } .r6 { background: #F9E1D5; color: #8A3519; }
+  .r1 { background: #DCFBD3; color: #157C00; } .r2 { background: #DCFBD3; color: #157C00; } .r3 { background: #EAF2E3; color: #2F6326; }
+  .r4 { background: #F2F0D8; color: #5A560F; } .r5 { background: #FBE8D8; color: #A2561C; } .r6 { background: #FBE8D8; color: #A2561C; }
   .r7 { background: #F4D8D1; color: #7A2414; } .r8 { background: #E9D3CF; color: #5C1A10; }
   /* 1: So entsteht ein Rating (Fluss) */
   .fluss { list-style: none; display: grid; gap: 10px; }
@@ -71,7 +72,7 @@
   .rbs.t3 { --tick: 33.333%; } .rbs.t5 { --tick: 20%; }
   .tk.t3 i:nth-child(2) { left: 33.333%; } .tk.t3 i:nth-child(3) { left: 66.667%; } .tk.t3 i:nth-child(4) { left: 100%; }
   .tk.t5 i:nth-child(2) { left: 20%; } .tk.t5 i:nth-child(3) { left: 40%; } .tk.t5 i:nth-child(4) { left: 60%; } .tk.t5 i:nth-child(5) { left: 80%; } .tk.t5 i:nth-child(6) { left: 100%; }
-  .rb.hy .rb-v i { background: #A85A22; }
+  .rb.hy .rb-v i { background: #A2561C; }
   .rb-v i { display: flex; justify-content: flex-end; align-items: center; }
   .rb-v i.null { min-width: 0; width: 0; }
   .rb-v i b.in { color: #fff; padding: 0 7px; font-size: 12.5px; }
@@ -86,7 +87,7 @@
   .rb-leg { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 12.5px; color: var(--text); }
   .rb-leg span { display: inline-flex; align-items: center; gap: 6px; }
   .rb-leg span::before { content: ""; width: 14px; height: 10px; border-radius: 0 3px 3px 0; background: var(--blue); }
-  .rb-leg span.hy::before { background: #A85A22; }
+  .rb-leg span.hy::before { background: #A2561C; }
   /* 5: Checkliste */
   .check { list-style: none; display: grid; gap: 10px; }
   .check li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 14.5px; line-height: 1.45; color: var(--text); }
@@ -150,16 +151,16 @@
   /* 5: Der Ausblick (seit 24.09.2026 spät): Beispielzeile, vier Ausblicke, Zeiträume */
   .abl-so { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 14px; color: var(--text); }
   .abl-sk { font-weight: 600; }
-  .abl-tag { display: inline-block; font-size: 13px; font-weight: 600; border-radius: 7px; padding: 4px 9px; background: #F9E1D5; color: #8A3519; white-space: nowrap; }
+  .abl-tag { display: inline-block; font-size: 13px; font-weight: 600; border-radius: 7px; padding: 4px 9px; background: #FBE8D8; color: #A2561C; white-space: nowrap; }
   .abl { list-style: none; display: grid; gap: 8px; }
   .abl li { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 12px; align-items: center; border: 1px solid var(--rule); border-radius: 12px; padding: 9px 12px; background: #fff; }
   .abl .ai { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; }
   .abl .ai svg { width: 20px; height: 20px; }
   .abl b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); }
   .abl .at { display: block; font-size: 14px; line-height: 1.4; color: var(--text); }
-  .abl .a-pos .ai { background: #D8EEE4; color: #14553F; }
+  .abl .a-pos .ai { background: #DCFBD3; color: #157C00; }
   .abl .a-sta .ai { background: var(--green-tint); color: var(--green-text); }
-  .abl .a-neg .ai { background: #F9E1D5; color: #8A3519; }
+  .abl .a-neg .ai { background: #FBE8D8; color: #A2561C; }
   .abl .a-dev .ai { background: #ECEBE7; color: #55544F; }
   .abl-z { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
   .abl-z div { background: var(--green-tint); border: 1px solid var(--green-line); border-radius: 10px; padding: 9px 12px; }
@@ -234,8 +235,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="wissen.html">Verstehen</a></li><li><span aria-current="page">Bonität und Ratings</span></li></ol></nav>
   <main id="main">
-    <h1>Bonität und Ratings einfach erklärt</h1>
-    <p class="sub">Wie sicher bekommst du dein Geld zurück? Das sagt die Bonität des Schuldners – und das Rating ist die Note dafür. Sechs kurze Schritte, jeder mit Schaubild. Lesezeit: etwa 7 Minuten.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Bonität und Ratings einfach erklärt</h1>
+        <p class="sub">Wie sicher bekommst du dein Geld zurück? Das sagt die Bonität des Schuldners – und das Rating ist die Note dafür. Sechs kurze Schritte, jeder mit Schaubild. Lesezeit: etwa 7 Minuten.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-bonitaet.svg" alt="" width="232" height="160"></div>
+    </div>
     <nav class="lands" aria-label="Zum Schritt springen">
       <a class="lbtn" href="#was"><span class="n">1</span>Was ist Bonität?</a>
       <a class="lbtn" href="#skala"><span class="n">2</span>Die Skala</a>

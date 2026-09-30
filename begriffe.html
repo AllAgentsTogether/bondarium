@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -45,6 +46,7 @@
   .az a, .az span { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 6px; font-size: 14px; font-weight: 600; }
   .az a { color: var(--green-text); text-decoration: none; background: var(--ap-soft); }
   .az a:hover { background: var(--green); color: var(--ink); }
+  .az a.an { background: var(--green); color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }   /* Bildwelt 2.0: aktiver Buchstabe */
   .az a.leer { opacity: 0.35; }
   .az span { color: rgba(44,44,42,0.28); }
   /* Zurück zur Buchstabenleiste: schwebender Knopf, sobald die Leiste aus dem Bild ist */
@@ -144,8 +146,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="wissen.html">Verstehen</a></li><li><span aria-current="page">Glossar</span></li></ol></nav>
   <main id="main">
-    <h1>Glossar</h1>
-    <p class="sub"><span id="bg-n">67</span> Fachbegriffe rund um Anleihen – jeder in wenigen Sätzen. Tippe einen Begriff ein oder springe zum Buchstaben.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Glossar</h1>
+        <p class="sub"><span id="bg-n">67</span> Fachbegriffe rund um Anleihen – jeder in wenigen Sätzen. Tippe einen Begriff ein oder springe zum Buchstaben.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-begriffe.svg" alt="" width="232" height="160"></div>
+    </div>
     <div class="suche">
       <svg class="lupe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.8-3.8"/></svg>
       <label for="bg-q" class="sr-only">Begriff suchen</label>
@@ -236,6 +243,14 @@ MC.navInit();
   }
   count.textContent = total + ' Begriffe';
   q.addEventListener('input', run);
+  // Bildwelt 2.0 (30.09.2026): aktiver Buchstabe = Abschnitt, der gerade oben im Bild steht (Neon mit Tinten-Rand)
+  function aktiv() {
+    var an = null;
+    groups.forEach(function (g) { if (!g.hidden && g.getBoundingClientRect().top <= 130) an = g.id; });
+    letters.forEach(function (l) { l.classList.toggle('an', l.getAttribute('href') === '#' + an); });
+  }
+  window.addEventListener('scroll', aktiv, { passive: true });   // 26 Abschnitte – direkt rechnen ist billig
+  aktiv();
   document.getElementById('bg-reset').addEventListener('click', function () { q.value = ''; run(); q.focus(); });
   // Sprungmarke von außen (z. B. #duration): Suche leeren, damit der Eintrag sichtbar ist
   window.addEventListener('hashchange', function () { if (q.value) { q.value = ''; run(); var t = document.getElementById(location.hash.slice(1)); if (t) t.scrollIntoView(); } });

@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -37,13 +38,13 @@
   .k-bild svg .axt { font-size: 13px; font-weight: 600; fill: #55544F; }
   .sb-f { font-size: 13px; color: var(--text); margin-top: 10px; line-height: 1.5; }
   .lg { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12.5px; font-weight: 600; color: var(--text); margin: -2px 0 6px; }
-  .lg span::before { content: ""; display: inline-block; width: 18px; height: 3px; border-radius: 2px; vertical-align: middle; margin: 0 6px 2px 0; background: #1DA300; }
+  .lg span::before { content: ""; display: inline-block; width: 18px; height: 3px; border-radius: 2px; vertical-align: middle; margin: 0 6px 2px 0; background: #157C00; }
   .lg .lg-s::before { background: repeating-linear-gradient(90deg, #1A1A19 0 6px, transparent 6px 10px); opacity: .7; }
 
   /* Kennzeichen harmlos / beachten / Vorteil (Farben wie .bdg im Broker-Vergleich) */
   .bdg { display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1; padding: 5px 9px; border-radius: 999px; white-space: nowrap; }
-  .bdg.ok { color: #1B6B52; background: #E3F1EC; }
-  .bdg.acht { color: #8E4A17; background: #FBEADB; }
+  .bdg.ok { color: #157C00; background: #DCFBD3; }
+  .bdg.acht { color: #A2561C; background: #FBE8D8; }
   .bdg.plus { color: #157C00; background: #DCFBD3; }
 
   /* Katalog der Kündigungsarten (2) – Kartengrundregeln (.gruppe/.typ) seit 30.09.2026 zentral in base.css */
@@ -61,11 +62,11 @@
   .nm .n1, .nm .n2, .nm .n3 { padding: 0 3px; border-radius: 5px; }
   .nm .n1 { background: rgba(26,26,25,0.08); }
   .nm .n2 { background: #DCFBD3; color: #157C00; }
-  .nm .n3 { background: #FBEADB; color: #8E4A17; }
+  .nm .n3 { background: #FBE8D8; color: #A2561C; }
   .nm-l { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 16px; margin: 10px 0 0; padding: 0; font-size: 13px; color: var(--text); }
   .nm-l b { color: var(--ink); font-weight: 600; margin-right: 4px; font-variant-numeric: tabular-nums; }
   .nm-l i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: 0; }
-  .nm-l i.n1 { background: rgba(26,26,25,0.25); } .nm-l i.n2 { background: #1DA300; } .nm-l i.n3 { background: #CF7430; }
+  .nm-l i.n1 { background: rgba(26,26,25,0.25); } .nm-l i.n2 { background: #157C00; } .nm-l i.n3 { background: #CF7430; }
   .lese { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; line-height: 1.4; }
   .lese th, .lese td { text-align: left; padding: 8px 8px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: middle; }
   .lese thead th { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); padding-top: 0; }
@@ -84,7 +85,7 @@
   .rbb { flex: none; width: var(--w); height: 22px; border-radius: 0 6px 6px 0; background: #C9C6BE; }
   .rbt b { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .nimm .rbl { color: var(--ink); font-weight: 600; }
-  .nimm .rbb { background: #1DA300; }
+  .nimm .rbb { background: #157C00; }
   .rbg-e { margin: 8px 0 0; font-size: 14px; color: var(--green-text); }
   .rbg-e b { font-weight: 600; font-variant-numeric: tabular-nums; }
 
@@ -163,8 +164,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="wissen.html">Verstehen</a></li><li><span aria-current="page">Kündbare Anleihen</span></li></ol></nav>
   <main id="main">
-    <h1>Kündbar ist nicht gleich kündbar</h1>
-    <p class="sub">Viele Anleihen darf der Emittent vor der Fälligkeit zurückzahlen. Meist ist das harmlos – manchmal kostet es dich Zinsen. Sechs Arten, woran du sie erkennst und was sie für dich heißen. Lesezeit: etwa 5 Minuten.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Kündbar ist nicht gleich kündbar</h1>
+        <p class="sub">Viele Anleihen darf der Emittent vor der Fälligkeit zurückzahlen. Meist ist das harmlos – manchmal kostet es dich Zinsen. Sechs Arten, woran du sie erkennst und was sie für dich heißen. Lesezeit: etwa 5 Minuten.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-kuendbare-anleihen.svg" alt="" width="232" height="160"></div>
+    </div>
     <nav class="lands" aria-label="Zum Thema springen">
       <a class="lbtn" href="#prinzip"><span class="n">1</span>Das Prinzip</a>
       <a class="lbtn" href="#arten"><span class="n">2</span>Sechs Arten</a>
@@ -179,7 +185,7 @@
         <h2 id="h-prinzip">Warum der Emittent kündigt</h2>
         <p>Kündigen heißt: Die Anleihe wird <strong>vor der Fälligkeit</strong> zurückgezahlt. Ob das erlaubt ist, steht in den Anleihebedingungen. Meist hat der Emittent das Recht dazu – englisch <strong>Call</strong>. Seltener hast du es als Anleger – <strong>Put</strong>.</p><p>Der Emittent kündigt, wenn es sich für ihn lohnt: <strong>wenn das allgemeine Zinsniveau gefallen ist</strong> oder seine Bonität besser wurde. Dann leiht er sich das Geld neu, billiger. Für dich endet der gute Zins früher, und du legst das Geld schlechter wieder an. Steigt das Zinsniveau, kündigt er nicht. Als Ausgleich bringen kündbare Anleihen meist etwas mehr Zins.</p>
       </div>
-      <div class="k-bild"><p class="sb-k">Die Kündigung deckelt den Kurs</p><p class="lg" aria-hidden="true"><span class="lg-s">ohne Kündigungsrecht</span><span class="lg-g">kündbar zu 100&nbsp;%</span></p><svg class="sb" viewBox="0 0 480 258" role="img" aria-labelledby="sb1t" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif"><title id="sb1t">Schematisch: Kurs einer Anleihe mit 10 Jahren Laufzeit und 4 Prozent Kupon, wenn das allgemeine Zinsniveau von 6 auf 2 Prozent fällt. Ohne Kündigungsrecht steigt der Kurs auf 118 Prozent. Ist die Anleihe in einem Jahr zu 100 Prozent kündbar, bleibt der Kurs bei rund 100 bis 102 Prozent.</title><text class="axt" x="4" y="16">↑ Kurs in %</text><line x1="58.0" y1="212.0" x2="462.0" y2="212.0" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/><text x="50.0" y="216.0" text-anchor="end" class="tk" font-size="12" fill="#55544F">80</text><line x1="58.0" y1="168.0" x2="462.0" y2="168.0" stroke="#1A1A19" stroke-opacity="0.09" stroke-width="1"/><text x="50.0" y="172.0" text-anchor="end" class="tk" font-size="12" fill="#55544F">90</text><line x1="58.0" y1="124.0" x2="462.0" y2="124.0" stroke="#1A1A19" stroke-opacity="0.09" stroke-width="1"/><text x="50.0" y="128.0" text-anchor="end" class="tk" font-size="12" fill="#55544F">100</text><line x1="58.0" y1="80.0" x2="462.0" y2="80.0" stroke="#1A1A19" stroke-opacity="0.09" stroke-width="1"/><text x="50.0" y="84.0" text-anchor="end" class="tk" font-size="12" fill="#55544F">110</text><line x1="58.0" y1="36.0" x2="462.0" y2="36.0" stroke="#1A1A19" stroke-opacity="0.09" stroke-width="1"/><text x="50.0" y="40.0" text-anchor="end" class="tk" font-size="12" fill="#55544F">120</text><line x1="58.0" y1="124.0" x2="462.0" y2="124.0" stroke="#1A1A19" stroke-opacity="0.45" stroke-width="1.2" stroke-dasharray="5 4"/><line x1="58.0" y1="212.0" x2="58.0" y2="217.0" stroke="#1A1A19" stroke-opacity="0.35"/><text x="58.0" y="233.0" text-anchor="middle" class="tk" font-size="12" fill="#55544F">6&#160;%</text><line x1="159.0" y1="212.0" x2="159.0" y2="217.0" stroke="#1A1A19" stroke-opacity="0.35"/><text x="159.0" y="233.0" text-anchor="middle" class="tk" font-size="12" fill="#55544F">5&#160;%</text><line x1="260.0" y1="212.0" x2="260.0" y2="217.0" stroke="#1A1A19" stroke-opacity="0.35"/><text x="260.0" y="233.0" text-anchor="middle" class="tk" font-size="12" fill="#55544F">4&#160;%</text><line x1="361.0" y1="212.0" x2="361.0" y2="217.0" stroke="#1A1A19" stroke-opacity="0.35"/><text x="361.0" y="233.0" text-anchor="middle" class="tk" font-size="12" fill="#55544F">3&#160;%</text><line x1="462.0" y1="212.0" x2="462.0" y2="217.0" stroke="#1A1A19" stroke-opacity="0.35"/><text x="462.0" y="233.0" text-anchor="middle" class="tk" font-size="12" fill="#55544F">2&#160;%</text><polyline points="58.0,188.8 83.2,181.4 108.5,173.7 133.8,166.0 159.0,158.0 184.2,149.8 209.5,141.4 234.8,132.8 260.0,124.0 285.2,122.9 310.5,121.9 335.8,120.8 361.0,119.7 386.2,118.6 411.5,117.6 436.8,116.5 462.0,115.4" fill="none" stroke="#1DA300" stroke-width="4" stroke-linejoin="round"/><polyline points="58.0,188.8 83.2,181.4 108.5,173.7 133.8,166.0 159.0,158.0 184.2,149.8 209.5,141.4 234.8,132.8 260.0,124.0 285.2,115.0 310.5,105.7 335.8,96.2 361.0,86.5 386.2,76.5 411.5,66.2 436.8,55.7 462.0,45.0" fill="none" stroke="#1A1A19" stroke-opacity="0.7" stroke-width="2" stroke-dasharray="6 4" stroke-linejoin="round"/><text x="462.0" y="33.0" text-anchor="end" class="an" font-size="13" font-weight="600" fill="#55544F">ohne Kündigung: 118&#160;%</text><text x="462.0" y="146.0" text-anchor="end" class="an" font-size="13" font-weight="600" fill="#157C00">kündbar: 102&#160;%</text><text class="axt" x="474" y="252" text-anchor="end">Zinsniveau fällt →</text></svg><p class="sb-f">Schematisch: 10 Jahre Laufzeit, Kupon 4&nbsp;%, kündbar in einem Jahr. Fällt das allgemeine Zinsniveau, steigt der Kurs der kündbaren Anleihe kaum über 100&nbsp;% – alle rechnen mit der Kündigung.</p></div>
+      <div class="k-bild"><p class="sb-k">Die Kündigung deckelt den Kurs</p><p class="lg" aria-hidden="true"><span class="lg-s">ohne Kündigungsrecht</span><span class="lg-g">kündbar zu 100&nbsp;%</span></p><svg class="sb" viewBox="0 0 480 258" role="img" aria-labelledby="sb1t" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif"><title id="sb1t">Schematisch: Kurs einer Anleihe mit 10 Jahren Laufzeit und 4 Prozent Kupon, wenn das allgemeine Zinsniveau von 6 auf 2 Prozent fällt. Ohne Kündigungsrecht steigt der Kurs auf 118 Prozent. Ist die Anleihe in einem Jahr zu 100 Prozent kündbar, bleibt der Kurs bei rund 100 bis 102 Prozent.</title><text class="axt" x="4" y="16">↑ Kurs in %</text><line x1="58.0" y1="212.0" x2="462.0" y2="212.0" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/><text x="50.0" y="216.0" text-anchor="end" class="tk" font-size="12" fill="#55544F">80</text><line x1="58.0" y1="168.0" x2="462.0" y2="168.0" stroke="#1A1A19" stroke-opacity="0.09" stroke-width="1"/><text x="50.0" y="172.0" text-anchor="end" class="tk" font-size="12" fill="#55544F">90</text><line x1="58.0" y1="124.0" x2="462.0" y2="124.0" stroke="#1A1A19" stroke-opacity="0.09" stroke-width="1"/><text x="50.0" y="128.0" text-anchor="end" class="tk" font-size="12" fill="#55544F">100</text><line x1="58.0" y1="80.0" x2="462.0" y2="80.0" stroke="#1A1A19" stroke-opacity="0.09" stroke-width="1"/><text x="50.0" y="84.0" text-anchor="end" class="tk" font-size="12" fill="#55544F">110</text><line x1="58.0" y1="36.0" x2="462.0" y2="36.0" stroke="#1A1A19" stroke-opacity="0.09" stroke-width="1"/><text x="50.0" y="40.0" text-anchor="end" class="tk" font-size="12" fill="#55544F">120</text><line x1="58.0" y1="124.0" x2="462.0" y2="124.0" stroke="#1A1A19" stroke-opacity="0.45" stroke-width="1.2" stroke-dasharray="5 4"/><line x1="58.0" y1="212.0" x2="58.0" y2="217.0" stroke="#1A1A19" stroke-opacity="0.35"/><text x="58.0" y="233.0" text-anchor="middle" class="tk" font-size="12" fill="#55544F">6&#160;%</text><line x1="159.0" y1="212.0" x2="159.0" y2="217.0" stroke="#1A1A19" stroke-opacity="0.35"/><text x="159.0" y="233.0" text-anchor="middle" class="tk" font-size="12" fill="#55544F">5&#160;%</text><line x1="260.0" y1="212.0" x2="260.0" y2="217.0" stroke="#1A1A19" stroke-opacity="0.35"/><text x="260.0" y="233.0" text-anchor="middle" class="tk" font-size="12" fill="#55544F">4&#160;%</text><line x1="361.0" y1="212.0" x2="361.0" y2="217.0" stroke="#1A1A19" stroke-opacity="0.35"/><text x="361.0" y="233.0" text-anchor="middle" class="tk" font-size="12" fill="#55544F">3&#160;%</text><line x1="462.0" y1="212.0" x2="462.0" y2="217.0" stroke="#1A1A19" stroke-opacity="0.35"/><text x="462.0" y="233.0" text-anchor="middle" class="tk" font-size="12" fill="#55544F">2&#160;%</text><polyline points="58.0,188.8 83.2,181.4 108.5,173.7 133.8,166.0 159.0,158.0 184.2,149.8 209.5,141.4 234.8,132.8 260.0,124.0 285.2,122.9 310.5,121.9 335.8,120.8 361.0,119.7 386.2,118.6 411.5,117.6 436.8,116.5 462.0,115.4" fill="none" stroke="#157C00" stroke-width="4" stroke-linejoin="round"/><polyline points="58.0,188.8 83.2,181.4 108.5,173.7 133.8,166.0 159.0,158.0 184.2,149.8 209.5,141.4 234.8,132.8 260.0,124.0 285.2,115.0 310.5,105.7 335.8,96.2 361.0,86.5 386.2,76.5 411.5,66.2 436.8,55.7 462.0,45.0" fill="none" stroke="#1A1A19" stroke-opacity="0.7" stroke-width="2" stroke-dasharray="6 4" stroke-linejoin="round"/><text x="462.0" y="33.0" text-anchor="end" class="an" font-size="13" font-weight="600" fill="#55544F">ohne Kündigung: 118&#160;%</text><text x="462.0" y="146.0" text-anchor="end" class="an" font-size="13" font-weight="600" fill="#157C00">kündbar: 102&#160;%</text><text class="axt" x="474" y="252" text-anchor="end">Zinsniveau fällt →</text></svg><p class="sb-f">Schematisch: 10 Jahre Laufzeit, Kupon 4&nbsp;%, kündbar in einem Jahr. Fällt das allgemeine Zinsniveau, steigt der Kurs der kündbaren Anleihe kaum über 100&nbsp;% – alle rechnen mit der Kündigung.</p></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Der Emittent kündigt, wenn es ihm nützt – also meist dann, wenn es dir schadet.</span></p>
     </section>
 
