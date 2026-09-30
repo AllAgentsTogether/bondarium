@@ -225,6 +225,12 @@ def main() -> int:
             "fenster": {"von": fenster[0], "bis": fenster[-1], "tage": len(fenster), "soll": FENSTER},
             "aktiv": len(fenster) >= MIN_TAGE, "min_tage": MIN_TAGE}
     rc = 0
+    # Hinweis (30.09.2026): Länder ohne gehandelte Anleihe im Fenster fehlen in der Liste – z. B. die Schweiz bei
+    # Unternehmensanleihen (Umsatz an deutschen Börsen praktisch null). Die Seiten blenden sie dann aus.
+    for datei, slugs in (("top10-staatsanleihen-laender.json", STAAT_LAENDER), ("top10-unternehmensanleihen-laender.json", FIRMEN_LAENDER)):
+        leer = [s for s in slugs if not listen[datei].get(s)]
+        if leer:
+            print(f"{datei}: ohne gehandelte Anleihe im Fenster: {', '.join(leer)}")
     for datei, gruppen in listen.items():
         top = {g: sorted(z, key=lambda x: (-x["ht"], -x["um"], -(x["vol"] or 0), x["isin"]))[:TOP]
                for g, z in gruppen.items()}
