@@ -29,7 +29,9 @@
 /* Porträts (Guide): Laufzeit-Ring */
 .pc .pc-img { position: relative; border-radius: 50%; overflow: visible !important; background: transparent !important; }
 .pc .pc-img img { border-radius: 50%; background: #fff; }
-.b2-ring { position: absolute; inset: -7%; width: 114%; height: 114%; pointer-events: none; }
+.b2-ring { position: absolute; inset: -7%; width: 114%; height: 114%; pointer-events: none; overflow: visible; }   /* Punkt am Ring ragt über den Rand – nicht abschneiden (wie .ppl .ring svg auf der Startseite) */
+a.pc { padding-top: 26px; }   /* Platz über dem Ring: Der Punkt oben (Nadine, Jonas) stieß sonst an den Kartenrand; a.pc schlägt .pc im Seitenstil */
+@media (max-width: 600px) { a.pc { padding-top: 20px; } }
 .ap-badge { background: #39FF14 !important; color: #1A1A19 !important; border: 2px solid #1A1A19; }
 .ap-card { background: #fff !important; border: 1px solid #E4E3DF; }
 .merk .mi::before { display: block; box-sizing: border-box; }
