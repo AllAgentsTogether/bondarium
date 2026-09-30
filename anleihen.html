@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -149,6 +150,11 @@
     .hub-tag { margin: 0 0 6px; padding: 3px 8px; font-size: 10px; letter-spacing: 0.05em; justify-self: start; }
     .hub-card.next { margin-top: 12px; }
   }
+
+  /* Bildwelt 2.0 (30.09.2026, Vorlage des Nutzers): Kartenbilder = Titel-Illustrationen der Zielseiten (<img class="hub-img">),
+     Weiter-Karte als flache Hauch-Fläche ohne Bildfeld (auch Tablet und Handy) */
+  .hub-card.next, .hub-card.next:hover { background: #DCFBD3; border-color: transparent; }
+  .hub-card.next:hover { border-color: var(--green-text); }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","headline":"Anleihen – Suche, Top 10 nach Laufzeit und Land, Anleihen-ETFs und Beispiele der Redaktion","description":"Suche über rund 33.000 Anleihen an deutschen Börsen, die zehn meistgehandelten je Laufzeit und Land, 70 Anleihen-ETFs und Beispiele für vier Ziele.","inLanguage":"de","isAccessibleForFree":true,"url":"https://www.bondarium.de/anleihen.html","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.bondarium.de/anleihen.html"}]}</script>
@@ -224,145 +230,55 @@
 
   <div class="hub">
     <a class="hub-card" href="anleihen-suche.html">
-      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
-<ellipse cx="60" cy="93" rx="46" ry="4" fill="#1DA300" fill-opacity="0.08"/>
-  <rect x="12" y="14" width="96" height="20" rx="10" fill="#fff" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="24" cy="24" r="4.5" fill="none" stroke="#1DA300" stroke-width="2.2"/><path d="M27.5 27.5 L31 31" stroke="#1DA300" stroke-width="2.4" stroke-linecap="round"/>
-  <text x="38" y="27.5" text-anchor="start" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="8.5" font-weight="500" fill="#6E6D68">ISIN oder Name</text>
-  <rect x="12" y="42" width="96" height="12" rx="6" fill="#DFFFD9"/>
-  <rect x="12" y="58" width="96" height="12" rx="6" fill="#74FF5B" stroke="#1DA300" stroke-width="1.6"/>
-  <rect x="12" y="74" width="96" height="12" rx="6" fill="#DFFFD9"/>
-  <path d="M20 48 H56 M84 48 H100 M20 64 H62 M84 64 H100 M20 80 H50 M84 80 H100" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round" stroke-opacity="0.55"/>
-</svg>
+      <img class="hub-img" src="spot-anleihen-suche.svg" alt="" width="160" height="110">
       <span class="hub-tag neutral">Alle Anleihen</span>
       <h2>Anleihen-Suche</h2>
       <p class="desc">Filter nach Land, Währung, Laufzeit und Rendite</p>
     </a>
     <a class="hub-card" href="staatsanleihen-laufzeit.html">
-      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
-<ellipse cx="60" cy="93" rx="46" ry="4" fill="#1DA300" fill-opacity="0.08"/>
-  <rect x="14" y="18" width="24" height="10" rx="5" fill="#B0FFA1"/>
-  <rect x="14" y="32" width="40" height="10" rx="5" fill="#74FF5B"/>
-  <rect x="14" y="46" width="56" height="10" rx="5" fill="#1DA300"/>
-  <rect x="14" y="60" width="72" height="10" rx="5" fill="#74FF5B"/>
-  <rect x="14" y="74" width="72" height="10" rx="5" fill="#B0FFA1"/>
-  <text x="110" y="27" text-anchor="end" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9" font-weight="600" fill="#157C00">1&#160;J.</text><text x="110" y="83" text-anchor="end" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9" font-weight="600" fill="#157C00">30+</text>
-  <path d="M96 40 V48 L92 46 L88 48 V40 Z" fill="#DFFFD9" stroke="#1DA300" stroke-width="1.6" stroke-linejoin="round"/>
-  <path d="M86 40 H98 M86 36 L92 32 L98 36 M87 40 V49 M97 40 V49 M92 40 V49" fill="none" stroke="#1DA300" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
+      <img class="hub-img" src="spot-staatsanleihen-laufzeit.svg" alt="" width="160" height="110">
       <span class="hub-tag">Top 10 meistgehandelt</span>
       <h2>Staatsanleihen nach Laufzeit</h2>
       <p class="desc">Fünf Restlaufzeiten von bis 1 Jahr bis über 30 Jahre</p>
     </a>
     <a class="hub-card" href="unternehmensanleihen-laufzeit.html">
-      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
-<ellipse cx="60" cy="93" rx="46" ry="4" fill="#1DA300" fill-opacity="0.08"/>
-  <rect x="12" y="22" width="22" height="62" rx="4" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M18 30 H28 M18 38 H28 M18 46 H28 M18 54 H28 M18 62 H28" stroke="#1DA300" stroke-width="2" stroke-linecap="round"/>
-  <path d="M20 84 V74 H26 V84" fill="#fff" stroke="#1DA300" stroke-width="1.8" stroke-linejoin="round"/>
-  <rect x="42" y="18" width="20" height="10" rx="5" fill="#B0FFA1"/>
-  <rect x="42" y="32" width="32" height="10" rx="5" fill="#74FF5B"/>
-  <rect x="42" y="46" width="44" height="10" rx="5" fill="#1DA300"/>
-  <rect x="42" y="60" width="50" height="10" rx="5" fill="#74FF5B"/>
-  <rect x="42" y="74" width="52" height="10" rx="5" fill="#B0FFA1"/>
-  <text x="112" y="27" text-anchor="end" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9" font-weight="600" fill="#157C00">1&#160;J.</text><text x="112" y="83" text-anchor="end" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9" font-weight="600" fill="#157C00">30+</text>
-</svg>
+      <img class="hub-img" src="spot-unternehmensanleihen-laufzeit.svg" alt="" width="160" height="110">
       <span class="hub-tag">Top 10 meistgehandelt</span>
       <h2>Unternehmens&shy;anleihen nach Laufzeit</h2>
       <p class="desc">Fünf Restlaufzeiten von bis 1 Jahr bis über 30 Jahre</p>
     </a>
     <a class="hub-card" href="anleihen-laender.html">
-      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
-<ellipse cx="60" cy="93" rx="46" ry="4" fill="#1DA300" fill-opacity="0.08"/>
-  <circle cx="54" cy="52" r="34" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M20 52 H88 M54 18 C40 30 40 74 54 86 M54 18 C68 30 68 74 54 86 M27 34 C40 40 68 40 81 34 M27 70 C40 64 68 64 81 70" fill="none" stroke="#1DA300" stroke-width="1.6" stroke-opacity="0.6"/>
-  <path d="M92 16 C82 16 75 24 75 33 C75 46 92 62 92 62 S109 46 109 33 C109 24 102 16 92 16 Z" fill="#1DA300" stroke="#fff" stroke-width="2"/>
-  <circle cx="92" cy="33" r="6" fill="#fff"/>
-  <rect x="62" y="70" width="52" height="16" rx="8" fill="#fff" stroke="#1DA300" stroke-width="1.8"/>
-  <text x="88" y="81.5" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9.5" font-weight="700" fill="#157C00">20 Länder</text>
-</svg>
+      <img class="hub-img" src="spot-anleihen-laender.svg" alt="" width="160" height="110">
       <span class="hub-tag">Top 10 meistgehandelt</span>
       <h2>Staatsanleihen nach Ländern</h2>
       <p class="desc">20 Länder auf der Karte</p>
     </a>
     <a class="hub-card" href="unternehmensanleihen-laender.html">
-      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
-<ellipse cx="60" cy="93" rx="46" ry="4" fill="#1DA300" fill-opacity="0.08"/>
-  <circle cx="58" cy="52" r="34" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M24 52 H92 M58 18 C44 30 44 74 58 86 M58 18 C72 30 72 74 58 86 M31 34 C44 40 72 40 85 34 M31 70 C44 64 72 64 85 70" fill="none" stroke="#1DA300" stroke-width="1.6" stroke-opacity="0.6"/>
-  <path d="M94 16 C84 16 77 24 77 33 C77 46 94 62 94 62 S111 46 111 33 C111 24 104 16 94 16 Z" fill="#1DA300" stroke="#fff" stroke-width="2"/>
-  <circle cx="94" cy="33" r="6" fill="#fff"/>
-  <rect x="8" y="42" width="20" height="44" rx="3" fill="#fff" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M13 50 H23 M13 57 H23 M13 64 H23 M13 71 H23" stroke="#1DA300" stroke-width="1.8" stroke-linecap="round"/>
-  <rect x="64" y="70" width="50" height="16" rx="8" fill="#fff" stroke="#1DA300" stroke-width="1.8"/>
-  <text x="89" y="81.5" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9.5" font-weight="700" fill="#157C00">Länder</text>
-</svg>
+      <img class="hub-img" src="spot-unternehmensanleihen-laender.svg" alt="" width="160" height="110">
       <span class="hub-tag">Top 10 meistgehandelt</span>
       <h2>Unternehmens&shy;anleihen nach Ländern</h2>
       <p class="desc">Deutschland, USA, Frankreich und weitere Länder auf der Karte</p>
     </a>
     <a class="hub-card" href="anleihen-etf.html">
-      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
-<ellipse cx="60" cy="93" rx="46" ry="4" fill="#1DA300" fill-opacity="0.08"/>
-  <rect x="18" y="12" width="84" height="76" rx="9" fill="#fff" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M18 21 A9 9 0 0 1 27 12 H93 A9 9 0 0 1 102 21 V32 H18 Z" fill="#1DA300"/>
-  <text x="60" y="26.5" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="800" fill="#fff">ETF</text>
-  <rect x="26" y="40" width="20" height="12" rx="3" fill="#B0FFA1"/><rect x="50" y="40" width="20" height="12" rx="3" fill="#DFFFD9"/><rect x="74" y="40" width="20" height="12" rx="3" fill="#74FF5B"/>
-  <rect x="26" y="56" width="20" height="12" rx="3" fill="#DFFFD9"/><rect x="50" y="56" width="20" height="12" rx="3" fill="#1DA300"/><rect x="74" y="56" width="20" height="12" rx="3" fill="#DFFFD9"/>
-  <rect x="26" y="72" width="20" height="10" rx="3" fill="#74FF5B"/><rect x="50" y="72" width="20" height="10" rx="3" fill="#DFFFD9"/><rect x="74" y="72" width="20" height="10" rx="3" fill="#B0FFA1"/>
-</svg>
+      <img class="hub-img" src="spot-anleihen-etf.svg" alt="" width="160" height="110">
       <span class="hub-tag">Top 10 meistgehandelt</span>
       <h2>Anleihen-ETFs</h2>
       <p class="desc">Sieben Kategorien, von ruhig bis riskant</p>
     </a>
     <a class="hub-card" href="anleihen-etf-erklaert.html">
-      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
-<ellipse cx="60" cy="93" rx="46" ry="4" fill="#1DA300" fill-opacity="0.08"/>
-  <rect x="12" y="16" width="44" height="68" rx="9" fill="#fff" stroke="#1DA300" stroke-width="2.2"/>
-  <rect x="64" y="16" width="44" height="68" rx="9" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2"/>
-  <text x="34" y="32" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9.5" font-weight="700" fill="#157C00">ETF</text>
-  <text x="86" y="32" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9" font-weight="700" fill="#157C00">Anleihe</text>
-  <path d="M22 46 L27 51 L36 41 M22 64 L27 69 L36 59" fill="none" stroke="#1DA300" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M40 46 H48 M40 64 H48" stroke="#74FF5B" stroke-width="2.4" stroke-linecap="round"/>
-  <path d="M74 46 L79 51 L88 41 M76 60 L86 70 M86 60 L76 70" fill="none" stroke="#1DA300" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M92 46 H100 M92 64 H100" stroke="#B0FFA1" stroke-width="2.4" stroke-linecap="round"/>
-</svg>
+      <img class="hub-img" src="spot-anleihen-etf-erklaert.svg" alt="" width="160" height="110">
       <span class="hub-tag neutral">Erklärt</span>
       <h2>Anleihen-ETF: Vor- und Nachteile</h2>
       <p class="desc">ETF oder einzelne Anleihe – fünf kurze Schritte</p>
     </a>
     <a class="hub-card" href="guide.html">
-      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
-<ellipse cx="60" cy="93" rx="46" ry="4" fill="#1DA300" fill-opacity="0.08"/>
-  <g>
-    <circle cx="30" cy="36" r="13" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2"/><circle cx="30" cy="32" r="4.5" fill="#1DA300"/><path d="M22 45 C22 39 38 39 38 45" fill="#1DA300"/>
-    <circle cx="60" cy="36" r="13" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2"/><circle cx="60" cy="32" r="4.5" fill="#1DA300"/><path d="M52 45 C52 39 68 39 68 45" fill="#1DA300"/>
-    <circle cx="90" cy="36" r="13" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2"/><circle cx="90" cy="32" r="4.5" fill="#1DA300"/><path d="M82 45 C82 39 98 39 98 45" fill="#1DA300"/>
-    <circle cx="30" cy="68" r="13" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2"/><circle cx="30" cy="64" r="4.5" fill="#1DA300"/><path d="M22 77 C22 71 38 71 38 77" fill="#1DA300"/>
-    <circle cx="60" cy="68" r="13" fill="#1DA300" stroke="#1DA300" stroke-width="2.2"/><circle cx="60" cy="64" r="4.5" fill="#fff"/><path d="M52 77 C52 71 68 71 68 77" fill="#fff"/>
-    <circle cx="60" cy="68" r="17" fill="none" stroke="#74FF5B" stroke-width="2.6"/>
-    <circle cx="90" cy="68" r="13" fill="#DFFFD9" stroke="#1DA300" stroke-width="2.2"/><circle cx="90" cy="64" r="4.5" fill="#1DA300"/><path d="M82 77 C82 71 98 71 98 77" fill="#1DA300"/>
-  </g>
-</svg>
+      <img class="hub-img" src="spot-guide.svg" alt="" width="160" height="110">
       <span class="hub-tag neutral">Beispiele</span>
       <h2>Anleihen-Beispiele nach Ziel</h2>
       <p class="desc">Vier Ziele, vier Wege</p>
     </a>
     <a class="hub-card next" href="wissen.html">
-      <svg class="hub-img" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
-  <ellipse cx="60" cy="92" rx="44" ry="4" fill="#1DA300" fill-opacity="0.10"/>
-  <path d="M60 24 C50 16 34 14 16 16 V80 C34 78 50 80 60 88 Z" fill="#fff" stroke="#1DA300" stroke-width="2.2" stroke-linejoin="round"/>
-  <path d="M60 24 C70 16 86 14 104 16 V80 C86 78 70 80 60 88 Z" fill="#fff" stroke="#1DA300" stroke-width="2.2" stroke-linejoin="round"/>
-  <path d="M60 24 V88" stroke="#1DA300" stroke-width="2.2" stroke-linecap="round"/>
-  <rect x="24" y="27" width="28" height="19" rx="5" fill="#DFFFD9"/>
-  <text x="38" y="41" text-anchor="middle" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="12" font-weight="800" fill="#157C00">5&#160;%</text>
-  <path d="M24 56 H52 M24 63 H44 M24 70 H50" stroke="#B0FFA1" stroke-width="2.6" stroke-linecap="round"/>
-  <path d="M68 30 H96 M68 37 H86" stroke="#1DA300" stroke-width="2.4" stroke-linecap="round"/>
-  <rect x="69" y="56" width="7" height="16" rx="2" fill="#B0FFA1"/>
-  <rect x="80" y="46" width="7" height="26" rx="2" fill="#1DA300"/>
-  <rect x="91" y="51" width="7" height="21" rx="2" fill="#74FF5B"/>
-  <path d="M67 75 H100" stroke="#1DA300" stroke-width="1.6" stroke-linecap="round" stroke-opacity="0.45"/>
-</svg>
+      <img class="hub-img" src="spot-akademie.svg" alt="" width="160" height="110">
       <h2>Erst verstehen? Zur Akademie</h2>
       <p class="desc">Vom Einstieg bis zum Profi – in drei Stufen: Verstehen, Entscheiden, Kaufen</p>
     </a>
