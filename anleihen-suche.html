@@ -210,6 +210,32 @@
     .kpis tr.zdet > td { display: block; padding: 0; }
     .kpis tr.zdet .det { position: static; width: auto; max-width: none; margin: 0; border-radius: 0 0 12px 12px; border-top: 0; box-shadow: var(--shadow); }
   }
+  /* Solide Auswahl (01.10.2026, Nutzerwunsch): ein Schalter über den Filtern, sechs Grundregeln für Privatanleger als Vorfilter */
+  .solide { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 14px; max-width: 1000px; }
+  .sol-btn { font: inherit; font-size: 13px; line-height: 1.2; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.18); border-radius: 999px; padding: 7px 14px 7px 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 9px; }
+  .sol-btn { text-align: left; }
+  .sol-btn:hover { border-color: var(--green-text); }
+  .fclear[hidden] { display: none; }   /* am Touch-Gerät überschrieb display: inline-flex das hidden-Attribut (Knopf stand ohne aktiven Filter da) */
+  .sol-btn:focus-visible, .sol-mehr summary:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .sol-sw { flex: none; position: relative; width: 30px; height: 18px; border-radius: 999px; background: #D9D8D3; transition: background .15s; }
+  .sol-sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(26,26,25,0.3); transition: transform .15s; }
+  .sol-btn[aria-pressed="true"] { border-color: var(--green-text); }
+  .sol-btn[aria-pressed="true"] .sol-sw { background: var(--green-text); }
+  .sol-btn[aria-pressed="true"] .sol-sw::after { transform: translateX(12px); }
+  .sol-btn b { font-weight: 600; }
+  .sol-btn small { font-size: 13px; color: var(--muted); }
+  .sol-btn small::before { content: "· "; }
+  .sol-mehr { font-size: 13px; }
+  .sol-mehr summary { color: var(--line); cursor: pointer; list-style: none; padding: 4px 0; }
+  .sol-mehr summary::-webkit-details-marker { display: none; }
+  .sol-mehr summary:hover { text-decoration: underline; }
+  .sol-mehr[open] { flex-basis: 100%; }
+  .sol-regeln { margin: 6px 0 0; padding: 12px 16px 12px 34px; background: #fff; border: 1px solid rgba(44,44,42,0.12); border-radius: 12px; line-height: 1.5; max-width: 640px; }
+  .sol-regeln li + li { margin-top: 3px; }
+  .sol-regeln small { color: var(--muted); }
+  .sol-fuss { margin: 8px 0 0; font-size: 12px; color: var(--muted); max-width: 640px; }
+  @media (pointer: coarse) { .sol-btn, .sol-mehr summary { min-height: 44px; } .sol-mehr summary { display: inline-flex; align-items: center; } }
+  @media (prefers-reduced-motion: reduce) { .sol-sw, .sol-sw::after { transition: none; } }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Anleihen-Suche","description":"Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen: Suche nach Name, ISIN oder WKN, Filter nach Land, Währung, Laufzeit, Rendite.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-27","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihen-suche.html","isBasedOn":{"@type":"Dataset","name":"Financial Instruments Reference Data System (FIRDS)","creator":{"@type":"Organization","name":"European Securities and Markets Authority (ESMA)"},"url":"https://registers.esma.europa.eu/publication/searchRegister?core=esma_registers_firds"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.bondarium.de/anleihen.html"},{"@type":"ListItem","position":3,"name":"Anleihen-Suche","item":"https://www.bondarium.de/anleihen-suche.html"}]}</script>
@@ -282,6 +308,20 @@
       <input type="search" id="q" name="q" placeholder="Name, Emittent, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search">
     </form>
 
+    <div class="solide" id="solide-z">
+      <button type="button" class="sol-btn" id="solide" aria-pressed="false"><span class="sol-sw" aria-hidden="true"></span><span><b>Solide Auswahl</b> <small>6 Grundregeln für Privatanleger</small></span></button>
+      <details class="sol-mehr"><summary>Was heißt das?</summary>
+        <ol class="sol-regeln">
+          <li><b>Restlaufzeit mindestens 8 Monate</b> <small>– sonst fressen die Kaufkosten den Ertrag</small></li>
+          <li><b>Kündigung: keine, Make-Whole oder kurz vor Fälligkeit</b> <small>– die Anleihe läuft so lange wie versprochen</small></li>
+          <li><b>Volumen ab 100 Mio.</b> <small>– mit einem Markt dahinter, Verkauf vor Fälligkeit möglich</small></li>
+          <li><b>Mindestanlage bis 10.000</b> <small>– in der Währung der Anleihe</small></li>
+          <li><b>Währung Euro oder US-Dollar</b></li>
+          <li><b>Datenprüfung ohne Befund</b> <small>– Kupon und Fälligkeit stimmen mit dem Register überein</small></li>
+        </ol>
+        <p class="sol-fuss">Grundregeln, keine Empfehlung: Bonität des Emittenten und Anleihebedingungen prüfst du selbst. Alle übrigen Filter wirken zusätzlich.</p>
+      </details>
+    </div>
     <div class="filter" id="filter" role="group" aria-label="Filter">
       <div class="fgrp" data-f="art"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-art"><span class="flab">Art</span><span class="fval"></span></button><div class="fpanel" id="fp-art" hidden></div></div>
       <div class="fgrp" data-f="land"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-land"><span class="flab">Land</span><span class="fval"></span></button><div class="fpanel" id="fp-land" hidden></div></div>
@@ -432,8 +472,8 @@ function L(k) { return T[k] != null ? T[k] : k; }
 // Fehlt suchindex.json, baut die Seite dieselben Zeilen aus anleihen-index.json und anleihen-kurse.json (Rückfall, wie bisher).
 const MAX = 200;
 const AKTUELL_TAGE = 14;   // Kurs höchstens so alt (Kalendertage vor dem Stand) – ältere Anleihen stehen nicht in der Suche (Nutzerregel 26.09.2026: nur, was täglich aktuell gehalten werden kann)
-let IDX = null, HAY = null, KEYS = null, EMI = [], ART = ["Staat", "Öffentlich", "Unternehmen"], KURSE = {}, KTAGE = [], KSTAND = "", BOERSEN = {};
-const S = { q: "", col: "rest", dir: -1, f: {}, offen: new Set() };   // Standard seit 29.09.2026: längste Restlaufzeit zuerst
+let IDX = null, HAY = null, KEYS = null, SOL = null, EMI = [], ART = ["Staat", "Öffentlich", "Unternehmen"], KURSE = {}, KTAGE = [], KSTAND = "", BOERSEN = {};
+const S = { q: "", col: "rest", dir: -1, f: {}, offen: new Set(), solide: false };   // Standard seit 29.09.2026: längste Restlaufzeit zuerst
 
 // ---------- Formatierung ----------
 const fmt = (v, dec = 0) => MC.zahl(v, dec);   // gemeinsames Zahlenformat (site.js)
@@ -519,6 +559,7 @@ function auswerten() {
   const akt = aktiv().map(f => [f.i, S.f[f.k]]);
   const zahl = FILTER.map(() => new Map()), hits = [];
   for (let i = 0; i < IDX.length; i++) {
+    if (S.solide && !SOL[i]) continue;
     if (toks.length) { const h = HAY[i]; if (!toks.every(t => h.includes(t))) continue; }
     const ks = KEYS[i];
     let fehl = -1, n = 0;
@@ -537,6 +578,14 @@ const unsicher = r => { const k = KURSE[r[0]]; if (!k || k[4] || k[3] === "B" ||
 // Datenprüfung (27.09.2026): r[14] = Befunde des Indexskripts ({} = keiner) – bei Befund keine Rendite, Kennzeichen „Daten?“
 const pruefVon = r => r[14] && typeof r[14] === "object" ? r[14] : {};
 const befund = r => Object.keys(pruefVon(r)).length > 0;
+// Solide Auswahl (01.10.2026, Nutzerwunsch): sechs Grundregeln als Vorfilter vor allen übrigen Filtern – Restlaufzeit ab 8 Monaten,
+// Kündigung keine/Make-Whole/kurz vor Fälligkeit, Volumen ab 100 Mio., Stückelung bis 10.000 (Währung der Anleihe), Euro oder
+// US-Dollar, Datenprüfung ohne Befund. Eigener Schalter statt gesetzter Filter: 8 Monate und 10.000 sind keine Filterstufen.
+const solide = r => {
+  if (!r[5] || jahre(r[5]) < 8 / 12) return false;
+  const k = kueVon(r); if (!k || "nmp".indexOf(k.k) < 0) return false;
+  return typeof r[6] === "number" && r[6] >= 1e8 && typeof r[7] === "number" && r[7] <= 10000 && (r[3] === "EUR" || r[3] === "USD") && !befund(r);
+};
 const widerspruch = r => { const p = pruefVon(r); return [p.kuponFisn != null ? `Kupon laut Kurzname ${fmtCoupon(p.kuponFisn)}` : "", p.zinsName ? "Name: variabel (FLR), Register: Nullkupon" : "", p.kuponHoch ? "Kupon unplausibel hoch" : "",
   p.faelligFisn ? `Fälligkeit laut Kurzname ${fmtDate(p.faelligFisn)}` : "", p.faelligName ? `Fälligkeit laut Name ${p.faelligName}${!r[5] ? " – vermutlich fällig, nicht zurückgezahlt" : ""}` : ""].filter(Boolean).join("; "); };
 const rendite = r => { const k = KURSE[r[0]]; return k && typeof k[1] === "number" && !unsicher(r) && !befund(r) ? k[1] : null; };
@@ -667,7 +716,7 @@ function filterZeigen(zahl) {
     b.classList.toggle("on", sel.size > 0);
     val.textContent = sel.size === 1 ? ((f.kurz || (v => f.namen.get(v) || v))([...sel][0])) : sel.size > 1 ? `${sel.size}` : "";
   }
-  document.getElementById("fclear").hidden = !aktiv().length;
+  document.getElementById("fclear").hidden = !aktiv().length && !S.solide;
   // Schalter „Weitere Filter“: Zahl der aktiven Filter im ausgeblendeten Teil
   const nNeben = FILTER.filter(f => S.f[f.k].size && document.querySelector(`.fgrp[data-f="${f.k}"]`).classList.contains("neben")).length;
   document.querySelector("#fmehr .fanz").textContent = nNeben ? String(nNeben) : "";
@@ -701,7 +750,7 @@ function zeige() {
   const box = document.getElementById("treffer"), status = document.getElementById("status");
   const AUS = auswerten(), { hits, zahl, suche } = AUS;
   filterZeigen(zahl);
-  const aus = suche || aktiv().length > 0;
+  const aus = suche || aktiv().length > 0 || S.solide;
   document.getElementById("bsp").hidden = aus;
   const unten = document.getElementById("status2");
   if (!aus) { box.hidden = true; unten.hidden = true; status.innerHTML = L("ready")(IDX.length.toLocaleString("de-DE")); return; }
@@ -724,6 +773,7 @@ function zeige() {
 function merkeURL() {
   const p = new URLSearchParams();
   if (S.q.trim()) p.set("q", S.q.trim());
+  if (S.solide) p.set("solide", "1");
   for (const f of FILTER) if (S.f[f.k].size) p.set(f.k, [...S.f[f.k]].join(","));
   const qs = p.toString().replace(/%2C/g, ",");
   const neu = location.pathname + (qs ? "?" + qs : "");
@@ -765,6 +815,7 @@ function laden() {
       IDX = d.rows.filter(r => (!r[5] || r[5] > heute) && kDatum(KURSE[r[0]]) >= grenze);
       HAY = IDX.map(suchtext);
       KEYS = IDX.map(r => FILTER.map(f => f.key(r)));
+      SOL = IDX.map(solide);
       FILTER.forEach(panelBauen);
       st.classList.remove("laedt");
       // Filterwerte aus der Adresse, die es nicht (mehr) gibt, verwerfen
@@ -780,6 +831,7 @@ function laden() {
 (function () {
   const p = new URLSearchParams(location.search);
   S.q = p.get("q") || "";
+  S.solide = p.get("solide") === "1";
   for (const f of FILTER) (p.get(f.k) || "").split(",").map(v => v.trim()).filter(Boolean).forEach(v => S.f[f.k].add(f.k === "w" || f.k === "land" ? v.toUpperCase() : v));
   const input = document.getElementById("q");
   input.value = S.q;
@@ -793,7 +845,9 @@ function laden() {
   const kopfHoehe = () => { if (kopf) document.documentElement.style.setProperty("--kopf", kopf.offsetHeight + "px"); };
   kopfHoehe(); window.addEventListener("resize", kopfHoehe);
 
-  const leiste = document.getElementById("filter");
+  const leiste = document.getElementById("filter"), sol = document.getElementById("solide");
+  sol.setAttribute("aria-pressed", String(S.solide));
+  sol.addEventListener("click", () => { S.solide = !S.solide; sol.setAttribute("aria-pressed", String(S.solide)); laden(); zeige(); });
   // Weitere Filter von Anfang an zeigen, wenn einer davon aus der Adresse aktiv ist
   if (FILTER.some(f => S.f[f.k].size && document.querySelector(`.fgrp[data-f="${f.k}"]`).classList.contains("neben"))) mehrFilter(true);
   leiste.addEventListener("click", e => {
@@ -804,7 +858,7 @@ function laden() {
     if (b) { const f = b.parentElement.dataset.f; panel(f, b.getAttribute("aria-expanded") !== "true"); return; }
     const r = e.target.closest(".freset");
     if (r) { S.f[r.closest(".fgrp").dataset.f].clear(); zeige(); return; }
-    if (e.target.closest("#fclear")) { FILTER.forEach(f => S.f[f.k].clear()); if (offen) panel(offen, false); zeige(); }
+    if (e.target.closest("#fclear")) { FILTER.forEach(f => S.f[f.k].clear()); S.solide = false; sol.setAttribute("aria-pressed", "false"); if (offen) panel(offen, false); zeige(); }
   });
   leiste.addEventListener("change", e => {
     const c = e.target.closest(".fopt input"); if (!c) return;
@@ -858,7 +912,7 @@ function laden() {
   // Daten erst bei Bedarf (seit 30.09.2026): Suchbegriff oder Filter in der Adresse → sofort; sonst beim ersten Fokus, Tippen oder
   // Filterklick, spätestens im Leerlauf nach dem Anzeigen (nicht bei „Datensparen“ oder langsamer Verbindung)
   const p0 = new URLSearchParams(location.search);
-  if (p0.get("q") || FILTER.some(f => p0.get(f.k))) laden();
+  if (p0.get("q") || p0.get("solide") || FILTER.some(f => p0.get(f.k))) laden();
   else {
     const c = navigator.connection || {};
     if (!c.saveData && !/(^|-)2g$|3g/.test(c.effectiveType || "")) window.addEventListener("load", () => (window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => laden(), { timeout: 4000 }));
