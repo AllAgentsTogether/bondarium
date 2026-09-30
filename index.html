@@ -491,23 +491,22 @@
   /* 1 · Hero-Produktkarte: eine echte Anleihe mit Kupon-Zeitachse (nur neben dem Foto, also ab 941 px) */
   .hero-karte { display: none; }
   @media (min-width: 941px) {
-    .hero-karte { position: absolute; z-index: 2; left: max(calc(var(--g) + 500px), calc(100% - var(--g) - 456px)); bottom: 76px; width: 276px;   /* 01.10.2026: kleiner und tiefer, damit das Gesicht frei bleibt */
-      display: flex; flex-direction: column; gap: 10px; padding: 13px 15px 12px; border-radius: 14px; background: #fff; border-radius: 16px; color: var(--ink); text-decoration: none;
+    .hero-karte { position: absolute; z-index: 2; left: max(calc(var(--g) + 500px), calc(100% - var(--g) - 456px)); bottom: 104px; width: 316px;
+      display: flex; flex-direction: column; gap: 12px; padding: 16px 18px 14px; background: #fff; border-radius: 16px; color: var(--ink); text-decoration: none;
       box-shadow: 0 1px 2px rgba(26,26,25,0.06), 0 22px 44px -16px rgba(26,26,25,0.38); transition: box-shadow .15s ease, transform .15s ease; }
     .hero-karte:hover { transform: translateY(-2px); box-shadow: 0 1px 2px rgba(26,26,25,0.06), 0 26px 50px -16px rgba(26,26,25,0.45); }
   }
-  .hk-kopf { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; line-height: 1.2; }
-  .hk-kopf b { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+  .hk-kopf { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 15px; line-height: 1.2; }
+  .hk-kopf b { font-weight: 600; }
   .hero-karte:hover .hk-kopf b { color: var(--green-text); }
-  .hk-art { flex: none; border-radius: 999px; padding: 3px 9px; background: #E8FFE3; color: var(--green-text); font-size: 12px; font-weight: 600; }
-  .hk-rend { display: flex; align-items: baseline; gap: 8px; font-size: 13px; color: var(--text); }
-  .hk-z { font-size: 26px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; color: var(--green-text); font-variant-numeric: tabular-nums; }
+  .hk-art { border-radius: 999px; padding: 3px 10px; background: #E8FFE3; color: var(--green-text); font-size: 12px; font-weight: 600; }
+  .hk-rend { display: flex; align-items: baseline; gap: 8px; font-size: 14px; color: var(--text); }
+  .hk-z { font-size: 30px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; color: var(--green-text); font-variant-numeric: tabular-nums; }
   .hk-achse { position: relative; display: flex; align-items: center; justify-content: space-between; height: 16px; margin: 2px 0 0; }
   .hk-achse::before { content: ""; position: absolute; left: 4px; right: 8px; top: 7px; height: 2px; background: #E4E3DF; }
   .hk-achse i { position: relative; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--green-text); }
   .hk-achse i:last-child { width: 16px; height: 16px; background: var(--green); border: 2px solid var(--ink); }
-  .hk-achse i:only-child { margin-left: auto; }   /* Nullkupon: nur der Rückzahlungspunkt, rechts */
-  .hk-fuss { display: flex; justify-content: space-between; gap: 10px; font-size: 11.5px; color: var(--text); white-space: nowrap; }
+  .hk-fuss { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; color: var(--text); white-space: nowrap; }
   .hk-fuss b { font-weight: 600; color: var(--ink); }
   @media (prefers-reduced-motion: reduce) { .hero-karte { transition: none; } .hero-karte:hover { transform: none; } }
   /* 2 · Laufzeit-Ringe: Foto innen auf Weiß, Ring und Kupon-Punkt als SVG darüber */
@@ -616,7 +615,7 @@
         <p class="sub">Durchsuche <span data-kz="anleihen-kurs">rund 33.000</span> Anleihen mit aktuellem Kurs, vergleiche sie und verstehe, wie sie funktionieren – einfach erklärt, mit Beispielen, wie man vorgeht.</p>
       </div>
       <img class="hero-img" src="startseite-hero.webp" width="1004" height="684" alt="" fetchpriority="high" decoding="async">   <!-- 29.09.2026: Foto wieder statt der Kacheln (Nutzerwunsch) -->
-      <a class="hero-karte" href="anleihe.html?isin=DE000BU2Z015">   <!-- Bildwelt 2.0 (30.09.2026), seit 01.10.2026 stündlich zufällig eine Anleihe aus den vier Top-10-Listen (ohne ETFs, Skript unten); Bundesanleihe = Rückfall --><span class="hk-kopf"><b id="hk-name">Bundesanleihe</b><span class="hk-art" id="hk-art">Staat</span></span><span class="hk-rend"><span class="hk-z" id="hk-rend">3,47&nbsp;%</span>Rendite p.a.</span><span class="hk-achse" data-faellig="2033-08-15" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="hk-fuss"><span id="hk-kupon">Kupon 2,60&nbsp;% jährlich</span><b id="hk-rueck">Rückzahlung 15.08.2033</b></span></a>
+      <a class="hero-karte" href="anleihe.html?isin=DE000BU2Z015">   <!-- Bildwelt 2.0 (30.09.2026): Rendite täglich aus kurse-auswahl.json, ein Punkt je ausstehendem Kupon (Skript unten) --><span class="hk-kopf"><b>Bundesanleihe</b><span class="hk-art">Staat</span></span><span class="hk-rend"><span class="hk-z" id="hk-rend">3,47&nbsp;%</span>Rendite p.a.</span><span class="hk-achse" data-faellig="2033-08-15" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="hk-fuss"><span>Kupon 2,60&nbsp;% jährlich</span><b>Rückzahlung 15.08.2033</b></span></a>
     </section>
 
     <div class="sheet">
@@ -720,47 +719,16 @@ if (MC.load) MC.load("kurse-auswahl.json").then(function (d) {
     tr.querySelector(".kurs").textContent = fmt(k[0], 2);
     tr.querySelector(".rend").textContent = typeof k[1] === "number" ? fmt(k[1], 2) + "\u00a0%" : "–";
   });
+  var hk = document.getElementById("hk-rend"), kb = K["DE000BU2Z015"];   // Hero-Karte (Bildwelt 2.0, 30.09.2026)
+  if (hk && kb && typeof kb[1] === "number") hk.textContent = fmt(kb[1], 2) + "\u00a0%";
 }).catch(function (e) { console.warn("Tageskurse nicht geladen:", e); });
 
-// Hero-Karte (01.10.2026): jede Stunde zufällig eine Anleihe aus allen Einträgen der vier Top-10-Listen (keine ETFs).
-// Der Zufall hängt an der Stundennummer: innerhalb einer Stunde zeigt jeder Aufruf dieselbe Anleihe, zur vollen Stunde wechselt sie.
-// Kupon-Zeitachse: ein Punkt je Jahr mit noch ausstehendem Kupon (höchstens 12), der letzte ist die Rückzahlung.
+// Kupon-Zeitachse der Hero-Karte: ein Punkt je noch ausstehendem Kupon (jährlich zum Fälligkeitstag), der letzte ist die Rückzahlung
 (function () {
-  var karte = document.querySelector(".hero-karte"), a = document.querySelector(".hk-achse");
-  if (!karte || !a) return;
-  function achse(faellig, kupon) {
-    var f = faellig.split("-"), heute = new Date(), n = 0;
-    for (var j = heute.getFullYear(); j <= +f[0]; j++) if (new Date(j, f[1] - 1, f[2]) > heute) n++;
-    n = kupon > 0 ? Math.min(Math.max(n, 1), 12) : 1;
-    a.innerHTML = new Array(n + 1).join("<i></i>");
-  }
-  achse(a.getAttribute("data-faellig"), 1);
-  if (!MC.load || !window.matchMedia || !matchMedia("(min-width: 941px)").matches) return;   // Karte erscheint erst ab 941 px
-  var LISTEN = ["top10-staatsanleihen-laender", "top10-staatsanleihen-laufzeit", "top10-unternehmensanleihen-laender", "top10-unternehmensanleihen-laufzeit"];
-  Promise.all(LISTEN.map(function (n) { return MC.load(n + ".json").catch(function () { return null; }); })).then(function (ds) {
-    var pool = {};
-    ds.forEach(function (d) {
-      if (!d || !d.gruppen) return;
-      Object.keys(d.gruppen).forEach(function (g) {
-        (d.gruppen[g] || []).forEach(function (x) { if (x && x.isin && x.faellig && typeof x.rendite === "number") pool[x.isin] = x; });
-      });
-    });
-    var isins = Object.keys(pool).sort(); if (!isins.length) return;
-    function zeige() {
-      var h = Math.floor(Date.now() / 3600000), t = (h ^ 0x9E3779B9) >>> 0;   // Stundennummer verwürfeln (xorshift), damit benachbarte Stunden nicht benachbarte Anleihen zeigen
-      t ^= t << 13; t >>>= 0; t ^= t >>> 17; t ^= t << 5; t >>>= 0;
-      var x = pool[isins[t % isins.length]], d = x.faellig.split("-");
-      karte.href = "anleihe.html?isin=" + encodeURIComponent(x.isin);
-      var nm = document.getElementById("hk-name"); nm.textContent = x.emittent || x.isin; nm.title = x.emittent || "";
-      document.getElementById("hk-art").textContent = x.art === "Unternehmen" ? "Unternehmen" : "Staat";
-      document.getElementById("hk-rend").textContent = MC.zahl(x.rendite, 2) + " %";
-      document.getElementById("hk-kupon").textContent = x.kupon > 0 ? "Kupon " + MC.zahl(x.kupon, 2) + " % " + (x.zins === 2 ? "halbjährlich" : "jährlich") : "Nullkupon";
-      document.getElementById("hk-rueck").textContent = "Rückzahlung " + d[2] + "." + d[1] + "." + d[0];
-      a.setAttribute("data-faellig", x.faellig); achse(x.faellig, x.kupon);
-      setTimeout(zeige, 3600000 - Date.now() % 3600000 + 500);   // zur nächsten vollen Stunde wechseln, auch bei offener Seite
-    }
-    zeige();
-  });
+  var a = document.querySelector(".hk-achse"); if (!a) return;
+  var f = a.getAttribute("data-faellig").split("-"), heute = new Date(), n = 0;
+  for (var j = heute.getFullYear(); j <= +f[0]; j++) if (new Date(j, f[1] - 1, f[2]) > heute) n++;
+  if (n > 0 && n !== a.children.length) a.innerHTML = new Array(n + 1).join("<i></i>");
 })();
 
 // Sortieren per Klick auf den Spaltentitel (wie auf den Datenseiten): liest die Zellen der Zeile, auch die täglich
