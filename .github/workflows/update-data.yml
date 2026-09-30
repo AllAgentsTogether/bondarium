@@ -289,7 +289,8 @@ jobs:
           mkdir -p _site
           # webp: Fotos der Anlegerprofile, woff2: Manrope (seit 24.09.2026); indexnow-key.txt: Schlüssel für die Meldung
           # geänderter Seiten an Bing & Co. (scripts/indexnow.py). llms.txt entsteht seit 30.09.2026 im Bau (scripts/llms.py).
-          cp *.html *.json *.svg *.css *.js *.png *.webp *.woff2 robots.txt sitemap.xml indexnow-key.txt _site/
+          # favicon.ico (seit 30.09.2026): Rückfall für Browser und Dienste, die /favicon.ico direkt abfragen – neues Logo, 16/32/48 px.
+          cp *.html *.json *.svg *.css *.js *.png *.webp *.woff2 favicon.ico robots.txt sitemap.xml indexnow-key.txt _site/
           rm -f _site/package.json _site/package-lock.json   # Build-Metadaten gehören nicht auf den Webroot
           cp .htaccess _site/.htaccess
           cp kontakt.php _site/kontakt.php   # Kontaktformular (ueber-uns.html#kontakt, seit 30.09.2026)
