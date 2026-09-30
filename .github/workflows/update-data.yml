@@ -359,6 +359,11 @@ jobs:
               sed -i -E "s|src=\"(/?)${n//./\\.}[^\"]*\"|src=\"\1${n}?v=${h}\"|g" "$f"
             done
             sed -i -E "s|href=\"(/?)base\.css[^\"]*\"|href=\"\1base.css?v=${CSS}\"|g" "$f"
+            # weitere Stylesheets (seit 01.10.2026, z. B. bildwelt2.css) ebenso – sonst hielten Browser eine geänderte Datei bis zu 7 Tage
+            for c in _site/*.css; do
+              n=$(basename "$c"); [ "$n" = "base.css" ] && continue; h=$(sha256sum "$c" | cut -c1-10)
+              sed -i -E "s|href=\"(/?)${n//./\\.}[^\"]*\"|href=\"\1${n}?v=${h}\"|g" "$f"
+            done
             # Such-Index: Versions-URL, damit .htaccess ihn lange cachen darf (siehe dort)
             sed -i -E "s|fetch\(\"anleihen-index\.json[^\"]*\"\)|fetch(\"anleihen-index.json?v=${IDX}\")|g" "$f"
             sed -i -E "s|\"suchindex\.json[^\"]*\"|\"suchindex.json?v=${SIX}\"|g" "$f"
