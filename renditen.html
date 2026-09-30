@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -47,6 +48,11 @@
   .ser { transition: opacity 0.18s ease; }
   .ser.dim { opacity: 0.12; }
   .ser.hi path.line { stroke-width: 2.6; }
+  /* Bildwelt 2.0 (30.09.2026): Fokus statt Regenbogen – übrige Serien grau, beim Hervorheben (Legende/Maus) Tiefgrün */
+  .ser.hi:is([data-key="cn"],[data-key="in"],[data-key="jp"],[data-key="gb"],[data-key="fr"],[data-key="it"]) path.line { stroke: #157C00; }
+  .ser.hi:is([data-key="cn"],[data-key="in"],[data-key="jp"],[data-key="gb"],[data-key="fr"],[data-key="it"]) .band { fill: #157C00; }
+  .leg:is(:hover, :focus-visible, .on, [aria-pressed="true"]):is([data-key="cn"],[data-key="in"],[data-key="jp"],[data-key="gb"],[data-key="fr"],[data-key="it"]) .sw-line { background: #157C00; }
+  .leg:is(:hover, :focus-visible, .on, [aria-pressed="true"]):is([data-key="cn"],[data-key="in"],[data-key="jp"],[data-key="gb"],[data-key="fr"],[data-key="it"]) .sw-line.dashed { background: repeating-linear-gradient(90deg, #157C00 0 6px, transparent 6px 9px); }
   /* Hinweiszeile im Chart: Hover-Variante („… oder Maus“) bzw. Touch-Variante */
   .chart-scroll .hint-touch { display: none; }
   @media (hover: none) {
@@ -165,8 +171,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="beobachten.html">Zinsen</a></li><li><span aria-current="page">Staatsanleihen seit 1970</span></li></ol></nav>
   <main id="main">
-    <h1>Staatsanleihen seit 1970</h1>
-    <p class="sub">Die Renditen 10-jähriger Staatsanleihen der acht größten Volkswirtschaften – von 1970 bis heute. Mit einer Staatsanleihe leihst du einem Staat Geld, für eine feste Laufzeit zu einem festen Zins. Weil Laufzeiten von wenigen Monaten bis zu 100 Jahren reichen, vergleicht man Länder an der 10-jährigen Anleihe: Ihre Rendite ist der Referenzzins einer Volkswirtschaft und spiegelt Inflation, Geldpolitik und das Vertrauen in den Staat.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Staatsanleihen seit 1970</h1>
+        <p class="sub">Die Renditen 10-jähriger Staatsanleihen der acht größten Volkswirtschaften – von 1970 bis heute. Mit einer Staatsanleihe leihst du einem Staat Geld, für eine feste Laufzeit zu einem festen Zins. Weil Laufzeiten von wenigen Monaten bis zu 100 Jahren reichen, vergleicht man Länder an der 10-jährigen Anleihe: Ihre Rendite ist der Referenzzins einer Volkswirtschaft und spiegelt Inflation, Geldpolitik und das Vertrauen in den Staat.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-renditen.svg" alt="" width="232" height="160"></div>
+    </div>
 
     <p class="eyebrow" id="eyebrow-renditen">10-jährige Staatsanleihen · 1970 – 2026 · Stand: 25.09.2026</p>
     <div class="legend linie" id="legend-renditen"></div>
@@ -182,56 +193,56 @@
         <tr><th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Land</button></th><th scope="col" data-col="current"><button type="button" class="sortbtn" data-col="current">Aktuelle Rendite</button></th><th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th><th scope="col" data-col="stand"><button type="button" class="sortbtn" data-col="stand">Stand</button></th><th scope="col" data-col="high"><button type="button" class="sortbtn" data-col="high">Hoch seit 1970</button></th><th scope="col" data-col="low"><button type="button" class="sortbtn" data-col="low">Tief seit 1970</button></th><th scope="col" data-col="avg"><button type="button" class="sortbtn" data-col="avg">Ø seit 1970</button></th></tr>
       </thead>
       <tbody id="rtable"><tr>
-      <th scope="row"><i class="tag" style="background:#1D5FA0"></i>USA<small class="cur-m">USD</small></th><td class="num">5,17&nbsp;%<small class="cur-m">25.09.2026</small></td>
+      <th scope="row"><i class="tag" style="background:#1A1A19"></i>USA<small class="cur-m">USD</small></th><td class="num">5,17&nbsp;%<small class="cur-m">25.09.2026</small></td>
       <td class="cur">USD <span class="sym">$</span></td>
       <td class="num stand">25.09.2026</td>
       <td class="num">13,91&nbsp;% (1981)</td>
       <td class="num">0,89&nbsp;% (2020)</td>
       <td class="num">5,96&nbsp;%</td>
     </tr><tr>
-      <th scope="row"><i class="tag" style="background:#B23B2E"></i>China (ab 2002)<small class="cur-m">CNY</small></th><td class="num">1,67&nbsp;%<small class="cur-m">24.09.2026</small></td>
+      <th scope="row"><i class="tag" style="background:#8E8D86"></i>China (ab 2002)<small class="cur-m">CNY</small></th><td class="num">1,67&nbsp;%<small class="cur-m">24.09.2026</small></td>
       <td class="cur">CNY <span class="sym">¥</span></td>
       <td class="num stand">24.09.2026</td>
       <td class="num">4,55&nbsp;% (2004)</td>
       <td class="num">1,75&nbsp;% (2025)</td>
       <td class="num">3,31&nbsp;%</td>
     </tr><tr>
-      <th scope="row"><i class="tag" style="background:#2C2C2A"></i>Deutschland<small class="cur-m">EUR</small></th><td class="num">3,60&nbsp;%<small class="cur-m">25.09.2026</small></td>
+      <th scope="row"><i class="tag" style="background:#157C00"></i>Deutschland<small class="cur-m">EUR</small></th><td class="num">3,60&nbsp;%<small class="cur-m">25.09.2026</small></td>
       <td class="cur">EUR <span class="sym">€</span></td>
       <td class="num stand">25.09.2026</td>
       <td class="num">10,44&nbsp;% (1974)</td>
       <td class="num">−0,51&nbsp;% (2020)</td>
       <td class="num">5,06&nbsp;%</td>
     </tr><tr>
-      <th scope="row"><i class="tag" style="background:#C07E28"></i>Indien (Lücke 1986–95)<small class="cur-m">INR</small></th><td class="num">6,78&nbsp;%<small class="cur-m">07.2026</small></td>
+      <th scope="row"><i class="tag" style="background:#A9A7A0"></i>Indien (Lücke 1986–95)<small class="cur-m">INR</small></th><td class="num">6,78&nbsp;%<small class="cur-m">07.2026</small></td>
       <td class="cur">INR <span class="sym">₹</span></td>
       <td class="num stand">07.2026</td>
       <td class="num">13,60&nbsp;% (1996)</td>
       <td class="num">5,00&nbsp;% (1970)</td>
       <td class="num">7,61&nbsp;%</td>
     </tr><tr>
-      <th scope="row"><i class="tag" style="background:#8A5FBF"></i>Japan<small class="cur-m">JPY</small></th><td class="num">3,07&nbsp;%<small class="cur-m">24.09.2026</small></td>
+      <th scope="row"><i class="tag" style="background:#B5B3AC"></i>Japan<small class="cur-m">JPY</small></th><td class="num">3,07&nbsp;%<small class="cur-m">24.09.2026</small></td>
       <td class="cur">JPY <span class="sym">¥</span></td>
       <td class="num stand">24.09.2026</td>
       <td class="num">8,87&nbsp;% (1980)</td>
       <td class="num">−0,11&nbsp;% (2019)</td>
       <td class="num">3,65&nbsp;%</td>
     </tr><tr>
-      <th scope="row"><i class="tag" style="background:#1F7A5E"></i>Großbritannien<small class="cur-m">GBP</small></th><td class="num">4,99&nbsp;%<small class="cur-m">08.2026</small></td>
+      <th scope="row"><i class="tag" style="background:#9C9A93"></i>Großbritannien<small class="cur-m">GBP</small></th><td class="num">4,99&nbsp;%<small class="cur-m">08.2026</small></td>
       <td class="cur">GBP <span class="sym">£</span></td>
       <td class="num stand">08.2026</td>
       <td class="num">14,88&nbsp;% (1981)</td>
       <td class="num">0,37&nbsp;% (2020)</td>
       <td class="num">7,00&nbsp;%</td>
     </tr><tr>
-      <th scope="row"><i class="tag" style="background:#2F8A9A"></i>Frankreich<small class="cur-m">EUR</small></th><td class="num">4,00&nbsp;%<small class="cur-m">08.2026</small></td>
+      <th scope="row"><i class="tag" style="background:#C4C2BB"></i>Frankreich<small class="cur-m">EUR</small></th><td class="num">4,00&nbsp;%<small class="cur-m">08.2026</small></td>
       <td class="cur">EUR <span class="sym">€</span></td>
       <td class="num stand">08.2026</td>
       <td class="num">16,29&nbsp;% (1981)</td>
       <td class="num">−0,15&nbsp;% (2020)</td>
       <td class="num">6,43&nbsp;%</td>
     </tr><tr>
-      <th scope="row"><i class="tag" style="background:#A0386E"></i>Italien<small class="cur-m">EUR</small></th><td class="num">3,99&nbsp;%<small class="cur-m">08.2026</small></td>
+      <th scope="row"><i class="tag" style="background:#7D7C76"></i>Italien<small class="cur-m">EUR</small></th><td class="num">3,99&nbsp;%<small class="cur-m">08.2026</small></td>
       <td class="cur">EUR <span class="sym">€</span></td>
       <td class="num stand">08.2026</td>
       <td class="num">20,21&nbsp;% (1982)</td>
@@ -359,14 +370,14 @@ function ageDays(d, ref) {
 // Spalte "Währung" der Tabelle); dash: gestrichelt (Italien, zweites
 // Unterscheidungsmerkmal neben der Farbe).
 const COUNTRIES = [
-  { key: "us", code: "US", cur: "USD", nameKey: "cUs", color: "#1D5FA0" },
-  { key: "cn", code: "CN", cur: "CNY", nameKey: "cCn", tblKey: "cCnNote", color: "#B23B2E" },
-  { key: "de", code: "DE", cur: "EUR", nameKey: "cDe", color: "#2C2C2A" },
-  { key: "in", code: "IN", cur: "INR", nameKey: "cIn", tblKey: "cInNote", color: "#C07E28", text: "#8A5A1A" },
-  { key: "jp", code: "JP", cur: "JPY", nameKey: "cJp", color: "#8A5FBF", text: "#7A52B0" },
-  { key: "gb", code: "GB", cur: "GBP", nameKey: "cGb", color: "#1F7A5E" },
-  { key: "fr", code: "FR", cur: "EUR", nameKey: "cFr", color: "#2F8A9A", text: "#1F6F7D" },
-  { key: "it", code: "IT", cur: "EUR", nameKey: "cIt", color: "#A0386E", dash: "6 3" }
+  { key: "us", code: "US", cur: "USD", nameKey: "cUs", color: "#1A1A19" },
+  { key: "cn", code: "CN", cur: "CNY", nameKey: "cCn", tblKey: "cCnNote", color: "#8E8D86" },
+  { key: "de", code: "DE", cur: "EUR", nameKey: "cDe", color: "#157C00" },
+  { key: "in", code: "IN", cur: "INR", nameKey: "cIn", tblKey: "cInNote", color: "#A9A7A0", text: "#55544F" },
+  { key: "jp", code: "JP", cur: "JPY", nameKey: "cJp", color: "#B5B3AC", text: "#55544F" },
+  { key: "gb", code: "GB", cur: "GBP", nameKey: "cGb", color: "#9C9A93" },
+  { key: "fr", code: "FR", cur: "EUR", nameKey: "cFr", color: "#C4C2BB", text: "#55544F" },
+  { key: "it", code: "IT", cur: "EUR", nameKey: "cIt", color: "#7D7C76", dash: "6 3" }
 ];
 // Währungszeichen zur Spalte "Währung" (ISO-Code + Symbol)
 const CUR_SYM = { USD: "$", CNY: "¥", EUR: "€", INR: "₹", JPY: "¥", GBP: "£", AUD: "$" };
@@ -405,8 +416,8 @@ const RY = {
 
 // Feste Chart-Marker (historische Extreme)
 const MARKERS = [
-  { key: "it", t: 1982.5, v: 20.21, textKey: "mkItHigh", titleKey: "mkItHighTitle", anchor: "start", dx: 8, dy: 4, color: "#A0386E" },
-  { key: "de", t: 2020.5, v: -0.51, textKey: "mkDeLow", titleKey: "mkDeLowTitle", anchor: "start", dx: 7, dy: 4, color: "#2C2C2A", narrow: { anchor: "end", dx: -7 } }   // rechts neben dem Punkt: unter dem Punkt überlagerte es die Jahreszahl 2020
+  { key: "it", t: 1982.5, v: 20.21, textKey: "mkItHigh", titleKey: "mkItHighTitle", anchor: "start", dx: 8, dy: 4, color: "#7D7C76" },
+  { key: "de", t: 2020.5, v: -0.51, textKey: "mkDeLow", titleKey: "mkDeLowTitle", anchor: "start", dx: 7, dy: 4, color: "#157C00", narrow: { anchor: "end", dx: -7 } }   // rechts neben dem Punkt: unter dem Punkt überlagerte es die Jahreszahl 2020
 ];
 
 

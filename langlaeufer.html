@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -138,8 +139,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="beobachten.html">Zinsen</a></li><li><span aria-current="page">Langläufer</span></li></ol></nav>
   <main id="main">
-    <h1>Langläufer: Wenn eine Anleihe 30, 50 oder 100 Jahre läuft</h1>
-    <p class="sub">Je länger eine Anleihe läuft, desto heftiger reagiert ihr Kurs auf jede Bewegung des allgemeinen Zinsniveaus – bei drei bis zehn Jahrzehnten wird aus einem sicheren Schuldner ein Papier mit Aktienrisiko. Sieben Beispiele großer Schuldner aus fünf Ländern, alle börsentäglich handelbar: sechs Staatsanleihen und eine Unternehmensanleihe, mit Kupons von 0 bis 4,75&nbsp;% und Laufzeiten bis 2120.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Langläufer: Wenn eine Anleihe 30, 50 oder 100 Jahre läuft</h1>
+        <p class="sub">Je länger eine Anleihe läuft, desto heftiger reagiert ihr Kurs auf jede Bewegung des allgemeinen Zinsniveaus – bei drei bis zehn Jahrzehnten wird aus einem sicheren Schuldner ein Papier mit Aktienrisiko. Sieben Beispiele großer Schuldner aus fünf Ländern, alle börsentäglich handelbar: sechs Staatsanleihen und eine Unternehmensanleihe, mit Kupons von 0 bis 4,75&nbsp;% und Laufzeiten bis 2120.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-langlaeufer.svg" alt="" width="232" height="160"></div>
+    </div>
 
     <p class="eyebrow" id="eyebrow-ll">Kurse in % des Nennwerts · 2019 – 2026</p>
     <div id="chart-kurs" class="chart-scroll"></div>
@@ -181,13 +187,13 @@
       <caption class="sr-only">Steckbrief der sieben Anleihen: Emittent, Kupon, Emission, Volumen und Stückelung, Handel, Kursspanne seit Emission</caption>
       <thead><tr><th scope="col">Anleihe</th><th scope="col">Emittent</th><th scope="col">Kupon</th><th scope="col">Emission</th><th scope="col">Volumen · Stückelung</th><th scope="col">Handel</th><th scope="col">Kursspanne seit Emission</th></tr></thead>
       <tbody>
-        <tr><th scope="row"><i class="tag" style="background:#1D5FA0"></i>Bund 0&nbsp;% 15.08.2050<small>DE0001102481 / 110248</small></th><td>Bundesrepublik Deutschland (Finanzagentur)</td><td>0&nbsp;% – Nullkupon, Ertrag nur aus der Rückzahlung zu 100</td><td>21.08.2019 zu 103,61 (Rendite −0,11&nbsp;%); 26 Aufstockungen bis 10/2025</td><td>45,5 Mrd. € · 0,01&nbsp;€</td><td>Deutsche Börsen; Referenzpreise der Bundesbank</td><td id="b-spanne">Hoch 116,56 (12.03.2020) · Tief 40,04 (15.09.2026)</td></tr>
+        <tr><th scope="row"><i class="tag" style="background:#157C00"></i>Bund 0&nbsp;% 15.08.2050<small>DE0001102481 / 110248</small></th><td>Bundesrepublik Deutschland (Finanzagentur)</td><td>0&nbsp;% – Nullkupon, Ertrag nur aus der Rückzahlung zu 100</td><td>21.08.2019 zu 103,61 (Rendite −0,11&nbsp;%); 26 Aufstockungen bis 10/2025</td><td>45,5 Mrd. € · 0,01&nbsp;€</td><td>Deutsche Börsen; Referenzpreise der Bundesbank</td><td id="b-spanne">Hoch 116,56 (12.03.2020) · Tief 40,04 (15.09.2026)</td></tr>
         <tr><th scope="row"><i class="tag" style="background:var(--ink)"></i>Bund 4,75&nbsp;% 04.07.2040<small>DE0001135366 / 113536</small></th><td>Bundesrepublik Deutschland (Finanzagentur)</td><td>4,75&nbsp;% p. a., jährlich am 4. Juli</td><td>23.07.2008 zu ≈97,8 (Rendite 4,91&nbsp;%); 10 Aufstockungen bis 2025</td><td>23 Mrd. € · 0,01&nbsp;€</td><td>Deutsche Börsen; Referenzpreise der Bundesbank</td><td id="b2-spanne">Hoch 218,06 (12.03.2020) · Tief 97,80 (23.07.2008)</td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#B23B2E"></i>BTP 2,15&nbsp;% 01.03.2072<small>IT0005441883 / A3KPKQ</small></th><td>Republik Italien (Dipartimento del Tesoro)</td><td>2,15&nbsp;% p. a., halbjährlich je 1,075&nbsp;% (1. März, 1. September)</td><td>12.04.2021 per Konsortium zu 99,467 (Rendite 2,18&nbsp;%)</td><td>5 → rund 7,4 Mrd. € · 1.000&nbsp;€</td><td>Borsa Italiana (MOT), daneben deutsche Börsen</td><td id="t-spanne">Hoch 105,16 (17.08.2021) · Tief 48,89 (03.10.2023)</td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#8A5FBF"></i>Frankreich 0,5&nbsp;% 25.05.2072<small>FR0014001NN8 / A2876Z</small></th><td>Republik Frankreich (Agence France Trésor)</td><td>0,5&nbsp;% p. a., jährlich am 25. Mai</td><td>19.01.2021 per Konsortium zu 95,895 (Rendite 0,593&nbsp;%, Rekordtief); Orderbuch 75 Mrd. €</td><td>7 Mrd. € zum Start, später aufgestockt · 1&nbsp;€</td><td>Euronext Paris, daneben deutsche Börsen</td><td id="fr-spanne">Hoch 97,38 (25.01.2021) · Tief 21,55 (15.09.2026)</td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#1F7A5E"></i>Österreich 0,85&nbsp;% 30.06.2120<small>AT0000A2HLC4 / A28Y97</small></th><td>Republik Österreich (OeBFA)</td><td>0,85&nbsp;% p. a., jährlich am 30. Juni</td><td>24.06.2020 per Konsortium zu 98,01 (Rendite 0,88&nbsp;%); später aufgestockt</td><td>2 → rund 5,2 Mrd. € · 1.000&nbsp;€</td><td>Wiener Börse, daneben deutsche Börsen</td><td id="at-spanne">Hoch 134,55 (10.12.2020) · Tief 28,23 (10.09.2026)</td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#C07E28"></i>US-Treasury 1,25&nbsp;% 15.05.2050<small>US912810SN90 / A28XEG</small></th><td>Vereinigte Staaten (U.S. Treasury)</td><td>1,25&nbsp;% p. a., halbjährlich je 0,625&nbsp;% (15. Mai, 15. November)</td><td>Auktion 13.05.2020 zu 97,73 (Rendite 1,34&nbsp;%); Aufstockungen 06/07 2020</td><td>22 Mrd. $ Erstauktion, mit Aufstockungen deutlich mehr · 100 $</td><td>US-Interbankenmarkt; in Deutschland u. a. Stuttgart, Frankfurt · US-Dollar</td><td id="us-spanne">Hoch 101,72 (06.08.2020) · Tief 43,65 (23.10.2023)</td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#2F8A9A"></i>Microsoft 2,675&nbsp;% 01.06.2060<small>US594918CD48 / A28XT9</small></th><td>Microsoft Corp., Redmond</td><td>2,675&nbsp;% p. a., halbjährlich je 1,3375&nbsp;% (1. Juni, 1. Dezember)</td><td>01.06.2020 im Umtausch gegen ältere Microsoft-Anleihen, Umtauschrendite 2,525&nbsp;% (≈ 103,8)</td><td>3,75 Mrd. $ · 2.000 $</td><td>US-OTC-Markt; in Deutschland u. a. Stuttgart, Frankfurt · US-Dollar</td><td id="ms-spanne">Hoch 111,94 (23.07.2020) · Tief 50,50 (10.09.2026)</td></tr>
+        <tr><th scope="row"><i class="tag" style="background:#8E8D86"></i>BTP 2,15&nbsp;% 01.03.2072<small>IT0005441883 / A3KPKQ</small></th><td>Republik Italien (Dipartimento del Tesoro)</td><td>2,15&nbsp;% p. a., halbjährlich je 1,075&nbsp;% (1. März, 1. September)</td><td>12.04.2021 per Konsortium zu 99,467 (Rendite 2,18&nbsp;%)</td><td>5 → rund 7,4 Mrd. € · 1.000&nbsp;€</td><td>Borsa Italiana (MOT), daneben deutsche Börsen</td><td id="t-spanne">Hoch 105,16 (17.08.2021) · Tief 48,89 (03.10.2023)</td></tr>
+        <tr><th scope="row"><i class="tag" style="background:#A9A7A0"></i>Frankreich 0,5&nbsp;% 25.05.2072<small>FR0014001NN8 / A2876Z</small></th><td>Republik Frankreich (Agence France Trésor)</td><td>0,5&nbsp;% p. a., jährlich am 25. Mai</td><td>19.01.2021 per Konsortium zu 95,895 (Rendite 0,593&nbsp;%, Rekordtief); Orderbuch 75 Mrd. €</td><td>7 Mrd. € zum Start, später aufgestockt · 1&nbsp;€</td><td>Euronext Paris, daneben deutsche Börsen</td><td id="fr-spanne">Hoch 97,38 (25.01.2021) · Tief 21,55 (15.09.2026)</td></tr>
+        <tr><th scope="row"><i class="tag" style="background:#CF7430"></i>Österreich 0,85&nbsp;% 30.06.2120<small>AT0000A2HLC4 / A28Y97</small></th><td>Republik Österreich (OeBFA)</td><td>0,85&nbsp;% p. a., jährlich am 30. Juni</td><td>24.06.2020 per Konsortium zu 98,01 (Rendite 0,88&nbsp;%); später aufgestockt</td><td>2 → rund 5,2 Mrd. € · 1.000&nbsp;€</td><td>Wiener Börse, daneben deutsche Börsen</td><td id="at-spanne">Hoch 134,55 (10.12.2020) · Tief 28,23 (10.09.2026)</td></tr>
+        <tr><th scope="row"><i class="tag" style="background:#B5B3AC"></i>US-Treasury 1,25&nbsp;% 15.05.2050<small>US912810SN90 / A28XEG</small></th><td>Vereinigte Staaten (U.S. Treasury)</td><td>1,25&nbsp;% p. a., halbjährlich je 0,625&nbsp;% (15. Mai, 15. November)</td><td>Auktion 13.05.2020 zu 97,73 (Rendite 1,34&nbsp;%); Aufstockungen 06/07 2020</td><td>22 Mrd. $ Erstauktion, mit Aufstockungen deutlich mehr · 100 $</td><td>US-Interbankenmarkt; in Deutschland u. a. Stuttgart, Frankfurt · US-Dollar</td><td id="us-spanne">Hoch 101,72 (06.08.2020) · Tief 43,65 (23.10.2023)</td></tr>
+        <tr><th scope="row"><i class="tag" style="background:#9C9A93"></i>Microsoft 2,675&nbsp;% 01.06.2060<small>US594918CD48 / A28XT9</small></th><td>Microsoft Corp., Redmond</td><td>2,675&nbsp;% p. a., halbjährlich je 1,3375&nbsp;% (1. Juni, 1. Dezember)</td><td>01.06.2020 im Umtausch gegen ältere Microsoft-Anleihen, Umtauschrendite 2,525&nbsp;% (≈ 103,8)</td><td>3,75 Mrd. $ · 2.000 $</td><td>US-OTC-Markt; in Deutschland u. a. Stuttgart, Frankfurt · US-Dollar</td><td id="ms-spanne">Hoch 111,94 (23.07.2020) · Tief 50,50 (10.09.2026)</td></tr>
       </tbody>
     </table>
     </div>
@@ -431,8 +437,8 @@ const MS = mkBond({
   raw: MS_WEEKLY_RAW
 });
 const COUPON_BONDS = [BTP, FR, AT, US, MS];
-const COLORS = { bund: "#1D5FA0", bund2: "#1A1A19", btp: "#B23B2E", fr: "#8A5FBF", at: "#1F7A5E", us: "#C07E28", ms: "#2F8A9A" };
-const LABEL_COLORS = { bund: "#1D5FA0", bund2: "#1A1A19", btp: "#8A2A20", fr: "#5E3D8C", at: "#155C46", us: "#8F5A16", ms: "#1F5F6A" };
+const COLORS = { bund: "#157C00", bund2: "#1A1A19", btp: "#8E8D86", fr: "#A9A7A0", at: "#CF7430", us: "#B5B3AC", ms: "#9C9A93" };
+const LABEL_COLORS = { bund: "#157C00", bund2: "#1A1A19", btp: "#55544F", fr: "#55544F", at: "#A2561C", us: "#55544F", ms: "#55544F" };   // Bildwelt 2.0: Fokus-Regel
 
 // ---------- Bund 0 % 2050: Daten der Bundesbank (langlaeufer.json, beim Deploy eingebettet) ----------
 const BUND = {

@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -140,18 +141,23 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="beobachten.html">Zinsen</a></li><li><span aria-current="page">Zinskurve seit 1972</span></li></ol></nav>
   <main id="main">
-    <h1>Zinskurve seit 1972</h1>
-    <p class="sub">Lohnt es sich gerade, dein Geld lange zu binden? Das zeigt der Abstand zwischen der 10-jährigen und der 2-jährigen Staatsanleihe. Ist er groß, bekommst du für die lange Laufzeit deutlich mehr Zins. Ist er klein oder sogar negativ, bringt kurz fast dasselbe – oder mehr. Für Deutschland seit 1972 und die USA seit 1976, täglich aktualisiert.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Zinskurve seit 1972</h1>
+        <p class="sub">Lohnt es sich gerade, dein Geld lange zu binden? Das zeigt der Abstand zwischen der 10-jährigen und der 2-jährigen Staatsanleihe. Ist er groß, bekommst du für die lange Laufzeit deutlich mehr Zins. Ist er klein oder sogar negativ, bringt kurz fast dasselbe – oder mehr. Für Deutschland seit 1972 und die USA seit 1976, täglich aktualisiert.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-zinskurve.svg" alt="" width="232" height="160"></div>
+    </div>
 
     <div class="heute" id="heute">
-      <div class="hk" data-land="DE" style="--c:#2C2C2A"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Deutschland · Bundesanleihen</span><b class="hk-v"><span class="v">+0,35</span><small>Prozentpunkte</small></b><span class="hk-s s normal">normal</span><span class="hk-d d">10 Jahre 3,63&nbsp;% · 2 Jahre 3,28&nbsp;% · Stand 25.09.2026</span></div>
-      <div class="hk" data-land="US" style="--c:#1D5FA0"><span class="hk-l"><span class="sw" aria-hidden="true"></span>USA · Treasuries</span><b class="hk-v"><span class="v">+0,31</span><small>Prozentpunkte</small></b><span class="hk-s s normal">normal</span><span class="hk-d d">10 Jahre 5,18&nbsp;% · 2 Jahre 4,87&nbsp;% · Stand 24.09.2026</span></div>
+      <div class="hk" data-land="DE" style="--c:#157C00"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Deutschland · Bundesanleihen</span><b class="hk-v"><span class="v">+0,35</span><small>Prozentpunkte</small></b><span class="hk-s s normal">normal</span><span class="hk-d d">10 Jahre 3,63&nbsp;% · 2 Jahre 3,28&nbsp;% · Stand 25.09.2026</span></div>
+      <div class="hk" data-land="US" style="--c:#1A1A19"><span class="hk-l"><span class="sw" aria-hidden="true"></span>USA · Treasuries</span><b class="hk-v"><span class="v">+0,31</span><small>Prozentpunkte</small></b><span class="hk-s s normal">normal</span><span class="hk-d d">10 Jahre 5,18&nbsp;% · 2 Jahre 4,87&nbsp;% · Stand 24.09.2026</span></div>
     </div>
 
     <p class="eyebrow" id="eyebrow-zk">10 Jahre minus 2 Jahre · Monatsdurchschnitte · 1972 – 2026 · Stand: 25.09.2026</p>
     <div class="legend linie" id="legend-zk">
-      <button type="button" class="leg" data-key="DE" aria-pressed="true" title="Deutschland ausblenden"><span class="sw-line" style="--c:#2C2C2A" aria-hidden="true"></span>Deutschland</button>
-      <button type="button" class="leg" data-key="US" aria-pressed="true" title="USA ausblenden"><span class="sw-line" style="--c:#1D5FA0" aria-hidden="true"></span>USA</button>
+      <button type="button" class="leg" data-key="DE" aria-pressed="true" title="Deutschland ausblenden"><span class="sw-line" style="--c:#157C00" aria-hidden="true"></span>Deutschland</button>
+      <button type="button" class="leg" data-key="US" aria-pressed="true" title="USA ausblenden"><span class="sw-line" style="--c:#1A1A19" aria-hidden="true"></span>USA</button>
       <span class="leg"><span class="sw-area" aria-hidden="true"></span>unter null: Kurve invers – kurz bringt mehr als lang</span>
       <span class="leg-hint">Deutschland oder USA antippen bzw. anklicken blendet die Kurve aus und wieder ein; im Chart zeigt Tippen (oder die Maus) den Wert je Monat. Mit der Maus hebt Überfahren eine Kurve hervor (Esc löst).</span>
     </div>
@@ -173,9 +179,9 @@
         <line x1="70" y1="208" x2="450" y2="208" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/>
         <text x="90" y="228" text-anchor="middle" font-size="13" fill="#55544F">2 J.</text><text x="230" y="228" text-anchor="middle" font-size="13" fill="#55544F">5 J.</text><text x="400" y="228" text-anchor="middle" font-size="13" fill="#55544F">10 J.</text>
         <text class="axt" x="450" y="250" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Laufzeit →</text>
-        <path d="M90 166 C 190 130, 300 96, 400 82" fill="none" stroke="#1F7A5E" stroke-width="3" stroke-linecap="round"/><circle cx="400" cy="82" r="4" fill="#1F7A5E"/><text x="410" y="78" font-size="14" font-weight="600" fill="#1F7A5E">steil</text>
+        <path d="M90 166 C 190 130, 300 96, 400 82" fill="none" stroke="#157C00" stroke-width="3" stroke-linecap="round"/><circle cx="400" cy="82" r="4" fill="#157C00"/><text x="410" y="78" font-size="14" font-weight="600" fill="#157C00">steil</text>
         <path d="M90 126 C 190 122, 300 119, 400 116" fill="none" stroke="#55544F" stroke-width="3" stroke-linecap="round"/><circle cx="400" cy="116" r="4" fill="#55544F"/><text x="410" y="120" font-size="14" font-weight="600" fill="#55544F">flach</text>
-        <path d="M90 82 C 190 100, 300 120, 400 150" fill="none" stroke="#993C1D" stroke-width="3" stroke-linecap="round"/><circle cx="400" cy="150" r="4" fill="#993C1D"/><text x="410" y="158" font-size="14" font-weight="600" fill="#993C1D">invers</text>
+        <path d="M90 82 C 190 100, 300 120, 400 150" fill="none" stroke="#CF7430" stroke-width="3" stroke-linecap="round"/><circle cx="400" cy="150" r="4" fill="#CF7430"/><text x="410" y="158" font-size="14" font-weight="600" fill="#CF7430">invers</text>
       </svg><p class="sb-f">Der große Chart oben zeigt für jeden Monat genau diesen Abstand: 10 Jahre (rechtes Ende) minus 2 Jahre (linkes Ende). Hier bei „steil“ +2 Punkte, bei „flach“ +0,2, bei „invers“ −1.</p></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Der Abstand sagt dir, wie viel Zins die lange Laufzeit extra bringt – nicht, wie hoch das allgemeine Zinsniveau ist. Beides zusammen lesen: das Niveau bei <a href="renditen.html">Staatsanleihen seit 1970</a>, die Form hier.</span></p>
     </section>
@@ -258,7 +264,7 @@ MC.navInit();
 // ---- Zinskurve: Abstand 10 J. − 2 J. (zinskurve.json, scripts/update_zinskurve.py) ----
 (function () {
   const SANS = 'Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif';
-  const LAND = { DE: { name: "Deutschland", color: "#2C2C2A" }, US: { name: "USA", color: "#1D5FA0" } };
+  const LAND = { DE: { name: "Deutschland", color: "#157C00" }, US: { name: "USA", color: "#1A1A19" } };
   const MON = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
   const fmt = (v, d) => MC.zahl(v, d);   // de-DE, echtes Minus
   const vz = v => (v > 0 ? "+" : v < 0 ? "−" : "±") + fmt(Math.abs(v), 2);

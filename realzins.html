@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -56,7 +57,7 @@
   .cerkl { font-size: 14px; color: var(--text); margin: 0 0 8px; max-width: 760px; line-height: 1.5; }
   .legend { gap: 6px 20px; color: var(--ink); margin: 0 0 4px; }   /* Grundform in base.css */
   .sw-line { width: 20px; height: 3px; border-radius: 2px; background: var(--c, var(--line)); }
-  .sw-area { width: 20px; height: 12px; border-radius: 2px; background: var(--c); opacity: 0.55; }
+  .sw-area { width: 20px; height: 12px; border-radius: 2px; background: var(--c); border: 1px solid var(--r, transparent); box-sizing: border-box; }
   .zeit { display: inline-flex; gap: 6px; margin-left: auto; flex: none; }
   .zeit button { font: inherit; font-size: 12.5px; font-weight: 600; min-height: 32px; padding: 5px 13px; border-radius: 999px; border: 1px solid rgba(26,26,25,0.25); background: #fff; color: var(--ink); cursor: pointer; }
   .zeit button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
@@ -158,8 +159,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="beobachten.html">Zinsen</a></li><li><span aria-current="page">Realzins seit 1970</span></li></ol></nav>
   <main id="main">
-    <h1>Realzins seit 1970</h1>
-    <p class="sub">Was eine Anleihe bringt, zählt erst nach Inflation. Hier die 10-jährige Bundesanleihe gegen die Teuerung seit 1970: was übrig blieb, was heute übrig bleibt – auch nach Steuern – und welche Inflation der Markt für die nächsten Jahre erwartet. Täglich aktualisiert.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Realzins seit 1970</h1>
+        <p class="sub">Was eine Anleihe bringt, zählt erst nach Inflation. Hier die 10-jährige Bundesanleihe gegen die Teuerung seit 1970: was übrig blieb, was heute übrig bleibt – auch nach Steuern – und welche Inflation der Markt für die nächsten Jahre erwartet. Täglich aktualisiert.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-realzins.svg" alt="" width="232" height="160"></div>
+    </div>
     <nav class="lands" aria-label="Zum Abschnitt springen">
       <a class="lbtn" href="#realzins"><span class="n">1</span>Was der Realzins ist</a>
       <a class="lbtn" href="#geschichte"><span class="n">2</span>Seit 1970</a>
@@ -168,9 +174,9 @@
     </nav>
 
     <div class="heute" id="heute">
-      <div class="hk" style="--c:#2C2C2A"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Bund 10 Jahre</span><b class="hk-v" id="h-zins">3,63<small>%</small></b><span class="hk-d" id="h-zins-d">Rendite, nominal · Tageswert 25.09.2026</span></div>
+      <div class="hk" style="--c:#157C00"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Bund 10 Jahre</span><b class="hk-v" id="h-zins">3,63<small>%</small></b><span class="hk-d" id="h-zins-d">Rendite, nominal · Tageswert 25.09.2026</span></div>
       <div class="hk" style="--c:#CF7430"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Inflation</span><b class="hk-v" id="h-vpi">2,9<small>%</small></b><span class="hk-d" id="h-vpi-d">Verbraucherpreise Deutschland, August 2026 gegen Vorjahr</span></div>
-      <div class="hk" id="h-real-k" style="--c:#1F7A5E"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Realzins heute</span><b class="hk-v plus" id="h-real">+0,7<small>Punkte</small></b><span class="hk-d" id="h-real-d">Zins minus Inflation · nach Abgeltungsteuer <b>−0,2</b></span></div>
+      <div class="hk" id="h-real-k" style="--c:#157C00"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Realzins heute</span><b class="hk-v plus" id="h-real">+0,7<small>Punkte</small></b><span class="hk-d" id="h-real-d">Zins minus Inflation · nach Abgeltungsteuer <b>−0,2</b></span></div>
       <div class="hk" style="--c:#CF7430"><span class="hk-l"><span class="sw gestr" aria-hidden="true"></span>Markterwartung</span><b class="hk-v" id="h-be">2,3<small>% Inflation</small></b><span class="hk-d" id="h-be-d">pro Jahr bis 2033 im Euroraum, abgeleitet aus der inflationsindexierten Bundesanleihe</span></div>
     </div>
 
@@ -180,9 +186,9 @@
     </div>
     <div class="cblock">
       <p class="ctitel">Zins und Inflation</p>
-      <p class="cerkl">Liegt die schwarze Linie über der orangen, ist das Geld schneller gewachsen als die Preise.</p>
+      <p class="cerkl">Liegt die grüne Linie über der orangen, ist das Geld schneller gewachsen als die Preise.</p>
       <div class="legend">
-        <span class="leg"><span class="sw-line" style="--c:#2C2C2A" aria-hidden="true"></span>Bund 10 Jahre (Rendite)</span>
+        <span class="leg"><span class="sw-line" style="--c:#157C00" aria-hidden="true"></span>Bund 10 Jahre (Rendite)</span>
         <span class="leg"><span class="sw-line" style="--c:#CF7430" aria-hidden="true"></span>Inflation (Verbraucherpreise)</span>
       </div>
       <div id="chart-zi" class="chart-scroll"></div>
@@ -191,8 +197,8 @@
       <p class="ctitel">Realzins</p>
       <p class="cerkl">Der Abstand beider Linien, in Prozentpunkten – was nach Inflation übrig blieb.</p>
       <div class="legend">
-        <span class="leg"><span class="sw-area" style="--c:#1F7A5E" aria-hidden="true"></span>über null: Kaufkraft gewonnen</span>
-        <span class="leg"><span class="sw-area" style="--c:#993C1D" aria-hidden="true"></span>unter null: Kaufkraft verloren</span>
+        <span class="leg"><span class="sw-area" style="--c:#DCFBD3;--r:#157C00" aria-hidden="true"></span>über null: Kaufkraft gewonnen</span>
+        <span class="leg"><span class="sw-area" style="--c:#FBE8D8;--r:#CF7430" aria-hidden="true"></span>unter null: Kaufkraft verloren</span>
       </div>
       <div id="chart-rz" class="chart-scroll"></div>
     </div>
@@ -207,7 +213,7 @@
       <div class="k-bild"><p class="sb-k">10.000 € zu 3 % Zins – nach zehn Jahren</p>
         <div class="kk" role="img" aria-label="Kaufkraft von 10.000 Euro nach zehn Jahren bei 3 Prozent Zins: ohne Inflation 13.439 Euro, bei 2 Prozent Inflation 11.025 Euro, bei 3 Prozent 10.000 Euro, bei 5 Prozent 8.250 Euro." style="--einsatz:71.4%">
           <span class="ax-t" aria-hidden="true">Inflation</span><span class="ax-t rechts" aria-hidden="true">Kaufkraft in heutigen Euro →</span>
-          <span class="kk-l">Ohne Inflation<small>nur nominal</small></span><span class="kk-bahn"><span class="kk-bar" style="--w:96.0%;--c:#D6D5D0"></span><span class="kk-w innen dunkel" style="--w:96.0%">13.439 €</span></span><span class="kk-l">2 % Inflation</span><span class="kk-bahn"><span class="kk-bar" style="--w:78.8%;--c:#1F7A5E"></span><span class="kk-w innen" style="--w:78.8%">11.025 €</span></span><span class="kk-l">3 % Inflation</span><span class="kk-bahn"><span class="kk-bar" style="--w:71.4%;--c:#6E6D68"></span><span class="kk-w innen" style="--w:71.4%">10.000 €</span></span><span class="kk-l">5 % Inflation</span><span class="kk-bahn"><span class="kk-bar" style="--w:58.9%;--c:#993C1D"></span><span class="kk-w innen" style="--w:58.9%">8.250 €</span></span>
+          <span class="kk-l">Ohne Inflation<small>nur nominal</small></span><span class="kk-bahn"><span class="kk-bar" style="--w:96.0%;--c:#E4E3DF"></span><span class="kk-w innen dunkel" style="--w:96.0%">13.439 €</span></span><span class="kk-l">2 % Inflation</span><span class="kk-bahn"><span class="kk-bar" style="--w:78.8%;--c:#157C00"></span><span class="kk-w innen" style="--w:78.8%">11.025 €</span></span><span class="kk-l">3 % Inflation</span><span class="kk-bahn"><span class="kk-bar" style="--w:71.4%;--c:#6E6D68"></span><span class="kk-w innen" style="--w:71.4%">10.000 €</span></span><span class="kk-l">5 % Inflation</span><span class="kk-bahn"><span class="kk-bar" style="--w:58.9%;--c:#CF7430"></span><span class="kk-w innen" style="--w:58.9%">8.250 €</span></span>
           <span class="kk-einsatz" aria-hidden="true"><span>Einsatz 10.000 €</span></span>
         </div>
         <p class="sb-f">Zinsen jedes Jahr wieder angelegt, ohne Steuern. Die Formel: 10.000 € × (1,03 ÷ (1 + Inflation))<sup>10</sup>. Mehr dazu: <a href="rendite-lesen.html#netto">Rendite nach Steuern und Inflation</a>.</p></div>
@@ -309,7 +315,7 @@ MC.navInit();
 // ---- Realzins: Bund 10 J., Inflation, Differenz (realzins.json, scripts/update_realzins.py) ----
 (function () {
   const SANS = 'Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif';
-  const C = { zins: "#2C2C2A", infl: "#CF7430", plus: "#1F7A5E", minus: "#993C1D" };
+  const C = { zins: "#157C00", infl: "#CF7430", plus: "#157C00", minus: "#A2561C", flPlus: "#DCFBD3", flMinus: "#FBE8D8" };   // plus/minus: Linien und Schrift, fl…: Flächen   // Bildwelt 2.0: Realzins-Fläche Hauch-Grün über null, Orange-Hauch darunter
   const STEUER = 0.26375;   // Abgeltungsteuer 25 % + Solidaritätszuschlag 5,5 % darauf
   const MON = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
   const fmt = (v, d) => MC.zahl(v, d);   // de-DE mit echtem Minus (Achsen „−2“ statt „-2“)
@@ -466,13 +472,13 @@ MC.navInit();
       const line = pts.map((p, i) => `${i ? "L" : "M"}${p[0].toFixed(1)} ${y(p[1]).toFixed(1)}`).join("");
       const area = `M${pts[0][0].toFixed(1)} ${y0}${pts.map(p => `L${p[0].toFixed(1)} ${y(p[1]).toFixed(1)}`).join("")}L${pts[pts.length - 1][0].toFixed(1)} ${y0}Z`;
       const paths = `<defs><clipPath id="rz-pos"><rect x="${X0}" y="${Y0}" width="${X1 - X0}" height="${(y0 - Y0).toFixed(1)}"/></clipPath><clipPath id="rz-neg"><rect x="${X0}" y="${y0}" width="${X1 - X0}" height="${(Y1 - y0).toFixed(1)}"/></clipPath></defs>`
-        + `<path d="${area}" fill="${C.plus}" fill-opacity="0.45" clip-path="url(#rz-pos)"/><path d="${area}" fill="${C.minus}" fill-opacity="0.5" clip-path="url(#rz-neg)"/>`
+        + `<path d="${area}" fill="${C.flPlus}" stroke="#157C00" stroke-width="1" clip-path="url(#rz-pos)"/><path d="${area}" fill="${C.flMinus}" stroke="#CF7430" stroke-width="1" clip-path="url(#rz-neg)"/>`
         + `<path d="${line}" fill="none" stroke="#1A1A19" stroke-opacity="0.55" stroke-width="1.2" stroke-linejoin="round"/>`
         + marken(pts, y);
       const series = [{ x: pts.map(p => +p[0].toFixed(1)), y: pts.map(p => +y(p[1]).toFixed(1)), color: C.plus,
         tips: pts.map(p => `${label(p[2])}: Realzins ${vz(p[1], 1)} Punkte (Bund ${fmt(p[2].z, jahre ? 2 : 1)} %, Inflation ${fmt(p[2].i, 1)} %)`) }];
       const letzte = pts[pts.length - 1];
-      const aria = `Realzins in Prozentpunkten, ${jahre ? "Jahreswerte" : "Monatswerte"} ${zeitraum}; zuletzt ${vz(letzte[1], 1)} (${label(letzte[2])}). Grün über null, rot unter null. Werte mit den Pfeiltasten abrufbar.`;
+      const aria = `Realzins in Prozentpunkten, ${jahre ? "Jahreswerte" : "Monatswerte"} ${zeitraum}; zuletzt ${vz(letzte[1], 1)} (${label(letzte[2])}). Grün über null, orange unter null. Werte mit den Pfeiltasten abrufbar.`;
       const svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${MC.esc(aria)}" xmlns="http://www.w3.org/2000/svg">
         <text x="4" y="14" font-family="${SANS}" font-size="12" font-weight="600" style="fill:var(--muted)">↑ Prozentpunkte</text>${kopf(einheit)}${g}${paths}
         <text x="${X1}" y="${H - 8}" text-anchor="end" font-family="${SANS}" font-size="12" font-weight="600" style="fill:var(--muted)">Jahr →</text></svg>`;

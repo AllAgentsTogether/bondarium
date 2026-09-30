@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -50,6 +51,11 @@
   .ser { transition: opacity 0.18s ease; }
   .ser.dim { opacity: 0.12; }
   .ser.hi path.line { stroke-width: 2.6; }
+  /* Bildwelt 2.0 (30.09.2026): Fokus statt Regenbogen – übrige Serien grau, beim Hervorheben (Legende/Maus) Tiefgrün */
+  .ser.hi:is([data-key="jp_aa"],[data-key="jp_a"],[data-key="cn_aaa"],[data-key="au_a"]) path.line { stroke: #157C00; }
+  .ser.hi:is([data-key="jp_aa"],[data-key="jp_a"],[data-key="cn_aaa"],[data-key="au_a"]) .band { fill: #157C00; }
+  .leg:is(:hover, :focus-visible, .on, [aria-pressed="true"]):is([data-key="jp_aa"],[data-key="jp_a"],[data-key="cn_aaa"],[data-key="au_a"]) .sw-line { background: #157C00; }
+  .leg:is(:hover, :focus-visible, .on, [aria-pressed="true"]):is([data-key="jp_aa"],[data-key="jp_a"],[data-key="cn_aaa"],[data-key="au_a"]) .sw-line.dashed { background: repeating-linear-gradient(90deg, #157C00 0 6px, transparent 6px 9px); }
   /* Hinweiszeile im Chart: Hover-Variante („… oder Maus“) bzw. Touch-Variante */
   .chart-scroll .hint-touch { display: none; }
   @media (hover: none) {
@@ -154,8 +160,13 @@
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="beobachten.html">Zinsen</a></li><li><span aria-current="page">Unternehmensanleihen seit 1984</span></li></ol></nav>
   <main id="main">
 
-    <h1>Unternehmens&shy;anleihen seit 1984</h1>
-    <p class="sub" id="sub-unternehmen">Mit einer Unternehmensanleihe leihst du einem Unternehmen Geld – für eine feste Laufzeit und zu einem festen Zins. Weil ein Unternehmen eher ausfallen kann als ein Staat, zahlt es meist mehr Zins; wie viel mehr, hängt vor allem von seiner Bonität ab. Der Vergleich unten zeigt Unternehmensanleihen deshalb nach Bonitätsklassen aus vier Ländern, alle mit 10 Jahren Laufzeit – so lassen sie sich neben die 10-jährigen Staatsanleihen legen.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Unternehmens&shy;anleihen seit 1984</h1>
+        <p class="sub" id="sub-unternehmen">Mit einer Unternehmensanleihe leihst du einem Unternehmen Geld – für eine feste Laufzeit und zu einem festen Zins. Weil ein Unternehmen eher ausfallen kann als ein Staat, zahlt es meist mehr Zins; wie viel mehr, hängt vor allem von seiner Bonität ab. Der Vergleich unten zeigt Unternehmensanleihen deshalb nach Bonitätsklassen aus vier Ländern, alle mit 10 Jahren Laufzeit – so lassen sie sich neben die 10-jährigen Staatsanleihen legen.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-unternehmensanleihen.svg" alt="" width="232" height="160"></div>
+    </div>
 
     <p class="eyebrow" id="eyebrow-unternehmen">Unternehmensanleihen · 1984 – 2026 · Stand: 17.09.2026</p>
     <h2 class="abschnitt" id="h-verlauf">Renditen nach Bonität und Land seit 1984</h2>
@@ -293,12 +304,12 @@ const CUR_SYM = { USD: "$", EUR: "€", JPY: "¥", CNY: "¥", AUD: "$" };
 // (Japan A, Australien BBB) zusätzlich gestrichelt.
 // tblKey/cur/rating/mat: Spalten der Tabelle (Kurzname, Währung, Bonität, Laufzeit); code: Endlabel im Chart.
 const CORP = [
-  { key: "us_hqm",  code: "US HQM",     tblKey: "tUsHqm",  cur: "USD", rating: "AAA–A", matKey: "mat10",  nameKey: "sUsHqm",  color: "#1D5FA0" },
-  { key: "jp_aa",   pubNextDay: true, code: "JP AA",      tblKey: "tJpAa",   cur: "JPY", rating: "AA",    matKey: "mat10",  nameKey: "sJpAa",   color: "#8A5FBF", text: "#7A52B0" },
-  { key: "jp_a",    pubNextDay: true, code: "JP A",       tblKey: "tJpA",    cur: "JPY", rating: "A",     matKey: "mat10",  nameKey: "sJpA",    color: "#1F7A5E", dash: "6 3" },
-  { key: "cn_aaa",  code: "CN AAA",     tblKey: "tCnAaa",  cur: "CNY", ratingKey: "ratingCn", matKey: "mat10", nameKey: "sCnAaa", color: "#2F8A9A", text: "#1F6F7D" },
-  { key: "au_a",    code: "AU A",       tblKey: "tAuA",    cur: "AUD", rating: "A",     matKey: "mat10",  nameKey: "sAuA",    color: "#C07E28", text: "#8A5A1A" },
-  { key: "au_bbb",  code: "AU BBB",     tblKey: "tAuBbb",  cur: "AUD", rating: "BBB",   matKey: "mat10",  nameKey: "sAuBbb",  color: "#A0386E", dash: "6 3" }
+  { key: "us_hqm",  code: "US HQM",     tblKey: "tUsHqm",  cur: "USD", rating: "AAA–A", matKey: "mat10",  nameKey: "sUsHqm",  color: "#157C00" },
+  { key: "jp_aa",   pubNextDay: true, code: "JP AA",      tblKey: "tJpAa",   cur: "JPY", rating: "AA",    matKey: "mat10",  nameKey: "sJpAa",   color: "#8E8D86", text: "#55544F" },
+  { key: "jp_a",    pubNextDay: true, code: "JP A",       tblKey: "tJpA",    cur: "JPY", rating: "A",     matKey: "mat10",  nameKey: "sJpA",    color: "#B5B3AC", dash: "6 3" },
+  { key: "cn_aaa",  code: "CN AAA",     tblKey: "tCnAaa",  cur: "CNY", ratingKey: "ratingCn", matKey: "mat10", nameKey: "sCnAaa", color: "#A9A7A0", text: "#55544F" },
+  { key: "au_a",    code: "AU A",       tblKey: "tAuA",    cur: "AUD", rating: "A",     matKey: "mat10",  nameKey: "sAuA",    color: "#9C9A93", text: "#55544F" },
+  { key: "au_bbb",  code: "AU BBB",     tblKey: "tAuBbb",  cur: "AUD", rating: "BBB",   matKey: "mat10",  nameKey: "sAuBbb",  color: "#CF7430", dash: "6 3" }
 ];
 // Segmente mit börsentäglicher Quelle (JSDA, ChinaBond)
 const CORP_DAILY = ["jp_aa", "jp_a", "cn_aaa"];

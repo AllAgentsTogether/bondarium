@@ -681,9 +681,10 @@ window.MC = (function () {
     valuation: ["sehr günstig", "günstig", "fair", "teuer", "sehr teuer"],
     level: ["sehr niedrig", "niedrig", "mittel", "hoch", "sehr hoch"]
   };
+  // Bildwelt 2.0 (30.09.2026): Datenpalette – günstig Tiefgrün, fair Grau, teuer Orange; wertneutral in Tinte
   var RATE_COLORS = {
-    valuation: ["#14543F", "#1F7A5E", "#8A6A2A", "#B84A22", "#993C1D"],
-    level: ["#1D5FA0", "#3E7CB8", "#6B6A64", "#3E7CB8", "#1D5FA0"]
+    valuation: ["#157C00", "#157C00", "#55544F", "#CF7430", "#A2561C"],
+    level: ["#1A1A19", "#1A1A19", "#55544F", "#1A1A19", "#1A1A19"]
   };
   function rate(pct, kind, invert) {
     if (!isNum(pct)) return null;

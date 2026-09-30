@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -157,8 +158,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="beobachten.html">Zinsen</a></li><li><span aria-current="page">Risikoaufschläge</span></li></ol></nav>
   <main id="main">
-    <h1>Risikoaufschläge: Euro-Staaten seit 1991, USA seit 1984</h1>
-    <p class="sub">Wie viel mehr Zins zahlen Italien, Frankreich oder ein Unternehmen als der sicherste Schuldner? Der Aufschlag ist das Angstbarometer des Anleihenmarkts – für Euro-Staaten gegen die Bundesanleihe seit 1991, für US-Unternehmen gegen die US-Staatsanleihe seit 1984.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Risikoaufschläge: Euro-Staaten seit 1991, USA seit 1984</h1>
+        <p class="sub">Wie viel mehr Zins zahlen Italien, Frankreich oder ein Unternehmen als der sicherste Schuldner? Der Aufschlag ist das Angstbarometer des Anleihenmarkts – für Euro-Staaten gegen die Bundesanleihe seit 1991, für US-Unternehmen gegen die US-Staatsanleihe seit 1984.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-risikoaufschlaege.svg" alt="" width="232" height="160"></div>
+    </div>
     <nav class="lands" aria-label="Zum Abschnitt springen">
       <a class="lbtn" href="#aufschlag"><span class="n">1</span>Was der Aufschlag ist</a>
       <a class="lbtn" href="#angst"><span class="n">2</span>Das Angstbarometer</a>
@@ -166,10 +172,10 @@
     </nav>
 
     <div class="heute" id="heute">
-      <div class="hk" data-land="IT" style="--c:#1D5FA0"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Italien − Bund</span><b class="hk-v"><span class="v">+0,81</span><small>Punkte</small></b><span class="hk-d d"><b>3,99&nbsp;%</b> gegen Bund 3,18&nbsp;% · Monatsschnitt August 2026</span></div>
-      <div class="hk" data-land="FR" style="--c:#2C2C2A"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Frankreich − Bund</span><b class="hk-v"><span class="v">+0,82</span><small>Punkte</small></b><span class="hk-d d"><b>4,00&nbsp;%</b> gegen Bund 3,18&nbsp;% · Monatsschnitt August 2026</span></div>
-      <div class="hk" data-land="ES" style="--c:#CF7430"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Spanien − Bund</span><b class="hk-v"><span class="v">+0,45</span><small>Punkte</small></b><span class="hk-d d"><b>3,63&nbsp;%</b> gegen Bund 3,18&nbsp;% · Monatsschnitt August 2026</span></div>
-      <div class="hk" id="hk-us" style="--c:#993C1D"><span class="hk-l"><span class="sw" aria-hidden="true"></span>USA: Unternehmen</span><b class="hk-v"><span class="v" id="us-v">+0,90</span><small>Punkte</small></b><span class="hk-d" id="us-d"><b>5,58&nbsp;%</b> gegen US-Staatsanleihe 4,68&nbsp;% · August 2026 · Schnitt seit 1984: <b>1,3</b></span></div>
+      <div class="hk" data-land="IT" style="--c:#CF7430"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Italien − Bund</span><b class="hk-v"><span class="v">+0,81</span><small>Punkte</small></b><span class="hk-d d"><b>3,99&nbsp;%</b> gegen Bund 3,18&nbsp;% · Monatsschnitt August 2026</span></div>
+      <div class="hk" data-land="FR" style="--c:#157C00"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Frankreich − Bund</span><b class="hk-v"><span class="v">+0,82</span><small>Punkte</small></b><span class="hk-d d"><b>4,00&nbsp;%</b> gegen Bund 3,18&nbsp;% · Monatsschnitt August 2026</span></div>
+      <div class="hk" data-land="ES" style="--c:#A9A7A0"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Spanien − Bund</span><b class="hk-v"><span class="v">+0,45</span><small>Punkte</small></b><span class="hk-d d"><b>3,63&nbsp;%</b> gegen Bund 3,18&nbsp;% · Monatsschnitt August 2026</span></div>
+      <div class="hk" id="hk-us" style="--c:#1A1A19"><span class="hk-l"><span class="sw" aria-hidden="true"></span>USA: Unternehmen</span><b class="hk-v"><span class="v" id="us-v">+0,90</span><small>Punkte</small></b><span class="hk-d" id="us-d"><b>5,58&nbsp;%</b> gegen US-Staatsanleihe 4,68&nbsp;% · August 2026 · Schnitt seit 1984: <b>1,3</b></span></div>
     </div>
 
     <div class="ckopf">
@@ -179,9 +185,9 @@
       <p class="ctitel">Euro-Staaten gegen die Bundesanleihe</p>
       <p class="cerkl">Vor dem Euro der Preis der Währung, seither der Preis des Zweifels.</p>
       <div class="legend" id="legend-eu">
-        <button type="button" class="leg" data-key="IT" aria-pressed="true" title="Italien ausblenden"><span class="sw-line" style="--c:#1D5FA0" aria-hidden="true"></span>Italien</button>
-        <button type="button" class="leg" data-key="ES" aria-pressed="true" title="Spanien ausblenden"><span class="sw-line" style="--c:#CF7430" aria-hidden="true"></span>Spanien</button>
-        <button type="button" class="leg" data-key="FR" aria-pressed="true" title="Frankreich ausblenden"><span class="sw-line" style="--c:#2C2C2A" aria-hidden="true"></span>Frankreich</button>
+        <button type="button" class="leg" data-key="IT" aria-pressed="true" title="Italien ausblenden"><span class="sw-line" style="--c:#CF7430" aria-hidden="true"></span>Italien</button>
+        <button type="button" class="leg" data-key="ES" aria-pressed="true" title="Spanien ausblenden"><span class="sw-line" style="--c:#A9A7A0" aria-hidden="true"></span>Spanien</button>
+        <button type="button" class="leg" data-key="FR" aria-pressed="true" title="Frankreich ausblenden"><span class="sw-line" style="--c:#157C00" aria-hidden="true"></span>Frankreich</button>
       </div>
       <div id="chart-eu" class="chart-scroll"></div>
     </div>
@@ -189,7 +195,7 @@
       <p class="ctitel">USA: Unternehmen gegen Staatsanleihe</p>
       <p class="cerkl">Unternehmen hoher Bonität (AAA bis A), 10 Jahre Laufzeit.</p>
       <div class="legend" id="legend-us">
-        <button type="button" class="leg" data-key="HQM" aria-pressed="true" title="AAA bis A"><span class="sw-line" style="--c:#993C1D" aria-hidden="true"></span>AAA bis A</button>
+        <button type="button" class="leg" data-key="HQM" aria-pressed="true" title="AAA bis A"><span class="sw-line" style="--c:#1A1A19" aria-hidden="true"></span>AAA bis A</button>
       </div>
       <div id="chart-us" class="chart-scroll"></div>
     </div>
@@ -203,11 +209,11 @@
       </div>
       <div class="k-bild"><p class="sb-k">Aufschlag gegen die Bundesanleihe, letzter Monat</p>
         <div class="rl" id="rangliste" role="img" aria-label="Rangliste der Euro-Staaten nach Aufschlag gegen Deutschland, August 2026: Frankreich 0,82 Punkte, Italien 0,81, Griechenland 0,69, Belgien 0,58, Spanien 0,45, Portugal 0,37, Finnland 0,34, Österreich 0,23, Irland 0,17, Niederlande 0,10.">
-          <span class="rl-l">Frankreich</span><span class="rl-bahn"><span class="rl-bar" style="--w:88%;--c:#2C2C2A"></span><span class="rl-w" style="--w:88%">+0,82</span></span>
-          <span class="rl-l">Italien</span><span class="rl-bahn"><span class="rl-bar" style="--w:87%;--c:#1D5FA0"></span><span class="rl-w" style="--w:87%">+0,81</span></span>
+          <span class="rl-l">Frankreich</span><span class="rl-bahn"><span class="rl-bar" style="--w:88%;--c:#157C00"></span><span class="rl-w" style="--w:88%">+0,82</span></span>
+          <span class="rl-l">Italien</span><span class="rl-bahn"><span class="rl-bar" style="--w:87%;--c:#CF7430"></span><span class="rl-w" style="--w:87%">+0,81</span></span>
           <span class="rl-l">Griechenland</span><span class="rl-bahn"><span class="rl-bar" style="--w:74%"></span><span class="rl-w" style="--w:74%">+0,69</span></span>
           <span class="rl-l">Belgien</span><span class="rl-bahn"><span class="rl-bar" style="--w:62%"></span><span class="rl-w" style="--w:62%">+0,58</span></span>
-          <span class="rl-l">Spanien</span><span class="rl-bahn"><span class="rl-bar" style="--w:48%;--c:#CF7430"></span><span class="rl-w" style="--w:48%">+0,45</span></span>
+          <span class="rl-l">Spanien</span><span class="rl-bahn"><span class="rl-bar" style="--w:48%;--c:#A9A7A0"></span><span class="rl-w" style="--w:48%">+0,45</span></span>
           <span class="rl-l">Portugal<small>Juli 2026</small></span><span class="rl-bahn"><span class="rl-bar" style="--w:40%"></span><span class="rl-w" style="--w:40%">+0,37</span></span>
           <span class="rl-l">Finnland</span><span class="rl-bahn"><span class="rl-bar" style="--w:37%"></span><span class="rl-w" style="--w:37%">+0,34</span></span>
           <span class="rl-l">Österreich</span><span class="rl-bahn"><span class="rl-bar" style="--w:25%"></span><span class="rl-w" style="--w:25%">+0,23</span></span>
@@ -301,9 +307,9 @@ MC.navInit();
   const SANS = 'Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif';
   // Spalten in laender.monate: [Monat, DE, IT, ES, FR, PT, GR, IE, BE, NL, AT, FI]
   const COL = { IT: 2, ES: 3, FR: 4 };
-  const EU = { IT: { name: "Italien", color: "#1D5FA0" }, ES: { name: "Spanien", color: "#CF7430" }, FR: { name: "Frankreich", color: "#2C2C2A" } };
+  const EU = { IT: { name: "Italien", color: "#CF7430" }, ES: { name: "Spanien", color: "#A9A7A0" }, FR: { name: "Frankreich", color: "#157C00" } };
   // us.monate: [Monat, Aufschlag, Unternehmensrendite (HQM, AAA bis A, 10 J.), US-Staatsanleihe] – bis 30.09.2026 Moody's Aaa/Baa, entfallen
-  const US = { HQM: { name: "AAA bis A", color: "#993C1D", col: 1 } };
+  const US = { HQM: { name: "AAA bis A", color: "#1A1A19", col: 1 } };
   // Beschriftete Ausschläge im Chart (Monat, Reihe, Text) – nur wenn der Monat in den Daten liegt
   const MARKEN_EU = [["1992-10", "IT", "Lira-Krise"], ["2011-11", "IT", "Eurokrise"], ["2018-11", "IT", "Haushaltsstreit"], ["1998-12", "IT", "Tiefstand", "rechts"]];   // "rechts": Beschriftung rechts oberhalb, hinter der Euro-Linie – direkt über dem Punkt kreuzte die Linie (01/1999) den Text
   const MARKEN_US = [["2002-10", "HQM", "Enron, WorldCom"], ["2008-10", "HQM", "Finanzkrise"], ["2020-04", "HQM", "Corona"]];
@@ -313,7 +319,7 @@ MC.navInit();
   const monLang = m => `${MON[+m.slice(5, 7) - 1]} ${m.slice(0, 4)}`;
   const monKurz = m => `${MON[+m.slice(5, 7) - 1].slice(0, 3)} ${m.slice(0, 4)}`;
   const setT = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
-  const textFarbe = c => c === "#CF7430" ? "#A2561C" : c;   // Orange als Schrift zu blass (3,4:1) – Text in --orange-text
+  const textFarbe = c => c === "#A9A7A0" ? "#A2561C" : c;   // Orange als Schrift zu blass (3,4:1) – Text in --orange-text
   const VIS = { IT: true, ES: true, FR: true, HQM: true };
   let DATA = null, BREITE = 0, HI = { eu: null, us: null };
 
