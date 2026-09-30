@@ -120,6 +120,7 @@
   .pk-name { font-size: 17px; font-weight: 600; line-height: 1.3; margin: 0 0 12px; }
   .pk-name a { color: var(--ink); text-decoration: none; }
   .pk-name a:hover { text-decoration: underline; text-decoration-color: var(--green-text); }
+  .pick[data-etf] .pk-name a:hover { text-decoration-color: var(--orange-text); }
   .pk-daten { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; margin: 0 0 12px; }
   .pk-daten dt { font-size: 11.5px; color: var(--text); }
   .pk-daten dd { margin: 1px 0 0; font-size: 14.5px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
@@ -292,9 +293,9 @@
         </div>
       </div>
       <ol class="steps steps-voll">
-        <li><span class="sn" aria-hidden="true">1</span><div><strong>Das Ziel</strong><p>Das Geld soll <strong>ähnlich wie Tagesgeld</strong> arbeiten: feste Zinsen, überschaubares Risiko und nach rund einem Jahr wieder verfügbar. Der Kurs einer Anleihe bewegt sich unterwegs ein wenig – am Rückzahlungstag gibt es <strong>100&nbsp;% zurück</strong>. Wer früher ans Geld will, verkauft einfach an der Börse.</p></div></li>
-        <li><span class="sn" aria-hidden="true">2</span><div><strong>Die Kriterien</strong><p>Eine <strong>Restlaufzeit von ca. einem Jahr</strong> – so bleibt der Kurs ruhig. Dazu <strong>solide Schuldner</strong>: Staaten mit Investment Grade oder große, bekannte Unternehmen, in Euro und mit festem Zins. Die Porsche SE, Hauptaktionärin von Volkswagen, hat kein Rating einer Agentur und bringt dafür gut einen halben Punkt mehr Rendite als der Bund.</p></div></li>
-        <li><span class="sn" aria-hidden="true">3</span><div><strong>Vier Beispiele für Nadine</strong><p>Drei Anleihen, die im September 2027 zurückgezahlt werden – zwei Staaten und die Porsche SE –, und rechts ein ETF (orange umrandet) auf sehr kurz laufende Euro-Anleihen. Nadine kann eines wählen oder die 20.000&nbsp;€ aufteilen. Die Anleihen zahlen am Fälligkeitstag 100&nbsp;% zurück, den ETF verkauft sie nach rund zwölf Monaten zum Tageskurs. Ein Klick auf den Namen öffnet den Steckbrief mit Kursverlauf.</p></div></li>
+        <li><span class="sn" aria-hidden="true">1</span><div><strong>Das Ziel</strong><p>Das Geld soll <strong>ähnlich wie Tagesgeld</strong> arbeiten: feste Zinsen, überschaubares Risiko und nach rund einem Jahr wieder verfügbar. Der Kurs einer Anleihe bewegt sich unterwegs ein wenig – am Rückzahlungstag gibt es <strong>100&nbsp;% zurück</strong>. Wer früher ans Geld will, verkauft direkt an der Börse.</p></div></li>
+        <li><span class="sn" aria-hidden="true">2</span><div><strong>Die Kriterien</strong><p>Eine <strong>Restlaufzeit von ca. einem Jahr</strong> – so bleibt der Kurs ruhig. Dazu <strong>solide Schuldner</strong>: Staaten mit Investment Grade oder große, bekannte Unternehmen, in Euro und mit festem Zins. Volkswagen Financial Services, die Finanzsparte des VW-Konzerns, bringt gut einen halben Punkt mehr Rendite als der Bund.</p></div></li>
+        <li><span class="sn" aria-hidden="true">3</span><div><strong>Vier Beispiele für Nadine</strong><p>Drei Anleihen, die im Herbst 2027 zurückgezahlt werden – zwei Staaten und Volkswagen Financial Services –, und rechts ein Laufzeit-ETF (orange umrandet): Er bündelt Euro-Unternehmensanleihen mit Investment Grade, die alle 2027 fällig werden, und zahlt im Dezember 2027 aus – fast wie eine Anleihe, nur breit gestreut. Nadine kann eines wählen oder die 20.000&nbsp;€ aufteilen. Ein Klick auf den Namen öffnet den Steckbrief mit Kursverlauf.</p></div></li>
       </ol>
       <ul class="picks picks-4" aria-label="Vier Beispiele für Nadine: drei Anleihen und ein ETF">
           <li class="pick" data-isin="DE000BU22106" data-faellig="2027-09-16">
@@ -321,32 +322,32 @@
               <div><dt>ISIN</dt><dd class="pk-isin">FR001400NBC6</dd></div>
             </dl>
           </li>
-          <li class="pick" data-isin="XS2643320018" data-faellig="2027-09-27">
-            <p class="pk-typ">Unternehmensanleihe · Auto-Holding</p>
-            <h3 class="pk-name"><a href="anleihe.html?isin=XS2643320018">Porsche SE 4,125&nbsp;% 2027</a></h3>
+          <li class="pick" data-isin="XS1972547696" data-faellig="2027-10-01">
+            <p class="pk-typ">Unternehmensanleihe · Autofinanzierer</p>
+            <h3 class="pk-name"><a href="anleihe.html?isin=XS1972547696">VW Financial Services 2,25&nbsp;% 2027</a></h3>
             <dl class="pk-daten">
-              <div><dt>Rendite</dt><dd class="pk-rend">3,79&nbsp;%</dd></div>
-              <div><dt>Fällig</dt><dd>27.09.2027 <span class="pk-rest"></span></dd></div>
-              <div><dt>Kurs</dt><dd class="pk-kurs">100,32&nbsp;%</dd></div>
-              <div><dt>Kupon</dt><dd>4,125&nbsp;%</dd></div>
+              <div><dt>Rendite</dt><dd class="pk-rend">3,68&nbsp;%</dd></div>
+              <div><dt>Fällig</dt><dd>01.10.2027 <span class="pk-rest"></span></dd></div>
+              <div><dt>Kurs</dt><dd class="pk-kurs">98,62&nbsp;%</dd></div>
+              <div><dt>Kupon</dt><dd>2,25&nbsp;%</dd></div>
               <div><dt>Ab</dt><dd>1.000&nbsp;€</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">XS2643320018</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">XS1972547696</dd></div>
             </dl>
           </li>
-          <li class="pick" data-etf="IE000RHYOR04">
-            <p class="pk-typ">ETF · Euro-Anleihen · ultrakurz</p>
-            <h3 class="pk-name">iShares € Ultrashort Bond</h3>
+          <li class="pick" data-etf="IE000ZOI8OK5">
+            <p class="pk-typ">Laufzeit-ETF · Unternehmen</p>
+            <h3 class="pk-name">iShares iBonds Dec 2027 Term €&nbsp;Corp</h3>
             <dl class="pk-daten">
-              <div><dt>Rendite</dt><dd class="pk-rend">3,10&nbsp;%</dd></div>
-              <div><dt>Duration</dt><dd>0,36 Jahre</dd></div>
-              <div><dt>Kosten p.&nbsp;a.</dt><dd>0,09&nbsp;%</dd></div>
+              <div><dt>Rendite</dt><dd class="pk-rend">3,31&nbsp;%</dd></div>
+              <div><dt>Endet</dt><dd>Dez. 2027</dd></div>
+              <div><dt>Kosten p.&nbsp;a.</dt><dd>0,12&nbsp;%</dd></div>
               <div><dt>Zinsen</dt><dd>thesaurierend</dd></div>
-              <div><dt>Fondsgröße</dt><dd>6,3&nbsp;Mrd.&nbsp;€</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">IE000RHYOR04</dd></div>
+              <div><dt>Fondsgröße</dt><dd>879&nbsp;Mio.&nbsp;€</dd></div>
+              <div><dt>ISIN</dt><dd class="pk-isin">IE000ZOI8OK5</dd></div>
             </dl>
           </li>
       </ul>
-      <p class="pk-stand">Kurs und Rendite: <span class="pk-quelle">Deutsche Börse / Bundesbank, Stand 25.09.2026</span> – werden täglich aktualisiert. Beispiele, die die Kriterien erfüllen – keine Empfehlung und keine Anlageberatung; die Bonität kann sich ändern – vor dem Kauf auf <a href="bonitaet.html">Bonität prüfen</a>. ETF: Rendite bis Fälligkeit (vor Kosten), Kosten und Fondsgröße laut Anbieter, Stand 22.09.2026.</p>
+      <p class="pk-stand">Kurs und Rendite: <span class="pk-quelle">Deutsche Börse / Bundesbank, Stand 25.09.2026</span> – werden täglich aktualisiert. Beispiele, die die Kriterien erfüllen – keine Empfehlung und keine Anlageberatung; die Bonität kann sich ändern – vor dem Kauf auf <a href="bonitaet.html">Bonität prüfen</a>. ETF: Rendite bis Fälligkeit (vor Kosten) und Kosten laut Anbieter, Stand 28.09.2026; Fondsgröße Stand 31.08.2026.</p>
       <div class="g-fuss">
         <a class="gf-kauf" href="erste-anleihe.html"><span class="gf-l">Neu hier?</span><span class="gf-t">Wie kaufe ich eine Anleihe?</span><span class="gf-s">Depot, Order, Limit – in neun Schritten zur ersten Anleihe.</span><span class="gf-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
         <form class="gf-suche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen für Nadines Ziel suchen">
