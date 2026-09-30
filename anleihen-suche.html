@@ -114,7 +114,7 @@
   .fmehr:hover:not(:disabled) { border-color: var(--green-text); color: var(--green-text); }
   .fmehr:disabled { opacity: 0.5; cursor: default; }
   .fmehr:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
-  .fmehr .fanz:empty { display: none; }
+  .fmehr .fanz:empty, .filter.alle .fmehr .fanz { display: none; }   /* aufgeklappt ist kein Filter versteckt – die Zahl stünde sonst neben Filtern, die gar nicht gewählt sind (30.09.2026) */
   .fmehr .fanz { min-width: 18px; padding: 2px 5px; border-radius: 999px; background: var(--green); color: var(--ink); font-size: 12px; font-weight: 600; text-align: center; }
   .fpanel { position: absolute; top: calc(100% + 6px); left: 0; z-index: 40; min-width: 240px; width: max-content; max-width: 330px; background: #fff; border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 6px 24px rgba(44,44,42,0.13); padding: 6px 0 0; font-size: 14px; }
   .fpanel.rechts { left: auto; right: 0; }
