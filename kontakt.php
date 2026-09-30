@@ -3,7 +3,7 @@
  * Kontaktformular (ueber-uns.html#kontakt, seit 30.09.2026 – zweiter Kontaktweg neben der E-Mail, § 5 DDG).
  *
  * Nimmt Name (freiwillig), E-Mail-Adresse und Nachricht per POST entgegen und leitet sie als E-Mail an
- * info@bondarium.de weiter. Auf dem Webserver wird nichts gespeichert: keine Datei, keine Datenbank, keine
+ * info@bondarium.com weiter. Auf dem Webserver wird nichts gespeichert: keine Datei, keine Datenbank, keine
  * IP-Adresse in der E-Mail. Die Antwort ist JSON ({"status": …}); das Skript der Seite zeigt den passenden Text.
  *
  * Schutz ohne Captcha und ohne fremde Dienste:
@@ -18,8 +18,8 @@
  */
 declare(strict_types=1);
 
-const EMPFAENGER = 'info@bondarium.de';
-const ABSENDER   = 'info@bondarium.de';   // eigene Adresse der Domain; die Adresse des Besuchers steht in Reply-To
+const EMPFAENGER = 'info@bondarium.com';
+const ABSENDER   = 'info@bondarium.com';   // eigenes Postfach (bondarium.com liegt wie bondarium.de bei STRATO); die Adresse des Besuchers steht in Reply-To
 const URSPRUNG   = 'https://www.bondarium.de';
 
 header('Content-Type: application/json; charset=utf-8');
