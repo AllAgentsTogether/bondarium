@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""update_kurse.py – Tageskurse und Kursverlauf aller Anleihen der Suche und aller Anleihen/ETFs der Datenseiten.
+"""update_kurse.py – Tageskurse und Kursverlauf aller Anleihen der Suche, aller Anleihen/ETFs der Datenseiten und aller
+Anleihen-ETFs des Registers (etf-index.json, scripts/update_etf_index.py – seit 30.09.2026).
 
 Quellen (beide kostenlos, beide mit ausdrücklicher Erlaubnis zur Anzeige):
   * Deutsche Börse, MiFIR-Delayed-Data-Service (MiFIR Art. 13(2), Delegierte Verordnung (EU) 2025/1156):
@@ -29,8 +30,18 @@ Schreibt (alle im Website-Ordner):
                            oder null.
                            Einträge ohne neuen Kurs bleiben bis zu 45 Tage mit ihrem Datum stehen.
   kurse-auswahl.json       dieselben Felder für alle ISINs, die in den übrigen HTML-Seiten vorkommen (Länder, Laufzeit,
-                           Langläufer, Startseite, ETFs) – klein, wird per inline_data.py in diese Seiten eingebettet.
+                           Langläufer, Startseite, Guide) und für die ETFs der Top-10-Listen der ETF-Seite
+                           (top10-anleihen-etfs.json aus update_etf_index.py – die ISINs stehen nicht im HTML);
+                           klein, wird per inline_data.py in diese Seiten eingebettet.
                            ETFs: Kurs in Euro je Anteil (Xetra), umsatz in Euro.
+  etf-kurse.json           dieselben Felder für alle Anleihen-ETFs des Registers etf-index.json (seit 30.09.2026).
+                           Kurs je Anteil in der Handelswährung des Registers – fast immer Euro; einige Anteilsklassen
+                           werden an Xetra nur in USD, GBP, SEK oder CHF gehandelt. Einige ETFs haben eine Euro- UND eine
+                           Dollar-Handelszeile unter derselben ISIN: Für ETFs zählen nur Feststellungen in der Handelswährung
+                           des Registers (sonst wäre der „letzte Kurs“ mal ein Euro-, mal ein Dollar-Kurs).
+                           Xetra stellt für jeden ETF täglich Auktionspreise fest, auch ohne Umsatz – jeder ETF hat also
+                           jeden Börsentag einen Kurs. Wie bei den Anleihen bleiben Einträge ohne neuen Kurs bis zu 45 Tage
+                           mit ihrem Datum stehen (für ETFs und andere Papiere außerhalb des Anleihen-Index seit 30.09.2026).
   kurse/<Jahr>/<hh>.json   Kursverlauf ab 24.09.2026, 256 Teildateien je Jahr (hh = teil(ISIN), zwei Hex-Ziffern):
                            {"tage": [Datum …], "k": {ISIN: [kurs|null …]}, "u": {ISIN: {"<tag>": umsatz}},
                             "h": {ISIN: {"<tag>": [abschl_F, abschl_T, abschl_X, umsatz_F, umsatz_T, umsatz_X]}},
@@ -79,6 +90,12 @@ Aufruf:
                                                   stehen, fallen heraus
   python scripts/update_kurse.py --bund-bereinigen
                                                   ohne Abruf: Ausreißer aus den vorhandenen Bund-Verläufen entfernen
+  FIXTURE_DIR=<Ordner> python scripts/update_kurse.py --nachtragen
+                                                  Tage, die schon im Kursverlauf stehen, für ETFs und andere Papiere außerhalb
+                                                  des Anleihen-Index ergänzen, die an dem Tag noch keinen Wert haben (z. B. nach
+                                                  der Aufnahme ins Register) – aus den Tagesdateien im Ordner (Rohdaten-Artefakt
+                                                  des Workflows) oder, ohne FIXTURE_DIR, aus den bei der Börse noch gelisteten.
+                                                  Vorhandene Werte und alle Anleihen des Index bleiben unangetastet.
 """
 
 import collections
@@ -99,9 +116,12 @@ from _common import (INFLATION, ausreisser, get_with_retry, log_err, now_iso, oh
 ROOT = Path(__file__).resolve().parent.parent
 OUT_SUCHE = ROOT / "anleihen-kurse.json"
 OUT_AUSWAHL = ROOT / "kurse-auswahl.json"
+OUT_ETF = ROOT / "etf-kurse.json"
 DIR_VERLAUF = ROOT / "kurse"
 DIR_BUND = DIR_VERLAUF / "bund"
 INDEX = ROOT / "anleihen-index.json"
+ETF_INDEX = ROOT / "etf-index.json"   # Register der Anleihen-ETFs (scripts/update_etf_index.py)
+ETF_TOP10 = ROOT / "top10-anleihen-etfs.json"   # die zehn meistgehandelten je Kategorie (ETF-Seite)
 
 API = "https://mfs.deutsche-boerse.com/api/"
 DIENSTE = {"F": "DFRA-posttrade", "X": "DETR-posttrade", "T": "DGAT-posttrade"}
@@ -234,18 +254,50 @@ def rendite_und_aufschlag(z: list, kurs: float, valuta: datetime.date, kurve: li
 
 
 def auswahl_isins() -> set:
-    """Alle ISINs der übrigen HTML-Seiten (Länder, Laufzeit, Langläufer, Startseite, ETFs)."""
+    """Alle ISINs der übrigen HTML-Seiten (Länder, Laufzeit, Langläufer, Startseite, Guide) und der Top-10-Listen
+    der ETF-Seite (top10-anleihen-etfs.json). Die ETF-Seite baut ihre Tabellen aus dieser Datei – die ISINs stehen
+    nicht im HTML (vom 29.09. bis 30.09.2026 blieben deshalb 68 der 70 ETFs ohne Kurs)."""
     auswahl = set()
     for html in ROOT.glob("*.html"):
         if html.name in ("anleihen-suche.html", "404.html"):
             continue
         auswahl |= {i for i in ISIN_RE.findall(html.read_text(encoding="utf-8")) if isin_ok(i)}
+    for gruppe in (lade_json(ETF_TOP10, {}).get("gruppen") or {}).values():
+        auswahl |= {x["isin"] for x in gruppe.get("etfs") or [] if isinstance(x, dict) and isin_ok(str(x.get("isin") or ""))}
     return auswahl
 
 
-def schreibe_kursdateien(alle: dict, zeilen: dict, auswahl: set, stand: str) -> tuple[int, int]:
-    """anleihen-kurse.json (Index-Anleihen) und kurse-auswahl.json (Seiten-ISINs) aus alle = {ISIN: [kurs, rendite,
-    datum, boerse, umsatz, tagesdaten, vortag, aufschlag]} schreiben; gibt die Zahl der Einträge zurück."""
+def etf_register() -> dict:
+    """{ISIN: Handelswährung} aller Anleihen-ETFs aus etf-index.json; leer, solange es das Register nicht gibt."""
+    idx = lade_json(ETF_INDEX, {})
+    felder = idx.get("felder") or []
+    if "isin" not in felder or "handelswaehrung" not in felder:
+        return {}
+    i, w = felder.index("isin"), felder.index("handelswaehrung")
+    return {r[i]: r[w] or "EUR" for r in idx.get("rows") or [] if isin_ok(str(r[i]))}
+
+
+def alte_eintraege(*pfade: Path) -> dict:
+    """{ISIN: [kurs, rendite, datum, boerse, umsatz, tagesdaten, vortag, aufschlag]} aus Kursdateien (Datum statt
+    Tag-Index); spätere Dateien haben Vorrang."""
+    out = {}
+    for pfad in pfade:
+        alt = lade_json(pfad, {})
+        tage = alt.get("tage") or []
+        if isinstance(alt.get("kurse"), dict) and tage:
+            for isin, e in alt["kurse"].items():
+                try:
+                    out[isin] = [e[0], e[1], tage[e[2]], e[3], e[4]] + (list(e[5:8]) + [None, None, None])[:3]
+                except (IndexError, TypeError):
+                    pass
+    return out
+
+
+def schreibe_kursdateien(alle: dict, zeilen: dict, auswahl: set, stand: str, etf: dict | None = None,
+                         suche: bool = True) -> tuple[int, int, int]:
+    """anleihen-kurse.json (Index-Anleihen; nur mit suche=True), kurse-auswahl.json (Seiten-ISINs) und etf-kurse.json
+    (ETF-Register, sobald es eines gibt) aus alle = {ISIN: [kurs, rendite, datum, boerse, umsatz, tagesdaten, vortag,
+    aufschlag]} schreiben; gibt die Zahl der Einträge zurück."""
     def kompakt(auswahl_isins):
         tage = sorted({e[2] for i, e in alle.items() if i in auswahl_isins}, reverse=True)
         pos = {t: n for n, t in enumerate(tage)}
@@ -256,11 +308,17 @@ def schreibe_kursdateien(alle: dict, zeilen: dict, auswahl: set, stand: str) -> 
                       "und Deutsche Bundesbank (Bundeswertpapiere)",
             "boersen": BOERSE_NAME}
     tage_s, kurse_s = kompakt(set(zeilen))
-    write_atomic(OUT_SUCHE, {**kopf, "tage": tage_s, "kurse": kurse_s}, indent=None)
+    if suche:
+        write_atomic(OUT_SUCHE, {**kopf, "tage": tage_s, "kurse": kurse_s}, indent=None)
     tage_a, kurse_a = kompakt(auswahl)
     # anzahl = Anleihen in der Suche (Kurs in den letzten zwei Wochen) – Startseite zeigt „rund 33.000“ daraus
     write_atomic(OUT_AUSWAHL, {**kopf, "anzahl": len(kurse_s), "tage": tage_a, "kurse": kurse_a}, indent=None)
-    return len(kurse_s), len(kurse_a)
+    kurse_e = {}
+    if etf:
+        tage_e, kurse_e = kompakt(set(etf))
+        write_atomic(OUT_ETF, {**kopf, "quelle": "Deutsche Börse (Xetra, Tradegate, Börse Frankfurt; MiFIR-Nachhandelsdaten, 15 Minuten verzögert)",
+                               "tage": tage_e, "kurse": kurse_e}, indent=None)
+    return len(kurse_s), len(kurse_a), len(kurse_e)
 
 
 # ---------- Deutsche Börse: Tagesdateien ----------
@@ -302,9 +360,12 @@ def tagesdatei_holen(kuerzel: str, name: str) -> bytes | None:
         return None
 
 
-def auswerten(roh: bytes, behalten: set) -> tuple[str, dict]:
+def auswerten(roh: bytes, behalten: set, waehrung: dict | None = None) -> tuple[str, dict]:
     """Je ISIN: letzter Kurs, Höchst, Tiefst, Anzahl Feststellungen, Umsatz, Zahl der Abschlüsse.
-    Übersprungen: indikative Kurse (MMT-Handelsmodus „I“) und Stornos („C“)."""
+    Übersprungen: indikative Kurse (MMT-Handelsmodus „I“) und Stornos („C“) – und für die Papiere in `waehrung`
+    ({ISIN: Währung}, die ETFs) alle Feststellungen in einer anderen Währung: Manche ETFs werden an Xetra unter
+    derselben ISIN in Euro und in Dollar gehandelt (seit 30.09.2026)."""
+    waehrung = waehrung or {}
     if roh[:2] == b"\x1f\x8b":
         roh = gzip.decompress(roh)
     out, tage = {}, {}
@@ -316,6 +377,8 @@ def auswerten(roh: bytes, behalten: set) -> tuple[str, dict]:
             d = json.loads(zeile)
             isin = d["instrumentIdentificationCode"]
             if isin not in behalten or d.get("mmtTradingMode") == "I" or d.get("mmtModificationInd") == "C":
+                continue
+            if isin in waehrung and d.get("priceCurrency") not in (None, waehrung[isin]):
                 continue
             zeit, preis, menge = d["tradingDateAndTime"], float(d["price"]), float(d.get("quantity") or 0)
             notiz = int(d.get("priceNotation") or 2)
@@ -387,13 +450,17 @@ def main() -> int:
         return neu_rechnen()
     if "--bund-bereinigen" in sys.argv:
         return bund_bereinigen()
+    if "--nachtragen" in sys.argv:
+        return nachtragen()
     idx = lade_json(INDEX, {})
     zeilen = {r[0]: r for r in idx.get("rows", [])}
     if not zeilen:
         log_err("anleihen-index.json fehlt oder ist leer – keine Kurse.")
         return 1
-    # Alle ISINs der übrigen Seiten (Länder, Laufzeit, Langläufer, Startseite, ETFs)
+    # Alle ISINs der übrigen Seiten (Länder, Laufzeit, Langläufer, Startseite, ETFs) und das ETF-Register
     auswahl = auswahl_isins()
+    etf = etf_register()
+    waehrung = ohne_index(zeilen, auswahl, etf)
     alt_stand = (lade_json(OUT_SUCHE, {}) or {}).get("stand") or ""
 
     # Bundesbank (Bundeswertpapiere): Kurs und Rendite der letzten Tage
@@ -430,7 +497,7 @@ def main() -> int:
                     log_err(f"{DIENSTE[k]}: {name} nicht abrufbar ({e}).")
                     roh = None
                 if roh:
-                    t, daten = auswerten(roh, set(zeilen) | auswahl)
+                    t, daten = auswerten(roh, set(zeilen) | auswahl | set(etf), waehrung)
                     feed[k] = daten
                     print(f"{name}: {len(daten)} Papiere, Handelstag {t}")
                     break
@@ -438,14 +505,53 @@ def main() -> int:
             log_err(f"Börse Frankfurt fehlt für {tag} – dieser Tag wird übersprungen.")
             rc = 1
             continue
-        rc = verarbeite(tag, feed, zeilen, auswahl, bbk) or rc
+        rc = verarbeite(tag, feed, zeilen, auswahl, bbk, etf) or rc
     bund_verlauf(zeilen, bbk)
     return rc
 
 
-def verarbeite(tag: str, feed: dict, zeilen: dict, auswahl: set, bbk: dict) -> int:
+def ohne_index(zeilen: dict, auswahl: set, etf: dict) -> dict:
+    """{ISIN: Währung} der Papiere außerhalb des Anleihen-Index – die ETFs. Für sie zählen nur Feststellungen in
+    dieser Währung: die Handelswährung des Registers, sonst Euro (ETFs der Seiten ohne Registereintrag)."""
+    return {i: etf.get(i) or "EUR" for i in (auswahl | set(etf)) if i not in zeilen}
+
+
+def tagesdaten(feed: dict, isin: str, quelle: str, faktor: float):
+    """[eroeffnung, hoch, tief, feststellungen, abschluesse, umsatz F, T, X] aus der Datei des Handelsplatzes."""
+    a = feed.get(quelle, {}).get(isin)
+    if not a:
+        return None
+    u = [round(feed[k][isin]["u"]) if k in feed and isin in feed[k] else 0 for k in ("F", "T", "X")]
+    r = lambda x: round(x * faktor, 4 if x * faktor < 10 else 3)
+    if a["o"] == a["hi"] == a["lo"] == a["p"] and a["abs"] == 0 and not any(u):
+        return [a["n"]]
+    return [r(a["o"]), r(a["hi"]), r(a["lo"]), a["n"], a["abs"]] + u
+
+
+def handel(feed: dict, isin: str):
+    """[Abschlüsse F, T, X, Umsatz F, T, X] des Handelstags für die Historie – nur, wenn gehandelt wurde, sonst None."""
+    da = [feed[k][isin] if k in feed and isin in feed[k] else None for k in ("F", "T", "X")]
+    ab = [x["abs"] if x else 0 for x in da]
+    um = [round(x["u"]) if x else 0 for x in da]
+    return ab + um if any(ab) or any(um) else None
+
+
+def eintrag_ohne_index(feed: dict, isin: str, vortag):
+    """Kurseintrag eines Papiers außerhalb des Anleihen-Index (ETF): Kurs je Anteil, Xetra vor Tradegate vor
+    Frankfurt, Umsatz aller drei Plätze; None ohne Feststellung."""
+    quelle = next((k for k in ("X", "T", "F") if isin in feed.get(k, {})), None)
+    if quelle is None:
+        return None
+    a = feed[quelle][isin]
+    umsatz = sum(feed[k][isin]["u"] for k in ("F", "T", "X") if k in feed and isin in feed[k])
+    return [round(a["p"], 4 if a["p"] < 10 else 3), None, a["t"][:10], quelle, round(umsatz),
+            tagesdaten(feed, isin, quelle, 1.0), vortag, None]
+
+
+def verarbeite(tag: str, feed: dict, zeilen: dict, auswahl: set, bbk: dict, etf: dict | None = None) -> int:
     """Kurse eines Handelstags in die Kursdateien und den Kursverlauf schreiben."""
-    behalten = set(zeilen) | auswahl
+    etf = etf or {}
+    behalten = set(zeilen) | auswahl | set(etf)
     d_tag = datetime.date.fromisoformat(tag)
     # 2) Bundesbank: für den Handelstag gilt der Bundesbank-Kurs
     bund = {i: p for i, pts in bbk.items() for p in pts if p[0] == tag}
@@ -462,7 +568,7 @@ def verarbeite(tag: str, feed: dict, zeilen: dict, auswahl: set, bbk: dict) -> i
 
     # Vortag: bisheriger Schlusskurs aus der eigenen Datei (für die BERECHNETE Veränderung)
     vor = {}
-    for pfad in (OUT_AUSWAHL, OUT_SUCHE):
+    for pfad in (OUT_ETF, OUT_AUSWAHL, OUT_SUCHE):
         alt0 = lade_json(pfad, {})
         if isinstance(alt0.get("kurse"), dict) and alt0.get("tage"):
             for isin, e in alt0["kurse"].items():
@@ -472,21 +578,15 @@ def verarbeite(tag: str, feed: dict, zeilen: dict, auswahl: set, bbk: dict) -> i
                 except (IndexError, TypeError):
                     pass
 
-    def tagesdaten(isin, quelle, faktor):
-        """[eroeffnung, hoch, tief, feststellungen, abschluesse, umsatz F, T, X] aus der Datei des Handelsplatzes."""
-        a = feed.get(quelle, {}).get(isin)
-        if not a:
-            return None
-        u = [round(feed[k][isin]["u"]) if k in feed and isin in feed[k] else 0 for k in ("F", "T", "X")]
-        r = lambda x: round(x * faktor, 4 if x * faktor < 10 else 3)
-        if a["o"] == a["hi"] == a["lo"] == a["p"] and a["abs"] == 0 and not any(u):
-            return [a["n"]]
-        return [r(a["o"]), r(a["hi"]), r(a["lo"]), a["n"], a["abs"]] + u
-
     # 3) Kurs je ISIN für den Handelstag
     neu = {}
     for isin in behalten:
         z = zeilen.get(isin)
+        if z is None and isin not in bund:      # ETF oder anderes Papier außerhalb des Anleihen-Index
+            e = eintrag_ohne_index(feed, isin, vor.get(isin))
+            if e:
+                neu[isin] = e
+            continue
         ist_anleihe = z is not None
         reihenfolge = ("F", "T") if ist_anleihe else ("X", "T", "F")
         quelle = next((k for k in reihenfolge if isin in feed.get(k, {})), None)
@@ -495,7 +595,7 @@ def verarbeite(tag: str, feed: dict, zeilen: dict, auswahl: set, bbk: dict) -> i
         if isin in bund:
             datum, kurs, rend = bund[isin]
             neu[isin] = [round(kurs, 3), None if rend is None else round(rend, 3), datum, "B", round(umsatz),
-                         tagesdaten(isin, "F", 1.0), vor.get(isin), None]
+                         tagesdaten(feed, isin, "F", 1.0), vor.get(isin), None]
             continue
         if quelle is None:
             continue
@@ -511,35 +611,26 @@ def verarbeite(tag: str, feed: dict, zeilen: dict, auswahl: set, bbk: dict) -> i
                 continue
         rend, aufschlag = rendite_und_aufschlag(z, kurs, valuta, kurve) if ist_anleihe else (None, None)
         neu[isin] = [round(kurs, 4 if kurs < 10 else 3), rend, a["t"][:10], quelle, round(umsatz),
-                     tagesdaten(isin, quelle, faktor), vor.get(isin), aufschlag]
+                     tagesdaten(feed, isin, quelle, faktor), vor.get(isin), aufschlag]
 
     # 4) Mit dem Vortag zusammenführen, Schutzregel
     alt = lade_json(OUT_SUCHE, {})
-    alt_kurse, alt_tage = {}, alt.get("tage") or []
-    if isinstance(alt.get("kurse"), dict) and alt_tage:   # neues Format
-        for isin, e in alt["kurse"].items():
-            try:
-                alt_kurse[isin] = [e[0], e[1], alt_tage[e[2]], e[3], e[4]] + (list(e[5:8]) + [None, None, None])[:3]
-            except (IndexError, TypeError):
-                pass
+    alt_kurse = alte_eintraege(OUT_SUCHE)
     frisch_alt = sum(1 for e in alt_kurse.values() if e[2] == alt.get("stand"))
     frisch_neu = sum(1 for isin, e in neu.items() if isin in zeilen and e[2] == tag)
     if frisch_alt and frisch_neu < MIN_ANTEIL * frisch_alt:
         log_err(f"Nur {frisch_neu} Anleihekurse statt zuvor {frisch_alt} – Dateien bleiben unverändert.")
         return 1
     grenze = (d_tag - datetime.timedelta(days=HALTEN_TAGE)).isoformat()
+    # ETFs und andere Papiere außerhalb des Index: letzter Eintrag aus den eigenen Dateien – auch sie bleiben ohne
+    # neuen Kurs bis zu HALTEN_TAGE stehen (seit 30.09.2026; vorher verschwand ein ETF ohne Feststellung sofort)
+    alt_kurse.update({i: e for i, e in alte_eintraege(OUT_ETF, OUT_AUSWAHL).items() if i not in zeilen})
     alle = {i: e for i, e in alt_kurse.items() if e[2] >= grenze and (i in behalten)}
     alle.update(neu)
 
-    n_suche, n_auswahl = schreibe_kursdateien(alle, zeilen, auswahl, tag)
-    print(f"anleihen-kurse.json: {n_suche} Anleihen ({frisch_neu} vom {tag}); kurse-auswahl.json: {n_auswahl} Papiere")
-
-    def handel(isin):
-        """[Abschlüsse F, T, X, Umsatz F, T, X] des Handelstags für die Historie – nur, wenn gehandelt wurde, sonst None."""
-        da = [feed[k][isin] if k in feed and isin in feed[k] else None for k in ("F", "T", "X")]
-        ab = [x["abs"] if x else 0 for x in da]
-        um = [round(x["u"]) if x else 0 for x in da]
-        return ab + um if any(ab) or any(um) else None
+    n_suche, n_auswahl, n_etf = schreibe_kursdateien(alle, zeilen, auswahl, tag, etf)
+    print(f"anleihen-kurse.json: {n_suche} Anleihen ({frisch_neu} vom {tag}); kurse-auswahl.json: {n_auswahl} Papiere"
+          + (f"; etf-kurse.json: {n_etf} ETFs ({sum(1 for i in etf if i in neu and neu[i][2] == tag)} vom {tag})" if etf else ""))
 
     # 5) Kursverlauf (nur Kurse dieses Handelstags) und aktueller Eintrag je Teildatei
     jahr_dir = DIR_VERLAUF / tag[:4]
@@ -563,7 +654,7 @@ def verarbeite(tag: str, feed: dict, zeilen: dict, auswahl: set, bbk: dict) -> i
                 reihe.append(heute[isin][0] if isin in heute else None)
                 if isin in heute and heute[isin][4] > 0:
                     v["u"].setdefault(isin, {})[str(n)] = heute[isin][4]
-                h = handel(isin) if isin in heute else None
+                h = handel(feed, isin) if isin in heute else None
                 if h:
                     v.setdefault("h", {}).setdefault(isin, {})[str(n)] = h
         v["stand"] = tag
@@ -605,24 +696,17 @@ def neu_rechnen() -> int:
     """--neu-rechnen: Rendite und Aufschlag aller gespeicherten Kurse mit dem aktuellen Index und den aktuellen Regeln
     neu rechnen – ohne Abruf, Kurse bleiben unverändert. Bundeswertpapiere behalten die Bundesbank-Rendite, ETFs haben
     keine. Anleihen, die nicht mehr im Index stehen (und auf keiner Seite), fallen heraus. Schreibt anleihen-kurse.json,
-    kurse-auswahl.json und „aktuell“ in kurse/<Jahr>/<hh>.json."""
+    kurse-auswahl.json, etf-kurse.json und „aktuell“ in kurse/<Jahr>/<hh>.json."""
     zeilen = {r[0]: r for r in lade_json(INDEX, {}).get("rows", [])}
-    such, ausw = lade_json(OUT_SUCHE, {}), lade_json(OUT_AUSWAHL, {})
+    such = lade_json(OUT_SUCHE, {})
     stand = such.get("stand")
     if not zeilen or not isinstance(such.get("kurse"), dict) or not stand:
         log_err("anleihen-index.json oder anleihen-kurse.json fehlt – nichts neu gerechnet.")
         return 1
-    alle = {}
-    for d in (ausw, such):                      # die Suchdatei zuletzt: sie hat Vorrang
-        tage = d.get("tage") or []
-        for isin, e in (d.get("kurse") or {}).items():
-            try:
-                alle[isin] = [e[0], e[1], tage[e[2]], e[3], e[4]] + (list(e[5:8]) + [None, None, None])[:3]
-            except (IndexError, TypeError):
-                pass
-    auswahl = auswahl_isins()
+    alle = alte_eintraege(OUT_ETF, OUT_AUSWAHL, OUT_SUCHE)   # die Suchdatei zuletzt: sie hat Vorrang
+    auswahl, etf = auswahl_isins(), etf_register()
     vorher = len(alle)
-    alle = {i: e for i, e in alle.items() if i in zeilen or i in auswahl}
+    alle = {i: e for i, e in alle.items() if i in zeilen or i in auswahl or i in etf}
     # Bund-Renditekurve je Kursdatum aus den Bundesbank-Einträgen (wie im Tageslauf)
     kurven = {}
     for isin, e in alle.items():
@@ -645,7 +729,7 @@ def neu_rechnen() -> int:
         if e[7] != auf:
             geaendert["Aufschlag"] += 1
         e[1], e[7] = rend, auf
-    n_suche, n_auswahl = schreibe_kursdateien(alle, zeilen, auswahl, stand)
+    n_suche, n_auswahl, _ = schreibe_kursdateien(alle, zeilen, auswahl, stand, etf)
     # „aktuell“ der Verlaufs-Teildateien des laufenden Jahres (Steckbrief anleihe.html)
     akt = {}
     for isin, e in alle.items():
@@ -662,6 +746,87 @@ def neu_rechnen() -> int:
     print(f"Neu gerechnet (Stand {stand}): Rendite {geaendert['Rendite']}× und Aufschlag {geaendert['Aufschlag']}× geändert; "
           f"{vorher - len(alle)} Einträge ohne Index/Seite entfernt; anleihen-kurse.json {n_suche} Anleihen, "
           f"kurse-auswahl.json {n_auswahl} Papiere, {n_teil} Verlaufsdateien („aktuell“)")
+    return 0
+
+
+def nachtragen() -> int:
+    """--nachtragen: Tage, die schon im Kursverlauf stehen, für ETFs und andere Papiere außerhalb des Anleihen-Index
+    ergänzen, die an dem Tag noch keinen Wert haben – etwa ETFs, die erst später ins Register kamen, oder die 68 ETFs,
+    die vom 29.09.2026 an ohne Kurs blieben. Liest die Tagesdateien aus FIXTURE_DIR (Rohdaten-Artefakt des Workflows)
+    oder die bei der Börse noch gelisteten. Vorhandene Werte bleiben, Anleihen des Index werden nicht angefasst.
+    Schreibt kurse/<Jahr>/<hh>.json (k, u, h, aktuell), kurse-auswahl.json und etf-kurse.json."""
+    zeilen = {r[0]: r for r in lade_json(INDEX, {}).get("rows", [])}
+    stand = (lade_json(OUT_SUCHE, {}) or {}).get("stand") or ""
+    if not zeilen or not stand:
+        log_err("anleihen-index.json oder anleihen-kurse.json fehlt – nichts nachgetragen.")
+        return 1
+    auswahl, etf = auswahl_isins(), etf_register()
+    waehrung = ohne_index(zeilen, auswahl, etf)
+    je_teil = collections.defaultdict(list)
+    for isin in sorted(waehrung):
+        je_teil[teil(isin)].append(isin)
+    listen = {}
+    for k in ("X", "T", "F"):
+        try:
+            listen[k] = tagesdateien(k)
+        except Exception as e:  # noqa: BLE001
+            log_err(f"{DIENSTE[k]}: Dateiliste nicht abrufbar ({e}).")
+            listen[k] = []
+    tage = sorted({d for k in listen for d, _ in listen[k] if d <= stand})
+    if not tage:
+        print(f"Keine Tagesdatei bis zum Stand {stand} – nichts nachzutragen.")
+        return 0
+    alle = alte_eintraege(OUT_ETF, OUT_AUSWAHL, OUT_SUCHE)
+    gesamt = 0
+    for tag in tage:
+        feed = {}
+        for k in ("X", "T", "F"):
+            for d, name in listen[k]:
+                if d == tag:
+                    try:
+                        roh = tagesdatei_holen(k, name)
+                    except Exception as e:  # noqa: BLE001
+                        log_err(f"{DIENSTE[k]}: {name} nicht abrufbar ({e}).")
+                        roh = None
+                    if roh:
+                        feed[k] = auswerten(roh, set(waehrung), waehrung)[1]
+                    break
+        n_tag = 0
+        for t, isins in je_teil.items():
+            pfad = DIR_VERLAUF / tag[:4] / f"{t}.json"
+            v = lade_json(pfad, None)
+            if not v or tag not in (v.get("tage") or []):
+                continue
+            n, geaendert = v["tage"].index(tag), False
+            for isin in isins:
+                reihe = v["k"].get(isin) or []
+                if len(reihe) > n and reihe[n] is not None:
+                    continue                                   # Wert vorhanden – bleibt
+                e = eintrag_ohne_index(feed, isin, next((x for x in reversed(reihe[:n]) if x is not None), None))
+                if not e or e[2] != tag:
+                    continue
+                reihe = v["k"].setdefault(isin, reihe)
+                reihe.extend([None] * (len(v["tage"]) - len(reihe)))
+                reihe[n] = e[0]
+                if e[4] > 0:
+                    v.setdefault("u", {}).setdefault(isin, {})[str(n)] = e[4]
+                h = handel(feed, isin)
+                if h:
+                    v.setdefault("h", {}).setdefault(isin, {})[str(n)] = h
+                if "aktuell" in v and (isin not in v["aktuell"] or v["aktuell"][isin][2] < tag):
+                    v["aktuell"][isin] = e
+                if isin not in alle or alle[isin][2] < tag:
+                    alle[isin] = e
+                geaendert, n_tag = True, n_tag + 1
+            if geaendert:
+                if "aktuell" in v:
+                    v["aktuell"] = dict(sorted(v["aktuell"].items()))
+                write_atomic(pfad, v, indent=None)
+        print(f"Nachgetragen {tag}: {n_tag} Kurse")
+        gesamt += n_tag
+    if gesamt:
+        _, n_auswahl, n_etf = schreibe_kursdateien(alle, zeilen, auswahl, stand, etf, suche=False)
+        print(f"kurse-auswahl.json: {n_auswahl} Papiere; etf-kurse.json: {n_etf} ETFs")
     return 0
 
 

@@ -164,11 +164,23 @@ jobs:
         continue-on-error: true
         run: python scripts/update_anleihen_index.py
 
+      # Register der Anleihen-ETFs (seit 30.09.2026, docs/ETF-DATENBANK.md): etf-index.json aus der ETF-Liste der
+      # Deutschen Börse (börsentäglich, ~0,5 MB), ihrer Monatsstatistik (Anlageklasse der Neuzugänge, Fondsvermögen,
+      # Umsatz, XLM – eine Datei je Monat, nur solange der Vormonat fehlt) und ESMA FIRDS (Fonds-Datei, 1×/Woche).
+      # Zwischenstände im Ordner etf/ (werden committet, aber nicht veröffentlicht). Läuft VOR den Kursen: So
+      # bekommt ein neu gelisteter ETF am selben Tag einen Kurs. Schlägt es fehl, laufen die Kurse mit dem
+      # bisherigen Register.
+      - name: ETF-Register aktualisieren (Deutsche Börse, ESMA FIRDS)
+        if: env.VOLL == '1'
+        continue-on-error: true
+        run: python scripts/update_etf_index.py
+
       # Kurse aller Anleihen der Suche und aller Anleihen/ETFs der Datenseiten (seit 25.09.2026):
       # Tagesdateien der Deutschen Börse (MiFIR-Delayed-Data: Börse Frankfurt, Xetra, Tradegate –
       # kostenlos, 15 Minuten verzögert, je Datei nur einen Börsentag abrufbar) plus Bundesbank
       # für Bundeswertpapiere; ~30 MB Download, unter einer Minute. Schreibt anleihen-kurse.json
-      # (Suche), kurse-auswahl.json (Datenseiten, wird eingebettet) und den Kursverlauf kurse/
+      # (Suche), kurse-auswahl.json (Datenseiten, wird eingebettet), etf-kurse.json (alle Anleihen-ETFs
+      # des Registers, seit 30.09.2026) und den Kursverlauf kurse/
       # (kurse/<Jahr>/<teil>.json enthält seit 26.09.2026 auch „aktuell“ für den Steckbrief anleihe.html).
       - name: Kurse holen (Deutsche Börse MiFIR-Delayed-Data, Bundesbank)
         if: env.VOLL == '1'
@@ -241,7 +253,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add renditen.json unternehmen.json langlaeufer.json anleihen-index.json anleihen-kurse.json kurse-auswahl.json zinskurve.json realzins.json risikoaufschlaege.json top10-*.json suchindex.json ezb.json kurse kurse/jahre.json anleihen
+          git add renditen.json unternehmen.json langlaeufer.json anleihen-index.json anleihen-kurse.json kurse-auswahl.json zinskurve.json realzins.json risikoaufschlaege.json top10-*.json suchindex.json ezb.json kurse kurse/jahre.json anleihen etf-*.json etf
           if ! git diff --cached --quiet; then
             git commit -m "Daten aktualisiert"
             # Vor dem Push mit dem Remote abgleichen (falls inzwischen gepusht wurde);
@@ -486,6 +498,9 @@ jobs:
               # Kurse (Deutsche Börse, Bundesbank): börsentäglich
               ("anleihen-kurse.json → stand", (_lade("anleihen-kurse.json") if os.path.exists("anleihen-kurse.json") else {}).get("stand"), 7),
               ("kurse-auswahl.json → stand", (_lade("kurse-auswahl.json") if os.path.exists("kurse-auswahl.json") else {}).get("stand"), 7),
+              # ETF-Register (Liste der Deutschen Börse, börsentäglich) und die Kurse aller Anleihen-ETFs
+              ("etf-index.json → stand", (_lade("etf-index.json") if os.path.exists("etf-index.json") else {}).get("stand"), 7),
+              ("etf-kurse.json → stand", (_lade("etf-kurse.json") if os.path.exists("etf-kurse.json") else {}).get("stand"), 7),
               # Steckbrief anleihe.html: Teildateien Stammdaten (wöchentlich) und aktuelle Kurse (börsentäglich), Stichprobe 00
               ("anleihen/00.json → stand", (_lade("anleihen/00.json") if os.path.exists("anleihen/00.json") else {}).get("stand"), 16),
               (f"kurse/{heute.year}/00.json → stand", (_lade(f"kurse/{heute.year}/00.json") if os.path.exists(f"kurse/{heute.year}/00.json") else {}).get("stand"), 7),

@@ -11,8 +11,12 @@ In den Quell-HTML stehen die Werte als lesbarer Rückfall, markiert mit data-kz:
     <span data-kz="anleihen-gesamt">über 43.000</span>      alle Anleihen im Register
     <span data-kz="spanne-sl">3,0–5,0&nbsp;%</span>        Renditespanne (10.–90. Perzentil) je Top-10-Datei:
          sl = Staatsanleihen nach Laufzeit, ul = Unternehmensanleihen nach Laufzeit,
-         sland = Staatsanleihen nach Ländern, uland = Unternehmensanleihen nach Ländern,
-         etf = Anleihen-ETFs (Rendite des Anleihebestands laut Anbieter, etfs.json)
+         sland = Staatsanleihen nach Ländern, uland = Unternehmensanleihen nach Ländern
+    <span data-kz="etf-anzahl">908</span>                   Anleihen-ETFs im Register (etf-index.json, seit 30.09.2026 –
+         vorher „spanne-etf“ aus handgepflegten Renditen laut Anbieter; ETFs werden nicht mehr von Hand gepflegt)
+    <span data-kz="etf-top-anzahl">70</span>, „etf-kosten-spanne“, „etf-kosten-guenstig“, „etf-stand“
+         Kosten der ETFs auf der Seite anleihen-etf.html (top10-anleihen-etfs.json): Anzahl, niedrigste bis höchste
+         laufende Kosten, Anzahl mit höchstens 0,2 % und das Datum der ETF-Liste – für etf-oder-anleihe.html
 
 Außerdem wird in Meta-/og-/JSON-LD-Texten die Wendung „Suche über rund NN.000 Anleihen“ auf die aktuelle Zahl gesetzt
 (nur diese Wendung – Zahlen wie „Börse Frankfurt rund 27.700 Anleihen“ bleiben unberührt).
@@ -64,11 +68,18 @@ def main():
         r = sorted(a["rendite"] for g in d.get("gruppen", {}).values() for a in g if isinstance(a.get("rendite"), (int, float)))
         if len(r) >= 3:
             werte["spanne-" + key] = f"{de(perzentil(r, 0.1))}–{de(perzentil(r, 0.9))}&nbsp;%"
-    e = lade(site, "etfs.json")   # Rendite des Anleihebestands je ETF (Feld y, laut Anbieter) – seit 30.09.2026
-    if e:
-        r = sorted(x["y"] for g in e.get("gruppen", {}).values() for x in g if isinstance(x.get("y"), (int, float)))
-        if len(r) >= 3:
-            werte["spanne-etf"] = f"{de(perzentil(r, 0.1))}–{de(perzentil(r, 0.9))}&nbsp;%"
+    e = lade(site, "etf-index.json")   # Register der Anleihen-ETFs (scripts/update_etf_index.py)
+    if e and isinstance(e.get("anzahl"), int) and e["anzahl"] > 0:
+        werte["etf-anzahl"] = f"{e['anzahl']:,}".replace(",", ".")
+    t = lade(site, "top10-anleihen-etfs.json")   # die ETFs der Seite anleihen-etf.html
+    if t:
+        k = sorted(x["kosten"] for g in (t.get("gruppen") or {}).values() for x in g.get("etfs", []) if isinstance(x.get("kosten"), (int, float)))
+        if len(k) >= 3:
+            werte["etf-top-anzahl"] = str(len(k))
+            werte["etf-kosten-spanne"] = f"{de(k[0], 2)} bis {de(k[-1], 2)}&nbsp;%"
+            werte["etf-kosten-guenstig"] = str(sum(1 for x in k if x <= 0.2 + 1e-9))
+            if re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(t.get("stand") or "")):
+                werte["etf-stand"] = ".".join(reversed(t["stand"].split("-")))
     print("Kennzahlen:", werte)
 
     span_re = re.compile(r'(<span data-kz="([a-z-]+)">)([^<]*)(</span>)')
