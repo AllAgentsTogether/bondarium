@@ -6,12 +6,17 @@
 Bricht mit Fehler ab (Deploy wird rot, nichts geht live) bei:
   - internen Links auf Seiten, die es nicht gibt
   - Resten des alten Namens (METALCONCRETE / metalconcrete.de) im ausgelieferten Text
+  - Seiten für Suchmaschinen (ohne „noindex“) ohne <title>, ohne oder mit fremder kanonischer Adresse,
+    oder mit unlesbarem JSON-LD – das kostet Auffindbarkeit, ohne dass man es der Seite ansieht
 Warnt (Deploy läuft weiter) bei:
   - Platzhaltern wie [VORNAME NACHNAME] oder [E-MAIL-ADRESSE] (Impressum noch nicht befüllt)
   - Anker-Links (#…) auf Ziele, die es auf der Zielseite nicht gibt
   - Angeboten in broker.json, deren „bis“-Datum abgelaufen ist oder in weniger als 14 Tagen abläuft
+  - Titeln über 60 Zeichen, Beschreibungen unter 70 oder über 160 Zeichen, fehlender Beschreibung,
+    keiner oder mehreren <h1>, doppelt vergebenen Titeln oder Beschreibungen
 """
 import datetime
+import html as htmllib
 import json
 import os
 import re
@@ -42,6 +47,49 @@ for f in sorted(seiten):
         fehler.append(f"{f}: alter Name METALCONCRETE im Text")
     for p in sorted(set(PLATZ.findall(ohne_skript))):
         warnungen.append(f"{f}: Platzhalter {p}")
+
+# ---------- Auffindbarkeit (seit 30.09.2026): Titel, Beschreibung, kanonische Adresse, H1, strukturierte Daten ----------
+BASE = "https://www.bondarium.de/"
+titel_von, text_von = {}, {}
+for f in sorted(seiten):
+    html = open(os.path.join(site, f), encoding="utf-8").read()
+    kopf = html.split("</head>")[0]
+    if f == "404.html" or re.search(r'<meta name="robots" content="[^"]*noindex', kopf):
+        continue
+    m = re.search(r"<title>(.*?)</title>", kopf, re.S)
+    titel = htmllib.unescape(m.group(1)).strip() if m else ""
+    if not titel:
+        fehler.append(f"{f}: <title> fehlt")
+    else:
+        titel_von.setdefault(titel, []).append(f)
+        if len(titel) > 60:
+            warnungen.append(f"{f}: Titel hat {len(titel)} Zeichen (über 60 wird er im Suchergebnis abgeschnitten)")
+    m = re.search(r'<meta name="description" content="([^"]*)"', kopf)
+    text = htmllib.unescape(m.group(1)).strip() if m else ""
+    if not text:
+        warnungen.append(f"{f}: Beschreibung (meta description) fehlt")
+    else:
+        text_von.setdefault(text, []).append(f)
+        if not 70 <= len(text) <= 160:
+            warnungen.append(f"{f}: Beschreibung hat {len(text)} Zeichen (gut sind 70 bis 160)")
+    m = re.search(r'<link rel="canonical" href="([^"]+)"', kopf)
+    eigen = BASE + ("" if f == "index.html" else f)
+    if not m:
+        fehler.append(f"{f}: kanonische Adresse (link rel=canonical) fehlt")
+    elif m.group(1) != eigen:
+        fehler.append(f"{f}: kanonische Adresse zeigt auf {m.group(1)} statt auf {eigen}")
+    h1 = len(re.findall(r"<h1\b", re.sub(r"<script\b[^>]*>.*?</script>", "", html, flags=re.S)))
+    if h1 != 1:
+        warnungen.append(f"{f}: {h1} Hauptüberschriften (<h1>) statt einer")
+    for roh in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S):
+        try:
+            json.loads(roh)
+        except ValueError as e:
+            fehler.append(f"{f}: JSON-LD unlesbar ({e})")
+for art, gruppen in (("Titel", titel_von), ("Beschreibung", text_von)):
+    for wert, dateien in gruppen.items():
+        if len(dateien) > 1:
+            warnungen.append(f"{art} doppelt vergeben ({', '.join(dateien)}): {wert[:60]}")
 
 # Broker-Angebote mit Ablaufdatum (broker.json, Feld „bis“ im Format JJJJ-MM-TT)
 bj = os.path.join(site, "broker.json")

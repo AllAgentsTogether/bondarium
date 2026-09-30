@@ -1,4 +1,28 @@
+# robots.txt – www.bondarium.de
+# Suchmaschinen und KI-Dienste dürfen alle Seiten lesen, auswerten und mit Quellenangabe zitieren.
+# Kurzfassung für KI-Dienste: https://www.bondarium.de/llms.txt
+# Volltext aller Seiten mit aktuellen Zahlen: https://www.bondarium.de/llms-full.txt
+
 User-agent: *
+Allow: /
+Disallow: /trigger/
+
+# KI-Crawler und KI-Suchen ausdrücklich genannt – es gelten dieselben Regeln wie für alle anderen.
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: Amazonbot
+User-agent: Meta-ExternalAgent
+User-agent: MistralAI-User
+User-agent: DuckAssistBot
+User-agent: CCBot
 Allow: /
 Disallow: /trigger/
 

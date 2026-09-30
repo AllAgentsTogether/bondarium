@@ -23,6 +23,13 @@ RewriteRule ^ https://www.bondarium.de%{REQUEST_URI} [R=301,L]
 # ---- Kanonischer Host: ohne www -> mit www (eine URL je Seite) ----
 RewriteCond %{HTTP_HOST} ^bondarium\.de$ [NC]
 RewriteRule ^ https://www.bondarium.de%{REQUEST_URI} [R=301,L]
+# ---- Zweitdomain bondarium.com -> www.bondarium.de (seit 30.09.2026) ----
+# https://www.bondarium.com und https://bondarium.com lieferten die ganze Seite ein zweites Mal aus
+# (HTTP 200, gleicher Inhalt unter zwei Adressen). Ausgenommen: /trigger/ (Auslöser mit Kopf-Schlüssel,
+# eine Weiterleitung würde ihn verlieren) und /.well-known/ (Zertifikatsprüfung der Domain).
+RewriteCond %{HTTP_HOST} ^(www\.)?bondarium\.com$ [NC]
+RewriteCond %{REQUEST_URI} !^/(trigger|\.well-known)/
+RewriteRule ^ https://www.bondarium.de%{REQUEST_URI} [R=301,L]
 # ---- index.html -> Verzeichnis-URL (Canonical ist "/") ----
 RewriteCond %{THE_REQUEST} \s/+index\.html[\s?] [NC]
 RewriteRule ^index\.html$ / [R=301,L]
@@ -77,6 +84,14 @@ Header always set Strict-Transport-Security "max-age=31536000"
 #      ist ein langer Cache dort unschädlich. ----
 <FilesMatch "\.json$">
   Header set Cache-Control "max-age=900, stale-while-revalidate=3600"
+  # Rohdaten gehören nicht als eigene Treffer in den Suchindex (seit 30.09.2026). Abrufen dürfen Suchmaschinen sie
+  # weiter – sie brauchen die Dateien, um die Seiten mit JavaScript darzustellen.
+  Header set X-Robots-Tag "noindex"
+</FilesMatch>
+# llms.txt und llms-full.txt (Kurzfassung und Volltext für KI-Dienste): abrufbar, aber kein eigener Suchtreffer –
+# sonst stünde der Volltext als doppelter Inhalt neben den Seiten.
+<FilesMatch "^llms(-full)?\.txt$">
+  Header set X-Robots-Tag "noindex"
 </FilesMatch>
 # Such-Index (≈ 1 MB gzip, wöchentlich neu): die Suche lädt ihn seit 25.09.2026 über eine
 # Versions-URL (?v=<Hash>, gesetzt im Deploy) – deshalb darf er lange im Browser bleiben.

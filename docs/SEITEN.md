@@ -1,3 +1,8 @@
+<!-- Interne Beschreibung der Seiten. Bis 30.09.2026 lag diese Datei als llms.txt im Stammordner und wurde so
+     veröffentlicht. Seitdem erzeugt scripts/llms.py beim Deploy eine kurze llms.txt und eine llms-full.txt aus Titel,
+     Beschreibung und Inhalt der Seiten (siehe docs/SEO.md). Diese Datei wird nicht veröffentlicht; sie hält fest,
+     was auf welcher Seite steht und seit wann. -->
+
 # Bondarium (bondarium.de)
 
 > Statische, werbefreie Informationsseite zu Anleihen: Renditen von Staatsanleihen

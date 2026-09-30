@@ -286,7 +286,9 @@ jobs:
         # (früher kamen OG-Bild/Favicons/Sitemap unbemerkt nie auf dem Server an).
         run: |
           mkdir -p _site
-          cp *.html *.json *.svg *.css *.js *.png *.webp *.woff2 robots.txt sitemap.xml llms.txt _site/   # webp: Fotos der Anlegerprofile, woff2: Manrope (seit 24.09.2026)
+          # webp: Fotos der Anlegerprofile, woff2: Manrope (seit 24.09.2026); indexnow-key.txt: Schlüssel für die Meldung
+          # geänderter Seiten an Bing & Co. (scripts/indexnow.py). llms.txt entsteht seit 30.09.2026 im Bau (scripts/llms.py).
+          cp *.html *.json *.svg *.css *.js *.png *.webp *.woff2 robots.txt sitemap.xml indexnow-key.txt _site/
           rm -f _site/package.json _site/package-lock.json   # Build-Metadaten gehören nicht auf den Webroot
           cp .htaccess _site/.htaccess
           cp kontakt.php _site/kontakt.php   # Kontaktformular (ueber-uns.html#kontakt, seit 30.09.2026)
@@ -302,6 +304,26 @@ jobs:
       # ----- Kennzahlen aus den Daten (Anzahl Anleihen, Renditespannen) in die Seiten setzen (seit 30.09.2026) -----
       - name: Kennzahlen einsetzen
         run: python3 scripts/kennzahlen.py _site
+
+      # ----- Auffindbarkeit für Suchmaschinen und KI-Dienste (seit 30.09.2026, docs/SEO.md). Drei Schritte in dieser
+      #       Reihenfolge, alle nur auf _site – die Quell-HTML bleiben unverändert. continue-on-error: Es sind Zugaben;
+      #       scheitert eine, geht die Seite ohne sie live (der Schritt ist dann im Protokoll rot markiert). -----
+      # 1) Tabellen, die sonst erst das Skript im Browser zeichnet (19 Broker, 70 ETFs), stehen fest im HTML –
+      #    KI-Crawler führen kein JavaScript aus.
+      - name: Tabellen fest ins HTML schreiben (Broker, ETFs)
+        continue-on-error: true
+        run: python3 scripts/statische_tabellen.py _site
+
+      # 2) Ein verknüpfter JSON-LD-Block je Seite (Organisation, Website, Artikel, Glossar, Datensätze, Rechner),
+      #    Robots-Angabe mit großem Vorschaubild, sitemap.xml aus den Seiten.
+      - name: Strukturierte Daten und Sitemap
+        continue-on-error: true
+        run: python3 scripts/seo.py _site
+
+      # 3) llms.txt (Kurzfassung) und llms-full.txt (Volltext mit aktuellen Zahlen) aus den fertigen Seiten.
+      - name: llms.txt und llms-full.txt erzeugen
+        continue-on-error: true
+        run: python3 scripts/llms.py _site
 
       - name: Daten in die HTML-Seiten einbetten
         run: python3 scripts/inline_data.py _site
@@ -434,6 +456,14 @@ jobs:
           python3 scripts/deploy_manifest.py lftp alt.manifest neu.manifest _site > upload.lftp
           # -f (Skriptdatei) lässt sich nicht mit einer Server-Adresse kombinieren – daher per „source“ einlesen
           lftp -u "$SFTP_USERNAME" --env-password "sftp://$SFTP_SERVER" -e "source upload.lftp; bye"
+
+      # ----- Geänderte Seiten an IndexNow melden (seit 30.09.2026): Bing, Yandex, Seznam und Naver erfahren sofort, welche
+      #       Adressen neu sind – Bing ist der Suchindex hinter ChatGPT-Suche und Copilot. Nur nach dem Upload der geänderten
+      #       Dateien (dort liegen beide Manifeste); übertragen werden nur öffentliche Adressen der eigenen Seite. -----
+      - name: Geänderte Seiten an IndexNow melden
+        if: steps.inkrementell.outcome == 'success'
+        continue-on-error: true
+        run: python3 scripts/indexnow.py alt.manifest neu.manifest _site
 
       - name: Rückfall – alles per SFTP hochladen
         if: steps.inkrementell.outcome == 'failure'
