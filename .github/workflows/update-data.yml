@@ -3,7 +3,8 @@ name: Daten aktualisieren & auf Strato veröffentlichen
 # ===== Datenabruf: höchstens EINMAL am Tag, um 10:00 Uhr Berlin (seit 23.09.2026) =====
 #
 # * 10-Uhr-Lauf: Ein externer Cron (z. B. cron-job.org, Zeitzone Europe/Berlin,
-#   Mo–Fr 10:00) ruft /trigger/refresh.php?key=…&mode=voll auf. refresh.php
+#   Mo–Fr 10:00) ruft /trigger/refresh.php?mode=voll auf, den Schlüssel im Kopf
+#   „X-Trigger-Key“ (nicht in der Adresse – die steht im Server-Log). refresh.php
 #   startet diesen Workflow per workflow_dispatch – der beginnt binnen Sekunden.
 #   GitHubs eigener Zeitplan ist dafür zu unpünktlich: 09/2026 lief der auf
 #   07:17 gestellte Lauf täglich erst zwischen 11:30 und 12:15 Uhr.
@@ -289,6 +290,7 @@ jobs:
           rm -f _site/package.json _site/package-lock.json   # Build-Metadaten gehören nicht auf den Webroot
           cp .htaccess _site/.htaccess
           cp kontakt.php _site/kontakt.php   # Kontaktformular (ueber-uns.html#kontakt, seit 30.09.2026)
+          python3 scripts/security_txt.py _site   # /.well-known/security.txt (Adresse für Sicherheitsmeldungen, RFC 9116)
           cp -r kurse _site/kurse   # Kursverlauf: kurse/<Jahr>/<teil>.json und kurse/bund/<ISIN>.json
           cp -r anleihen _site/anleihen   # Stammdaten je ISIN für den Steckbrief anleihe.html (256 Teildateien)
           ls -la _site
@@ -409,7 +411,9 @@ jobs:
       # ----- Upload: nur geänderte Dateien (seit 30.09.2026). Vorher gingen bei jedem Lauf alle
       #       ~1.400 Dateien hoch (rund 12 Minuten). Auf dem Server liegt .deploy-manifest mit den
       #       SHA-1-Werten des letzten Uploads (per .htaccess gesperrt); scripts/deploy_manifest.py
-      #       vergleicht und schreibt ein lftp-Skript. Zielordner = Startverzeichnis des SFTP-Zugangs
+      #       vergleicht und schreibt ein lftp-Skript. Dateien, die ein früherer Lauf hochgeladen hat und die es
+      #       im Bau nicht mehr gibt, löscht das Skript auf dem Server (seit 30.09.2026; nur Dateien aus dem alten
+      #       Manifest, höchstens 40 je Lauf – sonst Warnung statt Löschen). Zielordner = Startverzeichnis des SFTP-Zugangs
       #       (/bondarium, Strato-Nutzer su1338619) = Docroot der Domain.
       #       Scheitert dieser Weg, lädt der Rückfall darunter wie früher alles hoch. -----
       - name: Geänderte Dateien per SFTP hochladen
