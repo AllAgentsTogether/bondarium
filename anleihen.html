@@ -49,6 +49,106 @@
   .hubsuche button:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
   .hubsuche-t { font-size: 13.5px; color: var(--text); margin: 8px 0 0 4px; }
   @media (max-width: 600px) { .hubsuche input[type=search] { padding-right: 96px; } .hubsuche button { padding: 10px 14px; } .hub-tag { font-size: 10px; letter-spacing: 0.03em; white-space: nowrap; padding: 3px 6px; } }
+
+  /* ==========================================================================================
+     Design-Optimierung 30.09.2026 (Mockup vom Nutzer abgenommen, Quellen in tmp/seiten-mockup):
+     überschreibt die älteren Regeln darüber und in base.css – Kacheln mit Bildfeld und Pfeil-Knopf,
+     Neon nur für die eine Hauptaktion, Handy: eine Kachel je Zeile. Gilt nur für anleihen.html und
+     beobachten.html (derselbe Block steht in beiden); Texte und HTML unverändert.
+     ========================================================================================== */
+  /* --- Kopf ------------------------------------------------------------------------------- */
+  main > h1 { margin-bottom: 12px; }
+  main > .sub { max-width: 640px; margin-bottom: 30px; }
+
+  /* --- Kacheln: Bildfeld oben, Text darunter, Pfeil-Knopf in der Ecke ------------------------ */
+  .hub { gap: 16px; }
+  .hub-card { position: relative; gap: 0; padding: 0 0 20px; border-color: var(--rule); border-radius: 16px; box-shadow: 0 1px 2px rgba(26,26,25,0.04); overflow: hidden; transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease; }
+  .hub-card:hover { transform: translateY(-2px); border-color: var(--green-text); box-shadow: 0 1px 2px rgba(26,26,25,0.04), 0 14px 30px -12px rgba(26,26,25,0.22); }
+  .hub-card > *:not(.hub-img) { margin-left: 18px; margin-right: 18px; }
+  .hub-card { --bild: 132px; background: linear-gradient(to bottom, #F3F2EC var(--bild), var(--rule) var(--bild) calc(var(--bild) + 1px), #fff calc(var(--bild) + 1px)); }
+  .hub-img { width: 100%; height: var(--bild); margin: 0 0 17px; padding: 16px 0 8px; }
+  .hub-card h2 { font-size: 18px; font-weight: 650; line-height: 1.3; letter-spacing: -0.01em; }
+  .hub-card .desc { margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--text); }
+  /* Pfeil-Knopf oben rechts im Bildfeld: weiß, beim Überfahren Neon */
+  .hub-card::after { content: "→" / ""; position: absolute; top: 12px; right: 12px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1px solid var(--rule); color: var(--green-text); font-size: 16px; font-weight: 700; line-height: 1; transition: background-color .15s ease, color .15s ease, transform .15s ease; }
+  .hub-card:hover::after { background: var(--green); border-color: var(--green); color: var(--ink); transform: translateX(2px); }
+
+  /* Breite Hauptkachel (.next): Bild links, Text Mitte, großer Pfeil rechts */
+  .hub-card.next { margin-top: 10px; padding: 26px 88px 26px 0; grid-template-columns: 210px minmax(0, 1fr); column-gap: 28px; row-gap: 6px; border-color: var(--rule); background: linear-gradient(to right, #F3F2EC 210px, var(--rule) 210px 211px, #fff 211px); }
+  .hub-card.next > *:not(.hub-img) { margin: 0; }
+  .hub-card.next .hub-img { grid-row: 1 / 3; width: 210px; height: 96px; padding: 0 30px; }
+  .hub-card.next h2 { font-size: 21px; letter-spacing: -0.02em; }
+  .hub-card.next .desc { margin-top: 0; font-size: 15px; }
+  .hub-card.next > div .desc { margin-top: 6px; }
+  .hub-card.next::after { top: 50%; right: 26px; width: 44px; height: 44px; margin-top: -22px; font-size: 20px; }
+  .hub-card.next:hover { border-color: var(--green-text); }
+
+  /* --- „Weiter“ / „Akademie“ als Abschnitt mit echtem Kopf ----------------------------------- */
+  .crossnav { margin-top: 72px; padding-top: 0; border-top: 0; }
+  .crossnav-t { margin: 0 0 12px; font-size: 24px; font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; text-transform: none; color: var(--ink); }
+  .crossnav-l li { border-bottom-color: var(--rule); }
+  .crossnav .crossnav-l a { padding: 13px 2px 13px 0; font-size: 15.5px; }
+  .crossnav-gt { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--green-text); border-bottom-color: rgba(26,26,25,0.22); padding-bottom: 8px; }
+
+  footer.fuss { margin-top: 88px; padding-top: 30px; border-top: 1px solid var(--rule); }
+
+  /* --- Tablet ------------------------------------------------------------------------------ */
+  @media (max-width: 940px) {
+    .hub-card.next { grid-template-columns: 160px minmax(0, 1fr); padding-right: 76px; background: linear-gradient(to right, #F3F2EC 160px, var(--rule) 160px 161px, #fff 161px); }
+    .hub-card.next .hub-img { width: 160px; padding: 0 20px; }
+  }
+
+  /* --- Handy: jede Kachel eine Zeile (Bild links, Text rechts), nichts wird zweispaltig gequetscht */
+  @media (max-width: 600px) {
+    :root { --spalte: 96px; }
+    main > .sub { margin-bottom: 22px; }
+    .hub { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+    .hub-card, .hub-card.next { background: linear-gradient(to right, #F3F2EC var(--spalte), var(--rule) var(--spalte) calc(var(--spalte) + 1px), #fff calc(var(--spalte) + 1px)); }
+    .hub-card { display: grid; grid-template-columns: var(--spalte) minmax(0, 1fr); grid-template-rows: auto auto auto; align-content: center; column-gap: 14px; min-height: 108px; padding: 14px 48px 14px 0; }
+    .hub-card:hover { transform: none; }
+    .hub-card > *:not(.hub-img) { grid-column: 2; margin: 0; }
+    .hub-img { grid-column: 1; grid-row: 1 / -1; align-self: center; width: var(--spalte); height: 80px; margin: 0; padding: 4px 10px; }
+    .hub-card h2 { font-size: 16.5px; }
+    .hub-card .desc { margin-top: 3px; font-size: 13.5px; line-height: 1.45; }
+    .hub-card::after { top: 50%; right: 12px; width: 28px; height: 28px; margin-top: -14px; font-size: 14px; }
+    .hub-card.next { grid-template-columns: var(--spalte) minmax(0, 1fr); column-gap: 14px; row-gap: 3px; min-height: 108px; margin-top: 6px; padding: 14px 52px 14px 0; }
+    .hub-card.next .hub-img { width: var(--spalte); height: 80px; padding: 4px 10px; }
+    .hub-card.next h2 { font-size: 17px; }
+    .hub-card.next .desc { font-size: 13.5px; }
+    .hub-card.next::after { right: 12px; width: 32px; height: 32px; margin-top: -16px; font-size: 15px; }
+    .crossnav { margin-top: 52px; }
+    .crossnav-t { font-size: 21px; }
+    footer.fuss { margin-top: 64px; }
+  }
+
+  /* --- Anleihen: die Suche ist die Hauptaktion – dunkles Suchband wie auf der Startseite ------- */
+  .hubsuche { max-width: none; margin: 0 0 40px; padding: 18px 18px 14px; background: var(--ink); border-radius: 20px; box-shadow: 0 1px 2px rgba(26,26,25,0.2), 0 26px 48px -18px rgba(26,26,25,0.45); }
+  .hubsuche svg { left: 20px; width: 20px; height: 20px; }
+  .hubsuche input[type=search] { border: 0; border-radius: 12px; padding: 18px 150px 18px 52px; font-size: 17.5px; box-shadow: none; }
+  .hubsuche input[type=search]:focus-visible { box-shadow: 0 0 0 3px var(--green); }
+  .hubsuche button { right: 7px; min-height: 46px; padding: 12px 30px; border-radius: 9px; font-size: 15.5px; }
+  .hubsuche button:hover { background: var(--green-hover); }
+  .hubsuche button:focus-visible { outline-color: #fff; }
+  .hubsuche-t { margin: 12px 0 0 4px; font-size: 14px; color: rgba(255,255,255,0.72); }
+  .hubsuche-t [data-kz] { color: #fff; font-weight: 600; }
+
+  /* Etiketten: kein Neon mehr (fünfmal „Top 10“ in Neon übertönte die Suche) – ruhige Pillen */
+  .hub-tag { margin-bottom: 10px; padding: 4px 10px; border-radius: 999px; background: #E8FFE3; color: var(--green-text); font-size: 11px; letter-spacing: 0.07em; }
+  .hub-tag.neutral { background: #F0EEE8; color: #4A4943; }
+  .hub-card h2 { margin-bottom: 0; }
+
+  /* Akademie-Kachel: Nebenweg, also weiß und ruhig (Neon bleibt beim Suchen) */
+  .hub-card.next { margin-top: 18px; }
+
+  @media (max-width: 600px) {
+    .hubsuche { margin-bottom: 28px; padding: 12px 12px 12px; border-radius: 16px; }
+    .hubsuche svg { left: 14px; width: 18px; height: 18px; }
+    .hubsuche input[type=search] { padding: 15px 98px 15px 42px; font-size: 16px; }
+    .hubsuche button { right: 5px; min-height: 42px; padding: 10px 16px; font-size: 14.5px; }
+    .hubsuche-t { margin: 10px 2px 0; font-size: 13px; line-height: 1.45; }
+    .hub-tag { margin: 0 0 6px; padding: 3px 8px; font-size: 10px; letter-spacing: 0.05em; justify-self: start; }
+    .hub-card.next { margin-top: 12px; }
+  }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","headline":"Anleihen – Suche, Top 10 nach Laufzeit und Land, Anleihen-ETFs und Beispiele der Redaktion","description":"Suche über rund 33.000 Anleihen an deutschen Börsen, die zehn meistgehandelten je Laufzeit und Land, 70 Anleihen-ETFs und Beispiele für vier Ziele.","inLanguage":"de","isAccessibleForFree":true,"url":"https://www.bondarium.de/anleihen.html","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.bondarium.de/anleihen.html"}]}</script>

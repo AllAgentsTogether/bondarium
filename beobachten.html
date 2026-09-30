@@ -33,6 +33,106 @@
   /* Zinsen (Übersicht): Kacheln (.hub/.hub-card), Aufklapper und Balken stehen seit 30.09.2026 zentral in base.css.
      Schrift der Kachel-Schaubilder per CSS statt je <text>-Attribut. */
   .hub-img text { font-family: var(--sans); }
+
+  /* ==========================================================================================
+     Design-Optimierung 30.09.2026 (Mockup vom Nutzer abgenommen, Quellen in tmp/seiten-mockup):
+     überschreibt die älteren Regeln darüber und in base.css – Kacheln mit Bildfeld und Pfeil-Knopf,
+     Neon nur für die eine Hauptaktion, Handy: eine Kachel je Zeile. Gilt nur für anleihen.html und
+     beobachten.html (derselbe Block steht in beiden); Texte und HTML unverändert.
+     ========================================================================================== */
+  /* --- Kopf ------------------------------------------------------------------------------- */
+  main > h1 { margin-bottom: 12px; }
+  main > .sub { max-width: 640px; margin-bottom: 30px; }
+
+  /* --- Kacheln: Bildfeld oben, Text darunter, Pfeil-Knopf in der Ecke ------------------------ */
+  .hub { gap: 16px; }
+  .hub-card { position: relative; gap: 0; padding: 0 0 20px; border-color: var(--rule); border-radius: 16px; box-shadow: 0 1px 2px rgba(26,26,25,0.04); overflow: hidden; transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease; }
+  .hub-card:hover { transform: translateY(-2px); border-color: var(--green-text); box-shadow: 0 1px 2px rgba(26,26,25,0.04), 0 14px 30px -12px rgba(26,26,25,0.22); }
+  .hub-card > *:not(.hub-img) { margin-left: 18px; margin-right: 18px; }
+  .hub-card { --bild: 132px; background: linear-gradient(to bottom, #F3F2EC var(--bild), var(--rule) var(--bild) calc(var(--bild) + 1px), #fff calc(var(--bild) + 1px)); }
+  .hub-img { width: 100%; height: var(--bild); margin: 0 0 17px; padding: 16px 0 8px; }
+  .hub-card h2 { font-size: 18px; font-weight: 650; line-height: 1.3; letter-spacing: -0.01em; }
+  .hub-card .desc { margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--text); }
+  /* Pfeil-Knopf oben rechts im Bildfeld: weiß, beim Überfahren Neon */
+  .hub-card::after { content: "→" / ""; position: absolute; top: 12px; right: 12px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1px solid var(--rule); color: var(--green-text); font-size: 16px; font-weight: 700; line-height: 1; transition: background-color .15s ease, color .15s ease, transform .15s ease; }
+  .hub-card:hover::after { background: var(--green); border-color: var(--green); color: var(--ink); transform: translateX(2px); }
+
+  /* Breite Hauptkachel (.next): Bild links, Text Mitte, großer Pfeil rechts */
+  .hub-card.next { margin-top: 10px; padding: 26px 88px 26px 0; grid-template-columns: 210px minmax(0, 1fr); column-gap: 28px; row-gap: 6px; border-color: var(--rule); background: linear-gradient(to right, #F3F2EC 210px, var(--rule) 210px 211px, #fff 211px); }
+  .hub-card.next > *:not(.hub-img) { margin: 0; }
+  .hub-card.next .hub-img { grid-row: 1 / 3; width: 210px; height: 96px; padding: 0 30px; }
+  .hub-card.next h2 { font-size: 21px; letter-spacing: -0.02em; }
+  .hub-card.next .desc { margin-top: 0; font-size: 15px; }
+  .hub-card.next > div .desc { margin-top: 6px; }
+  .hub-card.next::after { top: 50%; right: 26px; width: 44px; height: 44px; margin-top: -22px; font-size: 20px; }
+  .hub-card.next:hover { border-color: var(--green-text); }
+
+  /* --- „Weiter“ / „Akademie“ als Abschnitt mit echtem Kopf ----------------------------------- */
+  .crossnav { margin-top: 72px; padding-top: 0; border-top: 0; }
+  .crossnav-t { margin: 0 0 12px; font-size: 24px; font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; text-transform: none; color: var(--ink); }
+  .crossnav-l li { border-bottom-color: var(--rule); }
+  .crossnav .crossnav-l a { padding: 13px 2px 13px 0; font-size: 15.5px; }
+  .crossnav-gt { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--green-text); border-bottom-color: rgba(26,26,25,0.22); padding-bottom: 8px; }
+
+  footer.fuss { margin-top: 88px; padding-top: 30px; border-top: 1px solid var(--rule); }
+
+  /* --- Tablet ------------------------------------------------------------------------------ */
+  @media (max-width: 940px) {
+    .hub-card.next { grid-template-columns: 160px minmax(0, 1fr); padding-right: 76px; background: linear-gradient(to right, #F3F2EC 160px, var(--rule) 160px 161px, #fff 161px); }
+    .hub-card.next .hub-img { width: 160px; padding: 0 20px; }
+  }
+
+  /* --- Handy: jede Kachel eine Zeile (Bild links, Text rechts), nichts wird zweispaltig gequetscht */
+  @media (max-width: 600px) {
+    :root { --spalte: 96px; }
+    main > .sub { margin-bottom: 22px; }
+    .hub { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+    .hub-card, .hub-card.next { background: linear-gradient(to right, #F3F2EC var(--spalte), var(--rule) var(--spalte) calc(var(--spalte) + 1px), #fff calc(var(--spalte) + 1px)); }
+    .hub-card { display: grid; grid-template-columns: var(--spalte) minmax(0, 1fr); grid-template-rows: auto auto auto; align-content: center; column-gap: 14px; min-height: 108px; padding: 14px 48px 14px 0; }
+    .hub-card:hover { transform: none; }
+    .hub-card > *:not(.hub-img) { grid-column: 2; margin: 0; }
+    .hub-img { grid-column: 1; grid-row: 1 / -1; align-self: center; width: var(--spalte); height: 80px; margin: 0; padding: 4px 10px; }
+    .hub-card h2 { font-size: 16.5px; }
+    .hub-card .desc { margin-top: 3px; font-size: 13.5px; line-height: 1.45; }
+    .hub-card::after { top: 50%; right: 12px; width: 28px; height: 28px; margin-top: -14px; font-size: 14px; }
+    .hub-card.next { grid-template-columns: var(--spalte) minmax(0, 1fr); column-gap: 14px; row-gap: 3px; min-height: 108px; margin-top: 6px; padding: 14px 52px 14px 0; }
+    .hub-card.next .hub-img { width: var(--spalte); height: 80px; padding: 4px 10px; }
+    .hub-card.next h2 { font-size: 17px; }
+    .hub-card.next .desc { font-size: 13.5px; }
+    .hub-card.next::after { right: 12px; width: 32px; height: 32px; margin-top: -16px; font-size: 15px; }
+    .crossnav { margin-top: 52px; }
+    .crossnav-t { font-size: 21px; }
+    footer.fuss { margin-top: 64px; }
+  }
+
+  /* --- Zinsen: sechs Schaubilder als 3 × 2 (Zins oben, Risiko unten – wie im Menü), keine Lücke --- */
+  .hub { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .hub-card { --bild: 168px; }
+  .hub-img { padding: 20px 0 10px; }
+  .hub-card h2 { font-size: 19px; margin-bottom: 0; }
+
+  /* „Und jetzt: Anleihe finden“ ist hier die Hauptaktion: dunkles Band, Neon-Pfeil */
+  .hub-card.next { margin-top: 22px; background: var(--ink); border-color: var(--ink); color: #fff; box-shadow: 0 1px 2px rgba(26,26,25,0.2), 0 26px 48px -18px rgba(26,26,25,0.45); }
+  .hub-card.next { background: linear-gradient(to right, #262624 210px, #3A3A37 210px 211px, var(--ink) 211px); }
+  .hub-card.next h2 { color: #fff; font-size: 22px; }
+  .hub-card.next:hover h2 { color: var(--green); }
+  .hub-card.next .desc { color: rgba(255,255,255,0.74); }
+  .hub-card.next::after { background: var(--green); border-color: var(--green); color: var(--ink); }
+  .hub-card.next:hover { border-color: var(--ink); }
+  .hub-card.next:hover::after { background: var(--green-hover); }
+
+  /* Weiter: vier Links in einer Reihe statt 3 + 1 */
+  @media (min-width: 941px) { .crossnav-l { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 28px; } }
+
+  @media (max-width: 940px) { .hub { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hub-card.next { background: linear-gradient(to right, #262624 160px, #3A3A37 160px 161px, var(--ink) 161px); } }
+  @media (max-width: 600px) {
+    :root { --spalte: 118px; }   /* die Schaubilder sind hier der Inhalt: breiteres Bildfeld */
+    .hub { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+    .hub-img, .hub-card.next .hub-img { height: 96px; padding: 6px 8px; }
+    .hub-card h2 { font-size: 16.5px; }
+    .hub-card.next { margin-top: 14px; background: linear-gradient(to right, #262624 var(--spalte), #3A3A37 var(--spalte) calc(var(--spalte) + 1px), var(--ink) calc(var(--spalte) + 1px)); }
+    .hub-card.next h2 { font-size: 17px; }
+  }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","headline":"Zinsen – Staatsanleihen seit 1970, Unternehmensanleihen seit 1984, Langläufer, Zinskurve seit 1972","description":"Zinsen und Risiko in Zahlen: Renditen von Staatsanleihen seit 1970 und Unternehmensanleihen seit 1984, sieben Langläufer bis 2120 und die Zinskurve seit 1972 – täglich aktuell.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-30","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/beobachten.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Zinsen","item":"https://www.bondarium.de/beobachten.html"}]}</script>
