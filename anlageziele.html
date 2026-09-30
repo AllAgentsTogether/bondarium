@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -81,7 +82,7 @@
   .dp-l span { font-size: 12px; color: var(--ap-text); }
   .dp-bar i { font-style: normal; display: flex; align-items: center; justify-content: flex-end; height: 34px; width: var(--w); border-radius: 7px; background: var(--down); padding-right: 10px; }
   .dp-bar span { color: #fff; font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
-  .dp:nth-child(2) .dp-bar i { background: #A85A22; }
+  .dp:nth-child(2) .dp-bar i { background: #A2561C; }
   .mix { margin-top: 14px; }
   .mix-bar { display: flex; height: 26px; border-radius: 7px; overflow: hidden; }
   .mix-bar span { display: grid; place-items: center; font-size: 12.5px; font-weight: 600; color: #fff; white-space: nowrap; }
@@ -154,8 +155,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="entscheiden.html">Entscheiden</a></li><li><span aria-current="page">Welche Anleihe wozu?</span></li></ol></nav>
   <main id="main">
-    <h1>Welche Anleihe wozu passt?</h1>
-    <p class="sub">Sechs typische Ziele, jedes mit Schaubild. Lesezeit: etwa 7 Minuten. Wie vier Menschen dabei vorgehen, zeigen die <a href="guide.html">Anleihen-Beispiele nach Ziel</a>.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Welche Anleihe wozu passt?</h1>
+        <p class="sub">Sechs typische Ziele, jedes mit Schaubild. Lesezeit: etwa 7 Minuten. Wie vier Menschen dabei vorgehen, zeigen die <a href="guide.html">Anleihen-Beispiele nach Ziel</a>.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-anlageziele.svg" alt="" width="232" height="160"></div>
+    </div>
     <nav class="lands" aria-label="Zum Ziel springen">
       <a class="lbtn" href="#kurzfristig"><span class="n">1</span>Kurzfristig parken</a>
       <a class="lbtn" href="#langfristig"><span class="n">2</span>Langfristig parken</a>
@@ -173,35 +179,35 @@
         <ul class="passt" aria-label="Das passt dazu"><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span><span><b>Laufzeit</b> bis 1 Jahr, Fälligkeit vor dem Termin</span></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.2l8.2 3.1v6.1c0 5.1-3.5 8.9-8.2 10.4-4.7-1.5-8.2-5.3-8.2-10.4V5.3z"/><path d="M8.3 12.1l2.6 2.6 4.9-5"/></svg></span><span><b>Schuldner</b> sehr gute Bonität – Rating AAA oder AA</span></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.8v.4"/></svg></span><span><b>Tipp</b> Für ganz kleine Beträge reicht Tagesgeld</span></li></ul>
       </div>
       <div class="k-bild"><p class="sb-k">Kaufen, halten, Geld zurück</p><svg class="sb sb-d" viewBox="0 0 480 200" role="img" aria-labelledby="sb1t"><title id="sb1t">Zeitstrahl: Im Oktober kaufst du die Anleihe. Im Mai wird sie fällig, das Geld kommt zurück. Im Juni ist die Steuer fällig.</title>
-<rect x="30" y="112" width="322" height="18" rx="4" fill="#DFFFD9"/>
+<rect x="30" y="112" width="322" height="18" rx="4" fill="#DCFBD3"/>
 <text x="191.0" y="125" text-anchor="middle" font-size="13" font-weight="600" fill="#157C00">Anleihe läuft – bringt Zinsen</text>
 <line x1="20" y1="131" x2="428" y2="131" stroke="#55544F" stroke-width="2"/>
 <line x1="30" y1="126" x2="30" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="30" y="156" text-anchor="middle" font-size="14" fill="#55544F">Okt</text><line x1="76" y1="126" x2="76" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="76" y="156" text-anchor="middle" font-size="14" fill="#55544F">Nov</text><line x1="122" y1="126" x2="122" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="122" y="156" text-anchor="middle" font-size="14" fill="#55544F">Dez</text><line x1="168" y1="126" x2="168" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="168" y="156" text-anchor="middle" font-size="14" fill="#55544F">Jan</text><line x1="214" y1="126" x2="214" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="214" y="156" text-anchor="middle" font-size="14" fill="#55544F">Feb</text><line x1="260" y1="126" x2="260" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="260" y="156" text-anchor="middle" font-size="14" fill="#55544F">Mär</text><line x1="306" y1="126" x2="306" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="306" y="156" text-anchor="middle" font-size="14" fill="#55544F">Apr</text><line x1="352" y1="126" x2="352" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="352" y="156" text-anchor="middle" font-size="14" fill="#55544F">Mai</text><line x1="398" y1="126" x2="398" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="398" y="156" text-anchor="middle" font-size="14" fill="#55544F">Jun</text>
-<circle cx="30" cy="131" r="8" fill="#1DA300" stroke="#fff" stroke-width="3"/>
+<circle cx="30" cy="131" r="8" fill="#157C00" stroke="#fff" stroke-width="3"/>
 <text x="30" y="60" text-anchor="start" font-size="16" font-weight="600" fill="#157C00">Heute: Kauf</text>
 <text x="30" y="80" text-anchor="start" font-size="14" fill="#55544F">Anleihe, fällig im Mai</text>
-<line x1="30" y1="88" x2="30" y2="120" stroke="#1DA300" stroke-width="1.5" stroke-dasharray="3 3"/>
-<circle cx="352" cy="131" r="8" fill="#1F7A5E" stroke="#fff" stroke-width="3"/>
-<text x="346" y="24" text-anchor="end" font-size="16" font-weight="600" fill="#1F7A5E">Mai: Geld ist zurück</text>
+<line x1="30" y1="88" x2="30" y2="120" stroke="#157C00" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="352" cy="131" r="8" fill="#1A1A19" stroke="#fff" stroke-width="3"/>
+<text x="346" y="24" text-anchor="end" font-size="16" font-weight="600" fill="#1A1A19">Mai: Geld ist zurück</text>
 <text x="346" y="44" text-anchor="end" font-size="14" fill="#55544F">100&nbsp;% plus Zinsen</text>
-<line x1="352" y1="50" x2="352" y2="120" stroke="#1F7A5E" stroke-width="1.5" stroke-dasharray="3 3"/>
+<line x1="352" y1="50" x2="352" y2="120" stroke="#1A1A19" stroke-width="1.5" stroke-dasharray="3 3"/>
 <path d="M398 131 v-52 l22 8 -22 8z" fill="#CF7430"/>
 <text x="424" y="98" text-anchor="start" font-size="14" font-weight="600" fill="#A2561C">Juni:</text>
 <text x="424" y="114" text-anchor="start" font-size="14" font-weight="600" fill="#A2561C">Steuer</text>
 <text class="axt" x="428" y="182" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Monat&nbsp;→</text>
 </svg><svg class="sb sb-m" viewBox="0 0 300 200" role="img" aria-labelledby="sb1tm"><title id="sb1tm">Zeitstrahl: Im Oktober kaufst du die Anleihe. Im Mai wird sie fällig, das Geld kommt zurück. Im Juni ist die Steuer fällig.</title>
-<rect x="22" y="112" width="210" height="18" rx="4" fill="#DFFFD9"/>
+<rect x="22" y="112" width="210" height="18" rx="4" fill="#DCFBD3"/>
 <text x="127" y="125" text-anchor="middle" font-size="13" font-weight="600" fill="#157C00">Anleihe läuft – bringt Zinsen</text>
 <line x1="12" y1="131" x2="292" y2="131" stroke="#55544F" stroke-width="2"/>
 <line x1="22" y1="126" x2="22" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="22" y="156" text-anchor="middle" font-size="13" fill="#55544F">Okt</text><line x1="52" y1="126" x2="52" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="52" y="156" text-anchor="middle" font-size="13" fill="#55544F">Nov</text><line x1="82" y1="126" x2="82" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="82" y="156" text-anchor="middle" font-size="13" fill="#55544F">Dez</text><line x1="112" y1="126" x2="112" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="112" y="156" text-anchor="middle" font-size="13" fill="#55544F">Jan</text><line x1="142" y1="126" x2="142" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="142" y="156" text-anchor="middle" font-size="13" fill="#55544F">Feb</text><line x1="172" y1="126" x2="172" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="172" y="156" text-anchor="middle" font-size="13" fill="#55544F">Mär</text><line x1="202" y1="126" x2="202" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="202" y="156" text-anchor="middle" font-size="13" fill="#55544F">Apr</text><line x1="232" y1="126" x2="232" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="232" y="156" text-anchor="middle" font-size="13" fill="#55544F">Mai</text><line x1="262" y1="126" x2="262" y2="136" stroke="#55544F" stroke-width="1.5"/><text x="262" y="156" text-anchor="middle" font-size="13" fill="#55544F">Jun</text>
-<circle cx="22" cy="131" r="7" fill="#1DA300" stroke="#fff" stroke-width="3"/>
+<circle cx="22" cy="131" r="7" fill="#157C00" stroke="#fff" stroke-width="3"/>
 <text x="14" y="62" font-size="15" font-weight="600" fill="#157C00">Heute: Kauf</text>
 <text x="14" y="81" font-size="13" fill="#55544F">Anleihe, fällig im Mai</text>
-<line x1="22" y1="88" x2="22" y2="120" stroke="#1DA300" stroke-width="1.5" stroke-dasharray="3 3"/>
-<circle cx="232" cy="131" r="7" fill="#1F7A5E" stroke="#fff" stroke-width="3"/>
-<text x="226" y="22" text-anchor="end" font-size="15" font-weight="600" fill="#1F7A5E">Mai: Geld ist zurück</text>
+<line x1="22" y1="88" x2="22" y2="120" stroke="#157C00" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="232" cy="131" r="7" fill="#1A1A19" stroke="#fff" stroke-width="3"/>
+<text x="226" y="22" text-anchor="end" font-size="15" font-weight="600" fill="#1A1A19">Mai: Geld ist zurück</text>
 <text x="226" y="41" text-anchor="end" font-size="13" fill="#55544F">100&nbsp;% plus Zinsen</text>
-<line x1="232" y1="48" x2="232" y2="120" stroke="#1F7A5E" stroke-width="1.5" stroke-dasharray="3 3"/>
+<line x1="232" y1="48" x2="232" y2="120" stroke="#1A1A19" stroke-width="1.5" stroke-dasharray="3 3"/>
 <path d="M262 131 v-38 l18 7 -18 7z" fill="#CF7430"/>
 <text x="296" y="66" text-anchor="end" font-size="13" font-weight="600" fill="#A2561C">Juni:</text>
 <text x="296" y="83" text-anchor="end" font-size="13" font-weight="600" fill="#A2561C">Steuer</text>
@@ -217,15 +223,15 @@
         <ul class="passt" aria-label="Das passt dazu"><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span><span><b>Laufzeit</b> so lang wie die Zeit bis zum Ziel, 3 bis 10 Jahre</span></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.2l8.2 3.1v6.1c0 5.1-3.5 8.9-8.2 10.4-4.7-1.5-8.2-5.3-8.2-10.4V5.3z"/><path d="M8.3 12.1l2.6 2.6 4.9-5"/></svg></span><span><b>Schuldner</b> sehr gute Bonität – Rating AAA oder AA</span></li><li><span class="pi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.8v.4"/></svg></span><span><b>Tipp</b> Kupons wieder anlegen – sonst wächst nur, was du eingezahlt hast</span></li></ul>
       </div>
       <div class="k-bild"><p class="sb-k">Der Kurs schwankt, das Ziel steht</p><svg class="sb sb-d" viewBox="0 0 480 256" role="img" aria-labelledby="sb2t"><title id="sb2t">Der Kurs der Anleihe schwankt von 2026 bis 2031 zwischen etwa 94 und 106 Prozent. 2031, zum Studienbeginn, gibt es 100 Prozent zurück.</title><g transform="translate(0 22)">
-<rect x="60" y="50" width="380" height="110" rx="10" fill="#DFFFD9"/>
-<line x1="60" y1="105" x2="440" y2="105" stroke="#1DA300" stroke-width="1.5" stroke-dasharray="6 6"/>
+<rect x="60" y="50" width="380" height="110" rx="10" fill="#DCFBD3"/>
+<line x1="60" y1="105" x2="440" y2="105" stroke="#157C00" stroke-width="1.5" stroke-dasharray="6 6"/>
 <text x="52" y="110" text-anchor="end" font-size="14" fill="#55544F">100&nbsp;%</text>
-<path d="M60 105 C90 70 120 65 150 95 S200 145 240 130 S290 70 320 85 S370 140 400 118 S428 108 440 105" fill="none" stroke="#1DA300" stroke-width="4" stroke-linecap="round"/>
-<circle cx="60" cy="105" r="7" fill="#fff" stroke="#1DA300" stroke-width="3"/>
-<circle cx="440" cy="105" r="7" fill="#1F7A5E" stroke="#fff" stroke-width="3"/>
+<path d="M60 105 C90 70 120 65 150 95 S200 145 240 130 S290 70 320 85 S370 140 400 118 S428 108 440 105" fill="none" stroke="#157C00" stroke-width="4" stroke-linecap="round"/>
+<circle cx="60" cy="105" r="7" fill="#fff" stroke="#157C00" stroke-width="3"/>
+<circle cx="440" cy="105" r="7" fill="#1A1A19" stroke="#fff" stroke-width="3"/>
 <path d="M440 46 v-30 l26 8 -26 8" fill="#CF7430"/><line x1="440" y1="16" x2="440" y2="50" stroke="#CF7430" stroke-width="2.5"/>
 <text x="432" y="28" text-anchor="end" font-size="15" font-weight="600" fill="#A2561C">Ziel: Studium</text>
-<text x="432" y="45" text-anchor="end" font-size="13" fill="#1F7A5E" font-weight="600">100&nbsp;% zurück</text>
+<text x="432" y="45" text-anchor="end" font-size="13" fill="#1A1A19" font-weight="600">100&nbsp;% zurück</text>
 <text x="60" y="22" font-size="14" fill="#55544F">Zwischendurch schwankt der Kurs –</text><text x="60" y="40" font-size="14" fill="#55544F">egal, du hältst bis 2031.</text>
 <text x="60" y="196" text-anchor="middle" font-size="14" fill="#55544F">2026</text><text x="136" y="196" text-anchor="middle" font-size="14" fill="#55544F">2027</text><text x="212" y="196" text-anchor="middle" font-size="14" fill="#55544F">2028</text><text x="288" y="196" text-anchor="middle" font-size="14" fill="#55544F">2029</text><text x="364" y="196" text-anchor="middle" font-size="14" fill="#55544F">2030</text><text x="440" y="196" text-anchor="middle" font-size="14" fill="#55544F">2031</text>
 </g>
@@ -234,15 +240,15 @@
 </svg><svg class="sb sb-m" viewBox="0 0 310 290" role="img" aria-labelledby="sb2tm"><title id="sb2tm">Der Kurs der Anleihe schwankt von 2026 bis 2031 zwischen etwa 94 und 106 Prozent. 2031, zum Studienbeginn, gibt es 100 Prozent zurück.</title>
 <text class="axt" x="4" y="15" font-size="13" font-weight="600" fill="#55544F">↑ Kurs in %</text>
 <text x="44" y="42" font-size="13" fill="#55544F">Zwischendurch schwankt der Kurs –</text><text x="44" y="60" font-size="13" fill="#55544F">egal, du hältst bis 2031.</text>
-<rect x="44" y="110" width="246" height="110" rx="10" fill="#DFFFD9"/>
-<line x1="44" y1="165" x2="290" y2="165" stroke="#1DA300" stroke-width="1.5" stroke-dasharray="6 6"/>
+<rect x="44" y="110" width="246" height="110" rx="10" fill="#DCFBD3"/>
+<line x1="44" y1="165" x2="290" y2="165" stroke="#157C00" stroke-width="1.5" stroke-dasharray="6 6"/>
 <text x="36" y="170" text-anchor="end" font-size="13" fill="#55544F">100&nbsp;%</text>
-<path d="M 44.0 165.0 C 63.4 130.0 82.8 125.0 102.3 155.0 S 134.6 205.0 160.5 190.0 S 192.9 130.0 212.3 145.0 S 244.7 200.0 264.1 178.0 S 282.2 168.0 290.0 165.0" fill="none" stroke="#1DA300" stroke-width="3.5" stroke-linecap="round"/>
-<circle cx="44" cy="165" r="6" fill="#fff" stroke="#1DA300" stroke-width="3"/>
-<circle cx="290" cy="165" r="6" fill="#1F7A5E" stroke="#fff" stroke-width="3"/>
+<path d="M 44.0 165.0 C 63.4 130.0 82.8 125.0 102.3 155.0 S 134.6 205.0 160.5 190.0 S 192.9 130.0 212.3 145.0 S 244.7 200.0 264.1 178.0 S 282.2 168.0 290.0 165.0" fill="none" stroke="#157C00" stroke-width="3.5" stroke-linecap="round"/>
+<circle cx="44" cy="165" r="6" fill="#fff" stroke="#157C00" stroke-width="3"/>
+<circle cx="290" cy="165" r="6" fill="#1A1A19" stroke="#fff" stroke-width="3"/>
 <line x1="290" y1="72" x2="290" y2="112" stroke="#CF7430" stroke-width="2.5"/><path d="M290 72 l16 6 -16 6z" fill="#CF7430"/>
 <text x="283" y="84" text-anchor="end" font-size="14" font-weight="600" fill="#A2561C">Ziel: Studium</text>
-<text x="283" y="101" text-anchor="end" font-size="13" font-weight="600" fill="#1F7A5E">100&nbsp;% zurück</text>
+<text x="283" y="101" text-anchor="end" font-size="13" font-weight="600" fill="#1A1A19">100&nbsp;% zurück</text>
 <text x="44.0" y="252" text-anchor="middle" font-size="13" fill="#55544F">2026</text><text x="93.2" y="252" text-anchor="middle" font-size="13" fill="#55544F">2027</text><text x="142.4" y="252" text-anchor="middle" font-size="13" fill="#55544F">2028</text><text x="191.6" y="252" text-anchor="middle" font-size="13" fill="#55544F">2029</text><text x="240.8" y="252" text-anchor="middle" font-size="13" fill="#55544F">2030</text><text x="290.0" y="252" text-anchor="middle" font-size="13" fill="#55544F">2031</text>
 <text class="axt" x="306" y="278" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Jahr&nbsp;→</text>
 </svg><a class="go leise sb-go" href="staatsanleihen-laufzeit.html">Staatsanleihen nach Restlaufzeit ansehen&nbsp;→</a><a class="sb-bon" href="bonitaet.html">Bonität bei langer Laufzeit prüfen&nbsp;→</a></div>
@@ -268,9 +274,9 @@
       </div>
       <div class="k-bild"><p class="sb-k">Dein Zins bleibt, das Tagesgeld nicht</p><svg class="sb sb-d" viewBox="0 0 480 234" role="img" aria-labelledby="sb4t"><title id="sb4t">Deine Anleihe zahlt acht Jahre lang 3,5 Prozent. Das Tagesgeld sinkt in den ersten zwei Jahren von 3,5 auf 1,5 Prozent und bleibt dort. Die Fläche dazwischen ist dein Vorteil.</title>
 <line x1="60" y1="140" x2="440" y2="140" stroke="rgba(44,44,42,0.10)"/><text x="52" y="145" text-anchor="end" font-size="13" fill="#55544F">1&nbsp;%</text><line x1="60" y1="110" x2="440" y2="110" stroke="rgba(44,44,42,0.10)"/><text x="52" y="115" text-anchor="end" font-size="13" fill="#55544F">2&nbsp;%</text><line x1="60" y1="80" x2="440" y2="80" stroke="rgba(44,44,42,0.10)"/><text x="52" y="85" text-anchor="end" font-size="13" fill="#55544F">3&nbsp;%</text>
-<path d="M60 65 L440 65 L440 125 L155 125 L108 92 Z" fill="#DFFFD9"/>
+<path d="M60 65 L440 65 L440 125 L155 125 L108 92 Z" fill="#DCFBD3"/>
 <text x="298" y="100" text-anchor="middle" font-size="14" font-weight="600" fill="#157C00">Dein Vorteil</text>
-<path d="M60 65 L440 65" fill="none" stroke="#1DA300" stroke-width="4" stroke-linecap="round"/>
+<path d="M60 65 L440 65" fill="none" stroke="#157C00" stroke-width="4" stroke-linecap="round"/>
 <path d="M60 65 L108 92 L155 125 L440 125" fill="none" stroke="#CF7430" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 <text x="64" y="55" font-size="15" font-weight="600" fill="#157C00">Deine Anleihe: 3,5&nbsp;% – acht Jahre lang</text>
 <text x="440" y="147" text-anchor="end" font-size="15" font-weight="600" fill="#A2561C">Tagesgeld: nur noch 1,5&nbsp;%</text>
@@ -280,9 +286,9 @@
 <text class="axt" x="440" y="226" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Zeit in Jahren&nbsp;→</text>
 </svg><svg class="sb sb-m" viewBox="0 0 312 234" role="img" aria-labelledby="sb4tm"><title id="sb4tm">Deine Anleihe zahlt acht Jahre lang 3,5 Prozent. Das Tagesgeld sinkt in den ersten zwei Jahren von 3,5 auf 1,5 Prozent und bleibt dort. Die Fläche dazwischen ist dein Vorteil.</title>
 <line x1="44" y1="140" x2="290" y2="140" stroke="rgba(44,44,42,0.10)"/><text x="38" y="145" text-anchor="end" font-size="13" fill="#55544F">1&nbsp;%</text><line x1="44" y1="110" x2="290" y2="110" stroke="rgba(44,44,42,0.10)"/><text x="38" y="115" text-anchor="end" font-size="13" fill="#55544F">2&nbsp;%</text><line x1="44" y1="80" x2="290" y2="80" stroke="rgba(44,44,42,0.10)"/><text x="38" y="85" text-anchor="end" font-size="13" fill="#55544F">3&nbsp;%</text>
-<path d="M44 65 L290 65 L290 125 L105.5 125 L75.1 92 Z" fill="#DFFFD9"/>
+<path d="M44 65 L290 65 L290 125 L105.5 125 L75.1 92 Z" fill="#DCFBD3"/>
 <text x="198.1" y="100" text-anchor="middle" font-size="13" font-weight="600" fill="#157C00">Dein Vorteil</text>
-<path d="M44 65 L290 65" fill="none" stroke="#1DA300" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M44 65 L290 65" fill="none" stroke="#157C00" stroke-width="3.5" stroke-linecap="round"/>
 <path d="M44 65 L75.1 92 L105.5 125 L290 125" fill="none" stroke="#CF7430" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
 <text x="44" y="54" font-size="14" font-weight="600" fill="#157C00">Deine Anleihe: 3,5&nbsp;% fest</text>
 <text x="290" y="148" text-anchor="end" font-size="14" font-weight="600" fill="#A2561C">Tagesgeld: nur noch 1,5&nbsp;%</text>

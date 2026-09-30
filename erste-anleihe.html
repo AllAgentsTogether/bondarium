@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -51,11 +52,11 @@
   .ko-bar { display: flex; height: 34px; border-radius: 7px; overflow: hidden; }
   .ko-bar i { display: flex; align-items: center; min-width: 3px; font-style: normal; }
   .ko-r { background: var(--blue); }
-  .ko-k { background: #A85A22; justify-content: center; }
+  .ko-k { background: #A2561C; justify-content: center; }
   .ko-bar span { color: #fff; font-size: 14px; font-weight: 600; white-space: nowrap; padding: 0 10px; font-variant-numeric: tabular-nums; }
   /* 4: Kursanzeigen */
   .quotes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
-  .q { border-radius: 12px; border: 1.5px solid rgba(31,122,94,0.45); background: #F3FAF7; padding: 12px 12px 12px; display: flex; flex-direction: column; gap: 10px; }
+  .q { border-radius: 12px; border: 1.5px solid rgba(31,122,94,0.45); background: #FFFFFF; padding: 12px 12px 12px; display: flex; flex-direction: column; gap: 10px; }
   .q-schlecht { border-color: rgba(153,60,29,0.40); background: #FCF4F0; }
   .q-n { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.3; }
   .q-n small { display: block; font-size: 12px; font-weight: 400; color: var(--text); margin-top: 2px; }
@@ -74,7 +75,7 @@
   .or-l i { width: 20px; height: 20px; border-radius: 50%; background: var(--green); color: var(--ink); font-style: normal; font-size: 12px; font-weight: 600; display: grid; place-items: center; flex: none; }
   .or-v { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.3; }
   .or-v small { display: block; font-size: 12px; font-weight: 400; color: var(--text); font-variant-numeric: tabular-nums; }
-  .or-f { border: 1.5px solid rgba(29,163,0,0.45); border-radius: 7px; padding: 5px 9px; background: #F3FFF0; font-variant-numeric: tabular-nums; }
+  .or-f { border: 1.5px solid rgba(29,163,0,0.45); border-radius: 7px; padding: 5px 9px; background: #FFFFFF; font-variant-numeric: tabular-nums; }
   .seg { display: inline-flex; border: 1.5px solid rgba(29,163,0,0.45); border-radius: 7px; overflow: hidden; }
   .seg span { font-size: 13px; font-weight: 600; padding: 5px 12px; color: var(--text); }
   .seg .on { background: var(--green); color: var(--ink); }
@@ -101,7 +102,7 @@
   .fl-stand[hidden], .fl-ok { display: none; }
   .fl-btn { font: inherit; font-size: 13px; font-weight: 600; color: var(--blue); background: #fff; border: 1px solid rgba(29,163,0,0.45); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
   @media (pointer: coarse) { .fl-btn { min-height: 44px; padding: 0 16px; } .k-text .sb-bon { display: inline-flex; align-items: center; min-height: 44px; margin-top: 0; } }
-  .fl-btn:hover { background: #F3FFF0; }
+  .fl-btn:hover { background: #FFFFFF; }
   .fl-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
   .fl-tipp { font-size: 14px; color: var(--text); margin: 6px 0 14px; }
   .fl { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 24px; }
@@ -130,8 +131,7 @@
   .kurz-raster { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 26px; }
   .kurz-raster .kap { grid-template-rows: 1fr auto; padding: 28px 28px 28px; }
   .kurz-raster .kap h2 { font-size: 26px; }
-  .kurz-raster #zins { background: linear-gradient(160deg, var(--rub-card) 0%, var(--rub-card-2) 100%); }
-  .kurz-raster #stueckelung { background: linear-gradient(160deg, #F9F7F1 0%, #FBFAF7 100%); }
+  .kurz-raster #zins, .kurz-raster #stueckelung { background: #fff; }   /* Bildwelt 2.0 (30.09.2026): Abschnittskarten weiß statt Verlauf */
   @media (max-width: 860px) {
     .kurz-raster { grid-template-columns: minmax(0, 1fr); }
     .kurz-raster .kap { grid-template-rows: auto; }
@@ -221,8 +221,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="kaufen.html">Kaufen</a></li><li><span aria-current="page">Deine erste Anleihe</span></li></ol></nav>
   <main id="main">
-    <h1>Deine erste Anleihe in neun Schritten</h1>
-    <p class="sub">Vom Termin bis zur Rückzahlung – mit einem Beispiel, das durch alle Schritte führt: 5.000&nbsp;€ für ein Auto im Herbst 2028, angelegt in einer Anleihe mit Bestnote. Das Beispiel rechnet mit Kursen vom 23.09.2026 und einem Kauf am 24.09.2026; mit heutigen Kursen fallen die Zahlen etwas anders aus. Lesezeit: etwa 7 Minuten.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Deine erste Anleihe in neun Schritten</h1>
+        <p class="sub">Vom Termin bis zur Rückzahlung – mit einem Beispiel, das durch alle Schritte führt: 5.000&nbsp;€ für ein Auto im Herbst 2028, angelegt in einer Anleihe mit Bestnote. Das Beispiel rechnet mit Kursen vom 23.09.2026 und einem Kauf am 24.09.2026; mit heutigen Kursen fallen die Zahlen etwas anders aus. Lesezeit: etwa 7 Minuten.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-erste-anleihe.svg" alt="" width="232" height="160"></div>
+    </div>
     <nav class="lands" aria-label="Zum Schritt springen">
       <a class="lbtn" href="#termin"><span class="n">1</span>Termin</a>
       <a class="lbtn" href="#bonitaet"><span class="n">2</span>Bonität</a>
@@ -243,35 +248,35 @@
         <p>Fang mit deinem Termin an. Im Beispiel willst du im Herbst 2028 ein Auto kaufen und legst bis dahin 5.000&nbsp;€ an. Deine Anleihe sollte kurz vor dem Termin fällig werden – hier am 19.10.2028. <strong>Wer bis zur Fälligkeit hält, bekommt 100&nbsp;% zurück</strong> – egal, wie der Kurs zwischendurch schwankt, solange der Schuldner zahlt (Schritt&nbsp;2).</p><p>Du kannst die Anleihe auch <strong>vorher verkaufen</strong> – jederzeit über die Börse. Dann bekommst du den Kurs des Tages: Liegt er unter deinem Kaufkurs, machst du Verlust, liegt er darüber, Gewinn.</p>
       </div>
       <div class="k-bild"><p class="sb-k">Dein Plan auf einen Blick</p><svg class="sb sb-d" viewBox="0 0 400 204" role="img" aria-labelledby="ea1t"><title id="ea1t">Zeitleiste: Heute legst du 5.000 Euro an. Die Anleihe läuft bis zum 19. Oktober 2028 und zahlt jedes Jahr Zinsen. Dann gibt es 100 Prozent zurück – rechtzeitig vor dem Autokauf im Herbst 2028.</title>
-<rect x="36" y="118" width="315" height="16" rx="4" fill="#DFFFD9"/>
+<rect x="36" y="118" width="315" height="16" rx="4" fill="#DCFBD3"/>
 <text x="194" y="130" text-anchor="middle" font-size="12.5" font-weight="600" fill="#157C00">Anleihe läuft – jedes Jahr Zinsen</text>
 <line x1="20" y1="136" x2="392" y2="136" stroke="#55544F" stroke-width="2"/>
 <line x1="77.3" y1="131" x2="77.3" y2="141" stroke="#55544F" stroke-width="1.5"/><text x="77.3" y="160" text-anchor="middle" font-size="13" fill="#55544F">2027</text><line x1="229.3" y1="131" x2="229.3" y2="141" stroke="#55544F" stroke-width="1.5"/><text x="229.3" y="160" text-anchor="middle" font-size="13" fill="#55544F">2028</text>
-<line x1="36" y1="84" x2="36" y2="118" stroke="#1DA300" stroke-width="1.5" stroke-dasharray="3 3"/>
-<circle cx="36" cy="136" r="7" fill="#1DA300" stroke="#fff" stroke-width="3"/>
+<line x1="36" y1="84" x2="36" y2="118" stroke="#157C00" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="36" cy="136" r="7" fill="#157C00" stroke="#fff" stroke-width="3"/>
 <text x="22" y="56" font-size="15" font-weight="600" fill="#157C00">Heute</text>
 <text x="22" y="74" font-size="13" fill="#55544F">5.000&nbsp;€ anlegen</text>
-<line x1="351" y1="66" x2="351" y2="118" stroke="#1F7A5E" stroke-width="1.5" stroke-dasharray="3 3"/>
-<circle cx="351" cy="136" r="7" fill="#1F7A5E" stroke="#fff" stroke-width="3"/>
-<text x="343" y="38" text-anchor="end" font-size="15" font-weight="600" fill="#1F7A5E">19.10.2028</text>
-<text x="343" y="56" text-anchor="end" font-size="13" fill="#1F7A5E" font-weight="600">100&nbsp;% zurück</text>
+<line x1="351" y1="66" x2="351" y2="118" stroke="#1A1A19" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="351" cy="136" r="7" fill="#1A1A19" stroke="#fff" stroke-width="3"/>
+<text x="343" y="38" text-anchor="end" font-size="15" font-weight="600" fill="#1A1A19">19.10.2028</text>
+<text x="343" y="56" text-anchor="end" font-size="13" fill="#1A1A19" font-weight="600">100&nbsp;% zurück</text>
 <line x1="376" y1="136" x2="376" y2="74" stroke="#CF7430" stroke-width="2.5"/>
 <path d="M376 74 l20 7 -20 7z" fill="#CF7430"/>
 <text x="396" y="160" text-anchor="end" font-size="13" font-weight="600" fill="#A2561C">Autokauf</text>
 <text x="396" y="196" text-anchor="end" class="axt" font-size="13" font-weight="600" fill="#55544F">Zeit&nbsp;→</text>
 </svg><svg class="sb sb-m" viewBox="0 0 300 204" role="img" aria-labelledby="ea1tm"><title id="ea1tm">Zeitleiste: Heute legst du 5.000 Euro an. Die Anleihe läuft bis zum 19. Oktober 2028 und zahlt jedes Jahr Zinsen. Dann gibt es 100 Prozent zurück – rechtzeitig vor dem Autokauf im Herbst 2028.</title>
-<rect x="24.0" y="118" width="237.1" height="16" rx="4" fill="#DFFFD9"/>
+<rect x="24.0" y="118" width="237.1" height="16" rx="4" fill="#DCFBD3"/>
 <text x="143.0" y="130" text-anchor="middle" font-size="13" font-weight="600" fill="#157C00">Anleihe läuft – jedes Jahr Zinsen</text>
 <line x1="12" y1="136" x2="292" y2="136" stroke="#55544F" stroke-width="2"/>
 <line x1="55.1" y1="131" x2="55.1" y2="141" stroke="#55544F" stroke-width="1.5"/><text x="55.1" y="160" text-anchor="middle" font-size="13" fill="#55544F">2027</text><line x1="169.5" y1="131" x2="169.5" y2="141" stroke="#55544F" stroke-width="1.5"/><text x="169.5" y="160" text-anchor="middle" font-size="13" fill="#55544F">2028</text>
-<line x1="24.0" y1="84" x2="24.0" y2="118" stroke="#1DA300" stroke-width="1.5" stroke-dasharray="3 3"/>
-<circle cx="24.0" cy="136" r="6" fill="#1DA300" stroke="#fff" stroke-width="3"/>
+<line x1="24.0" y1="84" x2="24.0" y2="118" stroke="#157C00" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="24.0" cy="136" r="6" fill="#157C00" stroke="#fff" stroke-width="3"/>
 <text x="12" y="56" font-size="15" font-weight="600" fill="#157C00">Heute</text>
 <text x="12" y="74" font-size="13" fill="#55544F">5.000&nbsp;€ anlegen</text>
-<line x1="261.1" y1="66" x2="261.1" y2="118" stroke="#1F7A5E" stroke-width="1.5" stroke-dasharray="3 3"/>
-<circle cx="261.1" cy="136" r="6" fill="#1F7A5E" stroke="#fff" stroke-width="3"/>
-<text x="255.1" y="38" text-anchor="end" font-size="15" font-weight="600" fill="#1F7A5E">19.10.2028</text>
-<text x="255.1" y="56" text-anchor="end" font-size="13" fill="#1F7A5E" font-weight="600">100&nbsp;% zurück</text>
+<line x1="261.1" y1="66" x2="261.1" y2="118" stroke="#1A1A19" stroke-width="1.5" stroke-dasharray="3 3"/>
+<circle cx="261.1" cy="136" r="6" fill="#1A1A19" stroke="#fff" stroke-width="3"/>
+<text x="255.1" y="38" text-anchor="end" font-size="15" font-weight="600" fill="#1A1A19">19.10.2028</text>
+<text x="255.1" y="56" text-anchor="end" font-size="13" fill="#1A1A19" font-weight="600">100&nbsp;% zurück</text>
 <line x1="280.0" y1="136" x2="280.0" y2="74" stroke="#CF7430" stroke-width="2.5"/>
 <path d="M280.0 74 l16 6 -16 6z" fill="#CF7430"/>
 <text x="298" y="160" text-anchor="end" font-size="13" font-weight="600" fill="#A2561C">Autokauf</text>
@@ -371,34 +376,34 @@
         <p>Kaufst du zwischen zwei Zinsterminen, zahlst du dem Verkäufer die Zinsen, die seit dem letzten Termin aufgelaufen sind – die <strong>Stückzinsen</strong>. Auf der Abrechnung stehen sie extra.</p><p>Das Geld ist nicht weg: Am nächsten Zinstermin bekommst du die Zinsen für das ganze Jahr. Und die gezahlten Stückzinsen zieht die Bank von diesen Zinsen ab – versteuern musst du im Beispiel nur 120&nbsp;€ − 113,10&nbsp;€ = 6,90&nbsp;€.</p><p><strong>Plane etwas Puffer ein:</strong> Für 5.000&nbsp;€ Nennwert brauchst du im Beispiel 5.032,60&nbsp;€ auf dem Verrechnungskonto – sonst lehnt die Bank die Order womöglich ab.</p>
       </div>
       <div class="k-bild"><p class="sb-k">Wem die Zinsen gehören – Beispiel: Kauf am 24.09.2026</p><svg class="sb sb-d" viewBox="0 0 400 206" role="img" aria-labelledby="ea6t"><title id="ea6t">Zinsperiode vom 19. Oktober 2025 bis 19. Oktober 2026. Die ersten 344 Tage bis zum Abrechnungstag deines Kaufs, dem 28. September 2026, gehören dem Verkäufer – dafür zahlst du 113,10 Euro Stückzinsen. Die letzten 21 Tage gehören dir. Am 19. Oktober 2026 bekommst du 120 Euro Zinsen für das ganze Jahr.</title>
-<rect x="20" y="110" width="339.3" height="16" fill="#FBE3CF"/>
-<rect x="359.3" y="110" width="20.7" height="16" fill="#1F7A5E"/>
+<rect x="20" y="110" width="339.3" height="16" fill="#FBE8D8"/>
+<rect x="359.3" y="110" width="20.7" height="16" fill="#1A1A19"/>
 <text x="190" y="122" text-anchor="middle" font-size="12.5" font-weight="600" fill="#A2561C">344 Tage – Zinsen des Verkäufers</text>
 <line x1="20" y1="128" x2="380" y2="128" stroke="#55544F" stroke-width="2"/>
 <line x1="20" y1="123" x2="20" y2="133" stroke="#55544F" stroke-width="1.5"/><line x1="380" y1="123" x2="380" y2="133" stroke="#55544F" stroke-width="1.5"/>
 <text x="20" y="36" font-size="12.5" fill="#55544F">Letzter Zinstermin</text>
 <text x="20" y="54" font-size="15" font-weight="600" fill="#1A1A19">19.10.2025</text>
 <text x="380" y="36" text-anchor="end" font-size="12.5" fill="#55544F">Nächster Zinstermin</text>
-<text x="380" y="54" text-anchor="end" font-size="15" font-weight="600" fill="#1F7A5E">19.10.2026: 120&nbsp;€</text>
-<line x1="359.3" y1="92" x2="359.3" y2="134" stroke="#1DA300" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text x="380" y="54" text-anchor="end" font-size="15" font-weight="600" fill="#1A1A19">19.10.2026: 120&nbsp;€</text>
+<line x1="359.3" y1="92" x2="359.3" y2="134" stroke="#157C00" stroke-width="1.5" stroke-dasharray="3 3"/>
 <text x="353" y="90" text-anchor="end" font-size="12.5" font-weight="600" fill="#157C00">Abrechnungstag: 28.09.2026</text>
 <text x="190" y="152" text-anchor="middle" font-size="13.5" font-weight="600" fill="#A2561C">Du zahlst dafür 113,10&nbsp;€ Stückzinsen</text>
-<text x="380" y="172" text-anchor="end" font-size="12.5" font-weight="600" fill="#1F7A5E">21 Tage: deine Zinsen</text>
+<text x="380" y="172" text-anchor="end" font-size="12.5" font-weight="600" fill="#1A1A19">21 Tage: deine Zinsen</text>
 <text x="380" y="196" text-anchor="end" class="axt" font-size="13" font-weight="600" fill="#55544F">Datum&nbsp;→</text>
 </svg><svg class="sb sb-m" viewBox="0 0 300 206" role="img" aria-labelledby="ea6tm"><title id="ea6tm">Zinsperiode vom 19. Oktober 2025 bis 19. Oktober 2026. Die ersten 344 Tage bis zum Abrechnungstag deines Kaufs, dem 28. September 2026, gehören dem Verkäufer – dafür zahlst du 113,10 Euro Stückzinsen. Die letzten 21 Tage gehören dir. Am 19. Oktober 2026 bekommst du 120 Euro Zinsen für das ganze Jahr.</title>
-<rect x="12" y="110" width="263.9" height="16" fill="#FBE3CF"/>
-<rect x="275.9" y="110" width="16.1" height="16" fill="#1F7A5E"/>
+<rect x="12" y="110" width="263.9" height="16" fill="#FBE8D8"/>
+<rect x="275.9" y="110" width="16.1" height="16" fill="#1A1A19"/>
 <text x="144.2" y="122" text-anchor="middle" font-size="13" font-weight="600" fill="#A2561C">344 Tage – Zinsen des Verkäufers</text>
 <line x1="12" y1="128" x2="292" y2="128" stroke="#55544F" stroke-width="2"/>
 <line x1="12" y1="123" x2="12" y2="133" stroke="#55544F" stroke-width="1.5"/><line x1="292" y1="123" x2="292" y2="133" stroke="#55544F" stroke-width="1.5"/>
 <text x="12" y="36" font-size="13" fill="#55544F">Letzter Zinstermin</text>
 <text x="12" y="54" font-size="15" font-weight="600" fill="#1A1A19">19.10.2025</text>
 <text x="292" y="36" text-anchor="end" font-size="13" fill="#55544F">Nächster Zinstermin</text>
-<text x="292" y="54" text-anchor="end" font-size="15" font-weight="600" fill="#1F7A5E">19.10.2026: 120&nbsp;€</text>
-<line x1="275.9" y1="92" x2="275.9" y2="134" stroke="#1DA300" stroke-width="1.5" stroke-dasharray="3 3"/>
+<text x="292" y="54" text-anchor="end" font-size="15" font-weight="600" fill="#1A1A19">19.10.2026: 120&nbsp;€</text>
+<line x1="275.9" y1="92" x2="275.9" y2="134" stroke="#157C00" stroke-width="1.5" stroke-dasharray="3 3"/>
 <text x="269.9" y="90" text-anchor="end" font-size="13" font-weight="600" fill="#157C00">Abrechnungstag: 28.09.2026</text>
 <text x="144.2" y="152" text-anchor="middle" font-size="13" font-weight="600" fill="#A2561C">Du zahlst dafür 113,10&nbsp;€ Stückzinsen</text>
-<text x="292" y="172" text-anchor="end" font-size="13" font-weight="600" fill="#1F7A5E">21 Tage: deine Zinsen</text>
+<text x="292" y="172" text-anchor="end" font-size="13" font-weight="600" fill="#1A1A19">21 Tage: deine Zinsen</text>
 <text x="292" y="196" text-anchor="end" class="axt" font-size="13" font-weight="600" fill="#55544F">Datum&nbsp;→</text>
 </svg><div class="abr" role="img" aria-label="Beispiel-Abrechnung: 5.000 Euro Nennwert zu 98,37 Prozent ergeben 4.918,50 Euro Kurswert. Dazu 113,10 Euro Stückzinsen für 344 Tage und 1 Euro Ordergebühr. Endbetrag 5.032,60 Euro.">
 <p class="abr-h">Abrechnung <span>Beispiel</span></p>

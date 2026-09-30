@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -40,9 +41,9 @@
   .bv-in strong { color: var(--ink); font-weight: 600; }
   /* Kennzeichen: ja / Auswahl / nein */
   .bdg { display: inline-block; flex: none; font-size: 12px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; line-height: 1.3; border-radius: 999px; padding: 3px 9px; }
-  .bdg.ja { background: #E3F1EC; color: #1B6B52; }
-  .bdg.aw { background: #FBEADB; color: #8E4A17; }
-  .bdg.nein { background: #F7E4DE; color: #8A3519; }
+  .bdg.ja { background: #DCFBD3; color: #157C00; }
+  .bdg.aw { background: #FBE8D8; color: #A2561C; }
+  .bdg.nein { background: #FBE8D8; color: #A2561C; }
   .bv-leg { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0 0 16px; font-size: 14px; color: var(--text); }
   .bv-leg li { display: inline-flex; align-items: center; gap: 8px; }
   /* Tabelle (ab 901 px) */
@@ -58,10 +59,10 @@
   .bv-t .r { text-align: right; }
   .bv-t tbody th, .bv-t tbody td { text-align: left; vertical-align: top; font-weight: 400; color: var(--ink); padding: 12px; border-bottom: 1px solid var(--rule); }
   .bv-t tbody:last-child tr:last-child > * { border-bottom: 0; }
-  .bv-t tr.grp th { background: #EFFFEC; padding: 10px 12px; font-size: 14px; font-weight: 600; }
+  .bv-t tr.grp th { background: #FFFFFF; padding: 10px 12px; font-size: 14px; font-weight: 600; }
   .bv-t tr.grp th .bdg { margin-right: 10px; vertical-align: 1px; }
   .bv-t tr.grp th span.n { font-weight: 400; color: var(--text); }
-  .bv-t tr.grp:hover th { background: #EFFFEC; }
+  .bv-t tr.grp:hover th { background: #FFFFFF; }
   .bv-t .an b { display: block; font-size: 15px; font-weight: 600; }
   .typ { display: block; font-size: 12.5px; color: var(--text); margin-top: 1px; }
   .hin { display: block; margin-top: 6px; font-size: 12.5px; font-weight: 600; line-height: 1.35; color: var(--blue); }
@@ -70,6 +71,7 @@
   .bv-t td.k { text-align: right; white-space: nowrap; }
   .bv-t td.k b, .bvc-k b { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
   .bv-t td.k small { white-space: normal; }
+  .bv-t td.k.min b::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 7px; vertical-align: 1px; border-radius: 50%; background: #39FF14; border: 1.5px solid #1A1A19; box-sizing: border-box; }   /* Bildwelt 2.0: günstigster Preis */
   .bv-t tbody.g-nein td { color: var(--text); }
   /* Karten (bis 900 px, 601–900 px zweispaltig) */
   .bv-cards { display: none; }
@@ -192,8 +194,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="kaufen.html">Kaufen</a></li><li><span aria-current="page">Broker im Vergleich</span></li></ol></nav>
   <main id="main">
-    <h1>Welcher Broker kann Anleihen?</h1>
-    <p class="sub">Nicht jede Trading-App hat normale Anleihen im Angebot. <span data-bv="anzahl">19</span> Anbieter im Check: welche Anleihen du dort bekommst, wo gehandelt wird und was ein Kauf für 5.000&nbsp;€ oder 100.000&nbsp;€ kostet.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Welcher Broker kann Anleihen?</h1>
+        <p class="sub">Nicht jede Trading-App hat normale Anleihen im Angebot. <span data-bv="anzahl">19</span> Anbieter im Check: welche Anleihen du dort bekommst, wo gehandelt wird und was ein Kauf für 5.000&nbsp;€ oder 100.000&nbsp;€ kostet.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-broker-vergleich.svg" alt="" width="232" height="160"></div>
+    </div>
     <p class="bv-stand"><span><b>Stand <span data-bv="stand">siehe Tabelle</span></b> · geprüft nur auf den Seiten und in den Preisverzeichnissen der Anbieter</span></p>
     <p class="bv-unab">Sortiert ist nur nach den Kosten.</p>
     <nav class="lands" aria-label="Zum Abschnitt springen">
@@ -316,6 +323,11 @@ MC.navInit();
     var t = '<table class="bv-t"><caption class="sr-only">Broker für Anleihen im Vergleich, Stand ' + stand + '</caption>'
       + '<thead><tr><th scope="col">Anbieter</th><th scope="col">Anleihen</th><th scope="col">Handelsplätze</th><th scope="col">Gebühr je Kauf</th><th scope="col" class="r">Kauf für 5.000' + EUR + '</th><th scope="col" class="r">Kauf für 100.000' + EUR + '</th><th scope="col">Depot</th></tr></thead>';
     var c = '<div class="bv-cards">';
+    // Bildwelt 2.0 (30.09.2026): günstigster Preis je Kostenspalte mit Kupon-Punkt (bei Gleichstand alle)
+    var mitK = D.anbieter.filter(function (b) { return b.gruppe !== "nein"; });
+    function tief(f) { var v = mitK.map(function (b) { return b[f]; }).filter(function (x) { return x != null; }); return v.length ? Math.min.apply(null, v) : null; }
+    var min5 = tief("k5"), min100 = tief("k100");
+    function kz(v, m) { return v != null && v === m ? ' min" title="günstigster Preis' : ""; }
     D.gruppen.forEach(function (g) {
       var nein = g.id === "nein";
       t += '<tbody class="g-' + g.id + '"><tr class="grp"><th colspan="7" scope="rowgroup"><span class="bdg ' + g.id + '">' + g.bdg + "</span>" + g.titel
@@ -330,7 +342,7 @@ MC.navInit();
         }
         var w100 = k100w(b);
         t += "<tr>" + kopf + "<td>" + b.anleihen + smalls(b.anleihen_n) + "</td><td>" + handel(b) + smalls(b.handel_n) + "</td><td>" + b.gebuehr + smalls(b.gebuehr_n) + "</td>"
-          + '<td class="k"><b>' + geld(b.k5, b.k5_ab) + "</b><small>" + b.k5_w + '</small></td><td class="k"><b>' + geld(b.k100, b.k100_ab) + "</b><small>" + w100 + "</small></td>"
+          + '<td class="k' + kz(b.k5, min5) + '"><b>' + geld(b.k5, b.k5_ab) + "</b><small>" + b.k5_w + '</small></td><td class="k' + kz(b.k100, min100) + '"><b>' + geld(b.k100, b.k100_ab) + "</b><small>" + w100 + "</small></td>"
           + "<td>" + b.depot + smalls(b.depot_n) + "</td></tr>";
         c += '<li class="bvc"><p class="bvc-h"><span><b>' + b.name + '</b><span class="typ">' + b.typ + '</span></span><span class="bvc-k"><small>5.000' + EUR + " kaufen</small><b>" + geld(b.k5, b.k5_ab) + "</b><em>" + b.k5_w + "</em></span></p>"
           + "<dl><dt>Anleihen</dt><dd>" + b.anleihen + smalls(b.anleihen_n) + "</dd><dt>Handel</dt><dd>" + handel(b) + smalls(b.handel_n) + "</dd><dt>Gebühr</dt><dd>" + b.gebuehr + smalls(b.gebuehr_n) + "</dd>"

@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -46,6 +47,7 @@
   .k-bild .erg dd { text-align: right; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .k-bild .erg dd.big { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; color: var(--green-text); line-height: 1.1; }
   .k-bild .erg dd.big.down { color: var(--down); } .k-bild .erg dd.big.up { color: var(--up); }
+  .k-bild #r1-rendite::before, .k-bild #r2-stz::before, .k-bild #r3-netto::before { content: ""; display: inline-block; width: 12px; height: 12px; margin-right: 10px; vertical-align: 0.18em; border-radius: 50%; background: #39FF14; border: 2px solid #1A1A19; box-sizing: border-box; }   /* Bildwelt 2.0: das „=“ der Illustration als Kupon-Punkt vor dem Ergebnis */
   .k-bild .erg + .erg { border-top: 1px solid rgba(26,26,25,0.08); margin-top: 12px; padding-top: 12px; }   /* Trennlinie zwischen den Ergebnisgruppen (vorher div.sep im dl – ungültiges HTML) */
   .k-bild .out { font-size: 13px; line-height: 1.55; color: var(--text); margin-top: 14px; }
   /* 4: Balken für ±1/±2 Prozentpunkte */
@@ -123,8 +125,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="entscheiden.html">Entscheiden</a></li><li><span aria-current="page">Rechner</span></li></ol></nav>
   <main id="main">
-    <h1>Anleihen-Rechner</h1>
-    <p class="sub">Vier Rechner, die jede Kaufentscheidung braucht: Rendite, Stückzinsen, Netto nach Steuer und die Wirkung des allgemeinen Zinsniveaus.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Anleihen-Rechner</h1>
+        <p class="sub">Vier Rechner, die jede Kaufentscheidung braucht: Rendite, Stückzinsen, Netto nach Steuer und die Wirkung des allgemeinen Zinsniveaus.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-rechner.svg" alt="" width="232" height="160"></div>
+    </div>
     <nav class="lands" aria-label="Zum Rechner springen">
       <a class="lbtn" href="#rendite"><span class="n">1</span>Rendite</a>
       <a class="lbtn" href="#stueckzinsen"><span class="n">2</span>Stückzinsen</a>

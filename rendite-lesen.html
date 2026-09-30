@@ -27,6 +27,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -45,7 +46,7 @@
   /* Zerlegung (2) */
   .stapel { display: flex; height: 40px; border-radius: 8px; overflow: hidden; }
   .stapel span { display: grid; place-items: center; color: #fff; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; width: var(--w); }
-  .stapel .a { background: #1F7A5E; } .stapel .b { background: #1DA300; }
+  .stapel .a { background: #1A1A19; } .stapel .b { background: #157C00; }
   .st-leg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; font-size: 13px; line-height: 1.4; color: var(--text); }
   .st-leg b { display: block; color: var(--ink); font-weight: 600; }
   .st-sum { margin-top: 10px; padding: 9px 12px; border-radius: 10px; background: #fff; border: 1.5px solid var(--green-line); font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
@@ -131,8 +132,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="vertiefen.html">Vertiefen</a></li><li><span aria-current="page">Rendite richtig lesen</span></li></ol></nav>
   <main id="main">
-    <h1>Rendite ist nicht gleich Rendite</h1>
-    <p class="sub">Dieselbe Anleihe, fünf verschiedene „Renditen“ – je nachdem, wer rechnet und was er einrechnet. Hier lernst du, welche Zahl was bedeutet und welche für dich zählt. Sechs Karten, jede mit Schaubild. Lesezeit: etwa 6 Minuten.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Rendite ist nicht gleich Rendite</h1>
+        <p class="sub">Dieselbe Anleihe, fünf verschiedene „Renditen“ – je nachdem, wer rechnet und was er einrechnet. Hier lernst du, welche Zahl was bedeutet und welche für dich zählt. Sechs Karten, jede mit Schaubild. Lesezeit: etwa 6 Minuten.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-rendite-lesen.svg" alt="" width="232" height="160"></div>
+    </div>
     <nav class="lands" aria-label="Zum Thema springen">
       <a class="lbtn" href="#kupon"><span class="n">1</span>Kupon ist nicht Rendite</a>
       <a class="lbtn" href="#ytm"><span class="n">2</span>Rendite bis Fälligkeit</a>
