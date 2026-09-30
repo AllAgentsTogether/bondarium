@@ -269,6 +269,17 @@ jobs:
       - name: Kurs-Jahresliste schreiben
         run: if [ -f scripts/kurse_jahre.py ]; then python3 scripts/kurse_jahre.py; fi
 
+      # ----- PHP-Syntax prüfen (seit 30.09.2026): ein Tippfehler in kontakt.php oder refresh.php soll den Lauf stoppen,
+      #       nicht erst beim Besucher als Fehler 500 auffallen. Lokal gibt es kein PHP – der Runner bringt es mit. -----
+      - name: PHP-Syntax prüfen
+        run: |
+          if command -v php >/dev/null 2>&1; then
+            php -l kontakt.php
+            php -l strato-cron/refresh.php
+          else
+            echo "::warning::php fehlt auf dem Runner – Syntaxprüfung übersprungen"
+          fi
+
       - name: Veröffentlichungs-Ordner bauen (nur die echten Website-Dateien)
         # Explizite Liste ohne "|| true": fehlt eine Dateiklasse, bricht der Lauf ab
         # (früher kamen OG-Bild/Favicons/Sitemap unbemerkt nie auf dem Server an).
@@ -277,6 +288,7 @@ jobs:
           cp *.html *.json *.svg *.css *.js *.png *.webp *.woff2 robots.txt sitemap.xml llms.txt _site/   # webp: Fotos der Anlegerprofile, woff2: Manrope (seit 24.09.2026)
           rm -f _site/package.json _site/package-lock.json   # Build-Metadaten gehören nicht auf den Webroot
           cp .htaccess _site/.htaccess
+          cp kontakt.php _site/kontakt.php   # Kontaktformular (ueber-uns.html#kontakt, seit 30.09.2026)
           cp -r kurse _site/kurse   # Kursverlauf: kurse/<Jahr>/<teil>.json und kurse/bund/<ISIN>.json
           cp -r anleihen _site/anleihen   # Stammdaten je ISIN für den Steckbrief anleihe.html (256 Teildateien)
           ls -la _site

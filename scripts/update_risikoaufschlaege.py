@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Schreibt risikoaufschlaege.json – der Risikoaufschlag (Spread) als Zeitreihe:
 Euro-Staaten gegen die Bundesanleihe seit 1991 und US-Unternehmensanleihen gegen
-die US-Staatsanleihe seit 1953. Seite: risikoaufschlaege.html (Menü „Einordnen“).
+die US-Staatsanleihe seit 1984. Seite: risikoaufschlaege.html (Menü „Zinsen“).
 
 Quellen (amtlich bzw. frei, ohne Schlüssel):
 - Euro-Staaten: OECD, Main Economic Indicators, „Long-term interest rates“ (10-jährige
@@ -12,31 +12,34 @@ Quellen (amtlich bzw. frei, ohne Schlüssel):
   und Frankreich seit 03/1991 (ab da hat Italien eine OECD-Monatsreihe); die übrigen
   Länder stehen nur in der Rangliste „heute“. Die OECD veröffentlicht einen Monat rund
   zwei Wochen nach Monatsende; einen Tageswert gibt es für diese Länder nicht.
-- USA: FRED (Federal Reserve Bank of St. Louis), Moody's Seasoned Aaa/Baa Corporate Bond
-  Yield Relative to Yield on 10-Year Treasury Constant Maturity – AAA10YM/BAA10YM
-  (Monatsdurchschnitte seit 04/1953) und AAA10Y/BAA10Y (Tageswerte, seit 1986). Der
-  laufende Monat wird aus den bisherigen Handelstagen gemittelt. ICE-BofA-Indizes
-  (Hochzins) sind bewusst nicht dabei: Lizenz untersagt die Veröffentlichung.
+- USA: Unternehmensanleihen hoher Bonität (AAA/AA/A), 10 Jahre – HQM-Renditekurve des
+  US-Finanzministeriums (Spot-Rendite, monatlich seit 01/1984, gemeinfrei; Abruf über FRED,
+  Reihe HQMCB10YR, dort „Public Domain: Citation Requested“) minus 10-jährige
+  US-Staatsanleihe aus derselben OECD-Reihe wie die Euro-Staaten (Monatsdurchschnitt).
+  Aufschlag BERECHNET. Die HQM-Rendite ist eine Spot-Rendite (Nullkupon), die Staatsanleihe
+  eine Kuponrendite – der Aufschlag fällt dadurch meist 0,1 bis 0,2 Punkte höher aus.
+  Bis 30.09.2026 standen hier Moody's Aaa/Baa (AAA10YM, BAA10YM, AAA10Y, BAA10Y): gestrichen,
+  weil Moody's in den Reihen-Notizen bei FRED jede Weiterverbreitung ohne schriftliche
+  Zustimmung untersagt. ICE-BofA-Indizes (Hochzins) sind aus demselben Grund nicht dabei.
 
 Struktur:
   {"updated", "updatedAt", "checkedAt",
-   "stand": {"laender": "JJJJ-MM", "us": "JJJJ-MM-TT"},
+   "stand": {"laender": "JJJJ-MM", "us": "JJJJ-MM"},
    "quelle": {...},
    "laender": {"monate": [["1991-03", DE, IT, ES, FR], …],   # Renditen in %, null = kein Wert
                "heute": [{"code": "IT", "name": "Italien", "monat": "2026-08", "rendite": 3.99,
                           "aufschlag": 0.81}, …]},           # alle Länder, nach Aufschlag sortiert
-   "us": {"monate": [["1953-04", aaa, baa], …],              # Aufschlag in Prozentpunkten
-          "heute": ["JJJJ-MM-TT", aaa, baa]}}
+   "us": {"monate": [["1984-01", aufschlag, hqm, staat], …], # Aufschlag in Prozentpunkten, Renditen in %
+          "heute": ["JJJJ-MM", aufschlag, hqm, staat]}}       # jüngster Monat mit beiden Werten
 
 Schutz: Bleibt eine Quelle aus, behält ihr Teil den alten Stand. Werte außerhalb
 −5…40 Punkte (Aufschlag) bzw. −5…40 % (Rendite) oder eine um mehr als 10 % geschrumpfte
-Reihe lassen die Datei unverändert. Vier Abrufe, ~10 s (OECD-Datei ~1,6 MB).
+Reihe lassen die Datei unverändert. Zwei Abrufe, ~10 s (OECD-Datei ~1,8 MB).
 
 Aufruf: python scripts/update_risikoaufschlaege.py
 """
 
 import csv
-import datetime
 import io
 import json
 import sys
@@ -54,8 +57,11 @@ LAENDER = [("DE", "DEU", "Deutschland"), ("IT", "ITA", "Italien"), ("ES", "ESP",
 CHART = ["IT", "ES", "FR"]
 START = "1991-03"   # ab hier hat Italien eine OECD-Monatsreihe
 
+US = ("US", "USA")    # 10-jährige US-Staatsanleihe: Vergleichsreihe für die US-Unternehmensanleihen (keine Spalte in laender.monate)
+US_START = "1984-01"  # Beginn der HQM-Kurve
+
 OECD = ("https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_FINMARK,4.0/"
-        + "+".join(a for _, a, _ in LAENDER) + ".M.IRLT.PA.....?startPeriod=1970-01&format=csvfilewithlabels")
+        + "+".join([a for _, a, _ in LAENDER] + [US[1]]) + ".M.IRLT.PA.....?startPeriod=1970-01&format=csvfilewithlabels")
 OECD_H = {"User-Agent": "bondarium.de Risikoaufschlaege (Datenaufbereitung)", "Accept": "text/csv,*/*"}
 FRED = "https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}&cosd={cosd}"
 FRED_H = {"User-Agent": "bondarium.de Risikoaufschlaege (Datenaufbereitung)", "Accept": "text/csv,*/*"}
@@ -66,6 +72,7 @@ def oecd() -> dict[str, dict[str, float]]:
     """{Länderkürzel: {JJJJ-MM: Rendite}} aus der OECD-Monatsreihe."""
     text = get_with_retry(OECD, headers=OECD_H, timeout=180).decode("utf-8-sig", "replace")
     iso = {a: k for k, a, _ in LAENDER}
+    iso[US[1]] = US[0]
     out: dict[str, dict[str, float]] = defaultdict(dict)
     for rec in csv.DictReader(io.StringIO(text)):
         try:
@@ -78,8 +85,7 @@ def oecd() -> dict[str, dict[str, float]]:
     return out
 
 
-def laender() -> tuple[list, list, str]:
-    r = oecd()
+def laender(r: dict[str, dict[str, float]]) -> tuple[list, list, str]:
     de = r["DE"]
     monate = []
     for m in sorted(de):
@@ -114,21 +120,13 @@ def fred(sid: str, cosd: str) -> dict[str, float]:
     return out
 
 
-def usa() -> tuple[list, list]:
-    aaa, baa = fred("AAA10YM", "1950-01-01"), fred("BAA10YM", "1950-01-01")
-    monate = [[d[:7], aaa[d], baa[d]] for d in sorted(aaa) if d in baa]
-    seit = (datetime.date.today() - datetime.timedelta(days=45)).isoformat()
-    daaa, dbaa = fred("AAA10Y", seit), fred("BAA10Y", seit)
-    tage = sorted(d for d in daaa if d in dbaa)
-    if len(monate) < 800 or not tage:
-        raise RuntimeError("FRED: Monats- oder Tagesreihe unvollständig")
-    letzter = tage[-1]
-    heute = [letzter, daaa[letzter], dbaa[letzter]]
-    lm = letzter[:7]
-    if lm > monate[-1][0]:   # laufender Monat: Durchschnitt der bisherigen Handelstage
-        tm = [d for d in tage if d.startswith(lm)]
-        monate.append([lm, round(sum(daaa[d] for d in tm) / len(tm), 2), round(sum(dbaa[d] for d in tm) / len(tm), 2)])
-    return monate, heute
+def usa(staat: dict[str, float]) -> tuple[list, list]:
+    """Monate [Monat, Aufschlag, HQM-Rendite, Staatsanleihe] ab 1984 und der jüngste Monat mit beiden Werten."""
+    hqm = {d[:7]: v for d, v in fred("HQMCB10YR", US_START + "-01").items()}
+    monate = [[m, round(hqm[m] - staat[m], 2), hqm[m], round(staat[m], 2)] for m in sorted(hqm) if m >= US_START and m in staat]
+    if len(monate) < 480:
+        raise RuntimeError(f"USA: nur {len(monate)} Monate mit HQM- und OECD-Wert")
+    return monate, monate[-1]
 
 
 def plausibel(werte, was: str) -> bool:
@@ -150,7 +148,13 @@ def main() -> int:
     fehler = 0
 
     try:
-        monate, heute, stand = laender()
+        renditen = oecd()
+    except Exception as e:  # noqa: BLE001
+        log_err(f"Risikoaufschläge: OECD nicht abrufbar ({e}) – risikoaufschlaege.json bleibt.")
+        return 1
+
+    try:
+        monate, heute, stand = laender(renditen)
         if not plausibel([v for z in monate for v in z[1:]], "Länder (Renditen)"):
             return 1
         vor = (alt.get("laender") or {}).get("monate") or []
@@ -160,21 +164,21 @@ def main() -> int:
         neu["laender"] = {"monate": monate, "heute": heute}
         neu["stand"]["laender"] = stand
     except Exception as e:  # noqa: BLE001
-        log_err(f"Risikoaufschläge Länder: OECD nicht abrufbar ({e}) – Länder behalten den alten Stand.")
+        log_err(f"Risikoaufschläge Länder: OECD-Reihen unbrauchbar ({e}) – Länder behalten den alten Stand.")
         fehler += 1
 
     try:
-        monate, heute = usa()
-        if not plausibel([v for z in monate for v in z[1:]], "USA (Aufschläge)"):
+        monate, heute = usa(renditen.get(US[0], {}))
+        if not plausibel([v for z in monate for v in z[1:]], "USA (Aufschlag, Renditen)"):
             return 1
-        vor = (alt.get("us") or {}).get("monate") or []
+        vor = [z for z in (alt.get("us") or {}).get("monate") or [] if len(z) == 4]   # nur Zeilen im heutigen Format (bis 30.09.2026: [Monat, Aaa, Baa] seit 1953)
         if vor and len(monate) < 0.9 * len(vor):
             log_err(f"Risikoaufschläge USA: nur {len(monate)} Monate statt zuvor {len(vor)} – Datei bleibt.")
             return 1
         neu["us"] = {"monate": monate, "heute": heute}
         neu["stand"]["us"] = heute[0]
     except Exception as e:  # noqa: BLE001
-        log_err(f"Risikoaufschläge USA: FRED nicht abrufbar ({e}) – USA behält den alten Stand.")
+        log_err(f"Risikoaufschläge USA: HQM-Kurve (FRED) nicht abrufbar oder unvollständig ({e}) – USA behält den alten Stand.")
         fehler += 1
 
     if fehler == 2 or not (neu["laender"] or neu["us"]):
@@ -183,7 +187,7 @@ def main() -> int:
 
     data = {"updated": today_iso(), "updatedAt": now_iso(), "checkedAt": now_iso(), "stand": neu["stand"],
             "quelle": {"laender": "OECD, Main Economic Indicators, Long-term interest rates (10-jährige Staatsanleihen, Monatsdurchschnitte); Aufschlag gegen Deutschland berechnet",
-                       "us": "FRED (Federal Reserve Bank of St. Louis): Moody's Seasoned Aaa/Baa Corporate Bond Yield Relative to Yield on 10-Year Treasury Constant Maturity (AAA10YM, BAA10YM, AAA10Y, BAA10Y)"},
+                       "us": "U.S. Department of the Treasury, HQM Corporate Bond Yield Curve (Spot-Rendite 10 Jahre, AAA/AA/A, monatlich; über FRED, HQMCB10YR) minus 10-jährige US-Staatsanleihe (OECD, Long-term interest rates, Monatsdurchschnitt); Aufschlag berechnet"},
             "laender": neu["laender"], "us": neu["us"]}
     write_atomic(OUT, data, indent=None)
     lm = data["laender"].get("monate") or []
@@ -192,9 +196,9 @@ def main() -> int:
         print(f"risikoaufschlaege.json Länder: {len(lm)} Monate {lm[0][0]}…{z[0]}; {z[0]}: " +
               ", ".join(f"{h['name']} {h['aufschlag']:+.2f}" for h in data["laender"]["heute"][:4]))
     um = data["us"].get("monate") or []
-    if um:
+    if um and len(data["us"].get("heute") or []) >= 4:
         h = data["us"]["heute"]
-        print(f"risikoaufschlaege.json USA: {len(um)} Monate {um[0][0]}…{um[-1][0]}, heute {h[0]}: Aaa {h[1]:+.2f}, Baa {h[2]:+.2f}")
+        print(f"risikoaufschlaege.json USA: {len(um)} Monate {um[0][0]}…{um[-1][0]}, {h[0]}: HQM {h[2]:.2f} % − Staat {h[3]:.2f} % = {h[1]:+.2f}")
     return 0 if fehler == 0 else 1
 
 

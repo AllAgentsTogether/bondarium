@@ -6,12 +6,10 @@ Läuft wie update_renditen.py nur im vollen Lauf (Workflow: VOLL=1). Die
 FAST-Selbstdrosselung (höchstens ein Abruf pro Tag, gemessen an checkedAt)
 bleibt als Schutz erhalten, falls das Skript doch in einem FAST-Lauf startet.
 
-Acht Reihen (Schlüssel → Quelle):
+Sieben Reihen (Schlüssel → Quelle):
 - us_hqm   USA, Unternehmensanleihen hoher Bonität (AAA/AA/A), 10 Jahre:
            HQM-Kurve des US-Finanzministeriums (Spot-Rendite), via FRED
            HQMCB10YR – monatlich seit 1984.
-- us_baa   USA, Moody's Seasoned Baa (Laufzeit 20 Jahre und mehr): FRED BAA
-           (Monatsmittel seit 1919) + DBAA (börsentäglich seit 1986).
 - de_corp  Deutschland, Anleihen von Unternehmen (Nicht-MFIs), Umlaufsrendite
            über alle Laufzeiten (Ø Restlaufzeit ≈ 7 J.): Bundesbank BBSIS,
            Monatswerte seit 1957, Tageswerte seit 1979.
@@ -28,6 +26,8 @@ Acht Reihen (Schlüssel → Quelle):
 
 Nicht aufgenommen (bewusst): ICE-BofA-Indizes über FRED – seit 04/2026 nur
 noch drei Jahre Historie, und die Lizenz untersagt die Veröffentlichung.
+Gestrichen 30.09.2026: Moody's Baa (FRED BAA/DBAA) – Moody's untersagt in den
+Reihen-Notizen bei FRED jede Weiterverbreitung ohne schriftliche Zustimmung.
 Gestrichen 09/2026: Moody's Aaa (Dublette zu HQM), Hypothekenpfandbriefe
 (gedeckte Bankanleihen) und Bankschuldverschreibungen 9–10 J. (reiner
 Finanzsektor – passte nicht zu den übrigen Unternehmenssegmenten).
@@ -41,8 +41,8 @@ Struktur von unternehmen.json (analog renditen.json):
 Zeitstempel checkedAt (jeder Abruf-Lauf) sowie updated/updatedAt (nur bei
 Wertänderung) wie in renditen.json.
 
-Monatswerte sind bei FRED (BAA) und Bundesbank Monatsdurchschnitte, bei HQM,
-RBA, JSDA und ChinaBond Monatsend- bzw. Monatspunktwerte. Jahresdurchschnitt =
+Monatswerte sind bei der Bundesbank Monatsdurchschnitte, bei HQM, RBA, JSDA
+und ChinaBond Monatsend- bzw. Monatspunktwerte. Jahresdurchschnitt =
 Mittel der zwölf Monatswerte; Jahresspanne = [min, max] der Monatswerte.
 
 Japan/China werden „gesampelt“: Je Monat wird der Wert des letzten Handelstags
@@ -107,7 +107,7 @@ UA = {"User-Agent": "Mozilla/5.0 (Datenaktualisierung Unternehmensanleihen)"}
 RBA_HEADERS = {"Accept": "text/csv,*/*"}
 # FRED bricht Anfragen OHNE Accept-Header häufig ab (Timeout bzw. "Remote end closed
 # connection", geprüft 26.09.2026 – mit Accept kam jede Anfrage durch). Folge vorher:
-# DBAA fiel still aus, USA Baa blieb tagelang auf einem alten Stand stehen.
+# eine FRED-Tagesreihe fiel still aus und blieb tagelang auf einem alten Stand stehen.
 FRED_HEADERS = {**UA, "Accept": "text/csv,*/*"}
 
 # Bundesbank-Zeitreihenschlüssel (BBSIS, 15 Dimensionen). Frequenz D/M wird
@@ -115,8 +115,8 @@ FRED_HEADERS = {**UA, "Accept": "text/csv,*/*"}
 BUBA_KEYS = {
     "de_corp": "I.UMR.RD.EUR.X2000.B.A.A.R.A.A._Z._Z.A",       # Unternehmen (Nicht-MFIs), alle RLZ
 }
-FRED_MONTHLY = {"us_hqm": "HQMCB10YR", "us_baa": "BAA"}
-FRED_DAILY = {"us_baa": "DBAA"}
+FRED_MONTHLY = {"us_hqm": "HQMCB10YR"}   # U.S. Treasury, gemeinfrei (FRED: „Public Domain: Citation Requested“)
+FRED_DAILY: dict[str, str] = {}             # seit 30.09.2026 leer (Moody's DBAA gestrichen); Mechanik bleibt für freie Tagesreihen
 RBA_IDS = {"au_a": "FNFYA10M", "au_bbb": "FNFYBBB10M"}
 # Gesampelte Reihen: Beginn der Quelle, Budget fehlender Monate je Lauf, Pause zwischen Abrufen
 # Japan: eine JSDA-Datei liefert alle Rating-Klassen – Reihe → Rating-Label in der Matrix (R&I)
@@ -129,7 +129,7 @@ SAMPLED = {
     "cn_aaa": {"start": "2006-03", "budget": int(os.environ.get("SAMPLE_BUDGET_CN", "40")), "pause": 0.3},
 }
 
-KEYS = ["us_hqm", "us_baa", "de_corp", "jp_aa", "jp_a", "cn_aaa", "au_a", "au_bbb"]
+KEYS = ["us_hqm", "de_corp", "jp_aa", "jp_a", "cn_aaa", "au_a", "au_bbb"]
 
 
 def _plausibel(key: str, new: float, old) -> bool:

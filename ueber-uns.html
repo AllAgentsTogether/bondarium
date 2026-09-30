@@ -78,6 +78,21 @@
   .risiko-hw strong { font-weight: 600; }
   .risiko-hw a { color: var(--green-text); }
   .kontakt p { font-size: 16.5px; line-height: 1.6; color: var(--ink); max-width: 720px; }
+  /* Kontaktformular (seit 30.09.2026): zweiter Kontaktweg neben der E-Mail (§ 5 DDG). Versand über kontakt.php per fetch;
+     ohne JavaScript bleibt das Formular verborgen (hidden), dann gilt der Hinweis auf die E-Mail-Adresse. */
+  .kf { display: grid; gap: 14px; max-width: 640px; margin-top: 20px; }
+  .kf label { display: block; font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 5px; }
+  .kf label span { font-weight: 500; color: var(--text); }
+  .kf input, .kf textarea { width: 100%; font: inherit; font-size: 16px; color: var(--ink); background: #fff; border: 1.5px solid rgba(26,26,25,0.55); border-radius: 10px; padding: 11px 13px; }
+  .kf textarea { min-height: 150px; resize: vertical; line-height: 1.5; }
+  .kf input:focus-visible, .kf textarea:focus-visible { outline: 0; border-color: var(--green-text); box-shadow: 0 0 0 3px var(--green-tint-2); }
+  .kf-falle { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }   /* Honigtopf gegen Bots – für Menschen unsichtbar */
+  .kontakt .kf-hinweis { font-size: 14px; color: var(--text); margin: 0; }
+  .kf .go { justify-self: start; border: 0; cursor: pointer; font-family: inherit; }
+  .kf .go[disabled] { opacity: 0.6; cursor: default; }
+  .kontakt .kf-status { font-size: 15px; font-weight: 600; min-height: 1.5em; margin: 0; }
+  .kf-status.ok { color: var(--green-text); }
+  .kf-status.fehler { color: var(--down); }
   @media (max-width: 860px) { .gruende, .wer { grid-template-columns: 1fr; } }
   @media (max-width: 600px) {
     .kap { margin-top: 24px; }
@@ -246,10 +261,20 @@
     </div>
   </section>
 
-  <section class="section kontakt" aria-labelledby="h-kontakt">
+  <section class="section kontakt" id="kontakt" aria-labelledby="h-kontakt">
     <h2 id="h-kontakt">Kontakt</h2>
-    <!-- dieselbe Adresse wie im Impressum (rechtliches.html) -->
-    <p>Fragen, Hinweise oder einen Fehler gefunden? Schreib uns: <a href="mailto:info@bondarium.de">info@bondarium.de</a></p>
+    <!-- dieselbe Adresse wie im Impressum (rechtliches.html); das Formular sendet über kontakt.php an diese Adresse -->
+    <p>Fragen, Hinweise oder einen Fehler gefunden? Schreib uns über das Formular oder per E-Mail an <a href="mailto:info@bondarium.de">info@bondarium.de</a>.</p>
+    <form class="kf" id="kontaktformular" action="kontakt.php" method="post" hidden>
+      <div><label for="kf-name">Name <span>(freiwillig)</span></label><input id="kf-name" name="name" type="text" autocomplete="name" maxlength="100"></div>
+      <div><label for="kf-email">E-Mail-Adresse</label><input id="kf-email" name="email" type="email" autocomplete="email" maxlength="254" required></div>
+      <div><label for="kf-text">Nachricht</label><textarea id="kf-text" name="nachricht" rows="6" minlength="10" maxlength="5000" required></textarea></div>
+      <p class="kf-falle" aria-hidden="true"><label for="kf-web">Website</label><input id="kf-web" name="website" type="text" tabindex="-1" autocomplete="off"></p>
+      <p class="kf-hinweis">Wir nutzen deine Angaben nur, um dir zu antworten. Mehr dazu in der <a href="rechtliches.html#datenschutz">Datenschutzerklärung</a>.</p>
+      <button type="submit" class="go">Nachricht senden</button>
+      <p class="kf-status" id="kf-status" role="status" aria-live="polite"></p>
+    </form>
+    <noscript><p>Das Formular braucht JavaScript. Ohne JavaScript erreichst du uns per E-Mail.</p></noscript>
   </section>
 
   </main>
@@ -268,6 +293,35 @@
 window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, minus: function (s) { return String(s).replace(/^-/, "\u2212"); }, zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\u2212") : "\u2013"; }, load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, hoverWrap: function (s) { return s; }, navInit: function () {} };
 // Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
 MC.navInit();
+
+// Kontaktformular (seit 30.09.2026): Versand per fetch an kontakt.php – das setzt den Kopf „X-Requested-With“, den der Server verlangt.
+// Antwort: {"status": "ok" | "email" | "nachricht" | "name" | "versand" | …}. Das Formular ist im HTML verborgen und wird erst hier sichtbar.
+(function () {
+  var f = document.getElementById("kontaktformular"); if (!f || !window.fetch || !window.FormData) return;
+  var st = document.getElementById("kf-status"), knopf = f.querySelector("button[type=submit]");
+  var TEXT = {
+    ok: "Danke – deine Nachricht ist angekommen.",
+    email: "Bitte prüfe deine E-Mail-Adresse.",
+    nachricht: "Bitte schreib mindestens 10 und höchstens 5.000 Zeichen.",
+    name: "Der Name ist zu lang (höchstens 100 Zeichen).",
+    fehler: "Das hat nicht geklappt. Bitte versuch es noch einmal oder schreib an info@bondarium.de."
+  };
+  function zeige(art, text) { st.className = "kf-status" + (art ? " " + art : ""); st.textContent = text; }
+  f.hidden = false;
+  f.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!f.checkValidity()) { f.reportValidity(); return; }
+    knopf.disabled = true; zeige("", "Wird gesendet …");
+    fetch(f.getAttribute("action"), { method: "POST", body: new FormData(f), credentials: "same-origin", headers: { "X-Requested-With": "bondarium-kontakt", "Accept": "application/json" } })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, status: j && j.status }; }); })
+      .then(function (a) {
+        if (a.ok && a.status === "ok") { f.reset(); zeige("ok", TEXT.ok); }
+        else zeige("fehler", TEXT[a.status] && a.status !== "ok" ? TEXT[a.status] : TEXT.fehler);
+      })
+      .catch(function () { zeige("fehler", TEXT.fehler); })
+      .then(function () { knopf.disabled = false; });
+  });
+})();
 </script>
 </body>
 </html>

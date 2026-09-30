@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Anleihen-Beispiele nach Ziel – Bondarium</title>
-<meta name="description" content="Vier Ziele, je drei konkrete Beispiele: Geld für ein Jahr parken, für zehn Jahre anlegen, Zinsen über Jahrzehnte, ein ruhiger ETF-Sparplan.">
+<meta name="description" content="Vier Ziele, vier Wege: Geld für ein Jahr parken, für zehn Jahre anlegen, Zinsen über Jahrzehnte, ein ruhiger ETF-Sparplan – mit Kriterien und passender Suche.">
 <link rel="canonical" href="https://www.bondarium.de/guide.html">
 <meta name="robots" content="index, follow">
 <meta name="author" content="Bondarium"><!-- nach Impressum-Befüllung durch Klarnamen ersetzen -->
@@ -13,14 +13,14 @@
 <meta property="og:locale" content="de_DE">
 <meta property="og:url" content="https://www.bondarium.de/guide.html">
 <meta property="og:title" content="Anleihen-Beispiele nach Ziel – Bondarium">
-<meta property="og:description" content="Vier Ziele, je drei konkrete Beispiele: Geld für ein Jahr parken, für zehn Jahre anlegen, Zinsen über Jahrzehnte, ein ruhiger ETF-Sparplan.">
+<meta property="og:description" content="Vier Ziele, vier Wege: Geld für ein Jahr parken, für zehn Jahre anlegen, Zinsen über Jahrzehnte, ein ruhiger ETF-Sparplan – mit Kriterien und passender Suche.">
 <meta property="og:image" content="https://www.bondarium.de/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Bondarium: Finde Anleihen, die zu deinem Leben passen">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Anleihen-Beispiele nach Ziel – Bondarium">
-<meta name="twitter:description" content="Vier Ziele, je drei konkrete Beispiele: Geld für ein Jahr parken, für zehn Jahre anlegen, Zinsen über Jahrzehnte, ein ruhiger ETF-Sparplan.">
+<meta name="twitter:description" content="Vier Ziele, vier Wege: Geld für ein Jahr parken, für zehn Jahre anlegen, Zinsen über Jahrzehnte, ein ruhiger ETF-Sparplan – mit Kriterien und passender Suche.">
 <meta name="twitter:image" content="https://www.bondarium.de/og-image.png">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -99,37 +99,11 @@
   .sb-t { display: block; font-size: 15px; font-weight: 600; color: var(--blue); text-decoration: none; line-height: 1.4; }
   .sb-mehr { display: block; margin-top: 10px; font-size: 14px; }
   .sb-t:hover .sb-mehr { text-decoration: underline; }
-  /* Nadines Anleitung (28.09.2026, Nutzerwunsch): Schritte über die volle Breite, Top 3 Picks als Karten mit Tageskurs,
-     unten links „Wie kaufe ich eine Anleihe?“, rechts eine voreingestellte Suche. */
+  /* Anleitungen (28.09.2026, Nutzerwunsch): Schritte über die volle Breite, unten links „Wie kaufe ich eine Anleihe?“, rechts eine
+     voreingestellte Suche. Seit 30.09.2026 ohne Karten mit einzelnen Wertpapieren (Nutzerentscheid nach Compliance-Prüfung): Die Seite
+     nennt Ziel und Kriterien und führt in die vorgefilterte Suche – keine Namen, keine ISIN. */
   .steps-voll { margin-top: 26px; max-width: 760px; }
-  .picks { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 18px 0 0 40px; }
-  .pick { display: flex; flex-direction: column; background: #fff; border: 2px solid var(--green-line); border-radius: 14px; padding: 15px 17px; }
-  .pick:hover { border-color: var(--green); }
-  /* 29.09.2026 (Nutzerwunsch): Anleihen grün umrandet, ETFs orange; bei Nadine, Tobias, Michael steht rechts eine vierte Karte mit einem passenden ETF */
-  .pick[data-etf] { border-color: rgba(207,116,48,0.7); }
-  .pick[data-etf]:hover { border-color: var(--orange); }
-  .pick[data-etf] .pk-typ, .pick[data-etf] .pk-daten .pk-rend { color: var(--orange-text); }
-  .picks-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-  .picks-4 .pick { padding: 15px 14px; }
-  .picks-4 .pk-name { font-size: 16px; }
-  .picks-4 .pk-daten { gap: 8px 8px; }
-  .picks-4 .pk-daten dd { font-size: 13.5px; }
-  .picks-4 .pk-daten .pk-isin { font-size: 11.5px; letter-spacing: 0; }
-  @media (max-width: 940px) { .picks-4 .pick { padding: 15px 17px; } .picks-4 .pk-daten dd { font-size: 14.5px; } .picks-4 .pk-daten .pk-isin { font-size: 12.5px; } }
-  .pk-typ { font-size: 11.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); margin: 0 0 4px; }
-  .pk-name { font-size: 17px; font-weight: 600; line-height: 1.3; margin: 0 0 12px; }
-  .pk-name a { color: var(--ink); text-decoration: none; }
-  .pk-name a:hover { text-decoration: underline; text-decoration-color: var(--green-text); }
-  .pick[data-etf] .pk-name a:hover { text-decoration-color: var(--orange-text); }
-  .pk-daten { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; margin: 0 0 12px; }
-  .pk-daten dt { font-size: 11.5px; color: var(--text); }
-  .pk-daten dd { margin: 1px 0 0; font-size: 14.5px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .pk-daten .pk-rest { display: block; font-size: 12px; font-weight: 500; color: var(--text); }
-  .pk-daten .pk-rend { color: var(--green-text); }
-  .pk-daten .pk-isin { font-size: 12.5px; font-weight: 500; letter-spacing: 0.02em; }
-  .pk-rend small { font-size: 11.5px; font-weight: 500; color: var(--text); }
   .gf-etf { display: inline-block; margin-top: 2px; font-size: 14.5px; padding: 11px 18px; box-shadow: none; }
-  .pk-stand { font-size: 12.5px; color: var(--text); margin: 12px 0 0 40px; }
   .g-fuss { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 16px; margin-top: 26px; }
   .gf-kauf { position: relative; display: flex; flex-direction: column; gap: 4px; background: var(--ink); color: #fff; border-radius: 16px; padding: 20px 64px 20px 22px; text-decoration: none; }
   .gf-kauf .gf-l { color: var(--green); }
@@ -148,8 +122,7 @@
   .gf-feld input { flex: 1 1 auto; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 15px; color: var(--ink); }
   .gf-feld input::-webkit-search-cancel-button { -webkit-appearance: none; }
   .gf-feld .go { flex: none; width: auto; padding: 9px 16px; font-size: 14px; border: 0; cursor: pointer; box-shadow: none; }   /* width: base.css macht .go am Handy 100 % breit */
-  @media (max-width: 940px) { .picks { grid-template-columns: minmax(0, 1fr); margin-left: 0; } .pk-stand { margin-left: 0; } .g-fuss { grid-template-columns: minmax(0, 1fr); } }
-  @media (max-width: 940px) and (min-width: 601px) { .picks-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 940px) { .g-fuss { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 600px) { .gf-feld input { font-size: 16px; } .gf-t { font-size: 18px; } }
   @media (pointer: coarse) { .gf-feld input, .gf-feld .go { min-height: 44px; } .g-up a { display: inline-block; padding: 12px 0; margin: -12px 0; } }   /* Tippflächen ≥ 44 px (30.09.2026) */
   .g-up { margin-top: 20px; font-size: 13px; }
@@ -208,7 +181,7 @@
     .vt { grid-template-columns: minmax(0, 1fr); gap: 18px; }
   }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Anleihen-Beispiele nach Ziel: vier Menschen, vier Wege zur passenden Anlage","description":"Vier Ziele, je drei konkrete Beispiele: Geld für ein Jahr parken, für zehn Jahre anlegen, Zinsen über Jahrzehnte, ein ruhiger ETF-Sparplan.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-30","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/guide.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Anleihen-Beispiele nach Ziel: vier Menschen, vier Wege zur passenden Anlage","description":"Vier Ziele, vier Wege: Geld für ein Jahr parken, für zehn Jahre anlegen, Zinsen über Jahrzehnte, ein ruhiger ETF-Sparplan – mit Kriterien und passender Suche.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-30","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/guide.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.bondarium.de/anleihen.html"},{"@type":"ListItem","position":3,"name":"Anleihen-Beispiele nach Ziel","item":"https://www.bondarium.de/guide.html"}]}</script>
 </head>
 <body>
@@ -272,7 +245,7 @@
     <section class="g-hero" aria-labelledby="h-guide">
       <div class="gh-text">
         <h1 id="h-guide">Anleihen-Beispiele <span class="hl">nach Ziel</span></h1>
-        <p class="sub">Wähle die Person, die dir am nächsten kommt: Für jedes Ziel gibt es drei konkrete Beispiele – Schritt für Schritt erklärt.</p>
+        <p class="sub">Wähle die Person, die dir am nächsten kommt: Ziel, Kriterien und die passende Suche – Schritt für Schritt erklärt.</p>
       </div>
       <img class="gh-img" src="guide-hero.webp" width="828" height="716" alt="" fetchpriority="high" decoding="async">
     </section>
@@ -283,7 +256,7 @@
       <a class="pc" id="t-jonas" href="#jonas" role="tab" aria-selected="false" aria-controls="jonas" data-k="jonas"><span class="pc-img"><img src="guide-jonas.webp" width="248" height="248" alt="" decoding="async"></span><b>Jonas, 29</b><span class="pc-r">Ingenieur</span><span class="pc-z">will einen ruhigen Baustein</span><span class="pc-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
     </div>
 
-    <section class="guide" id="nadine" role="tabpanel" aria-labelledby="h-nadine">   <!-- Aufbau seit 28.09.2026 (Nutzerwunsch): Ziel, Kriterien, Top 3 Picks, darunter „Wie kaufe ich eine Anleihe?“ und eine voreingestellte Suche; ohne Rechnung, Fehler-Kasten und „Worauf es ankommt“ -->
+    <section class="guide" id="nadine" role="tabpanel" aria-labelledby="h-nadine">   <!-- Aufbau seit 30.09.2026: Ziel, Kriterien, Suche – darunter „Wie kaufe ich eine Anleihe?“ und die voreingestellte Suche; keine einzelnen Wertpapiere -->
       <div class="g-kopf">
         <span class="g-av"><img src="guide-nadine.webp" width="248" height="248" alt="" loading="lazy" decoding="async"></span>
         <div>
@@ -293,61 +266,10 @@
         </div>
       </div>
       <ol class="steps steps-voll">
-        <li><span class="sn" aria-hidden="true">1</span><div><strong>Das Ziel</strong><p>Das Geld soll <strong>ähnlich wie Tagesgeld</strong> arbeiten: feste Zinsen, überschaubares Risiko und nach rund einem Jahr wieder verfügbar. Der Kurs einer Anleihe bewegt sich unterwegs ein wenig – am Rückzahlungstag gibt es <strong>100&nbsp;% zurück</strong>. Wer früher ans Geld will, verkauft direkt an der Börse.</p></div></li>
-        <li><span class="sn" aria-hidden="true">2</span><div><strong>Die Kriterien</strong><p>Eine <strong>Restlaufzeit von ca. einem Jahr</strong> – so bleibt der Kurs ruhig. Dazu <strong>solide Schuldner</strong>: Staaten mit Investment Grade oder große, bekannte Unternehmen, in Euro und mit festem Zins. Volkswagen Financial Services, die Finanzsparte des VW-Konzerns, bringt gut einen halben Punkt mehr Rendite als der Bund.</p></div></li>
-        <li><span class="sn" aria-hidden="true">3</span><div><strong>Vier Beispiele für Nadine</strong><p>Drei Anleihen, die im Herbst 2027 zurückgezahlt werden – zwei Staaten und Volkswagen Financial Services –, und rechts ein Laufzeit-ETF (orange umrandet): Er bündelt Euro-Unternehmensanleihen mit Investment Grade, die alle 2027 fällig werden, und zahlt im Dezember 2027 aus – fast wie eine Anleihe, nur breit gestreut. Nadine kann eines wählen oder die 20.000&nbsp;€ aufteilen. Ein Klick auf den Namen öffnet den Steckbrief mit Kursverlauf.</p></div></li>
+        <li><span class="sn" aria-hidden="true">1</span><div><strong>Das Ziel</strong><p>Das Geld soll <strong>ähnlich wie Tagesgeld</strong> arbeiten: feste Zinsen, überschaubares Risiko und nach rund einem Jahr wieder verfügbar. Der Kurs einer Anleihe bewegt sich unterwegs ein wenig – am Rückzahlungstag zahlt der Schuldner <strong>den Nennwert zurück</strong>, sofern er zahlen kann. Wer früher ans Geld will, verkauft an der Börse – zum Kurs dieses Tages.</p></div></li>
+        <li><span class="sn" aria-hidden="true">2</span><div><strong>Die Kriterien</strong><p>Eine <strong>Restlaufzeit von ca. einem Jahr</strong> – so bleibt der Kurs ruhig. Dazu <strong>solide Schuldner</strong>: Staaten mit Investment Grade oder große, bekannte Unternehmen, in Euro und mit festem Zins. Unternehmen zahlen meist etwas mehr Zins als Staaten – dafür ist das Ausfallrisiko höher.</p></div></li>
+        <li><span class="sn" aria-hidden="true">3</span><div><strong>Die Suche</strong><p>Die Anleihen-Suche zeigt alle Anleihen mit diesen Merkmalen: Staat oder Unternehmen, Euro, fester Zins, Restlaufzeit bis ein Jahr. Nadine sortiert nach Rendite, öffnet die Steckbriefe und prüft vor dem Kauf die <a href="bonitaet.html">Bonität</a> jedes Schuldners – die Suche kennt keine Ratings. Wer lieber streut, findet unter <a href="anleihen-etf.html#kurze-laufzeiten">Anleihen-ETFs</a> auch Laufzeit-ETFs, die in einem festen Jahr enden. <a href="anleihen-suche.html?art=0,2&amp;w=EUR&amp;zins=0&amp;rest=a">Anleihen mit diesen Kriterien anzeigen&nbsp;→</a></p></div></li>
       </ol>
-      <ul class="picks picks-4" aria-label="Vier Beispiele für Nadine: drei Anleihen und ein ETF">
-          <li class="pick" data-isin="DE000BU22106" data-faellig="2027-09-16">
-            <p class="pk-typ">Staatsanleihe · Deutschland</p>
-            <h3 class="pk-name"><a href="anleihe.html?isin=DE000BU22106">Bundesschatzanweisung 1,9&nbsp;% 2027</a></h3>
-            <dl class="pk-daten">
-              <div><dt>Rendite</dt><dd class="pk-rend">3,07&nbsp;%</dd></div>
-              <div><dt>Fällig</dt><dd>16.09.2027 <span class="pk-rest"></span></dd></div>
-              <div><dt>Kurs</dt><dd class="pk-kurs">98,90&nbsp;%</dd></div>
-              <div><dt>Kupon</dt><dd>1,90&nbsp;%</dd></div>
-              <div><dt>Ab</dt><dd>0,01&nbsp;€</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">DE000BU22106</dd></div>
-            </dl>
-          </li>
-          <li class="pick" data-isin="FR001400NBC6" data-faellig="2027-09-24">
-            <p class="pk-typ">Staatsanleihe · Frankreich</p>
-            <h3 class="pk-name"><a href="anleihe.html?isin=FR001400NBC6">Frankreich OAT 2,5&nbsp;% 2027</a></h3>
-            <dl class="pk-daten">
-              <div><dt>Rendite</dt><dd class="pk-rend">3,31&nbsp;%</dd></div>
-              <div><dt>Fällig</dt><dd>24.09.2027 <span class="pk-rest"></span></dd></div>
-              <div><dt>Kurs</dt><dd class="pk-kurs">99,23&nbsp;%</dd></div>
-              <div><dt>Kupon</dt><dd>2,50&nbsp;%</dd></div>
-              <div><dt>Ab</dt><dd>1&nbsp;€</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">FR001400NBC6</dd></div>
-            </dl>
-          </li>
-          <li class="pick" data-isin="XS1972547696" data-faellig="2027-10-01">
-            <p class="pk-typ">Unternehmensanleihe · Autofinanzierer</p>
-            <h3 class="pk-name"><a href="anleihe.html?isin=XS1972547696">VW Financial Services 2,25&nbsp;% 2027</a></h3>
-            <dl class="pk-daten">
-              <div><dt>Rendite</dt><dd class="pk-rend">3,68&nbsp;%</dd></div>
-              <div><dt>Fällig</dt><dd>01.10.2027 <span class="pk-rest"></span></dd></div>
-              <div><dt>Kurs</dt><dd class="pk-kurs">98,62&nbsp;%</dd></div>
-              <div><dt>Kupon</dt><dd>2,25&nbsp;%</dd></div>
-              <div><dt>Ab</dt><dd>1.000&nbsp;€</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">XS1972547696</dd></div>
-            </dl>
-          </li>
-          <li class="pick" data-etf="IE000ZOI8OK5">
-            <p class="pk-typ">Laufzeit-ETF · Unternehmen</p>
-            <h3 class="pk-name">iShares iBonds Dec 2027 Term EUR Corp</h3>
-            <dl class="pk-daten">
-              <div><dt>Kurs</dt><dd class="pk-rend pk-kurs">–</dd></div>
-              <div><dt data-ef="lz-titel">Endet</dt><dd data-ef="lz">–</dd></div>
-              <div><dt>Kosten p.&nbsp;a.</dt><dd data-ef="kosten">–</dd></div>
-              <div><dt>Zinsen</dt><dd data-ef="zinsen">–</dd></div>
-              <div><dt>Fondsgröße</dt><dd data-ef="groesse">–</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">IE000ZOI8OK5</dd></div>
-            </dl>
-          </li>
-      </ul>
-      <p class="pk-stand">Kurs und Rendite: <span class="pk-quelle">Deutsche Börse / Bundesbank, Stand 25.09.2026</span> – werden täglich aktualisiert. Beispiele, die die Kriterien erfüllen – keine Empfehlung und keine Anlageberatung; die Bonität kann sich ändern – vor dem Kauf auf <a href="bonitaet.html">Bonität prüfen</a>. ETF: Kurs von Xetra, täglich; Kosten, Laufzeit und Fondsgröße (Vermögen der Anteilsklasse) aus der ETF-Liste und der Monatsstatistik der Deutschen Börse<span class="pk-etf-stand"></span> – alles aktualisiert sich von selbst.</p>
       <div class="g-fuss">
         <a class="gf-kauf" href="erste-anleihe.html"><span class="gf-l">Neu hier?</span><span class="gf-t">Wie kaufe ich eine Anleihe?</span><span class="gf-s">Depot, Order, Limit – in neun Schritten zur ersten Anleihe.</span><span class="gf-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
         <form class="gf-suche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen für Nadines Ziel suchen">
@@ -359,71 +281,20 @@
       </div>
       <p class="g-up"><a href="#personas">↑ Andere Person wählen</a></p>
     </section>
-    <section class="guide" id="tobias" role="tabpanel" aria-labelledby="h-tobias">   <!-- Aufbau seit 28.09.2026 wie Nadine (Nutzerwunsch): Ziel, Kriterien, Top 3 Picks, darunter Kaufen-Kasten und voreingestellte Suche -->
+    <section class="guide" id="tobias" role="tabpanel" aria-labelledby="h-tobias">   <!-- Aufbau wie Nadine: Ziel, Kriterien, Suche -->
       <div class="g-kopf">
         <span class="g-av"><img src="guide-tobias.webp" width="248" height="248" alt="" loading="lazy" decoding="async"></span>
         <div>
           <p class="g-wer">Tobias, 39 · Vater von zwei Kindern</p>
-          <h2 id="h-tobias">Geld langfristig sicher parken</h2>
-          <p class="g-sit">Tobias hat 30.000&nbsp;€ für seine beiden Kinder zurückgelegt. In zehn Jahren soll das Geld für Ausbildung oder Studium bereitstehen – bis dahin braucht er es nicht. Er will sicher investieren: nur in Anleihen mit Investment Grade.</p>
+          <h2 id="h-tobias">Geld langfristig parken</h2>
+          <p class="g-sit">Tobias hat 30.000&nbsp;€ für seine beiden Kinder zurückgelegt. In zehn Jahren soll das Geld für Ausbildung oder Studium bereitstehen – bis dahin braucht er es nicht. Er sucht nur Anleihen mit Investment Grade.</p>
         </div>
       </div>
       <ol class="steps steps-voll">
-        <li><span class="sn" aria-hidden="true">1</span><div><strong>Das Ziel</strong><p>In zehn Jahren soll das ganze Geld wieder da sein – mit Zinsen. Die Anleihe sollte also <strong>in rund zehn Jahren fällig</strong> werden: Dann zahlt der Schuldner 100&nbsp;% zurück, egal wie der Kurs zwischendurch steht. Weil Tobias das Geld vorher nicht braucht, muss er nie zum Tageskurs verkaufen.</p></div></li>
-        <li><span class="sn" aria-hidden="true">2</span><div><strong>Die Kriterien</strong><p>Eine Anleihe mit <strong>Investment Grade</strong> – also einem Rating von BBB oder besser, wie es die Ratingagenturen nur solide Schuldner geben. Von <strong>Staaten oder großen Unternehmen</strong>, in Euro, mit festem Zins. Je besser das Rating, desto sicherer – alle drei Beispiele liegen klar über der Grenze: Deutschland und Österreich ganz oben, die Telekom im soliden Mittelfeld.</p></div></li>
-        <li><span class="sn" aria-hidden="true">3</span><div><strong>Drei Beispiele für Tobias</strong><p>Drei Anleihen, die in rund zehn Jahren zurückgezahlt werden – zwei Staaten und ein bekanntes deutsches Unternehmen, je rund 10.000&nbsp;€. Ein Klick auf den Namen öffnet den Steckbrief mit Kursverlauf. Ganz rechts steht zum Vergleich ein Laufzeit-ETF (orange umrandet): Er bündelt Unternehmensanleihen, die alle 2036 fällig werden, und zahlt dann aus – fast wie eine Anleihe, nur breit gestreut. Wie groß er ist und was er kostet, steht auf der Karte.</p></div></li>
+        <li><span class="sn" aria-hidden="true">1</span><div><strong>Das Ziel</strong><p>In zehn Jahren soll das ganze Geld wieder da sein – mit Zinsen. Die Anleihe sollte also <strong>in rund zehn Jahren fällig</strong> werden: Dann zahlt der Schuldner den Nennwert zurück, egal wie der Kurs zwischendurch steht – solange er zahlen kann. Weil Tobias das Geld vorher nicht braucht, muss er nicht zum Tageskurs verkaufen.</p></div></li>
+        <li><span class="sn" aria-hidden="true">2</span><div><strong>Die Kriterien</strong><p>Eine Anleihe mit <strong>Investment Grade</strong> – also einem Rating von BBB oder besser. Von <strong>Staaten oder großen Unternehmen</strong>, in Euro, mit festem Zins. Tobias verteilt das Geld auf mehrere Schuldner, je rund 10.000&nbsp;€.</p></div></li>
+        <li><span class="sn" aria-hidden="true">3</span><div><strong>Die Suche</strong><p>Die Anleihen-Suche zeigt alle Anleihen mit diesen Merkmalen: Staat oder Unternehmen, Euro, fester Zins, Restlaufzeit 7 bis 30 Jahre. Tobias sortiert nach Fälligkeit, sieht sich die Jahre um 2036 an und prüft vor dem Kauf die <a href="bonitaet.html">Bonität</a> jedes Schuldners – die Suche kennt keine Ratings. <a href="anleihen-suche.html?art=0,2&amp;w=EUR&amp;zins=0&amp;rest=d">Anleihen mit diesen Kriterien anzeigen&nbsp;→</a></p></div></li>
       </ol>
-      <ul class="picks picks-4" aria-label="Drei Beispiel-Anleihen und ein ETF für Tobias">
-          <li class="pick" data-isin="DE000BU2Z072" data-faellig="2036-08-15">
-            <p class="pk-typ">Staatsanleihe · Deutschland</p>
-            <h3 class="pk-name"><a href="anleihe.html?isin=DE000BU2Z072">Bundesanleihe 3&nbsp;% 2036</a></h3>
-            <dl class="pk-daten">
-              <div><dt>Rendite</dt><dd class="pk-rend">3,58&nbsp;%</dd></div>
-              <div><dt>Fällig</dt><dd>15.08.2036 <span class="pk-rest"></span></dd></div>
-              <div><dt>Kurs</dt><dd class="pk-kurs">95,21&nbsp;%</dd></div>
-              <div><dt>Kupon</dt><dd>3,00&nbsp;%</dd></div>
-              <div><dt>Ab</dt><dd>0,01&nbsp;€</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">DE000BU2Z072</dd></div>
-            </dl>
-          </li>
-          <li class="pick" data-isin="AT0000A04967" data-faellig="2037-03-15">
-            <p class="pk-typ">Staatsanleihe · Österreich</p>
-            <h3 class="pk-name"><a href="anleihe.html?isin=AT0000A04967">Österreich 4,15&nbsp;% 2037</a></h3>
-            <dl class="pk-daten">
-              <div><dt>Rendite</dt><dd class="pk-rend">3,86&nbsp;%</dd></div>
-              <div><dt>Fällig</dt><dd>15.03.2037 <span class="pk-rest"></span></dd></div>
-              <div><dt>Kurs</dt><dd class="pk-kurs">102,44&nbsp;%</dd></div>
-              <div><dt>Kupon</dt><dd>4,15&nbsp;%</dd></div>
-              <div><dt>Ab</dt><dd>1.000&nbsp;€</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">AT0000A04967</dd></div>
-            </dl>
-          </li>
-          <li class="pick" data-isin="XS2788600869" data-faellig="2036-03-20">
-            <p class="pk-typ">Unternehmensanleihe · DAX</p>
-            <h3 class="pk-name"><a href="anleihe.html?isin=XS2788600869">Deutsche Telekom 3,25&nbsp;% 2036</a></h3>
-            <dl class="pk-daten">
-              <div><dt>Rendite</dt><dd class="pk-rend">4,28&nbsp;%</dd></div>
-              <div><dt>Fällig</dt><dd>20.03.2036 <span class="pk-rest"></span></dd></div>
-              <div><dt>Kurs</dt><dd class="pk-kurs">92,07&nbsp;%</dd></div>
-              <div><dt>Kupon</dt><dd>3,25&nbsp;%</dd></div>
-              <div><dt>Ab</dt><dd>1.000&nbsp;€</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">XS2788600869</dd></div>
-            </dl>
-          </li>
-          <li class="pick" data-etf="IE000AD2AYN2">
-            <p class="pk-typ">Laufzeit-ETF · Unternehmen</p>
-            <h3 class="pk-name">iShares iBonds Dec 2036 Term EUR Corp</h3>
-            <dl class="pk-daten">
-              <div><dt>Kurs</dt><dd class="pk-rend pk-kurs">–</dd></div>
-              <div><dt data-ef="lz-titel">Endet</dt><dd data-ef="lz">–</dd></div>
-              <div><dt>Kosten p.&nbsp;a.</dt><dd data-ef="kosten">–</dd></div>
-              <div><dt>Zinsen</dt><dd data-ef="zinsen">–</dd></div>
-              <div><dt>Fondsgröße</dt><dd data-ef="groesse">–</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">IE000AD2AYN2</dd></div>
-            </dl>
-          </li>
-      </ul>
-      <p class="pk-stand">Kurs und Rendite: <span class="pk-quelle">Deutsche Börse / Bundesbank, Stand 25.09.2026</span> – werden täglich aktualisiert. Beispiele, die die Kriterien erfüllen – keine Empfehlung und keine Anlageberatung; die Bonität kann sich ändern – vor dem Kauf auf <a href="bonitaet.html">Bonität prüfen</a>. ETF: Kurs von Xetra, täglich; Kosten, Laufzeit und Fondsgröße (Vermögen der Anteilsklasse) aus der ETF-Liste und der Monatsstatistik der Deutschen Börse<span class="pk-etf-stand"></span> – alles aktualisiert sich von selbst.</p>
       <div class="g-fuss">
         <a class="gf-kauf" href="erste-anleihe.html"><span class="gf-l">Neu hier?</span><span class="gf-t">Wie kaufe ich eine Anleihe?</span><span class="gf-s">Depot, Order, Limit – in neun Schritten zur ersten Anleihe.</span><span class="gf-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
         <form class="gf-suche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen für Tobias’ Ziel suchen">
@@ -435,7 +306,7 @@
       </div>
       <p class="g-up"><a href="#personas">↑ Andere Person wählen</a></p>
     </section>
-    <section class="guide" id="michael" role="tabpanel" aria-labelledby="h-michael">   <!-- Aufbau seit 28.09.2026 wie Nadine/Tobias (Nutzerwunsch): hohe, regelmäßige Zinsen über Jahrzehnte, 100.000 € auf drei lange Anleihen -->
+    <section class="guide" id="michael" role="tabpanel" aria-labelledby="h-michael">   <!-- Aufbau wie Nadine/Tobias: hohe, regelmäßige Zinsen über Jahrzehnte, 100.000 € auf drei lange Anleihen -->
       <div class="g-kopf">
         <span class="g-av"><img src="guide-michael.webp" width="248" height="248" alt="" loading="lazy" decoding="async"></span>
         <div>
@@ -445,61 +316,10 @@
         </div>
       </div>
       <ol class="steps steps-voll">
-        <li><span class="sn" aria-hidden="true">1</span><div><strong>Das Ziel</strong><p>Jedes Jahr hohe Zinsen – und das möglichst lange. Deshalb wählt Michael Anleihen, die erst <strong>in rund 14 bis 19 Jahren fällig</strong> werden – mit hohem Kupon. Bis dahin zahlt jede Anleihe Jahr für Jahr ihren festen Kupon. Der Kurs zwischendurch ist ihm egal: Er verkauft nicht, und am Ende gibt es 100&nbsp;% zurück. Aber Achtung: <strong>Hoher Kupon heißt nicht hohe Rendite.</strong> Die Bundesanleihe mit 4,75&nbsp;% kostet rund 110&nbsp;%, zurück gibt es 100&nbsp;% – einen Teil seiner hohen Zinsen bezahlt Michael also mit dem eigenen Geld. Was unterm Strich bleibt, zeigt die Rendite.</p></div></li>
-        <li><span class="sn" aria-hidden="true">2</span><div><strong>Die Kriterien</strong><p>Anleihen mit <strong>Investment Grade</strong> – also einem Rating von BBB oder besser –, mit festem Kupon und langer Restlaufzeit, <strong>auf drei Schuldner verteilt</strong>, je rund 33.333&nbsp;€. Vorsicht: Mehr Rendite heißt immer auch mehr Risiko – wie zum Beispiel bei Rumänien. Alle drei in Euro – ohne Währungsrisiko.</p></div></li>
-        <li><span class="sn" aria-hidden="true">3</span><div><strong>Drei Beispiele für Michael</strong><p>Drei Anleihen, die bis in die 2040er Jahre laufen – zwei Staaten und ein Weltkonzern. Ganz rechts steht zum Vergleich ein ETF (orange umrandet) auf Euro-Staatsanleihen mit 15 bis 30 Jahren: breit gestreut, mit einem Kauf. Aber ein ETF wird nie fällig – es gibt keinen Tag, an dem sicher 100&nbsp;% zurückkommen, und sein Kurs schwankt dauerhaft stark.</p></div></li>
+        <li><span class="sn" aria-hidden="true">1</span><div><strong>Das Ziel</strong><p>Jedes Jahr hohe Zinsen – und das möglichst lange. Deshalb sucht Michael Anleihen, die erst <strong>in rund 14 bis 19 Jahren fällig</strong> werden – mit hohem Kupon. Bis dahin zahlt jede Anleihe Jahr für Jahr ihren festen Kupon. Der Kurs zwischendurch ist ihm egal: Er verkauft nicht. Aber Achtung: <strong>Hoher Kupon heißt nicht hohe Rendite.</strong> Eine Anleihe mit 4,75&nbsp;% Kupon kann 110&nbsp;% kosten, zurückgezahlt wird der Nennwert – einen Teil seiner hohen Zinsen bezahlt Michael dann mit dem eigenen Geld. Was unterm Strich bleibt, zeigt die Rendite.</p></div></li>
+        <li><span class="sn" aria-hidden="true">2</span><div><strong>Die Kriterien</strong><p>Anleihen mit <strong>Investment Grade</strong> – also einem Rating von BBB oder besser –, mit festem Kupon und langer Restlaufzeit, <strong>auf drei Schuldner verteilt</strong>, je rund 33.333&nbsp;€. Vorsicht: Mehr Rendite heißt immer auch mehr Risiko. Alle drei in Euro – ohne Währungsrisiko.</p></div></li>
+        <li><span class="sn" aria-hidden="true">3</span><div><strong>Die Suche</strong><p>Die Anleihen-Suche zeigt alle Anleihen mit diesen Merkmalen: Staat oder Unternehmen, Euro, Kupon über 4&nbsp;%, Restlaufzeit 7 bis 30 Jahre. Michael sortiert nach Fälligkeit und prüft vor dem Kauf die <a href="bonitaet.html">Bonität</a> jedes Schuldners – die Suche kennt keine Ratings. Zum Vergleich: Ein ETF auf lang laufende Staatsanleihen streut breit, wird aber nie fällig – es gibt keinen Tag, an dem der Nennwert zurückkommt, und sein Kurs schwankt dauerhaft stark. <a href="anleihen-suche.html?art=0,2&amp;w=EUR&amp;zins=0&amp;kupon=g,d,e&amp;rest=d">Anleihen mit diesen Kriterien anzeigen&nbsp;→</a></p></div></li>
       </ol>
-      <ul class="picks picks-4" aria-label="Drei Beispiel-Anleihen und ein ETF für Michael">
-          <li class="pick" data-isin="DE0001135366" data-faellig="2040-07-04">
-            <p class="pk-typ">Staatsanleihe · Deutschland</p>
-            <h3 class="pk-name"><a href="anleihe.html?isin=DE0001135366">Bundesanleihe 4,75&nbsp;% 2040</a></h3>
-            <dl class="pk-daten">
-              <div><dt>Rendite</dt><dd class="pk-rend">3,74&nbsp;%</dd></div>
-              <div><dt>Fällig</dt><dd>04.07.2040 <span class="pk-rest"></span></dd></div>
-              <div><dt>Kurs</dt><dd class="pk-kurs">110,71&nbsp;%</dd></div>
-              <div><dt>Kupon</dt><dd>4,75&nbsp;%</dd></div>
-              <div><dt>Ab</dt><dd>0,01&nbsp;€</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">DE0001135366</dd></div>
-            </dl>
-          </li>
-          <li class="pick" data-isin="XS3200176298" data-faellig="2045-10-07">
-            <p class="pk-typ">Staatsanleihe · Rumänien</p>
-            <h3 class="pk-name"><a href="anleihe.html?isin=XS3200176298">Rumänien 6,5&nbsp;% 2045</a></h3>
-            <dl class="pk-daten">
-              <div><dt>Rendite</dt><dd class="pk-rend">6,97&nbsp;%</dd></div>
-              <div><dt>Fällig</dt><dd>07.10.2045 <span class="pk-rest"></span></dd></div>
-              <div><dt>Kurs</dt><dd class="pk-kurs">95,08&nbsp;%</dd></div>
-              <div><dt>Kupon</dt><dd>6,50&nbsp;%</dd></div>
-              <div><dt>Ab</dt><dd>1.000&nbsp;€</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">XS3200176298</dd></div>
-            </dl>
-          </li>
-          <li class="pick" data-isin="XS2976332283" data-faellig="2045-01-14">
-            <p class="pk-typ">Unternehmensanleihe · Schweiz</p>
-            <h3 class="pk-name"><a href="anleihe.html?isin=XS2976332283">Nestlé 3,5&nbsp;% 2045</a></h3>
-            <dl class="pk-daten">
-              <div><dt>Rendite</dt><dd class="pk-rend">4,61&nbsp;%</dd></div>
-              <div><dt>Fällig</dt><dd>14.01.2045 <span class="pk-rest"></span></dd></div>
-              <div><dt>Kurs</dt><dd class="pk-kurs">86,52&nbsp;%</dd></div>
-              <div><dt>Kupon</dt><dd>3,50&nbsp;%</dd></div>
-              <div><dt>Ab</dt><dd>1.000&nbsp;€</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">XS2976332283</dd></div>
-            </dl>
-          </li>
-          <li class="pick" data-etf="IE00B1FZS913">
-            <p class="pk-typ">ETF · Euro-Staaten · 15–30 Jahre</p>
-            <h3 class="pk-name">iShares EUR Govt Bond 15-30yr</h3>
-            <dl class="pk-daten">
-              <div><dt>Kurs</dt><dd class="pk-rend pk-kurs">–</dd></div>
-              <div><dt data-ef="lz-titel">Laufzeiten</dt><dd data-ef="lz">–</dd></div>
-              <div><dt>Kosten p.&nbsp;a.</dt><dd data-ef="kosten">–</dd></div>
-              <div><dt>Zinsen</dt><dd data-ef="zinsen">–</dd></div>
-              <div><dt>Fondsgröße</dt><dd data-ef="groesse">–</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">IE00B1FZS913</dd></div>
-            </dl>
-          </li>
-      </ul>
-      <p class="pk-stand">Kurs und Rendite: <span class="pk-quelle">Deutsche Börse / Bundesbank, Stand 25.09.2026</span> – werden täglich aktualisiert. Beispiele, die die Kriterien erfüllen – keine Empfehlung und keine Anlageberatung; die Bonität kann sich ändern – vor dem Kauf auf <a href="bonitaet.html">Bonität prüfen</a>. ETF: Kurs von Xetra, täglich; Kosten, Laufzeit und Fondsgröße (Vermögen der Anteilsklasse) aus der ETF-Liste und der Monatsstatistik der Deutschen Börse<span class="pk-etf-stand"></span> – alles aktualisiert sich von selbst.</p>
       <div class="g-fuss">
         <a class="gf-kauf" href="erste-anleihe.html"><span class="gf-l">Neu hier?</span><span class="gf-t">Wie kaufe ich eine Anleihe?</span><span class="gf-s">Depot, Order, Limit – in neun Schritten zur ersten Anleihe.</span><span class="gf-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
         <form class="gf-suche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen für Michaels Ziel suchen">
@@ -523,47 +343,8 @@
       <ol class="steps steps-voll">
         <li><span class="sn" aria-hidden="true">1</span><div><strong>Das Ziel</strong><p>Ein Teil seines Geldes soll <strong>kaum schwanken und trotzdem Zinsen bringen</strong> – wie Tagesgeld, aber mit etwas mehr Rendite und ohne dass er Aktionszinsen hinterherlaufen muss. Ein ETF bündelt Dutzende Anleihen, Jonas muss keine einzelne auswählen und zahlt per Sparplan monatlich ein. Ehrlich gesagt: Einen Aktien-Crash gleichen so kurze Laufzeiten kaum aus – dafür wären längere Laufzeiten nötig. Jonas geht es um Ruhe, nicht um den Ausgleich.</p></div></li>
         <li><span class="sn" aria-hidden="true">2</span><div><strong>Die Kriterien</strong><p>Nur <strong>Staatsanleihen aus dem Euroraum</strong> – Deutschland, Frankreich, Italien, Spanien und weitere, alle mit Investment Grade – und nur <strong>1 bis 3 Jahre</strong> Restlaufzeit. Kurze Laufzeiten heißen: Der Kurs schwankt wenig, wenn sich das Zinsniveau ändert. Alles in Euro, also ohne Währungsrisiko. Ein ETF hat keine Fälligkeit – er ersetzt auslaufende Anleihen laufend durch neue mit 1 bis 3 Jahren.</p></div></li>
-        <li><span class="sn" aria-hidden="true">3</span><div><strong>Drei Beispiele für Jonas</strong><p>Drei ETFs auf Euro-Staatsanleihen mit 1 bis 3 Jahren. Sie halten fast dieselben Anleihen – die Wahl hängt vor allem an einer Frage: Will Jonas die Zinsen ausgezahlt bekommen oder automatisch wieder anlegen lassen? Das steht bei „Zinsen“ auf jeder Karte, daneben Kosten und Größe.</p></div></li>
+        <li><span class="sn" aria-hidden="true">3</span><div><strong>Der Vergleich</strong><p>Die Seite Anleihen-ETFs zeigt in der Kategorie „Kurze Laufzeiten“ die zehn meistgehandelten ETFs. ETFs auf denselben Index halten fast dieselben Anleihen – die Wahl hängt dann vor allem an drei Fragen: Werden die Zinsen ausgezahlt oder wieder angelegt? Was kostet der ETF im Jahr? Wie groß ist er? <a href="anleihen-etf.html#kurze-laufzeiten">Anleihen-ETFs mit kurzen Laufzeiten vergleichen&nbsp;→</a></p></div></li>
       </ol>
-      <ul class="picks" aria-label="Drei Beispiele für Jonas">
-          <li class="pick" data-etf="LU0290356871">
-            <p class="pk-typ">ETF · Euro-Staaten · 1–3 Jahre</p>
-            <h3 class="pk-name">Xtrackers II Eurozone Government Bond 1-3</h3>
-            <dl class="pk-daten">
-              <div><dt>Kurs</dt><dd class="pk-rend pk-kurs">–</dd></div>
-              <div><dt data-ef="lz-titel">Laufzeiten</dt><dd data-ef="lz">–</dd></div>
-              <div><dt>Kosten p.&nbsp;a.</dt><dd data-ef="kosten">–</dd></div>
-              <div><dt>Zinsen</dt><dd data-ef="zinsen">–</dd></div>
-              <div><dt>Fondsgröße</dt><dd data-ef="groesse">–</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">LU0290356871</dd></div>
-            </dl>
-          </li>
-          <li class="pick" data-etf="IE00B14X4Q57">
-            <p class="pk-typ">ETF · Euro-Staaten · 1–3 Jahre</p>
-            <h3 class="pk-name">iShares EUR Govt Bond 1-3yr</h3>
-            <dl class="pk-daten">
-              <div><dt>Kurs</dt><dd class="pk-rend pk-kurs">–</dd></div>
-              <div><dt data-ef="lz-titel">Laufzeiten</dt><dd data-ef="lz">–</dd></div>
-              <div><dt>Kosten p.&nbsp;a.</dt><dd data-ef="kosten">–</dd></div>
-              <div><dt>Zinsen</dt><dd data-ef="zinsen">–</dd></div>
-              <div><dt>Fondsgröße</dt><dd data-ef="groesse">–</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">IE00B14X4Q57</dd></div>
-            </dl>
-          </li>
-          <li class="pick" data-etf="LU1650487413">
-            <p class="pk-typ">ETF · Euro-Staaten · 1–3 Jahre</p>
-            <h3 class="pk-name">Amundi Euro Government Bond 1-3Y</h3>
-            <dl class="pk-daten">
-              <div><dt>Kurs</dt><dd class="pk-rend pk-kurs">–</dd></div>
-              <div><dt data-ef="lz-titel">Laufzeiten</dt><dd data-ef="lz">–</dd></div>
-              <div><dt>Kosten p.&nbsp;a.</dt><dd data-ef="kosten">–</dd></div>
-              <div><dt>Zinsen</dt><dd data-ef="zinsen">–</dd></div>
-              <div><dt>Fondsgröße</dt><dd data-ef="groesse">–</dd></div>
-              <div><dt>ISIN</dt><dd class="pk-isin">LU1650487413</dd></div>
-            </dl>
-          </li>
-      </ul>
-      <p class="pk-stand">Kurs von Xetra, täglich; Kosten, Laufzeit und Fondsgröße (Vermögen der Anteilsklasse) aus der ETF-Liste und der Monatsstatistik der Deutschen Börse<span class="pk-etf-stand"></span> – alles aktualisiert sich von selbst. Beispiele, die die Kriterien erfüllen – keine Empfehlung und keine Anlageberatung.</p>
       <div class="g-fuss">
         <a class="gf-kauf" href="erste-anleihe.html"><span class="gf-l">Neu hier?</span><span class="gf-t">Wie kaufe ich eine Anleihe?</span><span class="gf-s">Depot, Order, Limit – in neun Schritten zur ersten Anleihe.</span><span class="gf-go" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></a>
         <div class="gf-suche">
@@ -578,14 +359,14 @@
     <section class="vorteile" aria-labelledby="h-vorteile">
       <h2 id="h-vorteile">Warum Anleihen zu deinen Plänen passen</h2>
       <ul class="vt">
-        <li><span class="vt-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.2 19 6v5.6c0 4.4-3 7.8-7 9.2-4-1.4-7-4.8-7-9.2V6z"/><path d="m8.8 12.2 2.2 2.2 4.2-4.4"/></svg></span><div><strong>Planbar und sicher</strong><p>Fester Zins und Rückzahlung zum Nennwert bei Fälligkeit – bei soliden Schuldnern.</p></div></li>
+        <li><span class="vt-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3.2 19 6v5.6c0 4.4-3 7.8-7 9.2-4-1.4-7-4.8-7-9.2V6z"/><path d="m8.8 12.2 2.2 2.2 4.2-4.4"/></svg></span><div><strong>Planbar</strong><p>Fester Zins und Rückzahlung zum Nennwert bei Fälligkeit – bei soliden Schuldnern.</p></div></li>
         <li><span class="vt-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 16.5 9 11l3.5 3.5 8-8"/><path d="M15 6.5h5.5V12"/></svg></span><div><strong>Verlässliche Zinsen</strong><p>Rendite schon ab kurzer Laufzeit und kleinen Beträgen.</p></div></li>
         <li><span class="vt-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6.5h9M17 6.5h3M4 12h3M11 12h9M4 17.5h11M19 17.5h1"/><circle cx="15" cy="6.5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17.5" r="2"/></svg></span><div><strong>Flexibel wählbar</strong><p>Laufzeit, Zinstermine und Risiko passend zu deinen Zielen.</p></div></li>
         <li><span class="vt-i" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="m8.3 12.3 2.5 2.5 5-5.2"/></svg></span><div><strong>Transparent</strong><p>Zins, Laufzeit und Rückzahlung stehen vorher fest. Die Risiken sind klar: Bonität und Kurs vor Fälligkeit.</p></div></li>
       </ul>
     </section>
 
-    <p class="klein">Die vier Personen sind erfunden, ihre Zahlen gerundet und beispielhaft; Renditen ändern sich täglich. Die genannten Anleihen und ETFs sind Beispiele, die die Kriterien am Stichtag erfüllen – sie zeigen, wie man vorgeht, und sind keine Empfehlung und keine Anlageberatung.</p>
+    <p class="klein">Die vier Personen sind erfunden, ihre Zahlen gerundet und beispielhaft. Die Seite zeigt, wie man vorgeht – sie nennt keine einzelnen Wertpapiere und ist keine Anlageberatung.</p>
     <nav class="crossnav" aria-label="Weiter">
       <p class="crossnav-t">Weiter</p>
       <ul class="crossnav-l">
@@ -613,70 +394,6 @@ window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']
 
 // Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
 MC.navInit();
-
-// Beispiel-Anleihen (Nadine, Tobias, Michael – 28.09.2026; bis 29.09. „Top 3 Picks“): Kurs und Rendite täglich aus kurse-auswahl.json (update_kurse.py sammelt die ISINs aus den
-// HTML-Seiten), Restlaufzeit aus dem Fälligkeitstag; ohne Datei bleiben die eingebetteten Werte vom 25.09.2026 stehen.
-(function () {
-  var picks = document.querySelectorAll(".pick[data-isin]"); if (!picks.length) return;
-  var heute = new Date(), fmt = MC.zahl;   // de-DE aus site.js (bzw. Rückfall-Block)
-  picks.forEach(function (li) {
-    var f = new Date(li.getAttribute("data-faellig") + "T00:00:00"), m = Math.round((f - heute) / (1000 * 60 * 60 * 24 * 30.44));
-    var el = li.querySelector(".pk-rest"); if (el) el.textContent = m >= 24 ? "in " + fmt(m / 12, 1) + " Jahren" : m > 1 ? "in " + m + " Monaten" : m === 1 ? "in einem Monat" : "in wenigen Tagen";
-  });
-  if (!window.MC || !MC.load) return;
-  MC.load("kurse-auswahl.json").then(function (d) {
-    var K = d.kurse || {}, n = 0;
-    picks.forEach(function (li) {
-      var k = K[li.getAttribute("data-isin")]; if (!k || typeof k[0] !== "number") return;
-      li.querySelector(".pk-kurs").textContent = fmt(k[0], 2) + "\u00a0%";
-      if (typeof k[1] === "number") li.querySelector(".pk-rend").textContent = fmt(k[1], 2) + "\u00a0%";
-      n++;
-    });
-    if (n && d.stand && MC.datum) { document.querySelectorAll(".pk-quelle").forEach(function (q) { q.textContent = "Deutsche Börse / Bundesbank, Stand " + MC.datum(d.stand); }); }
-  }).catch(function (e) { console.warn("Tageskurse nicht geladen, eingebettete Kurse bleiben:", e); });
-})();
-
-// ETF-Karten (seit 30.09.2026 ohne Handpflege – Nutzerentscheid): Im HTML steht je Karte nur die ISIN (data-etf). Name, Typ,
-// Laufzeit, Kosten, Zinsen und Fondsgröße kommen aus etf-auswahl.json (scripts/update_etf_index.py – ETF-Liste und Monatsstatistik
-// der Deutschen Börse), der Kurs aus kurse-auswahl.json (Xetra). Steht der ETF unter den zehn meistgehandelten seiner Kategorie,
-// führt der Name dorthin.
-(function () {
-  var karten = document.querySelectorAll(".pick[data-etf]"); if (!karten.length || !window.MC || !MC.load) return;
-  var fmt = MC.zahl;
-  function setze(li, feld, text) { var el = li.querySelector('[data-ef="' + feld + '"]'); if (el && text) el.textContent = text; }
-  function jahre(x) { return fmt(x, x % 1 ? 1 : 0); }
-  function laufzeit(l) { return l[1] == null ? "über " + jahre(l[0]) + " Jahre" : l[0] > 0 ? jahre(l[0]) + " bis " + jahre(l[1]) + " Jahre" : "bis " + jahre(l[1]) + (l[1] === 1 ? " Jahr" : " Jahre"); }
-  function groesse(v) { return v >= 1000 ? fmt(v / 1000, 1) + " Mrd. €" : fmt(v, v < 10 ? 1 : 0) + " Mio. €"; }
-  function typ(e) {
-    var kat = e.kategorie === "Staat" ? ({ EUR: "Euro-Staaten", USD: "US-Staatsanleihen" }[e.markt] || "Staaten") : e.kategorie;
-    var t = [e.endjahr ? "Laufzeit-ETF" : "ETF", kat], l = e.laufzeit;
-    if (l && !e.endjahr && l[1] != null) t.push(l[0] > 0 ? jahre(l[0]) + "–" + jahre(l[1]) + " Jahre" : "bis " + jahre(l[1]) + " Jahre");
-    return t.join(" · ");
-  }
-  MC.load("etf-auswahl.json").then(function (d) {
-    var E = d.etfs || {};
-    karten.forEach(function (li) {
-      var e = E[li.getAttribute("data-etf")]; if (!e) return;
-      var name = li.querySelector(".pk-name"), art = li.querySelector(".pk-typ");
-      if (art) art.textContent = typ(e);
-      if (name) name.innerHTML = e.top10 ? '<a href="anleihen-etf.html#' + MC.esc(e.top10) + '">' + MC.esc(e.kurzname) + "</a>" : MC.esc(e.kurzname);
-      setze(li, "lz-titel", e.endjahr ? "Endet" : "Laufzeiten");
-      setze(li, "lz", e.endjahr ? String(e.endjahr) : e.laufzeit ? laufzeit(e.laufzeit) : "alle");
-      if (typeof e.kosten === "number") setze(li, "kosten", fmt(e.kosten, 2) + " %");
-      setze(li, "zinsen", e.ausschuettend ? "ausschüttend" : "thesaurierend");
-      if (typeof e.vermoegen === "number") setze(li, "groesse", groesse(e.vermoegen));
-      li.setAttribute("data-w", e.handelswaehrung || "EUR");
-    });
-    if (d.stand && MC.datum) document.querySelectorAll(".pk-etf-stand").forEach(function (el) { el.textContent = " (Stand " + MC.datum(d.stand) + ")"; });
-    return MC.load("kurse-auswahl.json").then(function (k) {
-      var K = k.kurse || {}, zeichen = { EUR: "€", USD: "$", GBP: "£" };
-      karten.forEach(function (li) {
-        var e = K[li.getAttribute("data-etf")], el = li.querySelector(".pk-kurs"), w = li.getAttribute("data-w") || "EUR";
-        if (e && el && typeof e[0] === "number") el.textContent = fmt(e[0], 2) + " " + (zeichen[w] || w);
-      });
-    });
-  }).catch(function (e) { console.warn("ETF-Daten nicht geladen:", e); });
-})();
 
 // Personen-Karten als Reiter: nur die Anleitung der gewählten Person ist sichtbar; Anker (#nadine …) bleiben gültig.
 (function () {
