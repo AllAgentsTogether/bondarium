@@ -1,0 +1,18 @@
+# Bilder und Karten – Herkunft
+
+Stand: 30.09.2026 · Grundlage: Angabe des Betreibers (Compliance-Prüfung, Punkt E6).
+
+| Datei | Verwendung | Herkunft |
+|---|---|---|
+| `guide-hero.webp` | Beispiel-Seite, Kopf | mit KI erzeugt |
+| `guide-nadine.webp`, `guide-tobias.webp`, `guide-michael.webp`, `guide-jonas.webp` | die vier erfundenen Personen (Beispiel-Seite, Startseite) | mit KI erzeugt |
+| `anlegerprofil-unternehmerin.webp`, `anlegerprofil-privatanleger.webp` | Anlegerprofile, Über uns | mit KI erzeugt |
+| `lernen-anlageziele.webp`, `lernen-anleihen-etf.webp` | Startseite | mit KI erzeugt |
+| `startseite-hero.webp` | Startseite, Kopf | mit KI erzeugt |
+| `weltkarte.svg` | Länder-Seiten | eigene Zeichnung, von Claude erzeugt, keine fremde Vorlage |
+| `manrope-*.woff2` | Schrift | Manrope, SIL Open Font License 1.1 |
+
+Hinweis auf der Website: `rechtliches.html`, Abschnitt „Bilder“; dazu je ein Satz auf `guide.html` und
+`anlegerprofile.html`. Die gezeigten Personen gibt es nicht.
+
+Kommt ein neues Bild dazu, hier eintragen – mit Herkunft und, bei fremden Bildern, Lizenz und Urheber.
