@@ -1,14 +1,14 @@
 # Benutzerbereich „Mein Depot“
 
-Stand 30.09.2026. Besucher können sich anmelden und Anleihen merken. Die Merkliste („Depot“) liegt auf dem Server und
-ist auf jedem Gerät da, auf dem man sich anmeldet. Es ist eine Merkliste, kein Wertpapierdepot: keine Bestände, keine
-Kaufpreise, keine Orders.
+Stand 30.09.2026 (abends: Anmeldung mit Passwort statt per E-Mail-Link). Besucher registrieren sich mit E-Mail-Adresse
+und Passwort und merken sich Anleihen. Die Merkliste („Depot“) liegt auf dem Server und ist auf jedem Gerät da, auf dem
+man sich anmeldet. Es ist eine Merkliste, kein Wertpapierdepot: keine Bestände, keine Kaufpreise, keine Orders.
 
 ## Bausteine
 
 | Datei | Aufgabe |
 | --- | --- |
-| `konto.html` | Seite „Mein Depot“: Anmeldeformular oder Merkliste. Für alle gleich, `noindex`. |
+| `konto.html` | Seite „Mein Depot“: Anmelden, Registrieren, Passwort vergessen – oder die Merkliste. Für alle gleich, `noindex`. |
 | `konto.js` | Spricht mit `konto.php` (`MC.konto`), zeichnet den Merken-Knopf. Geladen auf `konto.html`, `anleihe.html`, `anleihen-suche.html`. |
 | `konto.php` | Schnittstelle auf dem Server (PHP bei STRATO), Antwort immer JSON. |
 | `konto-daten/` | Entsteht nur auf dem Server: SQLite-Datei mit zufälligem Namen. Nicht im Repository, nicht im Bau. |
@@ -16,40 +16,53 @@ Kaufpreise, keine Orders.
 | `scripts/nav.py` | Menüpunkt „Mein Depot“ (`LINKS`). |
 | `rechtliches.html#konto` | Abschnitt der Datenschutzerklärung. |
 
-## Anmeldung ohne Passwort
+## Abläufe
 
-1. Adresse eingeben → `konto.php` (`aktion=link`) schickt einen Link per E-Mail. Er gilt 30 Minuten und einmal.
-   Ein Konto entsteht dabei noch nicht.
-2. Der Link führt auf `konto.html#anmelden=<Kennwort>`. Der Teil hinter `#` geht nicht an den Server und steht in
-   keinem Log. Die Seite nimmt ihn sofort aus der Adresse und schickt ihn per POST (`aktion=einloesen`).
-3. Erst jetzt entsteht das Konto. Der Browser bekommt zwei Cookies, 90 Tage gültig, bei Nutzung verlängert:
-   `__Host-bondarium-sitzung` (zufällige Kennung; HttpOnly, Secure, SameSite=Strict) und `bondarium-angemeldet=1`
-   (für `konto.js` lesbar).
+**Registrieren.** E-Mail-Adresse und Passwort → `aktion=registrieren` schickt eine E-Mail mit Link (24 Stunden).
+Gespeichert wird nur eine offene Registrierung mit dem Hashwert des Passworts; ein Konto gibt es noch nicht. Der Link
+führt auf `konto.html#bestaetigen=<Kennwort>`. Dort gibt man das Passwort noch einmal ein (`aktion=bestaetigen`) – erst
+dann entsteht das Konto, und man ist angemeldet. Das zweite Eingeben ist Absicht: Wer nur die E-Mail bekommt, das
+Passwort aber nicht kennt, kann kein Konto anlegen. So lässt sich niemandem ein Konto mit fremdem Passwort unterschieben.
 
-Wer nicht angemeldet ist, löst keine Anfrage an `konto.php` aus: `konto.js` fragt den Stand nur ab, wenn der Merker
-`bondarium-angemeldet` da ist. Klickt ein nicht angemeldeter Besucher auf „Merken“, führt der Knopf auf
-`konto.html?merken=<ISIN>`; die ISIN reist mit dem Anmelde-Link mit und liegt nach dem Anmelden im Depot. Ist jemand
+**Anmelden.** `aktion=anmelden` mit E-Mail und Passwort. Der Browser bekommt zwei Cookies, 90 Tage gültig, bei Nutzung
+verlängert: `__Host-bondarium-sitzung` (zufällige Kennung; HttpOnly, Secure, SameSite=Strict) und
+`bondarium-angemeldet=1` (für `konto.js` lesbar). Dasselbe Konto gilt auf jedem Gerät.
+
+**Passwort vergessen.** `aktion=vergessen` schickt einen Link (30 Minuten, einmal) auf `konto.html#passwort=<Kennwort>`;
+`aktion=passwort-neu` setzt das Passwort, meldet alle Geräte ab und das aktuelle an.
+
+**Angemeldet.** Merken, Entfernen, Abmelden, Passwort ändern (mit dem aktuellen Passwort; andere Geräte werden
+abgemeldet, eine E-Mail weist darauf hin), Konto löschen (mit Passwort).
+
+Der Teil hinter `#` eines Links geht nicht an den Server und steht in keinem Log; die Seite nimmt ihn sofort aus der
+Adresse. Wer nicht angemeldet ist, löst keine Anfrage an `konto.php` aus: `konto.js` fragt den Stand nur ab, wenn der
+Merker `bondarium-angemeldet` da ist. Klickt ein nicht angemeldeter Besucher auf „Merken“, führt der Knopf auf
+`konto.html?merken=<ISIN>`; die ISIN geht mit der Anmeldung oder Registrierung mit und liegt danach im Depot. Ist jemand
 schon angemeldet, legt `?merken=` nichts von selbst ab (ein fremder Link soll nichts ins Depot legen können) – die
 Seite zeigt dann einen Knopf.
 
 ## Was gespeichert wird
 
-SQLite-Datei `konto-daten/konto-<zufällig>.sqlite`:
+SQLite-Datei `konto-daten/konto-<zufällig>.sqlite` (Fassung 2):
 
 | Tabelle | Inhalt | Löschung |
 | --- | --- | --- |
-| `nutzer` | E-Mail-Adresse, angelegt am, zuletzt angemeldet | „Konto löschen“ sofort; nach zwei Jahren ohne Anmeldung |
+| `nutzer` | E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet | „Konto löschen“ sofort; nach zwei Jahren ohne Anmeldung |
 | `favoriten` | ISIN und Zeitpunkt je Nutzer, höchstens 200 | „Entfernen“, mit dem Konto |
-| `links` | Hashwert des Link-Kennworts, Adresse, vorgemerkte ISIN, Ablauf | beim Einlösen; sonst nach Ablauf |
-| `sitzungen` | Hashwert des Cookies, Ablauf | Abmelden; nach Ablauf |
-| `zaehler` | verschlüsselte Hashwerte von Adresse und IP-Adresse (Missbrauchsschutz) | nach 24 Stunden |
-| `meta` | Schlüssel für diese Hashwerte, Zeitpunkt des letzten Aufräumens | – |
+| `links` | offene Registrierungen (Adresse, Hashwert des Passworts, vorgemerkte ISIN) und Links „Passwort vergessen“; jeweils Hashwert des Link-Kennworts und Ablauf | beim Einlösen; sonst nach Ablauf |
+| `sitzungen` | Hashwert des Cookies, Ablauf | Abmelden, Passwortwechsel; nach Ablauf |
+| `zaehler` | verschlüsselte Hashwerte von Adresse und IP-Adresse: verschickte E-Mails, falsche Passwörter | nach 24 Stunden |
+| `meta` | Schlüssel für diese Hashwerte, Zeitpunkt des letzten Aufräumens, Vergleichs-Hashwert | – |
 
-Kennwörter von Links und Cookies stehen nie im Klartext in der Datei. „Nach Ablauf“ heißt: beim nächsten Aufräumen.
-Es läuft höchstens einmal je Stunde bei jeder Anfrage, die die Datenbank öffnet – auch bei der Nach-Deploy-Prüfung des
-Workflows, also mindestens einmal je Werktag.
+Passwörter, Link-Kennwörter und Cookies stehen nie im Klartext in der Datei. Passwörter: Argon2id, wo PHP es kann,
+sonst bcrypt (Kosten 12); beim Anmelden wird ein älterer Hashwert auf das aktuelle Verfahren gehoben. „Nach Ablauf“
+heißt: beim nächsten Aufräumen. Es läuft höchstens einmal je Stunde bei jeder Anfrage, die die Datenbank öffnet – auch
+bei der Nach-Deploy-Prüfung des Workflows, also mindestens einmal je Werktag.
 
-Ändert sich etwas an diesen Daten, muss `rechtliches.html#konto` mit.
+Konten aus der ersten Fassung (Anmeldung per Link, 30.09.2026 nachmittags) haben kein Passwort; „Passwort vergessen“
+setzt eines.
+
+Ändert sich etwas an diesen Daten oder an den Cookies: erst den Betreiber fragen, dann `rechtliches.html#konto` mitziehen.
 
 ## Schutz
 
@@ -57,19 +70,28 @@ Workflows, also mindestens einmal je Werktag.
   Weiterleitungen, auf beiden Domains), eigene `.htaccess` im Ordner (legt `konto.php` an), Sperre für `*.sqlite`,
   zufälliger Dateiname. Der Workflow prüft nach jedem Deploy, dass der Ordner mit 403 antwortet.
 - Änderungen nur per POST mit dem Kopf `X-Requested-With: bondarium-konto`; ein fremder Ursprung wird abgewiesen;
-  das Cookie ist SameSite=Strict.
-- Obergrenzen für Anmelde-Links (`GRENZEN` in `konto.php`): je Adresse 3 in 15 Minuten und 8 am Tag, je IP-Adresse
-  10 und 30, insgesamt 60 je Stunde und 300 am Tag. Dazu ein Honigtopf-Feld. Kein Captcha, keine fremden Dienste.
+  das Cookie ist SameSite=Strict. Passwörter gehen nur im POST-Körper über HTTPS, nie in einer Adresse.
+- Passwort: mindestens 10 Zeichen, mindestens fünf verschiedene Zeichen, keine sehr häufigen Passwörter
+  (`PW_HAEUFIG`), nicht die eigene Adresse. Keine Pflicht zu Sonderzeichen – Länge zählt.
+- Falsche Passwörter (`LOGIN_GRENZEN`): je Adresse und IP-Adresse zusammen 5 in 15 Minuten, je Adresse 30 je Stunde
+  und 100 am Tag, je IP-Adresse 30 in 15 Minuten und 200 am Tag. Die enge Grenze hängt an Adresse *und* IP-Adresse,
+  damit ein Angreifer den Inhaber nicht aussperren kann.
+- Die Antworten verraten nicht, ob es zu einer Adresse ein Konto gibt: Anmelden meldet immer „E-Mail-Adresse oder
+  Passwort stimmen nicht“ und rechnet auch ohne Konto einen Hashwert; Registrieren und „Passwort vergessen“ antworten
+  immer gleich und schicken in beiden Fällen eine E-Mail (mit passendem Inhalt).
+- Verschickte E-Mails (`GRENZEN`): je Adresse 3 in 15 Minuten und 8 am Tag, je IP-Adresse 10 und 30, insgesamt 60 je
+  Stunde und 300 am Tag. Dazu ein Honigtopf-Feld. Kein Captcha, keine fremden Dienste.
 - Der Deploy fasst `konto-daten/` nicht an (steht nicht im Manifest). Eine Sicherung gibt es nur über die
   Webspace-Sicherung von STRATO.
 
 ## E-Mail-Versand
 
-`mail()` von PHP, Absender `info@bondarium.com` – wie das Kontaktformular. Für beide Domains gilt DMARC `p=reject`;
-ein SPF-Eintrag fehlt (Stand 30.09.2026). Fremde Postfächer (Gmail, iCloud, GMX …) nehmen die E-Mail nur an, wenn
-STRATO sie für die Domain signiert (DKIM) oder ein SPF-Eintrag den Versand erlaubt. Kommt der Anmelde-Link nicht an:
-bei STRATO im Kundenbereich unter Domains → DNS den SPF-Eintrag einschalten (STRATO-Standard,
-`v=spf1 redirect=smtp.rzone.de`), für `bondarium.com`.
+`mail()` von PHP, Absender `info@bondarium.com` – wie das Kontaktformular. Vier E-Mails: Adresse bestätigen, „es gibt
+schon ein Konto“, neues Passwort setzen (bzw. „kein Konto zu dieser Adresse“), Passwort geändert. Für beide Domains
+gilt DMARC `p=reject`; ein SPF-Eintrag fehlt (Stand 30.09.2026). Fremde Postfächer (Gmail, iCloud, GMX …) nehmen die
+E-Mail nur an, wenn STRATO sie für die Domain signiert (DKIM) oder ein SPF-Eintrag den Versand erlaubt. Kommt die
+E-Mail nicht an: bei STRATO im Kundenbereich unter Domains → DNS den SPF-Eintrag einschalten (STRATO-Standard,
+`v=spf1 redirect=smtp.rzone.de`), für `bondarium.com`. Ohne ankommende E-Mail kann sich niemand registrieren.
 
 ## Lokal testen
 

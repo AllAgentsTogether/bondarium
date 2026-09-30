@@ -16,7 +16,7 @@
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
  <style>
-  /* Benutzerbereich „Mein Depot“ (seit 30.09.2026): Anmeldung per E-Mail-Link und Merkliste. Schnittstelle konto.php, Skript konto.js,
+  /* Benutzerbereich „Mein Depot“ (seit 30.09.2026): Anmeldung mit E-Mail und Passwort, Merkliste. Schnittstelle konto.php, Skript konto.js,
      Beschreibung docs/KONTO.md. Die Seite ist für alle gleich (kein Inhalt vom Server im HTML) und steht nicht im Suchindex (noindex).
      Farbvariablen, .go, .sortbtn, .table-scroll und .sr-only kommen aus base.css. */
   h1 { margin-bottom: 10px; }
@@ -42,6 +42,14 @@
   .kf { display: grid; gap: 14px; }
   .kf[hidden] { display: none; }
   .kf label { display: block; font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 5px; }
+  .kf label span { font-weight: 500; color: var(--text); }
+  .kf input[readonly] { background: #F3F2EE; border-color: rgba(26,26,25,0.25); color: var(--text); }
+  /* Passwortfeld mit „anzeigen“ rechts im Feld */
+  .kto-pw { position: relative; }
+  .kto-pw input { padding-right: 104px; }
+  .kto-auge { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); font: inherit; font-size: 13px; font-weight: 600; color: var(--green-text); background: none; border: 0; border-radius: 7px; padding: 7px 9px; cursor: pointer; }
+  .kto-auge:hover { color: var(--ink); }
+  .kto-auge:focus-visible { outline: 2px solid var(--line); outline-offset: -1px; }
   .kf input { width: 100%; font: inherit; font-size: 16px; color: var(--ink); background: #fff; border: 1.5px solid rgba(26,26,25,0.55); border-radius: 10px; padding: 11px 13px; }
   .kf input:focus-visible { outline: 0; border-color: var(--green-text); box-shadow: 0 0 0 3px var(--green-tint-2); }
   .kf-falle { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }   /* Honigtopf gegen Bots – für Menschen unsichtbar */
@@ -90,10 +98,12 @@
   .kto-leer p + p { margin-top: 12px; }
   .kto-stand { font-size: 13px; line-height: 1.6; color: var(--text); margin-top: 16px; max-width: 820px; }
   .kto-konto { margin-top: 40px; border-top: 1px solid var(--rule); padding-top: 16px; font-size: 14.5px; color: var(--text); }
+  .kto-konto details + details { margin-top: 10px; }
+  .kto-konto .kf { max-width: 420px; margin-top: 12px; }
+  .kto-konto .kf button[type=submit] { justify-self: start; }
   .kto-konto summary { cursor: pointer; font-weight: 600; color: var(--ink); width: max-content; max-width: 100%; }
   .kto-konto summary:focus-visible { outline: 2px solid var(--line); outline-offset: 3px; border-radius: 3px; }
   .kto-konto p { max-width: 640px; line-height: 1.6; margin-top: 10px; }
-  .kto-konto .kto-reihe { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
   .kto-weg { font: inherit; font-size: 14px; font-weight: 600; color: #fff; background: var(--down); border: 1px solid var(--down); border-radius: 999px; padding: 8px 16px; cursor: pointer; }
   .kto-weg:hover { background: #7E2F15; }
   .kto-weg:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
@@ -188,21 +198,53 @@
       <section class="kto-karte" aria-labelledby="h-anm">
         <h2 id="h-anm">Anmelden</h2>
         <p class="kto-vor" id="vormerk" hidden></p>
-        <form class="kf" id="anmeldeform" action="konto.php" method="post">
-          <div><label for="kto-email">E-Mail-Adresse</label><input id="kto-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" required></div>
-          <p class="kf-falle" aria-hidden="true"><label for="kto-web">Website</label><input id="kto-web" name="website" type="text" tabindex="-1" autocomplete="off"></p>
-          <button type="submit" class="go">Anmelde-Link schicken</button>
-          <p class="kf-status" id="anm-status" role="status" aria-live="polite"></p>
-          <p class="kf-hinweis">Du bekommst einen Link per E-Mail. Ein Klick darauf meldet dich an – ohne Passwort. Beim ersten Mal entsteht dabei dein Konto. Was wir speichern, steht in der <a href="rechtliches.html#konto">Datenschutzerklärung</a>.</p>
+        <form class="kf" id="f-anmelden" data-modus="anmelden" action="konto.php" method="post">
+          <div><label for="an-email">E-Mail-Adresse</label><input id="an-email" name="email" type="email" autocomplete="username" inputmode="email" maxlength="254" required></div>
+          <div><label for="an-pw">Passwort</label><div class="kto-pw"><input id="an-pw" name="passwort" type="password" autocomplete="current-password" maxlength="200" required><button type="button" class="kto-auge" aria-pressed="false" aria-controls="an-pw">anzeigen</button></div></div>
+          <button type="submit" class="go">Anmelden</button>
+          <p class="kf-status" role="status" aria-live="polite"></p>
+          <p class="kf-hinweis"><button type="button" class="kto-textbtn" data-zu="vergessen">Passwort vergessen?</button><br>Noch kein Konto? <button type="button" class="kto-textbtn" data-zu="registrieren">Jetzt registrieren</button></p>
         </form>
-        <div id="gesendet" hidden>
-          <p class="kto-post"><b>Schau in dein Postfach.</b> Wir haben einen Link an <b id="gesendet-an"></b> geschickt. Er gilt <span id="gesendet-min">30</span> Minuten und nur einmal.</p>
-          <p class="kf-hinweis">Nichts angekommen? Sieh im Spam-Ordner nach oder <button type="button" class="kto-textbtn" id="nochmal">fordere einen neuen Link an</button>.</p>
+        <form class="kf" id="f-registrieren" data-modus="registrieren" action="konto.php" method="post" hidden>
+          <div><label for="reg-email">E-Mail-Adresse</label><input id="reg-email" name="email" type="email" autocomplete="username" inputmode="email" maxlength="254" required></div>
+          <div><label for="reg-pw">Passwort <span>(mindestens 10 Zeichen)</span></label><div class="kto-pw"><input id="reg-pw" name="passwort" type="password" autocomplete="new-password" maxlength="200" minlength="10" required><button type="button" class="kto-auge" aria-pressed="false" aria-controls="reg-pw">anzeigen</button></div></div>
+          <p class="kf-falle" aria-hidden="true"><label for="reg-web">Website</label><input id="reg-web" name="website" type="text" tabindex="-1" autocomplete="off"></p>
+          <button type="submit" class="go">Konto anlegen</button>
+          <p class="kf-status" role="status" aria-live="polite"></p>
+          <p class="kf-hinweis">Du bekommst eine E-Mail mit einem Link. Erst wenn du ihn anklickst und dein Passwort noch einmal eingibst, entsteht dein Konto. Was wir speichern, steht in der <a href="rechtliches.html#konto">Datenschutzerklärung</a>.</p>
+          <p class="kf-hinweis">Schon ein Konto? <button type="button" class="kto-textbtn" data-zu="anmelden">Anmelden</button></p>
+        </form>
+        <form class="kf" id="f-vergessen" data-modus="vergessen" action="konto.php" method="post" hidden>
+          <p class="kf-hinweis">Gib die E-Mail-Adresse deines Kontos ein. Wir schicken dir einen Link, mit dem du ein neues Passwort setzt.</p>
+          <div><label for="ve-email">E-Mail-Adresse</label><input id="ve-email" name="email" type="email" autocomplete="username" inputmode="email" maxlength="254" required></div>
+          <p class="kf-falle" aria-hidden="true"><label for="ve-web">Website</label><input id="ve-web" name="website" type="text" tabindex="-1" autocomplete="off"></p>
+          <button type="submit" class="go">Link schicken</button>
+          <p class="kf-status" role="status" aria-live="polite"></p>
+          <p class="kf-hinweis"><button type="button" class="kto-textbtn" data-zu="anmelden">Zurück zum Anmelden</button></p>
+        </form>
+        <form class="kf" id="f-bestaetigen" data-modus="bestaetigen" action="konto.php" method="post" hidden>
+          <p class="kto-post">Fast fertig: Gib dein Passwort noch einmal ein, dann ist dein Konto angelegt.</p>
+          <div><label for="be-email">E-Mail-Adresse</label><input id="be-email" name="email" type="email" autocomplete="username" inputmode="email" maxlength="254" readonly required></div>
+          <div><label for="be-pw">Passwort</label><div class="kto-pw"><input id="be-pw" name="passwort" type="password" autocomplete="current-password" maxlength="200" required><button type="button" class="kto-auge" aria-pressed="false" aria-controls="be-pw">anzeigen</button></div></div>
+          <button type="submit" class="go">Konto fertigstellen</button>
+          <p class="kf-status" role="status" aria-live="polite"></p>
+          <p class="kf-hinweis">Passwort nicht mehr im Kopf? <button type="button" class="kto-textbtn" data-zu="registrieren">Registriere dich einfach neu</button>.</p>
+        </form>
+        <form class="kf" id="f-neu" data-modus="neu" action="konto.php" method="post" hidden>
+          <div><label for="ne-email">E-Mail-Adresse</label><input id="ne-email" name="email" type="email" autocomplete="username" inputmode="email" maxlength="254" readonly required></div>
+          <div><label for="ne-pw">Neues Passwort <span>(mindestens 10 Zeichen)</span></label><div class="kto-pw"><input id="ne-pw" name="passwort" type="password" autocomplete="new-password" maxlength="200" minlength="10" required><button type="button" class="kto-auge" aria-pressed="false" aria-controls="ne-pw">anzeigen</button></div></div>
+          <button type="submit" class="go">Passwort speichern</button>
+          <p class="kf-status" role="status" aria-live="polite"></p>
+          <p class="kf-hinweis">Danach bist du hier angemeldet; alle anderen Geräte werden abgemeldet.</p>
+        </form>
+        <div id="gesendet" data-modus="gesendet" hidden>
+          <p class="kto-post" id="gesendet-text"></p>
+          <p class="kf-hinweis">Nichts angekommen? Sieh im Spam-Ordner nach oder <button type="button" class="kto-textbtn" id="nochmal">versuch es noch einmal</button>.</p>
         </div>
       </section>
       <div>
       <ol class="kto-schritte" aria-label="So funktioniert das Depot">
-        <li><b>Anmelden</b><span>E-Mail-Adresse eingeben, Link in der E-Mail anklicken. Ein Passwort gibt es nicht.</span></li>
+        <li><b>Registrieren</b><span>E-Mail-Adresse und Passwort wählen, die Adresse über den Link in der E-Mail bestätigen. Das Konto gilt auf jedem Gerät.</span></li>
         <li><b>Merken</b><span>In der <a href="anleihen-suche.html">Anleihen-Suche</a> und auf jedem Steckbrief steht der Knopf „Merken“.</span></li>
         <li><b>Wiedersehen</b><span>Hier stehen deine Anleihen mit Kurs und Rendite vom letzten Börsentag – auf jedem Gerät, auf dem du dich anmeldest.</span></li>
       </ol>
@@ -234,12 +276,29 @@
         <p><a class="go" href="anleihen-suche.html">Zur Anleihen-Suche</a></p>
       </div>
       <p class="kto-stand" id="datastand"></p>
-      <details class="kto-konto" id="konto">
-        <summary>Konto löschen</summary>
-        <p>Dein Konto, deine E-Mail-Adresse und deine Merkliste werden sofort und endgültig gelöscht. Du kannst dich danach jederzeit neu anmelden – mit leerem Depot.</p>
-        <div class="kto-reihe"><button type="button" class="kto-weg" id="loeschen">Konto endgültig löschen</button></div>
-        <p class="kf-status fehler" id="loesch-status" role="status" aria-live="polite"></p>
-      </details>
+      <div class="kto-konto" id="konto">
+        <details id="d-pw">
+          <summary>Passwort ändern</summary>
+          <form class="kf" id="f-aendern" action="konto.php" method="post">
+            <input class="sr-only" id="ae-email" name="email" type="email" autocomplete="username" tabindex="-1" aria-hidden="true" readonly>
+            <div><label for="ae-alt">Aktuelles Passwort</label><div class="kto-pw"><input id="ae-alt" name="alt" type="password" autocomplete="current-password" maxlength="200" required><button type="button" class="kto-auge" aria-pressed="false" aria-controls="ae-alt">anzeigen</button></div></div>
+            <div><label for="ae-neu">Neues Passwort <span>(mindestens 10 Zeichen)</span></label><div class="kto-pw"><input id="ae-neu" name="passwort" type="password" autocomplete="new-password" maxlength="200" minlength="10" required><button type="button" class="kto-auge" aria-pressed="false" aria-controls="ae-neu">anzeigen</button></div></div>
+            <button type="submit" class="kto-leise">Passwort ändern</button>
+            <p class="kf-status" role="status" aria-live="polite"></p>
+            <p class="kf-hinweis">Danach sind alle anderen Geräte abgemeldet.</p>
+          </form>
+        </details>
+        <details id="d-weg">
+          <summary>Konto löschen</summary>
+          <p>Dein Konto, deine E-Mail-Adresse, dein Passwort und deine Merkliste werden sofort und endgültig gelöscht. Du kannst dich danach jederzeit neu registrieren – mit leerem Depot.</p>
+          <form class="kf" id="f-loeschen" action="konto.php" method="post">
+            <input class="sr-only" id="lo-email" name="email" type="email" autocomplete="username" tabindex="-1" aria-hidden="true" readonly>
+            <div><label for="lo-pw">Passwort zur Bestätigung</label><div class="kto-pw"><input id="lo-pw" name="passwort" type="password" autocomplete="current-password" maxlength="200" required><button type="button" class="kto-auge" aria-pressed="false" aria-controls="lo-pw">anzeigen</button></div></div>
+            <button type="submit" class="kto-weg">Konto endgültig löschen</button>
+            <p class="kf-status" role="status" aria-live="polite"></p>
+          </form>
+        </details>
+      </div>
     </div>
   </main>
   <footer class="fuss">
@@ -260,8 +319,10 @@ window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']
 MC.navInit();
 
 // ---------- Benutzerbereich (konto.js → konto.php) ----------
-// Drei Zustände: „lade“ (Stand wird geholt oder Link eingelöst), „anmelden“ (Formular), „depot“ (Merkliste).
-// Der Anmelde-Link führt auf konto.html#anmelden=<Kennwort>; „?merken=<ISIN>“ kommt vom Merken-Knopf, wenn niemand angemeldet ist.
+// Drei Zustände: „lade“ (Stand wird geholt oder Link geprüft), „anmelden“ (Karte mit Formular), „depot“ (Merkliste).
+// Die Karte hat sechs Ansichten (data-modus): anmelden, registrieren, vergessen, gesendet, bestaetigen (Link aus der
+// Registrierungs-E-Mail: konto.html#bestaetigen=<Kennwort>) und neu (Link „Passwort vergessen“: konto.html#passwort=<Kennwort>).
+// „?merken=<ISIN>“ kommt vom Merken-Knopf, wenn niemand angemeldet ist. Passwörter gehen nur per POST an konto.php.
 (function () {
   const K = MC.konto, $ = id => document.getElementById(id);
   if (!K || !window.fetch || !window.URLSearchParams) { $("lade").textContent = "Der Benutzerbereich ist gerade nicht erreichbar. Bitte lade die Seite neu."; return; }
@@ -270,32 +331,78 @@ MC.navInit();
   let VOR = (par.get("merken") || "").trim().toUpperCase(); if (!ISIN_RE.test(VOR)) VOR = "";
   const TEXT = {
     email: "Bitte prüfe deine E-Mail-Adresse.",
-    zuviel: "Für diese Adresse wurden gerade schon mehrere Links angefordert. Bitte sieh in dein Postfach oder versuch es später noch einmal.",
+    passwort: "Das Passwort braucht mindestens 10 Zeichen und darf nicht zu einfach sein (kein sehr häufiges Passwort, nicht nur ein paar wiederholte Zeichen, nicht deine E-Mail-Adresse).",
+    zugang: "E-Mail-Adresse oder Passwort stimmen nicht.",
+    zuviel: "Zu viele Versuche. Bitte warte eine Viertelstunde und versuch es dann noch einmal.",
     versand: "Die E-Mail ließ sich nicht verschicken. Bitte versuch es später noch einmal.",
-    link: "Dieser Link ist abgelaufen oder wurde schon benutzt. Fordere unten einen neuen an.",
+    link: "Dieser Link ist abgelaufen oder wurde schon benutzt.",
+    netz: "Keine Verbindung zum Server. Bitte prüfe deine Internetverbindung.",
     fehler: "Das hat nicht geklappt. Bitte versuch es noch einmal.",
   };
+  const ZUVIEL_MAIL = "Für diese Adresse wurden gerade schon mehrere E-Mails angefordert. Bitte sieh in dein Postfach oder versuch es später noch einmal.";
   const zeigeTeil = t => { $("lade").hidden = t !== "lade"; $("anmelden").hidden = t !== "anmelden"; $("depot").hidden = t !== "depot"; };
   function hinweis(html, fehler) { const h = $("hinweis"); h.className = "kto-hinweis" + (fehler ? " fehler" : ""); h.innerHTML = `<span>${html}</span>`; h.hidden = !html; }
   const steckbrief = isin => `<a href="anleihe.html?isin=${encodeURIComponent(isin)}">${MC.esc(isin)}</a>`;
+  const imDepot = isin => isin ? ` Die Anleihe ${steckbrief(isin)} liegt in deinem Depot.` : "";
 
-  // ---------- Anmelden ----------
-  const form = $("anmeldeform"), knopf = form.querySelector("button[type=submit]"), st = $("anm-status");
-  if (VOR) { $("vormerk").innerHTML = `Nach dem Anmelden liegt die Anleihe <b>${MC.esc(VOR)}</b> in deinem Depot.`; $("vormerk").hidden = false; }
-  form.addEventListener("submit", e => {
-    e.preventDefault();
-    if (!form.checkValidity()) { form.reportValidity(); return; }
-    const email = form.email.value.trim();
-    knopf.disabled = true; st.className = "kf-status"; st.textContent = "Wird gesendet …";
-    K.link(email, VOR, form.website.value).then(a => {
-      knopf.disabled = false;
-      if (!a.ok) { st.className = "kf-status fehler"; st.textContent = TEXT[a.status] || TEXT.fehler; return; }
-      st.textContent = ""; hinweis("");
-      $("gesendet-an").textContent = email; if (a.minuten) $("gesendet-min").textContent = a.minuten;
-      form.hidden = true; $("vormerk").hidden = true; $("gesendet").hidden = false;
-    });
+  // ---------- Karte: Ansichten ----------
+  const TITEL = { anmelden: "Anmelden", registrieren: "Konto anlegen", vergessen: "Passwort vergessen", bestaetigen: "Registrierung abschließen", neu: "Neues Passwort" };
+  let MODUS = "anmelden", ZURUECK = "anmelden", KENNWORT = "";   // KENNWORT: aus dem Link in der E-Mail (bestaetigen, neu)
+  function modus(m, fokus) {
+    const vorher = document.querySelector(`#anmelden form[data-modus="${MODUS}"]`), ziel = document.querySelector(`#anmelden [data-modus="${m}"]`);
+    // eingetippte Adresse in die nächste Ansicht mitnehmen
+    if (vorher && ziel && ziel.email && !ziel.email.readOnly && vorher.email && vorher.email.value && !ziel.email.value) ziel.email.value = vorher.email.value;
+    document.querySelectorAll("#anmelden [data-modus]").forEach(el => { el.hidden = el.dataset.modus !== m; });
+    document.querySelectorAll("#anmelden input[type=text][autocomplete$=password]").forEach(zu);   // angezeigte Passwörter wieder verbergen
+    if (TITEL[m]) $("h-anm").textContent = TITEL[m];
+    $("vormerk").hidden = !VOR || !["anmelden", "registrieren"].includes(m);
+    MODUS = m;
+    if (fokus && ziel && ziel.elements) { const f = Array.from(ziel.elements).find(e => e.tagName === "INPUT" && !e.readOnly && e.tabIndex >= 0 && !e.value); if (f) f.focus(); }
+  }
+  if (VOR) $("vormerk").innerHTML = `Nach dem Anmelden liegt die Anleihe <b>${MC.esc(VOR)}</b> in deinem Depot.`;
+  $("anmelden").addEventListener("click", e => { const b = e.target.closest("[data-zu]"); if (b) { hinweis(""); modus(b.dataset.zu, true); } });
+  $("nochmal").addEventListener("click", () => modus(ZURUECK, true));
+  // Passwort anzeigen / verbergen
+  function zu(feld) { feld.type = "password"; const b = document.querySelector(`.kto-auge[aria-controls="${feld.id}"]`); if (b) { b.textContent = "anzeigen"; b.setAttribute("aria-pressed", "false"); } }
+  document.addEventListener("click", e => {
+    const b = e.target.closest(".kto-auge"); if (!b) return;
+    const feld = $(b.getAttribute("aria-controls")), zeigen = feld.type === "password";
+    if (zeigen) { feld.type = "text"; b.textContent = "verbergen"; b.setAttribute("aria-pressed", "true"); } else zu(feld);
   });
-  $("nochmal").addEventListener("click", () => { $("gesendet").hidden = true; form.hidden = false; $("vormerk").hidden = !VOR; form.email.focus(); });
+  // Ein Formular absenden: sende(f) → Promise { ok, status, … }; bei ok läuft fertig(antwort, f), sonst steht der Fehler unter dem Knopf
+  function formular(id, sende, fertig, texte) {
+    const f = $(id), knopf = f.querySelector("button[type=submit]"), st = f.querySelector(".kf-status");
+    f.addEventListener("submit", e => {
+      e.preventDefault();
+      if (!f.checkValidity()) { f.reportValidity(); return; }
+      const lauf = sende(f); if (!lauf) return;
+      knopf.disabled = true; st.className = "kf-status"; st.textContent = "Einen Moment …";
+      lauf.then(a => {
+        knopf.disabled = false;
+        if (a.ok) { st.textContent = ""; fertig(a, f); }
+        else { st.className = "kf-status fehler"; st.textContent = (texte && texte[a.status]) || TEXT[a.status] || TEXT.fehler; }
+      });
+    });
+    return f;
+  }
+  const leere = f => { f.querySelectorAll("input[autocomplete$=password]").forEach(i => { i.value = ""; zu(i); }); };
+  function gesendet(html, von) { $("gesendet-text").innerHTML = html; ZURUECK = von; hinweis(""); modus("gesendet"); }
+
+  formular("f-anmelden", f => K.anmelden(f.email.value.trim(), f.passwort.value, VOR),
+    (a, f) => { leere(f); hinweis("Du bist angemeldet." + imDepot(a.gemerkt)); VOR = ""; ohneZusatz(); });
+  formular("f-registrieren", f => K.registrieren(f.email.value.trim(), f.passwort.value, VOR, f.website.value),
+    (a, f) => { const an = f.email.value.trim(); leere(f); VOR = ""; ohneZusatz();   // die vorgemerkte Anleihe reist mit dem Link in der E-Mail
+      gesendet(`<b>Schau in dein Postfach.</b> Wir haben eine E-Mail an <b>${MC.esc(an)}</b> geschickt. Klick auf den Link darin und gib dein Passwort noch einmal ein – dann ist dein Konto fertig. Der Link gilt ${a.stunden || 24} Stunden.`, "registrieren"); },
+    { zuviel: ZUVIEL_MAIL });
+  formular("f-vergessen", f => K.vergessen(f.email.value.trim(), f.website.value),
+    (a, f) => gesendet(`<b>Schau in dein Postfach.</b> Wir haben eine E-Mail an <b>${MC.esc(f.email.value.trim())}</b> geschickt. Mit dem Link darin setzt du ein neues Passwort. Er gilt ${a.minuten || 30} Minuten und nur einmal.`, "vergessen"),
+    { zuviel: ZUVIEL_MAIL });
+  formular("f-bestaetigen", f => K.bestaetigen(KENNWORT, f.passwort.value),
+    (a, f) => { leere(f); KENNWORT = ""; hinweis("Dein Konto ist angelegt – du bist angemeldet." + imDepot(a.gemerkt)); },
+    { zugang: "Das ist nicht das Passwort, das du bei der Registrierung gewählt hast.", link: "Dieser Link ist abgelaufen oder wurde schon benutzt. Melde dich an oder registriere dich neu." });
+  formular("f-neu", f => K.passwortNeu(KENNWORT, f.passwort.value),
+    (a, f) => { leere(f); KENNWORT = ""; hinweis("Dein neues Passwort ist gespeichert. Du bist hier angemeldet, alle anderen Geräte sind abgemeldet."); },
+    { link: "Dieser Link ist abgelaufen oder wurde schon benutzt. Fordere über „Passwort vergessen“ einen neuen an." });
 
   // ---------- Depot: Daten ----------
   // suchindex.json (scripts/suchindex.py, dieselbe Datei wie die Anleihen-Suche): nur Anleihen mit Kurs aus den letzten 14 Tagen, je Zeile
@@ -384,7 +491,8 @@ MC.navInit();
   let lauf = 0;
   function zeigeDepot(stand) {
     const nr = ++lauf, fav = stand.favoriten;
-    $("wer").textContent = stand.email;
+    $("wer").textContent = stand.email; $("ae-email").value = $("lo-email").value = stand.email;
+    if (["bestaetigen", "neu", "gesendet"].includes(MODUS)) modus("anmelden");
     zeigeTeil("depot");
     $("leer").hidden = fav.length > 0;
     if (!fav.length) { LISTE = []; $("liste").hidden = true; $("datastand").textContent = ""; statusText(); return; }
@@ -404,7 +512,7 @@ MC.navInit();
   }
   function zeige(stand) {
     if (stand.angemeldet) zeigeDepot(stand);
-    else { lauf++; LISTE = []; ZULETZT = ""; form.hidden = false; $("gesendet").hidden = true; zeigeTeil("anmelden"); }
+    else { lauf++; LISTE = []; ZULETZT = ""; if (!["bestaetigen", "neu"].includes(MODUS)) modus("anmelden"); zeigeTeil("anmelden"); }
   }
   K.beiAenderung(zeige);
 
@@ -426,41 +534,48 @@ MC.navInit();
     K.merken(isin).catch(a => { if (a && a.status !== "anmelden") hinweis(TEXT.fehler, true); });
   });
 
-  // Abmelden, Konto löschen
+  // Abmelden, Passwort ändern, Konto löschen
   $("abmelden").addEventListener("click", e => {
     e.currentTarget.disabled = true;
-    K.abmelden().then(a => { $("abmelden").disabled = false; if (a.ok) hinweis("Du bist abgemeldet."); else hinweis(TEXT.fehler, true); });
+    K.abmelden().then(a => { $("abmelden").disabled = false; if (a.ok) hinweis("Du bist abgemeldet."); else hinweis(TEXT[a.status] || TEXT.fehler, true); });
   });
-  $("loeschen").addEventListener("click", e => {
-    const b = e.currentTarget;
-    if (!b.dataset.sicher) { b.dataset.sicher = "1"; b.textContent = "Ja, jetzt endgültig löschen"; return; }
-    b.disabled = true; $("loesch-status").textContent = "";
-    K.loeschen().then(a => {
-      b.disabled = false; delete b.dataset.sicher; b.textContent = "Konto endgültig löschen"; $("konto").open = false;
-      if (a.ok) hinweis("Dein Konto und deine Merkliste sind gelöscht.");
-      else $("loesch-status").textContent = TEXT.fehler;
-    });
-  });
-  $("konto").addEventListener("toggle", () => { const b = $("loeschen"); delete b.dataset.sicher; b.textContent = "Konto endgültig löschen"; });
+  formular("f-aendern", f => K.passwortAendern(f.alt.value, f.passwort.value),
+    (a, f) => { leere(f); $("d-pw").open = false; hinweis("Dein Passwort ist geändert. Alle anderen Geräte sind abgemeldet."); },
+    { zugang: "Das aktuelle Passwort stimmt nicht." });
+  const wegKnopf = $("f-loeschen").querySelector("button[type=submit]");
+  const wegZurueck = () => { delete wegKnopf.dataset.sicher; wegKnopf.textContent = "Konto endgültig löschen"; };
+  formular("f-loeschen", f => {
+      if (!wegKnopf.dataset.sicher) { wegKnopf.dataset.sicher = "1"; wegKnopf.textContent = "Ja, jetzt endgültig löschen"; return null; }   // erster Klick fragt nach
+      return K.loeschen(f.passwort.value).then(a => { wegZurueck(); return a; });
+    },
+    (a, f) => { leere(f); $("d-weg").open = false; hinweis("Dein Konto und deine Merkliste sind gelöscht."); },
+    { zugang: "Das Passwort stimmt nicht." });
+  $("d-weg").addEventListener("toggle", wegZurueck);
 
-  // ---------- Start: Link einlösen, vorgemerkte Anleihe ablegen oder Stand zeigen ----------
-  const ohneZusatz = () => { try { history.replaceState(null, "", location.pathname); } catch (e) {} };
-  function einloesen() {
-    const m = /^#anmelden=([A-Za-z0-9_-]{43})$/.exec(location.hash);
+  // ---------- Start: Link aus einer E-Mail, vorgemerkte Anleihe oder Stand zeigen ----------
+  function ohneZusatz() { try { history.replaceState(null, "", location.pathname); } catch (e) {} }
+  function ausLink() {
+    const m = /^#(bestaetigen|passwort)=([A-Za-z0-9_-]{43})$/.exec(location.hash);
     if (!m) return false;
     ohneZusatz();   // Kennwort sofort aus der Adresse nehmen (Verlauf, Lesezeichen)
-    $("lade").textContent = "Du wirst angemeldet …"; zeigeTeil("lade"); hinweis("");
-    K.einloesen(m[1]).then(a => {
-      if (a.ok) hinweis(a.gemerkt ? `Du bist angemeldet. Die Anleihe ${steckbrief(a.gemerkt)} liegt in deinem Depot.` : "Du bist angemeldet.");
-      else K.bereit().then(stand => {   // Link verbraucht oder abgelaufen – wer schon angemeldet ist, sieht einfach sein Depot
-        if (!stand.angemeldet) hinweis(a.status === "link" ? TEXT.link : TEXT.fehler, true);
-        zeige(stand);
-      });
+    $("lade").textContent = "Der Link wird geprüft …"; zeigeTeil("lade"); hinweis("");
+    K.linkPruefen(m[2]).then(a => {
+      if (!a.ok) {   // verbraucht oder abgelaufen – wer schon angemeldet ist, sieht einfach sein Depot
+        K.bereit().then(stand => {
+          if (!stand.angemeldet) hinweis(a.status === "link" ? TEXT.link + (m[1] === "passwort" ? " Fordere über „Passwort vergessen“ einen neuen an." : " Melde dich an oder registriere dich neu.") : TEXT[a.status] || TEXT.fehler, true);
+          MODUS = "anmelden"; zeige(stand);
+        });
+        return;
+      }
+      KENNWORT = m[2];
+      const ansicht = a.art === "neu" ? "bestaetigen" : "neu";
+      $(ansicht === "neu" ? "ne-email" : "be-email").value = a.email;
+      zeigeTeil("anmelden"); modus(ansicht, true);
     });
     return true;
   }
-  window.addEventListener("hashchange", einloesen);   // Link in einem Tab geöffnet, in dem die Seite schon steht: kein Neuladen, nur „#…“ ändert sich
-  if (!einloesen()) {
+  window.addEventListener("hashchange", ausLink);   // Link in einem Tab geöffnet, in dem die Seite schon steht: kein Neuladen, nur „#…“ ändert sich
+  if (!ausLink()) {
     K.bereit().then(stand => {
       if (stand.angemeldet && VOR) {
         // Schon angemeldet: nicht von selbst ablegen – sonst könnte ein fremder Link etwas ins Depot legen. Der Knopf im Hinweis tut es.

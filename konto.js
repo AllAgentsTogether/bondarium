@@ -1,4 +1,4 @@
-/* konto.js – Benutzerbereich „Mein Depot“ im Browser (seit 30.09.2026): Anmeldung per E-Mail-Link und Merkliste.
+/* konto.js – Benutzerbereich „Mein Depot“ im Browser (seit 30.09.2026): Anmeldung mit E-Mail und Passwort, Merkliste.
    Spricht mit konto.php (Beschreibung dort und in docs/KONTO.md). Geladen auf konto.html, anleihe.html und
    anleihen-suche.html – nach site.js:
      <script src="site.js"></script><script src="konto.js"></script>
@@ -14,9 +14,15 @@
      knopf(isin[, klasse])    HTML des Merken-Knopfs; Klick, Beschriftung und Zustand übernimmt dieses Skript –
                               auch für Knöpfe, die eine Seite später ins Dokument schreibt
      merken(isin), entfernen(isin)            Promise mit dem neuen Stand; abgelehnt mit { status } bei Fehlern
-     link(email[, isin])      Anmelde-Link anfordern → Promise { ok, status, minuten }
-     einloesen(kennwort)      Anmelde-Link einlösen → Promise { ok, status, gemerkt }
-     abmelden(), loeschen()   Promise { ok, status }
+     registrieren(email, passwort[, isin])   E-Mail mit Bestätigungslink anfordern → Promise { ok, status, stunden }
+     bestaetigen(kennwort, passwort)         Registrierung abschließen (Link aus der E-Mail + Passwort) → { ok, status, gemerkt }
+     anmelden(email, passwort[, isin])       → Promise { ok, status, gemerkt }
+     vergessen(email)                        E-Mail mit Link für ein neues Passwort → Promise { ok, status, minuten }
+     linkPruefen(kennwort)                   gilt der Link noch? → Promise { ok, art: "neu" | "passwort", email }
+     passwortNeu(kennwort, passwort)         neues Passwort über den Link setzen → Promise { ok, status }
+     passwortAendern(alt, neu)               angemeldet das Passwort ändern → Promise { ok, status }
+     abmelden(), loeschen(passwort)          Promise { ok, status }
+     Bei ok nach bestaetigen, anmelden und passwortNeu ist man angemeldet (der Stand ist übernommen).
      beiAenderung(fn)         fn(stand) nach jeder Änderung des Stands */
 (function (MC) {
   "use strict";
@@ -109,6 +115,10 @@
     if (b) klick(b);
   });
 
+  // Antwort nach einer Anmeldung bzw. Abmeldung übernehmen: Der Stand gilt sofort, ohne neue Abfrage
+  function an(j) { if (j.ok) abfrage = Promise.resolve(uebernimm(j)); return j; }
+  function ab(j) { if (j.ok) abfrage = Promise.resolve(uebernimm(null)); return j; }
+
   MC.konto = {
     bereit: bereit,
     stand: function () { return st; },
@@ -116,12 +126,15 @@
     knopf: knopf,
     merken: function (isin) { return aendere("merken", isin); },
     entfernen: function (isin) { return aendere("entfernen", isin); },
-    link: function (email, isin, falle) { return sende("POST", { aktion: "link", email: email, isin: isin || "", website: falle || "" }); },
-    einloesen: function (kennwort) {
-      return sende("POST", { aktion: "einloesen", token: kennwort }).then(function (j) { if (j.ok) { abfrage = Promise.resolve(uebernimm(j)); } return j; });
-    },
-    abmelden: function () { return sende("POST", { aktion: "abmelden" }).then(function (j) { if (j.ok) { abfrage = Promise.resolve(uebernimm(null)); } return j; }); },
-    loeschen: function () { return sende("POST", { aktion: "loeschen" }).then(function (j) { if (j.ok) { abfrage = Promise.resolve(uebernimm(null)); } return j; }); },
+    registrieren: function (email, passwort, isin, falle) { return sende("POST", { aktion: "registrieren", email: email, passwort: passwort, isin: isin || "", website: falle || "" }); },
+    bestaetigen: function (kennwort, passwort) { return sende("POST", { aktion: "bestaetigen", token: kennwort, passwort: passwort }).then(an); },
+    anmelden: function (email, passwort, isin) { return sende("POST", { aktion: "anmelden", email: email, passwort: passwort, isin: isin || "" }).then(an); },
+    vergessen: function (email, falle) { return sende("POST", { aktion: "vergessen", email: email, website: falle || "" }); },
+    linkPruefen: function (kennwort) { return sende("POST", { aktion: "link-pruefen", token: kennwort }); },
+    passwortNeu: function (kennwort, passwort) { return sende("POST", { aktion: "passwort-neu", token: kennwort, passwort: passwort }).then(an); },
+    passwortAendern: function (alt, neu) { return sende("POST", { aktion: "passwort-aendern", alt: alt, passwort: neu }); },
+    abmelden: function () { return sende("POST", { aktion: "abmelden" }).then(ab); },
+    loeschen: function (passwort) { return sende("POST", { aktion: "loeschen", passwort: passwort || "" }).then(ab); },
     beiAenderung: function (fn) { hoerer.push(fn); }
   };
 
