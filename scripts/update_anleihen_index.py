@@ -27,6 +27,14 @@ Einstufung (Spalte „Art“) je Emittent, über das LEI-Register GLEIF:
 Land: Konzernmutter („ultimate parent“, sonst direkte Mutter) aus der Beziehungsdatei des
 LEI-Registers (GLEIF Golden Copy, Relationship Records, wöchentlich ~25 MB) – so zählt
 etwa die Mercedes-Benz International Finance B.V. zu Deutschland, nicht zu den Niederlanden.
+Seit 30.09.2026 zusätzlich für Finanzierungsgesellschaften, die GLEIF keine Mutter melden, sondern nur eine
+Ausnahme („NON_PUBLIC“, „NON_CONSOLIDATING“ …): Konzernmutter über ihre Namensverwandten in der GLEIF-Gesamtdatei
+(Level 1, ~500 MB, gestreamt; siehe namensverwandte()). Beispiele: BMW International Investment B.V. → BMW AG (DE),
+Nestlé Finance International Ltd. → Nestlé S.A. (CH), Würth Finance International B.V. → Adolf Würth (DE).
+Gemessen mit der Gesamtdatei vom 26.09.2026: 4 076 Unternehmen, davon 1 150 mit gemeldeter Mutter; die Regel ordnet
+61 Finanzierungsgesellschaften (275 Anleihen) einem Konzern in einem anderen Land zu. Einzelne Fehlgriffe bei
+Allerweltsnamen sind möglich (etwa „Iceland Bondco“ → Iceland Seafood); das Protokoll listet jede Zuordnung.
+Nicht betroffen: Emittenten mit gemeldeter Mutter – so zählt TenneT GmbH & Co. KG laut GLEIF zu TenneT Holding (NL).
 
 Drossel: Die Gesamtdatei erscheint einmal pro Woche. Das Skript fragt die
 Dateiliste erst, wenn der Index-Stand mindestens 7 Tage alt ist, und baut nur
@@ -88,10 +96,13 @@ import io
 import json
 import os
 import re
+import shutil
 import sys
 import tempfile
+import time
 import unicodedata
 import urllib.parse
+import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 from pathlib import Path
@@ -105,6 +116,9 @@ FILES_API = ("https://registers.esma.europa.eu/solr/esma_registers_firds_files/s
 GLEIF_API = "https://api.gleif.org/api/v1/lei-records?"
 GLEIF_GC = "https://goldencopy.gleif.org/api/v2/golden-copies/publishes/latest"
 SUPRANATIONAL = re.compile(r"EUROPEAN (FINANCIAL STABILITY|STABILITY MECHANISM|UNION)|^EUROPEAN UNION$", re.IGNORECASE)
+# Finanzierungsgesellschaft am Namen (auf worte() angewandt): nur für sie gilt die Konzernmutter über Namensverwandte
+FINANZIERER = re.compile(r"\b(?:financ\w*|finanz\w*|financiering\w*|finansiering\w*|funding|capital|treasury|invest\w*|"
+                         r"issuer|finco|bondco|emisiones|emissions?)\b")
 UA = {"User-Agent": "bondarium.de Anleihen-Suche (Datenaufbereitung)", "Accept": "*/*"}
 NS = "{urn:iso:std:iso:20022:tech:xsd:auth.017.001.02}"
 
@@ -329,32 +343,117 @@ def gleif(leis: list[str]) -> dict[str, dict]:
     return out
 
 
-def konzernmuetter(leis: set[str]) -> dict[str, str]:
-    """LEI → LEI der Konzernmutter (ultimativ, sonst direkt) aus der GLEIF-Beziehungsdatei."""
+def golden_copy(teil: str, publ: dict | None):
+    """GLEIF-Gesamtdatei (rr = Beziehungen ~25 MB, lei2 = alle Einträge ~500 MB) als Zip in einer Temp-Datei –
+    gestreamt, damit die große Datei nicht im Speicher liegt. Tests: FIXTURE_DIR/gleif-<teil>.csv.zip."""
+    tmp = tempfile.TemporaryFile()
     lokal = os.environ.get("FIXTURE_DIR")
-    if lokal and Path(lokal, "gleif-rr.csv.zip").exists():
-        daten = Path(lokal, "gleif-rr.csv.zip").read_bytes()
+    if lokal and Path(lokal, f"gleif-{teil}.csv.zip").exists():
+        with open(Path(lokal, f"gleif-{teil}.csv.zip"), "rb") as f:
+            shutil.copyfileobj(f, tmp)
     else:
-        url = json.loads(get_with_retry(GLEIF_GC, headers=UA, timeout=60))["data"]["rr"]["full_file"]["csv"]["url"]
-        daten = get_with_retry(url, headers=UA, timeout=300)
+        url = publ[teil]["full_file"]["csv"]["url"]
+        for versuch in range(3):
+            try:
+                tmp.seek(0)
+                tmp.truncate()
+                with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=300) as resp:
+                    shutil.copyfileobj(resp, tmp, 1 << 20)
+                break
+            except Exception as e:  # noqa: BLE001 – Netz- und Übertragungsfehler (auch IncompleteRead)
+                if versuch == 2:
+                    raise
+                log_err(f"GLEIF {teil}: Abruf fehlgeschlagen ({e}) – neuer Versuch")
+                time.sleep(10 * (versuch + 1))
+    tmp.seek(0)
+    return tmp
+
+
+def csv_zeilen(tmp):
+    """Kopf und Zeilen der (einzigen) CSV-Datei im Zip."""
+    z = zipfile.ZipFile(tmp)
+    r = csv.reader(io.TextIOWrapper(z.open(z.namelist()[0]), encoding="utf-8", newline=""))
+    return next(r), r
+
+
+def worte(name: str) -> list[str]:
+    """„Nestlé Finance Int'l Ltd.“ → ["nestle", "finance", "int", "l", "ltd"] (ohne Akzente, ohne führendes „the“)."""
+    w = re.findall(r"[a-z0-9]+", unicodedata.normalize("NFKD", name).encode("ascii", "ignore").decode().lower())
+    return w[1:] if w[:1] == ["the"] else w
+
+
+def namensverwandte(kandidaten: dict[str, str], oben: dict[str, str], hat_kinder: set[str], publ: dict | None) -> dict[str, str]:
+    """Konzernmutter einer Finanzierungsgesellschaft ohne GLEIF-Mutter über ihre Namensverwandten (seit 30.09.2026).
+
+    Viele Finanzierungstöchter melden GLEIF statt ihrer Mutter nur eine Ausnahme (BMW International Investment:
+    „NON_PUBLIC“, Nestlé Finance International und Würth Finance International: „NON_CONSOLIDATING“), andere Töchter
+    desselben Konzerns aber schon. Abstimmung: alle Einträge der GLEIF-Gesamtdatei, deren Name mit denselben 3, 2 oder
+    1 Wörtern beginnt wie der des Emittenten und die eine Mutter melden (Konzernspitzen stimmen für sich selbst).
+    Entscheidend ist der längste Namensanfang mit mindestens 3 Stimmen; hat dort eine Konzernmutter mehr als
+    zwei Drittel (2 von 3 reicht nicht), gilt sie, sonst bleibt der Emittent ohne Mutter. Ein einzelnes Wort muss
+    mindestens 3 Zeichen haben („bmw“ ja, „vz“ nein). Geprüft an den 373 Finanzierungsgesellschaften mit gemeldeter Mutter (Stand 30.09.2026),
+    als hätten sie keine gemeldet: 234 Länder richtig, 3 falsch, 136 ohne Zuordnung."""
+    praefixe = {}
+    for lei, name in kandidaten.items():
+        w = worte(name)
+        praefixe[lei] = [" ".join(w[:k]) for k in (3, 2, 1) if len(w) >= k and (k > 1 or len(w[0]) >= 3)]
+    gesucht = {p for ps in praefixe.values() for p in ps}
+    stimmen = collections.defaultdict(list)
+    csv.field_size_limit(1 << 24)
+    with golden_copy("lei2", publ) as tmp:
+        kopf, zeilen = csv_zeilen(tmp)
+        i_l, i_n = kopf.index("LEI"), kopf.index("Entity.LegalName")
+        for row in zeilen:
+            lei = row[i_l]
+            m = oben.get(lei) or (lei if lei in hat_kinder else None)
+            if not m:
+                continue
+            w = worte(row[i_n])
+            for k in (1, 2, 3):
+                if len(w) >= k and " ".join(w[:k]) in gesucht:
+                    stimmen[" ".join(w[:k])].append((lei, m))
+    out = {}
+    for lei, ps in praefixe.items():
+        for p in ps:
+            v = [m for l, m in stimmen[p] if l != lei]
+            if len(v) >= 3:
+                m, n = collections.Counter(v).most_common(1)[0]
+                if n * 3 > len(v) * 2 and m != lei:
+                    out[lei] = m
+                break
+    return out
+
+
+def konzernmuetter(leis: set[str], firmen: dict[str, str]) -> tuple[dict[str, str], dict[str, str]]:
+    """(LEI → LEI der Konzernmutter laut GLEIF-Beziehungsdatei (ultimativ, sonst direkt),
+        LEI → Konzernmutter über Namensverwandte) – Letzteres nur für Unternehmen (firmen: LEI → Name), die keine
+    Mutter melden, selbst keine Töchter haben und im Namen als Finanzierungsgesellschaft erkennbar sind (FINANZIERER)."""
+    lokal = os.environ.get("FIXTURE_DIR")
+    publ = None if lokal and Path(lokal, "gleif-rr.csv.zip").exists() else \
+        json.loads(get_with_retry(GLEIF_GC, headers=UA, timeout=60))["data"]
     ult, direkt = {}, {}
-    with tempfile.TemporaryFile() as tmp:
-        tmp.write(daten)
-        tmp.seek(0)
-        with zipfile.ZipFile(tmp) as z:
-            with z.open(z.namelist()[0]) as f:
-                r = csv.reader(io.TextIOWrapper(f, encoding="utf-8"))
-                kopf = next(r)
-                i_s, i_e = kopf.index("Relationship.StartNode.NodeID"), kopf.index("Relationship.EndNode.NodeID")
-                i_t, i_st = kopf.index("Relationship.RelationshipType"), kopf.index("Relationship.RelationshipStatus")
-                for row in r:
-                    if row[i_st] != "ACTIVE" or row[i_s] not in leis:
-                        continue
-                    if row[i_t] == "IS_ULTIMATELY_CONSOLIDATED_BY":
-                        ult[row[i_s]] = row[i_e]
-                    elif row[i_t] == "IS_DIRECTLY_CONSOLIDATED_BY":
-                        direkt[row[i_s]] = row[i_e]
-    return {lei: ult.get(lei) or direkt[lei] for lei in set(ult) | set(direkt)}
+    with golden_copy("rr", publ) as tmp:
+        kopf, zeilen = csv_zeilen(tmp)
+        i_s, i_e = kopf.index("Relationship.StartNode.NodeID"), kopf.index("Relationship.EndNode.NodeID")
+        i_t, i_st = kopf.index("Relationship.RelationshipType"), kopf.index("Relationship.RelationshipStatus")
+        for row in zeilen:
+            if row[i_st] != "ACTIVE":
+                continue
+            if row[i_t] == "IS_ULTIMATELY_CONSOLIDATED_BY":
+                ult[row[i_s]] = row[i_e]
+            elif row[i_t] == "IS_DIRECTLY_CONSOLIDATED_BY":
+                direkt[row[i_s]] = row[i_e]
+    oben = {lei: ult.get(lei) or direkt[lei] for lei in set(ult) | set(direkt)}
+    hat_kinder = set(ult.values()) | set(direkt.values())
+    mutter = {lei: oben[lei] for lei in leis if lei in oben}
+    kandidaten = {lei: n for lei, n in firmen.items()
+                  if lei not in oben and lei not in hat_kinder and FINANZIERER.search(" ".join(worte(n)))}
+    try:
+        verwandt = namensverwandte(kandidaten, oben, hat_kinder, publ)
+    except Exception as e:  # noqa: BLE001 – ohne Gesamtdatei gelten nur die gemeldeten Mütter
+        log_err(f"GLEIF-Gesamtdatei nicht verfügbar ({e}) – Konzernsitz nur aus gemeldeten Müttern.")
+        verwandt = {}
+    return mutter, verwandt
 
 
 def land(lei: str, k: int, register: dict, mutter: dict, cfi4: collections.Counter) -> str:
@@ -716,13 +815,20 @@ def main() -> int:
     art = {lei: einstufen(lei, register.get(lei), namen[lei], cfi4[lei]) for lei in namen}
 
     try:
-        mutter = konzernmuetter(set(namen))
+        firmen = {lei: register[lei]["name"] for lei in namen if art[lei][0] == 2 and lei in register}
+        mutter, verwandt = konzernmuetter(set(namen), firmen)
+        mutter.update(verwandt)
         fehlend = sorted(set(mutter.values()) - set(register))
         register.update(gleif(fehlend))
     except Exception as e:  # noqa: BLE001 – ohne Mütter gilt der Sitz des Emittenten
         log_err(f"GLEIF-Beziehungsdatei nicht verfügbar ({e}) – Land = Sitz des Emittenten.")
-        mutter = {}
+        mutter, verwandt = {}, {}
     laender = {lei: land(lei, art[lei][0], register, mutter, cfi4[lei]) for lei in namen}
+    umgezogen = sorted((lei for lei in verwandt if laender[lei] != register[lei].get("land")), key=lambda l: register[l]["name"])
+    print(f"Konzernmutter über Namensverwandte: {len(verwandt)} Finanzierungsgesellschaften, davon {len(umgezogen)} "
+          f"mit anderem Land als dem eigenen Sitz" + "".join(
+              f"\n  {register[l]['name']} ({register[l].get('land')}) → {register.get(verwandt[l], {}).get('name', verwandt[l])} ({laender[l]})"
+              for l in umgezogen))
 
     # Plausibilität: ein kaputter Abruf darf den Index nicht leeren
     n_alt = len(alt.get("rows", []))
