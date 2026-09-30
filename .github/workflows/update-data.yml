@@ -270,12 +270,13 @@ jobs:
       - name: Kurs-Jahresliste schreiben
         run: if [ -f scripts/kurse_jahre.py ]; then python3 scripts/kurse_jahre.py; fi
 
-      # ----- PHP-Syntax prüfen (seit 30.09.2026): ein Tippfehler in kontakt.php oder refresh.php soll den Lauf stoppen,
+      # ----- PHP-Syntax prüfen (seit 30.09.2026): ein Tippfehler in kontakt.php, konto.php oder refresh.php soll den Lauf stoppen,
       #       nicht erst beim Besucher als Fehler 500 auffallen. Lokal gibt es kein PHP – der Runner bringt es mit. -----
       - name: PHP-Syntax prüfen
         run: |
           if command -v php >/dev/null 2>&1; then
             php -l kontakt.php
+            php -l konto.php
             php -l strato-cron/refresh.php
           else
             echo "::warning::php fehlt auf dem Runner – Syntaxprüfung übersprungen"
@@ -292,6 +293,7 @@ jobs:
           rm -f _site/package.json _site/package-lock.json   # Build-Metadaten gehören nicht auf den Webroot
           cp .htaccess _site/.htaccess
           cp kontakt.php _site/kontakt.php   # Kontaktformular (ueber-uns.html#kontakt, seit 30.09.2026)
+          cp konto.php _site/konto.php   # Benutzerbereich (konto.html, seit 30.09.2026): Anmelde-Link und Merkliste; die Datenbank legt das Skript auf dem Server an (konto-daten/, nie im Bau)
           python3 scripts/security_txt.py _site   # /.well-known/security.txt (Adresse für Sicherheitsmeldungen, RFC 9116)
           cp -r kurse _site/kurse   # Kursverlauf: kurse/<Jahr>/<teil>.json und kurse/bund/<ISIN>.json
           cp -r anleihen _site/anleihen   # Stammdaten je ISIN für den Steckbrief anleihe.html (256 Teildateien)
@@ -500,6 +502,20 @@ jobs:
           code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 https://www.bondarium.de/trigger/refresh-config.php || echo "000")
           echo "refresh-config.php -> HTTP $code"
           if [ "$code" = "200" ]; then echo "::error::/trigger/refresh-config.php ist öffentlich lesbar – Token sofort rotieren!"; exit 1; fi
+
+      # Der Datenordner des Benutzerbereichs (konto-daten/, Datenbank mit E-Mail-Adressen) darf NIE abrufbar sein
+      # (403 durch die .htaccess im Stammordner und im Ordner). Ein Deploy, nach dem er es wäre, wird rot.
+      - name: Nach-Deploy-Prüfung (Benutzerbereich – Datenordner gesperrt, Schnittstelle antwortet)
+        continue-on-error: true
+        run: |
+          for pfad in konto-daten/ konto-daten/index.html konto-daten/.sperre; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://www.bondarium.de/$pfad" || echo "000")
+            echo "$pfad -> HTTP $code"
+            if [ "$code" = "200" ]; then echo "::error::/$pfad ist öffentlich abrufbar – Datenordner des Benutzerbereichs sofort sperren!"; exit 1; fi
+          done
+          antwort=$(curl -s --max-time 30 "https://www.bondarium.de/konto.php?aktion=status" || true)
+          echo "konto.php?aktion=status -> $antwort"
+          case "$antwort" in *'"status":"ok"'*) ;; *) echo "::error::Benutzerbereich antwortet nicht mit „ok“ – Anmelden und Merkliste sind gestört"; exit 1;; esac
 
       # ----- Automatische Alarm-Prüfung: schlägt fehl (= E-Mail von GitHub), wenn
       #       Daten veraltet sind. Nur im Abruf-Lauf (1×/Tag), nicht bei

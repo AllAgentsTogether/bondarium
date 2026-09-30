@@ -7,3 +7,4 @@ anleihen-kurse 2.json
 refresh-config.php
 .env*
 .claude/
+konto-daten/

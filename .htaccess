@@ -13,6 +13,10 @@ AddType font/woff2 .woff2
 
 <IfModule mod_rewrite.c>
 RewriteEngine On
+# ---- Benutzerbereich (seit 30.09.2026): Der Ordner konto-daten/ enthält die Datenbank von konto.php (E-Mail-Adressen,
+#      Merklisten) und wird nie ausgeliefert – auf keiner Domain, vor allen Weiterleitungen. Zweiter Schutz: die
+#      .htaccess im Ordner selbst (legt konto.php an), dritter: die Sperre für *.sqlite weiter unten. ----
+RewriteRule ^konto-daten(/|$) - [F,L]
 # ---- HTTPS erzwingen ----
 # Beide Bedingungen (UND-verknüpft) verhindern eine Redirect-Schleife, wenn
 # Strato TLS vor dem Apache terminiert: dann ist %{HTTPS} zwar "off", aber
@@ -60,6 +64,11 @@ RewriteRule ^(data|sentiment|valuations|einfluss|verlierer)\.json$ - [G,L]
 <Files ".deploy-manifest">
   Require all denied
 </Files>
+
+# ---- Datenbank-Dateien nie ausliefern (seit 30.09.2026, siehe konto-daten/ oben) ----
+<FilesMatch "\.sqlite(-journal|-wal|-shm)?$">
+  Require all denied
+</FilesMatch>
 
 # ---- Eigene 404-Seite (mit Marke und Navigation) ----
 ErrorDocument 404 /404.html
