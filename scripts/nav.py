@@ -139,7 +139,7 @@ STUFE_ZEILE = {"Verstehen": "Vom Einstieg bis zum Profi", "Entscheiden": "Welche
 # Nutzerwunsch „Die Anleihen-Suche soll ganz oben raus“ → Eintrag im Menü Kaufen (Gruppe „Finden“)
 BUTTONS = []
 # Direktlinks ohne Aufklapper (ganz rechts). „Mein Depot“ (seit 30.09.2026): Benutzerbereich konto.html – Anmeldung und Merkliste
-LINKS = [("Über uns", "ueber-uns.html"), ("Mein Depot", "konto.html")]
+LINKS = [("Mein Depot", "konto.html"), ("Über uns", "ueber-uns.html")]   # seit 30.09.2026 abends: Mein Depot vor Über uns (Nutzerwunsch)
 # Suchfeld rechts außen (seit 26.09.2026, Nutzerwunsch „Feld ganz oben rechts … direkt in die Anleihensuche“):
 # schickt q an die Anleihen-Suche; leer abgeschickt führt site.js direkt auf die Suchseite (Fokus ins Suchfeld).
 # Im DOM nach dem Menü (Tab-Reihenfolge Marke → Menü → Suche); der Lupen-Knopf steht per CSS links im Feld.
