@@ -13,6 +13,7 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
  <style>
@@ -25,7 +26,7 @@
   .kto-hinweis { display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: start; max-width: 720px; background: var(--green-tint); border: 1px solid var(--green-line); border-radius: 12px; padding: 11px 14px; margin-bottom: 18px; font-size: 15px; line-height: 1.5; }
   .kto-hinweis[hidden] { display: none; }
   .kto-hinweis::before { content: "✓"; width: 24px; height: 24px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 700; color: var(--green-text); }
-  .kto-hinweis.fehler { background: #FBEDE7; border-color: rgba(153,60,29,0.35); }
+  .kto-hinweis.fehler { background: #FBE8D8; border-color: rgba(153,60,29,0.35); }
   .kto-hinweis.fehler::before { content: "!"; color: var(--down); }
   .kto-hinweis .merkbtn { margin-left: 6px; vertical-align: 1px; }
   .kto-textbtn { font: inherit; color: var(--green-text); background: none; border: 0; padding: 0; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; cursor: pointer; }
@@ -63,7 +64,7 @@
   .kto-post b { font-weight: 700; overflow-wrap: anywhere; }
   .kto-schritte { list-style: none; counter-reset: s; display: grid; gap: 16px; margin: 6px 0 0; padding: 0; }
   .kto-schritte li { counter-increment: s; display: grid; grid-template-columns: 34px 1fr; gap: 2px 14px; font-size: 15.5px; line-height: 1.55; color: var(--text); }
-  .kto-schritte li::before { content: counter(s); grid-row: 1 / span 2; width: 34px; height: 34px; border-radius: 50%; background: var(--green); color: var(--ink); font-weight: 700; font-size: 15px; display: grid; place-items: center; }
+  .kto-schritte li::before { content: counter(s); grid-row: 1 / span 2; width: 34px; height: 34px; border-radius: 50%; background: var(--green); color: var(--ink); border: 2px solid #1A1A19; box-sizing: border-box; font-weight: 700; font-size: 15px; display: grid; place-items: center; }
   .kto-schritte b { display: block; font-size: 17px; font-weight: 700; color: var(--ink); }
   .kto-schritte span { grid-column: 2; }
   .kto-klein { font-size: 13.5px; line-height: 1.6; color: var(--text); margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--rule); }
@@ -123,7 +124,7 @@
   .kto-konto summary:focus-visible { outline: 2px solid var(--line); outline-offset: 3px; border-radius: 3px; }
   .kto-konto p { max-width: 640px; line-height: 1.6; margin-top: 10px; }
   .kto-weg { font: inherit; font-size: 14px; font-weight: 600; color: #fff; background: var(--down); border: 1px solid var(--down); border-radius: 999px; padding: 8px 16px; cursor: pointer; }
-  .kto-weg:hover { background: #7E2F15; }
+  .kto-weg:hover { background: #A2561C; }
   .kto-weg:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
   .kto-weg[disabled] { opacity: 0.6; cursor: default; }
   @media (max-width: 860px) {
@@ -206,8 +207,13 @@
   </header>
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><span aria-current="page">Mein Depot</span></li></ol></nav>
   <main id="main">
-    <h1>Mein Depot</h1>
-    <p class="sub">Merke dir Anleihen und sieh sie hier wieder – mit Kurs und Rendite vom letzten Börsentag, auf jedem Gerät.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Mein Depot</h1>
+        <p class="sub">Merke dir Anleihen und sieh sie hier wieder – mit Kurs und Rendite vom letzten Börsentag, auf jedem Gerät.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-konto.svg" alt="" width="232" height="160"></div>
+    </div>
     <noscript><p class="note">Der Benutzerbereich braucht JavaScript.</p></noscript>
     <p class="kto-hinweis" id="hinweis" role="status" aria-live="polite" hidden></p>
     <p class="kto-lade" id="lade">Wird geladen …</p>

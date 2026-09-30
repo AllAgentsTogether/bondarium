@@ -27,17 +27,18 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
  <style>
   /* Farbvariablen und .kap/.k-bild/.merk kommen aus base.css. Seiteneigene Bausteine: Schaubild-Legende, Gründe, Zielgruppen-Karten, dunkles Band */
-  .hero { max-width: 720px; }
+  .hero { max-width: none; }   /* Bildwelt 2.0: volle Breite für Titel + Illustration (.b2-kopf); die Textbreite begrenzt .sub */
   .hero .sub { margin-bottom: 0; }
   .kap { margin-top: 30px; }
   .k-bild svg .axt { font-size: 13px; font-weight: 600; fill: #55544F; }
   .lg { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12.5px; font-weight: 600; color: var(--text); margin: -2px 0 6px; }
   .lg span::before { content: ""; display: inline-block; vertical-align: middle; margin: 0 6px 2px 0; }
-  .lg .lg-a::before { width: 18px; height: 4px; border-radius: 2px; background: #1DA300; }
+  .lg .lg-a::before { width: 18px; height: 4px; border-radius: 2px; background: #157C00; }
   .lg .lg-z::before { width: 9px; height: 9px; border-radius: 50%; background: #39FF14; box-shadow: inset 0 0 0 1.6px #157C00; }
   .lg .lg-t::before { width: 18px; height: 2px; border-radius: 1px; background: rgba(26,26,25,0.7); }
   .lg .lg-w::before { width: 9px; height: 9px; border-radius: 50%; background: #CF7430; }
@@ -51,7 +52,10 @@
   .wer { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
   .karte { display: flex; flex-direction: column; gap: 12px; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 22px; box-shadow: var(--shadow); }
   .karte .kopf { display: flex; align-items: center; gap: 16px; margin-bottom: 2px; }
-  .karte .kopf img { flex: none; width: 76px; height: 76px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px #fff, 0 0 0 5px var(--green-line); }
+  .karte .kopf img { flex: none; display: block; width: 76px; height: 76px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px #fff, 0 0 0 5px #157C00; }
+  /* Bildwelt 2.0 (30.09.2026): Porträt-Rahmen mit Kupon-Punkt */
+  .b2-por { position: relative; flex: none; display: block; }
+  .b2-por::after { content: ""; position: absolute; right: -3px; top: -3px; width: 16px; height: 16px; border-radius: 50%; background: #39FF14; border: 2px solid #1A1A19; box-sizing: border-box; }
   .karte .kicker { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); margin-bottom: 4px; }
   .karte h3 { margin-bottom: 0; }
   .karte > p { font-size: 15.5px; line-height: 1.6; color: var(--ink); }
@@ -74,7 +78,7 @@
   .band .go.leise:hover { background: rgba(255,255,255,0.08); }
   .band a:focus-visible { outline-color: var(--green); }
   /* Risiko sichtbar statt Kleintext (seit 30.09.2026) */
-  .risiko-hw { margin-top: 18px; background: #FBEADB; border-radius: 12px; padding: 14px 18px; font-size: 15.5px; line-height: 1.6; color: var(--ink); max-width: 820px; }
+  .risiko-hw { margin-top: 18px; background: #FBE8D8; border-radius: 12px; padding: 14px 18px; font-size: 15.5px; line-height: 1.6; color: var(--ink); max-width: 820px; }
   .risiko-hw strong { font-weight: 600; }
   .risiko-hw a { color: var(--green-text); }
   .kontakt p { font-size: 16.5px; line-height: 1.6; color: var(--ink); max-width: 720px; }
@@ -167,8 +171,13 @@
   <main id="main">
 
   <div class="hero">
-    <h1>Über Bondarium</h1>
-    <p class="sub"><strong>Zinsen, die bleiben:</strong> Wir machen Anleihen verständlich – für alle, die sich Zinsen für Jahre sichern wollen, statt ihnen hinterherzulaufen. Privat wie im Unternehmen.</p>
+    <div class="b2-kopf">
+      <div>
+        <h1>Über Bondarium</h1>
+        <p class="sub"><strong>Zinsen, die bleiben:</strong> Wir machen Anleihen verständlich – für alle, die sich Zinsen für Jahre sichern wollen, statt ihnen hinterherzulaufen. Privat wie im Unternehmen.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-ueber-uns.svg" alt="" width="232" height="160"></div>
+    </div>
   </div>
 
   <section class="kap" aria-labelledby="h-bild">
@@ -186,7 +195,7 @@
       <text x="410" y="218" text-anchor="middle" class="tk" font-size="12" fill="#55544F">Fälligkeit</text>
       <path d="M40 62 H95 V128 H150 V84 H205 V148 H265 V114 H315 V166 L444 184" fill="none" stroke="#1A1A19" stroke-opacity="0.7" stroke-width="2.2" stroke-linejoin="round"/>
       <circle cx="150" cy="128" r="5" fill="#CF7430"/><circle cx="265" cy="148" r="5" fill="#CF7430"/>
-      <line x1="40" y1="100" x2="410" y2="100" stroke="#1DA300" stroke-width="4" stroke-linecap="round"/>
+      <line x1="40" y1="100" x2="410" y2="100" stroke="#157C00" stroke-width="4" stroke-linecap="round"/>
       <g fill="#39FF14" stroke="#157C00" stroke-width="1.6"><circle cx="101.7" cy="100" r="5"/><circle cx="163.3" cy="100" r="5"/><circle cx="225" cy="100" r="5"/><circle cx="286.7" cy="100" r="5"/><circle cx="348.3" cy="100" r="5"/><circle cx="410" cy="100" r="5"/></g>
       <text x="46" y="52" class="an" font-size="13" font-weight="600" fill="#55544F">Lockangebot</text>
       <text x="364" y="88" text-anchor="middle" class="an" font-size="13" font-weight="600" fill="#157C00">fester Zins</text>
@@ -223,7 +232,7 @@
     <h2 id="h-wer">Für wen wir das machen</h2>
     <div class="wer">
       <div class="karte">
-        <div class="kopf"><img src="anlegerprofil-privatanleger.webp" width="76" height="76" alt="" loading="lazy" decoding="async"><div><p class="kicker">Privatpersonen</p><h3>Für dein Erspartes</h3></div></div>
+        <div class="kopf"><span class="b2-por"><img src="anlegerprofil-privatanleger.webp" width="76" height="76" alt="" loading="lazy" decoding="async"></span><div><p class="kicker">Privatpersonen</p><h3>Für dein Erspartes</h3></div></div>
         <p>Du willst, dass dein Geld verlässlich Zinsen bringt – ohne jedes Jahr die Bank zu wechseln. Dafür können Anleihen passen.</p>
         <ul>
           <li>Ein regelmäßiges Einkommen aus Zinsen</li>
@@ -234,7 +243,7 @@
         <a href="anlegerprofile.html">Sind Anleihen etwas für dich? →</a>
       </div>
       <div class="karte">
-        <div class="kopf"><img src="anlegerprofil-unternehmerin.webp" width="76" height="76" alt="" loading="lazy" decoding="async"><div><p class="kicker">Unternehmerinnen und Unternehmer</p><h3>Für die Rücklagen deiner Firma</h3></div></div>
+        <div class="kopf"><span class="b2-por"><img src="anlegerprofil-unternehmerin.webp" width="76" height="76" alt="" loading="lazy" decoding="async"></span><div><p class="kicker">Unternehmerinnen und Unternehmer</p><h3>Für die Rücklagen deiner Firma</h3></div></div>
         <p>Alle Gründe gelten auch hier – und einer kommt dazu:</p>
         <p class="plus"><span aria-hidden="true">+</span>Für Firmen gibt es deutlich weniger Tagesgeld-Angebote. Viele Zinsaktionen gelten nur für Privatkunden.</p>
         <ul>
