@@ -391,7 +391,7 @@ jobs:
               ("repo",     "AllAgentsTogether/bondarium"),
               ("workflow", "update-data.yml"),
               ("branch",   "main"),
-              ("secret",   os.environ.get("TRIGGER_KEY", "")),
+              ("secret",   os.environ.get("TRIGGER_KEY", "").strip()),   # strip: beim Einfügen rutscht leicht ein Zeilenumbruch mit
               ("token",    os.environ.get("GH_DISPATCH_TOKEN", "")),
           ]
           lines = ["<?php", "return ["]

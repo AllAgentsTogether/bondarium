@@ -34,12 +34,13 @@ if ($isCli) {
     // Aufruf über das Web: nur mit korrektem Schlüssel auslösbar.
     // Ohne konfiguriertes Secret (leer/fehlend) gar nicht erst vergleichen –
     // sonst wäre der Trigger mit ?key= (leer) für jedermann auslösbar.
-    if (!is_string($cfg['secret']) || $cfg['secret'] === '') {
+    if (!is_string($cfg['secret']) || trim($cfg['secret']) === '') {
         http_response_code(503);
         exit('not configured');
     }
     $key = $_SERVER['HTTP_X_TRIGGER_KEY'] ?? $_POST['key'] ?? '';
-    if (!is_string($key) || !hash_equals($cfg['secret'], $key)) {
+    // trim: ein Leerzeichen oder Zeilenumbruch vom Kopieren soll den Schlüssel nicht ungültig machen
+    if (!is_string($key) || !hash_equals(trim($cfg['secret']), trim($key))) {
         http_response_code(403);
         exit('Forbidden');
     }
