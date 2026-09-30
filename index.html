@@ -551,6 +551,9 @@
     .kwv .kw-bis, .kwv .kw-e { font-size: 14px; }
     .spk { height: 72px; }
   }
+  /* 01.10.2026 (Nutzerwunsch): Sechs Beispiele stündlich aus den Top 10 – drei Staats-, drei Unternehmensanleihen, dazwischen ein etwas kräftigerer Strich (entfällt beim Sortieren) */
+  .itab tbody:not(.sortiert) tr.gr-ende > td { border-bottom: 2px solid rgba(26,26,25,0.2); }
+  @media (min-width: 601px) { .itab td.nm a { display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; } }   /* lange Emittentennamen mit Auslassung */
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Anleihen verstehen und finden", "headline": "Anleihen verstehen und finden", "description": "Anleihen verstehen und finden: Wissen in kurzen Schritten, Renditen seit 1970, die meistgehandelten Anleihen und eine Suche über rund 33.000 Anleihen.", "inLanguage": "de", "isAccessibleForFree": true, "dateModified": "2026-09-30", "publisher": {"@type": "Organization", "name": "Bondarium", "url": "https://www.bondarium.de/"}, "mainEntityOfPage": "https://www.bondarium.de/"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Bondarium","alternateName":"bondarium.de","url":"https://www.bondarium.de/","description":"Anleihen in Perspektive: Staats- und Unternehmensanleihen weltweit, Langläufer, die meistgehandelten Anleihen je Land und Restlaufzeit und eine Suche über alle Anleihen an deutschen Börsen.","inLanguage":"de"}</script>
@@ -657,7 +660,7 @@
       </section>
 
       <section class="interessant" aria-labelledby="h-int">
-        <div class="bt mit-link"><div><h2 id="h-int">Sechs Beispiele</h2><p class="bsub">Aus Staats- und Unternehmensanleihen · Kurse und Renditen vom <span id="itab-stand">25.09.2026</span></p></div><a class="more" href="anleihen-suche.html">Zur Anleihen-Suche<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></div>
+        <div class="bt mit-link"><div><h2 id="h-int">Sechs Beispiele</h2><p class="bsub"><span id="itab-her">Aus Staats- und Unternehmensanleihen</span> · Kurse und Renditen vom <span id="itab-stand">25.09.2026</span></p></div><a class="more" href="anleihen-suche.html">Zur Anleihen-Suche<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></div>
         <div class="table-scroll">
           <table class="itab">
           <thead id="itab-head"><tr><th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Anleihe</button></th><th scope="col" class="isin-sp" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th><th scope="col" class="num" data-col="rend"><button type="button" class="sortbtn" data-col="rend">Rendite p.a.</button></th><th scope="col" class="num" data-col="kupon"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th><th scope="col" class="num" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs">Kurs</button></th><th scope="col" class="num" data-col="faellig"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th><th scope="col" data-col="art"><button type="button" class="sortbtn" data-col="art">Art</button></th><th scope="col" class="c" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th><th scope="col" class="num" data-col="stk"><button type="button" class="sortbtn" data-col="stk">Mindestanlage</button></th><th scope="col" class="go-z"><span class="sr-only">Steckbrief</span></th></tr></thead>
@@ -711,17 +714,77 @@ window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']
 
 
 
-// Tageskurse der sechs Beispiele (kurse-auswahl.json, scripts/update_kurse.py – Deutsche Börse / Bundesbank, seit 25.09.2026)
-if (MC.load) MC.load("kurse-auswahl.json").then(function (d) {
-  var st = document.getElementById("itab-stand");
-  if (st && d.stand && MC.datum) st.textContent = MC.datum(d.stand);   // Datum im Abschnittskopf (29.09.2026)
-  var K = d.kurse || {}, fmt = MC.zahl;   // de-DE, echtes Minus (site.js)
-  document.querySelectorAll(".itab tr[data-isin]").forEach(function (tr) {
-    var k = K[tr.getAttribute("data-isin")]; if (!k) return;
-    tr.querySelector(".kurs").textContent = fmt(k[0], 2);
-    tr.querySelector(".rend").textContent = typeof k[1] === "number" ? fmt(k[1], 2) + "\u00a0%" : "–";
-  });
-}).catch(function (e) { console.warn("Tageskurse nicht geladen:", e); });
+// Sechs Beispiele (01.10.2026, Nutzerwunsch): jede Stunde zufällig drei Staats- und drei Unternehmensanleihen aus den
+// Top-10-Listen (je Art aus „nach Ländern“ und „nach Laufzeit“, keine ETFs), möglichst verschiedene Emittenten.
+// Zufall an der Stundennummer wie bei der Hero-Karte: innerhalb einer Stunde sieht jeder dieselben sechs.
+// Rückfall, falls die Listen nicht laden: die festen Zeilen im HTML mit Tageskursen aus kurse-auswahl.json (scripts/update_kurse.py).
+(function () {
+  var body = document.querySelector(".itab tbody"), st = document.getElementById("itab-stand");
+  if (!body || !MC.load) return;
+  var PFEIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg>';
+  var SYM = { EUR: "€", USD: "$", GBP: "£" };
+  var LAND = { "Bundesrepublik Deutschland": "Deutschland", "Hellenische Republik": "Griechenland", "Vereinigte Staaten": "USA", "Vereinigtes Königreich": "Großbritannien" };
+  function name(x) {   // Staaten kurz als Land („Republik Österreich“ → „Österreich“), damit neun Spalten nebeneinander passen
+    var n = x.emittent || x.isin;
+    return x.art === "Unternehmen" ? n : LAND[n] || n.replace(/^(Republik|Königreich( der)?) /, "");
+  }
+  function tageskurse() {
+    MC.load("kurse-auswahl.json").then(function (d) {
+      if (st && d.stand && MC.datum) st.textContent = MC.datum(d.stand);
+      var K = d.kurse || {};
+      body.querySelectorAll("tr[data-isin]").forEach(function (tr) {
+        var k = K[tr.getAttribute("data-isin")]; if (!k) return;
+        tr.querySelector(".kurs").textContent = MC.zahl(k[0], 2);
+        tr.querySelector(".rend").textContent = typeof k[1] === "number" ? MC.zahl(k[1], 2) + "\u00a0%" : "–";
+      });
+    }).catch(function (e) { console.warn("Tageskurse nicht geladen:", e); });
+  }
+  function laden(namen) {
+    return Promise.all(namen.map(function (n) { return MC.load(n + ".json").catch(function () { return null; }); })).then(function (ds) {
+      var pool = {}, stand = "";
+      ds.forEach(function (d) {
+        if (!d || !d.gruppen) return;
+        if (d.stand > stand) stand = d.stand;
+        Object.keys(d.gruppen).forEach(function (g) {
+          (d.gruppen[g] || []).forEach(function (x) { if (x && x.isin && x.faellig && typeof x.rendite === "number" && typeof x.kurs === "number") pool[x.isin] = x; });
+        });
+      });
+      return { liste: Object.keys(pool).sort().map(function (i) { return pool[i]; }), stand: stand };
+    });
+  }
+  function zufall(seed) {   // xorshift32, Startwert aus der Stundennummer
+    var t = (seed ^ 0x9E3779B9) >>> 0 || 1;
+    return function () { t ^= t << 13; t >>>= 0; t ^= t >>> 17; t ^= t << 5; t >>>= 0; return t / 4294967296; };
+  }
+  function ziehe(liste, n, rnd) {   // n zufällige, erst verschiedene Emittenten, dann auffüllen
+    var a = liste.slice(), wahl = [], em = {};
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(rnd() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
+    a.forEach(function (x) { if (wahl.length < n && !em[x.emittent]) { em[x.emittent] = 1; wahl.push(x); } });
+    a.forEach(function (x) { if (wahl.length < n && wahl.indexOf(x) < 0) wahl.push(x); });
+    return wahl;
+  }
+  function zeile(x, ende) {
+    var e = MC.esc, isin = e(x.isin), url = "anleihe.html?isin=" + encodeURIComponent(x.isin), d = x.faellig.split("-"), f = d[2] + "." + d[1] + "." + d[0];
+    var u = x.art === "Unternehmen", stk = typeof x.stk === "number" ? MC.zahl(x.stk, x.stk % 1 ? (x.stk < 0.01 ? 3 : 2) : 0) + "\u00a0" + e(SYM[x.cur] || x.cur || "") : "–";
+    return '<tr data-isin="' + isin + '"' + (ende ? ' class="gr-ende"' : "") + '><td class="nm"><a href="' + url + '" title="' + e(x.emittent || "") + '">' + e(name(x)) + '</a><small class="nm-i">' + isin + '</small><small class="nm-f">fällig ' + f + '</small></td>' +
+      '<td class="isin-sp">' + isin + '</td><td class="num ren rend">' + MC.zahl(x.rendite, 2) + '\u00a0%</td><td class="num">' + (x.kupon > 0 ? MC.zahl(x.kupon, 2) : "0") + '\u00a0%</td>' +
+      '<td class="num kurs">' + MC.zahl(x.kurs, 2) + '</td><td class="num">' + f + '</td><td><span class="art' + (u ? ' u">Unternehmen' : '">Staat') + '</span></td>' +
+      '<td class="c">' + e(x.cur || "") + '</td><td class="num">' + stk + '</td><td class="go-z"><a href="' + url + '" tabindex="-1" aria-hidden="true">' + PFEIL + '</a></td></tr>';
+  }
+  Promise.all([laden(["top10-staatsanleihen-laender", "top10-staatsanleihen-laufzeit"]), laden(["top10-unternehmensanleihen-laender", "top10-unternehmensanleihen-laufzeit"])]).then(function (r) {
+    if (r[0].liste.length < 3 || r[1].liste.length < 3) return tageskurse();
+    var her = document.getElementById("itab-her"); if (her) her.textContent = "Aus den Top 10 · stündlich neu gewählt";
+    var stand = r[0].stand > r[1].stand ? r[0].stand : r[1].stand;
+    if (st && stand && MC.datum) st.textContent = MC.datum(stand);
+    function zeige() {
+      var h = Math.floor(Date.now() / 3600000), s = ziehe(r[0].liste, 3, zufall(h)), u = ziehe(r[1].liste, 3, zufall(h + 7919));
+      body.innerHTML = s.map(function (x, i) { return zeile(x, i === 2); }).concat(u.map(function (x) { return zeile(x, false); })).join("");
+      body.dispatchEvent(new Event("itab-neu"));   // Sortierung (unten) übernimmt die neuen Zeilen
+      setTimeout(zeige, 3600000 - Date.now() % 3600000 + 500);   // zur vollen Stunde wechseln, auch bei offener Seite
+    }
+    zeige();
+  }).catch(tageskurse);
+})();
 
 // Hero-Karte (01.10.2026): jede Stunde zufällig eine Anleihe aus allen Einträgen der vier Top-10-Listen (keine ETFs).
 // Der Zufall hängt an der Stundennummer: innerhalb einer Stunde zeigt jeder Aufruf dieselbe Anleihe, zur vollen Stunde wechselt sie.
@@ -770,8 +833,12 @@ if (MC.load) MC.load("kurse-auswahl.json").then(function (d) {
   var head = document.getElementById("itab-head"), body = document.querySelector(".itab tbody");
   if (!head || !body) return;
   var COLS = ["name", "isin", "rend", "kupon", "kurs", "faellig", "art", "cur", "stk"], col = null, dir = 1;
-  var rows = Array.prototype.slice.call(body.querySelectorAll("tr"));
-  rows.forEach(function (tr, i) { tr.setAttribute("data-rank", i); });
+  var rows;
+  function neu() {   // Zeilen (neu) einlesen – die sechs Beispiele wechseln stündlich (01.10.2026); eine gewählte Sortierung bleibt
+    rows = Array.prototype.slice.call(body.querySelectorAll("tr"));
+    rows.forEach(function (tr, i) { tr.setAttribute("data-rank", i); });
+    if (col) render();
+  }
   function val(tr, c) {
     var td = tr.children[COLS.indexOf(c)], t = (c === "name" ? tr.querySelector("td.nm a") : td).textContent.trim();
     if (c === "name" || c === "isin" || c === "art" || c === "cur") return t;
@@ -784,6 +851,7 @@ if (MC.load) MC.load("kurse-auswahl.json").then(function (d) {
       var r = typeof x === "string" ? x.localeCompare(y, "de", { numeric: true }) : x - y;
       return (r || a.getAttribute("data-rank") - b.getAttribute("data-rank")) * dir;
     }).forEach(function (tr) { body.appendChild(tr); });
+    body.classList.add("sortiert");   // Trennstrich Staat/Unternehmen gilt nur in der Ausgangsreihenfolge
     head.querySelectorAll("th[data-col]").forEach(function (th) {
       if (th.getAttribute("data-col") === col) th.setAttribute("aria-sort", dir > 0 ? "ascending" : "descending"); else th.removeAttribute("aria-sort");
     });
@@ -796,6 +864,7 @@ if (MC.load) MC.load("kurse-auswahl.json").then(function (d) {
     var url = "anleihe.html?isin=" + encodeURIComponent(tr.getAttribute("data-isin"));
     if (e.metaKey || e.ctrlKey) window.open(url, "_blank"); else location.href = url;
   });
+  neu(); body.addEventListener("itab-neu", neu);
   head.addEventListener("click", function (e) {
     var b = e.target.closest(".sortbtn"); if (!b) return;
     var c = b.getAttribute("data-col");
