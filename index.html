@@ -310,8 +310,6 @@
   .kc .kz { padding-right: 56px; font-size: 21px; }
   .kc .kz > span { white-space: nowrap; }   /* Spanne „3,0–5,0 %“ nie umbrechen */   /* Platz für das Symbol unten rechts (.kimg), damit der Text es nicht überdeckt */
   .itab tbody tr[data-isin] { cursor: pointer; }
-  .topbar .kopfsuche { transition: opacity 0.2s ease, visibility 0.2s ease; }
-  html.suche-sichtbar .topbar .kopfsuche { opacity: 0; visibility: hidden; }   /* auf der Startseite nur ein Suchfeld zugleich: das große, solange es zu sehen ist */
   .beispiele .alle a, .itab-note a, .interessant .more { padding: 12px 0; margin: -12px 0; }   /* größere Tippfläche ohne Layout-Verschiebung */
   @media (max-width: 600px) {
     .bsp-bar a { min-height: 44px; padding-top: 0; padding-bottom: 0; }   /* Tippflächen mindestens 44 px */
@@ -581,20 +579,7 @@ if (MC.load) MC.load("kurse-auswahl.json").then(function (d) {
 // Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
 MC.navInit();
 
-// Nur ein Suchfeld zugleich: Die Suche in der Kopfzeile erscheint erst, wenn das große Suchfeld aus dem Bild gescrollt ist (UX-Review 30.09.2026)
-(function () {
-  var band = document.querySelector(".suchband"), tb = document.querySelector(".topbar");
-  if (!band || !("IntersectionObserver" in window)) return;
-  var ks = document.querySelector(".topbar .kopfsuche"), erst = true;
-  var io = new IntersectionObserver(function (e) {
-    if (erst && ks) ks.style.transition = "none";   // beim Laden ohne Überblendung, sonst blitzt das Feld kurz auf
-    document.documentElement.classList.toggle("suche-sichtbar", e[0].isIntersecting);
-    if (erst && ks) { void ks.offsetWidth; ks.style.transition = ""; }
-    erst = false;
-  },
-    { rootMargin: "-" + ((tb && tb.offsetHeight) || 80) + "px 0px 0px 0px" });
-  io.observe(band);
-})();
+// (30.09.2026, Nutzerwunsch) Die Suche in der Kopfzeile bleibt immer sichtbar – das Ausblenden neben dem großen Suchfeld ist entfernt.
 
 // Handy: kürzerer Platzhalter im großen Suchfeld (der lange wäre abgeschnitten)
 (function () {
