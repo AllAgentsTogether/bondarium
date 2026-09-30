@@ -71,9 +71,14 @@ FINANZ = re.compile(
     r"kfw|bausparkasse|leasing bank|capital markets|investment bank|financial group|asset management|"
     r"brokerage|securities)\b", re.I)
 GRUPPEN = [("sehr-kurzfristig", 1), ("kurzfristig", 3), ("mittelfristig", 7), ("langfristig", 30), ("sehr-langfristig", 1e9)]
-STAAT_LAENDER = {"deutschland": "DE", "frankreich": "FR", "griechenland": "GR", "grossbritannien": "GB", "italien": "IT",
-                 "norwegen": "NO", "oesterreich": "AT", "polen": "PL", "rumaenien": "RO", "spanien": "ES",
-                 "suedafrika": "ZA", "tuerkei": "TR", "usa": "US"}
+# Seit 30.09.2026 zusätzlich Australien, Belgien, Finnland, Irland, Kanada, Niederlande, Ungarn: in den ersten drei
+# Börsentagen 6 bis 14 gehandelte Anleihen je Land (Polen 9, Türkei und Südafrika 6). Für sie gibt es keine Handauswahl –
+# anleihen-laender.html zeigt ihre Liste schon vor „aktiv“ (LAENDER[…].auto). Ein neues Land braucht außerdem einen Knopf
+# und einen LAENDER-Eintrag in der Seite sowie eine Fläche mit data-land in weltkarte.svg.
+STAAT_LAENDER = {"australien": "AU", "belgien": "BE", "deutschland": "DE", "finnland": "FI", "frankreich": "FR",
+                 "griechenland": "GR", "grossbritannien": "GB", "irland": "IE", "italien": "IT", "kanada": "CA",
+                 "niederlande": "NL", "norwegen": "NO", "oesterreich": "AT", "polen": "PL", "rumaenien": "RO",
+                 "spanien": "ES", "suedafrika": "ZA", "tuerkei": "TR", "ungarn": "HU", "usa": "US"}
 FIRMEN_LAENDER = {"deutschland": "DE", "frankreich": "FR", "grossbritannien": "GB", "oesterreich": "AT",
                   "schweiz": "CH", "usa": "US"}
 STAATSNAME = {

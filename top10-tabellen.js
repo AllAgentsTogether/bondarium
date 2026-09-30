@@ -130,9 +130,11 @@
   }
 
   // ---------- Länder-Seiten: Weltkarte (weltkarte.svg), Knopfleiste, eine Tabelle ----------
-  // opt: { laender: {key: {name, emittent?, art, cur, date, pt: [x, y], note?, rows}}, standard: "deutschland",
+  // opt: { laender: {key: {name, emittent?, art, cur, date, pt: [x, y], note?, rows, auto?}}, standard: "deutschland",
   //        titel: n => "die zehn meistgehandelten …", hinweis: "…" (Notiz unter der Tabelle), daten: [kurse, top10],
-  //        aktiv: d => {} (Texte der Seite bei automatischer Liste), leer: "…" }
+  //        aktiv: d => {} (Texte der Seite bei automatischer Liste), leer: "…", vorlaeufig: d => "…" }
+  // auto: true (seit 30.09.2026) = Land ohne Handauswahl (rows: []): Seine Zeilen kommen schon vor „aktiv“ aus der automatischen
+  // Liste, mit dem Hinweis opt.vorlaeufig(d); fehlt es dort oder lädt die Liste nicht, entfällt es wie ein Land ohne Anleihe.
   function laender(opt) {
     var L = opt.laender, SORT = { col: "rank", dir: 1 }, AUTO = null, current = opt.standard;
     var map = document.getElementById("map"), lands = document.getElementById("lands"), tip = document.getElementById("maptip");
@@ -157,6 +159,7 @@
       document.getElementById("land-titel").textContent = titel;
       if (table.caption) table.caption.textContent = titel;
       document.getElementById("land-note").textContent = (c.note ? c.note + " " : "") + opt.hinweis;
+      var ue = document.getElementById("uebergang"); if (ue && !AUTO) ue.hidden = !!c.auto;   // Übergangshinweis gilt nur für die Handauswahl
     }
     function select(key, o) {
       o = o || {};
@@ -187,10 +190,11 @@
         el.textContent = el.dataset.anzahlLaender === "gross" ? (ZAHL_GROSS[n] || n) : (n <= 10 ? ZAHL[n] : n);
       });
     }
-    // Karte: gemeinsame, cachebare Datei weltkarte.svg (vorher je Seite 49 KB inline); nur die Länder dieser Seite bleiben wählbar
+    // Karte: gemeinsame, cachebare Datei weltkarte.svg (vorher je Seite 49 KB inline); nur die Länder dieser Seite bleiben wählbar.
+    // ?v= nach jeder Änderung der Karte hochzählen – sonst zeigt der Browser bis zu einen Tag die alte (v=2: 20 Länder, 30.09.2026).
     function karte() {
       if (!map) return Promise.resolve();
-      return fetch("weltkarte.svg").then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (t) {
+      return fetch("weltkarte.svg?v=2").then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (t) {
         var box = map.querySelector(".map-svg");
         box.innerHTML = t;
         var svg = box.querySelector("svg");
@@ -244,6 +248,17 @@
         zaehlen();
         if (L[current].aus) current = opt.standard;
         try { if (opt.aktiv) opt.aktiv(d); } catch (e) { console.warn(e); }
+      } else {
+        // Übergang: Die Handauswahl bleibt, nur die Länder ohne Handauswahl (auto) zeigen schon die automatische Liste
+        var autos = Object.keys(L).filter(function (k) { return L[k].auto; });
+        autos.forEach(function (k) {
+          L[k].rows = (d && d.gruppen && d.fenster && d.gruppen[k]) || [];
+          if (!L[k].rows.length) { landWeg(k); return; }
+          L[k].date = d.stand;
+          try { L[k].note = opt.vorlaeufig ? opt.vorlaeufig(d) : null; } catch (e) { console.warn(e); }
+        });
+        if (autos.length) zaehlen();
+        if (L[current].aus) current = opt.standard;
       }
       select(current);
       datenstand();

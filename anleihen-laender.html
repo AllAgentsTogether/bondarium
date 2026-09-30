@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Staatsanleihen nach Ländern: Top 10 je Land – Bondarium</title>
-<meta name="description" content="Weltkarte zum Anklicken: je zehn meistgehandelte Staatsanleihen aus 13 Ländern – mit ISIN, Kurs, Kupon, Rendite, Restlaufzeit und Stückelung.">
+<meta name="description" content="Weltkarte zum Anklicken: je zehn meistgehandelte Staatsanleihen aus 20 Ländern – mit ISIN, Kurs, Kupon, Rendite, Restlaufzeit und Stückelung.">
 <link rel="canonical" href="https://www.bondarium.de/anleihen-laender.html">
 <meta name="robots" content="index, follow">
 <meta name="author" content="Bondarium">
@@ -13,14 +13,14 @@
 <meta property="og:locale" content="de_DE">
 <meta property="og:url" content="https://www.bondarium.de/anleihen-laender.html">
 <meta property="og:title" content="Staatsanleihen nach Ländern: Top 10 je Land – Bondarium">
-<meta property="og:description" content="Weltkarte zum Anklicken: je zehn meistgehandelte Staatsanleihen aus 13 Ländern – mit ISIN, Kurs, Kupon, Rendite, Restlaufzeit und Stückelung.">
+<meta property="og:description" content="Weltkarte zum Anklicken: je zehn meistgehandelte Staatsanleihen aus 20 Ländern – mit ISIN, Kurs, Kupon, Rendite, Restlaufzeit und Stückelung.">
 <meta property="og:image" content="https://www.bondarium.de/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Bondarium: Finde Anleihen, die zu deinem Leben passen">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Staatsanleihen nach Ländern: Top 10 je Land – Bondarium">
-<meta name="twitter:description" content="Weltkarte zum Anklicken: je zehn meistgehandelte Staatsanleihen aus 13 Ländern – mit ISIN, Kurs, Kupon, Rendite, Restlaufzeit und Stückelung.">
+<meta name="twitter:description" content="Weltkarte zum Anklicken: je zehn meistgehandelte Staatsanleihen aus 20 Ländern – mit ISIN, Kurs, Kupon, Rendite, Restlaufzeit und Stückelung.">
 <meta name="twitter:image" content="https://www.bondarium.de/og-image.png">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -75,7 +75,7 @@
     .maphint { font-size: 12px; bottom: -2px; }
   }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Staatsanleihen nach Ländern: die zehn meistgehandelten aus 13 Ländern","description":"Weltkarte zum Anklicken: je zehn meistgehandelte Staatsanleihen aus 13 Ländern – mit ISIN, Kurs, Kupon, Rendite, Restlaufzeit und Stückelung.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-26","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihen-laender.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Staatsanleihen nach Ländern: die zehn meistgehandelten aus 20 Ländern","description":"Weltkarte zum Anklicken: je zehn meistgehandelte Staatsanleihen aus 20 Ländern – mit ISIN, Kurs, Kupon, Rendite, Restlaufzeit und Stückelung.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-30","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihen-laender.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.bondarium.de/anleihen.html"},{"@type":"ListItem","position":3,"name":"Staatsanleihen nach Ländern","item":"https://www.bondarium.de/anleihen-laender.html"}]}</script>
 </head>
 <body>
@@ -139,7 +139,7 @@
   <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="anleihen.html">Anleihen</a></li><li><span aria-current="page">Staatsanleihen nach Ländern</span></li></ol></nav>
   <main id="main">
     <h1>Staatsanleihen nach Ländern: die meistgehandelten je Land</h1>
-    <p class="sub">Welche Staatsanleihen handeln Anleger am häufigsten? Ein Klick auf die Karte zeigt für <span data-anzahl-laender>13</span> Länder – von den USA über Europa bis Südafrika – die meistgehandelten Anleihen, mit Kurs, Kupon, Rendite, Restlaufzeit, Volumen und Stückelung.</p>
+    <p class="sub">Welche Staatsanleihen handeln Anleger am häufigsten? Ein Klick auf die Karte zeigt für <span data-anzahl-laender>20</span> Länder – von Kanada über Europa bis Australien – die meistgehandelten Anleihen, mit Kurs, Kupon, Rendite, Restlaufzeit, Volumen und Stückelung.</p>
 
     <div class="map" id="map">
       <div class="map-svg"></div>
@@ -147,11 +147,17 @@
       <div class="maptip" id="maptip" hidden></div>
     </div>
     <div class="lands" id="lands" role="group" aria-label="Land wählen">
+      <button type="button" class="lbtn" data-land="australien" aria-pressed="false" aria-controls="kpis">Australien</button>
+      <button type="button" class="lbtn" data-land="belgien" aria-pressed="false" aria-controls="kpis">Belgien</button>
       <button type="button" class="lbtn" data-land="deutschland" aria-pressed="true" aria-controls="kpis">Deutschland</button>
+      <button type="button" class="lbtn" data-land="finnland" aria-pressed="false" aria-controls="kpis">Finnland</button>
       <button type="button" class="lbtn" data-land="frankreich" aria-pressed="false" aria-controls="kpis">Frankreich</button>
       <button type="button" class="lbtn" data-land="griechenland" aria-pressed="false" aria-controls="kpis">Griechenland</button>
       <button type="button" class="lbtn" data-land="grossbritannien" aria-pressed="false" aria-controls="kpis">Großbritannien</button>
+      <button type="button" class="lbtn" data-land="irland" aria-pressed="false" aria-controls="kpis">Irland</button>
       <button type="button" class="lbtn" data-land="italien" aria-pressed="false" aria-controls="kpis">Italien</button>
+      <button type="button" class="lbtn" data-land="kanada" aria-pressed="false" aria-controls="kpis">Kanada</button>
+      <button type="button" class="lbtn" data-land="niederlande" aria-pressed="false" aria-controls="kpis">Niederlande</button>
       <button type="button" class="lbtn" data-land="norwegen" aria-pressed="false" aria-controls="kpis">Norwegen</button>
       <button type="button" class="lbtn" data-land="oesterreich" aria-pressed="false" aria-controls="kpis">Österreich</button>
       <button type="button" class="lbtn" data-land="polen" aria-pressed="false" aria-controls="kpis">Polen</button>
@@ -159,6 +165,7 @@
       <button type="button" class="lbtn" data-land="spanien" aria-pressed="false" aria-controls="kpis">Spanien</button>
       <button type="button" class="lbtn" data-land="suedafrika" aria-pressed="false" aria-controls="kpis">Südafrika</button>
       <button type="button" class="lbtn" data-land="tuerkei" aria-pressed="false" aria-controls="kpis">Türkei</button>
+      <button type="button" class="lbtn" data-land="ungarn" aria-pressed="false" aria-controls="kpis">Ungarn</button>
       <button type="button" class="lbtn" data-land="usa" aria-pressed="false" aria-controls="kpis">USA</button>
     </div>
 
@@ -201,9 +208,10 @@
       <div class="quellen-body">
         <p id="m-rang"><strong>Beliebt heißt hier: meistgehandelt.</strong> Gezählt wird der Handel an der Börse Stuttgart vom 23.09.2025 bis 22.09.2026: Vorn steht die Anleihe, die an den meisten Börsentagen umgesetzt wurde, bei Gleichstand die mit dem höheren Umsatz. Berücksichtigt sind Staatsanleihen mit festem Kupon (auch null Prozent) und mehr als einem Jahr Restlaufzeit; inflationsgeschützte und variabel verzinste Papiere sind ausgenommen. Griechenlands Anleihen aus dem Schuldenschnitt 2012 zählen als Festzins – ihre letzte Zinsstufe (4,3&nbsp;%) gilt seit 2022 bis zur Fälligkeit.</p>
         <p id="m-such"><strong>Durchsucht</strong> wurden alle börsennotierten Bundeswertpapiere (Bundesbank), alle umlaufenden OATs (Agence France Trésor), alle an der Borsa Italiana notierten BTPs, alle Treasury Notes und Bonds (U.S. Treasury) und für die übrigen neun Länder alle an deutschen Börsen notierten Staatsanleihen – in jeder Währung. Polen, Rumänien, die Türkei und Südafrika begeben neben Anleihen in eigener Währung auch Auslandsanleihen in Euro oder Dollar. Im Fachjargon heißen sie oft Eurobonds (nicht zu verwechseln mit gemeinsamen EU-Anleihen) – streng genommen aber nur, wenn sie ohne US-Registrierung außerhalb der USA begeben werden. Polens zwei Dollar-Anleihen und neun der zehn türkischen Anleihen sind zudem bei der US-Börsenaufsicht SEC registriert und wurden auch in den USA angeboten.</p>
+        <p id="m-neu"><strong>Seit 30.09.2026 dabei:</strong> Australien, Belgien, Finnland, Irland, Kanada, die Niederlande und Ungarn. Ihre Listen sind keine Handauswahl, sondern werden schon jetzt jeden Börsentag neu berechnet – aus dem Handel an der Börse Frankfurt und bei Tradegate seit 24.09.2026, mit denselben Auswahlregeln; Volumen und Stückelung stammen hier aus dem ESMA-Register (ausgegebener Betrag). Solange erst wenige Börsentage erfasst sind, ist die Reihenfolge vorläufig.</p>
         <p><strong>Kurse:</strong> Schlusskurs des letzten Börsentags an der Börse Frankfurt – die Nachhandelsdaten, die jeder Handelsplatz nach der EU-Finanzmarktverordnung MiFIR 15 Minuten verzögert kostenlos veröffentlichen muss (Deutsche Börse); Bundeswertpapiere: Deutsche Bundesbank. Täglich aktualisiert, Stand am Ende dieses Abschnitts. Ohne Umsatz ist der Kurs die Feststellung des Spezialisten und kann bei selten gehandelten Anleihen vom Marktniveau abweichen. Ein Klick auf die ISIN öffnet den Steckbrief der Anleihe mit Kursverlauf, Handel und Stammdaten.</p>
         <p id="m-vol"><strong>Volumen und Stückelung</strong> aus den Stammdaten der Deutschen Börse (Stand 23.09.2026). Volumen ist der umlaufende Betrag nach Aufstockungen und Rückkäufen (die Anleihen-Suche und der Steckbrief zeigen den ausgegebenen Betrag laut ESMA-Register, deshalb können die Zahlen abweichen) – von Griechenlands Anleihen aus dem Schuldenschnitt ist nach dem Umtausch 2017 nur noch ein kleiner Rest im Umlauf. Stückelung ist der kleinste Nennwert und damit die Mindestanlage: von 1 Cent (Bundesanleihen, britische Gilts) bis 200.000 Dollar (zwei Dollar-Anleihen der Türkei).</p>
-        <p id="m-rendite"><strong>Rendite</strong> bis Fälligkeit, aus Kurs, Kupon und Zinsterminen berechnet (jährliche Verzinsung wie auf der Langläufer-Seite; Deutschland: Rendite der Bundesbank). Sie gilt in der Währung der Anleihe – Renditen in Kronen, Zloty oder Rand enthalten keinen Ausgleich für das Währungsrisiko. Die Auswahl der Anleihen ist eine Momentaufnahme und wird manuell gepflegt; Ratings zeigt die Seite nicht, weil sie sich nicht automatisch aktuell halten lassen – wie du die Bonität eines Staates einschätzt, steht unter <a href="bonitaet.html">Bonität und Ratings</a>.</p>
+        <p id="m-rendite"><strong>Rendite</strong> bis Fälligkeit, aus Kurs, Kupon und Zinsterminen berechnet (jährliche Verzinsung wie auf der Langläufer-Seite; Deutschland: Rendite der Bundesbank). Sie gilt in der Währung der Anleihe – Renditen in fremder Währung, etwa in Kronen, Zloty, Rand oder australischen und kanadischen Dollar, enthalten keinen Ausgleich für das Währungsrisiko. Die Auswahl der Anleihen ist eine Momentaufnahme und wird manuell gepflegt; Ratings zeigt die Seite nicht, weil sie sich nicht automatisch aktuell halten lassen – wie du die Bonität eines Staates einschätzt, steht unter <a href="bonitaet.html">Bonität und Ratings</a>.</p>
         <p id="datastand">Daten-Stand: 22.09.2026</p>
       </div>
     </details>
@@ -240,7 +248,16 @@ function L(k) { return T[k] != null ? T[k] : k; }
 // Reihenfolge = Rang (Beliebtheit). Rendite und Restlaufzeit rechnet die Seite aus Kurs, Kupon und Datum.
 // Pflege: kurs und date je Land aktualisieren; vol nach Aufstockungen oder Rückkäufen anpassen.
 // Auswahl, Quellen und Vorgehen: siehe „Datenquellen und Methodik“ unten auf der Seite.
+// auto: true (seit 30.09.2026: Australien, Belgien, Finnland, Irland, Kanada, Niederlande, Ungarn) = ohne Handauswahl; die Zeilen
+// kommen aus top10-staatsanleihen-laender.json, auch schon vor „aktiv“ (top10-tabellen.js). pt = Punkt auf der Karte (weltkarte.svg).
 const LAENDER = {
+  australien: { name: "Australien", art: "Staat", cur: "AUD", pt: [865.2, 340.2], auto: true, rows: [] },
+  belgien: { name: "Belgien", art: "Staat", cur: "EUR", pt: [511.3, 92.4], auto: true, rows: [] },
+  finnland: { name: "Finnland", art: "Staat", cur: "EUR", pt: [558.9, 55], auto: true, rows: [] },
+  irland: { name: "Irland", art: "Staat", cur: "EUR", pt: [480.7, 84.4], auto: true, rows: [] },
+  kanada: { name: "Kanada", art: "Staat", cur: "CAD", pt: [268.9, 65.3], auto: true, rows: [] },
+  niederlande: { name: "Niederlande", art: "Staat", cur: "EUR", pt: [513.6, 87.2], auto: true, rows: [] },
+  ungarn: { name: "Ungarn", art: "Staat", cur: "EUR", pt: [548.6, 103.5], auto: true, rows: [] },
   deutschland: {
     name: "Deutschland", emittent: "Bundesrepublik Deutschland", art: "Staat", cur: "EUR", date: "2026-09-22", settleDays: 2, source: "buba", pt: [525.5, 91],
     rows: [
@@ -451,11 +468,14 @@ if (window.T10 && window.MC && MC.bond) T10.laender({
   laender: LAENDER, standard: DEFAULT_LAND, titel: L("titleSuffix"), hinweis: L("noteCommon"),
   leer: n => `In den letzten ${n} Börsentagen wurde an der Börse Frankfurt und bei Tradegate keine Anleihe dieses Landes gehandelt, die die Auswahlregeln erfüllt.`,
   daten: [MC.load("kurse-auswahl.json"), MC.load("top10-staatsanleihen-laender.json")],
+  // Notiz unter der Tabelle der Länder ohne Handauswahl, solange die automatische Liste noch nicht „aktiv“ ist
+  vorlaeufig: d => `Vorläufige Rangfolge aus dem Handel an der Börse Frankfurt und bei Tradegate seit ${d.fenster.von.split("-").reverse().join(".")} (${d.fenster.tage} Börsentage) – sie festigt sich, je mehr Börsentage erfasst sind.`,
   aktiv(d) {
     const f = d.fenster, dat = iso => iso.split("-").reverse().join(".");
+    const neu = document.getElementById("m-neu"); if (neu) neu.remove();
     const set = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
     set("m-rang", `<strong>Meistgehandelt</strong> heißt: an den meisten Börsentagen umgesetzt. Gezählt wird der Handel an der Börse Frankfurt und bei Tradegate in den letzten ${f.tage} Börsentagen (${dat(f.von)} bis ${dat(f.bis)}); bei Gleichstand zählt der höhere Umsatz. Die Listen werden jeden Börsentag neu berechnet – ein Land hat weniger als zehn Anleihen, wenn nicht mehr gehandelt wurden. Durchsucht werden alle Staatsanleihen des Landes mit festem Kupon (auch null Prozent), mehr als einem Jahr Restlaufzeit und aktuellem Kurs an einer deutschen Börse – in jeder Währung; inflationsgeschützte und variabel verzinste Anleihen sowie Strips sind ausgenommen.`);
-    set("m-such", `<strong>Währung.</strong> Polen, Rumänien, die Türkei und Südafrika begeben neben Anleihen in eigener Währung auch Auslandsanleihen in Euro oder Dollar; sie zählen zum jeweiligen Land. Emittent ist bei Staatsanleihen der Zentralstaat selbst.`);
+    set("m-such", `<strong>Währung.</strong> Polen, Rumänien, Ungarn, die Türkei und Südafrika begeben neben Anleihen in eigener Währung auch Auslandsanleihen in Euro oder Dollar; sie zählen zum jeweiligen Land. Emittent ist bei Staatsanleihen der Zentralstaat selbst.`);
     set("m-vol", `<strong>Volumen und Stückelung</strong> aus dem ESMA-Register (FIRDS), wöchentlich aktualisiert. Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage.`);
     const r = document.getElementById("m-rendite"); if (r) r.innerHTML = r.innerHTML.replace("Die Auswahl der Anleihen ist eine Momentaufnahme und wird manuell gepflegt;", "Die Auswahl wird jeden Börsentag neu berechnet;");
   }
