@@ -554,6 +554,37 @@
   /* 01.10.2026 (Nutzerwunsch): Sechs Beispiele stündlich aus den Top 10 – drei Staats-, drei Unternehmensanleihen, dazwischen ein etwas kräftigerer Strich (entfällt beim Sortieren) */
   .itab tbody:not(.sortiert) tr.gr-ende > td { border-bottom: 2px solid rgba(26,26,25,0.2); }
   @media (min-width: 601px) { .itab td.nm a { display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; } }   /* lange Emittentennamen mit Auslassung */
+  /* ==========================================================================================
+     Schriftgrößen-Raster 01.10.2026 (Nutzerwunsch „Schriftgrößen passen teilweise nicht – einheitliches Bild“):
+     vorher 20 Größen (u. a. 11,5 · 12,5 · 13,5 · 14,5 · 15,5 · 16,5 px), jetzt eine Leiter nach Rolle – gleiche Rolle, gleiche Größe.
+     Label 12 · Meta 13 · Klein 14 · Bedienung 15 · Text 16 · Kartentitel 17 · Zwischentitel 21 · Kennzahl 24 · Überschrift/große Kennzahl 30.
+     Hero-Titel und -Unterzeile bleiben. Steht am Ende und überschreibt nur Schriftgrößen der Blöcke darüber.
+     ========================================================================================== */
+  :root { --fs-label: 12px; --fs-meta: 13px; --fs-klein: 14px; --fs-ui: 15px; --fs-text: 16px; --fs-karte: 17px; --fs-h3: 21px; --fs-zahl: 24px; --fs-zahl-gross: 30px; --fs-h2: 30px; }
+  @media (max-width: 600px) { :root { --fs-text: 15px; --fs-karte: 16px; --fs-h3: 19px; --fs-zahl: 21px; --fs-zahl-gross: 25px; --fs-h2: 25px; } }
+  /* Label: Dachzeilen, Tabellenkopf, Marken, ISIN, Zahlen-Unterzeilen */
+  .kicker, .vt .vt-k, .itab thead th, .itab .art, .itab td.nm small, .kc .kz small, .hk-dach, .hk-art, .hk-fuss { font-size: var(--fs-label); }
+  /* Meta: Ergebnis unter dem Namen, dritte Zeile im Lernpfad, Kurzbeschreibungen, Hinweise, Kategorie der Top-10-Karten */
+  .kc .kicker, .ppl .res, .tueren.pfad .mehr, .vt a .vt-t span, .itab-note, .itab .isin-sp, .hk-rend { font-size: var(--fs-meta); }
+  /* Klein: Beschreibungen in Karten, Titel der kompakten Linkleiste „Tiefer einsteigen“, Such-Chips, Einheiten neben Kennzahlen */
+  .vk .desc, .vt a b, .bsp-bar, .bsp-bar a, .kwv .kw-bis, .kwv .kw-e, .hk-kopf { font-size: var(--fs-klein); }
+  @media (max-width: 600px) { .bsp-bar a { font-size: var(--fs-meta); } }
+  /* Bedienung: Links, Knöpfe, Namen, Tabelle, Unterzeilen neben Zwischentiteln */
+  .bt .more, .beispiele .alle, .ppl .cta, .ppl b, .tueren .sub, .suche .go, .itab, .k-lab small, .k-lab:has(+ .k2) small { font-size: var(--fs-ui); }
+  /* Text: Unterzeilen der Abschnitte, Ziel-Zitate, Suchfeld (≥ 16 px, sonst zoomt iOS) */
+  .bt .bsub, .bsp-kopf p, .ppl .bub, .ppl a:nth-child(2n) .bub { font-size: var(--fs-text); }
+  .suche input { font-size: 16px; }
+  /* Kartentitel */
+  .vk b, .kc b, .kw b { font-size: var(--fs-karte); }
+  /* Zwischentitel: Lernpfad-Schritte und beide Unterköpfe unter „Märkte und Top-10-Listen“ (vorher 18 und 30 px) */
+  .tueren .verb, .k-lab, .k-lab:has(+ .k2) { font-size: var(--fs-h3); line-height: 1.2; letter-spacing: -0.015em; }
+  .k-lab, .k-lab:has(+ .k2) { margin: 0 0 14px; font-weight: 700; }
+  .k-lab:has(+ .k2) small { display: inline; margin-top: 0; font-weight: 500; }
+  /* Kennzahlen */
+  .kc .kz, .hk-z { font-size: var(--fs-zahl); }
+  .kwv { font-size: var(--fs-zahl-gross); }
+  /* Abschnittsüberschriften */
+  .bt h2, .bsp-kopf h2 { font-size: var(--fs-h2); }
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Anleihen verstehen und finden", "headline": "Anleihen verstehen und finden", "description": "Anleihen verstehen und finden: Wissen in kurzen Schritten, Renditen seit 1970, die meistgehandelten Anleihen und eine Suche über rund 33.000 Anleihen.", "inLanguage": "de", "isAccessibleForFree": true, "dateModified": "2026-09-30", "publisher": {"@type": "Organization", "name": "Bondarium", "url": "https://www.bondarium.de/"}, "mainEntityOfPage": "https://www.bondarium.de/"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Bondarium","alternateName":"bondarium.de","url":"https://www.bondarium.de/","description":"Anleihen in Perspektive: Staats- und Unternehmensanleihen weltweit, Langläufer, die meistgehandelten Anleihen je Land und Restlaufzeit und eine Suche über alle Anleihen an deutschen Börsen.","inLanguage":"de"}</script>
