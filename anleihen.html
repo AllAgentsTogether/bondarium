@@ -121,16 +121,16 @@
     footer.fuss { margin-top: 64px; }
   }
 
-  /* --- Anleihen: die Suche ist die Hauptaktion – dunkles Suchband wie auf der Startseite ------- */
-  .hubsuche { max-width: none; margin: 0 0 40px; padding: 18px 18px 14px; background: var(--ink); border-radius: 20px; box-shadow: 0 1px 2px rgba(26,26,25,0.2), 0 26px 48px -18px rgba(26,26,25,0.45); }
+  /* --- Anleihen: die Suche ist die Hauptaktion – helle Fläche wie die Bildfelder der Kacheln, Neon nur am Knopf
+     (bis 30.09.2026 abends ein dunkles Band; auf Wunsch des Nutzers dezenter) -------------------------------- */
+  .hubsuche { max-width: none; margin: 0 0 40px; padding: 14px 14px 12px; background: #F3F2EC; border: 1px solid var(--rule); border-radius: 18px; }
   .hubsuche svg { left: 20px; width: 20px; height: 20px; }
-  .hubsuche input[type=search] { border: 0; border-radius: 12px; padding: 18px 150px 18px 52px; font-size: 17.5px; box-shadow: none; }
-  .hubsuche input[type=search]:focus-visible { box-shadow: 0 0 0 3px var(--green); }
+  .hubsuche input[type=search] { border: 1px solid rgba(26,26,25,0.16); border-radius: 12px; padding: 17px 150px 17px 52px; font-size: 17.5px; box-shadow: 0 1px 2px rgba(26,26,25,0.04); }
+  .hubsuche input[type=search]:focus-visible { border-color: var(--green-text); box-shadow: 0 0 0 3px var(--green-tint-2); }
   .hubsuche button { right: 7px; min-height: 46px; padding: 12px 30px; border-radius: 9px; font-size: 15.5px; }
   .hubsuche button:hover { background: var(--green-hover); }
-  .hubsuche button:focus-visible { outline-color: #fff; }
-  .hubsuche-t { margin: 12px 0 0 4px; font-size: 14px; color: rgba(255,255,255,0.72); }
-  .hubsuche-t [data-kz] { color: #fff; font-weight: 600; }
+  .hubsuche-t { margin: 10px 0 0 4px; font-size: 14px; color: var(--text); }
+  .hubsuche-t [data-kz] { color: var(--ink); font-weight: 600; }
 
   /* Etiketten: kein Neon mehr (fünfmal „Top 10“ in Neon übertönte die Suche) – ruhige Pillen */
   .hub-tag { margin-bottom: 10px; padding: 4px 10px; border-radius: 999px; background: #E8FFE3; color: var(--green-text); font-size: 11px; letter-spacing: 0.07em; }
@@ -141,7 +141,7 @@
   .hub-card.next { margin-top: 18px; }
 
   @media (max-width: 600px) {
-    .hubsuche { margin-bottom: 28px; padding: 12px 12px 12px; border-radius: 16px; }
+    .hubsuche { margin-bottom: 28px; padding: 10px 10px 10px; border-radius: 16px; }
     .hubsuche svg { left: 14px; width: 18px; height: 18px; }
     .hubsuche input[type=search] { padding: 15px 98px 15px 42px; font-size: 16px; }
     .hubsuche button { right: 5px; min-height: 42px; padding: 10px 16px; font-size: 14.5px; }

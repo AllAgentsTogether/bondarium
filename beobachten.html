@@ -111,26 +111,23 @@
   .hub-img { padding: 20px 0 10px; }
   .hub-card h2 { font-size: 19px; margin-bottom: 0; }
 
-  /* „Und jetzt: Anleihe finden“ ist hier die Hauptaktion: dunkles Band, Neon-Pfeil */
-  .hub-card.next { margin-top: 22px; background: var(--ink); border-color: var(--ink); color: #fff; box-shadow: 0 1px 2px rgba(26,26,25,0.2), 0 26px 48px -18px rgba(26,26,25,0.45); }
-  .hub-card.next { background: linear-gradient(to right, #262624 210px, #3A3A37 210px 211px, var(--ink) 211px); }
-  .hub-card.next h2 { color: #fff; font-size: 22px; }
-  .hub-card.next:hover h2 { color: var(--green); }
-  .hub-card.next .desc { color: rgba(255,255,255,0.74); }
+  /* „Und jetzt: Anleihe finden“ ist hier die Hauptaktion: helle Kachel wie die übrigen, nur der Pfeil in Neon
+     (bis 30.09.2026 abends ein dunkles Band; auf Wunsch des Nutzers dezenter) */
+  .hub-card.next { margin-top: 22px; }
+  .hub-card.next h2 { font-size: 22px; }
   .hub-card.next::after { background: var(--green); border-color: var(--green); color: var(--ink); }
-  .hub-card.next:hover { border-color: var(--ink); }
-  .hub-card.next:hover::after { background: var(--green-hover); }
+  .hub-card.next:hover::after { background: var(--green-hover); border-color: var(--green-hover); }
 
   /* Weiter: vier Links in einer Reihe statt 3 + 1 */
   @media (min-width: 941px) { .crossnav-l { grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 28px; } }
 
-  @media (max-width: 940px) { .hub { grid-template-columns: repeat(2, minmax(0, 1fr)); } .hub-card.next { background: linear-gradient(to right, #262624 160px, #3A3A37 160px 161px, var(--ink) 161px); } }
+  @media (max-width: 940px) { .hub { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 600px) {
     :root { --spalte: 118px; }   /* die Schaubilder sind hier der Inhalt: breiteres Bildfeld */
     .hub { grid-template-columns: minmax(0, 1fr); gap: 10px; }
     .hub-img, .hub-card.next .hub-img { height: 96px; padding: 6px 8px; }
     .hub-card h2 { font-size: 16.5px; }
-    .hub-card.next { margin-top: 14px; background: linear-gradient(to right, #262624 var(--spalte), #3A3A37 var(--spalte) calc(var(--spalte) + 1px), var(--ink) calc(var(--spalte) + 1px)); }
+    .hub-card.next { margin-top: 14px; }
     .hub-card.next h2 { font-size: 17px; }
   }
 </style>
