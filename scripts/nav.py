@@ -26,7 +26,7 @@ Hat eine Stufe ihre Übersichtsseite nicht selbst als Eintrag (der Normalfall),
 schreibt das Skript zusätzlich den Eintrag „Übersicht“ mit der Klasse nav-ov – base.css zeigt ihn nur im Handy-Akkordeon, wo der Kopf nicht
 navigiert, sondern auf- und zuklappt.
 
-Menü ändern: nur GROUPS, AKADEMIE_EXTRA, ANLEIHEN, ZINSEN, BUTTONS, LINKS anpassen und das Skript laufen lassen.
+Menü ändern: nur GROUPS, VERTIEFEN, AKADEMIE_EXTRA, ANLEIHEN, ZINSEN, BUTTONS, LINKS anpassen und das Skript laufen lassen.
 
 Seit 30.09.2026 schreibt das Skript außerdem (alles idempotent, --check meldet Abweichungen):
   * die Brotkrumen-Zeile <nav class="krumen"> direkt unter der Kopfzeile – erzeugt aus dem JSON-LD
@@ -94,12 +94,11 @@ GROUPS = [
 AKADEMIE = ("Akademie", "./#akademie", "/#akademie")   # (Beschriftung, Ziel relativ, Ziel absolut für 404.html)
 # Seit 30.09.2026 (Audit „Orientierung fehlt“): unter den drei Stufen die Vertiefungsseiten und der Rechner direkt im
 # Aufklapper – vorher nur über die Übersichten erreichbar. Einträge wie in ANLEIHEN (Chip = Zeichenkette).
+# Seit 30.09.2026 abends (Nutzerwunsch „Vertiefen muss klickbar sein, die vier Punkte haben nichts im Dropdown zu suchen“):
+# „Vertiefen“ ist ein Stufen-Eintrag wie Verstehen/Entscheiden/Kaufen und führt auf die Übersicht vertiefen.html mit den
+# vier Profi-Themen (VERTIEFEN); die Themen selbst stehen nicht mehr im Aufklapper.
+VERTIEFEN = ("Vertiefen", "vertiefen.html", ["duration.html", "rendite-lesen.html", "anleihenleiter.html", "markttechnik.html"])
 AKADEMIE_EXTRA = [
-    "Vertiefen",
-    ("Duration und Konvexität", "duration.html"),
-    ("Rendite richtig lesen", "rendite-lesen.html"),
-    ("Leiter, Hantel, Roll-down", "anleihenleiter.html"),
-    ("Markttechnik lesen", "markttechnik.html"),
     "Werkzeuge",
     ("Anleihen-Rechner", "rechner.html"),
 ]
@@ -198,7 +197,7 @@ FALLBACK_RE = re.compile(
 RUBRIK = {"Verstehen": "verstehen", "Entscheiden": "entscheiden", "Kaufen": "kaufen"}
 # Seiten außerhalb der Aufklapper (die Anleihen-Suche steht seit 25.09.2026 abends im Menü Kaufen;
 # anleihe.html ist der Steckbrief einer einzelnen Anleihe, erreichbar aus der Suche und den Datenseiten)
-RUBRIK_EXTRA = {"ueber-uns.html": "ueber"}
+RUBRIK_EXTRA = {"ueber-uns.html": "ueber", VERTIEFEN[1]: "verstehen"}   # vertiefen.html gehört zur Akademie
 
 
 def links(items):
@@ -293,9 +292,12 @@ def render(page, absolute=False):
                f'<span>{AKADEMIE[0]}</span><span class="nav-caret" aria-hidden="true"></span></a>')
     out.append('        <div class="nav-group-menu">')
     for label, target, items in GROUPS:
-        in_group = page == target or any(i[1] == page for i in links(items))
+        # die vier Vertiefen-Themen gehören inhaltlich zu Verstehen (Rubrik), markieren im Menü aber „Vertiefen“
+        in_group = page == target or (page not in VERTIEFEN[2] and any(i[1] == page for i in links(items)))
         c = ' class="nav-stufe current"' if in_group else ' class="nav-stufe"'
         out.append(f'          <a href="{p}{target}"{c}>{label}</a>')   # seit 28.09.2026 ohne Unterzeile (Nutzerwunsch)
+    c = ' class="nav-stufe current"' if page == VERTIEFEN[1] or page in VERTIEFEN[2] else ' class="nav-stufe"'
+    out.append(f'          <a href="{p}{VERTIEFEN[1]}"{c}>{VERTIEFEN[0]}</a>')
     out += menu_items(AKADEMIE_EXTRA, page, p)
     out.append("        </div>")
     out.append("      </div>")
