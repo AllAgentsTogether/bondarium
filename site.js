@@ -99,9 +99,13 @@ window.MC = (function () {
   // MC.json(url) → Promise mit dem geparsten JSON; bei HTTP-Fehler wird abgelehnt (Error mit dem Statuscode) und der
   // Eintrag verworfen, damit ein späterer Versuch neu lädt. Das Ergebnis ist geteilt – nur lesen, nicht verändern.
   var jsonCache = {};
+  // Lokale Vorschau (python -m http.server sendet kein Cache-Control): Der Browser hielt Datendateien tagelang im Cache –
+  // Kurse und „Stand“ blieben alt, obwohl die Datei neu war (30.09.2026). Lokal deshalb immer beim Server nachfragen;
+  // live bleibt es beim Cache-Control des Servers.
+  var lokal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   function json(url) {
     if (!jsonCache[url]) {
-      jsonCache[url] = fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
+      jsonCache[url] = fetch(url, lokal ? { cache: "no-cache" } : undefined).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
       jsonCache[url].catch(function () { delete jsonCache[url]; });
     }
     return jsonCache[url];
