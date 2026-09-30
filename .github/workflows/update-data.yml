@@ -399,7 +399,8 @@ jobs:
             || echo "Kein Manifest auf dem Server – alles wird hochgeladen"
           touch alt.manifest
           python3 scripts/deploy_manifest.py lftp alt.manifest neu.manifest _site > upload.lftp
-          lftp -u "$SFTP_USERNAME" --env-password "sftp://$SFTP_SERVER" -f upload.lftp
+          # -f (Skriptdatei) lässt sich nicht mit einer Server-Adresse kombinieren – daher per „source“ einlesen
+          lftp -u "$SFTP_USERNAME" --env-password "sftp://$SFTP_SERVER" -e "source upload.lftp; bye"
 
       - name: Rückfall – alles per SFTP hochladen
         if: steps.inkrementell.outcome == 'failure'
