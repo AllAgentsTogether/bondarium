@@ -13,9 +13,8 @@
  *   2) per PHP-CLI: php refresh.php voll
  *
  * Der Schlüssel gehört NICHT in die Adresse (seit 30.09.2026): Adressen stehen im
- * Server-Log und in den Protokollen des Cron-Dienstes. Die alte Form ?key=GEHEIM wird
- * für den Übergang noch angenommen und meldet das in der Antwort – sobald der Cron-Dienst
- * umgestellt und der Schlüssel erneuert ist, den Block „Übergang“ unten löschen.
+ * Server-Log und in den Protokollen des Cron-Dienstes. Ein Schlüssel in der Adresse
+ * (?key=GEHEIM) wird nicht angenommen.
  *
  * mode=voll     Daten abrufen – höchstens einmal am Tag: Der Workflow prüft
  *               zuerst, ob heute schon abgefragt wurde, und endet dann ohne Abruf.
@@ -27,8 +26,6 @@
 $cfg = require __DIR__ . '/refresh-config.php';
 
 $isCli = (php_sapi_name() === 'cli');
-
-$ausAdresse = false;   // true = Schlüssel kam noch über die Adresse (?key=…)
 
 if ($isCli) {
     // Aufruf über die Kommandozeile (php refresh.php [schnell|voll])
@@ -42,11 +39,6 @@ if ($isCli) {
         exit('not configured');
     }
     $key = $_SERVER['HTTP_X_TRIGGER_KEY'] ?? $_POST['key'] ?? '';
-    // Übergang: Schlüssel in der Adresse – nur solange der Cron-Dienst noch nicht umgestellt ist
-    if ($key === '' && isset($_GET['key'])) {
-        $key = $_GET['key'];
-        $ausAdresse = true;
-    }
     if (!is_string($key) || !hash_equals($cfg['secret'], $key)) {
         http_response_code(403);
         exit('Forbidden');
@@ -91,8 +83,7 @@ curl_close($ch);
 
 if ($code === 204) {
     http_response_code(200);
-    echo "OK – Workflow ausgelöst (Modus: $mode)"
-        . ($ausAdresse ? ' – Hinweis: Schlüssel künftig im Kopf „X-Trigger-Key“ senden, nicht in der Adresse' : '');
+    echo "OK – Workflow ausgelöst (Modus: $mode)";
 } else {
     http_response_code(502);
     echo "Fehler: HTTP $code" . ($err ? " ($err)" : '') . ' ' . substr((string)$resp, 0, 300);

@@ -156,7 +156,7 @@ Unter `https://github.com/PhilGerEsp/website/actions` sollte Dienstag bis Samsta
 
 **Neue Regeln (`.github/workflows/update-data.yml`):**
 
-- **10-Uhr-Lauf:** Ein externer Cron ruft um 10:00 `https://www.bondarium.de/trigger/refresh.php?mode=voll` auf und sendet den Schlüssel im Kopf `X-Trigger-Key` (seit 30.09.2026 nicht mehr in der Adresse – Adressen stehen im Server-Log; `?key=…` wird nur noch für den Übergang angenommen); `refresh.php` startet den Workflow per `workflow_dispatch` (beginnt binnen Sekunden).
+- **10-Uhr-Lauf:** Ein externer Cron ruft um 10:00 `https://www.bondarium.de/trigger/refresh.php?mode=voll` auf und sendet den Schlüssel im Kopf `X-Trigger-Key` (seit 30.09.2026 nicht mehr in der Adresse – Adressen stehen im Server-Log; `?key=…` wird nicht mehr angenommen); `refresh.php` startet den Workflow per `workflow_dispatch` (beginnt binnen Sekunden).
 - **Reserve:** GitHub-Zeitplan `15 10 * * 2-6` mit `timezone: "Europe/Berlin"` (Sommer-/Winterzeit automatisch). Er ruft nur ab, wenn heute noch nichts abgefragt wurde.
 - **Tagessperre:** Job `sperre` liest `data.json` von `main` (per `gh api`, kein Checkout) und vergleicht `updatedAt` (in Berliner Zeit) mit heute. Schon abgefragt → der Lauf endet ohne Abruf und ohne Deploy. Übergehen nur manuell mit dem Häkchen `erzwingen`.
 - **Push-Deploys und `schnell`:** kein einziger Datenabruf mehr, nur Veröffentlichen des Repo-Stands. Der Checkout nutzt `ref: main`, damit ein Push, der auf den 10-Uhr-Lauf warten musste, dessen frische JSONs veröffentlicht.
@@ -168,8 +168,8 @@ Unter `https://github.com/PhilGerEsp/website/actions` sollte Dienstag bis Samsta
 
 1. GitHub → Settings → Secrets and variables → Actions: `TRIGGER_KEY` (langer Zufallswert) und `GH_DISPATCH_TOKEN` (Fine-grained Token, nur dieses Repo, Berechtigung „Actions: Read and write“, Ablaufdatum notieren) anlegen. Stand 23.09.2026 antwortet `refresh.php` mit „not configured“ – die Secrets fehlen.
 2. Einmal pushen, damit der Deploy `trigger/refresh-config.php` schreibt.
-3. Test: die URL mit `key` und `mode=voll` im Browser öffnen → „OK – Workflow ausgelöst (Modus: voll)“. Wegen der Tagessperre entsteht am selben Tag kein zweiter Abruf.
-4. cron-job.org (kostenlos): Cronjob mit dieser URL, 10:00 Uhr, Dienstag–Samstag, Zeitzone Europe/Berlin, Benachrichtigung bei Fehlern.
+3. cron-job.org (kostenlos): Cronjob mit der URL `https://www.bondarium.de/trigger/refresh.php?mode=voll`, 10:00 Uhr, Montag–Freitag (seit 30.09.2026), Zeitzone Europe/Berlin, Benachrichtigung bei Fehlern. Unter „Erweitert“ die Kopfzeile `X-Trigger-Key` mit dem Wert von `TRIGGER_KEY` eintragen – der Schlüssel gehört nicht in die Adresse.
+4. Test: in cron-job.org „Testlauf“ → Antwort „OK – Workflow ausgelöst (Modus: voll)“. Wegen der Tagessperre entsteht am selben Tag kein zweiter Abruf.
 
 Der Strato-Cron eignet sich nicht als pünktlicher Auslöser: Laut Strato-FAQ ist er ein Best-Effort-Dienst mit Verzögerungen bis zu 4 Stunden und auf der neuen Strato-Plattform nicht verfügbar.
 
