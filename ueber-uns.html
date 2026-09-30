@@ -73,16 +73,10 @@
   .band .go.leise { background: transparent; color: #fff; border-color: rgba(255,255,255,0.45); }
   .band .go.leise:hover { background: rgba(255,255,255,0.08); }
   .band a:focus-visible { outline-color: var(--green); }
-  /* Risiko sichtbar statt Kleintext; Abschnitt „Wer dahintersteht“ (seit 30.09.2026) */
+  /* Risiko sichtbar statt Kleintext (seit 30.09.2026) */
   .risiko-hw { margin-top: 18px; background: #FBEADB; border-radius: 12px; padding: 14px 18px; font-size: 15.5px; line-height: 1.6; color: var(--ink); max-width: 820px; }
   .risiko-hw strong { font-weight: 600; }
-  .risiko-hw a, .wir-l a { color: var(--green-text); }
-  .wir-l { display: grid; gap: 0; max-width: 820px; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); box-shadow: var(--shadow); padding: 6px 22px; }
-  .wir-l > div { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 4px 16px; padding: 14px 0; border-top: 1px solid var(--rule); }
-  .wir-l > div:first-child { border-top: 0; }
-  .wir-l dt { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); padding-top: 3px; }
-  .wir-l dd { font-size: 15.5px; line-height: 1.6; color: var(--ink); margin: 0; }
-  @media (max-width: 600px) { .wir-l { padding: 4px 16px; } .wir-l > div { grid-template-columns: minmax(0, 1fr); } }
+  .risiko-hw a { color: var(--green-text); }
   .kontakt p { font-size: 16.5px; line-height: 1.6; color: var(--ink); max-width: 720px; }
   @media (max-width: 860px) { .gruende, .wer { grid-template-columns: 1fr; } }
   @media (max-width: 600px) {
@@ -252,16 +246,6 @@
     </div>
   </section>
 
-  <section class="section wir" aria-labelledby="h-wir">
-    <h2 id="h-wir">Wer dahintersteht und wie Bondarium arbeitet</h2>
-    <dl class="wir-l">
-      <div><dt>Wer</dt><dd>Bondarium ist ein Angebot der urbanelo GmbH aus Stuttgart. Verantwortlich für die Inhalte ist Philipp Osterwald; Anschrift und Registereintrag stehen im <a href="rechtliches.html#impressum">Impressum</a>.</dd></div>
-      <div><dt>Unabhängig</dt><dd>Bondarium verkauft keine Anleihen und vermittelt keine Depots. Die Seiten enthalten keine Werbung und keine Affiliate-Links; Bondarium erhält keine Provisionen oder sonstigen Vergütungen von Banken, Brokern oder Herausgebern. Listen und Vergleiche richten sich nur nach den Daten.</dd></div>
-      <div><dt>Finanzierung</dt><dd>Bondarium finanziert sich nicht über Werbung, Provisionen oder Affiliate-Links. Es gibt kein Tracking und keine Analyse-Tools, siehe <a href="rechtliches.html#datenschutz">Datenschutz</a>.</dd></div>
-      <div><dt>Daten</dt><dd>Kurse und Stammdaten kommen aus öffentlichen Quellen, überwiegend automatisch – unter anderem Deutsche Bundesbank, ESMA, GLEIF und Deutsche Börse. Welche Quelle wofür, steht auf jeder Seite unten unter „Datenquellen und Methodik“ und gesammelt unter <a href="rechtliches.html#haftung">Datenquellen</a>.</dd></div>
-      <div><dt>Keine Beratung</dt><dd>Bondarium erklärt und zeigt Daten. Es ist keine Anlageberatung; entscheiden musst du selbst.</dd></div>
-    </dl>
-  </section>
   <section class="section kontakt" aria-labelledby="h-kontakt">
     <h2 id="h-kontakt">Kontakt</h2>
     <!-- dieselbe Adresse wie im Impressum (rechtliches.html) -->
