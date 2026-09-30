@@ -3,10 +3,21 @@
 /* ============================================================================================
    Gestaltungssystem (24.09.2026) – ein Look für alle Seiten.
    Eine Schrift (seit 27.09.2026, Nutzerentscheid nach Mockup): Manrope (400/500/600/700) für alles – selbst gehostet
-   (manrope-400/500/600/700.woff2, Latin-Teilmenge aus @fontsource/manrope 5.3.0, SIL OFL). Vorher Source Serif 4 + Inter + Caveat.
+   (manrope-400/500/600/700.woff2, Latin-Teilmenge aus @fontsource/manrope 5.3.0, SIL OFL). Früher drei Schriften (Serif, Grotesk, Handschrift).
    Stufenleiter: Display 56 · H1 44 · H2 32 · H3 20 · Lead 19 · Body 17 · UI 15 · Label 12–12,5 (Versalien, 0,06 em) · Caption 13.
    Titel (H1, H2, Marke) in 700 mit enger Laufweite, sonst kein Schnitt über 600; Versal-Labels 0,08 em; keine Schrift unter 12 px. Fließtext groß und ruhig, Inhalte in Karten. Die Seiten definieren nur noch ihre eigenen Bausteine;
-   alles Gemeinsame steht hier. Ältere Variablennamen (--line, --ma, --muted, --ap-*) bleiben gültig.
+   alles Gemeinsame steht hier. Ältere Variablennamen (--blue, --line, --ma, --muted, --ap-*) bleiben als Alias gültig.
+
+   SEIT 30.09.2026 ZENTRAL (Abschnitt „Gemeinsame Komponenten“ am Dateiende) – die gleichlautenden Regeln in den
+   <style>-Blöcken der Seiten sind damit überflüssig und können gelöscht werden (gleicher Selektor, gleiche Werte):
+     .sb-go (Knopf unter Schaubildern) · details.more / .more summary (Aufklapper) · .hub / .hub-card / .hub-img (Übersichts-Kacheln)
+     · .hb-bar / .hb-l / .balken .hb (HTML-Balken) · .sortbtn (Sortierknopf im Tabellenkopf) · .kpis (Kennzahlen-Tabellen)
+     · .legend / .legend .leg / .legend button.leg (Legende, Grundform; Linien oben/unten: Klasse „linie“)
+     · .gruppe / .typ (Typ-Karten in anleihe-arten, kuendbare-anleihen) · button.lbtn (Filter-Chips, jetzt in Manrope)
+     · footer.fuss (gemeinsame Fußzeile, scripts/nav.py) · .krumen (Brotkrumen, scripts/nav.py)
+     · Wisch-Hinweis .table-scroll.ueberlauf / .chart-scroll.ueberlauf (Klasse setzt site.js)
+     · Tippflächen ≥ 44 px bei (pointer: coarse) für Sortierknöpfe, Legenden-Knöpfe, Aufklapper, Chips, Sprungpillen, Fußzeile.
+   Weicht eine Seite bewusst ab (z. B. andere Spaltenbreiten, Farben), bleibt nur diese Abweichung in der Seite stehen.
    ============================================================================================ */
 @font-face { font-family: 'Manrope'; src: url(manrope-400.woff2) format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Manrope'; src: url(manrope-500.woff2) format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
@@ -16,12 +27,13 @@
   --sans: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   --serif: var(--sans);   /* seit 27.09.2026 keine Serif mehr: Titel und Marke ebenfalls Manrope (700); der Name bleibt, weil viele Seiten var(--serif) nutzen */
   --bg: #FBFAF7; --ink: #1A1A19; --text: #55544F;
-  /* Grundfarbe seit 25.09.2026 Giftgrün statt Blau (Nutzerwunsch „anstelle von blau soll die grundfarbe giftgrün sein! überall!“):
-     --blue heißt aus Kompatibilität weiter so (viele Seiten nutzen var(--blue)/--line/--ap-blue), ist aber jetzt das tiefe Giftgrün. */
-  /* Seit dem Gesamttest 25.09.2026: Schrift-Grün #157C00 statt #1DA300 (#1DA300 lag mit 3,2–3,3:1 unter der AA-Grenze 4,5:1).
-     #157C00 erreicht 5,4:1 auf Weiß, 5,1:1 auf warmem Weiß, 4,8:1 auf den hellgrünen Karten; weiße Schrift auf #157C00-Flächen 5,4:1.
-     --blue-dark (#178500) bleibt für Kante, Unterstreichung und CONCRETE in der Kopfzeile. */
-  --blue: #157C00; --blue-dark: #178500; --orange: #CF7430; --orange-text: #A2561C;
+  /* Akzentfarbe: tiefes Grün (seit 25.09.2026; vorher Blau). Klare Namen seit 30.09.2026:
+     --accent-text  #157C00  Schrift, Links, Linien auf hellem Grund (5,4:1 auf Weiß, 5,1:1 auf warmem Weiß, 4,8:1 auf hellgrünen Karten)
+     --accent-edge  #178500  Kante unter dem grünen Kopfband, Unterstreichung im Menü
+     Die alten Namen bleiben als Alias gültig (viele Seiten nutzen sie): --blue = --line = --ap-blue = --accent-text,
+     --blue-dark = --accent-edge. Neue Regeln bitte mit --accent-text / --accent-edge schreiben. */
+  --accent-text: #157C00; --accent-edge: #178500;
+  --blue: var(--accent-text); --blue-dark: var(--accent-edge); --orange: #CF7430; --orange-text: #A2561C;
   /* Giftgrün (seit 25.09.2026, Nutzerwunsch „die ganze Seite soll einen giftgrünen Touch bekommen“): --green für Flächen und Knöpfe
      (Schrift darauf immer dunkel), --green-text als etwas tiefere Schriftfarbe (Neon auf Weiß wäre unlesbar), die Tints sind
      leicht transparent, damit der Untergrund durchscheint. --soft (ehemals Hellblau #EBEFFA) ist jetzt die grüne Fläche. */
@@ -29,7 +41,7 @@
   --green-tint: rgba(57,255,20,0.16); --green-tint-2: rgba(57,255,20,0.30); --green-line: rgba(57,255,20,0.55);
   --soft: var(--green-tint);
   --rule: rgba(26,26,25,0.10); --up: #1F7A5E; --down: #993C1D;
-  --line: var(--blue); --ma: var(--orange); --muted: var(--text);
+  --line: var(--accent-text); --ma: var(--orange); --muted: var(--text);
   --ap-blue: var(--blue); --ap-orange: var(--orange); --ap-ink: var(--ink); --ap-text: var(--text); --ap-soft: var(--soft); --ap-sans: var(--sans);
   --radius: 16px; --shadow: 0 1px 2px rgba(26,26,25,0.04), 0 10px 28px rgba(26,26,25,0.05);
 }
@@ -141,7 +153,7 @@ footer a { color: var(--blue); }
    Grün 80 px nach oben gemalt wurde). Bandhöhe 90 px (≤ 760 px: 82 px, ≤ 600 px: 58 px). */
 .topbar { position: sticky; top: 0; z-index: 50; padding: 26px 0; margin: -48px 0 26px; }
 /* Seit 25.09.2026 ist die Kopfzeile giftgrün (erst dunkelblau, dann Nutzerwunsch „Grundfarbe Giftgrün, überall“). Das Grün reicht
-   per border-image-outset über die volle Breite (nur Malfläche, erzeugt kein Scrollen). Marke und Menü in dunkler Schrift (Weiß wäre auf Neon unlesbar), CONCRETE im tiefen Grün, Menülisten weiß.
+   per border-image-outset über die volle Breite (nur Malfläche, erzeugt kein Scrollen). Marke und Menü in dunkler Schrift (Weiß wäre auf Neon unlesbar), Menülisten weiß.
    Beim Scrollen (is-stuck) eine dunkelgrüne Kante unten. */
 .topbar { border-image: linear-gradient(var(--green), var(--green)) fill 0 / / 0 100vmax 0; }
 .topbar.is-stuck { border-image: linear-gradient(to top, var(--blue-dark) 3px, var(--green) 3px) fill 0 / / 0 100vmax 0; }
@@ -185,14 +197,19 @@ html { scroll-padding-top: 100px; }   /* Sprungziele nicht unter der festen Kopf
   overflow-x: auto; -webkit-overflow-scrolling: touch;
   position: relative;   /* Bezugsrahmen für absolut positionierte Kinder (z. B. .sr-only in Tabellen) – sonst entkommen sie dem Scroll-Container und machen die ganze Seite am Handy breiter (30.09.2026) */
   background:
-    linear-gradient(90deg, var(--bg) 30%, transparent),
-    linear-gradient(90deg, transparent, var(--bg) 70%) 100% 0,
+    linear-gradient(90deg, var(--scroll-bg, var(--bg)) 30%, transparent),
+    linear-gradient(90deg, transparent, var(--scroll-bg, var(--bg)) 70%) 100% 0,
     radial-gradient(farthest-side at 0 50%, rgba(44,44,42,0.18), transparent),
     radial-gradient(farthest-side at 100% 50%, rgba(44,44,42,0.18), transparent) 100% 0;
   background-repeat: no-repeat;
   background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
   background-attachment: local, local, scroll, scroll;
 }
+/* Die Abdeckung der Scroll-Schatten muss die Farbe der Fläche darunter haben (seit 30.09.2026): auf weißen Flächen
+   (.sheet der Startseite, Schaubild-Kästen, Kurzansicht) Weiß statt Creme – sonst cremefarbene Streifen am Rand.
+   Eigene weiße Flächen setzen einfach --scroll-bg: #fff. */
+.sheet, .k-bild, .det { --scroll-bg: #fff; }
+@media (max-width: 600px) { .sheet { --scroll-bg: var(--bg); } }   /* am Handy ist .sheet der Startseite ohne eigene Fläche */
 /* Reduzierte Bewegung: Animationen/Transitions site-weit praktisch abschalten */
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
@@ -274,7 +291,7 @@ table tbody tr:hover > :is(td, th) { background-color: rgba(57,255,20,0.10); }
 .hovergraph.tipon .tipline, .hovergraph.tipon .tipdot, .hovergraph.tipon .tiplab { display: block; }
 
 /* Mikro-Details */
-::selection { background: rgba(29,95,160,0.16); }
+::selection { background: var(--green-tint-2); }   /* bis 30.09.2026 noch das alte Blau */
 html { scroll-behavior: smooth; }  /* wird bei prefers-reduced-motion oben zurückgesetzt */
 
 /* Datenquellen und Methodik (Seitenstandard seit 23.09.2026): nie offen im Bild, sondern ein unauffälliger
@@ -359,11 +376,16 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 .ax-t { font-size: 12px; font-weight: 600; line-height: 1.3; color: var(--text); }
 @media (max-width: 600px) { svg text.axt { font-size: 16px; } }   /* SVG schrumpft am Handy – Achsentitel bleiben lesbar */
 /* Handy (28.09.2026, Nutzerbefund iPhone): Die Scroll-Schatten (background-attachment: local) zeichnet iOS Safari seit iOS 13 nicht –
-   der Nutzer sieht dann nicht, dass die Tabelle breiter ist. Deshalb bis 600 px ein sichtbarer Hinweis, der beim Wischen links kleben bleibt.
+   der Nutzer sieht dann nicht, dass die Tabelle breiter ist. Deshalb bis 600 px (und auf Touch-Geräten) ein sichtbarer Hinweis, der beim
+   Wischen links kleben bleibt. Seit 30.09.2026 nur, wenn der Inhalt wirklich überläuft: site.js setzt dann die Klasse „ueberlauf“
+   (vorher stand der Hinweis per CSS immer da, auch unter Grafiken, die gar nicht mehr quer scrollen). Eigener Text: data-wisch="…".
    Ab 16 px Schriftgröße zoomt iOS in Formularfelder nicht hinein – Auswahlfelder und Eingaben am Handy deshalb mindestens 16 px. */
+@media (max-width: 600px), (pointer: coarse) {
+  .table-scroll.ueberlauf::before, .chart-scroll.ueberlauf::before { content: "← Tabelle breiter als der Bildschirm – wischen →"; position: sticky; left: 0; display: block; width: max-content; max-width: 100%; margin-bottom: 4px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
+  .chart-scroll.ueberlauf::before { content: "← Grafik breiter als der Bildschirm – wischen →"; }
+  .table-scroll.ueberlauf[data-wisch]::before, .chart-scroll.ueberlauf[data-wisch]::before { content: attr(data-wisch); }
+}
 @media (max-width: 600px) {
-  .table-scroll::before, .chart-scroll::before { content: "← Tabelle breiter als der Bildschirm – wischen →"; position: sticky; left: 0; display: block; width: max-content; max-width: 100%; margin-bottom: 4px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
-  .chart-scroll::before { content: "← Grafik breiter als der Bildschirm – wischen →"; }
   select, input[type="search"], input[type="text"], input[type="number"] { font-size: max(16px, 1em) !important; }   /* !important, weil Seiten-Styles wie „caption select { font: inherit }“ sonst gewinnen */
 }
 
@@ -459,4 +481,165 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 .nav-stufe small { font-size: 12.5px; font-weight: 500; color: var(--text); }
 .sitenav .nav-group-menu a.nav-stufe.current { border-left-color: var(--green); background: var(--green-tint); text-decoration: none; }
 .nav-akademie .nav-group-menu { min-width: 230px; }
+.sitenav .nav-akademie .nav-group-menu a:not(.nav-stufe) { border-left: 3px solid transparent; }   /* Vertiefen/Werkzeuge (seit 30.09.2026) bündig mit den Stufen */
 #akademie { scroll-margin-top: 90px; }
+
+/* ============================================================================================
+   Gemeinsame Komponenten (seit 30.09.2026 zentral; vorher je Seite kopiert und auseinandergelaufen).
+   Die Selektoren sind absichtlich dieselben wie in den Seiten: Solange eine Seite ihre Kopie noch hat, gewinnt
+   die Kopie (sie steht später); ist sie gelöscht, gilt diese Regel mit gleichem Ergebnis. Hier steht jeweils
+   die häufigste Fassung; Eigenschaften, die nur einzelne Seiten anders haben, bleiben in der Seite.
+   ============================================================================================ */
+
+/* Knopf unter einem Schaubild („Zum Rechner →“ u. ä.; 14 Seiten) */
+.sb-go { margin-top: 14px; align-self: flex-start; font-size: 14px; padding: 10px 16px; }
+@media (max-width: 600px) { .sb-go { align-self: stretch; text-align: center; } }
+
+/* Aufklapper <details class="more"> mit Pfeil (Übersichten, Top-10-Seiten) */
+.more summary { cursor: pointer; font-size: 19px; font-weight: 600; color: var(--ink); list-style: none; display: flex; align-items: center; gap: 10px; }
+.more summary::-webkit-details-marker { display: none; }
+.more summary::before { content: ''; width: 8px; height: 8px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(-45deg); transition: transform .15s; }
+.more[open] summary::before { transform: rotate(45deg); }
+.more summary:hover { color: var(--line); }
+.more summary:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 3px; }
+.more .prose { font-size: 15px; margin-top: 16px; }
+
+/* Übersichts-Kacheln (wissen, entscheiden, kaufen, anleihen, beobachten): .hub > a.hub-card [.next = breite Hauptkachel] */
+.hub { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.hub-card { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 14px 14px 14px; text-decoration: none; color: var(--ink); box-shadow: var(--shadow); transition: transform .15s ease, border-color .15s ease; }
+.hub-card:hover { border-color: var(--green-line); transform: translateY(-2px); }
+.hub-card:hover h2 { color: var(--green-text); }
+.hub-card:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+.hub-card h2 { font-family: var(--sans); font-weight: 600; font-size: 17.5px; line-height: 1.25; margin-bottom: 0; overflow-wrap: anywhere; }
+.hub-card .desc { font-size: 13px; line-height: 1.4; color: var(--muted); }
+.hub-img { width: 100%; height: 92px; display: block; margin-bottom: 6px; }
+.hub-card.next { background: linear-gradient(160deg, rgba(57,255,20,0.14) 0%, rgba(57,255,20,0.04) 100%); border-color: rgba(57,255,20,0.55); }
+.hub-card.next { grid-column: 1 / -1; display: grid; grid-template-columns: 150px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 22px; row-gap: 4px; align-items: center; padding: 16px 20px; }
+.hub-card.next .hub-img { grid-row: 1 / 3; width: 150px; height: 96px; margin: 0; }
+.hub-card.next h2 { align-self: end; }
+.hub-card.next .desc { align-self: start; }
+.hub-card.next > div { grid-row: 1 / 3; align-self: center; min-width: 0; }   /* Variante mit Textblock <div> (beobachten.html) */
+.hub-card.next:hover { border-color: var(--blue); }
+.hub-card.next:hover h2 { color: var(--green-text); }
+@media (max-width: 940px) { .hub { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) {
+  .hub { gap: 10px; }
+  .hub-card { padding: 14px 14px 14px; }
+  .hub-card h2 { font-size: 17px; }
+  .hub-card .desc { font-size: 12.5px; }
+  .hub-img { height: 84px; margin-bottom: 4px; }
+  .hub-card.next { grid-template-columns: 96px minmax(0, 1fr); column-gap: 14px; }
+  .hub-card.next .hub-img { width: 96px; height: 72px; }
+}
+@media (prefers-reduced-motion: reduce) { .hub-card { transition: none; } .hub-card:hover { transform: none; } }
+
+/* HTML-Balken: .balken > .hb (Beschriftung .hb-l | Balken .hb-bar mit Wert <b> | optional .hb-r), Länge über --w.
+   Spaltenbreiten (grid-template-columns) und Balkenfarben legt jede Seite selbst fest; hier die gemeinsame Form.
+   Textlage im Balken: Standard links; Seiten mit Wert am rechten Ende setzen justify-content: flex-end. */
+.balken .hb { display: grid; grid-template-columns: 130px minmax(0, 1fr); align-items: center; gap: 10px; }
+.balken .hb + .hb { margin-top: 7px; }
+.hb-l { font-size: 14px; font-weight: 600; color: var(--ap-ink); }
+.hb-l small { display: block; font-size: 12px; font-weight: 400; color: var(--text); }
+.hb-bar { display: flex; align-items: center; height: 28px; width: var(--w); min-width: max-content; border-radius: 6px; background: #1F7A5E; }
+.hb-bar b { color: #fff; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hb-bar.o { background: #A3651A; }
+.hb-bar.r { background: var(--down); }
+.hb-bar.n { background: #8E8D86; }
+@media (max-width: 600px) { .hb-l { font-size: 13px; } }
+
+/* Sortierknopf im Tabellenkopf: <th data-col aria-sort><button class="sortbtn">Titel</button></th> */
+.sortbtn { font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; }
+.sortbtn::after { content: "↕"; font-size: 12px; opacity: 0.45; }
+.sortbtn:hover, th[aria-sort] .sortbtn { color: var(--ink); }
+th[aria-sort="ascending"] .sortbtn::after { content: "↑"; opacity: 1; }
+th[aria-sort="descending"] .sortbtn::after { content: "↓"; opacity: 1; }
+.sortbtn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+
+/* Kennzahlen-Tabellen <table class="kpis"> (Top-10-Seiten, Langläufer, Suche) – in .table-scroll */
+.kpis { min-width: 1000px; font-size: 13px; }
+.kpis th, .kpis td { padding: 9px 4px 9px 0; }
+.kpis thead th { vertical-align: top; font-size: 12px; letter-spacing: 0; }
+.kpis th[scope=row] { line-height: 1.4; }   /* die Top-10-Seiten ergänzen font-weight: 400; white-space: nowrap */
+.kpis td.num { font-size: 14px; }
+.kpis td.txt { white-space: nowrap; }
+.kpis td.txt small { display: block; color: var(--muted); font-size: 12px; }
+.kpis td.art { padding-right: 10px; }
+.kpis td.isin { font-variant-numeric: tabular-nums; white-space: nowrap; letter-spacing: 0.01em; }
+.kpis td.rk { color: var(--muted); padding-right: 6px; }
+.kpis td.leer { text-align: left; color: var(--text); font-style: italic; padding: 14px 8px; white-space: normal; }
+
+/* Legende über Charts – Grundform. <div class="legend [linie]"> mit <span class="leg"> oder <button class="leg" aria-pressed>.
+   „linie“: feine Linien oben und unten (renditen, zinskurve, unternehmensanleihen, langlaeufer).
+   Was aria-pressed bedeutet (hervorheben oder ausblenden), gestaltet die Seite selbst. */
+.legend { display: flex; gap: 10px 22px; flex-wrap: wrap; align-items: center; font-size: 13px; color: var(--muted); }
+.legend.linie { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 10px 0; margin-bottom: 24px; }
+.legend .leg { display: inline-flex; align-items: center; gap: 7px; }
+.legend button.leg { font: inherit; background: none; border: 0; cursor: pointer; border-radius: 3px; }
+.legend button.leg:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+.legend .leg-hint { font-size: 12px; flex-basis: 100%; }
+
+/* Typ-Karten (anleihe-arten, kuendbare-anleihen): <section class="gruppe"> mit <article class="typ">.
+   :where(.gruppe) begrenzt die Regeln auf diese Karten, ohne die Gewichtung zu erhöhen (.typ heißt anderswo etwas anderes). */
+.gruppe { margin-top: 34px; }
+:where(.gruppe) .typ { background: #fff; border: 1px solid rgba(26,26,25,0.09); border-radius: 14px; padding: 18px 20px 18px; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(26,26,25,0.03), 0 6px 18px rgba(26,26,25,0.035); scroll-margin-top: 110px; }
+:where(.gruppe) .typ .tk { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+:where(.gruppe) .typ .ti { flex: none; width: 44px; height: 44px; border-radius: 50%; background: var(--soft); color: var(--green-text); display: grid; place-items: center; }
+:where(.gruppe) .typ .ti svg { width: 24px; height: 24px; }
+:where(.gruppe) .typ h3 { font-size: 19px; line-height: 1.2; letter-spacing: -0.01em; }
+:where(.gruppe) .typ .def { font-size: 15.5px; line-height: 1.55; color: var(--ink); }
+:where(.gruppe) .typ dl { margin-top: 12px; display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: 6px 10px; font-size: 14px; line-height: 1.45; }
+:where(.gruppe) .typ dt { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); padding-top: 3px; }
+:where(.gruppe) .typ dd { color: var(--text); margin: 0; }
+:where(.gruppe) .typ dd strong { color: var(--ink); font-weight: 600; }
+:where(.gruppe) .typ .tl { margin-top: auto; padding-top: 14px; }
+:where(.gruppe) .typ .tl a { display: inline-block; font-size: 14px; font-weight: 600; text-decoration: none; background: var(--soft); color: var(--green-text); padding: 7px 12px; border-radius: 999px; }
+:where(.gruppe) .typ .tl a:hover { background: var(--green); color: var(--ink); }
+@media (max-width: 600px) { :where(.gruppe) .typ { padding: 16px; } :where(.gruppe) .typ dl { grid-template-columns: 72px minmax(0, 1fr); } }
+
+/* Filter-Chips als Knopf <button class="lbtn" aria-pressed> (Länder, Laufzeiten). Nicht zu verwechseln mit den
+   Sprungpillen a.lbtn oben. Seit 30.09.2026 mit font-family: inherit – vorher erschienen die Knöpfe in Arial. */
+button.lbtn { font-family: inherit; font-size: 13px; line-height: 1; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.18); border-radius: 999px; padding: 7px 13px; cursor: pointer; transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease; }
+button.lbtn:hover, button.lbtn.hot { border-color: var(--green-text); color: var(--green-text); }
+button.lbtn[aria-pressed="true"] { background: var(--green); border-color: var(--green); color: var(--ink); }
+button.lbtn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+button.lbtn .rng { font-size: 12px; color: var(--muted); }
+button.lbtn:hover .rng { color: inherit; }
+@media (max-width: 600px) { button.lbtn { font-size: 12.5px; padding: 7px 11px; } }
+@media (prefers-reduced-motion: reduce) { button.lbtn { transition: none; } }
+
+/* Brotkrumen unter der Kopfzeile (scripts/nav.py aus dem JSON-LD BreadcrumbList; nicht auf Startseite und 404) */
+.krumen { margin: -10px 0 22px; font-size: 13px; line-height: 1.5; color: var(--text); }
+.krumen ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 6px; }
+.krumen li { display: inline-flex; align-items: baseline; gap: 6px; min-width: 0; }
+.krumen li + li::before { content: "›"; color: rgba(26,26,25,0.40); }
+.krumen a { color: var(--text); text-decoration: none; }
+.krumen a:hover { color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; }
+.krumen [aria-current] { color: var(--ink); font-weight: 500; }
+@media (max-width: 600px) { .krumen { margin: -4px 0 16px; font-size: 12.5px; } }
+
+/* Fußzeile aller Seiten (scripts/nav.py; Vorbild: Startseite): vier Spalten Anleihen · Akademie · Zinsen · Bondarium,
+   darunter Hinweis und Link „Rechtliches“. Die Grundregel „footer“ oben (Linie, Abstand, Schriftgröße) gilt weiter. */
+footer.fuss { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px 24px; padding-top: 26px; font-size: 14px; }
+.fuss nav { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.fuss .fuss-k { font-size: 14px; font-weight: 700; letter-spacing: 0; line-height: 1.3; color: var(--ink); margin: 0 0 4px; }
+.fuss nav a { color: var(--text); text-decoration: none; }
+.fuss nav a:hover { color: var(--green-text); text-decoration: underline; text-underline-offset: 3px; }
+.fuss nav a[aria-current] { color: var(--ink); }
+.fuss .fuss-hw { grid-column: 1 / -1; margin: 0; padding-top: 14px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--text); }
+.fuss .fuss-hw a { color: var(--blue); }
+@media (max-width: 760px) { footer.fuss { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Tippflächen am Touch-Gerät (pointer: coarse) mindestens 44 px hoch – das Desktop-Layout (Maus) bleibt unverändert.
+   min-height mit !important, weil ältere Seiten-Kopien dieser Bausteine (mit höherer Gewichtung) sonst gewinnen;
+   Innenabstände und Farben bleiben Sache der Seiten. */
+@media (pointer: coarse) {
+  .sortbtn, .legend button.leg, a.lbtn, button.lbtn, .kv-btn, .kopie, .det-mehr .det-link,
+  .more > summary, details.quellen > summary { min-height: 44px !important; }
+  button.lbtn, .kv-btn, .kopie, .det-mehr .det-link { display: inline-flex; align-items: center; justify-content: center; }
+  .gruppe .typ .tl a { display: inline-flex !important; align-items: center; min-height: 44px !important; }
+  .fuss nav { gap: 0; }
+  .fuss nav a { display: flex; align-items: center; min-height: 44px; }
+  .fuss .fuss-k { margin-bottom: 0; }
+  .fuss .fuss-hw a, .krumen a, footer:not(.fuss) a { display: inline-block; padding: 12px 0; margin: -12px 0; }
+  .crossnav .crossnav-l a { min-height: 44px; align-items: center; }
+}

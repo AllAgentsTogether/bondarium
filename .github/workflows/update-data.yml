@@ -64,7 +64,7 @@ jobs:
   sperre:
     name: Heute schon abgefragt?
     if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && github.event.inputs.lauf != 'schnell' && github.event.inputs.erzwingen != 'true')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # fest statt ubuntu-latest (Wechsel auf Ubuntu 26 ab 19.10.2026)
     outputs:
       abrufen: ${{ steps.pruefen.outputs.abrufen }}
     steps:
@@ -101,7 +101,7 @@ jobs:
     # wenn heute noch nicht abgefragt wurde (sonst gäbe es nichts Neues zu
     # veröffentlichen).
     if: ${{ !cancelled() && (needs.sperre.result == 'skipped' || needs.sperre.outputs.abrufen == '1') }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # fest statt ubuntu-latest (Wechsel auf Ubuntu 26 ab 19.10.2026)
     env:
       # VOLL=1: Datenabruf aller Quellen, Commit der JSONs, Frische-Prüfung –
       # im 10-Uhr-Lauf, im Reserve-Lauf und beim manuellen 'voll'-Start.
@@ -242,6 +242,10 @@ jobs:
           fi
 
       # ----- Veröffentlichen: IMMER (auch bei jedem Push) -----
+      # ----- Liste der vorhandenen Kurs-Jahre (site.js MC.verlauf lädt nur diese – keine 404 mehr) -----
+      - name: Kurs-Jahresliste schreiben
+        run: if [ -f scripts/kurse_jahre.py ]; then python3 scripts/kurse_jahre.py; fi
+
       - name: Veröffentlichungs-Ordner bauen (nur die echten Website-Dateien)
         # Explizite Liste ohne "|| true": fehlt eine Dateiklasse, bricht der Lauf ab
         # (früher kamen OG-Bild/Favicons/Sitemap unbemerkt nie auf dem Server an).
@@ -258,6 +262,10 @@ jobs:
       #       <script type="application/json"> in jeder Seite (site.js: MC.load).
       #       Kein zweiter Request, kein Render-Sprung, Fallback-Werte so frisch
       #       wie der Lauf. Die Quell-HTML im Repo bleiben unverändert. -----
+      # ----- Kennzahlen aus den Daten (Anzahl Anleihen, Renditespannen) in die Seiten setzen (seit 30.09.2026) -----
+      - name: Kennzahlen einsetzen
+        run: python3 scripts/kennzahlen.py _site
+
       - name: Daten in die HTML-Seiten einbetten
         run: python3 scripts/inline_data.py _site
 
@@ -356,7 +364,37 @@ jobs:
               f.write("\n".join(lines) + "\n")
           '
 
-      - name: Per SFTP zu Strato hochladen
+      # ----- Qualitätsprüfung: tote interne Links oder Reste des alten Namens stoppen den Upload.
+      #       Platzhalter (Impressum noch leer) erscheinen nur als Warnung. -----
+      - name: Veröffentlichungs-Ordner prüfen
+        run: python3 scripts/pruefen.py _site
+
+      # ----- Upload: nur geänderte Dateien (seit 30.09.2026). Vorher gingen bei jedem Lauf alle
+      #       ~1.400 Dateien hoch (rund 12 Minuten). Auf dem Server liegt .deploy-manifest mit den
+      #       SHA-1-Werten des letzten Uploads (per .htaccess gesperrt); scripts/deploy_manifest.py
+      #       vergleicht und schreibt ein lftp-Skript. Zielordner = Startverzeichnis des SFTP-Zugangs
+      #       (/bondarium, Strato-Nutzer su1338619) = Docroot der Domain.
+      #       Scheitert dieser Weg, lädt der Rückfall darunter wie früher alles hoch. -----
+      - name: Geänderte Dateien per SFTP hochladen
+        id: inkrementell
+        continue-on-error: true
+        env:
+          SFTP_SERVER: ${{ secrets.SFTP_SERVER }}
+          SFTP_USERNAME: ${{ secrets.SFTP_USERNAME }}
+          LFTP_PASSWORD: ${{ secrets.SFTP_PASSWORD }}
+        run: |
+          sudo apt-get install -y -qq lftp > /dev/null
+          python3 scripts/deploy_manifest.py manifest _site > neu.manifest
+          rm -f alt.manifest
+          lftp -u "$SFTP_USERNAME" --env-password "sftp://$SFTP_SERVER" \
+            -e "set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 30; get .deploy-manifest -o alt.manifest; bye" \
+            || echo "Kein Manifest auf dem Server – alles wird hochgeladen"
+          touch alt.manifest
+          python3 scripts/deploy_manifest.py lftp alt.manifest neu.manifest _site > upload.lftp
+          lftp -u "$SFTP_USERNAME" --env-password "sftp://$SFTP_SERVER" -f upload.lftp
+
+      - name: Rückfall – alles per SFTP hochladen
+        if: steps.inkrementell.outcome == 'failure'
         uses: wlixcc/SFTP-Deploy-Action@896dcfc555b4cbe36a4acc9bc0827ab474d429fc # v1.2.5 (SHA-gepinnt, Action erhält das SFTP-Passwort)
         with:
           server: ${{ secrets.SFTP_SERVER }}
@@ -365,16 +403,13 @@ jobs:
           port: 22
           sftp_only: true          # Strato erlaubt nur reines SFTP, kein rsync/SSH-Shell
           local_path: './_site/*'
-          # Zielordner = Startverzeichnis des SFTP-Zugangs (/bondarium, Strato-Nutzer su1338619) = Docroot
-          # der Domain. Verifiziert am 10.07.2026: Live-Abruf mit Cache-Buster
-          # liefert exakt den Repo-Stand; nur zwischengespeicherte Antworten
-          # können älter wirken (Cache-Header regelt jetzt die .htaccess).
           remote_path: './'
 
       # Die Root-.htaccess MUSS separat hochgeladen werden: das Glob ./_site/*
       # im Schritt oben wird per glob(3) expandiert und überspringt Punktdateien
       # (Audit 07/2026). Expliziter Dateiname umgeht das.
-      - name: .htaccess separat hochladen (Glob überspringt Punktdateien)
+      - name: Rückfall – .htaccess separat hochladen (Glob überspringt Punktdateien)
+        if: steps.inkrementell.outcome == 'failure'
         uses: wlixcc/SFTP-Deploy-Action@896dcfc555b4cbe36a4acc9bc0827ab474d429fc # v1.2.5
         with:
           server: ${{ secrets.SFTP_SERVER }}

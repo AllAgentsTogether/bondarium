@@ -25,6 +25,21 @@ import re
 import sys
 
 LOAD_RE = re.compile(r'MC\.load\("([a-z0-9_-]+\.json)"\)')
+# Seit 30.09.2026 zusätzlich: Dateinamen als String-Literal (z. B. ["sl", "top10-….json"] oder const TOP10 = "….json"),
+# die per Variable an MC.load gehen. Nur Dateien im Stammordner und bis MAX_KB – große Such-/Kursdateien bleiben fetch.
+LIT_RE = re.compile(r'"([a-z0-9_-]+\.json)"')
+MAX_KB = 200
+ISIN_RE = re.compile(r'\b([A-Z]{2}[A-Z0-9]{9}[0-9])\b')
+
+
+def kuerzen(data, html):
+    """kurse-auswahl.json u. ä.: nur die ISINs einbetten, die auf der Seite vorkommen (Startseite: 6 statt 324)."""
+    if isinstance(data, dict) and isinstance(data.get("kurse"), dict):
+        isins = set(ISIN_RE.findall(html))
+        if isins:
+            data = dict(data)
+            data["kurse"] = {k: v for k, v in data["kurse"].items() if k in isins}
+    return data
 ANCHOR_RE = re.compile(r'<script src="site\.js[^"]*"></script>')
 
 
@@ -35,6 +50,11 @@ def embed(site, fname):
     for n in LOAD_RE.findall(html):
         if n not in names:
             names.append(n)
+    if "MC.load(" in html:
+        for n in LIT_RE.findall(html):
+            p = os.path.join(site, n)
+            if n not in names and os.path.isfile(p) and os.path.getsize(p) <= MAX_KB * 1024:
+                names.append(n)
     if not names:
         return None
     m = ANCHOR_RE.search(html)
@@ -52,6 +72,7 @@ def embed(site, fname):
         except Exception as e:  # defekte/fehlende Datei: Seite lädt dann per fetch
             print(f"::warning::{fname}: {n} nicht einbettbar ({e}) – Seite nutzt fetch")
             continue
+        data = kuerzen(data, html)
         compact = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
         # "</" darf in einem Script-Block nicht vorkommen (würde ihn beenden)
         compact = compact.replace("</", "<\\/")

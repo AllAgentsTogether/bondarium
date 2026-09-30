@@ -24,7 +24,7 @@ concurrency:
 
 jobs:
   nachholen:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # fest statt ubuntu-latest (Wechsel auf Ubuntu 26 ab 19.10.2026)
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
         with:

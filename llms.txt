@@ -1,4 +1,4 @@
-# BONDARIUM (bondarium.de)
+# Bondarium (bondarium.de)
 
 > Statische, werbefreie Informationsseite zu Anleihen: Renditen von Staatsanleihen
 > der großen Volkswirtschaften, Unternehmensanleihen nach Bonität, Langläufer, die

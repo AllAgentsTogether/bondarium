@@ -1,8 +1,27 @@
 /* site.js – gemeinsame Helfer für alle Seiten. Wird vor dem seitenspezifischen
    Inline-Script am Body-Ende geladen (DOM ist dann bereits geparst).
    Einzige Quelle für: HTML-Escaping (XSS-Schutz), Datenladen (eingebettete
-   Deploy-Daten vor fetch), Nav-Dropdowns inkl. aria-current, Chart-Tooltips und
-   die Einordnungsregel (Perzentil/Einstufung gegen die eigene Historie). */
+   Deploy-Daten vor fetch, gemeinsamer Fetch-Cache), Zahlen-/Datumsformat, die
+   „veraltet“-Regel, Nav-Dropdowns inkl. aria-current, Chart-Tooltips, Kursverläufe,
+   den Wisch-Hinweis quer scrollender Tabellen und die Einordnungsregel.
+   Der Kurs-Chart (MC.kursChart) steht seit 30.09.2026 in chart.js, die Anleihen-
+   Mathematik (MC.bond) in bond.js – beide nur auf den Seiten, die sie brauchen.
+
+   API (window.MC), Stand 30.09.2026:
+     MC.esc(s)                 HTML-Escaping – für jede Fremd-Zeichenkette vor innerHTML
+     MC.minus(s)               führendes „-“ → echtes Minus „−“
+     MC.zahl(v, nachkomma)     1234.5 → „1.234,50“ (de-DE, echtes Minus); keine Zahl → „–“
+     MC.datum(iso) / MC.tag(iso)   „2026-09-25“ → „25.09.2026“ / „25.09.“; ungültig → „–“
+     MC.STALE_TAGE             5 – ab so vielen Börsentagen Alter gilt ein Datenstand als veraltet
+     MC.boersentage(iso[, bis]) Börsentage (Mo–Fr) nach iso bis heute; MC.veraltet(iso) → true ab STALE_TAGE
+     MC.load(datei)            Promise mit JSON: eingebetteter Block (Deploy) oder fetch über MC.json
+     MC.json(url)              fetch + JSON mit gemeinsamem Cache (jede URL einmal je Seitenaufruf)
+     MC.restlaufzeit(jahre[, kurz]), MC.kuendigung(...), MC.kuendigungFeld(...)
+     MC.teil(isin), MC.verlauf(isin[, bund][, {ab}])   Kursverlauf aus kurse/ (nur vorhandene Jahre, kurse/jahre.json)
+     MC.hoverWrap(svg, series[, label[, opts]])        Chart-Tooltip; Daten bleiben im JS (nicht im DOM)
+     MC.wischPruefen()         Wisch-Hinweis (.ueberlauf) neu prüfen
+     MC.navInit()              Menü, aria-current, Kopfzeilen-Suche
+     MC.percentile/stats/rate/pctText/ratePill         Einordnung gegen die eigene Historie */
 window.MC = (function () {
   "use strict";
 
@@ -75,20 +94,61 @@ window.MC = (function () {
     return { wert: f[0], klein: f[1], warn: o.k === "t" || o.k === "e", anker: f[2] };
   }
 
+  // Gemeinsamer Fetch-Cache (seit 30.09.2026): jede URL wird je Seitenaufruf nur einmal geladen – auch wenn
+  // MC.load, MC.verlauf und das Seitenskript dieselbe Datei brauchen (anleihe.html lud kurse/<Jahr>/<teil>.json doppelt).
+  // MC.json(url) → Promise mit dem geparsten JSON; bei HTTP-Fehler wird abgelehnt (Error mit dem Statuscode) und der
+  // Eintrag verworfen, damit ein späterer Versuch neu lädt. Das Ergebnis ist geteilt – nur lesen, nicht verändern.
+  var jsonCache = {};
+  function json(url) {
+    if (!jsonCache[url]) {
+      jsonCache[url] = fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
+      jsonCache[url].catch(function () { delete jsonCache[url]; });
+    }
+    return jsonCache[url];
+  }
+
   // Daten laden. Der Deploy-Workflow bettet die JSON-Dateien als
   // <script type="application/json" data-mc="renditen.json"> in jede Seite ein
   // (scripts/inline_data.py) – dann entfällt der zusätzliche Request und der
   // erste Render zeigt bereits die aktuellen Werte (kein Sprung, kein
   // „Flash“ alter Fallback-Zahlen). Ohne eingebettete Daten (lokal/Entwicklung)
-  // wird wie bisher per fetch geladen.
+  // wird per fetch geladen – über den gemeinsamen Cache (MC.json).
   function load(name) {
     var el = document.querySelector('script[type="application/json"][data-mc="' + name + '"]');
     if (el) {
       try { return Promise.resolve(JSON.parse(el.textContent)); }
       catch (e) { /* defekter Block: auf fetch zurückfallen */ }
     }
-    return fetch(name).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
+    return json(name);
   }
+
+  // --- Zahlen und Daten (seit 30.09.2026 zentral; vorher in vielen Seiten als fmt()/fmtDate() nachgebaut) ---
+  // MC.zahl(v, nachkomma): deutsches Zahlenformat mit fester Nachkommazahl und echtem Minuszeichen (U+2212);
+  // keine Zahl (null, NaN, Text) → „–“. Beispiel: MC.zahl(-1234.5, 2) → „−1.234,50“.
+  var NF = {};
+  function zahl(v, dec) {
+    if (typeof v !== "number" || !isFinite(v)) return "–";
+    dec = dec || 0;
+    var nf = NF[dec] || (NF[dec] = new Intl.NumberFormat("de-DE", { minimumFractionDigits: dec, maximumFractionDigits: dec }));
+    return minus(nf.format(v));
+  }
+  // ISO-Datum „JJJJ-MM-TT…“ → „TT.MM.JJJJ“ (MC.datum) bzw. „TT.MM.“ (MC.tag); ungültig → „–“
+  var ISO_RE = /^(\d{4})-(\d{2})-(\d{2})/;
+  function datum(iso) { var m = ISO_RE.exec(String(iso || "")); return m ? m[3] + "." + m[2] + "." + m[1] : "–"; }
+  function tag(iso) { var m = ISO_RE.exec(String(iso || "")); return m ? m[3] + "." + m[2] + "." : "–"; }
+  // Veraltete Daten (eine Regel für alle Seiten): ab MC.STALE_TAGE Börsentagen (Mo–Fr, ohne Feiertage) Alter gilt
+  // ein Kurs/Datenstand als „veraltet“. Gezählt wie auf anleihe.html: Werktage NACH dem Datum bis heute einschließlich
+  // (Kurs von Freitag ist am Montag 1 Börsentag alt). MC.boersentage(iso[, bis]) → Anzahl; bis = Date, Standard heute.
+  var STALE_TAGE = 5;
+  function boersentage(iso, bis) {
+    var m = ISO_RE.exec(String(iso || ""));
+    if (!m) return null;
+    var h = bis instanceof Date ? bis : new Date();
+    var ende = Date.UTC(h.getFullYear(), h.getMonth(), h.getDate(), 12), d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], 12)), n = 0;
+    while (d.getTime() < ende) { d.setUTCDate(d.getUTCDate() + 1); if (d.getTime() <= ende && d.getUTCDay() % 6) n++; }
+    return n;
+  }
+  function veraltet(iso, bis) { var n = boersentage(iso, bis); return n != null && n >= STALE_TAGE; }
 
   // Nav-Dropdowns (die vier Stufen Verstehen, Entscheiden, Kaufen, Einordnen):
   // Hover/Fokus, auf Touch-Geräten erster Tipp; Escape und Außenklick schließen,
@@ -272,22 +332,44 @@ window.MC = (function () {
     var m = !label && svgStr.match(/ role="img" aria-label="([^"]*)"/);
     var aria = label ? esc(label) : m ? m[1] : "Interaktives Diagramm – Werte mit den Pfeiltasten abrufbar";
     if (m) svgStr = svgStr.replace(' role="img" aria-label="' + m[1] + '"', ' aria-hidden="true"');
+    // Seit 30.09.2026 stehen die Tooltip-Daten nicht mehr als JSON im Attribut (risikoaufschlaege.html hatte 220 KB
+    // data-hover im DOM): data-hover trägt nur noch eine kurze Kennung, die Daten liegen in HOVER_DATEN (JS).
+    var id = "h" + (++hoverNr);
+    HOVER_DATEN[id] = { d: clean, t: Date.now() };
+    aufraeumen();
     return '<div class="hovergraph" tabindex="0" role="group" aria-label="' + aria +
       '" aria-roledescription="Diagramm"' + (opts && opts.mode === "nearest" ? ' data-hover-mode="nearest"' : "") +
-      ' data-hover="' + esc(JSON.stringify(clean)) + '">' + svgStr + "</div>";
+      ' data-hover="' + id + '">' + svgStr + "</div>";
+  }
+  // Kennung → Daten. Einträge, deren Chart nicht mehr im Dokument steht (neu gezeichnet, z. B. nach Resize), werden
+  // nach 10 s verworfen; ein bereits angezeigter Chart behält seine Daten über HOVER_EL (WeakMap am Element).
+  var HOVER_DATEN = {}, hoverNr = 0, HOVER_EL = typeof WeakMap === "function" ? new WeakMap() : null, aufraeumTimer = 0;
+  function aufraeumen() {
+    if (aufraeumTimer) return;
+    aufraeumTimer = setTimeout(function () {
+      aufraeumTimer = 0;
+      var jetzt = Date.now(), offen = false;
+      Object.keys(HOVER_DATEN).forEach(function (id) {
+        if (jetzt - HOVER_DATEN[id].t < 10000) { offen = true; return; }
+        if (!document.querySelector('.hovergraph[data-hover="' + id + '"]')) delete HOVER_DATEN[id];
+      });
+      if (offen) aufraeumen();
+    }, 11000);
   }
 
   function hoverInit() {
     if (document.__mcHoverInit) return;
     document.__mcHoverInit = true;
 
+    // Daten eines Charts: aus der Kennung in data-hover (hoverWrap); ältere Seiten-Kopien mit JSON im Attribut gehen weiter
     function dataOf(wrap) {
-      var raw = wrap.getAttribute("data-hover");
-      if (wrap.__mcHoverRaw !== raw) {
-        try { wrap.__mcHover = JSON.parse(raw); } catch (e) { wrap.__mcHover = null; }
-        wrap.__mcHoverRaw = raw;
-      }
-      return wrap.__mcHover;
+      var raw = wrap.getAttribute("data-hover") || "";
+      if (HOVER_EL) { var c = HOVER_EL.get(wrap); if (c && c.raw === raw) return c.d; }
+      var d = null;
+      if (HOVER_DATEN[raw]) d = HOVER_DATEN[raw].d;
+      else if (raw.charAt(0) === "[") { try { d = JSON.parse(raw); } catch (e) { d = null; } }
+      if (HOVER_EL && d) HOVER_EL.set(wrap, { raw: raw, d: d });
+      return d;
     }
 
     // Abbildung viewBox-Koordinaten -> Pixel relativ zum Wrapper. Beachtet
@@ -451,28 +533,95 @@ window.MC = (function () {
   }
   hoverInit();
 
+  // --- Wisch-Hinweis für quer scrollende Tabellen und Grafiken (seit 30.09.2026) ---
+  // Früher zeigte base.css den Hinweis „← Tabelle breiter als der Bildschirm – wischen →“ am Handy immer – auch
+  // wenn nichts überlief (alle Chart-Seiten). Jetzt setzt site.js die Klasse „ueberlauf“ an .table-scroll/.chart-scroll
+  // nur, solange der Inhalt wirklich breiter ist (scrollWidth > clientWidth); base.css zeigt den Hinweis nur dann.
+  // Geprüft beim Laden, bei Größenänderung und wenn Seitenskripte Inhalte nachzeichnen. Eigener Text: data-wisch="…".
+  // MC.wischPruefen() stößt die Prüfung von Hand an (z. B. nach dem Aufklappen eines Bereichs).
+  var wischPlan = 0, wischRO = null;
+  function wischPruefen() {
+    if (wischPlan) return;
+    var lauf = function () {
+      wischPlan = 0;
+      document.querySelectorAll(".table-scroll, .chart-scroll").forEach(function (el) {
+        if (wischRO && !el.__wischRO) { el.__wischRO = true; wischRO.observe(el); if (el.firstElementChild) wischRO.observe(el.firstElementChild); }
+        var breit = el.clientWidth > 0 && el.scrollWidth > el.clientWidth + 1;
+        if (el.classList.contains("ueberlauf") !== breit) el.classList.toggle("ueberlauf", breit);
+      });
+    };
+    wischPlan = setTimeout(lauf, 50);   // setTimeout statt requestAnimationFrame: rAF kann in Hintergrund-Frames ausbleiben
+  }
+  function wischInit() {
+    window.addEventListener("resize", wischPruefen);
+    window.addEventListener("load", wischPruefen);
+    if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener("loadingdone", wischPruefen);   // Webfont ändert die Breite
+    // Größe des Containers und seines Inhalts (Tabelle/SVG) beobachten; neue Container meldet der MutationObserver
+    if (window.ResizeObserver) wischRO = new ResizeObserver(wischPruefen);
+    wischPruefen();
+    if (window.MutationObserver && document.body) {
+      new MutationObserver(function (list) {
+        for (var i = 0; i < list.length; i++) {
+          var t = list[i].target;
+          // Tooltip-Beschriftung und die Klasse selbst lösen keine neue Prüfung aus
+          if (t.nodeType === 1 && t.closest && t.closest(".hovergraph")) continue;
+          wischPruefen(); return;
+        }
+      }).observe(document.body, { childList: true, subtree: true });
+    }
+  }
+  wischInit();
+
   // --- Kursverlauf einer Anleihe oder eines ETFs (seit 25.09.2026) ---
   // Daten: scripts/update_kurse.py. Deutsche Börse (Frankfurt, Xetra, Tradegate) ab 24.09.2026 in
   // kurse/<Jahr>/<teil>.json (256 Teildateien je Jahr), Bundeswertpapiere seit Ausgabe (Bundesbank)
   // in kurse/bund/<ISIN>.json. teil() MUSS mit update_kurse.py übereinstimmen.
+  // Seit 30.09.2026 ohne blinde Jahresabrufe: kurse/jahre.json (scripts/kurse_jahre.py) sagt, welche Teildateien es je
+  // Jahr gibt und welche ISINs einen Bundesbank-Verlauf haben – geladen werden nur vorhandene Dateien (keine 404 mehr).
+  // Fehlt die Liste, gilt die alte Schleife ab VERLAUF_AB (die Zeile setzt scripts/import_kurshistorie.py --site-js).
+  // Jahre nach dem letzten gelisteten Jahr bis heute werden immer versucht (Jahreswechsel vor dem nächsten Listenlauf).
   var VERLAUF_AB = 2021;
   function teil(isin) {
     var h = 0;
     for (var i = 0; i < isin.length; i++) h = (h * 31 + isin.charCodeAt(i)) % 65536;
     return ("0" + (h % 256).toString(16)).slice(-2);
   }
-  var jsonCache = {};
-  function json(url) {
-    if (!jsonCache[url]) jsonCache[url] = fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); });
-    return jsonCache[url];
+  var jahreListe = null;
+  function kursJahre() {
+    if (!jahreListe) jahreListe = json("kurse/jahre.json").then(function (d) { return d && d.jahre ? d : null; }, function () { return null; });
+    return jahreListe;
   }
-  // → Promise {t: [Datum], k: [Kurs], u: [Umsatz oder 0]}; bund = Bundeswertpapier (Bundesbank-Verlauf)
-  function verlauf(isin, bund) {
-    var boerse = function () {
-      var jahre = [];
-      for (var j = VERLAUF_AB; j <= new Date().getFullYear(); j++) jahre.push(j);
-      return Promise.all(jahre.map(function (j) {
-        return json("kurse/" + j + "/" + teil(isin) + ".json").catch(function () { return null; });
+  // MC.verlauf(isin[, bund][, opts]) → Promise {t: [Datum], k: [Kurs], u: [Umsatz oder 0], bund?: true}
+  //   bund = true: Bundeswertpapier – erst den Bundesbank-Verlauf kurse/bund/<ISIN>.json, sonst Börse.
+  //   opts.ab = "JJJJ-MM-TT": nur Jahre ab diesem Datum laden und nur Punkte ab diesem Tag liefern
+  //   (langlaeufer.html braucht nur die Kurse nach dem letzten eingebetteten Wochenkurs).
+  //   Aufruf auch als MC.verlauf(isin, {ab: …}).
+  function verlauf(isin, bund, opts) {
+    if (bund && typeof bund === "object") { opts = bund; bund = false; }
+    opts = opts || {};
+    var ab = typeof opts.ab === "string" && /^\d{4}-\d{2}-\d{2}/.test(opts.ab) ? opts.ab.slice(0, 10) : "";
+    var abJahr = ab ? +ab.slice(0, 4) : 0;
+    var schneide = function (v) {
+      if (!ab) return v;
+      var out = { t: [], k: [], u: [] };
+      if (v.bund) out.bund = true;
+      v.t.forEach(function (t, i) { if (t >= ab) { out.t.push(t); out.k.push(v.k[i]); out.u.push(v.u ? v.u[i] || 0 : 0); } });
+      return out;
+    };
+    var boerse = function (liste) {
+      var jetzt = new Date().getFullYear(), t = teil(isin), jahre = [], j;
+      if (liste) {
+        var letztes = 0;
+        Object.keys(liste.jahre).forEach(function (y) {
+          var n = +y, s = liste.jahre[y];
+          if (n > letztes) letztes = n;
+          for (var i = 0; i < s.length; i += 2) if (s.substr(i, 2) === t) { jahre.push(n); break; }
+        });
+        for (j = letztes + 1; j <= jetzt; j++) jahre.push(j);
+      } else for (j = VERLAUF_AB; j <= jetzt; j++) jahre.push(j);
+      jahre = jahre.filter(function (y) { return y >= abJahr; }).sort(function (x, y) { return x - y; });
+      return Promise.all(jahre.map(function (y) {
+        return json("kurse/" + y + "/" + t + ".json").catch(function () { return null; });
       })).then(function (files) {
         var out = { t: [], k: [], u: [] };
         files.forEach(function (f) {
@@ -483,164 +632,18 @@ window.MC = (function () {
             out.t.push(tag); out.k.push(reihe[i]); out.u.push(um[i] || 0);
           });
         });
-        return out;
+        return schneide(out);
       });
     };
-    if (!bund) return boerse();
-    return json("kurse/bund/" + isin + ".json").then(function (d) {
-      return { t: d.t, k: d.k, u: d.t.map(function () { return 0; }), bund: true };
-    }).catch(boerse);
+    return kursJahre().then(function (liste) {
+      if (!bund || (liste && liste.bund && liste.bund.indexOf(isin) < 0)) return boerse(liste);
+      return json("kurse/bund/" + isin + ".json").then(function (d) {
+        return schneide({ t: d.t, k: d.k, u: d.t.map(function () { return 0; }), bund: true });
+      }).catch(function () { return boerse(liste); });
+    });
   }
 
-  var MON = ["Jan.", "Feb.", "März", "Apr.", "Mai", "Juni", "Juli", "Aug.", "Sep.", "Okt.", "Nov.", "Dez."];
-  function zahl(v, dec) { return minus(v.toLocaleString("de-DE", { minimumFractionDigits: dec, maximumFractionDigits: dec })); }
-  function datumLang(iso) { return iso.slice(8, 10) + "." + iso.slice(5, 7) + "." + iso.slice(0, 4); }
-  function zeitOf(iso) { return Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10)); }
-  function schritt(spanne) {   // „schöne“ Achsenschritte
-    var roh = spanne / 4, p = Math.pow(10, Math.floor(Math.log10(roh))), n = roh / p;
-    return (n < 1.5 ? 1 : n < 3.5 ? 2 : n < 7.5 ? 5 : 10) * p;
-  }
-
-  // Kursverlauf zeichnen. el: Container; v: verlauf(); o: {einheit: "%" | "€", name, waehrung, breit}
-  // Zeitraum-Knöpfe erscheinen nur, wenn der Verlauf länger ist als der Zeitraum.
-  var ZEITRAUM = [["1 Monat", 31], ["3 Monate", 92], ["1 Jahr", 366], ["5 Jahre", 1827], ["Alles", Infinity]];
-  function kursChart(el, v, o) {
-    o = o || {};
-    var einheit = o.einheit || "%";
-    var fmtK = function (x) { return zahl(x, x < 10 ? 3 : 2) + (einheit === "%" ? "\u00a0%" : "\u00a0€"); };
-    el.__kvArgs = [v, o];
-    if (!el.__kvResize) {   // bei Größenänderung in der neuen Breite zeichnen (Handy drehen, Fenster ziehen)
-      var rt;
-      el.__kvResize = function () {
-        clearTimeout(rt);
-        rt = setTimeout(function () {
-          if (el.isConnected && el.__kvCW && Math.abs(el.clientWidth - el.__kvCW) > 24) kursChart(el, el.__kvArgs[0], el.__kvArgs[1]);
-        }, 150);
-      };
-      window.addEventListener("resize", el.__kvResize);
-    }
-    if (!v || !v.t || !v.t.length) {
-      el.innerHTML = '<p class="kv-leer">Für dieses Papier gibt es noch keinen Kursverlauf – er beginnt mit dem ersten Börsentag, an dem ein Kurs festgestellt wird.</p>';
-      return;
-    }
-    if (v.t.length < 2) {
-      el.innerHTML = '<p class="kv-leer">Kursverlauf ab ' + datumLang(v.t[0]) + ': bisher ein Kurs (' + fmtK(v.k[0]) +
-        '). Ab jetzt kommt jeden Börsentag ein Wert dazu – die Linie wächst täglich.</p>';
-      return;
-    }
-    if (v.t.length < 5) {   // zwei bis vier Punkte ergäben nur eine flache Linie über die volle Breite
-      el.innerHTML = '<p class="kv-leer">Kursverlauf wird seit ' + datumLang(v.t[0]) + ' gesammelt: bisher ' + v.t.length + ' Kurse, zuletzt ' +
-        fmtK(v.k[v.k.length - 1]) + ' (' + datumLang(v.t[v.t.length - 1]) + '). Ab fünf Börsentagen erscheint hier die Linie.</p>';
-      return;
-    }
-    var ende = zeitOf(v.t[v.t.length - 1]), tageGesamt = (ende - zeitOf(v.t[0])) / 864e5;
-    var wahl = ZEITRAUM.filter(function (z) { return z[1] === Infinity || z[1] < tageGesamt; });
-    var aktiv = el.__kvZeitraum && wahl.some(function (z) { return z[0] === el.__kvZeitraum; }) ? el.__kvZeitraum
-      : (wahl.filter(function (z) { return z[1] === 366; })[0] || wahl[wahl.length - 1])[0];
-    el.__kvZeitraum = aktiv;
-    var tage = wahl.filter(function (z) { return z[0] === aktiv; })[0][1];
-    var i0 = 0;
-    while (i0 < v.t.length - 1 && (ende - zeitOf(v.t[i0])) / 864e5 > tage) i0++;
-    var T = v.t.slice(i0), K = v.k.slice(i0), U = (v.u || []).slice(i0);
-    // Breite: in der tatsächlichen Pixelbreite zeichnen, damit die Schrift am Handy nicht schrumpft
-    var basisW = o.breit ? 960 : 640, cw = el.clientWidth || 0;
-    el.__kvCW = cw;
-    var W = cw >= 240 && cw < basisW ? Math.round(cw) : basisW, schmal = W < 560;
-    var H = o.breit ? 330 : schmal ? Math.round(Math.max(220, W * 0.66)) : 250, ml = 46, mr = 14, mt = 26, mb = 46, FS = 12;   // breit: Steckbrief-Seite
-    var t0 = zeitOf(T[0]), t1 = zeitOf(T[T.length - 1]) || t0 + 1, tLetzt = t1;
-    var lo = Math.min.apply(null, K), hi = Math.max.apply(null, K);
-    // Steckbrief (o.faellig, seit 29.09.2026): liegt die Fälligkeit knapp hinter dem letzten Kurs (höchstens 12 % der Zeitspanne),
-    // reicht die Achse bis dorthin, und ein Kreis markiert die Rückzahlung zu 100 %
-    var tF = o.faellig && einheit === "%" ? zeitOf(o.faellig) : 0, mitF = tF > t1 && tF - t1 <= 0.12 * (t1 - t0);
-    if (mitF) { t1 = tF; lo = Math.min(lo, 100); hi = Math.max(hi, 100); }
-    if (hi - lo < hi * 0.004) { lo -= hi * 0.002 + 0.05; hi += hi * 0.002 + 0.05; }
-    var st = schritt(hi - lo);
-    lo = Math.floor(lo / st) * st; hi = Math.ceil(hi / st) * st;
-    if (mitF && hi <= 100) hi = 100 + st;   // Platz über der Rückzahlungslinie für den Kreis
-    var X = function (t) { return ml + (t - t0) / Math.max(1, t1 - t0) * (W - ml - mr); };
-    var Y = function (k) { return mt + (hi - k) / (hi - lo) * (H - mt - mb); };
-    var dec = st < 0.1 ? 2 : st < 1 ? 1 : 0;
-    var g = [], label100 = "";
-    for (var y = lo; y <= hi + st / 2; y += st) {
-      var py = Y(y).toFixed(1);
-      g.push('<line x1="' + ml + '" x2="' + (W - mr) + '" y1="' + py + '" y2="' + py + '" stroke="#1A1A19" stroke-opacity="0.09"/>' +
-        '<text x="' + (ml - 7) + '" y="' + (+py + 4) + '" text-anchor="end" font-size="' + FS + '" fill="#55544F">' + zahl(y, dec) + '</text>');
-    }
-    if (einheit === "%" && lo < 100 && hi > 100) {
-      var p100 = Y(100).toFixed(1);
-      g.push('<line x1="' + ml + '" x2="' + (W - mr) + '" y1="' + p100 + '" y2="' + p100 + '" stroke="#1A1A19" stroke-opacity="0.45" stroke-dasharray="4 4"/>');
-      label100 = '<text x="' + (W - mr) + '" y="' + (+p100 - 5) + '" text-anchor="end" font-size="' + FS + '" fill="#55544F" stroke="#FBFAF7" stroke-width="4" stroke-linejoin="round" paint-order="stroke">100\u00a0% = Rückzahlung</text>';
-    }
-    // x-Achse: Beschriftungen an Kalendergrenzen (Jahresanfang, Monatsanfang) bzw. gleichmäßig bei kurzen Zeiträumen
-    var span = (t1 - t0) / 864e5, maxT = schmal ? 4 : 6, ticks = [];
-    var iso = function (t) { return new Date(t).toISOString().slice(0, 10); };
-    if (span > 1100) {
-      var y0 = new Date(t0).getUTCFullYear() + 1, y1 = new Date(t1).getUTCFullYear(), ys1 = Math.max(1, Math.ceil((y1 - y0 + 1) / maxT));
-      for (var yy = y0; yy <= y1; yy += ys1) ticks.push([Date.UTC(yy, 0, 1), String(yy)]);
-    } else if (span > 100) {
-      var d0 = new Date(t0), m = d0.getUTCFullYear() * 12 + d0.getUTCMonth() + 1, mEnd = new Date(t1).getUTCFullYear() * 12 + new Date(t1).getUTCMonth();
-      var ms = Math.max(1, Math.ceil((mEnd - m + 1) / maxT));
-      for (; m <= mEnd; m += ms) ticks.push([Date.UTC(Math.floor(m / 12), m % 12, 1), MON[m % 12] + " " + String(Math.floor(m / 12)).slice(2)]);
-    } else {
-      var nt = Math.min(maxT, T.length);
-      for (var j = 0; j < nt; j++) { var tt = t0 + j * (t1 - t0) / Math.max(1, nt - 1), s8 = iso(tt); ticks.push([tt, s8.slice(8, 10) + "." + s8.slice(5, 7) + "."]); }
-    }
-    ticks.forEach(function (tk) {
-      var px = X(tk[0]), anc = px < ml + 24 ? "start" : px > W - mr - 24 ? "end" : "middle";
-      g.push('<line x1="' + px.toFixed(1) + '" x2="' + px.toFixed(1) + '" y1="' + (H - mb) + '" y2="' + (H - mb + 4) + '" stroke="#1A1A19" stroke-opacity="0.35"/>' +
-        '<text x="' + px.toFixed(1) + '" y="' + (H - mb + 17) + '" text-anchor="' + anc + '" font-size="' + FS + '" fill="#55544F">' + tk[1] + '</text>');
-    });
-    g.push('<text x="4" y="13" font-size="' + FS + '" font-weight="600" fill="#55544F">' + (einheit === "%" ? "↑ Kurs in %" : "↑ Kurs in €") + '</text>');
-    g.push('<text x="' + (W - mr) + '" y="' + (H - 4) + '" text-anchor="end" font-size="' + FS + '" font-weight="600" fill="#55544F">Datum →</text>');
-    var xs = T.map(function (t) { return +X(zeitOf(t)).toFixed(1); }), ys = K.map(function (k) { return +Y(k).toFixed(1); });
-    var d = xs.map(function (x, i) { return (i ? "L" : "M") + x + " " + ys[i]; }).join("");
-    g.push('<path d="' + d + '" fill="none" stroke="#1DA300" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>');
-    if (mitF) {
-      var fx = X(tF).toFixed(1), fy = Y(100).toFixed(1);
-      g.push('<line x1="' + xs[xs.length - 1] + '" y1="' + ys[ys.length - 1] + '" x2="' + fx + '" y2="' + fy + '" stroke="#1DA300" stroke-width="2" stroke-dasharray="2 4"/>' +
-        '<circle cx="' + fx + '" cy="' + fy + '" r="5" fill="#fff" stroke="#1A1A19" stroke-width="1.5"/>' +
-        '<text x="' + fx + '" y="' + (+fy - 11) + '" text-anchor="end" font-size="' + FS + '" fill="#1A1A19" stroke="#FBFAF7" stroke-width="4" stroke-linejoin="round" paint-order="stroke">Fälligkeit ' + datumLang(o.faellig).slice(0, 6) + '</text>');
-      label100 = label100.replace('x="' + (W - mr) + '" y="' + (+Y(100).toFixed(1) - 5) + '" text-anchor="end"', 'x="' + (ml + 6) + '" y="' + (+Y(100).toFixed(1) - 5) + '" text-anchor="start"');
-    }
-    if (label100) g.push(label100);   // über der Linie, mit Hof lesbar
-    var mitUmsatz = 0;
-    U.forEach(function (u, i) { if (u > 0) { mitUmsatz++; g.push('<circle cx="' + xs[i] + '" cy="' + ys[i] + '" r="2.6" fill="#1A1A19"/>'); } });
-    var tips = T.map(function (t, i) {
-      return datumLang(t) + ": " + fmtK(K[i]) + (U[i] > 0 ? " · Umsatz " + zahl(U[i], 0) + (o.waehrung ? " " + o.waehrung : "") : "");
-    });
-    var aria = (o.name ? o.name + ": " : "") + "Kursverlauf " + datumLang(T[0]) + " bis " + datumLang(T[T.length - 1]) +
-      ", von " + fmtK(K[0]) + " auf " + fmtK(K[K.length - 1]) + ", Tief " + fmtK(Math.min.apply(null, K)) + ", Hoch " + fmtK(Math.max.apply(null, K));
-    var svg = '<svg viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(aria) + '">' + g.join("") + "</svg>";
-    var knoepfe = wahl.length > 1 ? '<div class="kv-zeit" role="group" aria-label="Zeitraum">' + wahl.map(function (z) {
-      return '<button type="button" class="kv-btn" aria-pressed="' + (z[0] === aktiv) + '" data-z="' + z[0] + '">' + z[0] + "</button>";
-    }).join("") + "</div>" : "";
-    var ver = (K[K.length - 1] / K[0] - 1) * 100;
-    if (Math.abs(ver) < 0.05) ver = 0;   // gerundet unverändert: ohne Vorzeichen und ohne Farbe
-    // o.neutral (Steckbrief, seit 29.09.2026): Veränderung nur mit Vorzeichen, ohne Signalfarbe.
-    // o.kupon (Kupon in % p. a.): zusätzlich „inkl. Kupons“ = (Kursänderung + Kupon × Tage/365) / Anfangskurs, ohne Wiederanlage
-    var cls = function (x) { return o.neutral ? "null" : x > 0 ? "plus" : x < 0 ? "minus" : "null"; };
-    var inkl = "";
-    if (typeof o.kupon === "number" && einheit === "%") {
-      var gs = (K[K.length - 1] - K[0] + o.kupon * (tLetzt - zeitOf(T[0])) / 864e5 / 365) / K[0] * 100;
-      if (Math.abs(gs) < 0.05) gs = 0;
-      inkl = ' · inkl. Kupons <span class="kv-ver ' + cls(gs) + '">' + (gs > 0 ? "+" : "") + zahl(gs, 1) + "\u00a0%</span>";
-    }
-    var titel = o.kopf === "zeitraum" ? datumLang(T[0]) + " bis " + datumLang(T[T.length - 1]) : "Kursverlauf seit " + datumLang(T[0]);   // Steckbrief: Überschrift steht schon über dem Chart
-    el.innerHTML = '<div class="kv-kopf"><span class="kv-titel">' + titel +
-      ' <span class="kv-ver ' + cls(ver) + '">' + (ver > 0 ? "+" : "") + zahl(ver, 1) + "\u00a0%</span>" + inkl + (o.neutral && inkl ? ' <span class="ber">berechnet</span>' : "") + "</span>" + knoepfe + "</div>" +
-      hoverWrap(svg, [{ x: xs, y: ys, tips: tips }]) +
-      (mitUmsatz || inkl || mitF ? '<p class="kv-legende">' + (mitUmsatz ? '<span class="kv-punkt" aria-hidden="true"></span>Tag mit Umsatz; die Linie verbindet die täglichen Schlusskurse.' : "") +
-        (mitF ? " Kreis: Fälligkeit zum Rückzahlungskurs 100\u00a0%." : "") +
-        (inkl ? " „Inkl. Kupons“: Kursänderung plus Kupon × Tage ÷ 365 im Zeitraum, bezogen auf den Anfangskurs, ohne Wiederanlage." : "") + "</p>" : "");
-    el.onclick = function (e) {
-      var b = e.target.closest ? e.target.closest(".kv-btn") : null;
-      if (!b) return;
-      el.__kvZeitraum = b.getAttribute("data-z");
-      kursChart(el, v, o);
-      var nb = el.querySelector('.kv-btn[data-z="' + el.__kvZeitraum + '"]');
-      if (nb) nb.focus();
-    };
-  }
+  // MC.kursChart (Kursverlauf zeichnen) steht seit 30.09.2026 in chart.js – nur anleihe.html und anleihen-etf.html laden es.
 
   // --- Einordnung gegen die eigene Historie (seit 09/2026) ---
   // Einzige Quelle der Perzentil-/Einstufungsregel für Startseite, Bewertungs-
@@ -698,7 +701,8 @@ window.MC = (function () {
     return r ? '<span class="pill" style="background:' + r.color + '">' + esc(r.label) + '</span>' : "";
   }
 
-  return { esc: esc, minus: minus, restlaufzeit: restlaufzeit, kuendigung: kuendigung, kuendigungFeld: kuendigungFeld, load: load, navInit: navInit, hoverWrap: hoverWrap,
+  return { esc: esc, minus: minus, zahl: zahl, datum: datum, tag: tag, STALE_TAGE: STALE_TAGE, boersentage: boersentage, veraltet: veraltet,
+    restlaufzeit: restlaufzeit, kuendigung: kuendigung, kuendigungFeld: kuendigungFeld, load: load, json: json, navInit: navInit, hoverWrap: hoverWrap, wischPruefen: wischPruefen,
     percentile: percentile, stats: stats, rate: rate, pctText: pctText, ratePill: ratePill,
-    teil: teil, verlauf: verlauf, kursChart: kursChart };
+    teil: teil, verlauf: verlauf };
 })();
