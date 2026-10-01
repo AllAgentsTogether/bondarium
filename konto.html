@@ -1206,7 +1206,7 @@ MC.navInit();
       "Stückelung: kleinster Nennwert, zugleich Mindestanlage, in der Währung der Anleihe. Einzelheiten zu jeder Anleihe: Klick auf den Namen.");
     noten.push("Keine Anlageberatung: Dieser Auszug ist eine Merkliste und keine Empfehlung zum Kauf oder Verkauf. Alle Angaben ohne Gewähr.");
     const fuss = [].concat(...noten.map(t => P.umbrechen(t, B - 2 * R, 7)));
-    const UNTEN = H - 34 - fuss.length * 9 - 14;
+    const KNOPF = 24, UNTEN = H - 34 - fuss.length * 9 - 14 - KNOPF - 20;   // Platz für den Knopf über den Hinweisen
     // Logo wie in der Kopfzeile der Website: Bildzeichen „Orbit“ (SVG-Maß 100 × 100) und Wortmarke „bondarium“ (Pfad aus der Seite)
     const wort = document.querySelector(".topbar .brand-w path"), punkt = document.querySelector(".topbar .brand-w .brand-i");
     function logo(x, yo) {
@@ -1233,15 +1233,7 @@ MC.navInit();
         P.text(R, y, "Merkliste", { gr: 24, fett: true });
         y += 20;
         P.text(R, y, `Erstellt am ${datum} um ${uhr} Uhr · ${n} ${n === 1 ? "Anleihe" : "Anleihen"}${KSTAND ? ` · Kurse vom ${MC.datum(KSTAND)}` : ""}`, { gr: 9.5, farbe: GRAU });
-        // Knopf für Empfänger (Nutzerwunsch 01.10.2026): öffnet konto.html#liste=ISIN,… – dort lässt sich die Liste in die eigene
-        // Merkliste übernehmen. Die ISINs stehen hinter „#“, gehen also beim Öffnen nicht an den Server.
-        const kt = "In meine Merkliste übernehmen", kb = P.weite(kt, 10, true) + 28, ziel = `${LINK}konto.html#liste=${liste.map(o => o.isin).join(",")}`;
-        P.rechteck(R, y + 12, kb, 24, GRUEN, 6);
-        P.text(R + 14, y + 28, kt, { gr: 10, fett: true, farbe: INK });
-        P.link(R, y + 12, kb, 24, ziel);
-        P.text(R + kb + 12, y + 23, "Für alle, die diese Liste bekommen: Der Knopf öffnet bondarium.de.", { gr: 8, farbe: GRAU });
-        P.text(R + kb + 12, y + 33, `Dort ${n === 1 ? "lässt sich die Anleihe" : "lassen sich die " + n + " Anleihen"} mit einem Klick in die eigene Merkliste übernehmen.`, { gr: 8, farbe: GRAU });
-        y += 30 + 36;
+        y += 30;
       } else { P.text(R, y, "Merkliste – Fortsetzung", { gr: 12, fett: true }); y += 22; }
       SP.forEach((s, i) => {
         P.text(s.r ? rx(i) : lx(i), y, s.t.toUpperCase(), { gr: 6.5, fett: true, farbe: GRAU, rechts: s.r });
@@ -1276,6 +1268,13 @@ MC.navInit();
       P.text(R, H - 22, "Bondarium – Anleihen verstehen und finden · www.bondarium.de", { gr: 7, farbe: GRAU });
       P.text(B - R, H - 22, `Seite ${i + 1} von ${gesamt}`, { gr: 7, farbe: GRAU, rechts: true });
     }
+    // Knopf für Empfänger (Nutzerwunsch 01.10.2026): öffnet konto.html#liste=ISIN,… – dort lässt sich die Liste in die eigene
+    // Merkliste übernehmen. Die ISINs stehen hinter „#“, gehen also beim Öffnen nicht an den Server. Er steht unten links über
+    // den Hinweisen der letzten Seite, ohne erklärenden Text (Nutzerwunsch).
+    const kt = "In meine Merkliste übernehmen", kb = P.weite(kt, 10, true) + 28, ky = H - 34 - fuss.length * 9 - 12 - 10 - KNOPF;
+    P.rechteck(R, ky, kb, KNOPF, GRUEN, 6);
+    P.text(R + 14, ky + 16, kt, { gr: 10, fett: true, farbe: INK });
+    P.link(R, ky, kb, KNOPF, `${LINK}konto.html#liste=${liste.map(o => o.isin).join(",")}`);
     return { blob: P.blob("Merkliste – Bondarium"), name: `Bondarium-Merkliste-${jetzt.getFullYear()}-${zwei(jetzt.getMonth() + 1)}-${zwei(jetzt.getDate())}.pdf` };
   }
   function teilenStatus(text, fehler) { const el = $("teilen-status"); el.className = "kto-teilen-status" + (fehler ? " fehler" : ""); el.textContent = text; }

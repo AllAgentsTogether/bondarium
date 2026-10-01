@@ -146,7 +146,8 @@ Dateiname `Bondarium-Merkliste-JJJJ-MM-TT.pdf`. Das Beispieldepot steht nicht im
 
 **Geteilte Merkliste übernehmen** (seit 01.10.2026, Nutzerwunsch: „im geteilten Dokument soll stehen: in meine
 Merkliste übernehmen … eine andere Person soll diese Merkliste in ihre Merkliste bei Bondarium übernehmen können“).
-Auf der ersten Seite des PDFs steht der grüne Knopf „In meine Merkliste übernehmen“. Er führt auf
+Unten links auf der letzten Seite des PDFs, über den Hinweisen, steht der grüne Knopf „In meine Merkliste übernehmen“ –
+ohne erklärenden Text (Nutzerwunsch 01.10.2026, vorher oben unter der Überschrift mit zwei Zeilen Erklärung). Er führt auf
 `konto.html#liste=ISIN,ISIN,…` – die ISINs stehen hinter „#“, gehen beim Öffnen also nicht an den Server, und die Seite
 nimmt sie sofort aus der Adresse. Die Seite zeigt den Kasten „Geteilte Merkliste“ mit den Anleihen und fragt nach;
 nichts wird von selbst übernommen (ein fremder Link soll nichts auf die Merkliste setzen können). Erst der Klick ruft
