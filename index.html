@@ -840,7 +840,7 @@ window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']
   function lage(jahre) { return Math.min(Math.log(1 + Math.max(jahre, 0)) / Math.log(31), 1); }
   function achse(faellig, kupon) {
     var f = faellig.split("-"), heute = new Date(), JAHR = 365.25 * 864e5;
-    var p = lage((new Date(f[0], f[1] - 1, f[2]) - heute) / JAHR), w = Math.max(a.clientWidth - 12, 100), html = "", letzt = -1;
+    var p = lage((new Date(f[0], f[1] - 1, f[2]) - heute) / JAHR), w = (a.clientWidth || 208) - 12, html = "", letzt = -1;
     for (var j = heute.getFullYear(); kupon > 0 && j < +f[0]; j++) {
       var t = (new Date(j, f[1] - 1, f[2]) - heute) / JAHR, x = lage(t);
       if (t <= 0 || (x - letzt) * w < 8 || (p - x) * w < 10) continue;
