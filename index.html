@@ -790,6 +790,54 @@
   }
   .itab td.kup small.zt { display: block; margin-top: 1px; font-size: var(--fs-label); font-weight: 500; color: var(--text); letter-spacing: 0; }
   @media (min-width: 1100px) { .itab td.nm a { max-width: 150px; } .itab th, .itab td { padding-left: 6px; padding-right: 6px; } }   /* Platz für den Zinstermin, ohne dass die Tabelle wischt */
+  /* ============================================================================================================
+     Anfänger-Einstieg 02.10.2026 (Entwurf des Nutzers „Kompakter Anfängerbereich“, Variante 01 „Persönliche Einladung“):
+     direkt unter dem Suchband – Porträt vor grünem Kreis, weiße Sprechblase mit Titel, Knopf zu grundlagen.html.
+     Rund 240 px hoch (Handy rund 320 px: Porträt und Sprechblase nebeneinander, Knopf darunter über die ganze Breite).
+     Der ganze Block ist anklickbar (Knopf mit ::after über der Fläche). Größen nur über das Raster --fs-*.
+     Bild: einstieg-portraet.webp (fiktive Beispielperson, KI-generiert, freigestellt; aus dem Entwurf übernommen).
+     ============================================================================================================ */
+  #bnd-einstieg { position: relative; display: grid; grid-template-columns: 250px minmax(0, 1fr) auto; align-items: center; column-gap: 26px; min-height: 232px; margin-top: 34px; padding: 0 26px 0 0; border: 0; border-radius: 18px; background: #EEF5E8; }
+  .sheet > section#bnd-einstieg { padding-top: 0; border-top: 0; }
+  #bnd-einstieg .be-bild { position: relative; grid-column: 1; grid-row: 1; align-self: end; display: block; height: 240px; margin-top: -8px; }
+  #bnd-einstieg .be-bild::before { content: ""; position: absolute; left: 24px; top: 14px; width: 212px; height: 212px; border-radius: 50%; background: var(--green); }
+  #bnd-einstieg .be-bild img { position: absolute; left: 20px; bottom: 0; display: block; width: 228px; height: 240px; border-radius: 0 0 0 18px; }
+  #bnd-einstieg .be-karte { position: relative; grid-column: 2 / 4; grid-row: 1; align-self: stretch; display: flex; flex-direction: column; justify-content: center; margin: 28px 0; padding: 20px 230px 20px 30px; border-radius: 16px; background: #fff; }
+  #bnd-einstieg .be-karte::before { content: ""; position: absolute; left: -15px; top: 50%; width: 18px; height: 22px; background: #fff; clip-path: polygon(100% 0, 0 100%, 100% 100%); }   /* Spitze der Sprechblase zum Porträt */
+  #bnd-einstieg h2 { margin: 0; font-size: var(--fs-h2); line-height: 1.2; letter-spacing: -0.015em; }
+  #bnd-einstieg h2 em { font-style: normal; color: var(--green-text); }
+  #bnd-einstieg p { margin: 10px 0 0; font-size: var(--fs-text); line-height: 1.45; color: var(--text); }
+  #bnd-einstieg .be-knopf { grid-column: 3; grid-row: 1; z-index: 1; display: inline-flex; align-items: center; gap: 12px; margin-right: 24px; padding: 14px 20px; border-radius: 10px; background: var(--green); color: var(--ink); font-size: var(--fs-ui); font-weight: 700; line-height: 1.2; text-decoration: none; white-space: nowrap; transition: background-color .15s; }
+  #bnd-einstieg .be-knopf::after { content: ""; position: absolute; inset: 0; border-radius: 18px; }
+  #bnd-einstieg .be-knopf svg { display: block; width: 20px; height: 20px; }
+  #bnd-einstieg:hover .be-knopf { background: var(--green-hover); }
+  #bnd-einstieg .be-knopf:focus-visible { outline: none; }
+  #bnd-einstieg .be-knopf:focus-visible::after { outline: 2px solid var(--ink); outline-offset: 2px; }
+  @media (max-width: 860px) {
+    #bnd-einstieg { grid-template-columns: 200px minmax(0, 1fr) auto; column-gap: 20px; padding-right: 18px; }
+    #bnd-einstieg .be-bild::before { left: 12px; top: 40px; width: 180px; height: 180px; }
+    #bnd-einstieg .be-bild img { left: 8px; width: 194px; height: 204px; }
+    #bnd-einstieg .be-karte { padding: 18px 196px 18px 24px; }
+    #bnd-einstieg .be-knopf { margin-right: 16px; padding: 13px 16px; }
+    #bnd-einstieg h2 em { display: block; }
+  }
+  @media (max-width: 700px) {
+    #bnd-einstieg { grid-template-columns: 44% minmax(0, 1fr); column-gap: 0; row-gap: 16px; align-items: stretch; min-height: 0; margin-top: 30px; padding: 14px 14px 14px 0; border-radius: 16px; }
+    #bnd-einstieg .be-bild { grid-column: 1; grid-row: 1; align-self: end; height: 178px; margin: 0; }
+    #bnd-einstieg .be-bild::before { left: 8px; top: 10px; width: 148px; height: 148px; }
+    #bnd-einstieg .be-bild img { left: 10px; width: 150px; height: 158px; border-radius: 0; }
+    #bnd-einstieg .be-karte { grid-column: 2; grid-row: 1; margin: 8px 0 0; padding: 18px 16px; }
+    #bnd-einstieg .be-karte::before { left: -13px; top: 46%; width: 15px; height: 18px; }
+    #bnd-einstieg h2 { font-size: var(--fs-zahl); line-height: 1.25; }
+    #bnd-einstieg h2 em { display: block; }
+    #bnd-einstieg p { margin-top: 10px; font-size: var(--fs-klein); }
+    #bnd-einstieg .be-knopf { grid-column: 1 / 3; grid-row: 2; justify-content: space-between; margin: 0 0 0 14px; padding: 14px 18px; }
+    #bnd-einstieg .be-knopf::after { border-radius: 16px; }
+  }
+  @media (max-width: 360px) {
+    #bnd-einstieg .be-karte { padding: 16px 12px; }
+    #bnd-einstieg h2 { font-size: var(--fs-h3); }
+  }
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Anleihen verstehen und finden", "headline": "Anleihen verstehen und finden", "description": "Anleihen verstehen und finden: Wissen in kurzen Schritten, Renditen seit 1970, die meistgehandelten Anleihen und eine Suche über rund 33.000 Anleihen.", "inLanguage": "de", "isAccessibleForFree": true, "dateModified": "2026-09-30", "publisher": {"@type": "Organization", "name": "Bondarium", "url": "https://www.bondarium.de/"}, "mainEntityOfPage": "https://www.bondarium.de/"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Bondarium","alternateName":"bondarium.de","url":"https://www.bondarium.de/","description":"Anleihen in Perspektive: Staats- und Unternehmensanleihen weltweit, Langläufer, die meistgehandelten Anleihen je Land und Restlaufzeit und eine Suche über alle Anleihen an deutschen Börsen.","inLanguage":"de"}</script>
@@ -902,6 +950,12 @@
         <button type="submit" class="go">Suchen</button>
       </form>
       <p class="bsp-bar"><span class="bb-k">Beliebte Suchen:</span> <a href="anleihen-suche.html?rest=a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>Kurzläufer</a><a href="anleihen-suche.html?zins=0&amp;kupon=g,d,e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6L6 18"/><circle cx="7.5" cy="7.5" r="2.2"/><circle cx="16.5" cy="16.5" r="2.2"/></svg>&gt;&nbsp;4&nbsp;% Kupon</a><a href="anleihen-suche.html?art=2&amp;w=EUR"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 9.5L12 4.5l8.5 5"/><path d="M5 20h14M4 17.5h16"/><path d="M6.5 10.5v6M10 10.5v6M14 10.5v6M17.5 10.5v6"/></svg>EUR-Unternehmensanleihen</a><a href="anleihen-suche.html?rest=e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 19v-5M12 19V9M18 19V5"/></svg>Langläufer</a></p>
+      </section>
+
+      <section id="bnd-einstieg" aria-labelledby="h-einstieg">   <!-- Anfänger-Einstieg 02.10.2026 (Entwurf des Nutzers, Variante 01 „Persönliche Einladung“): der ganze Block führt zu den Grundlagen -->
+        <span class="be-bild" aria-hidden="true"><img src="einstieg-portraet.webp" width="520" height="548" alt="" decoding="async"></span>
+        <div class="be-karte"><h2 id="h-einstieg">Anleihen? <em>Fang hier an.</em></h2><p>Das Wichtigste in etwa 5&nbsp;Minuten.</p></div>
+        <a class="be-knopf" href="grundlagen.html">Einfach erklärt<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h16M14 6l6 6-6 6"/></svg></a>
       </section>
 
       <section class="beispiele" aria-labelledby="h-bsp">   <!-- seit 02.10.2026 (Mockup „Mehr Gefühl“): vier große Karten, vorn der Lebensgrund, Betrag und Laufzeit als Zeile darunter; der Seitenname „Anleihen-Beispiele nach Ziel“ bleibt als Dachzeile -->
