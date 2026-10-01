@@ -31,9 +31,9 @@ Auswahl:
               Unternehmen (wie in der Suche: einschließlich Banken und Versicherer) –, ISIN auf der EZB-Liste,
               Restlaufzeit ab Valuta mindestens MIN_JAHRE Jahre
   Währung     Euro oder US-Dollar (WAEHRUNGEN) – so hatte der Nutzer die Liste zuletzt angesehen („nur Dollar und Euro“)
-  Stückelung  höchstens MAX_STUECKELUNG in der Währung der Anleihe (Nutzerwunsch 01.10.2026, „Stückelung bis 1.000“):
-              In der ersten Fassung hatten vier der zehn eine Stückelung von 100.000 oder 200.000. Ohne Angabe im
-              Register zählt eine Anleihe nicht mit.
+  Stückelung  höchstens MAX_STUECKELUNG in der Währung der Anleihe (Nutzerwunsch 01.10.2026: erst „bis 1.000“, dann
+              „geh bis zu einer Stückelung von 10.000“). In der ersten Fassung hatten vier der zehn eine Stückelung
+              von 100.000 oder 200.000. Ohne Angabe im Register zählt eine Anleihe nicht mit.
   Grundregeln wie update_top10.py: fester Kupon, Fälligkeit angegeben, aktueller Kurs (≤ 14 Tage alt), nicht nachrangig,
               nicht unbefristet, keine Inflations-, Stufenzins-, Wandel-, Tilgungs- oder 144A-Anleihen, keine Strips
   Datenprüfung ohne Befund (Feld pruef des Index) – ein Kupon, der im Register um den Faktor 10 zu hoch steht, stünde
@@ -62,7 +62,7 @@ EZB_URL = "https://www.ecb.europa.eu/paym/coll/assets/html/dla/ea_MID/ea_csv_{:%
 EZB_TAGE_ZURUECK = 7      # Wochenende plus Feiertage (Ostern, Weihnachten) – älter soll die Liste nicht sein
 EZB_MIN_ZEILEN = 20000    # die Liste hat rund 31.000 Zeilen; deutlich weniger = abgeschnittene oder falsche Datei
 MIN_JAHRE = 2
-MAX_STUECKELUNG = 1000
+MAX_STUECKELUNG = 10000
 WAEHRUNGEN = ("EUR", "USD")
 TOP = 30
 ART = ("Staat", "Öffentlich", "Unternehmen")
