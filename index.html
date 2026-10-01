@@ -496,7 +496,7 @@
       box-shadow: 0 1px 2px rgba(26,26,25,0.06), 0 22px 44px -16px rgba(26,26,25,0.38); transition: box-shadow .15s ease, transform .15s ease; }
     .hero-karte:hover { transform: translateY(-2px); box-shadow: 0 1px 2px rgba(26,26,25,0.06), 0 26px 50px -16px rgba(26,26,25,0.45); }
     /* 01.10.2026 (Nutzerwunsch „noch ein bisschen kleiner, damit man die Frau ordentlich sieht“): schmaler, knapper, kleinere Rendite */
-    .hero-karte { width: 232px; gap: 7px; padding: 10px 12px 10px; border-radius: 12px; }
+    .hero-karte { width: 232px; gap: 7px; padding: 10px 12px 10px; border-radius: 12px; }   /* seit 02.10.2026 noch kleiner: siehe Block „Mehr Gefühl“ am Stilende */
     .hero-karte .hk-z { font-size: 21px; }
     .hero-karte .hk-kopf { font-size: 13px; }
     .hero-karte .hk-achse { height: 14px; }
@@ -771,12 +771,23 @@
   }
 
   /* Idee 2 – Zinstermin als Kalendertag: Kalenderblatt in der Hero-Karte, Zinstermin unter dem Kupon in der Tabelle */
-  .hk-fuss { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 8px; white-space: normal; }
-  .hk-zt { display: flex; align-items: center; gap: 10px; padding-top: 9px; border-top: 1px solid var(--rule); }
-  .hk-blatt { flex: none; display: grid; place-items: center; align-content: start; width: 36px; height: 38px; border: 1.5px solid var(--ink); border-radius: 8px; overflow: hidden; background: #fff; font-size: 16px; font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .hk-blatt i { display: block; width: 100%; padding: 1px 0 2px; background: var(--green); border-bottom: 1.5px solid var(--ink); font-size: 10px; font-style: normal; font-weight: 700; line-height: 1.2; letter-spacing: 0.06em; text-transform: uppercase; text-align: center; }
-  .hk-ztt { display: block; min-width: 0; line-height: 1.35; }
+  .hk-fuss { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 5px; line-height: 1.3; white-space: normal; }
+  .hk-zt { display: flex; align-items: center; gap: 7px; padding-top: 7px; border-top: 1px solid var(--rule); }
+  .hk-blatt { flex: none; display: grid; place-items: center; align-content: start; width: 26px; height: 31px; border: 1.5px solid var(--ink); border-radius: 7px; overflow: hidden; background: #fff; font-size: 13px; font-weight: 700; line-height: 14px; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .hk-blatt i { display: block; width: 100%; padding: 1px 0; background: var(--green); border-bottom: 1.5px solid var(--ink); font-size: 9px; font-style: normal; font-weight: 700; line-height: 1.15; letter-spacing: 0.04em; text-transform: uppercase; text-align: center; }
+  .hk-ztt { display: block; min-width: 0; }
   .hk-ztt b, .hk-ztt span { display: block; }
+  /* 02.10.2026 (Nutzerwunsch „das muss kleiner werden, damit die Frau besser zu sehen ist“): mit dem Kalenderblatt war die Karte 194 px hoch geworden –
+     schmaler, engere Abstände, kleineres Blatt; die Schriftgrößen bleiben. Breite so, dass „Zinsen am 28.03. und 28.09.“ (160 px) in eine Zeile passt */
+  @media (min-width: 941px) {
+    .hero-karte { width: 216px; gap: 6px; padding: 9px; left: max(calc(var(--g) + 500px), calc(100% - var(--g) - 488px)); }   /* mittig in der freien Fläche zwischen Text und Frau (vorher 32 px weiter rechts, auf dem Ärmel) */
+    .hero-karte .hk-kopf { gap: 8px; }
+    .hero-karte .hk-wer { display: flex; flex-direction: column; gap: 2px; min-width: 0; }   /* Herkunft und Name links, das Feld „Staat“/„Unternehmen“ steht rechts mittig neben beiden Zeilen */
+    .hero-karte .hk-dach { margin-bottom: 0; }
+    .hero-karte .hk-art { padding: 2px 8px; }
+    .hero-karte .hk-rend { line-height: 1.2; }
+    .hero-karte .hk-achse { margin-top: 0; }
+  }
   .itab td.kup small.zt { display: block; margin-top: 1px; font-size: var(--fs-label); font-weight: 500; color: var(--text); letter-spacing: 0; }
   @media (min-width: 1100px) { .itab td.nm a { max-width: 150px; } .itab th, .itab td { padding-left: 6px; padding-right: 6px; } }   /* Platz für den Zinstermin, ohne dass die Tabelle wischt */
 </style>
@@ -879,7 +890,7 @@
         <p class="sub">Wir erklären dir, wie du aus <span data-kz="anleihen-kurs">rund 33.000</span> Anleihen ohne Fondsmanager die findest, die zu deiner Lebenssituation am besten passt.</p>
       </div>
       <img class="hero-img" src="startseite-hero.webp" width="1004" height="684" alt="" fetchpriority="high" decoding="async">   <!-- 29.09.2026: Foto wieder statt der Kacheln (Nutzerwunsch) -->
-      <a class="hero-karte" href="anleihe.html?isin=DE000BU2Z015">   <!-- Bildwelt 2.0 (30.09.2026), seit 01.10.2026 stündlich zufällig eine Anleihe aus den vier Top-10-Listen (ohne ETFs, Skript unten); Bundesanleihe = Rückfall --><span class="hk-dach">Aus den Top 10 · meistgehandelt</span><span class="hk-kopf"><b id="hk-name">Bundesanleihe</b><span class="hk-art" id="hk-art">Staat</span></span><span class="hk-rend"><span class="hk-z" id="hk-rend">3,47&nbsp;%</span>Rendite p. a.</span><span class="hk-achse" data-faellig="2033-08-15" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="hk-fuss"><span class="hk-zt" id="hk-kupon"><span class="hk-blatt" aria-hidden="true"><i>Aug</i>15</span><span class="hk-ztt"><b>Zinsen jedes Jahr am 15.08.</b><span>26&nbsp;€ je 1.000&nbsp;€ Nennwert</span></span></span><b id="hk-rueck">Rückzahlung 15.08.2033</b></span></a>
+      <a class="hero-karte" href="anleihe.html?isin=DE000BU2Z015">   <!-- Bildwelt 2.0 (30.09.2026), seit 01.10.2026 stündlich zufällig eine Anleihe aus den vier Top-10-Listen (ohne ETFs, Skript unten); Bundesanleihe = Rückfall --><span class="hk-kopf"><span class="hk-wer"><span class="hk-dach">Top&nbsp;10 meistgehandelt</span><b id="hk-name">Bundesanleihe</b></span><span class="hk-art" id="hk-art">Staat</span></span><span class="hk-rend"><span class="hk-z" id="hk-rend">3,47&nbsp;%</span>Rendite p. a.</span><span class="hk-achse" data-faellig="2033-08-15" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="hk-fuss"><span class="hk-zt" id="hk-kupon"><span class="hk-blatt" aria-hidden="true"><i>Aug</i>15</span><span class="hk-ztt"><b>Zinsen jedes Jahr am 15.08.</b><span>26&nbsp;€ je 1.000&nbsp;€ Nennwert</span></span></span><b id="hk-rueck">Rückzahlung 15.08.2033</b></span></a>
     </section>
 
     <div class="sheet">
