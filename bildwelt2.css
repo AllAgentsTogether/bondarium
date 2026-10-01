@@ -18,10 +18,18 @@
 .merk .mi::before { content: ""; width: 14px; height: 14px; border-radius: 50%; background: #39FF14; border: 2px solid #1A1A19; }
 /* Hub-Karten */
 .hub-card.next { background: #DCFBD3; border-color: transparent; }
-/* Titel-Illustration auf Themenseiten */
-.b2-kopf { display: grid; grid-template-columns: minmax(0, 1fr) 232px; gap: 40px; align-items: center; }
+/* Titel-Illustration auf Themenseiten – Platz, Maße und Zeichenfläche: docs/TITELBILD.md.
+   Seit 01.10.2026 oben an der Überschrift ausgerichtet (vorher senkrecht mittig zum Textblock: Die Illustration stand je nach
+   Textlänge 53 px über bis 129 px unter der Titel-Oberkante, und kurze Texte schoben die Überschrift selbst nach unten).
+   Der Rahmen ist 8 px über die Titel-Oberkante gezogen: So viel freie Fläche hat die Zeichnung oben in ihrer Zeichenfläche
+   im Mittel mehr als die Überschrift über ihren Großbuchstaben – die Oberkante der Zeichnung liegt damit im Mittel auf deren Höhe.
+   Nach unten wird nichts gezogen: Auf Seiten mit kurzem Text käme die Zeichnung dem nächsten Element sonst zu nahe. */
+.b2-kopf { display: grid; grid-template-columns: minmax(0, 1fr) 232px; gap: 40px; align-items: start; }
+.b2-kopf .b2-spot { margin: -8px 0 0; }
 .b2-kopf .b2-spot svg { width: 232px; height: 160px; display: block; }
-@media (max-width: 720px) { .b2-kopf { grid-template-columns: minmax(0, 1fr); gap: 8px; } .b2-kopf .b2-spot { order: -1; } .b2-kopf .b2-spot svg { width: 160px; height: 110px; } }
+/* Schmale Fenster (Tablet hochkant): kleinere Illustration, damit die Überschrift mehr Breite bekommt */
+@media (max-width: 900px) { .b2-kopf { grid-template-columns: minmax(0, 1fr) 160px; gap: 28px; } .b2-kopf .b2-spot { margin: -6px 0 0; } .b2-kopf .b2-spot svg { width: 160px; height: 110px; } }
+@media (max-width: 720px) { .b2-kopf { grid-template-columns: minmax(0, 1fr); gap: 8px; } .b2-kopf .b2-spot { order: -1; margin: 0; } .b2-kopf .b2-spot svg { width: 160px; height: 110px; } }
 /* Risiko-Punkte (Anleihen-ETFs): Tinte statt Ampel */
 .kats .dots i { background: #fff !important; border: 1.5px solid #1A1A19; box-sizing: border-box; }
 .kats .dots i.on { background: #1A1A19 !important; }
@@ -39,6 +47,6 @@ a.pc { padding-top: 26px; }   /* Platz über dem Ring: Der Punkt oben (Nadine, J
 img.hub-img { object-fit: contain; }
 .b2-kopf h1 { margin-bottom: 14px; }
 .b2-kopf .b2-spot img { width: 232px; height: 160px; display: block; }
-@media (max-width: 720px) { .b2-kopf .b2-spot img { width: 160px; height: 110px; } }
+@media (max-width: 900px) { .b2-kopf .b2-spot img { width: 160px; height: 110px; } }
 /* Aktiver Chip (Länder-Auswahl u. a.): Neon mit Tinten-Rand, wie die Kapitel-Chips */
 button.lbtn[aria-pressed="true"] { background: #39FF14; border-color: #1A1A19; color: #1A1A19; }
