@@ -61,17 +61,27 @@ mit dem Daten-Stand („Keine Anlageberatung“ steht in der Fußzeile jeder Sei
 
 Seit 01.10.2026 (Nutzerwunsch: „eine Funktion ‚mein depot‘, wo du Anleihen rein legen kannst und den Nennwert
 reinschreiben kannst … darunter genau deine Zahlungen grafisch dargestellt“). Oben ein Formular: Anleihe von der
-Merkliste wählen, Nennwert eintragen, „Ins Depot legen“. Darunter die Tabelle (Anleihe, Kupon, Fälligkeit, Nennwert als
-Eingabefeld, Zinsen im Jahr, Herausnehmen) mit Summenzeile. Kein Kaufkurs, kein Depotwert, kein Gewinn und Verlust.
+Merkliste wählen, Nennwert eintragen, „Ins Depot legen“. Darunter die Tabelle (Anleihe, Kurs, Kupon, Fälligkeit,
+Nennwert als Eingabefeld, Kaufbetrag heute, Zinsen im Jahr, Herausnehmen) mit Summenzeile.
+
+Kurs und Kaufbetrag (Nutzerwunsch 01.10.2026: „in der Anleihe muss auch der aktuelle Kurs stehen. Bei der Rückzahlung
+muss die Differenz zwischen Kaufkurs und 100 % Rückzahlung erkenntlich sein“): Als Kaufkurs gilt der Schlusskurs von
+heute – das Depot rechnet, als wäre heute der Kauftag; ein eigener Kaufkurs wird nicht gespeichert. Kaufbetrag heute =
+Nennwert × Kurs, ohne Stückzinsen und Gebühren. Der Unterschied zur Rückzahlung zu 100 % (Kursgewinn grün, Kursverlust
+orange) steht unter dem Kaufbetrag, in der Summenzeile, im Satz über den Schaubildern, an jedem Rückzahlungsbalken und
+in der Liste „Alle Zahlungen einzeln“.
 
 Ins Depot kommen vorerst nur Euro-Anleihen mit festem Kupon oder ohne Kupon (Nutzerentscheid); alles andere steht
 ausgegraut mit Grund in der Auswahl (`grund()` in `konto.html`). Der Nennwert ist eine ganze Zahl von 1 bis 100 Mio.;
 liegt er unter der Stückelung oder ist er kein Vielfaches davon, steht ein Hinweis in der Zeile.
 
 Unter der Tabelle die Zahlungen: ein Satz mit den Summen, zwei Schaubilder (nächste 12 Monate je Monat; je Jahr bis
-zur letzten Fälligkeit, höchstens 30 Jahre) und der Aufklapper „Alle Zahlungen einzeln“. Jedes Schaubild hat zwei
-Reihen mit eigener Höhe – oben Rückzahlungen (Tinte), unten Zinsen (Tiefgrün) –, weil eine Rückzahlung sonst jeden
-Zinsbalken unsichtbar machte; der Kupon-Punkt markiert die nächste Zinszahlung. Gerechnet wird wie im Steckbrief:
+zur letzten Fälligkeit, höchstens 30 Jahre) und der Aufklapper „Alle Zahlungen einzeln“. Jedes Schaubild hat
+Reihen mit eigener Höhe – oben Rückzahlungen, darunter Zinsen (Tiefgrün) –, weil eine Rückzahlung sonst jeden
+Zinsbalken unsichtbar machte; der Kupon-Punkt markiert die nächste Zinszahlung. Der Rückzahlungsbalken ist Tinte
+(Kaufbetrag heute) mit grüner Kappe (Kursgewinn) oder gestrichelter Kappe darüber (Kursverlust), die Zahl steht unter
+dem Betrag. Das Jahres-Schaubild hat ganz unten eine dritte Reihe „Rückzahlung kumuliert“ (Nutzerwunsch 01.10.2026):
+die bis zu diesem Jahr zurückgezahlte Summe. Gerechnet wird wie im Steckbrief:
 Zinstermine vom Fälligkeitstag rückwärts (`MC.bond.couponDates`), jährlich, italienische Staatsanleihen halbjährlich;
 Zinsen je Termin = Nennwert × Kupon ÷ Termine im Jahr; Rückzahlung zum Nennwert; vor Steuern und Kosten, ohne
 vorzeitige Kündigung. Die Schaubilder zeichnen sich in der sichtbaren Breite (am Handy breiter als der Bildschirm,

@@ -158,7 +158,9 @@
   .kd-t tbody th a { font-weight: 600; color: var(--ink); text-decoration: none; }
   .kd-t tbody th a:hover { color: var(--green-text); text-decoration: underline; }
   .kd-t small { display: block; font-size: 12.5px; color: var(--text); font-variant-numeric: tabular-nums; }
-  .kd-t small.kd-warn { color: var(--orange-text); }
+  .kd-t small.kd-warn, .kd-t small.kd-minus, .kd-z small.kd-minus, .kd-zsum .kd-minus { color: var(--orange-text); }
+  .kd-t small.kd-plus, .kd-z small.kd-plus, .kd-zsum .kd-plus { color: var(--green-text); }
+  .kd-t td small { font-weight: 400; }
   .kd-t .kd-eur { display: inline-block; width: 150px; }
   .kd-t .kd-eur input { font-size: 15px; padding: 7px 28px 7px 10px; }
   .kd-t tfoot th, .kd-t tfoot td { font-weight: 700; border-bottom: 0; border-top: 1px solid rgba(26,26,25,0.35); padding-top: 12px; }
@@ -177,6 +179,14 @@
   .kd-svg .kd-a { font-size: 13px; font-weight: 500; fill: #1A1A19; }
   .kd-svg .kd-b { font-size: 12px; fill: #55544F; }
   .kd-svg .kd-r { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; fill: #55544F; }
+  .kd-svg .kd-p { font-size: 12px; font-weight: 600; fill: #157C00; }
+  .kd-svg .kd-m { font-size: 12px; font-weight: 600; fill: #A2561C; }
+  .kd-leg { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 12px 0 0; font-size: 13px; color: var(--text); }
+  .kd-leg span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .kd-leg i { width: 11px; height: 11px; border-radius: 3px; flex: none; box-sizing: border-box; }
+  .kd-leg .k { background: #1A1A19; } .kd-leg .g, .kd-leg .z { background: #157C00; } .kd-leg .v { border: 1.5px dashed #CF7430; background: #FBE8D8; }
+  .kd-leg .p { border-radius: 50%; background: #39FF14; border: 2px solid #1A1A19; }
+  .kd-z td small { display: block; font-size: 12.5px; color: var(--text); }
   .kd-einzeln { margin-top: 18px; }
   .kd-z { width: 100%; max-width: 760px; border-collapse: collapse; margin-top: 10px; font-size: 14.5px; }
   .kd-z th, .kd-z td { padding: 9px 14px 9px 0; border-bottom: 1px solid var(--rule); text-align: left; font-variant-numeric: tabular-nums; }
@@ -416,9 +426,11 @@
             <caption class="sr-only">Dein Beispieldepot</caption>
             <thead><tr>
               <th scope="col">Anleihe</th>
+              <th scope="col" class="num" title="Schlusskurs in % des Nennwerts">Kurs</th>
               <th scope="col" class="num">Kupon</th>
               <th scope="col" class="num">Fälligkeit</th>
               <th scope="col" class="num">Nennwert</th>
+              <th scope="col" class="num" title="Nennwert mal Kurs: Was die Anleihe heute kosten würde, ohne Stückzinsen und Gebühren. Darunter der Unterschied zur Rückzahlung zu 100 %.">Kaufbetrag heute</th>
               <th scope="col" class="num" title="Kupon mal Nennwert, vor Steuern">Zinsen im Jahr</th>
               <th scope="col"><span class="sr-only">Herausnehmen</span></th>
             </tr></thead>
@@ -430,6 +442,7 @@
         <div id="kd-zahlungen" hidden>
           <h3 class="kd-h3" id="h-zahl">Zahlungen</h3>
           <p class="kd-zsum" id="kd-zsum"></p>
+          <p class="kd-leg" aria-hidden="true"><span><i class="k"></i>Rückzahlung: Kaufbetrag heute</span><span><i class="g"></i>Kursgewinn bis zur Rückzahlung</span><span><i class="v"></i>Kursverlust</span><span><i class="z"></i>Zinsen</span><span><i class="p"></i>nächste Zinszahlung</span></p>
           <figure class="kd-karte" aria-labelledby="kd-m-t">
             <figcaption><b id="kd-m-t">Nächste 12 Monate</b><span>je Monat</span></figcaption>
             <div class="chart-scroll" id="kd-monate"></div>
@@ -456,7 +469,7 @@
           <p><strong>Rendite.</strong> Rendite bis zur Fälligkeit in % pro Jahr, von uns aus Kurs, Kupon und Fälligkeit berechnet – nach denselben Regeln wie in der <a href="anleihen-suche.html">Anleihen-Suche</a>, wo unter „Datenquellen und Methodik“ alle Einzelheiten stehen.</p>
           <p><strong>Stammdaten.</strong> Kupon, Fälligkeit, Art, Währung, Volumen und Stückelung aus dem Register der europäischen Wertpapieraufsicht ESMA (FIRDS). Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage, beide in der Währung der Anleihe.</p>
           <p><strong>Steckbrief.</strong> Ein Klick auf Name oder ISIN öffnet den Steckbrief der Anleihe mit Kursverlauf, Handel und Rechenbeispiel.</p>
-          <p><strong>Mein Depot.</strong> Ein Beispieldepot mit gedachten Beträgen, kein Bestand. Zinsen je Termin = Nennwert × Kupon, bei halbjährlicher Zahlung die Hälfte; Rückzahlung zum Nennwert am Fälligkeitstag. Die Zinstermine sind aus der Fälligkeit abgeleitet (jährlich am Jahrestag, italienische Staatsanleihen halbjährlich) – maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Vorerst nur Anleihen in Euro mit festem Kupon oder ohne Kupon.</p>
+          <p><strong>Mein Depot.</strong> Ein Beispieldepot mit gedachten Beträgen, kein Bestand. Kaufbetrag heute = Nennwert × Schlusskurs, ohne Stückzinsen und Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Zinsen je Termin = Nennwert × Kupon, bei halbjährlicher Zahlung die Hälfte; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Der Unterschied zwischen Rückzahlung und Kaufbetrag ist der Kursgewinn oder Kursverlust bis zur Fälligkeit. Die Zinstermine sind aus der Fälligkeit abgeleitet (jährlich am Jahrestag, italienische Staatsanleihen halbjährlich) – maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Vorerst nur Anleihen in Euro mit festem Kupon oder ohne Kupon.</p>
           <p id="datastand"></p>
         </div>
       </details>
@@ -734,7 +747,8 @@ MC.navInit();
   // Zinstermine vom Fälligkeitstag rückwärts (MC.bond.couponDates), jährlich, italienische Staatsanleihen halbjährlich; Zinsen je
   // Termin = Nennwert × Kupon ÷ Termine im Jahr; Rückzahlung zum Nennwert. Ins Schaubild kommen nur Euro-Anleihen mit festem Kupon
   // oder ohne Kupon; alles andere steht mit Grund in der Liste.
-  const NENN_MAX = 100000000, eur = (v, dec = 2) => `${fmt(v, dec)} €`;
+  const NENN_MAX = 100000000, eur = (v, dec = 2) => `${fmt(v, dec)} €`, plus = (v, dec = 2) => (v > 0 ? "+" : "") + fmt(v, dec);
+  const diffKlein = (d, vor) => d == null ? "" : `<small class="${d < 0 ? "kd-minus" : "kd-plus"}">${vor}${plus(d)} €</small>`;
   const HEUTE_ISO = (d => `${d.getFullYear()}-${zwei(d.getMonth() + 1)}-${zwei(d.getDate())}`)(new Date());
   const MONATE = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
   let POS = [];   // { isin, nenn, o (wie anleihe()), freq, fest, rechnet, zins (im Jahr oder null), warum }
@@ -754,6 +768,9 @@ MC.navInit();
     p.rechnet = !p.warum; p.fest = p.rechnet && o.kupon > 0;
     p.freq = isin.startsWith("IT") && o.art === 0 ? 2 : 1;   // BTP halbjährlich (wie anleihe.html)
     p.zins = p.rechnet ? nenn * o.kupon / 100 : null;
+    // Kaufbetrag heute = Nennwert × Schlusskurs (ohne Stückzinsen und Gebühren); diff = Rückzahlung zu 100 % minus Kaufbetrag
+    p.kauf = typeof o.kurs === "number" ? nenn * o.kurs / 100 : null;
+    p.diff = p.kauf != null && p.rechnet ? nenn - p.kauf : null;
     return p;
   }
   function zahlungen() {
@@ -761,7 +778,7 @@ MC.navInit();
     POS.filter(p => p.rechnet).forEach(p => {
       if (p.fest) MC.bond.couponDates({ coupon: p.o.kupon, freq: p.freq, maturity: p.o.faellig }, HEUTE_ISO).dates
         .forEach(t => out.push({ tag: new Date(t).toISOString().slice(0, 10), p, art: "Zinsen", betrag: p.nenn * p.o.kupon / p.freq / 100 }));
-      out.push({ tag: p.o.faellig, p, art: "Rückzahlung", betrag: p.nenn });
+      out.push({ tag: p.o.faellig, p, art: "Rückzahlung", betrag: p.nenn, diff: p.diff });
     });
     return out.sort((a, b) => a.tag < b.tag ? -1 : a.tag > b.tag ? 1 : a.art === b.art ? a.p.isin.localeCompare(b.p.isin) : a.art === "Zinsen" ? -1 : 1);
   }
@@ -769,9 +786,11 @@ MC.navInit();
     const o = p.o, steck = `anleihe.html?isin=${encodeURIComponent(p.isin)}`, stk = typeof o.stk === "number" ? o.stk : null;
     const warn = [p.warum ? p.warum + " – fehlt im Schaubild" : "", stk && p.nenn < stk ? `unter der Mindestanlage von ${fmtStk(stk)}` : stk >= 1 && Number.isInteger(stk) && p.nenn % stk ? `kein Vielfaches der Stückelung ${fmtStk(stk)}` : ""].filter(Boolean);
     return `<tr><th scope="row"><a href="${steck}">${MC.esc(o.name)}</a><small>${MC.esc(p.isin)}${o.reg ? " · " + MC.esc(o.reg) : ""}</small>${warn.map(w => `<small class="kd-warn">${MC.esc(w)}</small>`).join("")}</th>` +
+      `<td class="num" data-l="Kurs"${o.kurs != null ? ` title="${MC.esc(`Schlusskurs vom ${MC.datum(o.datum)}${o.boerse ? ", " + o.boerse : ""}`)}"` : ""}>${o.kurs != null ? fmt(o.kurs, 2) + (o.datum && o.datum !== KSTAND ? `<small>${MC.esc(MC.tag(o.datum))}</small>` : "") : "–"}</td>` +
       `<td class="num" data-l="Kupon">${fmtCoupon(o.kupon)}</td>` +
       `<td class="num" data-l="Fälligkeit">${o.faellig ? MC.datum(o.faellig) : "–"}</td>` +
       `<td class="num" data-l="Nennwert"><span class="kd-eur"><input type="text" inputmode="numeric" autocomplete="off" maxlength="11" value="${fmt(p.nenn)}" data-nenn="${MC.esc(p.isin)}" aria-label="Nennwert ${MC.esc(o.name)}"><span>€</span></span></td>` +
+      `<td class="num" data-l="Kaufbetrag heute">${p.kauf != null ? eur(p.kauf) + diffKlein(p.diff, "Rückzahlung ") : "–"}</td>` +
       `<td class="num" data-l="Zinsen im Jahr">${p.zins != null ? eur(p.zins) : "–"}</td>` +
       `<td><button type="button" class="kto-x" data-raus="${MC.esc(p.isin)}" aria-label="${MC.esc(o.name)} aus dem Depot nehmen" title="Aus dem Depot nehmen">×<span> Herausnehmen</span></button></td></tr>`;
   }
@@ -784,30 +803,48 @@ MC.navInit();
     const pos = POS.slice().sort((a, b) => (a.o.faellig || "9999").localeCompare(b.o.faellig || "9999") || a.isin.localeCompare(b.isin));
     $("kd-liste").hidden = !pos.length; $("kd-leer").hidden = pos.length > 0;
     $("kd-zeilen").innerHTML = pos.map(depotZeile).join("");
-    const zins = pos.reduce((x, p) => x + (p.zins || 0), 0);
-    $("kd-summe").innerHTML = pos.length ? `<tr><th scope="row">Summe<small>${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}</small></th><td></td><td></td><td class="num" data-l="Nennwert">${eur(pos.reduce((x, p) => x + p.nenn, 0), 0)}</td><td class="num" data-l="Zinsen im Jahr">${eur(zins)}</td><td></td></tr>` : "";
+    const zins = pos.reduce((x, p) => x + (p.zins || 0), 0), mitKurs = pos.filter(p => p.kauf != null), kauf = mitKurs.reduce((x, p) => x + p.kauf, 0), mitDiff = pos.filter(p => p.diff != null);
+    $("kd-summe").innerHTML = pos.length ? `<tr><th scope="row">Summe<small>${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}</small></th><td></td><td></td><td></td><td class="num" data-l="Nennwert">${eur(pos.reduce((x, p) => x + p.nenn, 0), 0)}</td>` +
+      `<td class="num" data-l="Kaufbetrag heute">${mitKurs.length ? eur(kauf) + (mitDiff.length ? diffKlein(mitDiff.reduce((x, p) => x + p.diff, 0), "Rückzahlung ") : "") : "–"}</td><td class="num" data-l="Zinsen im Jahr">${eur(zins)}</td><td></td></tr>` : "";
     if (MC.wischPruefen) MC.wischPruefen();
     zeichneZahlungen();
   }
-  // Schaubild: je Spalte oben die Rückzahlung (Tinte), unten die Zinsen (Tiefgrün) – zwei Reihen mit eigener Höhe, weil eine
-  // Rückzahlung sonst jeden Zinsbalken unsichtbar machte. Der Kupon-Punkt markiert die nächste Zinszahlung.
+  // Schaubild: je Spalte oben die Rückzahlung, darunter die Zinsen (Tiefgrün) – Reihen mit eigener Höhe, weil eine Rückzahlung
+  // sonst jeden Zinsbalken unsichtbar machte. Der Rückzahlungsbalken zeigt den Unterschied zum Kaufbetrag von heute: Tinte =
+  // Kaufbetrag, grüne Kappe = Kursgewinn bis zur Rückzahlung (Kurs unter 100), gestrichelte Kappe darüber = Kursverlust (Kurs über
+  // 100); die Zahl steht darunter. Mit sp[i].kum gibt es ganz unten eine dritte Reihe: die bis dahin zurückgezahlte Summe.
+  // Der Kupon-Punkt markiert die nächste Zinszahlung.
   function balken(el, sp) {
     const n = sp.length, L = 6, R = 6, W = Math.max(el.clientWidth || 0, n * (n > 14 ? 34 : 50) + L + R), bw = (W - L - R) / n, werte = bw >= 44;
-    const mz = Math.max(1, ...sp.map(x => x.zins)), mr = Math.max(0, ...sp.map(x => x.rueck)), hR = mr ? 86 : 0, hZ = 122;
-    const yR = 34 + hR, yZ = yR + (mr ? 48 : 0) + hZ, H = yZ + (sp.some(x => x.k2) ? 46 : 30);
+    const mz = Math.max(1, ...sp.map(x => x.zins)), mr = Math.max(0, ...sp.map(x => x.rueck)), mitKum = sp.some(x => x.kum != null), mk = Math.max(1, ...sp.map(x => x.kum || 0));
+    const hR = mr ? 108 : 0, hZ = 122, hK = mitKum ? 104 : 0;
+    const yR = 34 + hR, yZ = yR + (mr ? 48 : 0) + hZ, yK = yZ + (mitKum ? 48 + hK : 0), H = yK + (sp.some(x => x.k2) ? 46 : 30);
     const kurz = v => fmt(v, v === Math.round(v) ? 0 : 2);
     let s = `<svg class="kd-svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${MC.esc(el.dataset.label || "Zahlungen")}">`, punkt = false;
     if (mr) s += `<text x="${L}" y="14" class="kd-r">Rückzahlung</text><line x1="${L}" y1="${yR}" x2="${W - R}" y2="${yR}" stroke="#1A1A19" stroke-width="1.5"/>`;
     s += `<text x="${L}" y="${yR + (mr ? 28 : -20)}" class="kd-r">Zinsen</text><line x1="${L}" y1="${yZ}" x2="${W - R}" y2="${yZ}" stroke="#1A1A19" stroke-width="1.5"/>`;
+    if (mitKum) s += `<text x="${L}" y="${yZ + 28}" class="kd-r">Rückzahlung kumuliert</text><line x1="${L}" y1="${yK}" x2="${W - R}" y2="${yK}" stroke="#1A1A19" stroke-width="1.5"/>`;
     sp.forEach((x, i) => {
-      const cx = L + (i + 0.5) * bw, b = Math.min(46, bw * 0.62), x0 = (cx - b / 2).toFixed(1);
-      if (x.rueck) { const h = Math.max(3, (hR - 16) * x.rueck / mr); s += `<rect x="${x0}" y="${(yR - h).toFixed(1)}" width="${b.toFixed(1)}" height="${h.toFixed(1)}" rx="4" fill="#1A1A19"/>` + (werte ? `<text x="${cx.toFixed(1)}" y="${(yR - h - 6).toFixed(1)}" text-anchor="middle" class="kd-w">${kurz(x.rueck)}</text>` : ""); }
+      const cx = L + (i + 0.5) * bw, b = Math.min(46, bw * 0.62), x0 = (cx - b / 2).toFixed(1), bb = b.toFixed(1);
+      if (x.rueck) {
+        const h = Math.max(4, (hR - 44) * x.rueck / mr), d = x.diff, kappe = d ? Math.min(h - 1, Math.max(3, h * Math.abs(d) / x.rueck)) : 0;
+        let oben = yR - h;
+        s += `<rect x="${x0}" y="${oben.toFixed(1)}" width="${bb}" height="${h.toFixed(1)}" rx="4" fill="#1A1A19"/>`;
+        if (d > 0) s += `<rect x="${x0}" y="${oben.toFixed(1)}" width="${bb}" height="${kappe.toFixed(1)}" rx="3" fill="#157C00"/>`;
+        if (d < 0) { oben -= kappe + 2; s += `<rect x="${(+x0 + 0.75).toFixed(1)}" y="${oben.toFixed(1)}" width="${(b - 1.5).toFixed(1)}" height="${kappe.toFixed(1)}" rx="3" fill="#FBE8D8" stroke="#CF7430" stroke-width="1.5" stroke-dasharray="3 2"/>`; }
+        if (werte) s += (d ? `<text x="${cx.toFixed(1)}" y="${(oben - 6).toFixed(1)}" text-anchor="middle" class="${d < 0 ? "kd-m" : "kd-p"}">${plus(d, 0)}</text>` : "") +
+          `<text x="${cx.toFixed(1)}" y="${(oben - (d ? 21 : 6)).toFixed(1)}" text-anchor="middle" class="kd-w">${kurz(x.rueck)}</text>`;
+      }
       if (x.zins) {
         const h = Math.max(3, (hZ - 30) * x.zins / mz), y = yZ - h;
-        s += `<rect x="${x0}" y="${y.toFixed(1)}" width="${b.toFixed(1)}" height="${h.toFixed(1)}" rx="4" fill="#157C00"/>` + (werte ? `<text x="${cx.toFixed(1)}" y="${(y - (punkt ? 6 : 13)).toFixed(1)}" text-anchor="middle" class="kd-w">${kurz(x.zins)}</text>` : "");
+        s += `<rect x="${x0}" y="${y.toFixed(1)}" width="${bb}" height="${h.toFixed(1)}" rx="4" fill="#157C00"/>` + (werte ? `<text x="${cx.toFixed(1)}" y="${(y - (punkt ? 6 : 13)).toFixed(1)}" text-anchor="middle" class="kd-w">${kurz(x.zins)}</text>` : "");
         if (!punkt) { s += `<circle cx="${cx.toFixed(1)}" cy="${y.toFixed(1)}" r="6" fill="#39FF14" stroke="#1A1A19" stroke-width="2"/>`; punkt = true; }
       } else s += `<line x1="${(cx - 7).toFixed(1)}" y1="${yZ - 5}" x2="${(cx + 7).toFixed(1)}" y2="${yZ - 5}" stroke="#C9C8C2" stroke-width="2" stroke-linecap="round"/>`;
-      s += `<text x="${cx.toFixed(1)}" y="${yZ + 19}" text-anchor="middle" class="kd-a">${x.k}</text>` + (x.k2 ? `<text x="${cx.toFixed(1)}" y="${yZ + 36}" text-anchor="middle" class="kd-b">${x.k2}</text>` : "");
+      if (mitKum) {
+        if (x.kum) { const h = Math.max(3, (hK - 24) * x.kum / mk); s += `<rect x="${x0}" y="${(yK - h).toFixed(1)}" width="${bb}" height="${h.toFixed(1)}" rx="4" fill="#55544F"/>` + (werte ? `<text x="${cx.toFixed(1)}" y="${(yK - h - 6).toFixed(1)}" text-anchor="middle" class="kd-w">${kurz(x.kum)}</text>` : ""); }
+        else s += `<line x1="${(cx - 7).toFixed(1)}" y1="${yK - 5}" x2="${(cx + 7).toFixed(1)}" y2="${yK - 5}" stroke="#C9C8C2" stroke-width="2" stroke-linecap="round"/>`;
+      }
+      s += `<text x="${cx.toFixed(1)}" y="${yK + 19}" text-anchor="middle" class="kd-a">${x.k}</text>` + (x.k2 ? `<text x="${cx.toFixed(1)}" y="${yK + 36}" text-anchor="middle" class="kd-b">${x.k2}</text>` : "");
     });
     el.innerHTML = s + "</svg>";
   }
@@ -820,19 +857,26 @@ MC.navInit();
     const summe = (liste, art) => liste.filter(x => x.art === art).reduce((a, x) => a + x.betrag, 0);
     // Nächste 12 Monate
     const jetzt = new Date(), mon = [];
-    for (let i = 0; i < 12; i++) { const d = new Date(jetzt.getFullYear(), jetzt.getMonth() + i, 1); mon.push({ id: `${d.getFullYear()}-${zwei(d.getMonth() + 1)}`, k: MONATE[d.getMonth()], k2: i === 0 || d.getMonth() === 0 ? String(d.getFullYear()) : "", zins: 0, rueck: 0 }); }
+    for (let i = 0; i < 12; i++) { const d = new Date(jetzt.getFullYear(), jetzt.getMonth() + i, 1); mon.push({ id: `${d.getFullYear()}-${zwei(d.getMonth() + 1)}`, k: MONATE[d.getMonth()], k2: i === 0 || d.getMonth() === 0 ? String(d.getFullYear()) : "", zins: 0, rueck: 0, diff: 0 }); }
     const z12 = z.filter(x => x.tag.slice(0, 7) >= mon[0].id && x.tag.slice(0, 7) <= mon[11].id);
-    z12.forEach(x => { const m = mon.find(y => y.id === x.tag.slice(0, 7)); if (x.art === "Zinsen") m.zins += x.betrag; else m.rueck += x.betrag; });
+    z12.forEach(x => { const m = mon.find(y => y.id === x.tag.slice(0, 7)); if (x.art === "Zinsen") m.zins += x.betrag; else { m.rueck += x.betrag; m.diff += x.diff || 0; } });
     balken($("kd-monate"), mon);
     // Je Jahr bis zur letzten Fälligkeit (höchstens 30 Jahre im Bild)
     const j0 = jetzt.getFullYear(), j1 = +z[z.length - 1].tag.slice(0, 4), bis = Math.min(j1, j0 + 29), jahr = [];
-    for (let j = j0; j <= bis; j++) jahr.push({ k: String(j), zins: 0, rueck: 0 });
-    z.forEach(x => { const j = jahr[+x.tag.slice(0, 4) - j0]; if (!j) return; if (x.art === "Zinsen") j.zins += x.betrag; else j.rueck += x.betrag; });
+    for (let j = j0; j <= bis; j++) jahr.push({ k: String(j), zins: 0, rueck: 0, diff: 0, kum: 0 });
+    z.forEach(x => { const j = jahr[+x.tag.slice(0, 4) - j0]; if (!j) return; if (x.art === "Zinsen") j.zins += x.betrag; else { j.rueck += x.betrag; j.diff += x.diff || 0; } });
+    jahr.reduce((bisher, j) => (j.kum = bisher + j.rueck), 0);   // unterste Reihe: bis zu diesem Jahr zurückgezahlt
     balken($("kd-jahre"), jahr);
     $("kd-j-u").textContent = bis < j1 ? `je Jahr · bis ${bis} gezeigt, die letzte Anleihe läuft bis ${j1}` : "je Jahr";
     $("kd-zsum").innerHTML = `In den nächsten 12 Monaten: <b>${eur(summe(z12, "Zinsen"))} Zinsen</b>${summe(z12, "Rückzahlung") ? ` und <b>${eur(summe(z12, "Rückzahlung"), 0)} Rückzahlung</b>` : ""}. ` +
-      `Bis zur letzten Fälligkeit am ${MC.datum(z[z.length - 1].tag)}: <b>${eur(summe(z, "Zinsen"))} Zinsen</b> und <b>${eur(summe(z, "Rückzahlung"), 0)} Rückzahlung</b>.`;
-    const zeilen = z.slice(0, 240).map(x => `<tr${x.art === "Rückzahlung" ? ' class="rz"' : ""}><td>${MC.datum(x.tag)}</td><th scope="row">${MC.esc(x.p.o.name)} ${fmtCoupon(x.p.o.kupon)} ${x.p.o.faellig.slice(0, 4)}</th><td>${x.art}</td><td class="num">${eur(x.betrag)}</td></tr>`);
+      `Bis zur letzten Fälligkeit am ${MC.datum(z[z.length - 1].tag)}: <b>${eur(summe(z, "Zinsen"))} Zinsen</b> und <b>${eur(summe(z, "Rückzahlung"), 0)} Rückzahlung</b>.` +
+      (() => {   // Unterschied zwischen Kaufbetrag heute und Rückzahlung zu 100 %
+        const mit = POS.filter(p => p.diff != null), ohne = POS.filter(p => p.rechnet && p.diff == null).length; if (!mit.length) return "";
+        const kauf = mit.reduce((a, p) => a + p.kauf, 0), d = mit.reduce((a, p) => a + p.diff, 0);
+        return ` Heute gekauft kostet ${ohne ? "das (ohne " + ohne + (ohne === 1 ? " Anleihe" : " Anleihen") + " ohne aktuellen Kurs)" : "das Depot"} <b>${eur(kauf)}</b>, ohne Stückzinsen und Gebühren; zurückgezahlt werden <b class="${d < 0 ? "kd-minus" : "kd-plus"}">${eur(Math.abs(d))} ${d < 0 ? "weniger" : "mehr"}</b>.`;
+      })();
+    const zeilen = z.slice(0, 240).map(x => `<tr${x.art === "Rückzahlung" ? ' class="rz"' : ""}><td>${MC.datum(x.tag)}</td><th scope="row">${MC.esc(x.p.o.name)} ${fmtCoupon(x.p.o.kupon)} ${x.p.o.faellig.slice(0, 4)}</th>` +
+      `<td>${x.art}${x.art === "Rückzahlung" && x.diff != null ? `<small>zu 100 %, Kauf heute zu ${fmt(x.p.o.kurs, 2)}</small>` : ""}</td><td class="num">${eur(x.betrag)}${x.art === "Rückzahlung" ? diffKlein(x.diff, "") : ""}</td></tr>`);
     if (z.length > 240) zeilen.push(`<tr><td colspan="4">… und ${z.length - 240} weitere Zahlungen bis ${MC.datum(z[z.length - 1].tag)}</td></tr>`);
     $("kd-plan").innerHTML = zeilen.join("");
     $("kd-hinweis").textContent = "Zinstermine aus der Fälligkeit abgeleitet; Beträge vor Steuern und Kosten. Fällt ein Termin aufs Wochenende, wird am nächsten Bankarbeitstag gezahlt." +
