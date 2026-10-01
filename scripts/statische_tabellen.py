@@ -219,6 +219,9 @@ def broker_teile(D, heute):
         return ('<div class="bk-ang"><span class="lab">Anleihen: </span>' + (f'<span class="bdg aw">{G["aw"]["bdg"]}</span> ' if b["gruppe"] == "aw" else "")
                 + b["anleihen"] + smalls(b.get("anleihen_n")) + "</div>")
 
+    def plaetze(b):
+        return '<div class="bk-hp"><span class="lab">Handelsplätze: </span>' + (handel(b) + smalls(b.get("handel_n")) if b.get("handel") else "–") + "</div>"
+
     def kopf(b):
         return f'<div class="bk-an"><b>{b["name"]}</b><span class="typ">{b["typ"]}</span>{hin(b)}</div>'
 
@@ -251,23 +254,22 @@ def broker_teile(D, heute):
                + (' title="günstigster Preis"' if ist_min else "") + f'>{b_eur(r["v"])}</b><span class="pz">{anteil}</span></div>'
                f'<p class="bk-rw">{r["kurz"]} · {w["name"]}</p>'
                + (f'<p class="bk-of">dazu {w["offen"]}</p>' if w.get("offen") else "") + "</div>"
-               + angebot(b)
+               + angebot(b) + plaetze(b)
                + f'<div class="bk-de{" kostet" if x["d"] > 0 else ""}"><span class="lab">Depot im Jahr: </span>{b_glatt(x["d"])}'
                + (f'<small>{d["kurz"]}</small>' if d.get("kurz") else "") + "</div>"
-               f'<details class="bk-d" data-b="{b["_i"]}"><summary><span class="bk-mehr">Rechnung, Handelsplätze und Quelle</span></summary><dl class="bk-dl">'
+               f'<details class="bk-d" data-b="{b["_i"]}"><summary><span class="bk-mehr">Rechnung und Quelle</span></summary><dl class="bk-dl">'
                f'<dt>Preis laut Anbieter</dt><dd>{b["preis"]}{smalls(b.get("preis_n"))}</dd>'
                f'<dt>Rechnung für {b_glatt(B)}</dt><dd><small>{w["name"]}</small>' + "".join(f"<span>{s}</span>" for s in r["schritte"])
                + f'<span class="sum">= {b_eur(r["v"])} · {anteil} vom Betrag</span>' + (f'<small>{w["n"]}</small>' if w.get("n") else "") + "</dd>"
                + (f'<dt>Nicht enthalten</dt><dd>{w["offen"]}</dd>' if w.get("offen") else "")
                + (f"<dt>Andere Wege</dt><dd>{andere}</dd>" if andere else "")
                + f'<dt>Depot</dt><dd>{d.get("t", "–")}{smalls(d.get("n"))}</dd>'
-               f'<dt>Handelsplätze</dt><dd>{handel(b)}{smalls(b.get("handel_n"))}</dd>'
                "<dt>Order mit Limit</dt>" + zelle(b.get("limit")) + "<dt>Steuer</dt>" + zelle(b.get("steuer"))
                + quelle(b) + "</dl></details></div></li>")
     if ohne:
         li += f'<li class="bk-grp">{G["nein"]["titel"]} <span class="n">· {len(ohne)} Anbieter</span></li>'
         for b in ohne:
-            li += ('<li class="bk ohne" data-g="nein"><div class="bk-z">' + kopf(b) + '<div class="bk-ko"><p class="bk-rw">–</p></div>' + angebot(b)
+            li += ('<li class="bk ohne" data-g="nein"><div class="bk-z">' + kopf(b) + '<div class="bk-ko"><p class="bk-rw">–</p></div>' + angebot(b) + plaetze(b)
                    + '<div class="bk-de"><span class="lab">Depot im Jahr: </span>–</div>'
                    f'<details class="bk-d" data-b="{b["_i"]}"><summary><span class="bk-mehr">Quelle</span></summary><dl class="bk-dl">' + quelle(b) + "</dl></details></div></li>")
 
@@ -307,7 +309,7 @@ def broker(site):
     neu = re.sub(r'\n?<noscript><p class="klein">Die Liste braucht JavaScript\..*?</noscript>', "", neu, count=1, flags=re.S)
     with open(pfad, "w", encoding="utf-8") as f:
         f.write(neu)
-    print(f"broker-vergleich.html: {len(D['anbieter'])} Anbieter fest im HTML (Kosten für {zahl(B)} € und Angebot in einer Liste, Quellen)")
+    print(f"broker-vergleich.html: {len(D['anbieter'])} Anbieter fest im HTML (Kosten für {zahl(B)} €, Angebot und Handelsplätze in einer Liste, Quellen)")
 
 
 # ---------- Anleihen-ETFs: zehn Zeilen je Kategorie (vereinfachte Fassung von rowHtml der Seite) ----------

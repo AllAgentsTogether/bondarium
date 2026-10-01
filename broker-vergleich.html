@@ -32,7 +32,7 @@
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Broker im Vergleich – Konzept „Kosten offen“ (01.10.2026): 1 Kosten und Angebot in einer Liste (Betrag wählbar; je Anbieter
-     Preis, Rechenweg, Anleihen-Angebot, Depot im Jahr; Aufklapper mit Rechnung, Handelsplätzen und Quelle), 2 So rechnen wir
+     Preis, Rechenweg, Anleihen-Angebot, Handelsplätze, Depot im Jahr; Aufklapper mit Rechnung, anderen Wegen, Limit, Steuer und Quelle), 2 So rechnen wir
      + Quellen je Anbieter (eingeklappt), 3 Prüfliste. Alle Preise aus broker.json (Preismodell in Bausteinen – die Seite
      rechnet selbst, keine von Hand eingetragenen Summen). Grundregeln aus base.css. */
   .bv-stand { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text); margin: -8px 0 20px; }
@@ -54,11 +54,12 @@
   .bk-frei { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text); margin-left: 6px; }
   .bk-frei input { font: inherit; font-weight: 600; color: var(--ink); width: 104px; text-align: right; background: #fff; border: 1px solid rgba(26,26,25,0.18); border-radius: 8px; padding: 7px 10px; font-variant-numeric: tabular-nums; }
   .bk-frei input:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
-  /* Liste: eine Zeile je Anbieter – Name · Balken mit Preis und Rechenweg · Anleihen-Angebot · Depot im Jahr; darunter der Aufklapper */
+  /* Liste: eine Zeile je Anbieter – Name · Balken mit Preis und Rechenweg · Anleihen-Angebot · Handelsplätze · Depot im Jahr; darunter der Aufklapper */
   .bk-box { background: #fff; border: 1px solid rgba(26,26,25,0.10); border-radius: var(--radius); box-shadow: var(--shadow); padding: 6px 22px 10px; }
-  .bk-kopf, .bk-z { display: grid; grid-template-columns: 170px minmax(0, 1fr) 224px 108px; column-gap: 20px; }
+  .bk-kopf, .bk-z { display: grid; grid-template-columns: 150px minmax(0, 1fr) 178px 208px 88px; column-gap: 18px; }
   .bk-kopf { padding: 12px 0 9px; border-bottom: 1px solid rgba(26,26,25,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); align-items: end; }
   .bk-kopf > span:last-child { text-align: right; }
+  .bk-kopf > span { min-width: 0; }
   .bk-liste { list-style: none; margin: 0; padding: 0; }
   .bk-z { grid-template-rows: auto 1fr; }   /* ist das Angebot höher als Preis und Rechenweg, wächst die zweite Zeile – der Aufklapper bleibt direkt unter dem Rechenweg */
   .bk { padding: 13px 0 9px; border-bottom: 1px solid var(--rule); }
@@ -66,11 +67,13 @@
   .bk-an { grid-column: 1; grid-row: 1 / span 2; }
   .bk-ko { grid-column: 2; grid-row: 1; }
   .bk-ang { grid-column: 3; grid-row: 1; }
-  .bk-de { grid-column: 4; grid-row: 1; }
+  .bk-hp { grid-column: 4; grid-row: 1; }
+  .bk-de { grid-column: 5; grid-row: 1; }
   details.bk-d { grid-column: 2 / -1; grid-row: 2; }
   /* Zugeklappt dürfen Angebot und Depot neben dem Aufklapper-Kopf weiterlaufen – so bleibt die Zeile niedrig; aufgeklappt steht die Rechnung darunter in voller Breite */
   @supports selector(:has(*)) {
-    .bk-z:not(:has(details[open])) .bk-ang, .bk-z:not(:has(details[open])) .bk-de { grid-row: 1 / span 2; }
+    .bk-z:not(:has(details[open])) .bk-ang, .bk-z:not(:has(details[open])) .bk-hp, .bk-z:not(:has(details[open])) .bk-de { grid-row: 1 / span 2; }
+    .bk-z:not(:has(details[open])) details.bk-d { grid-column: 2; }   /* zugeklappt bleibt der Kopf in der Kostenspalte, sonst läuft er in den Text daneben */
   }
   .bk-an b { display: block; font-size: 16px; font-weight: 600; color: var(--ink); line-height: 1.3; }
   .bk-bar { display: flex; align-items: center; gap: 10px; min-height: 26px; }
@@ -81,14 +84,14 @@
   .bk.min .bk-bar b::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 7px; vertical-align: 1px; border-radius: 50%; background: #39FF14; border: 1.5px solid #1A1A19; box-sizing: border-box; }   /* Bildwelt 2.0: günstigster Preis */
   .bk-rw { font-size: 13.5px; line-height: 1.45; color: var(--text); margin: 2px 0 0; font-variant-numeric: tabular-nums; }
   .bk-of { font-size: 13px; line-height: 1.4; font-weight: 600; color: var(--orange-text); margin: 2px 0 0; }
-  .bk-ang { font-size: 14px; line-height: 1.45; color: var(--ink); padding-top: 3px; }
-  .bk-ang small { display: block; font-size: 12.5px; line-height: 1.4; color: var(--text); margin-top: 3px; }
+  .bk-ang, .bk-hp { font-size: 13.5px; line-height: 1.45; color: var(--ink); padding-top: 4px; }
+  .bk-ang small, .bk-hp small { display: block; font-size: 12.5px; line-height: 1.4; color: var(--text); margin-top: 3px; }
   .bk-ang .bdg { margin-right: 4px; font-size: 12px; padding: 2px 8px; }
-  .bk-ang .lab, .bk-de .lab { display: none; font-size: 13px; font-weight: 400; color: var(--text); }
+  .bk-ang .lab, .bk-hp .lab, .bk-de .lab { display: none; font-size: 13px; font-weight: 400; color: var(--text); }
   .bk-de { text-align: right; font-size: 15px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; padding-top: 3px; white-space: nowrap; }
   .bk-de small { display: block; font-size: 12.5px; font-weight: 400; line-height: 1.35; color: var(--text); white-space: normal; }
   .bk-de.kostet { color: var(--orange-text); }
-  .bk.ohne .bk-ang { color: var(--text); }
+  .bk.ohne .bk-ang, .bk.ohne .bk-hp { color: var(--text); }
   .bk-grp { padding: 16px 0 8px; border-bottom: 1px solid rgba(26,26,25,0.14); font-size: 14px; font-weight: 600; color: var(--ink); }
   .bk-grp .n { font-weight: 400; color: var(--text); }
   /* Aufklapper: Rechnung, andere Wege, Depot, Handelsplätze, Limit, Steuer, Quelle */
@@ -131,19 +134,24 @@
   .bq li > span { color: var(--text); }
   .bq a { color: var(--line); }
 
-  @media (max-width: 900px) {
+  /* Bis 1.000 px: Anleihen und Handelsplätze rutschen als beschriftete Zeilen unter den Rechenweg */
+  @media (max-width: 1000px) {
     .bk-kopf, .bk-z { grid-template-columns: 150px minmax(0, 1fr) 92px; column-gap: 16px; }
-    .bk-kopf > span:nth-child(3) { display: none; }
-    .bk-z { grid-template-rows: auto auto 1fr; }
-    .bk-an { grid-row: 1 / span 3; }
+    .bk-kopf > span:nth-child(3), .bk-kopf > span:nth-child(4) { display: none; }
+    .bk-z { grid-template-rows: auto auto auto 1fr; }
+    .bk-an { grid-row: 1 / span 4; }
     .bk-de { grid-column: 3; }
     .bk-ang { grid-column: 2 / -1; grid-row: 2; padding-top: 6px; }
+    .bk-hp { grid-column: 2 / -1; grid-row: 3; padding-top: 3px; }
     @supports selector(:has(*)) {   /* die Regel für zugeklappte Zeilen (oben) gilt hier nicht */
       .bk-z:not(:has(details[open])) .bk-ang { grid-row: 2; }
+      .bk-z:not(:has(details[open])) .bk-hp { grid-row: 3; }
       .bk-z:not(:has(details[open])) .bk-de { grid-row: 1; }
+      .bk-z:not(:has(details[open])) details.bk-d { grid-column: 2 / -1; }
     }
-    .bk-ang .lab { display: inline; }
-    details.bk-d { grid-row: 3; }
+    .bk-ang .lab, .bk-hp .lab { display: inline; }
+    .bk-ang small, .bk-hp small { margin-top: 1px; }
+    details.bk-d { grid-row: 4; }
   }
   @media (max-width: 760px) {
     .bv-steps { grid-template-columns: minmax(0, 1fr); }
@@ -153,13 +161,14 @@
     .bk-box { padding: 2px 14px 6px; }
     .bk-kopf { display: none; }
     .bk-z { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; row-gap: 6px; }
-    .bk-z .bk-an, .bk-z .bk-ko, .bk-z .bk-ang, .bk-z .bk-de, .bk-z details.bk-d { grid-column: 1; grid-row: auto; }
+    .bk-z .bk-an, .bk-z .bk-ko, .bk-z .bk-ang, .bk-z .bk-hp, .bk-z .bk-de, .bk-z details.bk-d { grid-column: 1; grid-row: auto; }
     @supports selector(:has(*)) {
-      .bk-z:not(:has(details[open])) .bk-ang, .bk-z:not(:has(details[open])) .bk-de { grid-row: auto; }
+      .bk-z:not(:has(details[open])) .bk-ang, .bk-z:not(:has(details[open])) .bk-hp, .bk-z:not(:has(details[open])) .bk-de { grid-row: auto; }
+      .bk-z:not(:has(details[open])) details.bk-d { grid-column: 1; }
     }
     .bk-an { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
     .bk-an .typ, .bk-an .hin { margin-top: 0; }
-    .bk-ang { padding-top: 0; }
+    .bk-ang, .bk-hp { padding-top: 0; }
     .bk-de { text-align: left; font-size: 13.5px; padding-top: 0; }
     .bk-de .lab { display: inline; }
     .bk-de small { display: inline; }
@@ -251,14 +260,14 @@
 
     <section class="section" id="kosten" aria-labelledby="h-kosten">
       <h2 id="h-kosten">Was kostet dein Kauf – und was bekommst du?</h2>
-      <p class="bv-in">Wähle deinen Betrag. Bei jedem Anbieter steht, was der Kauf einer Anleihe kostet, <strong>wie die Zahl entsteht</strong> und welche Anleihen es dort gibt – gerechnet mit den Preisen aus seinem Preisverzeichnis, über den günstigsten Handelsweg, den er für Anleihen nennt. Nicht jede Trading-App hat normale Anleihen im Angebot.</p>
+      <p class="bv-in">Wähle deinen Betrag. Bei jedem Anbieter steht, was der Kauf einer Anleihe kostet, <strong>wie die Zahl entsteht</strong>, welche Anleihen es dort gibt und an welchen Handelsplätzen du kaufen kannst – gerechnet mit den Preisen aus seinem Preisverzeichnis, über den günstigsten Handelsweg, den er für Anleihen nennt. Nicht jede Trading-App hat normale Anleihen im Angebot.</p>
       <div class="bk-wahl" id="bk-wahl" role="group" aria-label="Kaufbetrag wählen" hidden>
         <span class="bk-wahl-t">Kaufbetrag</span>
         <span class="bk-knoepfe lands"></span>
         <label class="bk-frei">oder eigener Betrag <input type="text" id="bk-frei" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="z. B. 7.500" aria-label="Eigener Kaufbetrag in Euro"> €</label>
       </div>
       <div class="bk-box">
-        <div class="bk-kopf" aria-hidden="true"><span>Anbieter</span><span>Kosten für einen Kauf über <span data-bv="betrag">5.000&nbsp;€</span></span><span>Anleihen</span><span>Depot im Jahr</span></div>
+        <div class="bk-kopf" aria-hidden="true"><span>Anbieter</span><span>Kosten für einen Kauf über <span data-bv="betrag">5.000&nbsp;€</span></span><span>Anleihen</span><span>Handelsplätze</span><span>Depot im Jahr</span></div>
 <!-- Die Liste erzeugt das Skript unten aus broker.json – Preise nur dort pflegen. Beim Veröffentlichen schreibt scripts/statische_tabellen.py sie für 5.000 € fest ins HTML. -->
 <ol class="bk-liste" id="bk-liste"><li class="klein" id="bk-laden">Die Übersicht wird geladen …</li></ol>
       </div>
@@ -280,7 +289,7 @@
     <section class="section" id="pruefen" aria-labelledby="h-pruefen">
       <h2 id="h-pruefen">So prüfst du deinen Broker</h2>
       <p class="bv-in">Sechs Fragen, bevor du ein Depot eröffnest – oder bevor du bei deinem jetzigen Broker kaufst.</p>
-      <ol class="bv-steps"><li><h3>Gibt es deine Anleihe?</h3><p>Gib die <b>ISIN</b> der Anleihe, die dich interessiert, in die Suche deines Brokers ein. Findet er sie nicht, kannst du sie dort nicht kaufen.</p></li><li><h3>Kannst du den Handelsplatz wählen?</h3><p>Gut ist eine Auswahl: Börse Stuttgart oder Frankfurt, gettex, Tradegate, Direkthandel. Wo viel gehandelt wird, ist die Spanne klein.</p></li><li><h3>Geht eine Order mit Limit?</h3><p>Nur mit Limit zahlst du nie mehr als geplant. Ob dein Broker das bei Anleihen kann, steht oben im Aufklapper.</p></li><li><h3>Was kostet dein Betrag?</h3><p>Fester Betrag plus Prozent plus Börsenentgelt. <b>0,25&nbsp;%</b> sind bei 10.000&nbsp;€ schon 25&nbsp;€ – bei jedem Kauf und jedem Verkauf.</p></li><li><h3>Kostet das Depot etwas?</h3><p>Online-Depots sind meist kostenlos. In der Filiale zahlst du oft jedes Jahr – das steht oben in der Spalte „Depot im Jahr“.</p></li><li><h3>Wer kümmert sich um die Steuer?</h3><p>Deutsche Banken und Broker führen die Steuer ab und nehmen deinen Freistellungsauftrag. Bei Brokern im Ausland erklärst du die Zinsen selbst.</p></li></ol>
+      <ol class="bv-steps"><li><h3>Gibt es deine Anleihe?</h3><p>Gib die <b>ISIN</b> der Anleihe, die dich interessiert, in die Suche deines Brokers ein. Findet er sie nicht, kannst du sie dort nicht kaufen.</p></li><li><h3>Kannst du den Handelsplatz wählen?</h3><p>Gut ist eine Auswahl: Börse Stuttgart oder Frankfurt, gettex, Tradegate, Direkthandel. Wo viel gehandelt wird, ist die Spanne klein. Welche Plätze ein Anbieter nennt, steht oben in der Liste.</p></li><li><h3>Geht eine Order mit Limit?</h3><p>Nur mit Limit zahlst du nie mehr als geplant. Ob dein Broker das bei Anleihen kann, steht oben im Aufklapper.</p></li><li><h3>Was kostet dein Betrag?</h3><p>Fester Betrag plus Prozent plus Börsenentgelt. <b>0,25&nbsp;%</b> sind bei 10.000&nbsp;€ schon 25&nbsp;€ – bei jedem Kauf und jedem Verkauf.</p></li><li><h3>Kostet das Depot etwas?</h3><p>Online-Depots sind meist kostenlos. In der Filiale zahlst du oft jedes Jahr – das steht oben in der Spalte „Depot im Jahr“.</p></li><li><h3>Wer kümmert sich um die Steuer?</h3><p>Deutsche Banken und Broker führen die Steuer ab und nehmen deinen Freistellungsauftrag. Bei Brokern im Ausland erklärst du die Zinsen selbst.</p></li></ol>
     </section>
 
     <div class="weiter">
@@ -439,6 +448,7 @@ MC.navInit();
     var ohne = D.anbieter.filter(function (b) { return !(b.wege && b.wege.length); });
     function zelle(x) { return x ? "<dd" + (x.warn ? ' class="warn"' : "") + ">" + x.t + (x.n ? "<small>" + x.n + "</small>" : "") + "</dd>" : "<dd>–</dd>"; }
     function angebot(b) { return '<div class="bk-ang"><span class="lab">Anleihen: </span>' + (b.gruppe === "aw" ? '<span class="bdg aw">' + G.aw.bdg + "</span> " : "") + b.anleihen + smalls(b.anleihen_n) + "</div>"; }
+    function plaetze(b) { return '<div class="bk-hp"><span class="lab">Handelsplätze: </span>' + (b.handel ? handel(b) + smalls(b.handel_n) : "–") + "</div>"; }
     function kopf(b) { return '<div class="bk-an"><b>' + b.name + '</b><span class="typ">' + b.typ + "</span>" + hin(b) + "</div>"; }
     function quelle(b) { return "<dt>Quelle</dt><dd>" + (quellen(b) || "–") + (b.notiz ? "<small>" + b.notiz + "</small>" : "") + "</dd>"; }
     function zeichne(B) {
@@ -456,21 +466,20 @@ MC.navInit();
           + '<div class="bk-ko"><div class="bk-bar"><i style="width:calc((100% - 150px) * ' + (r.v / max).toFixed(4) + ')"></i><b' + (r.v === min ? ' title="günstigster Preis"' : "") + ">" + eur(r.v) + '</b><span class="pz">' + anteil(r.v, B) + "</span></div>"
           + '<p class="bk-rw">' + r.kurz + " · " + w.name + "</p>"
           + (w.offen ? '<p class="bk-of">dazu ' + w.offen + "</p>" : "") + "</div>"
-          + angebot(b)
+          + angebot(b) + plaetze(b)
           + '<div class="bk-de' + (x.d > 0 ? " kostet" : "") + '"><span class="lab">Depot im Jahr: </span>' + glatt(x.d) + (d.kurz ? "<small>" + d.kurz + "</small>" : "") + "</div>"
-          + '<details class="bk-d" data-b="' + b._i + '"' + (offen[b._i] ? " open" : "") + '><summary><span class="bk-mehr">Rechnung, Handelsplätze und Quelle</span></summary><dl class="bk-dl">'
+          + '<details class="bk-d" data-b="' + b._i + '"' + (offen[b._i] ? " open" : "") + '><summary><span class="bk-mehr">Rechnung und Quelle</span></summary><dl class="bk-dl">'
           + "<dt>Preis laut Anbieter</dt><dd>" + b.preis + smalls(b.preis_n) + "</dd>"
           + "<dt>Rechnung für " + glatt(B) + "</dt><dd><small>" + w.name + "</small>" + r.schritte.map(function (s) { return "<span>" + s + "</span>"; }).join("")
           + '<span class="sum">= ' + eur(r.v) + " · " + anteil(r.v, B) + " vom Betrag</span>" + (w.n ? "<small>" + w.n + "</small>" : "") + "</dd>"
           + (w.offen ? "<dt>Nicht enthalten</dt><dd>" + w.offen + "</dd>" : "")
           + (andere ? "<dt>Andere Wege</dt><dd>" + andere + "</dd>" : "")
           + "<dt>Depot</dt><dd>" + d.t + smalls(d.n) + "</dd>"
-          + "<dt>Handelsplätze</dt><dd>" + handel(b) + smalls(b.handel_n) + "</dd>"
           + "<dt>Order mit Limit</dt>" + zelle(b.limit) + "<dt>Steuer</dt>" + zelle(b.steuer)
           + quelle(b) + "</dl></details></div></li>";
       }).join("");
       if (ohne.length) h += '<li class="bk-grp">' + G.nein.titel + ' <span class="n">· ' + ohne.length + " Anbieter</span></li>" + ohne.map(function (b) {
-        return '<li class="bk ohne" data-g="nein"><div class="bk-z">' + kopf(b) + '<div class="bk-ko"><p class="bk-rw">–</p></div>' + angebot(b)
+        return '<li class="bk ohne" data-g="nein"><div class="bk-z">' + kopf(b) + '<div class="bk-ko"><p class="bk-rw">–</p></div>' + angebot(b) + plaetze(b)
           + '<div class="bk-de"><span class="lab">Depot im Jahr: </span>–</div>'
           + '<details class="bk-d" data-b="' + b._i + '"' + (offen[b._i] ? " open" : "") + '><summary><span class="bk-mehr">Quelle</span></summary><dl class="bk-dl">' + quelle(b) + "</dl></details></div></li>";
       }).join("");
