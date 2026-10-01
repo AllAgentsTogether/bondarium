@@ -17,6 +17,10 @@ In den Quell-HTML stehen die Werte als lesbarer Rückfall, markiert mit data-kz:
     <span data-kz="etf-top-anzahl">70</span>, „etf-kosten-spanne“, „etf-kosten-guenstig“, „etf-stand“
          Kosten der ETFs auf der Seite anleihen-etf.html (top10-anleihen-etfs.json): Anzahl, niedrigste bis höchste
          laufende Kosten, Anzahl mit höchstens 0,2 % und das Datum der ETF-Liste – für etf-oder-anleihe.html
+    <span data-kz="broker-spanne">0 bis rund 40&nbsp;€</span>, „broker-stand“
+         Broker-Vergleich (broker.json, seit 01.10.2026): niedrigste bis höchste Kosten für einen Kauf über den
+         Standardbetrag (5.000 €), je Anbieter der günstigste Handelsweg – gerechnet mit derselben Funktion wie die
+         Seite (scripts/statische_tabellen.py) – und der Tag der Prüfung; für steuern-handelskosten.html, erste-anleihe.html
 
 Außerdem wird in Meta-/og-/JSON-LD-Texten die Wendung „Suche über rund NN.000 Anleihen“ auf die aktuelle Zahl gesetzt
 (nur diese Wendung – Zahlen wie „Börse Frankfurt rund 27.700 Anleihen“ bleiben unberührt).
@@ -80,6 +84,19 @@ def main():
             werte["etf-kosten-guenstig"] = str(sum(1 for x in k if x <= 0.2 + 1e-9))
             if re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(t.get("stand") or "")):
                 werte["etf-stand"] = ".".join(reversed(t["stand"].split("-")))
+    b = lade(site, "broker.json")   # Broker-Vergleich: Kosten je Anbieter rechnet dieselbe Funktion wie die Seite
+    if b:
+        try:
+            from statische_tabellen import b_guenstigster
+            betrag = b.get("standard") or 5000
+            k = sorted(b_guenstigster(x, betrag)["v"] for x in b.get("anbieter", []) if x.get("wege"))
+            if len(k) >= 3:
+                glatt = lambda v: str(int(v)) if float(v).is_integer() else de(v, 2)
+                werte["broker-spanne"] = f"{glatt(k[0])} bis rund {int(k[-1] + 0.5)}&nbsp;€"
+            if re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(b.get("stand") or "")):
+                werte["broker-stand"] = ".".join(reversed(b["stand"].split("-")))
+        except Exception as e:   # Rechnung nicht möglich: der Rückfall-Text der Seiten bleibt stehen
+            print(f"::warning::kennzahlen.py: Broker-Kennzahlen nicht gesetzt ({type(e).__name__}: {e})")
     print("Kennzahlen:", werte)
 
     span_re = re.compile(r'(<span data-kz="([a-z-]+)">)([^<]*)(</span>)')
