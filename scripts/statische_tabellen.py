@@ -17,6 +17,8 @@ Fassung (innerHTML) – mit Sortieren, Aufklappen und den Handy-Karten. Die Quel
                           <tbody id="kpis-body">           ← top10-…-laender.json, Gruppe „deutschland“ – erst wenn die
                                                              automatische Rangliste gilt („aktiv“); bis dahin zeigt die
                                                              Seite ihre Handauswahl, die nur das Seitenskript kennt
+  unternehmensanleihen-kupon.html
+                          <tbody id="kpis-body">           ← top10-unternehmensanleihen-kupon.json, Gruppe „kupon“ (seit 01.10.2026)
 
 Passt eine Seite oder Datei nicht zum Erwarteten, gibt es eine Warnung und die Seite bleibt, wie sie ist.
 """
@@ -238,13 +240,29 @@ def laender(site, seite, datei):
     print(f"{seite}: {len(reihe)} Anleihen (Deutschland) fest im HTML")
 
 
+def kupon(site, seite="unternehmensanleihen-kupon.html", datei="top10-unternehmensanleihen-kupon.json"):
+    """Top 10 nach Kupon (seit 01.10.2026): dieselben Zeilen wie das Seitenskript, gleiche Spalten wie die Länder-Seiten."""
+    pfad = os.path.join(site, seite)
+    D = lade(site, datei)
+    reihe = (D.get("gruppen") or {}).get("kupon") or []
+    html_ = open(pfad, encoding="utf-8").read()
+    leer = re.compile(r'(<tbody id="kpis-body">)\s*(</tbody>)')
+    if not reihe or not leer.search(html_):
+        return warn(f"{seite}: leere Tabelle #kpis-body oder Gruppe „kupon“ fehlt – nichts vorab geschrieben")
+    zeilen = "".join(laender_zeile(r, i + 1, D.get("stand")) for i, r in enumerate(reihe))
+    with open(pfad, "w", encoding="utf-8") as f:
+        f.write(leer.sub(lambda m: m.group(1) + zeilen + m.group(2), html_, count=1))
+    print(f"{seite}: {len(reihe)} Anleihen fest im HTML")
+
+
 def main():
     site = sys.argv[1] if len(sys.argv) > 1 else "_site"
     if not os.path.isdir(site):
         raise SystemExit(f"Ordner nicht gefunden: {site}")
     for name, schritt in (("Broker", lambda: broker(site)), ("ETFs", lambda: etfs(site)),
                           ("Staatsanleihen nach Ländern", lambda: laender(site, "anleihen-laender.html", "top10-staatsanleihen-laender.json")),
-                          ("Unternehmensanleihen nach Ländern", lambda: laender(site, "unternehmensanleihen-laender.html", "top10-unternehmensanleihen-laender.json"))):
+                          ("Unternehmensanleihen nach Ländern", lambda: laender(site, "unternehmensanleihen-laender.html", "top10-unternehmensanleihen-laender.json")),
+                          ("Unternehmensanleihen nach Kupon", lambda: kupon(site))):
         try:
             schritt()
         except Exception as e:   # Daten oder Seite anders als erwartet: Seite bleibt, wie sie ist

@@ -241,6 +241,13 @@ jobs:
         continue-on-error: true
         run: python scripts/update_top10.py
 
+      # Top 10 nach Kupon (seit 01.10.2026): Unternehmensanleihen auf der EZB-Liste notenbankfähiger Sicherheiten,
+      # Restlaufzeit ab zwei Jahren. Lädt die Tagesdatei der EZB; fehlt sie, bleibt die Liste vom Vortag stehen.
+      - name: Top 10 nach Kupon berechnen (Index, Kurse, EZB-Liste)
+        if: env.VOLL == '1'
+        continue-on-error: true
+        run: python scripts/update_top10_kupon.py
+
       # Schlanker Suchindex für anleihen-suche.html (seit 30.09.2026): aus anleihen-index.json + anleihen-kurse.json
       - name: Suchindex bauen
         if: env.VOLL == '1'
