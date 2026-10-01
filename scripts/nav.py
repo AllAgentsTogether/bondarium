@@ -59,9 +59,11 @@ AKADEMIE = ("Akademie", "wissen.html", [
     ("Auswählen", "auswaehlen", [
         ("Sind Anleihen etwas für dich?", "anlegerprofile.html"),
         ("Welche Anleihe wozu?", "anlageziele.html"),
+        ("Wie viel Anleihen ins Depot?", "anleihen-anteil.html"),   # seit 01.10.2026: Anleihen neben Aktien – Mischung, Faustregeln, Nachjustieren
         ("Vier Beispiele nach Ziel", "guide.html"),   # Anleitungen, keine Liste – bis 01.10.2026 im Menü „Anleihen“
         ("ETF oder Anleihe?", "etf-oder-anleihe.html"),
         ("Anleihen-ETF: Vor- und Nachteile", "anleihen-etf-erklaert.html"),
+        ("Anleihen für Unternehmen", "anleihen-fuer-unternehmen.html"),   # seit 01.10.2026: Depot, LEI, Steuern, Bilanz – Hausbegriff „Unternehmen“ (nicht „Firmen“); die Listen im Menü „Anleihen“ heißen „Unternehmensanleihen …“
     ]),
     ("Für Fortgeschrittene", "fortgeschrittene", [
         ("Zinskurve, Duration & Co.", "fortgeschrittene.html"),

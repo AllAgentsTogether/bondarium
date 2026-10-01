@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wie viel Anleihen ins Depot? Aktien und Anleihen – Bondarium</title>
+<meta name="description" content="Wie viel Anleihen neben Aktien? Was die Mischung bewirkt, warum der Puffer 2022 fehlte, drei Faustregeln und wie du nachjustierst – mit Zahlen und Quellen.">
+<link rel="canonical" href="https://www.bondarium.de/anleihen-anteil.html">
+<meta name="robots" content="index, follow">
+<meta name="author" content="Bondarium">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Bondarium">
+<meta property="og:locale" content="de_DE">
+<meta property="og:url" content="https://www.bondarium.de/anleihen-anteil.html">
+<meta property="og:title" content="Wie viel Anleihen ins Depot? Aktien und Anleihen – Bondarium">
+<meta property="og:description" content="Wie viel Anleihen neben Aktien? Was die Mischung bewirkt, warum der Puffer 2022 fehlte, drei Faustregeln und wie du nachjustierst – mit Zahlen und Quellen.">
+<meta property="og:image" content="https://www.bondarium.de/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Bondarium: Finde Anleihen, die zu deinem Leben passen">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Wie viel Anleihen ins Depot? Aktien und Anleihen – Bondarium">
+<meta name="twitter:description" content="Wie viel Anleihen neben Aktien? Was die Mischung bewirkt, warum der Puffer 2022 fehlte, drei Faustregeln und wie du nachjustierst – mit Zahlen und Quellen.">
+<meta name="twitter:image" content="https://www.bondarium.de/og-image.png">
+<link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+<meta name="theme-color" content="#39FF14">
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="bildwelt2.css">
+<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Wie viel Anleihen ins Depot? – neu 01.10.2026 (Menü Akademie, Spalte Auswählen): sechs Karten im Look von „ETF oder Anleihe?“ und
+     „Steuern und Handelskosten“. Erklärt Überlegungen und nennt belegte Zahlen (Quellen im Aufklapper) – keine Empfehlung für eine Aufteilung.
+     Schaubilder als HTML-Balken und Tabellen. Grundregeln in base.css. */
+  .balken .hb { display: grid; grid-template-columns: 150px minmax(0, 1fr); align-items: center; gap: 10px; }
+  .balken .hb + .hb { margin-top: 7px; }
+  .hb-l { font-size: 13.5px; font-weight: 600; color: var(--ap-ink); line-height: 1.25; }
+  .hb-l small { display: block; font-size: 12px; font-weight: 400; color: var(--text); }
+  .hb-bar { display: flex; align-items: center; justify-content: flex-end; height: 28px; width: var(--w); min-width: max-content; padding: 0 8px 0 10px; border-radius: 6px; background: #1A1A19; }
+  .hb-bar.o { background: #A2561C; } .hb-bar.n { background: #8E8D86; } .hb-bar.g { background: #157C00; }
+  .hb-bar b { color: #fff; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  /* Tabellen in den Schaubild-Kästen */
+  .tab { border-collapse: collapse; width: 100%; font-size: 14.5px; }
+  .tab th, .tab td { text-align: left; padding: 8px 8px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  .tab thead th { font-size: 12px; font-weight: 600; color: var(--text); letter-spacing: 0.08em; text-transform: uppercase; vertical-align: bottom; }
+  .tab tbody th { font-weight: 600; color: var(--ink); }
+  .tab td.z, .tab th.z { text-align: right; padding-left: 10px; padding-right: 0; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tab td.z.m { color: var(--down); font-weight: 600; }
+  .tab tbody tr:last-child th, .tab tbody tr:last-child td { border-bottom: 0; }
+  .tab small { display: block; font-size: 12.5px; font-weight: 400; color: var(--text); line-height: 1.35; }
+  /* Zwei Jahre nebeneinander (3) */
+  .zwei { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .zf { display: flex; flex-direction: column; background: var(--ap-soft); border-radius: 12px; padding: 12px 12px; }
+  .zf-k { font-size: 15px; font-weight: 600; }
+  .zf dl { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; margin-top: 8px; font-size: 14px; }
+  .zf dt { color: var(--ap-text); }
+  .zf dd { font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
+  .zf dd.plus { color: var(--up); } .zf dd.minus { color: var(--down); }
+  .zf .sum { grid-column: 1 / -1; height: 1px; background: rgba(26,26,25,0.12); margin: 3px 0; }
+  .zf-w { font-size: 12.5px; line-height: 1.4; margin-top: 8px; color: var(--ink); }
+  /* Aufteilung als gestapelter Balken (6) */
+  .mix { display: grid; gap: 10px; }
+  .mix .mr { display: grid; grid-template-columns: 118px minmax(0, 1fr); gap: 10px; align-items: center; }
+  .mix .ml { font-size: 13.5px; font-weight: 600; color: var(--ap-ink); line-height: 1.25; }
+  .mix .ml small { display: block; font-size: 12px; font-weight: 400; color: var(--text); }
+  .stk { display: flex; height: 34px; border-radius: 8px; overflow: hidden; }
+  .stk span { display: grid; place-items: center; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; width: var(--w); white-space: nowrap; }
+  .stk .a { background: #1A1A19; color: #fff; } .stk .b { background: #DCFBD3; color: #1A1A19; }
+  .stk-leg { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 12.5px; color: var(--text); }
+  .stk-leg i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .sb-f strong { font-weight: 600; }
+  @media (max-width: 600px) {
+    .balken .hb { grid-template-columns: 104px minmax(0, 1fr); } .hb-l { font-size: 12.5px; }
+    .zwei { grid-template-columns: 1fr; }
+    .tab { font-size: 13.5px; } .tab thead th { letter-spacing: 0.02em; } .tab td.z, .tab th.z { padding-left: 6px; }
+    .mix .mr { grid-template-columns: 92px minmax(0, 1fr); } .mix .ml { font-size: 12.5px; }
+    .sb-go { align-self: stretch; text-align: center; }
+  }
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Wie viel Anleihen ins Depot? Aktien und Anleihen","description":"Wie viel Anleihen neben Aktien? Was die Mischung bewirkt, warum der Puffer 2022 fehlte, drei Faustregeln und wie du nachjustierst – mit Zahlen und Quellen.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-01","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihen-anteil.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Akademie","item":"https://www.bondarium.de/wissen.html"},{"@type":"ListItem","position":3,"name":"Wie viel Anleihen ins Depot?","item":"https://www.bondarium.de/anleihen-anteil.html"}]}</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
+<div class="wrap">
+  <header class="topbar" data-rubrik="verstehen">
+    <a class="brand" href="index.html" aria-label="bondarium – Startseite"><svg class="brand-z" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect width="100" height="100" rx="24" fill="#1A1A19"/><mask id="bnd-cut" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><circle cx="65.4" cy="47.6" r="11.5" fill="#000"/></mask><g mask="url(#bnd-cut)" fill="none" stroke="#FBFAF7" stroke-width="12"><path d="M29 20V78" stroke-linecap="round"/><circle cx="52" cy="61" r="19"/></g><circle cx="65.4" cy="47.6" r="7.5" fill="#39FF14"/></svg><svg class="brand-w" viewBox="0 330 5362 780" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path fill="currentColor" d="M398 1108Q331 1108 280.0 1079.5Q229 1051 200.0 996.0Q171 941 168 863H189V1090H79V360H218V725L181 782Q185 698 214.5 642.0Q244 586 294.0 558.0Q344 530 407 530Q463 530 509.0 551.0Q555 572 588.0 609.5Q621 647 638.5 697.0Q656 747 656 806V827Q656 886 638.0 937.0Q620 988 586.0 1026.5Q552 1065 504.5 1086.5Q457 1108 398 1108ZM367 991Q412 991 445.5 968.5Q479 946 498.0 907.0Q517 868 517 817Q517 765 498.0 727.0Q479 689 445.5 668.0Q412 647 367 647Q326 647 291.5 665.0Q257 683 235.5 718.0Q214 753 214 802V842Q214 889 236.0 922.0Q258 955 293.0 973.0Q328 991 367 991Z M1009 1109Q937 1109 882.0 1086.0Q827 1063 789.0 1023.5Q751 984 731.5 934.0Q712 884 712 830V809Q712 753 732.5 702.5Q753 652 791.5 612.5Q830 573 885.0 550.5Q940 528 1009 528Q1078 528 1133.0 550.5Q1188 573 1226.5 612.5Q1265 652 1285.0 702.5Q1305 753 1305 809V830Q1305 884 1285.5 934.0Q1266 984 1228.0 1023.5Q1190 1063 1135.0 1086.0Q1080 1109 1009 1109ZM1009 990Q1060 990 1095.0 967.5Q1130 945 1148.0 906.5Q1166 868 1166 819Q1166 769 1147.5 730.5Q1129 692 1093.5 669.5Q1058 647 1009 647Q960 647 924.5 669.5Q889 692 870.0 730.5Q851 769 851 819Q851 868 869.5 906.5Q888 945 923.0 967.5Q958 990 1009 990Z M1397 1090V547H1507V780H1497Q1497 697 1519.0 641.5Q1541 586 1584.5 558.0Q1628 530 1693 530H1699Q1796 530 1846.0 592.5Q1896 655 1896 779V1090H1757V767Q1757 717 1728.5 686.0Q1700 655 1650 655Q1599 655 1567.5 686.5Q1536 718 1536 771V1090Z M2240 1108Q2183 1108 2135.0 1087.0Q2087 1066 2052.0 1028.0Q2017 990 1998.0 939.5Q1979 889 1979 830V809Q1979 751 1997.5 700.0Q2016 649 2049.5 611.0Q2083 573 2130.5 551.5Q2178 530 2236 530Q2300 530 2348.5 557.5Q2397 585 2426.0 640.0Q2455 695 2458 778L2417 730V360H2556V1090H2446V859H2470Q2467 942 2436.0 997.5Q2405 1053 2354.5 1080.5Q2304 1108 2240 1108ZM2271 991Q2312 991 2346.0 972.5Q2380 954 2400.5 918.5Q2421 883 2421 835V795Q2421 747 2400.0 714.5Q2379 682 2345.0 664.5Q2311 647 2271 647Q2226 647 2191.5 668.5Q2157 690 2137.5 729.0Q2118 768 2118 820Q2118 872 2138.0 910.5Q2158 949 2192.5 970.0Q2227 991 2271 991Z M3013 1090V929H2990V750Q2990 703 2967.0 680.0Q2944 657 2896 657Q2871 657 2836.0 658.0Q2801 659 2765.5 660.5Q2730 662 2702 664V546Q2725 544 2754.0 542.0Q2783 540 2813.5 539.5Q2844 539 2871 539Q2955 539 3010.5 561.0Q3066 583 3094.5 630.0Q3123 677 3123 753V1090ZM2838 1104Q2779 1104 2734.5 1083.0Q2690 1062 2665.5 1023.0Q2641 984 2641 929Q2641 869 2670.5 831.0Q2700 793 2753.5 774.0Q2807 755 2879 755H3005V838H2877Q2829 838 2803.5 861.5Q2778 885 2778 922Q2778 959 2803.5 982.0Q2829 1005 2877 1005Q2906 1005 2930.5 994.5Q2955 984 2971.5 958.5Q2988 933 2990 889L3024 928Q3019 985 2996.5 1024.0Q2974 1063 2934.5 1083.5Q2895 1104 2838 1104Z M3242 1090V547H3352V777H3349Q3349 660 3399.0 600.0Q3449 540 3546 540H3566V661H3528Q3458 661 3419.5 698.5Q3381 736 3381 807V1090Z M3655 1090V547H3794V1090ZM3579 651V547H3794V651Z M4109 1107Q4015 1107 3963.5 1045.0Q3912 983 3912 861V546H4051V873Q4051 923 4079.0 952.5Q4107 982 4155 982Q4203 982 4233.5 951.0Q4264 920 4264 867V546H4403V1090H4293V859H4304Q4304 941 4283.0 996.0Q4262 1051 4220.0 1079.0Q4178 1107 4115 1107Z M4533 1090V547H4643V780H4633Q4633 698 4654.0 642.5Q4675 587 4716.5 558.5Q4758 530 4820 530H4826Q4889 530 4930.5 558.5Q4972 587 4992.5 642.5Q5013 698 5013 780H4978Q4978 698 4999.5 642.5Q5021 587 5062.5 558.5Q5104 530 5166 530H5172Q5235 530 5277.0 558.5Q5319 587 5340.5 642.5Q5362 698 5362 780V1090H5223V767Q5223 716 5197.0 685.5Q5171 655 5123 655Q5075 655 5046.0 686.5Q5017 718 5017 771V1090H4878V767Q4878 716 4852.0 685.5Q4826 655 4778 655Q4730 655 4701.0 686.5Q4672 718 4672 771V1090Z"/><circle class="brand-i" cx="3705.5" cy="406.5" r="85"/></svg></a>
+    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
+    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
+      <div class="nav-group nav-akademie">
+        <a href="wissen.html" class="nav-group-btn current" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu nav-mega">
+          <a href="wissen.html" class="nav-ov">Übersicht</a>
+          <div class="nav-spalten">
+          <div class="nav-spalte">
+          <span class="nav-cap">Grundlagen</span>
+          <a href="grundlagen.html">Anleihen einfach erklärt</a>
+          <a href="anleihe-arten.html">Anleihe-Arten</a>
+          <a href="zinsniveau.html">Zinsniveau</a>
+          <a href="laufzeit.html">Laufzeit</a>
+          <a href="bonitaet.html">Bonität und Ratings</a>
+          <a href="risiko.html">Risiko kennen</a>
+          <a href="kuendbare-anleihen.html">Kündbare Anleihen</a>
+          </div>
+          <div class="nav-spalte">
+          <span class="nav-cap">Auswählen</span>
+          <a href="anlegerprofile.html">Sind Anleihen etwas für dich?</a>
+          <a href="anlageziele.html">Welche Anleihe wozu?</a>
+          <a href="anleihen-anteil.html" class="current">Wie viel Anleihen ins Depot?</a>
+          <a href="guide.html">Vier Beispiele nach Ziel</a>
+          <a href="etf-oder-anleihe.html">ETF oder Anleihe?</a>
+          <a href="anleihen-etf-erklaert.html">Anleihen-ETF: Vor- und Nachteile</a>
+          <a href="anleihen-fuer-unternehmen.html">Anleihen für Unternehmen</a>
+          </div>
+          <div class="nav-spalte">
+          <span class="nav-cap">Für Fortgeschrittene</span>
+          <a href="fortgeschrittene.html">Zinskurve, Duration &amp; Co.</a>
+          <a href="duration.html">Duration und Konvexität</a>
+          <a href="rendite-lesen.html">Rendite richtig lesen</a>
+          <a href="anleihenleiter.html">Leiter, Hantel, Roll-down</a>
+          <a href="markttechnik.html">Markttechnik lesen</a>
+          </div>
+          </div>
+          <a href="begriffe.html" class="nav-fuss">Glossar<small>Fachbegriffe von A bis Z</small></a>
+        </div>
+      </div>
+      <div class="nav-group nav-anleihen">
+        <a href="anleihen.html" class="nav-group-btn" aria-expanded="false"><span>Anleihen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="anleihen.html" class="nav-ov">Übersicht</a>
+          <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
+          <span class="nav-cap">Top 10 meistgehandelt</span>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
+          <a href="anleihen-etf.html">Anleihen-ETFs</a>
+          <span class="nav-cap">Top 30</span>
+          <a href="anleihen-kupon.html">Höchste Kupons</a>
+        </div>
+      </div>
+      <div class="nav-group nav-kaufen">
+        <a href="kaufen.html" class="nav-group-btn" aria-expanded="false"><span>Kaufen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="kaufen.html" class="nav-ov">Übersicht</a>
+          <a href="erste-anleihe.html">Deine erste Anleihe</a>
+          <a href="broker-vergleich.html">Broker im Vergleich</a>
+          <a href="handelsplaetze.html">Handelsplätze</a>
+          <a href="steuern-handelskosten.html">Steuern und Handelskosten</a>
+          <a href="rechner.html">Rechner</a>
+        </div>
+      </div>
+      <div class="nav-group nav-zinsen">
+        <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="beobachten.html" class="nav-ov">Übersicht</a>
+          <a href="renditen.html">Renditen Staatsanleihen seit 1970</a>
+          <a href="zinskurve.html">Zinskurve seit 1972</a>
+          <a href="realzins.html">Realzins seit 1970</a>
+          <a href="unternehmensanleihen.html">Renditen Unternehmensanleihen seit 1984</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1984</a>
+          <a href="langlaeufer.html">Langläufer</a>
+        </div>
+      </div>
+      <a href="konto.html" class="nav-konto">Mein Bondarium</a>
+    </nav>
+    <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+    <a class="kopfkonto" href="konto.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.2-4 4-5.5 7.5-5.5s6.3 1.5 7.5 5.5"/></svg><span>Mein Bondarium</span></a>
+  </header>
+  <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><a href="wissen.html">Akademie</a></li><li><span aria-current="page">Wie viel Anleihen ins Depot?</span></li></ol></nav>
+  <main id="main">
+    <div class="b2-kopf">
+      <div>
+        <h1>Wie viel Anleihen ins Depot?</h1>
+        <p class="sub">Anleihen neben Aktien: was die Mischung bewirkt, wann der Puffer hält, welche Faustregeln es gibt und wie du nachjustierst. Lesezeit: etwa 5 Minuten.</p>
+      </div>
+      <div class="b2-spot"><img src="spot-anleihen-anteil.svg" alt="" width="232" height="160"></div>
+    </div>
+    <nav class="lands" aria-label="Zum Punkt springen">
+      <a class="lbtn" href="#wozu"><span class="n">1</span>Wozu</a>
+      <a class="lbtn" href="#mischung"><span class="n">2</span>Mischung</a>
+      <a class="lbtn" href="#puffer"><span class="n">3</span>Puffer</a>
+      <a class="lbtn" href="#laufzeit"><span class="n">4</span>Laufzeit</a>
+      <a class="lbtn" href="#anteil"><span class="n">5</span>Dein Anteil</a>
+      <a class="lbtn" href="#nachjustieren"><span class="n">6</span>Nachjustieren</a>
+    </nav>
+
+    <section class="kap" id="wozu" aria-labelledby="h-wozu">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">1</span>
+        <h2 id="h-wozu">Wozu Anleihen neben Aktien?</h2>
+        <p>Aktien haben über lange Zeiträume mehr gebracht als Anleihen – aber ihr Kurs kann sich in einem schlechten Jahr fast halbieren. <strong>Anleihen guter <a href="begriffe.html#bonitaet">Bonität</a> schwanken weniger und zahlen an festen Terminen.</strong> Sie sind der ruhige Teil im Depot.</p><p>Wie stark dein Depot schwankt, entscheidet deshalb vor allem eine Zahl: der Anteil der Anleihen. Nicht die einzelne Anleihe, nicht der einzelne ETF.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Aktien fallen um 40&nbsp;% – was wird aus 10.000&nbsp;€?</p><div class="balken" role="img" aria-label="Rechenbeispiel: Aktien fallen um 40 Prozent, Anleihen bleiben stabil. Aus 10.000 Euro werden bei 100 Prozent Aktien 6.000 Euro, bei 75 Prozent Aktien 7.000 Euro, bei 50 Prozent 8.000 Euro, bei 25 Prozent 9.000 Euro."><div class="hb"><span class="hb-l">100&nbsp;% Aktien</span><span class="hb-bar o" style="--w:60%"><b>6.000&nbsp;€</b></span></div><div class="hb"><span class="hb-l">75&nbsp;% Aktien<small>25&nbsp;% Anleihen</small></span><span class="hb-bar" style="--w:70%"><b>7.000&nbsp;€</b></span></div><div class="hb"><span class="hb-l">50&nbsp;% Aktien<small>50&nbsp;% Anleihen</small></span><span class="hb-bar" style="--w:80%"><b>8.000&nbsp;€</b></span></div><div class="hb"><span class="hb-l">25&nbsp;% Aktien<small>75&nbsp;% Anleihen</small></span><span class="hb-bar g" style="--w:90%"><b>9.000&nbsp;€</b></span></div></div><p class="sb-f">Rechenbeispiel: Aktien −40&nbsp;%, Anleihen unverändert. So tief fielen Aktien schon: Der DAX verlor 2002 rund 44&nbsp;% und 2008 rund 40&nbsp;%.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Der Anleihen-Anteil ist die Bremse im Depot. Je größer er ist, desto weniger fällt das Depot, wenn Aktien fallen.</span></p>
+    </section>
+    <section class="kap kap-b" id="mischung" aria-labelledby="h-mischung">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">2</span>
+        <h2 id="h-mischung">Mehr Aktien: mehr Ertrag, tiefere Täler</h2>
+        <p>Eine lange Datenreihe aus den USA zeigt den Tausch: <strong>Mit jedem Schritt mehr Aktien stieg der Ertrag im Durchschnitt – und das schlechteste Jahr wurde schlechter.</strong> Reine Anleihen verloren im schlechtesten Jahr rund 13&nbsp;%, reine Aktien rund 43&nbsp;%.</p><p>Die Verbraucherzentrale hat es für Sparpläne über 25 Jahre gerechnet, nach Abzug der Inflation: Halb Aktien, halb Festgeld brachte im Durchschnitt 4,2&nbsp;% im Jahr und im schlechtesten Fall 1,3&nbsp;%. Nur Aktien: 5,2&nbsp;% – aber im schlechtesten Fall ein kleines Minus.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Aktien und Anleihen gemischt – USA 1928 bis 2025</p><table class="tab"><thead><tr><th scope="col">Mischung</th><th scope="col" class="z">Ø&nbsp;im Jahr</th><th scope="col" class="z">Schlechtestes Jahr</th></tr></thead><tbody><tr><th scope="row">100&nbsp;% Anleihen</th><td class="z">5,2&nbsp;%</td><td class="z m">−12,9&nbsp;%</td></tr><tr><th scope="row">20&nbsp;% Aktien</th><td class="z">6,5&nbsp;%</td><td class="z m">−14,1&nbsp;%</td></tr><tr><th scope="row">40&nbsp;% Aktien</th><td class="z">7,8&nbsp;%</td><td class="z m">−18,7&nbsp;%</td></tr><tr><th scope="row">60&nbsp;% Aktien</th><td class="z">9,1&nbsp;%</td><td class="z m">−26,9&nbsp;%</td></tr><tr><th scope="row">80&nbsp;% Aktien</th><td class="z">10,4&nbsp;%</td><td class="z m">−35,1&nbsp;%</td></tr><tr><th scope="row">100&nbsp;% Aktien</th><td class="z">11,8&nbsp;%</td><td class="z m">−43,3&nbsp;%</td></tr></tbody></table><p class="sb-f">Jahreswerte in Dollar, vor Inflation, Kosten und Steuern; die Mischung wird jedes Jahr wiederhergestellt. Berechnung von Vanguard. Vergangene Werte sagen nichts Sicheres über die Zukunft.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Die Frage ist nicht, was am meisten bringt. Die Frage ist, welches schlechteste Jahr du aushältst, ohne zu verkaufen.</span></p>
+    </section>
+    <section class="kap" id="puffer" aria-labelledby="h-puffer">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">3</span>
+        <h2 id="h-puffer">Der Puffer hält oft – aber nicht immer</h2>
+        <p>2008 brachen Aktien ein, Bundesanleihen legten zu: <strong>Wer Sicherheit suchte, kaufte Anleihen, und ihre Kurse stiegen.</strong> So war es in den meisten Aktienkrisen seit der Jahrtausendwende.</p><p>2022 fiel beides zugleich. Die Inflation sprang nach oben, das <a href="zinsniveau.html">allgemeine Zinsniveau</a> stieg so schnell wie seit Jahrzehnten nicht – das drückt Aktien und laufende Anleihen. Die Europäische Zentralbank und die Bank für Internationalen Zahlungsausgleich beschreiben dasselbe Muster für die Jahrzehnte hoher Inflation vor 2000.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Zwei Krisenjahre in Deutschland</p><div class="zwei"><div class="zf"><span class="zf-k">2008</span><dl><dt>Aktien (DAX)</dt><dd class="minus">−40,4&nbsp;%</dd><dt>Bundesanleihen (REXP)</dt><dd class="plus">+10,1&nbsp;%</dd><span class="sum" aria-hidden="true"></span><dt>Halb und halb</dt><dd class="minus">−15,1&nbsp;%</dd></dl><p class="zf-w">Finanzkrise: Anleihen fangen einen Teil auf.</p></div><div class="zf"><span class="zf-k">2022</span><dl><dt>Aktien (DAX)</dt><dd class="minus">−12,3&nbsp;%</dd><dt>Bundesanleihen (REXP)</dt><dd class="minus">−11,9&nbsp;%</dd><span class="sum" aria-hidden="true"></span><dt>Halb und halb</dt><dd class="minus">−12,1&nbsp;%</dd></dl><p class="zf-w">Zinswende: Beides fällt, der Puffer fehlt.</p></div></div><p class="sb-f">Kalenderjahre, mit Dividenden und Zinsen. REXP: deutsche Staatsanleihen mit 1 bis 10 Jahren Laufzeit. „Halb und halb“ ist der Mittelwert der beiden Zahlen. Quelle: Deutsche Bundesbank (Angaben der Deutschen Börse).</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Anleihen dämpfen Aktienkrisen, solange das allgemeine Zinsniveau nicht selbst das Problem ist. Steigt es schnell, fallen beide.</span></p>
+    </section>
+    <section class="kap kap-b" id="laufzeit" aria-labelledby="h-laufzeit">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">4</span>
+        <h2 id="h-laufzeit">Kurze Laufzeiten bremsen besser</h2>
+        <p>Wie ruhig der ruhige Teil ist, hängt an der <a href="laufzeit.html">Laufzeit</a>. <strong>2022 verloren Euro-Staatsanleihen mit 1 bis 3 Jahren rund 4&nbsp;%, solche mit 15 bis 30 Jahren rund 35&nbsp;%</strong> – mehr als Aktien. Der Hebel dahinter heißt <a href="duration.html">Duration</a>.</p><p>Bei einer einzelnen Anleihe kommt etwas dazu: Hältst du sie bis zur Fälligkeit, bekommst du 100&nbsp;% zurück, sofern der Schuldner zahlt – der Kurs dazwischen trifft dich dann nicht. Ein <a href="etf-oder-anleihe.html">Anleihen-ETF hat dieses Ende nicht</a>.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Euro-Staatsanleihen 2022 – nach Laufzeit</p><div class="balken" role="img" aria-label="Wertentwicklung von drei ETFs auf Euro-Staatsanleihen im Jahr 2022: 1 bis 3 Jahre Laufzeit minus 4,3 Prozent, alle Laufzeiten minus 18,5 Prozent, 15 bis 30 Jahre minus 34,7 Prozent."><div class="hb"><span class="hb-l">1 bis 3 Jahre<small>Duration rund 1,6</small></span><span class="hb-bar g" style="--w:14%"><b>−4,3&nbsp;%</b></span></div><div class="hb"><span class="hb-l">Alle Laufzeiten</span><span class="hb-bar" style="--w:54%"><b>−18,5&nbsp;%</b></span></div><div class="hb"><span class="hb-l">15 bis 30 Jahre<small>Duration rund 15,8</small></span><span class="hb-bar o" style="--w:100%"><b>−34,7&nbsp;%</b></span></div></div><p class="sb-f">Wertentwicklung von drei ETFs auf Euro-Staatsanleihen im Kalenderjahr 2022 laut Anbieter (iShares). Zum Vergleich: Der DAX verlor im selben Jahr 12,3&nbsp;%.</p><a class="go leise sb-go" href="laufzeit.html">Laufzeit: kurz oder lang?&nbsp;→</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Als Bremse neben Aktien taugen vor allem kurze und mittlere Laufzeiten. Lange Laufzeiten schwanken selbst wie Aktien.</span></p>
+    </section>
+    <section class="kap" id="anteil" aria-labelledby="h-anteil">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">5</span>
+        <h2 id="h-anteil">Drei Fragen statt einer Formel</h2>
+        <p>Den einen richtigen Anteil gibt es nicht. Drei Fragen führen dich zu deinem: <strong>Wann brauchst du das Geld?</strong> Was in wenigen Jahren feststehen muss, gehört nicht in Aktien. <strong>Wie viel Minus hältst du aus?</strong> Sieh dir das schlechteste Jahr in der Tabelle oben an und rechne es in Euro um.</p><p><strong>Welche Zahlungen müssen sicher kommen?</strong> Für feste Termine passen Anleihen, die genau dann fällig werden – siehe <a href="anlageziele.html">Anlageziele</a>. Faustregeln sind ein Startpunkt, kein Ergebnis.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Drei bekannte Faustregeln</p><table class="tab"><thead><tr><th scope="col">Faustregel</th><th scope="col">Aktien-Anteil</th></tr></thead><tbody><tr><th scope="row">100 minus Lebensalter<small>Mit 40 Jahren 60&nbsp;% Aktien, mit 70 Jahren 30&nbsp;%. Kennt weder deine Termine noch deine anderen Einkünfte.</small></th><td>sinkt mit dem Alter</td></tr><tr><th scope="row">60/40<small>Die klassische Mischung, an der sich viele Profis messen.</small></th><td>60&nbsp;%</td></tr><tr><th scope="row">Pantoffel-Portfolio<small>Stiftung Warentest: defensiv, ausgewogen oder offensiv. Der sichere Teil ist Tagesgeld oder ein ETF auf Euro-Anleihen.</small></th><td>25, 50 oder 75&nbsp;%</td></tr></tbody></table><p class="sb-f">Der Rest ist jeweils der ruhige Teil: Anleihen, Tages- oder Festgeld. Keine der Regeln ist eine Empfehlung dieser Website.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Zeit, Nerven und feste Termine bestimmen den Anteil – nicht das Alter allein und keine Formel.</span></p>
+    </section>
+    <section class="kap kap-b" id="nachjustieren" aria-labelledby="h-nachjustieren">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">6</span>
+        <h2 id="h-nachjustieren">Nachjustieren: ein paar Mal im Jahr hinsehen</h2>
+        <p>Steigen Aktien über Jahre, wächst ihr Anteil von allein – und mit ihm das Risiko. <strong>Nachjustieren heißt: die Aufteilung wieder auf den gewählten Stand bringen.</strong> Das hält das Risiko dort, wo du es haben wolltest; mehr Ertrag bringt es nicht unbedingt.</p><p>Stiftung Warentest nennt als Schwelle 10 Prozentpunkte Abweichung. Am billigsten geht es ohne Verkauf: Neues Geld, Zinsen und fällige Anleihen fließen in den Teil, der zu klein geworden ist. Ein Verkauf kostet <a href="steuern-handelskosten.html">Gebühren und oft Steuern</a>.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Halb und halb – nach guten Aktienjahren</p><div class="mix" role="img" aria-label="Beispiel mit 20.000 Euro, halb Aktien, halb Anleihen. Nach guten Aktienjahren sind es 16.000 Euro Aktien und 10.400 Euro Anleihen, also 61 zu 39. Nach dem Umschichten von 2.800 Euro sind es wieder je 13.200 Euro."><div class="mr"><span class="ml">Start<small>20.000&nbsp;€</small></span><span class="stk"><span class="a" style="--w:50%">10.000&nbsp;€</span><span class="b" style="--w:50%">10.000&nbsp;€</span></span></div><div class="mr"><span class="ml">Später<small>Aktien +60&nbsp;%, Anleihen +4&nbsp;%</small></span><span class="stk"><span class="a" style="--w:61%">16.000&nbsp;€</span><span class="b" style="--w:39%">10.400&nbsp;€</span></span></div><div class="mr"><span class="ml">Nachjustiert<small>2.800&nbsp;€ umgeschichtet</small></span><span class="stk"><span class="a" style="--w:50%">13.200&nbsp;€</span><span class="b" style="--w:50%">13.200&nbsp;€</span></span></div></div><p class="stk-leg"><span><i style="background:#1A1A19"></i>Aktien</span><span><i style="background:#DCFBD3;border:1px solid #1A1A19"></i>Anleihen</span></p><p class="sb-f">Rechenbeispiel mit ausgedachten Zahlen. Aus 50 zu 50 wird 61 zu 39 – mehr als 10 Prozentpunkte Abweichung. Kosten und Steuern des Umschichtens sind nicht eingerechnet.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Die Aufteilung ein paar Mal im Jahr prüfen, erst bei deutlicher Abweichung handeln – am billigsten mit neuem Geld statt mit Verkäufen.</span></p>
+    </section>
+
+    <div class="weiter">
+      <a class="go" href="anlageziele.html">Welche Anleihe wozu?&nbsp;→</a>
+      <a class="go leise" href="etf-oder-anleihe.html">ETF oder Anleihe?&nbsp;→</a>
+      <a class="go leise" href="anleihenleiter.html">Leiter, Hantel, Roll-down&nbsp;→</a>
+    </div>
+    <p class="klein">Diese Seite erklärt, wie Anleger über den Anteil von Anleihen nachdenken. Sie empfiehlt keine Aufteilung und kein Produkt. Vergangene Wertentwicklungen sind keine Prognose. Keine Anlageberatung.</p>
+
+    <nav class="crossnav" aria-label="Weiter">
+      <p class="crossnav-t">Weiter</p>
+      <ul class="crossnav-l">
+        <li><a href="anleihen-etf.html">Die meistgehandelten Anleihen-ETFs</a></li>
+        <li><a href="risiko.html">Risiko kennen</a></li>
+        <li><a href="duration.html">Duration und Konvexität</a></li>
+      </ul>
+    </nav>
+    <details class="quellen" id="quellen">
+      <summary>Datenquellen und Methodik</summary>
+      <div class="quellen-body">
+        <p><strong>Rechenbeispiele (Karten 1 und 6).</strong> Ausgedachte Zahlen zur Veranschaulichung: Depotwert = Anteil × Wertentwicklung je Teil, ohne Kosten, Steuern und Zinsen.</p>
+        <p><strong>USA 1928 bis 2025 (Karte 2).</strong> Vanguard, „Vanguard portfolio allocation models“, Schaubild „Range of calendar year returns (1928–2025)“, Berechnung auf Basis von Morningstar-Daten, Stand 31.12.2025. Aktien: bis 1969 nur USA, danach 60&nbsp;% USA und 40&nbsp;% international; Anleihen: bis 1990 nur USA, danach 70&nbsp;% USA und 30&nbsp;% international (währungsgesichert). Durchschnitt und schlechtestes Kalenderjahr, nominal in US-Dollar. <a href="https://investor.vanguard.com/investor-resources-education/education/model-portfolio-allocation" rel="noopener">investor.vanguard.com</a>. Für Anleger im Euroraum lagen die Werte anders; die Reihenfolge der Mischungen ist dieselbe.</p>
+        <p><strong>Sparpläne über 25 Jahre (Karte 2).</strong> Verbraucherzentrale, „Augenmaß bei Geldanlagen: So können Sie Risiken streuen“, Stand 21.01.2026: eigene Berechnung für 1970 bis 2018, nach Inflation, Festgeld und weltweite Aktien. <a href="https://www.verbraucherzentrale.de/wissen/geld-versicherungen/sparen-und-anlegen/augenmass-bei-geldanlagen-so-koennen-sie-risiken-streuen-12435" rel="noopener">verbraucherzentrale.de</a>.</p>
+        <p><strong>DAX und REXP (Karten 1, 3 und 4).</strong> Jahresendstände laut Deutscher Bundesbank, Kapitalmarktstatistik April 2006 und Kapitalmarktkennzahlen Juni 2023, Tabelle „Indizes für Wertpapiere inländischer Emittenten“ (Quelle dort: Deutsche Börse AG). DAX-Performanceindex: Ende 2001 5.160,10 · Ende 2002 2.892,63 · Ende 2007 8.067,32 · Ende 2008 4.810,20 · Ende 2021 15.884,86 · Ende 2022 13.923,59. REX-Performanceindex (REXP): Ende 2007 325,02 · Ende 2008 357,99 · Ende 2021 490,77 · Ende 2022 432,53. Die Jahreswerte sind daraus berechnet. Der REXP bildet deutsche Staatsanleihen mit 1 bis 10 Jahren Restlaufzeit ab; Indizes über alle Laufzeiten verloren 2022 mehr.</p>
+        <p><strong>Gleichlauf von Aktien und Anleihen (Karte 3).</strong> Europäische Zentralbank, Financial Stability Review November 2022, Kasten „Stock-bond correlation and the risk of a simultaneous sell-off“: Der Gleichlauf war von den späten 1960er- bis in die späten 1990er-Jahre meist positiv, in den 2000er-Jahren negativ, und nahm mit Inflation und Zinserhöhungen wieder zu. Bank für Internationalen Zahlungsausgleich, Quartalsbericht Dezember 2023, Kasten „The correlation of equity and bond returns“: In den USA wechselte das Vorzeichen Mitte 2021.</p>
+        <p><strong>Euro-Staatsanleihen 2022 nach Laufzeit (Karte 4).</strong> Wertentwicklung im Kalenderjahr 2022 laut Factsheets von iShares (Stand August 2026): iShares € Govt Bond 1-3yr (IE00B14X4Q57) −4,28&nbsp;%, iShares Core € Govt Bond (IE00B4WXJJ64) −18,52&nbsp;%, iShares € Govt Bond 15-30yr (IE00B1FZS913) −34,71&nbsp;%; Duration laut denselben Factsheets. Die ETFs stehen hier als Beispiele für die Laufzeitbereiche, nicht als Empfehlung.</p>
+        <p><strong>Faustregeln (Karte 5).</strong> „100 minus Lebensalter“: beschrieben u.&nbsp;a. vom Leibniz-Institut für Finanzmarktforschung SAFE (Beitrag vom 24.01.2017) – mit dem Hinweis, dass Faustregeln gefährlich werden, wenn der eigene Fall von der Norm abweicht. 60/40: von der Europäischen Zentralbank (siehe oben) als Maßstab für passive Anleger genannt. Pantoffel-Portfolio: Stiftung Warentest, test.de, „Anlagestrategie Pantoffel-Portfolio“, Stand 04.09.2026.</p>
+        <p><strong>Nachjustieren (Karte 6).</strong> Schwelle von 10 Prozentpunkten: Stiftung Warentest, test.de, „Pantoffel-Portfolio: Umschichten, wenn die Aufteilung nicht mehr stimmt“, 20.10.2022. Zweck des Nachjustierens ist die Kontrolle des Risikos, nicht ein höherer Ertrag: Jaconetti, Kinniry, Zilbering, „Best practices for portfolio rebalancing“, Vanguard Research 2010.</p>
+        <p><strong>Geld aufteilen und Anlagedauer.</strong> Bundesanstalt für Finanzdienstleistungsaufsicht, „Einmaleins der Geldanlage“: Vermögen auf verschiedene Anlageformen verteilen; überlegen, wie lange man auf das Geld verzichten kann. Diese Seite ist allgemeine Information und keine Anlageberatung.</p>
+      </div>
+    </details>
+  </main>
+  <footer class="fuss">
+    <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html#grundlagen">Grundlagen</a><a href="wissen.html#auswaehlen">Auswählen</a><a href="wissen.html#fortgeschrittene">Für Fortgeschrittene</a><a href="begriffe.html">Glossar</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="anleihen-kupon.html">Höchste Kupons</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-kauf"><p class="fuss-k" id="f-kauf">Kaufen</p><a href="erste-anleihe.html">Deine erste Anleihe</a><a href="broker-vergleich.html">Broker im Vergleich</a><a href="steuern-handelskosten.html">Steuern und Handelskosten</a><a href="rechner.html">Rechner</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen Staatsanleihen</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
+    <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
+  </footer>
+</div>
+
+<script src="site.js"></script>
+<script>
+// Rückfall, falls site.js nicht lädt (Netzfehler): Minimalform, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
+window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, minus: function (s) { return String(s).replace(/^-/, "\u2212"); }, zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\u2212") : "\u2013"; }, load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, hoverWrap: function (s) { return s; }, navInit: function () {} };
+
+// Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
+MC.navInit();
+</script>
+</body>
+</html>
