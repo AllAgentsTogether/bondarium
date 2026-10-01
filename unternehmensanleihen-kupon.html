@@ -110,7 +110,7 @@
     <div class="b2-kopf">
       <div>
         <h1>Unternehmens&shy;anleihen nach Kupon: die zehn höchsten Kupons</h1>
-        <p class="sub">Welche Unternehmensanleihen zahlen den höchsten festen Zins? Die zehn Anleihen mit dem höchsten Kupon unter allen, die auf der Liste notenbankfähiger Sicherheiten der Europäischen Zentralbank stehen und noch mindestens zwei Jahre laufen – in Euro oder US-Dollar, mit Kurs, Rendite, Volumen und Stückelung.</p>
+        <p class="sub">Welche Unternehmensanleihen zahlen den höchsten festen Zins? Die zehn Anleihen mit dem höchsten Kupon unter allen, die auf der Liste notenbankfähiger Sicherheiten der Europäischen Zentralbank stehen, noch mindestens zwei Jahre laufen und eine Stückelung von höchstens 1.000 haben – in Euro oder US-Dollar, mit Kurs, Rendite und Volumen.</p>
       </div>
       <div class="b2-spot"><img src="spot-unternehmensanleihen-kupon.svg" alt="" width="232" height="160"></div>
     </div>
@@ -121,7 +121,7 @@
       <h2 id="h-kupon">Die zehn höchsten Kupons</h2>
       <div class="table-scroll">
       <table class="kpis" data-gruppe="kupon">
-        <caption class="sr-only">Die zehn Unternehmensanleihen mit dem höchsten Kupon auf der EZB-Liste, Restlaufzeit mindestens zwei Jahre</caption>
+        <caption class="sr-only">Die zehn Unternehmensanleihen mit dem höchsten Kupon auf der EZB-Liste, Restlaufzeit mindestens zwei Jahre, Stückelung höchstens 1.000</caption>
         <thead class="kpi-head"><tr>
           <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" aria-label="Rang" title="Rang nach Kupon">#</button></th>
           <th scope="col" data-col="emittent"><button type="button" class="sortbtn" data-col="emittent">Emittent</button></th>
@@ -151,7 +151,7 @@
     <details class="quellen" id="quellen">
       <summary>Datenquellen und Methodik</summary>
       <div class="quellen-body">
-        <p id="m-rang"><strong>Rang nach Kupon.</strong> Vorn steht die Anleihe mit dem höchsten Kupon, bei gleichem Kupon die mit dem größeren Volumen. Die Liste wird jeden Börsentag neu berechnet. Durchsucht werden alle Unternehmensanleihen in Euro oder US-Dollar mit festem Kupon und aktuellem Kurs – Banken und Versicherer zählen wie in der Anleihen-Suche zu den Unternehmen. Zwei Bedingungen: Die Anleihe steht auf der EZB-Liste und läuft noch mindestens zwei Jahre. Nicht berücksichtigt sind nachrangige und unbefristete Anleihen, Wandelanleihen, 144A-Anleihen und Anleihen, deren Angaben im Register sich widersprechen. Der Handelsumsatz spielt für den Rang keine Rolle; einige der Anleihen werden an der Börse selten gehandelt.</p>
+        <p id="m-rang"><strong>Rang nach Kupon.</strong> Vorn steht die Anleihe mit dem höchsten Kupon, bei gleichem Kupon die mit dem größeren Volumen. Die Liste wird jeden Börsentag neu berechnet. Durchsucht werden alle Unternehmensanleihen in Euro oder US-Dollar mit festem Kupon und aktuellem Kurs – Banken und Versicherer zählen wie in der Anleihen-Suche zu den Unternehmen. Drei Bedingungen: Die Anleihe steht auf der EZB-Liste, läuft noch mindestens zwei Jahre und hat eine Stückelung von höchstens 1.000 in ihrer Währung – so viel muss man mindestens anlegen. Nicht berücksichtigt sind nachrangige und unbefristete Anleihen, Wandelanleihen, 144A-Anleihen und Anleihen, deren Angaben im Register sich widersprechen. Der Handelsumsatz spielt für den Rang keine Rolle; einige der Anleihen werden an der Börse selten gehandelt.</p>
         <p id="m-ezb"><strong>EZB-Liste.</strong> Die Europäische Zentralbank veröffentlicht montags bis freitags die Liste der marktfähigen Wertpapiere, die das Eurosystem als Sicherheit annimmt, wenn sich Banken bei der Notenbank Geld leihen („notenbankfähige Sicherheiten“). Auf die Liste kommt nur, was die Zulassungskriterien des Eurosystems erfüllt, darunter dessen Anforderungen an die Bonität. Die Liste dient der Geldpolitik und ist keine Empfehlung. Eine Anleihe kann auch aus anderen Gründen fehlen, etwa weil sie außerhalb des Europäischen Wirtschaftsraums begeben wurde oder kein Rating einer anerkannten Agentur hat. Quelle: Europäische Zentralbank, <a href="https://www.ecb.europa.eu/mopo/coll/assets/html/index.en.html" rel="noopener">Liste der notenbankfähigen marktfähigen Sicherheiten</a>; von Bondarium nach den genannten Regeln gefiltert und sortiert.</p>
         <p id="m-kupon"><strong>Kupon und Rendite.</strong> Der Kupon ist der jährliche Zins in Prozent des Nennwerts. Die Rendite rechnet den Kaufkurs ein: Wer über 100 kauft, bekommt bei Fälligkeit 100 zurück, die Rendite liegt dann unter dem Kupon; wer unter 100 kauft, erhält mehr als den Kupon.</p>
         <p id="m-rest"><strong>Restlaufzeit</strong> ist die Zeit bis zur Fälligkeit, gerechnet ab dem Valutatag (Kursdatum plus ein bis zwei Börsentage).</p>

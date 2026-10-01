@@ -18,7 +18,7 @@ Liest:
                         wird (ecb.europa.eu → Disclaimer & Copyright, gelesen am 01.10.2026) – steht so auf der Seite.
 Schreibt:
   top10-unternehmensanleihen-kupon.json
-  {updated, updatedAt, stand (Kursstand), ezb: {stand, anzahl}, regeln: {min_jahre, waehrungen}, kandidaten,
+  {updated, updatedAt, stand (Kursstand), ezb: {stand, anzahl}, regeln: {min_jahre, max_stueckelung, waehrungen}, kandidaten,
    gruppen: {"kupon": [Zeile …]}}
   Zeile wie in update_top10.py, ohne Handelstage und Umsatz:
   {isin, emittent, art, cur, kupon, zins (Zinszahlungen/Jahr), faellig, kurs, datum, rendite|null, vol, stk}
@@ -27,6 +27,9 @@ Auswahl:
   Vorgabe     Art „Unternehmen“ (wie in der Suche: einschließlich Banken und Versicherer), ISIN auf der EZB-Liste,
               Restlaufzeit ab Valuta mindestens MIN_JAHRE Jahre
   Währung     Euro oder US-Dollar (WAEHRUNGEN) – so hatte der Nutzer die Liste zuletzt angesehen („nur Dollar und Euro“)
+  Stückelung  höchstens MAX_STUECKELUNG in der Währung der Anleihe (Nutzerwunsch 01.10.2026, „Stückelung bis 1.000“):
+              In der ersten Fassung hatten vier der zehn eine Stückelung von 100.000 oder 200.000. Ohne Angabe im
+              Register zählt eine Anleihe nicht mit.
   Grundregeln wie update_top10.py: fester Kupon, Fälligkeit angegeben, aktueller Kurs (≤ 14 Tage alt), nicht nachrangig,
               nicht unbefristet, keine Inflations-, Stufenzins-, Wandel-, Tilgungs- oder 144A-Anleihen, keine Strips
   Datenprüfung ohne Befund (Feld pruef des Index) – ein Kupon, der im Register um den Faktor 10 zu hoch steht, stünde
@@ -55,6 +58,7 @@ EZB_URL = "https://www.ecb.europa.eu/paym/coll/assets/html/dla/ea_MID/ea_csv_{:%
 EZB_TAGE_ZURUECK = 7      # Wochenende plus Feiertage (Ostern, Weihnachten) – älter soll die Liste nicht sein
 EZB_MIN_ZEILEN = 20000    # die Liste hat rund 31.000 Zeilen; deutlich weniger = abgeschnittene oder falsche Datei
 MIN_JAHRE = 2
+MAX_STUECKELUNG = 1000
 WAEHRUNGEN = ("EUR", "USD")
 TOP = 10
 # Im WM-Kurznamen klebt das Währungskürzel teils ohne Leerzeichen am Emittenten („… International asEO-Medium-Term“) –
@@ -108,6 +112,8 @@ def main() -> int:
         isin, name = r[0], r[1]
         if r[2] != 2 or r[3] not in WAEHRUNGEN or isin not in ezb:
             continue
+        if not isinstance(r[7], (int, float)) or r[7] > MAX_STUECKELUNG:
+            continue
         k = kurse.get(isin)
         if not k or r[10] != 0 or not isinstance(r[4], (int, float)) or r[4] <= 0 or not r[5]:
             continue
@@ -138,7 +144,7 @@ def main() -> int:
     top = sorted(zeilen, key=lambda x: (-x["kupon"], -(x["vol"] or 0), x["isin"]))[:TOP]
     write_atomic(OUT, {"updated": today_iso(), "updatedAt": now_iso(), "stand": stand,
                        "ezb": {"stand": ezb_tag.isoformat(), "anzahl": len(ezb)},
-                       "regeln": {"min_jahre": MIN_JAHRE, "waehrungen": list(WAEHRUNGEN)},
+                       "regeln": {"min_jahre": MIN_JAHRE, "max_stueckelung": MAX_STUECKELUNG, "waehrungen": list(WAEHRUNGEN)},
                        "kandidaten": len(zeilen), "gruppen": {"kupon": top}}, indent=None)
     print(f"{OUT.name}: {len(top)} von {len(zeilen)} Anleihen (Kurse {stand}, EZB-Liste {ezb_tag.isoformat()} mit {len(ezb)} Papieren); "
           f"Kupon {top[0]['kupon']} % bis {top[-1]['kupon']} %")
