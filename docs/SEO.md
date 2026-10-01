@@ -15,7 +15,7 @@ Reihenfolge im Workflow `update-data.yml`, nach `kennzahlen.py` und vor `inline_
 
 | Schritt | Skript | Ergebnis |
 | --- | --- | --- |
-| Tabellen fest ins HTML | `scripts/statische_tabellen.py` | Die 19 Broker (`broker.json`) und die 70 ETFs (`top10-anleihen-etfs.json`) stehen als Tabellenzeilen im HTML. Im Browser ersetzt das Seitenskript sie durch seine eigene Fassung. Die Top 10 nach Ländern (Deutschland) folgen, sobald die automatische Rangliste gilt (`aktiv`). |
+| Tabellen fest ins HTML | `scripts/statische_tabellen.py` | Die 19 Broker (`broker.json`: Kostenliste für 5.000 € mit Rechenweg, Angebots-Tabelle, Quellen je Anbieter – dieselbe Rechnung wie im Seitenskript) und die 70 ETFs (`top10-anleihen-etfs.json`) stehen fest im HTML. Im Browser ersetzt das Seitenskript sie durch seine eigene Fassung. Die Top 10 nach Ländern (Deutschland) folgen, sobald die automatische Rangliste gilt (`aktiv`). |
 | Strukturierte Daten, Sitemap | `scripts/seo.py` | Ein JSON-LD-Block je Seite (`@graph`): Organisation und Website mit fester Kennung, Artikel mit Autor und Bild, Glossar als `DefinedTermSet` (67 Begriffe), Rechner als `WebApplication`, sechs Zeitreihen als `Dataset`. Robots-Angabe mit `max-image-preview:large`. `sitemap.xml` aus den Seiten. |
 | llms.txt, llms-full.txt | `scripts/llms.py` | Kurzfassung (je Seite eine Zeile aus Titel und Beschreibung, gruppiert nach Brotkrumen) und Volltext aller Seiten als Markdown mit den aktuellen Zahlen aus den Daten-JSONs. |
 | Prüfung | `scripts/pruefen.py` | Stoppt den Deploy bei fehlendem Titel, fehlender oder fremder kanonischer Adresse, unlesbarem JSON-LD. Warnt bei Titel über 60, Beschreibung außerhalb 70–160 Zeichen, keiner oder mehreren H1, doppelten Titeln. |

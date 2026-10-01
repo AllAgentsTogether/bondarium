@@ -1,104 +1,406 @@
 {
-  "_info": "Quelle für broker-vergleich.html (seit 30.09.2026). Alle Angaben nur von den Seiten und Preisverzeichnissen der Anbieter, Stand siehe 'stand'. k5/k100 = Kosten in Euro für einen Kauf mit 5.000 bzw. 100.000 Euro Kurswert, günstigster Weg mit Limit. Textteile dürfen Objekte {t, bis} sein: nach dem Datum 'bis' (JJJJ-MM-TT, einschließlich) blendet die Seite sie aus; mit zeige_bis wird '(Angebot bis TT.MM.JJJJ)' angehängt. handelszeit: Uhrzeiten in der Zeitzone des Anbieters (utc = fester Abstand zu UTC); die Seite rechnet sie tagesaktuell in MEZ/MESZ um.",
-  "stand": "2026-09-27",
+  "_info": "Quelle für broker-vergleich.html. Regel: nur Angaben von den Seiten und aus den Preisverzeichnissen der Anbieter selbst, geprüft am Tag 'stand'; jede Quelle steht mit ihrem Datum unter 'quellen'. Die Kosten rechnen Seite und scripts/statische_tabellen.py aus dem Preismodell 'wege' (Handelswege; gezeigt wird der günstigste für den gewählten Betrag, die anderen stehen im Aufklapper): fix = fester Betrag in Euro, pct = Prozent vom Kaufbetrag, min/max = Mindest-/Höchstpreis, staffel = Preisstufen nach Betrag ('bis' einschließlich, 'unter' ausschließlich, letzte Stufe ohne Grenze), marginal = Prozentsätze je Teilbetrag, plus = Zuschläge (t = Name, k = Kurzname), offen = Kosten, die der Anbieter nicht beziffert. depot = Depotpreis im Jahr (fix + pct vom Depotwert, pmin = Mindestbetrag des Prozent-Teils, min = Mindestpreis). probe = Kontrollwerte aus der Prüfung; weicht die Rechnung ab, warnt das Deploy-Skript. Textteile dürfen Objekte {t, bis} sein: nach dem Datum 'bis' (JJJJ-MM-TT, einschließlich) blendet die Seite sie aus; mit zeige_bis wird '(Angebot bis TT.MM.JJJJ)' angehängt. handelszeit: Uhrzeiten in der Zeitzone des Anbieters (utc = fester Abstand zu UTC); die Seite rechnet sie tagesaktuell in MEZ/MESZ um.",
+  "stand": "2026-10-01",
+  "betraege": [1000, 5000, 10000, 25000, 100000],
+  "standard": 5000,
   "gruppen": [
-    { "id": "ja", "bdg": "ja", "titel": "Fast alle Anleihen", "legende": "Staats- und Unternehmensanleihen, mehrere Handelsplätze", "balken": "fast alle Anleihen" },
-    { "id": "aw", "bdg": "Auswahl", "titel": "Nur eine Auswahl", "legende": "ein Teil der Anleihen, ein Handelsweg", "balken": "nur eine Auswahl" },
-    { "id": "nein", "bdg": "nein", "titel": "Keine normalen Anleihen", "legende": "keine Staatsanleihen, höchstens einzelne Sonderprodukte" }
+    {"id": "ja", "bdg": "ja", "titel": "Staats- und Unternehmensanleihen, mehrere Handelsplätze", "legende": "breites Angebot an mehreren Handelsplätzen", "balken": "breites Angebot, mehrere Handelsplätze"},
+    {"id": "aw", "bdg": "Auswahl", "titel": "Nur eine Auswahl", "legende": "ein Teil der Anleihen, ein Handelsweg", "balken": "nur eine Auswahl, ein Handelsweg"},
+    {"id": "nein", "bdg": "nein", "titel": "Keine normalen Anleihen", "legende": "keine Staats- oder Unternehmensanleihen genannt"}
   ],
   "anbieter": [
-    { "name": "Smartbroker+", "typ": "Online-Broker", "gruppe": "ja",
-      "anleihen": "rund 40.000, auch in Fremdwährung",
-      "handel": "29 Handelsplätze im In- und Ausland, darunter gettex",
-      "gebuehr": "gettex: 0&nbsp;€ ab 500&nbsp;€, darunter 1 bis 4&nbsp;€", "gebuehr_n": ["andere Plätze: 4&nbsp;€ + Börsenentgelt"],
-      "k5": 0, "k5_w": "über gettex", "k100": 0, "k100_w": ["über gettex"], "depot": "0&nbsp;€" },
-    { "name": "Traders Place", "typ": "Online-Broker, Depot bei der Baader Bank", "gruppe": "ja",
-      "anleihen": "rund 40.000, deutsche und internationale",
-      "handel": "über 40 Handelsplätze: gettex, Baader-Direkthandel, deutsche Börsen",
-      "gebuehr": "gettex und Direkthandel: 0&nbsp;€ ab 500&nbsp;€, darunter 0,95&nbsp;€", "gebuehr_n": ["andere deutsche Börsen: ab 5&nbsp;€"],
-      "k5": 0, "k5_w": "gettex oder Direkthandel", "k100": 0, "k100_w": ["gettex oder Direkthandel"], "depot": "0&nbsp;€" },
-    { "name": "DEGIRO", "typ": "Broker aus den Niederlanden", "gruppe": "ja", "hin": ["Steuer selbst erklären"],
+    {
+      "name": "1822direkt",
+      "typ": "Direktbank der Frankfurter Sparkasse",
+      "gruppe": "ja",
+      "anleihen": "über 27.000: Staatsanleihen, Pfandbriefe, Unternehmensanleihen",
+      "handel": "deutsche Börsen, Auslandsbörsen; Direkthandel für Anleihen mit Lang &amp; Schwarz und Baader Bank",
+      "limit": {"t": "ja", "n": "auch im Direkthandel, kostenlos"},
+      "steuer": {"t": "führt die Bank ab"},
+      "preis": "4,90&nbsp;€ + 0,25&nbsp;% vom Kurswert, mindestens 9,90&nbsp;€, höchstens 54,90&nbsp;€. Handelsplatzgebühr: Direkthandel 0&nbsp;€, Börse 2,95&nbsp;€. Fremdkosten der Börse beziffert 1822direkt nicht.",
+      "wege": [
+        {"name": "Direkthandel", "fix": 4.9, "pct": 0.25, "min": 9.9, "max": 54.9},
+        {"name": "deutsche Börse", "fix": 4.9, "pct": 0.25, "min": 9.9, "max": 54.9, "plus": [{"t": "Handelsplatzgebühr", "k": "Handelsplatz", "fix": 2.95}], "offen": "Fremdkosten der Börse (z.&nbsp;B. Courtage), nicht beziffert"}
+      ],
+      "depot": {"t": "0&nbsp;€ für Depots, die ab dem 02.05.2023 eröffnet wurden", "n": ["ältere Depots: 3,90&nbsp;€ im Monat in Quartalen ohne Trade und ohne Sparplan"]},
+      "quellen": [
+        {"t": "Preis- und Leistungsverzeichnis", "url": "https://www.1822direkt.de/fileadmin/pdf-statisch/pv_gesamt_1822direkt.pdf", "stand": "Stand 03.09.2026"},
+        {"t": "Anleihen", "url": "https://www.1822direkt.de/anlegen-depot/anleihen/"},
+        {"t": "Direkthandel", "url": "https://www.1822direkt.de/anlegen-depot/wertpapierangebot/direkthandel/"}
+      ],
+      "probe": {"1000": 9.9, "5000": 17.4, "10000": 29.9, "25000": 54.9, "100000": 54.9}
+    },
+    {
+      "name": "comdirect",
+      "typ": "Online-Broker, Marke der Commerzbank",
+      "gruppe": "ja",
+      "anleihen": "über 60.000, Laufzeiten und Währungen wählbar",
+      "handel": "deutsche Börsen und außerbörslich (LiveTrading mit Baader Trading und Lang &amp; Schwarz)",
+      "limit": {"t": "ja", "n": "kostenlos"},
+      "steuer": {"t": "führt die Bank ab"},
+      "preis": "4,90&nbsp;€ + 0,25&nbsp;% des Ordervolumens, mindestens 9,90&nbsp;€, höchstens 59,90&nbsp;€. LiveTrading ohne weiteres Entgelt. Börse: dazu 0,0025&nbsp;% (mindestens 2,50&nbsp;€) oder 0,005&nbsp;% (mindestens 5&nbsp;€) je nach Börse und fremde Kosten.",
+      "preis_n": [{"t": "Neukunden: 36 Monate lang 3,90&nbsp;€ Orderentgelt je Trade, zuzüglich börsenplatzabhängiger Entgelte und fremder Kosten", "bis": "2026-11-01", "zeige_bis": true}],
+      "wege": [
+        {"name": "LiveTrading (außerbörslich)", "fix": 4.9, "pct": 0.25, "min": 9.9, "max": 59.9, "n": "Handelspartner nehmen in der Regel Orders bis 50.000 oder 100.000&nbsp;€ an"},
+        {"name": "Börse Stuttgart, Tradegate, gettex, Xetra", "fix": 4.9, "pct": 0.25, "min": 9.9, "max": 59.9, "plus": [{"t": "börsenplatzabhängiges Entgelt", "k": "Börsenplatz", "pct": 0.0025, "min": 2.5}], "offen": "Maklercourtage oder Börsenspesen, wo sie anfallen – laut comdirect in der Regel 0,08&nbsp;%"},
+        {"name": "Börse Frankfurt, München, Düsseldorf u.&nbsp;a.", "fix": 4.9, "pct": 0.25, "min": 9.9, "max": 59.9, "plus": [{"t": "börsenplatzabhängiges Entgelt", "k": "Börsenplatz", "pct": 0.005, "min": 5}], "offen": "Maklercourtage oder Börsenspesen – laut comdirect in der Regel 0,08&nbsp;%"}
+      ],
+      "depot": {"t": "0&nbsp;€ für Depots, die ab dem 15.07.2026 eröffnet wurden", "n": ["ältere Depots: 1,95&nbsp;€ im Monat; entfällt bei 2 Trades im Quartal, mit Girokonto oder Sparplan"]},
+      "quellen": [
+        {"t": "Preis- und Leistungsverzeichnis", "url": "https://www.comdirect.de/cms/docs/cori7105.pdf", "stand": "gültig ab 15.07.2026"},
+        {"t": "Anleihen", "url": "https://www.comdirect.de/wertpapierhandel/anleihen-informationen.html"},
+        {"t": "LiveTrading", "url": "https://www.comdirect.de/wertpapierhandel/livetrading.html"},
+        {"t": "Depot (Neukunden-Aktion)", "url": "https://www.comdirect.de/depot/"}
+      ],
+      "probe": {"1000": 9.9, "5000": 17.4, "10000": 29.9, "25000": 59.9, "100000": 59.9}
+    },
+    {
+      "name": "Commerzbank",
+      "typ": "Filialbank, DirektDepot mit Online-Order",
+      "gruppe": "ja",
+      "anleihen": "Staats- und Unternehmensanleihen",
+      "handel": "64 Handelsplätze im In- und Ausland; Fremdwährungsanleihen über einen eigenen Handelsweg",
+      "limit": {"t": "ja", "n": "kostenlos"},
+      "steuer": {"t": "führt die Bank ab"},
+      "preis": "0,25&nbsp;% vom Kurswert + 4,90&nbsp;€, mindestens 9,90&nbsp;€; einen Höchstpreis nennt das Preisverzeichnis nicht. Bei Anleihen wird mindestens vom Nennwert gerechnet. Fremde Kosten gibt die Bank weiter, beziffert sie aber nicht.",
+      "wege": [
+        {"name": "DirektDepot, Order online", "fix": 4.9, "pct": 0.25, "min": 9.9, "offen": "fremde Kosten (z.&nbsp;B. Maklercourtage, Börsenspesen), nicht beziffert"}
+      ],
+      "depot": {"t": "0&nbsp;€ in Quartalen mit mindestens einer Kauf- oder Verkaufsorder; sonst 0,175&nbsp;% im Jahr vom Depotwert, mindestens 4,95&nbsp;€ je Quartal", "kurz": "in Quartalen ohne Order, sonst 0&nbsp;€", "pct": 0.175, "min": 19.8},
+      "quellen": [
+        {"t": "Preis- und Leistungsverzeichnis, Abschnitt DirektDepot", "url": "https://www.commerzbank.de/portal/media/efw-dokumente/preis_leistungsverzeichnis.pdf", "stand": "Stand 01.10.2026"},
+        {"t": "DirektDepot", "url": "https://www.commerzbank.de/privatkunden/investieren/depot/depot-eroeffnen/"},
+        {"t": "Anleihen", "url": "https://www.commerzbank.de/privatkunden/investieren/wertpapiere/anleihen/"}
+      ],
+      "probe": {"1000": 9.9, "5000": 17.4, "10000": 29.9, "25000": 67.4, "100000": 254.9}
+    },
+    {
+      "name": "Consorsbank",
+      "typ": "Online-Broker der BNP Paribas",
+      "gruppe": "ja",
+      "anleihen": "Unternehmens- und Staatsanleihen",
+      "handel": "deutsche Börsen, u.&nbsp;a. Tradegate und Frankfurt; außerbörslich",
+      "limit": {"t": "ja", "n": "kostenlos"},
+      "steuer": {"t": "führt die Bank ab"},
+      "preis": "4,95&nbsp;€ + 0,25&nbsp;% des Ordervolumens, mindestens 9,95&nbsp;€, höchstens 69&nbsp;€; dazu Handelsplatzkosten: Tradegate 0,95&nbsp;€; gettex, LSX, Quotrix, Xetra und außerbörslich 1,95&nbsp;€; Frankfurt, München, Stuttgart 2,95&nbsp;€; andere deutsche Börsen 4,95&nbsp;€.",
+      "preis_n": ["ab 26 Orders im Jahr: 3,95&nbsp;€ + 0,25&nbsp;%, mindestens 8,95&nbsp;€, höchstens 59&nbsp;€", "Neukunden: 12 Monate lang 0,95&nbsp;€ je Order über Tradegate"],
+      "wege": [
+        {"name": "Tradegate", "fix": 4.95, "pct": 0.25, "min": 9.95, "max": 69, "plus": [{"t": "Handelsplatzkosten Tradegate", "k": "Handelsplatz", "fix": 0.95}]},
+        {"name": "Börse Frankfurt, München oder Stuttgart", "fix": 4.95, "pct": 0.25, "min": 9.95, "max": 69, "plus": [{"t": "Handelsplatzkosten", "k": "Handelsplatz", "fix": 2.95}], "offen": "Transaktionsentgelt der Börse, nicht beziffert"}
+      ],
+      "depot": {"t": "0&nbsp;€ (bei Sammelverwahrung)"},
+      "quellen": [
+        {"t": "Preis- und Leistungsverzeichnis", "url": "https://www.consorsbank.de/content/dam/de-cb/b2c/content/pdf/transversal/agb/CB.80.089_403-OL_PLV-Depot-Ver.K-TG.K-Girokonto-NK.pdf", "stand": "Stand 07/2026"},
+        {"t": "Preise Wertpapiere", "url": "https://www.consorsbank.de/web/Service/Preise-Zinsen/Preise-Zinsen-Wertpapiere"},
+        {"t": "Anleihen", "url": "https://www.consorsbank.de/web/Sparen-Anlegen/Anlegen/Anleihen"}
+      ],
+      "probe": {"1000": 10.9, "5000": 18.4, "10000": 30.9, "25000": 68.4, "100000": 69.95}
+    },
+    {
+      "name": "DEGIRO",
+      "typ": "Broker aus den Niederlanden (flatexDEGIRO Bank)",
+      "gruppe": "ja",
+      "hin": ["Steuer selbst erklären"],
       "anleihen": "Staats- und Unternehmensanleihen",
       "handel": "Börse Frankfurt, Euronext (Amsterdam, Brüssel, Lissabon, Paris)",
-      "gebuehr": "3,90&nbsp;€ + 1&nbsp;€ Bearbeitung",
-      "k5": 4.9, "k5_w": "Börse Frankfurt", "k100": 4.9, "k100_w": ["Börse Frankfurt"], "depot": "0&nbsp;€" },
-    { "name": "Interactive Brokers", "typ": "Broker aus Irland", "gruppe": "ja", "hin": ["Steuer selbst erklären"],
-      "anleihen": "über 1 Million weltweit, auch Fremdwährung",
-      "handel": "weltweit, außerbörslich und an Börsen wie Euronext",
-      "gebuehr": "0,1&nbsp;% vom Kurswert, über 10.000&nbsp;€ 0,025&nbsp;%", "gebuehr_n": ["Euronext: 0,1&nbsp;%, mind. 2&nbsp;€, dazu Börsengebühren"],
-      "k5": 5, "k5_w": "außerbörslich", "k100": 32.5, "k100_w": ["10&nbsp;€ + 0,025&nbsp;% über 10.000&nbsp;€"], "depot": "0&nbsp;€" },
-    { "name": "flatex", "typ": "Online-Broker", "gruppe": "ja",
-      "anleihen": "über 35.000, auch Pfandbriefe",
-      "handel": "deutsche Börsen und Direkthandel, u.&nbsp;a. gettex, Tradegate",
-      "gebuehr": "5,90&nbsp;€ + fremde Kosten", "gebuehr_n": ["gettex, Tradegate, Baader, Lang &amp; Schwarz: 2&nbsp;€ Pauschale", "Neukunden: 20 Orders ohne Ordergebühr"],
-      "k5": 7.9, "k5_w": "gettex oder Tradegate", "k100": 7.9, "k100_w": ["gettex oder Tradegate"], "depot": "0&nbsp;€" },
-    { "name": "DKB", "typ": "Direktbank", "gruppe": "ja",
+      "limit": {"t": "ja", "n": "Order gilt nur für den Tag"},
+      "steuer": {"t": "selbst erklären", "warn": true, "n": "keine deutsche Steuerbescheinigung"},
+      "preis": "3,90&nbsp;€ je Order + 1&nbsp;€ Bearbeitungsgebühr. Die Bearbeitungsgebühr deckt laut DEGIRO alle fremden Kosten der Ausführung.",
+      "preis_n": ["Euronext-Börsen: dazu Anschlussgebühr von 0,25&nbsp;% des Kontoguthabens, höchstens 2,50&nbsp;€ je Börse und Jahr – nicht für die Börse Frankfurt"],
+      "wege": [
+        {"name": "Börse Frankfurt", "ft": "Ordergebühr", "fix": 3.9, "plus": [{"t": "Bearbeitungsgebühr", "k": "Bearbeitung", "fix": 1}]}
+      ],
+      "depot": {"t": "0&nbsp;€"},
+      "quellen": [
+        {"t": "Preisverzeichnis", "url": "https://www.degiro.de/data/pdf/de/Preisverzeichnis.pdf", "stand": "gültig ab 01.01.2026"},
+        {"t": "Anleihen kaufen", "url": "https://www.degiro.de/anlegen/anleihen-kaufen"},
+        {"t": "Helpdesk: Steuerbescheinigung", "url": "https://www.degiro.de/helpdesk/steuer/kann-degiro-eine-steuerbescheinigung-ausstellen"}
+      ],
+      "notiz": "Die Produktseite „Anleihen kaufen“ nennt 2&nbsp;€ + 1&nbsp;€. Gerechnet ist mit dem Preisverzeichnis (3,90&nbsp;€ + 1&nbsp;€), das laut DEGIRO alle Gebühren enthält.",
+      "probe": {"1000": 4.9, "5000": 4.9, "10000": 4.9, "25000": 4.9, "100000": 4.9}
+    },
+    {
+      "name": "DKB",
+      "typ": "Bank; Depot nur mit DKB-Girokonto",
+      "gruppe": "ja",
       "anleihen": "Staats- und Unternehmensanleihen",
-      "handel": "9 deutsche Börsen (u.&nbsp;a. Xetra, Tradegate, gettex, Quotrix), Auslandsbörsen, außerbörslich",
-      "gebuehr": "10&nbsp;€ bis 5.000&nbsp;€, 15&nbsp;€ bis 20.000&nbsp;€, darüber 30&nbsp;€", "gebuehr_n": ["Xetra und Parkett: + 2,50&nbsp;€"],
-      "k5": 10, "k5_w": "Tradegate, gettex oder außerbörslich", "k100": 30, "k100_w": ["Tradegate, gettex oder außerbörslich"], "depot": "0&nbsp;€" },
-    { "name": "maxblue", "typ": "Online-Depot der Deutschen Bank", "gruppe": "ja",
+      "handel": "9 deutsche Börsen (u.&nbsp;a. Xetra, Tradegate, gettex, Quotrix), ausländische Börsen, außerbörslich über Baader",
+      "limit": {"t": "ja", "n": "kostenlos"},
+      "steuer": {"t": "führt die Bank ab"},
+      "preis": "Orderentgelt nach Ordervolumen: 10&nbsp;€ bis 5.000&nbsp;€, 15&nbsp;€ bis 20.000&nbsp;€, darüber 30&nbsp;€. Ausführungsentgelt: Tradegate, gettex, Quotrix und Direkthandel 0&nbsp;€; andere deutsche Handelsplätze 2,50&nbsp;€; ausländische 20&nbsp;€. Fremdkosten des Handelsplatzes werden gesondert berechnet.",
+      "wege": [
+        {"name": "Tradegate, gettex, Quotrix oder außerbörslich", "staffel": [{"bis": 5000, "fix": 10}, {"bis": 20000, "fix": 15}, {"fix": 30}]},
+        {"name": "Xetra oder andere deutsche Börse", "staffel": [{"bis": 5000, "fix": 10}, {"bis": 20000, "fix": 15}, {"fix": 30}], "plus": [{"t": "Ausführungsentgelt", "k": "Ausführung", "fix": 2.5}], "offen": "Fremdkosten der Börse (z.&nbsp;B. Courtage), nicht beziffert"}
+      ],
+      "depot": {"t": "0&nbsp;€"},
+      "quellen": [
+        {"t": "Preis- und Leistungsverzeichnis Depots", "url": "https://dok.dkb.de/pdf/plv_pk_depot.pdf", "stand": "Stand 15.09.2026"},
+        {"t": "Depot", "url": "https://www.dkb.de/privatkunden/investieren/depot"},
+        {"t": "Außerbörslicher Handel", "url": "https://www.dkb.de/fragen-antworten/was-ist-ausserboerslicher-handel"}
+      ],
+      "probe": {"1000": 10, "5000": 10, "10000": 15, "25000": 30, "100000": 30}
+    },
+    {
+      "name": "flatex",
+      "typ": "Online-Broker",
+      "gruppe": "ja",
+      "anleihen": "über 35.000: Staatsanleihen, Unternehmensanleihen, Pfandbriefe",
+      "handel": "deutsche Börsen, u.&nbsp;a. Frankfurt, Stuttgart, München, Düsseldorf, gettex, Tradegate, Quotrix",
+      "limit": {"t": "ja", "n": "kostenlos"},
+      "steuer": {"t": "führt die Bank ab"},
+      "preis": "5,90&nbsp;€ Orderprovision je Order. Dazu fremde Kosten: 2,00&nbsp;€ Fremdkostenpauschale bei gettex, Tradegate, Quotrix und Lang &amp; Schwarz Exchange; an den Parkettbörsen die Entgelte der Börse, die flatex je Börse auflistet. Zuzüglich marktüblicher Spreads und Zuwendungen.",
+      "preis_n": ["Neukunden: 20 Trades in den ersten 3 Monaten ohne Orderprovision; fremde Kosten bleiben"],
+      "wege": [
+        {"name": "gettex, Tradegate oder Quotrix", "ft": "Orderprovision", "fix": 5.9, "plus": [{"t": "Fremdkostenpauschale", "k": "Fremdkostenpauschale", "fix": 2}]},
+        {"name": "Börse Frankfurt", "ft": "Orderprovision", "fix": 5.9, "plus": [{"t": "Transaktionsentgelt der Börse", "k": "Transaktionsentgelt", "pct": 0.01104, "min": 1.04, "max": 27.6}, {"t": "Handelsentgelt, falls es anfällt", "k": "Handelsentgelt", "pct": 0.05, "min": 0.63}, {"t": "Regulierungsentgelt Clearer", "k": "Clearer", "fix": 1.01}], "n": "Clearer 1,01 oder 2,67&nbsp;€; Prozentsätze hier auf den Kaufbetrag gerechnet"},
+        {"name": "Börse Stuttgart", "ft": "Orderprovision", "fix": 5.9, "plus": [{"t": "Entgelt der Börse", "k": "Börsenentgelt", "fix": 5, "pct": 0.075, "min": 5.75}, {"t": "Regulierungsentgelt Clearer", "k": "Clearer", "fix": 1.01}, {"t": "Schlussnotenentgelt", "k": "Schlussnote", "fix": 0.04}], "n": "Clearer 1,01 oder 2,67&nbsp;€; Prozentsätze hier auf den Kaufbetrag gerechnet"}
+      ],
+      "depot": {"t": "0&nbsp;€"},
+      "quellen": [
+        {"t": "Preis- und Leistungsverzeichnis", "url": "https://konto.flatex.de/formularcenter_bank/public/1300100.pdf", "stand": "gültig ab 24.08.2026"},
+        {"t": "Preise mit Übersicht der Fremdkosten", "url": "https://www.flatex.de/preise/"},
+        {"t": "Anleihen", "url": "https://www.flatex.de/produkte-handel/produkte/anleihen/"}
+      ],
+      "probe": {"1000": 7.9, "5000": 7.9, "10000": 7.9, "25000": 7.9, "100000": 7.9}
+    },
+    {
+      "name": "ING",
+      "typ": "Direktbank",
+      "gruppe": "ja",
+      "anleihen": "über 9.000: Unternehmens- und Staatsanleihen, Pfandbriefe",
+      "handel": "alle deutschen Börsen; Direkthandel für Anleihen über Tradegate und gettex",
+      "limit": {"t": "ja", "n": "kostenlos, auch langfristig"},
+      "steuer": {"t": "führt die Bank ab"},
+      "preis": "4,90&nbsp;€ + 0,25&nbsp;% vom Kurswert, höchstens 69,90&nbsp;€. Handelsplatzgebühr: Direkthandel 0&nbsp;€; München, Stuttgart 1,90&nbsp;€; Frankfurt, Xetra, Düsseldorf u.&nbsp;a. 2,90&nbsp;€. Börsenentgelte und Courtage gibt die ING weiter.",
+      "wege": [
+        {"name": "Direkthandel (Tradegate, gettex)", "fix": 4.9, "pct": 0.25, "max": 69.9},
+        {"name": "Börse Stuttgart oder München", "fix": 4.9, "pct": 0.25, "max": 69.9, "plus": [{"t": "Handelsplatzgebühr", "k": "Handelsplatz", "fix": 1.9}], "offen": "Börsenentgelt oder Courtage, nicht beziffert"},
+        {"name": "Börse Frankfurt, Xetra, Düsseldorf u.&nbsp;a.", "fix": 4.9, "pct": 0.25, "max": 69.9, "plus": [{"t": "Handelsplatzgebühr", "k": "Handelsplatz", "fix": 2.9}], "offen": "Börsenentgelt oder Courtage, nicht beziffert"}
+      ],
+      "depot": {"t": "0&nbsp;€"},
+      "quellen": [
+        {"t": "Preis- und Leistungsverzeichnis, Auszug Wertpapiergeschäft", "url": "https://www.ing.de/dokumente/direkt-depot-auszug-plv/", "stand": "Stand 10.02.2026"},
+        {"t": "Anleihen", "url": "https://www.ing.de/wertpapiere/anleihen/"},
+        {"t": "Direkthandelspartner", "url": "https://www.ing.de/sparen-anlegen/direkt-depot/handelsplaetze/handelspartner/"}
+      ],
+      "probe": {"1000": 7.4, "5000": 17.4, "10000": 29.9, "25000": 67.4, "100000": 69.9}
+    },
+    {
+      "name": "Interactive Brokers",
+      "typ": "Broker aus Irland",
+      "gruppe": "ja",
+      "hin": ["Steuerabzug: keine Angabe"],
+      "anleihen": "über 1 Million weltweit, auch in Fremdwährung",
+      "handel": "außerbörslich (OTC Europa), Euronext, SIX Swiss Exchange",
+      "limit": {"t": "ja"},
+      "steuer": {"t": "kein Steuerabzug genannt", "warn": true, "n": "Steuerbericht für Deutschland zum Abruf"},
+      "preis": "Außerbörslich, Anleihen in Euro: 0,1&nbsp;% vom Handelswert für die ersten 10.000&nbsp;€, 0,025&nbsp;% für den Teil darüber; kein Mindest-, kein Höchstpreis. Euronext: 0,1&nbsp;% bis 50.000&nbsp;€, darüber 0,035&nbsp;%, mindestens 2&nbsp;€; dazu Börsengebühr 0,045&nbsp;% vom Nennwert und 0,10&nbsp;€ Clearing.",
+      "wege": [
+        {"name": "außerbörslich (OTC Europa)", "marginal": [{"bis": 10000, "pct": 0.1}, {"pct": 0.025}]},
+        {"name": "Euronext", "staffel": [{"bis": 50000, "pct": 0.1, "min": 2}, {"pct": 0.035, "min": 2}], "plus": [{"t": "Börsengebühr Euronext", "k": "Börse", "pct": 0.045}, {"t": "Clearing", "k": "Clearing", "fix": 0.1}], "n": "gerechnet bei Kurs 100&nbsp;%"}
+      ],
+      "depot": {"t": "0&nbsp;€"},
+      "quellen": [
+        {"t": "Provisionen Anleihen Europa", "url": "https://www.interactivebrokers.ie/de/pricing/commissions-bonds-europe.php?re=europe", "stand": "ohne Datum, abgerufen 01.10.2026"},
+        {"t": "Euronext: externe Gebühren", "url": "https://www.interactivebrokers.ie/de/accounts/fees/euronextBondFees.php"},
+        {"t": "Anleihen-Marktplatz", "url": "https://www.interactivebrokers.ie/de/trading/products-bonds.php"},
+        {"t": "Steuer-FAQ", "url": "https://www.interactivebrokers.ie/de/support/tax-faqs.php"}
+      ],
+      "probe": {"1000": 1, "5000": 5, "10000": 10, "25000": 13.75, "100000": 32.5}
+    },
+    {
+      "name": "maxblue",
+      "typ": "Online-Broker der Deutschen Bank",
+      "gruppe": "ja",
+      "anleihen": "Unternehmens- und Staatsanleihen",
+      "handel": "40 Börsenplätze weltweit; Direct Trade für Anleihen mit Baader Bank, Lang &amp; Schwarz und Tradegate",
+      "limit": {"t": "ja, an der Börse", "n": "Direct Trade: Kauf zum angefragten Kurs"},
+      "steuer": {"t": "führt die Bank ab"},
+      "preis": "0,25&nbsp;% vom Kurswert, mindestens 8,90&nbsp;€, höchstens 58,90&nbsp;€. Direct Trade ohne weiteres Entgelt. Börse: dazu 2,00&nbsp;€ (Xetra) oder 4,50&nbsp;€ (deutsche Präsenzbörsen) und fremde Kosten.",
+      "wege": [
+        {"name": "Direct Trade (Kursanfrage)", "pct": 0.25, "min": 8.9, "max": 58.9},
+        {"name": "Xetra", "pct": 0.25, "min": 8.9, "max": 58.9, "plus": [{"t": "Provision für die Börsenausführung", "k": "Börse", "fix": 2}], "offen": "fremde Kosten der Börse, nicht beziffert"},
+        {"name": "deutsche Präsenzbörse", "pct": 0.25, "min": 8.9, "max": 58.9, "plus": [{"t": "Provision für die Börsenausführung", "k": "Börse", "fix": 4.5}], "offen": "fremde Kosten der Börse (z.&nbsp;B. Courtage), nicht beziffert"}
+      ],
+      "depot": {"t": "0&nbsp;€"},
+      "quellen": [
+        {"t": "Preis- und Leistungsverzeichnis Deutsche Bank, Kapitel C1 Nr. 4", "url": "https://www.maxblue.de/dam/maxblue/de/files/pdf/deutsche_bank_konditionen_preis_leistungsverzeichnis.pdf", "stand": "Stand 01.10.2026"},
+        {"t": "Direct Trade", "url": "https://www.maxblue.de/wertpapierhandel/handeln/direct-trade.html"},
+        {"t": "Depot", "url": "https://www.maxblue.de/wertpapierhandel/handeln/depot.html"}
+      ],
+      "probe": {"1000": 8.9, "5000": 12.5, "10000": 25, "25000": 58.9, "100000": 58.9}
+    },
+    {
+      "name": "S Broker",
+      "typ": "Online-Broker der Sparkassen",
+      "gruppe": "ja",
+      "anleihen": "Staats- und Unternehmensanleihen, auch Währungsanleihen",
+      "handel": "alle deutschen Börsen, 29 Auslandsbörsen; Direkthandel für Anleihen mit Baader und Lang &amp; Schwarz",
+      "limit": {"t": "ja", "n": "auch im Direkthandel, kostenlos"},
+      "steuer": {"t": "führt der Broker ab"},
+      "preis": "0,95&nbsp;€ + 0,25&nbsp;% vom Orderwert, höchstens 54,99&nbsp;€. Handelsplatzentgelt: Direkthandel und elektronische Handelssysteme 0&nbsp;€; Xetra und deutsche Parkettbörsen 2,45&nbsp;€. Gegebenenfalls zuzüglich fremder Spesen.",
+      "wege": [
+        {"name": "Direkthandel", "fix": 0.95, "pct": 0.25, "min": 0.95, "max": 54.99},
+        {"name": "Xetra oder deutsche Parkettbörse", "fix": 0.95, "pct": 0.25, "min": 0.95, "max": 54.99, "plus": [{"t": "Handelsplatzentgelt", "k": "Handelsplatz", "fix": 2.45}], "offen": "fremde Spesen (Börsen- und Maklerkosten), nicht beziffert"}
+      ],
+      "depot": {"t": "0&nbsp;€"},
+      "quellen": [
+        {"t": "Preis- und Leistungsübersicht", "url": "https://www.sbroker.de/sites/default/files/documents/preis-und-leistungsuebersicht.pdf", "stand": "gültig ab 01.07.2026"},
+        {"t": "Anleihen", "url": "https://www.sbroker.de/handel/wertpapiere/anleihen"},
+        {"t": "Direkthandel", "url": "https://www.sbroker.de/handel/handelsplaetze/direkthandel"}
+      ],
+      "notiz": "Die Sofortorder für 0,95&nbsp;€ ist nicht eingerechnet: S Broker nennt dafür nur Aktien, ETFs und Fonds.",
+      "probe": {"1000": 3.45, "5000": 13.45, "10000": 25.95, "25000": 54.99, "100000": 54.99}
+    },
+    {
+      "name": "Smartbroker+",
+      "typ": "Online-Broker, Depot bei der Baader Bank",
+      "gruppe": "ja",
+      "anleihen": "40.000, auch in Fremdwährungen",
+      "handel": "gettex, Tradegate, Stuttgart und weitere Börsen im In- und Ausland",
+      "limit": {"t": "ja"},
+      "steuer": {"t": "führt die Baader Bank ab"},
+      "preis": "gettex: 0&nbsp;€ ab 500&nbsp;€ Ordervolumen. Tradegate, L&amp;S Exchange, Baader Trading: 4&nbsp;€. Xetra: 4&nbsp;€ + 0,01&nbsp;%, mindestens 1,50&nbsp;€. Andere deutsche Börsen: 4&nbsp;€ + börsenplatzabhängige Entgelte. Zuzüglich marktüblicher Spreads und Zuwendungen.",
+      "preis_n": ["gettex unter 500&nbsp;€: Die Anleihen-Seite nennt 4&nbsp;€, die Konditionenseite 1&nbsp;€ – gerechnet ist mit 4&nbsp;€", "wie viele der 40.000 Anleihen über gettex handelbar sind, nennt Smartbroker+ nicht"],
+      "wege": [
+        {"name": "gettex", "staffel": [{"unter": 500, "fix": 4}, {"fix": 0}]},
+        {"name": "Tradegate", "fix": 4},
+        {"name": "Börse Stuttgart, Frankfurt u.&nbsp;a.", "fix": 4, "offen": "börsenplatzabhängige Entgelte, nicht beziffert"}
+      ],
+      "depot": {"t": "0&nbsp;€"},
+      "quellen": [
+        {"t": "Konditionen", "url": "https://www.smartbrokerplus.de/de-de/konditionen/"},
+        {"t": "Anleihen kaufen", "url": "https://www.smartbrokerplus.de/de-de/anleihen-kaufen/"},
+        {"t": "Preis- und Leistungsverzeichnis", "url": "https://content-hub.smartbrokerplus.de/api/sb-media/2026_07_PLV_4f42b95ac5.pdf", "stand": "Stand Juli 2026"}
+      ],
+      "probe": {"1000": 0, "5000": 0, "10000": 0, "25000": 0, "100000": 0}
+    },
+    {
+      "name": "Sparkasse",
+      "typ": "Filialbank, Beispiel Sparkasse Siegen",
+      "gruppe": "ja",
       "anleihen": "Staats- und Unternehmensanleihen",
-      "handel": "40 Börsenplätze; Direct Trade für Anleihen mit Baader, Lang &amp; Schwarz, Société Générale, Tradegate",
-      "gebuehr": "0,25&nbsp;% (mind. 8,90&nbsp;€, max. 58,90&nbsp;€)", "gebuehr_n": ["Direct Trade ohne Zusatzentgelt; Börse: dazu Börsengebühren und Fremdspesen je Platz"],
-      "k5": 12.5, "k5_w": "Direct Trade", "k100": 58.9, "k100_w": ["Höchstpreis, Direct Trade"], "depot": "0&nbsp;€" },
-    { "name": "S Broker", "typ": "Online-Broker der Sparkassen", "gruppe": "ja",
-      "anleihen": "Staats- und Unternehmensanleihen",
-      "handel": "alle deutschen Börsen, 29 Auslandsbörsen, Direkthandel",
-      "gebuehr": "0,95&nbsp;€ + 0,25&nbsp;% (max. 54,99&nbsp;€)", "gebuehr_n": ["Börse: + 2,45&nbsp;€, Direkthandel frei", "Sofortorder in der App: 0,95&nbsp;€, den Handelsplatz wählt der Broker (Best Execution)"],
-      "k5": 13.45, "k5_w": "Direkthandel", "k100": 54.99, "k100_w": ["Höchstpreis, Direkthandel"], "depot": "0&nbsp;€" },
-    { "name": "1822direkt", "typ": "Direktbank", "gruppe": "ja",
-      "anleihen": "Staats- und Unternehmensanleihen",
-      "handel": "deutsche und ausländische Börsen, Direkthandel",
-      "gebuehr": "4,90&nbsp;€ + 0,25&nbsp;% (9,90 bis 54,90&nbsp;€)", "gebuehr_n": ["Börse: + 2,95&nbsp;€, Direkthandel frei"],
-      "k5": 17.4, "k5_w": "Direkthandel", "k100": 54.9, "k100_w": ["Höchstpreis, Direkthandel"], "depot": "0&nbsp;€" },
-    { "name": "comdirect", "typ": "Direktbank", "gruppe": "ja",
-      "anleihen": "über 60.000, Laufzeiten und Währungen wählbar",
-      "handel": "Börsen und LiveTrading (außerbörslich)",
-      "gebuehr": "4,90&nbsp;€ + 0,25&nbsp;% (9,90 bis 59,90&nbsp;€)", "gebuehr_n": ["dazu fremde Kosten je Börse", { "t": "Neukunden: 3 Jahre lang 3,90&nbsp;€ je Order", "bis": "2026-11-01", "zeige_bis": true }],
-      "k5": 17.4, "k5_w": "LiveTrading", "k100": 59.9, "k100_w": ["Höchstpreis, LiveTrading", { "t": "Neukunden 3,90&nbsp;€", "bis": "2026-11-01" }], "depot": "0&nbsp;€",
-      "balken_n": { "t": "Neukunden 3,90&nbsp;€", "bis": "2026-11-01" } },
-    { "name": "Commerzbank", "typ": "Filialbank, Order online", "gruppe": "ja",
-      "anleihen": "Staats- und Unternehmensanleihen",
-      "handel": "64 Handelsplätze, auch Direkthandel Commerzbank",
-      "gebuehr": "4,90&nbsp;€ + 0,25&nbsp;% (mind. 9,90&nbsp;€)", "gebuehr_n": ["dazu fremde Kosten"],
-      "k5": 17.4, "k5_ab": true, "k5_w": "plus fremde Kosten", "k100": 254.9, "k100_ab": true, "k100_w": ["kein Höchstpreis, plus fremde Kosten"],
-      "depot": "0,175&nbsp;% im Jahr, mind. 4,95&nbsp;€ je Quartal", "depot_n": ["bei 5.000&nbsp;€: 19,80&nbsp;€ im Jahr; 0&nbsp;€ mit mindestens einer Order im Quartal"],
-      "balken_n": "plus fremde Kosten" },
-    { "name": "ING", "typ": "Direktbank", "gruppe": "ja",
-      "anleihen": "über 9.000, auch Pfandbriefe",
-      "handel": "Börsen; Direkthandel für Anleihen über Tradegate und gettex",
-      "gebuehr": "4,90&nbsp;€ + 0,25&nbsp;% (max. 69,90&nbsp;€)", "gebuehr_n": ["Börse: + 1,90 bis 2,90&nbsp;€, Direkthandel (Tradegate, gettex) frei"],
-      "k5": 17.4, "k5_w": "Direkthandel", "k100": 69.9, "k100_w": ["Höchstpreis, Direkthandel"], "depot": "0&nbsp;€" },
-    { "name": "Consorsbank", "typ": "Direktbank", "gruppe": "ja",
-      "anleihen": "Staats- und Unternehmensanleihen",
-      "handel": "Tradegate, gettex, LSX, Xetra, Parkettbörsen, außerbörslich",
-      "gebuehr": "4,95&nbsp;€ + 0,25&nbsp;% (9,95 bis 69&nbsp;€)", "gebuehr_n": ["Handelsplatz: + 0,95&nbsp;€ (Tradegate), 1,95&nbsp;€ (gettex, LSX, Xetra) bis 2,95&nbsp;€ (Parkett)", "ab 26 Orders im Jahr günstiger"],
-      "k5": 18.4, "k5_w": "Tradegate", "k100": 69.95, "k100_w": ["Höchstpreis 69&nbsp;€ + Tradegate 0,95&nbsp;€"], "depot": "0&nbsp;€" },
-    { "name": "Sparkasse", "typ": "Filialbank, Beispiel Sparkasse Siegen", "gruppe": "ja",
-      "anleihen": "Staats- und Unternehmensanleihen",
-      "handel": "deutsche Börsen",
-      "gebuehr": "online: 14,90&nbsp;€ + 0,5&nbsp;%", "gebuehr_n": ["über den Berater: 19,90&nbsp;€ + 0,7&nbsp;%", "dazu fremde Kosten; Preise je Sparkasse verschieden"],
-      "k5": 39.9, "k5_w": "online; über den Berater 54,90&nbsp;€", "k100": 514.9, "k100_w": ["online, kein Höchstpreis; über den Berater 719,90&nbsp;€"],
-      "depot": "rund 48&nbsp;€ im Jahr", "depot_n": ["8,93&nbsp;€ je Quartal + 0,0595&nbsp;% vom Kurswert je Quartal"],
-      "balken": [{ "n": "online", "k5": 39.9 }, { "n": "über den Berater", "k5": 54.9 }] },
-    { "name": "Trade Republic", "typ": "Neobroker", "gruppe": "aw",
-      "anleihen": "Auswahl an Staats- und Unternehmensanleihen in Euro, seit Oktober 2025 auch in US-Dollar", "anleihen_n": ["ab 1&nbsp;€; zum Start 2023 waren es 500"],
-      "handel": "nur LS Exchange", "handel_n": ["Limit-Order nur ohne Bruchteile"],
-      "gebuehr": "1&nbsp;€",
-      "k5": 1, "k5_w": "LS Exchange", "k100": 1, "k100_w": ["LS Exchange"], "depot": "0&nbsp;€" },
-    { "name": "Revolut", "typ": "Neobank; Wertpapiere über Revolut Securities Europe (Litauen)", "gruppe": "aw", "hin": ["kein Limit möglich", "Steuer selbst erklären"],
-      "anleihen": "Staats- und Unternehmensanleihen in Euro und US-Dollar", "anleihen_n": ["ab 2&nbsp;€"],
-      "handel": "in der App, nur Market-Order; Handel {handelszeit}",
-      "handelszeit": { "von": 11, "bis": 20, "utc": 4, "zone": "Golfzeit" },
-      "gebuehr": "0,25&nbsp;%, mind. 1&nbsp;€",
-      "k5": 12.5, "k5_w": "ohne Limit", "k100": 250, "k100_w": ["ohne Limit; Trading Pro 120&nbsp;€"], "depot": "0&nbsp;€",
-      "balken_n": "ohne Limit" },
-    { "name": "Scalable Capital", "typ": "Neobroker", "gruppe": "nein",
-      "anleihen": "nur zwei Festzinsanleihen von Goldman Sachs (3 und 5 Jahre, ab 100&nbsp;€), sonst keine – auch keine Staatsanleihen", "anleihen_n": ["Anleihen-ETFs: ja"] },
-    { "name": "finanzen.net zero", "typ": "Neobroker", "gruppe": "nein",
-      "anleihen": "keine einzelnen Anleihen", "anleihen_n": ["Anleihen-ETFs: ja"] },
-    { "name": "N26", "typ": "Neobank", "gruppe": "nein",
-      "anleihen": "keine Anleihen – nur Aktien, ETFs, Fonds und Krypto" }
+      "handel": "in- und ausländische Börsen",
+      "limit": {"t": "ja", "n": "nicht ausgeführtes Limit: 5&nbsp;€"},
+      "steuer": {"t": "führt die Bank ab"},
+      "preis": "Order über das Internet: 14,90&nbsp;€ Grundpreis + 0,5&nbsp;% vom Kurswert. Order beim Berater: 19,90&nbsp;€ + 0,7&nbsp;%. Einen Mindest- oder Höchstpreis nennt der Preisaushang nicht. Alle Preise zuzüglich fremder Kosten.",
+      "preis_n": ["Rabatt für Kunden von 14 bis unter 30 Jahren"],
+      "wege": [
+        {"name": "online über die Börse", "fix": 14.9, "pct": 0.5, "offen": "fremde Kosten (z.&nbsp;B. Courtage, Clearinggebühren), nicht beziffert"},
+        {"name": "Order beim Berater", "fix": 19.9, "pct": 0.7, "offen": "fremde Kosten, nicht beziffert"}
+      ],
+      "depot": {"t": "8,93&nbsp;€ Grundpreis je Quartal + 0,0595&nbsp;% vom Kurswert je Quartal, mindestens 1,79&nbsp;€ je Posten", "n": ["bei Anleihen mindestens vom Nennwert gerechnet"], "fix": 35.72, "pct": 0.238, "pmin": 7.16},
+      "quellen": [
+        {"t": "Preisaushang", "url": "https://www.sparkasse-siegen.de/content/dam/myif/spk-siegen/work/dokumente/pdf/preise-leistungen/preisaushang.pdf", "stand": "Stand 03.08.2026"},
+        {"t": "Preis- und Leistungsverzeichnis", "url": "https://www.sparkasse-siegen.de/content/dam/myif/spk-siegen/work/dokumente/pdf/preise-leistungen/preis-leistungsverzeichnis.pdf", "stand": "Stand 12.08.2026"}
+      ],
+      "notiz": "Jede Sparkasse hat ihr eigenes Preisverzeichnis; die Zahlen gelten für die Sparkasse Siegen.",
+      "probe": {"1000": 19.9, "5000": 39.9, "10000": 64.9, "25000": 139.9, "100000": 514.9}
+    },
+    {
+      "name": "Traders Place",
+      "typ": "Wertpapierinstitut, Depot bei der Baader Bank",
+      "gruppe": "ja",
+      "anleihen": "rund 40.000 deutsche und internationale",
+      "anleihen_n": ["über gettex und den Baader-Direkthandel laut Traders Place „tausende“"],
+      "handel": "gettex, Baader-Direkthandel, alle deutschen Börsen",
+      "limit": {"t": "ja", "n": "kostenlos"},
+      "steuer": {"t": "führt die Baader Bank ab"},
+      "preis": "gettex und Baader-Direkthandel: 0&nbsp;€ je Order ab 500&nbsp;€ Kurswert, darunter 0,95&nbsp;€. Tradegate 5&nbsp;€, LSX 6&nbsp;€, Xetra 2&nbsp;€ + 0,01&nbsp;% (mindestens 3&nbsp;€), andere deutsche Börsen 5,50&nbsp;€ – Xetra und andere Börsen zuzüglich börsenplatzabhängiger Entgelte. Zuzüglich marktüblicher Spreads.",
+      "wege": [
+        {"name": "gettex oder Baader-Direkthandel", "staffel": [{"unter": 500, "fix": 0.95}, {"fix": 0}]},
+        {"name": "Tradegate", "fix": 5},
+        {"name": "Börse Frankfurt, Stuttgart u.&nbsp;a.", "fix": 5.5, "offen": "börsenplatzabhängige Entgelte, nicht beziffert"}
+      ],
+      "depot": {"t": "0&nbsp;€"},
+      "quellen": [
+        {"t": "Preis- und Leistungsverzeichnis", "url": "https://www.tradersplace.de/medien/dateien/preis-und-leistungsverzeichnis-tp-2026-08-25", "stand": "Stand 08/2026"},
+        {"t": "Anleihen", "url": "https://www.tradersplace.de/angebot/uebersicht/anleihen"},
+        {"t": "Konditionen", "url": "https://www.tradersplace.de/konditionen/deine-konditionen"}
+      ],
+      "probe": {"1000": 0, "5000": 0, "10000": 0, "25000": 0, "100000": 0}
+    },
+    {
+      "name": "Revolut",
+      "typ": "Banking-App; Wertpapiere über Revolut Securities Europe (Litauen)",
+      "gruppe": "aw",
+      "hin": ["kein Limit möglich", "Steuer selbst erklären"],
+      "anleihen": "Staats- und Unternehmensanleihen in Euro und US-Dollar",
+      "anleihen_n": ["ab 2&nbsp;€ als Teil-Anleihe: Du besitzt die Anleihe dann nicht selbst und kannst sie nicht zu einem anderen Anbieter übertragen"],
+      "handel": "in der App, außerhalb von Börsen; Handel {handelszeit}",
+      "handel_n": ["nicht an Feiertagen der Vereinigten Arabischen Emirate"],
+      "handelszeit": {"von": 11, "bis": 20, "utc": 4, "zone": "Golfzeit"},
+      "limit": {"t": "nein, nur Market-Order", "warn": true},
+      "steuer": {"t": "selbst erklären", "warn": true},
+      "preis": "0,25&nbsp;% des Transaktionswerts, mindestens 1&nbsp;€ (Tarife Standard bis Ultra). Keine Gebühr für die Verwahrung.",
+      "preis_n": ["mit dem Zusatz-Abo Trading Pro (15&nbsp;€ im Monat): 0,12&nbsp;% ohne Mindestgebühr", "bei US-Dollar-Anleihen können Gebühren für den Währungstausch dazukommen"],
+      "wege": [
+        {"name": "in der App, ohne Limit", "pct": 0.25, "min": 1}
+      ],
+      "depot": {"t": "0&nbsp;€"},
+      "quellen": [
+        {"t": "Gebühren für Anleihen", "url": "https://help.revolut.com/de-DE/help/wealth/stocks/bonds/bonds-fees/"},
+        {"t": "Anleihen kaufen", "url": "https://help.revolut.com/de-DE/help/wealth/stocks/bonds/buy-bonds-in-the-revolut-app/"},
+        {"t": "Kostenausweis Anleihen", "url": "https://cdn.revolut.com/legal/terms/RSEUAB-ex-ante-costs-report-bonds-v3-EN.pdf", "stand": "gültig ab 16.04.2025"},
+        {"t": "Steuern auf Trading", "url": "https://help.revolut.com/de-DE/help/wealth/stocks/licences-regulations/tax-information-for-stocks/reporting-taxes-on-my-investments/"}
+      ],
+      "probe": {"1000": 2.5, "5000": 12.5, "10000": 25, "25000": 62.5, "100000": 250}
+    },
+    {
+      "name": "Trade Republic",
+      "typ": "Bank mit Trading-App",
+      "gruppe": "aw",
+      "anleihen": "Auswahl an Staats- und Unternehmensanleihen in Euro und US-Dollar",
+      "anleihen_n": ["ab 1&nbsp;€; eine aktuelle Zahl nennt Trade Republic nicht (zum Start 2023: 500)"],
+      "handel": "Euro-Anleihen nur über die Lang &amp; Schwarz Exchange, US-Dollar-Anleihen über Walter Ludwig",
+      "limit": {"t": "ja, nur für ganze Stücke", "n": "Bruchstücke nur mit Market-Order"},
+      "steuer": {"t": "führt die Bank ab"},
+      "preis": "Orderprovision 0&nbsp;€, dazu 1&nbsp;€ Abwicklungskostenpauschale je Order. Was die Währungsumrechnung bei US-Dollar-Anleihen kostet, steht nicht auf den öffentlichen Seiten.",
+      "wege": [
+        {"name": "Lang &amp; Schwarz Exchange", "ft": "Orderprovision", "fix": 0, "plus": [{"t": "Abwicklungskostenpauschale", "k": "Abwicklungspauschale", "fix": 1}]}
+      ],
+      "depot": {"t": "Die Preisübersicht nennt keinen Preis für die Depotführung", "kurz": "kein Depotpreis genannt"},
+      "quellen": [
+        {"t": "Preisübersicht", "url": "https://traderepublic.com/de-de/fixed-income?openModal=pricing-scheme"},
+        {"t": "Hilfe: In Anleihen investieren", "url": "https://support.traderepublic.com/de-de/1614"},
+        {"t": "Hilfe: Orderausführung", "url": "https://support.traderepublic.com/de-de/39"},
+        {"t": "Kundenvereinbarung", "url": "https://assets.traderepublic.com/assets/files/CA_DE-de.pdf", "stand": "Stand 9/2026"}
+      ],
+      "notiz": "Ein Preisverzeichnis als PDF veröffentlicht Trade Republic nicht; die vollständige Preisliste steht laut Anbieter in der App.",
+      "probe": {"1000": 1, "5000": 1, "10000": 1, "25000": 1, "100000": 1}
+    },
+    {
+      "name": "finanzen.net zero",
+      "typ": "Online-Broker, Depot bei der Baader Bank",
+      "gruppe": "nein",
+      "anleihen": "keine einzelnen Anleihen – weder Staats- noch Unternehmensanleihen",
+      "anleihen_n": ["Fonds und ETFs auf Anleihen: ja"],
+      "quellen": [
+        {"t": "Hilfe: Kann ich mit Anleihen handeln?", "url": "https://support.finanzen-zero.net/hc/de/articles/36630126757661-Kann-ich-mit-Anleihen-handeln"},
+        {"t": "Preis- und Leistungsverzeichnis Wertpapiere", "url": "https://www.finanzen.net/zero/wp-content/uploads/2026/08/Preis-Leistungsverzeichnis-V12_Wertpapiere.pdf", "stand": "Stand Juli 2026"}
+      ]
+    },
+    {
+      "name": "N26",
+      "typ": "Bank mit App",
+      "gruppe": "nein",
+      "anleihen": "nennt Aktien, ETFs, ETCs, eigene Sofort-Fonds und Krypto – keine einzelnen Anleihen",
+      "quellen": [
+        {"t": "Investieren", "url": "https://n26.com/de-de/anlagemoeglichkeiten"},
+        {"t": "Nutzerdokumente Brokerservice", "url": "https://docs.n26.com/legal/01+DE/028+Securities+Trading/de/01-user-documents-de.pdf", "stand": "Version vom 04.09.2026"}
+      ]
+    },
+    {
+      "name": "Scalable Capital",
+      "typ": "Online-Broker (Scalable Capital Bank)",
+      "gruppe": "nein",
+      "anleihen": "nur zwei Festzinsanleihen von Goldman Sachs (3 und 5 Jahre, Stückelung 100&nbsp;€); Staats- oder Unternehmensanleihen nennt Scalable nicht",
+      "anleihen_n": ["Anleihen-ETFs: ja", "laut Scalable wird das Angebot „nach und nach erweitert“"],
+      "quellen": [
+        {"t": "Anleihen", "url": "https://de.scalable.capital/anleihen"},
+        {"t": "Hilfe: Finanzprodukte", "url": "https://help.scalable.capital/handeln-1541d52f/in-welche-finanzprodukte-kann-ich-investieren-65438ba9"},
+        {"t": "Preis- und Leistungsverzeichnis", "url": "https://de.scalable.capital/terms-and-conditions", "stand": "Stand September 2026"}
+      ]
+    }
   ]
 }

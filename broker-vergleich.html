@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Anleihen-Broker: 19 Anbieter im Vergleich – Bondarium</title>
-<meta name="description" content="Welcher Broker kann Anleihen? 19 Anbieter im Vergleich: welche Anleihen es gibt, wo gehandelt wird und was ein Kauf für 5.000 € kostet – von 0 bis 55 €.">
+<meta name="description" content="Welcher Broker kann Anleihen? 19 Anbieter im Vergleich: Kaufkosten von 1.000 bis 100.000 € offen vorgerechnet – mit Rechenweg und Quelle.">
 <link rel="canonical" href="https://www.bondarium.de/broker-vergleich.html">
 <meta name="robots" content="index, follow">
 <meta name="author" content="Bondarium">
@@ -13,14 +13,14 @@
 <meta property="og:locale" content="de_DE">
 <meta property="og:url" content="https://www.bondarium.de/broker-vergleich.html">
 <meta property="og:title" content="Anleihen-Broker: 19 Anbieter im Vergleich – Bondarium">
-<meta property="og:description" content="Welcher Broker kann Anleihen? 19 Anbieter im Vergleich: welche Anleihen es gibt, wo gehandelt wird und was ein Kauf für 5.000 € kostet – von 0 bis 55 €.">
+<meta property="og:description" content="Welcher Broker kann Anleihen? 19 Anbieter im Vergleich: Kaufkosten von 1.000 bis 100.000 € offen vorgerechnet – mit Rechenweg und Quelle.">
 <meta property="og:image" content="https://www.bondarium.de/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Bondarium: Finde Anleihen, die zu deinem Leben passen">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Anleihen-Broker: 19 Anbieter im Vergleich – Bondarium">
-<meta name="twitter:description" content="Welcher Broker kann Anleihen? 19 Anbieter im Vergleich: welche Anleihen es gibt, wo gehandelt wird und was ein Kauf für 5.000 € kostet – von 0 bis 55 €.">
+<meta name="twitter:description" content="Welcher Broker kann Anleihen? 19 Anbieter im Vergleich: Kaufkosten von 1.000 bis 100.000 € offen vorgerechnet – mit Rechenweg und Quelle.">
 <meta name="twitter:image" content="https://www.bondarium.de/og-image.png">
 <link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2">
@@ -31,47 +31,89 @@
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  /* Broker im Vergleich (27.09.2026, Daten seit 30.09.2026 aus broker.json): Kurzfassung, Tabelle (Handy: Karten), Kostenbalken, Prüfliste. Grundregeln aus base.css. */
+  /* Broker im Vergleich – Konzept „Kosten offen“ (01.10.2026): 1 Kostenliste mit wählbarem Betrag und Rechenweg je Anbieter,
+     2 Angebot (Tabelle, Handy: Karten), 3 So rechnen wir + Quellen je Anbieter, 4 Prüfliste. Alle Preise aus broker.json
+     (Preismodell in Bausteinen – die Seite rechnet selbst, keine von Hand eingetragenen Summen). Grundregeln aus base.css. */
   .bv-stand { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text); margin: -8px 0 20px; }
   .bv-stand::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--up); flex: none; }
   .bv-stand b { color: var(--ink); font-weight: 600; }
-  .bv-unab { font-size: 14px; line-height: 1.55; color: var(--text); max-width: 720px; margin: -8px 0 20px; }
-  .bv-unab strong { color: var(--ink); font-weight: 600; }
   .bv-in { font-size: 16.5px; line-height: 1.6; color: var(--text); max-width: 720px; margin-bottom: 16px; }
   .bv-in strong { color: var(--ink); font-weight: 600; }
   /* Kennzeichen: ja / Auswahl / nein */
   .bdg { display: inline-block; flex: none; font-size: 12px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; line-height: 1.3; border-radius: 999px; padding: 3px 9px; }
   .bdg.ja { background: #DCFBD3; color: #157C00; }
-  .bdg.aw { background: #FBE8D8; color: #A2561C; }
-  .bdg.nein { background: #FBE8D8; color: #A2561C; }
+  .bdg.aw, .bdg.nein { background: #FBE8D8; color: #A2561C; }
+  .typ { display: block; font-size: 12.5px; color: var(--text); margin-top: 1px; }
+  .hin { display: block; margin-top: 4px; font-size: 12.5px; font-weight: 600; line-height: 1.35; color: var(--orange-text); }
+
+  /* 1 Kosten: Betrag wählen */
+  .bk-wahl { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 4px 0 18px; }
+  .bk-wahl-t { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-right: 4px; }
+  .bk-wahl button.lbtn { font-size: 14px; font-weight: 600; padding: 9px 14px; font-variant-numeric: tabular-nums; }
+  .bk-frei { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text); margin-left: 6px; }
+  .bk-frei input { font: inherit; font-weight: 600; color: var(--ink); width: 104px; text-align: right; background: #fff; border: 1px solid rgba(26,26,25,0.18); border-radius: 8px; padding: 7px 10px; font-variant-numeric: tabular-nums; }
+  .bk-frei input:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  /* Kostenliste: eine Zeile je Anbieter – Name · Balken mit Preis · Rechenweg · Depot im Jahr; Aufklapper mit Rechnung und Quelle */
+  .bk-box { background: #fff; border: 1px solid rgba(26,26,25,0.10); border-radius: var(--radius); box-shadow: var(--shadow); padding: 6px 22px 10px; }
+  .bk-kopf, .bk-z { display: grid; grid-template-columns: 190px minmax(0, 1fr) 104px; column-gap: 20px; }
+  .bk-kopf { padding: 12px 0 9px; border-bottom: 1px solid rgba(26,26,25,0.14); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); align-items: end; }
+  .bk-kopf span:last-child { text-align: right; }
+  .bk-liste { list-style: none; margin: 0; padding: 0; }
+  .bk { padding: 13px 0 11px; border-bottom: 1px solid var(--rule); }
+  .bk:last-child { border-bottom: 0; }
+  .bk-an b { display: block; font-size: 16px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+  .bk-bar { display: flex; align-items: center; gap: 10px; min-height: 26px; }
+  .bk-bar i { display: block; flex: none; height: 18px; min-width: 3px; border-radius: 0 5px 5px 0; background: var(--blue); transition: width .25s ease; }
+  .bk[data-g="aw"] .bk-bar i { background: var(--orange); }
+  .bk-bar b { font-size: 17px; font-weight: 600; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .bk-bar .pz { font-size: 13px; color: var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .bk.min .bk-bar b::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 7px; vertical-align: 1px; border-radius: 50%; background: #39FF14; border: 1.5px solid #1A1A19; box-sizing: border-box; }   /* Bildwelt 2.0: günstigster Preis */
+  .bk-of { font-size: 13px; line-height: 1.4; font-weight: 600; color: var(--orange-text); margin: 2px 0 0; }
+  /* Rechenweg = Kopf des Aufklappers; darin Rechnung, andere Wege, Depot und Quelle */
+  details.bk-d { margin-top: 2px; }
+  details.bk-d > summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 14px; cursor: pointer; list-style: none; padding: 2px 0; }
+  details.bk-d > summary::-webkit-details-marker { display: none; }
+  .bk-rw { font-size: 13.5px; line-height: 1.45; color: var(--text); font-variant-numeric: tabular-nums; }
+  .bk-mehr { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: var(--blue); white-space: nowrap; }
+  .bk-mehr::before { content: ""; width: 6px; height: 6px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-45deg); margin-top: -1px; }
+  details.bk-d[open] .bk-mehr::before { transform: rotate(45deg); margin-top: -4px; }
+  details.bk-d > summary:hover .bk-mehr { text-decoration: underline; }
+  details.bk-d > summary:focus-visible { outline: 2px solid var(--line); outline-offset: 3px; border-radius: 3px; }
+  .bk-de { text-align: right; font-size: 15px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; padding-top: 3px; white-space: nowrap; }
+  .bk-de .lab { display: none; font-size: 13px; font-weight: 400; color: var(--text); }
+  .bk-de small { display: block; font-size: 12.5px; font-weight: 400; line-height: 1.35; color: var(--text); white-space: normal; }
+  .bk-de.kostet { color: var(--orange-text); }
+  .bk-dl { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 8px 16px; margin: 8px 0 6px; padding: 14px 16px; background: var(--bg); border-radius: 10px; font-size: 14px; line-height: 1.5; }
+  .bk-dl dt { font-size: 12.5px; font-weight: 600; color: var(--text); padding-top: 1px; }
+  .bk-dl dd { color: var(--ink); margin: 0; font-variant-numeric: tabular-nums; }
+  .bk-dl dd span { display: block; }
+  .bk-dl dd .sum { font-weight: 600; }
+  .bk-dl dd small { display: block; font-size: 12.5px; color: var(--text); }
+  .bk-dl a { color: var(--line); }
+  .bv-leg2 { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 12px; font-size: 13px; color: var(--text); }
+  .bv-leg2 span { display: inline-flex; align-items: center; gap: 7px; }
+  .bv-leg2 span::before { content: ""; width: 14px; height: 10px; border-radius: 0 3px 3px 0; background: var(--blue); }
+  .bv-leg2 span.aw::before { background: var(--orange); }
+  .bv-leg2 span.pkt::before { width: 10px; height: 10px; border-radius: 50%; background: #39FF14; border: 1.5px solid #1A1A19; box-sizing: border-box; }
+
+  /* 2 Angebot: Tabelle (ab 901 px) */
   .bv-leg { list-style: none; display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0 0 16px; font-size: 14px; color: var(--text); }
   .bv-leg li { display: inline-flex; align-items: center; gap: 8px; }
-  /* Tabelle (ab 901 px) */
   .bv-t { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border: 1px solid rgba(26,26,25,0.10); border-radius: 14px; box-shadow: var(--shadow); font-size: 14px; line-height: 1.45; }
-  .bv-t thead th { text-align: left; vertical-align: bottom; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); padding: 13px 12px 10px; border-bottom: 1px solid rgba(26,26,25,0.14); }
-  .bv-t thead th:nth-child(1) { width: 15%; }
-  .bv-t thead th:nth-child(2) { width: 17%; }
-  .bv-t thead th:nth-child(3) { width: 17%; }
-  .bv-t thead th:nth-child(4) { width: 22%; }
-  .bv-t thead th:nth-child(5) { width: 10%; }
-  .bv-t thead th:nth-child(6) { width: 10%; }
-  .bv-t thead th:nth-child(7) { width: 9%; }
-  .bv-t .r { text-align: right; }
-  .bv-t tbody th, .bv-t tbody td { text-align: left; vertical-align: top; font-weight: 400; color: var(--ink); padding: 12px; border-bottom: 1px solid var(--rule); }
+  .bv-t thead th { text-align: left; vertical-align: bottom; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); padding: 13px 14px 10px; border-bottom: 1px solid rgba(26,26,25,0.14); }
+  .bv-t thead th:nth-child(1) { width: 19%; }
+  .bv-t thead th:nth-child(2) { width: 25%; }
+  .bv-t thead th:nth-child(3) { width: 27%; }
+  .bv-t thead th:nth-child(4) { width: 15%; }
+  .bv-t thead th:nth-child(5) { width: 14%; }
+  .bv-t tbody th, .bv-t tbody td { text-align: left; vertical-align: top; font-weight: 400; color: var(--ink); padding: 11px 14px; border-bottom: 1px solid var(--rule); }
   .bv-t tbody:last-child tr:last-child > * { border-bottom: 0; }
-  .bv-t tr.grp th { background: #FFFFFF; padding: 10px 12px; font-size: 14px; font-weight: 600; }
+  .bv-t tr.grp th { background: #FFFFFF; padding: 12px 14px 8px; font-size: 14px; font-weight: 600; }
   .bv-t tr.grp th .bdg { margin-right: 10px; vertical-align: 1px; }
   .bv-t tr.grp th span.n { font-weight: 400; color: var(--text); }
-  .bv-t tr.grp:hover th { background: #FFFFFF; }
   .bv-t .an b { display: block; font-size: 15px; font-weight: 600; }
-  .typ { display: block; font-size: 12.5px; color: var(--text); margin-top: 1px; }
-  .hin { display: block; margin-top: 6px; font-size: 12.5px; font-weight: 600; line-height: 1.35; color: var(--blue); }
-  .hin.warn { color: var(--orange-text); }
   .bv-t td small, .bvc dd small { display: block; font-size: 12.5px; line-height: 1.4; color: var(--text); margin-top: 3px; }
-  .bv-t td.k { text-align: right; white-space: nowrap; }
-  .bv-t td.k b, .bvc-k b { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; }
-  .bv-t td.k small { white-space: normal; }
-  .bv-t td.k.min b::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 7px; vertical-align: 1px; border-radius: 50%; background: #39FF14; border: 1.5px solid #1A1A19; box-sizing: border-box; }   /* Bildwelt 2.0: günstigster Preis */
+  .bv-t td.warn, .bvc dd.warn { color: var(--orange-text); font-weight: 600; }
   .bv-t tbody.g-nein td { color: var(--text); }
   /* Karten (bis 900 px, 601–900 px zweispaltig) */
   .bv-cards { display: none; }
@@ -80,41 +122,26 @@
   .bv-ch span.n { font-weight: 400; color: var(--text); }
   .bvc-l { list-style: none; display: grid; gap: 10px; }
   .bvc { background: #fff; border: 1px solid rgba(26,26,25,0.10); border-radius: 12px; box-shadow: var(--shadow); padding: 14px 14px 13px; }
-  .bvc-h { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-  .bvc-h > span > b { display: block; font-size: 16.5px; font-weight: 600; color: var(--ink); }
-  .bvc-k { flex: none; text-align: right; }
-  .bvc-k small { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); }
-  .bvc-k em { display: block; font-style: normal; font-size: 12px; color: var(--text); }
+  .bvc > b { display: block; font-size: 16.5px; font-weight: 600; color: var(--ink); }
   .bvc dl { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 6px 10px; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--rule); font-size: 14px; line-height: 1.45; }
   .bvc dt { font-size: 12.5px; font-weight: 600; color: var(--text); padding-top: 1px; }
   .bvc dd { color: var(--ink); }
-  /* Kostenbalken: Achse und Breiten rechnet das Skript aus broker.json (Gitter alle 10 € über --gitter) */
-  .bv-chart { background: #fff; border: 1px solid rgba(26,26,25,0.08); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 24px 18px; }
-  .bar-ax, .bar, .bar-tk { display: grid; grid-template-columns: 172px minmax(0, 1fr); gap: 14px; }
-  .bar-ax-x { margin-top: 2px; } .bar-ax-x .ax-t { text-align: right; }
-  .bars { list-style: none; display: grid; gap: 6px; margin-top: 6px; }
-  .bar { align-items: center; }
-  .bar-l { font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.25; }
-  .bar-l small { display: block; font-size: 12px; font-weight: 400; color: var(--text); }
-  .bar-v { display: flex; align-items: center; gap: 8px; min-height: 28px; background: repeating-linear-gradient(to right, rgba(26,26,25,0.09) 0 1px, transparent 1px var(--gitter, 12.5%)); }
-  .bar-v i { display: block; flex: none; height: 20px; min-width: 3px; border-radius: 0 5px 5px 0; background: var(--blue); }
-  .bar.aw .bar-v i { background: var(--orange); }
-  .bar-v b { font-size: 14px; font-weight: 600; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .bar-tk { margin-top: 4px; }
-  .tk { position: relative; height: 16px; font-size: 12px; color: var(--text); font-variant-numeric: tabular-nums; }
-  .tk i { position: absolute; top: 0; font-style: normal; transform: translateX(-50%); }
-  .tk i:first-child { transform: none; }
-  .bv-leg2 { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 12px; font-size: 13px; color: var(--text); }
-  .bv-leg2 span { display: inline-flex; align-items: center; gap: 7px; }
-  .bv-leg2 span::before { content: ""; width: 14px; height: 10px; border-radius: 0 3px 3px 0; background: var(--blue); }
-  .bv-leg2 span.aw::before { background: var(--orange); }
-  /* So prüfst du deinen Broker */
+
+  /* 3 So rechnen wir, 4 So prüfst du: nummerierte Karten */
   .bv-steps { list-style: none; counter-reset: st; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }
   .bv-steps li { counter-increment: st; position: relative; background: #fff; border: 1px solid rgba(26,26,25,0.08); border-radius: 14px; box-shadow: var(--shadow); padding: 16px 18px 17px 62px; }
   .bv-steps li::before { content: counter(st); position: absolute; left: 18px; top: 15px; width: 30px; height: 30px; border-radius: 50%; background: var(--green); color: var(--ink); font-size: 14px; font-weight: 600; display: grid; place-items: center; }
   .bv-steps h3 { font-size: 16.5px; font-weight: 600; margin-bottom: 4px; }
   .bv-steps p { font-size: 14.5px; line-height: 1.55; color: var(--text); }
   .bv-steps p b { color: var(--ink); font-weight: 600; }
+  /* Quellen je Anbieter: offen sichtbar, eine Zeile je Anbieter */
+  .bq-t { font-size: 16.5px; font-weight: 600; margin: 28px 0 8px; }
+  .bq { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(26,26,25,0.14); max-width: 900px; }
+  .bq li { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 4px 16px; padding: 9px 0; border-bottom: 1px solid var(--rule); font-size: 14px; line-height: 1.5; }
+  .bq li > b { font-weight: 600; color: var(--ink); }
+  .bq li > span { color: var(--text); }
+  .bq a { color: var(--line); }
+
   @media (max-width: 900px) {
     .bv-t { display: none; }
     .bv-cards { display: block; }
@@ -124,19 +151,30 @@
   }
   @media (max-width: 760px) {
     .bv-steps { grid-template-columns: minmax(0, 1fr); }
+    .bk-kopf, .bk-z { grid-template-columns: 150px minmax(0, 1fr) 92px; column-gap: 14px; }
   }
   @media (max-width: 600px) {
     .bv-in { font-size: 16px; }
-    .bv-chart { padding: 16px 14px 14px; }
-    .bar-ax, .bar, .bar-tk { grid-template-columns: 102px minmax(0, 1fr); gap: 10px; }
-    .bar-l { font-size: 13px; }
-    .bar-l small { font-size: 12px; }
-    .bar-v b { font-size: 12.5px; }
+    .bk-box { padding: 2px 14px 6px; }
+    .bk-kopf { display: none; }
+    .bk-z { grid-template-columns: minmax(0, 1fr); row-gap: 6px; }
+    .bk-an { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; }
+    .bk-an .typ, .bk-an .hin { margin-top: 0; }
+    .bk-de { text-align: left; font-size: 13.5px; padding-top: 0; }
+    .bk-de .lab { display: inline; }
+    .bk-de small { display: inline; }
+    .bk-dl { grid-template-columns: minmax(0, 1fr); gap: 2px; padding: 12px; }
+    .bk-dl dt { margin-top: 8px; }
+    .bk-dl dt:first-child { margin-top: 0; }
+    .bk-frei { margin-left: 0; flex-basis: 100%; }
+    .bq li { grid-template-columns: minmax(0, 1fr); }
     .bv-steps li { padding: 14px 14px 15px 56px; }
     .bv-steps li::before { left: 14px; }
   }
+  @media (pointer: coarse) { details.bk-d > summary { min-height: 44px; } }
+  @media (prefers-reduced-motion: reduce) { .bk-bar i { transition: none; } }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Welcher Broker kann Anleihen? 19 Anbieter im Vergleich","description":"Welcher Broker kann Anleihen? 19 Anbieter im Vergleich: welche Anleihen es gibt, wo gehandelt wird und was ein Kauf für 5.000 € kostet – von 0 bis 55 €.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-30","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/broker-vergleich.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Welcher Broker kann Anleihen? 19 Anbieter im Vergleich","description":"Welcher Broker kann Anleihen? 19 Anbieter im Vergleich: Kaufkosten von 1.000 bis 100.000 € offen vorgerechnet – mit Rechenweg und Quelle.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-01","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/broker-vergleich.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Kaufen","item":"https://www.bondarium.de/kaufen.html"},{"@type":"ListItem","position":3,"name":"Broker im Vergleich","item":"https://www.bondarium.de/broker-vergleich.html"}]}</script>
 </head>
 <body>
@@ -198,45 +236,57 @@
     <div class="b2-kopf">
       <div>
         <h1>Welcher Broker kann Anleihen?</h1>
-        <p class="sub">Nicht jede Trading-App hat normale Anleihen im Angebot. <span data-bv="anzahl">19</span> Anbieter im Check: welche Anleihen du dort bekommst, wo gehandelt wird und was ein Kauf für 5.000&nbsp;€ oder 100.000&nbsp;€ kostet.</p>
+        <p class="sub"><span data-bv="anzahl">19</span> Anbieter im Check: Was ein Kauf kostet – mit Rechenweg und Quelle – und welche Anleihen du dort bekommst.</p>
       </div>
       <div class="b2-spot"><img src="spot-broker-vergleich.svg" alt="" width="232" height="160"></div>
     </div>
-    <p class="bv-stand"><span><b>Stand <span data-bv="stand">siehe Tabelle</span></b> · geprüft nur auf den Seiten und in den Preisverzeichnissen der Anbieter</span></p>
-    <p class="bv-unab">Sortiert ist nur nach den Kosten.</p>
+    <p class="bv-stand"><span><b>Stand <span data-bv="stand">siehe Liste</span></b> · jede Zahl aus dem Preisverzeichnis oder von der Seite des Anbieters · sortiert nur nach dem Preis</span></p>
     <nav class="lands" aria-label="Zum Abschnitt springen">
-      <a class="lbtn" href="#tabelle"><span class="n">1</span>Die Tabelle</a>
-      <a class="lbtn" href="#kosten"><span class="n">2</span>Kosten im Bild</a>
-      <a class="lbtn" href="#pruefen"><span class="n">3</span>So prüfst du</a>
+      <a class="lbtn" href="#kosten"><span class="n">1</span>Kosten</a>
+      <a class="lbtn" href="#tabelle"><span class="n">2</span>Angebot</a>
+      <a class="lbtn" href="#methodik"><span class="n">3</span>So rechnen wir</a>
+      <a class="lbtn" href="#pruefen"><span class="n">4</span>So prüfst du</a>
     </nav>
 
-
-    <section class="section" id="tabelle" aria-labelledby="h-tabelle">
-      <h2 id="h-tabelle"><span data-bv="anzahl">19</span> Anbieter im Vergleich</h2>
-      <p class="bv-in">Was bekommst du bei welchem Anbieter, wo wird gehandelt und was kostet ein Kauf für 5.000&nbsp;€ und für 100.000&nbsp;€ – beim günstigsten Weg <strong>mit Limit</strong>. Bei 100.000&nbsp;€ greift bei vielen Banken der Höchstpreis je Order; Commerzbank und Sparkasse haben keinen. Die Spanne zwischen Geld- und Briefkurs kommt überall dazu.</p>
-      <ul class="bv-leg" id="bv-leg" aria-label="Zeichenerklärung"></ul>
-<!-- Tabelle (ab 901 px) und Karten (bis 900 px) erzeugt das Skript unten aus broker.json – Preise nur dort pflegen. -->
-<div id="bv-tabelle"><p class="klein" id="bv-laden">Die Übersicht wird geladen …</p></div>
-<noscript><p class="klein">Die Tabelle braucht JavaScript. Alle Angaben stehen auch in der Datei <a href="broker.json">broker.json</a>.</p></noscript>
-      <p class="klein">Kosten: Kauf von Anleihen mit 5.000&nbsp;€ Kurswert, mit Limit, über den günstigsten Weg, den der Anbieter nennt (klein darunter). Fremde Kosten wie Maklercourtage sind nur eingerechnet, wo der Anbieter sie beziffert. Nicht mehr dabei: die onvista bank – sie hat ihren Geschäftsbetrieb Ende 2025 eingestellt.</p>
+    <section class="section" id="kosten" aria-labelledby="h-kosten">
+      <h2 id="h-kosten">Was kostet dein Kauf?</h2>
+      <p class="bv-in">Wähle deinen Betrag. Bei jedem Anbieter steht, was der Kauf einer Anleihe kostet und <strong>wie die Zahl entsteht</strong> – gerechnet mit den Preisen aus seinem Preisverzeichnis, über den günstigsten Handelsweg, den er für Anleihen nennt.</p>
+      <div class="bk-wahl" id="bk-wahl" role="group" aria-label="Kaufbetrag wählen" hidden>
+        <span class="bk-wahl-t">Kaufbetrag</span>
+        <span class="bk-knoepfe lands"></span>
+        <label class="bk-frei">oder eigener Betrag <input type="text" id="bk-frei" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="z. B. 7.500" aria-label="Eigener Kaufbetrag in Euro"> €</label>
+      </div>
+      <div class="bk-box">
+        <div class="bk-kopf" aria-hidden="true"><span>Anbieter</span><span>Kosten für einen Kauf über <span data-bv="betrag">5.000&nbsp;€</span></span><span>Depot im Jahr</span></div>
+<!-- Die Liste erzeugt das Skript unten aus broker.json – Preise nur dort pflegen. Beim Veröffentlichen schreibt scripts/statische_tabellen.py sie für 5.000 € fest ins HTML. -->
+<ol class="bk-liste" id="bk-liste"><li class="klein" id="bk-laden">Die Übersicht wird geladen …</li></ol>
+      </div>
+<noscript><p class="klein">Die Liste braucht JavaScript. Alle Angaben stehen auch in der Datei <a href="broker.json">broker.json</a>.</p></noscript>
+      <p class="bv-leg2" id="bv-leg2"></p>
+      <p class="klein">Prozent = Kosten im Verhältnis zum Kaufbetrag. Depot im Jahr = Preis für ein Depot, in dem nur diese Anleihe liegt. In keiner Zahl steckt die Spanne zwischen Geld- und Briefkurs – sie kommt bei jedem Anbieter dazu. Wo ein Anbieter fremde Kosten nicht beziffert, steht das in Orange dabei.</p>
     </section>
 
-    <section class="section" id="kosten" aria-labelledby="h-kosten">
-      <h2 id="h-kosten">Was ein Kauf für 5.000&nbsp;€ kostet</h2>
-      <p class="bv-in">Gleicher Betrag, gleiche Anleihe – je nach Anbieter zahlst du <span data-bv="spanne">0 bis 55</span>&nbsp;€. Das zählt, weil Anleihen nur ein paar Prozent im Jahr bringen.</p>
-<div class="bv-chart">
-<div class="ax-row bar-ax" aria-hidden="true"><span class="ax-t">Anbieter</span><span></span></div>
-<ul class="bars" id="bv-bars" aria-label="Kosten für einen Kauf von Anleihen für 5.000 Euro, günstigster Weg mit Limit"></ul>
-<div class="bar-tk" aria-hidden="true"><span></span><span class="tk" id="bv-ticks"></span></div>
-<div class="ax-row bar-ax bar-ax-x" aria-hidden="true"><span></span><span class="ax-t">Kosten für 5.000&nbsp;€ in&nbsp;€&nbsp;→</span></div>
-<p class="bv-leg2" id="bv-leg2"></p>
-</div>
+    <section class="section" id="tabelle" aria-labelledby="h-tabelle">
+      <h2 id="h-tabelle">Was du bei wem bekommst</h2>
+      <p class="bv-in">Der Preis nützt nichts, wenn es deine Anleihe dort nicht gibt. Nicht jede Trading-App hat normale Anleihen im Angebot.</p>
+      <ul class="bv-leg" id="bv-leg" aria-label="Zeichenerklärung"></ul>
+<!-- Tabelle (ab 901 px) und Karten (bis 900 px) erzeugt das Skript unten aus broker.json. -->
+<div id="bv-tabelle"><p class="klein" id="bv-laden">Die Übersicht wird geladen …</p></div>
+      <p class="klein">Nicht mehr dabei: die onvista bank – ihr Betrieb endete <a href="https://hilfe.onvista.de/de/gibt-es-onvista-noch-nach-ende-2025" rel="noopener">am 31.12.2025</a>.</p>
+    </section>
+
+    <section class="section" id="methodik" aria-labelledby="h-methodik">
+      <h2 id="h-methodik">So rechnen wir</h2>
+      <p class="bv-in">Vier Regeln – damit du jede Zahl nachprüfen kannst.</p>
+      <ol class="bv-steps"><li><h3>Nur die Anbieter selbst</h3><p>Jede Angabe stammt aus dem Preisverzeichnis, dem Preisaushang oder von der Seite des Anbieters. Keine Vergleichsportale, keine Tests, keine Presse. <b>Was ein Anbieter nicht nennt, steht hier nicht.</b></p></li><li><h3>Der günstigste Weg</h3><p>Gerechnet ist ein Online-Kauf über den günstigsten Handelsweg, den der Anbieter für Anleihen nennt. Nicht jede Anleihe gibt es auf jedem Weg – <b>die anderen Wege stehen im Aufklapper.</b> Wo kein Limit möglich ist, steht es dabei.</p></li><li><h3>Was in keiner Zahl steckt</h3><p>Die Spanne zwischen Geld- und Briefkurs, Stückzinsen (die bekommst du beim nächsten Zinstermin zurück) und fremde Kosten, die ein Anbieter nicht beziffert – das ist dann gekennzeichnet.</p></li><li><h3>Mit Datum</h3><p>Geprüft am <b><span data-bv="stand">Stand siehe oben</span></b>. Bei jeder Quelle steht, von wann das Dokument ist. Preise ändern sich – vor dem Kauf zählt das aktuelle Preisverzeichnis deines Anbieters.</p></li></ol>
+      <h3 class="bq-t">Quellen je Anbieter</h3>
+      <ul class="bq" id="bq"><li class="klein">Die Quellen werden geladen …</li></ul>
     </section>
 
     <section class="section" id="pruefen" aria-labelledby="h-pruefen">
       <h2 id="h-pruefen">So prüfst du deinen Broker</h2>
       <p class="bv-in">Sechs Fragen, bevor du ein Depot eröffnest – oder bevor du bei deinem jetzigen Broker kaufst.</p>
-      <ol class="bv-steps"><li><h3>Gibt es deine Anleihe?</h3><p>Gib die <b>ISIN</b> der Anleihe, die dich interessiert, in die Suche deines Brokers ein. Findet er sie nicht, kannst du sie dort nicht kaufen.</p></li><li><h3>Kannst du den Handelsplatz wählen?</h3><p>Gut ist eine Auswahl: Börse Stuttgart oder Frankfurt, gettex, Tradegate, Direkthandel. Wo viel gehandelt wird, ist die Spanne klein.</p></li><li><h3>Geht eine Order mit Limit?</h3><p>Nur mit Limit zahlst du nie mehr als geplant. Revolut nimmt bei Anleihen bisher nur Market-Orders an; bei Trade Republic geht ein Limit nur für ganze Nennwert-Stücke, nicht für Bruchteile.</p></li><li><h3>Was kostet dein Betrag?</h3><p>Fester Betrag plus Prozent plus Börsenentgelt. <b>0,25&nbsp;%</b> sind bei 10.000&nbsp;€ schon 25&nbsp;€ – bei jedem Kauf und jedem Verkauf.</p></li><li><h3>Kostet das Depot etwas?</h3><p>Online-Depots sind meist kostenlos. In der Filiale zahlst du oft jedes Jahr – bei der Beispiel-Sparkasse rund 48&nbsp;€ für 5.000&nbsp;€.</p></li><li><h3>Wer kümmert sich um die Steuer?</h3><p>Deutsche Banken und Broker führen die Steuer ab und nehmen deinen Freistellungsauftrag. Bei Brokern im Ausland erklärst du die Zinsen selbst.</p></li></ol>
+      <ol class="bv-steps"><li><h3>Gibt es deine Anleihe?</h3><p>Gib die <b>ISIN</b> der Anleihe, die dich interessiert, in die Suche deines Brokers ein. Findet er sie nicht, kannst du sie dort nicht kaufen.</p></li><li><h3>Kannst du den Handelsplatz wählen?</h3><p>Gut ist eine Auswahl: Börse Stuttgart oder Frankfurt, gettex, Tradegate, Direkthandel. Wo viel gehandelt wird, ist die Spanne klein.</p></li><li><h3>Geht eine Order mit Limit?</h3><p>Nur mit Limit zahlst du nie mehr als geplant. Ob dein Broker das bei Anleihen kann, steht oben in der Tabelle.</p></li><li><h3>Was kostet dein Betrag?</h3><p>Fester Betrag plus Prozent plus Börsenentgelt. <b>0,25&nbsp;%</b> sind bei 10.000&nbsp;€ schon 25&nbsp;€ – bei jedem Kauf und jedem Verkauf.</p></li><li><h3>Kostet das Depot etwas?</h3><p>Online-Depots sind meist kostenlos. In der Filiale zahlst du oft jedes Jahr – das steht oben in der Spalte „Depot im Jahr“.</p></li><li><h3>Wer kümmert sich um die Steuer?</h3><p>Deutsche Banken und Broker führen die Steuer ab und nehmen deinen Freistellungsauftrag. Bei Brokern im Ausland erklärst du die Zinsen selbst.</p></li></ol>
     </section>
 
     <div class="weiter">
@@ -255,14 +305,6 @@
         <li><a href="begriffe.html">Glossar: Begriffe kurz erklärt</a></li>
       </ul>
     </nav>
-    <details class="quellen" id="quellen">
-      <summary>Datenquellen und Methodik</summary>
-      <div class="quellen-body">
-        <p><strong>Methodik.</strong> Alle Angaben zum oben genannten Stand ausschließlich auf den Webseiten, in den Hilfe-Centern und in den Preisverzeichnissen der Anbieter selbst geprüft – keine Vergleichsportale, Tests oder Presseberichte Dritter. Was ein Anbieter auf seinen Seiten nicht nennt, steht auch hier nicht. Kosten = Kauf von Anleihen mit 5.000&nbsp;€ bzw. 100.000&nbsp;€ Kurswert, mit Limit, über den günstigsten Handelsweg, den der Anbieter für Anleihen nennt. Nicht eingerechnet: die Spanne zwischen Geld- und Briefkurs, Stückzinsen (die du beim nächsten Zinstermin zurückbekommst) und Maklercourtage, wo der Anbieter sie nicht beziffert. Einordnung „fast alle Anleihen“: Staats- und Unternehmensanleihen an mehreren Handelsplätzen. „Auswahl“: nur ein Teil der Anleihen oder nur ein Handelsweg. „Keine“: weder Staatsanleihen noch andere normale Anleihen.</p>
-        <p><strong>Sonderfälle.</strong> Smartbroker+: Für gettex-Orders unter 500&nbsp;€ nennt die Anleihen-Seite 4&nbsp;€, die allgemeine Konditionenseite 1&nbsp;€ – für 5.000&nbsp;€ spielt das keine Rolle. DEGIRO: Für Euronext-Börsen fällt eine Anschlussgebühr von 0,25&nbsp;% des Depotwerts an, höchstens 2,50&nbsp;€ je Börse und Jahr – nicht für die Börse Frankfurt. Interactive Brokers: Als Jahressteuerunterlagen für Kunden außerhalb der USA nennt IBKR nur US-Formulare; eine deutsche Steuerbescheinigung gibt es nicht. maxblue: Die Börsengebühren je Platz stehen nur im Preis- und Leistungsverzeichnis der Deutschen Bank (Kapitel C1, Nr. 4), das online nicht frei abrufbar ist – deshalb hier ohne Zahl. S Broker: Die Preisliste beschreibt die Sofortorder nur mit „Handelsplatzauswahl über Best Execution Policy“; ob sie für Anleihen und mit Limit möglich ist, sagt S Broker nicht. Commerzbank: Das Depotentgelt von 0,175&nbsp;% im Jahr hat ein Minimum von 4,95&nbsp;€ je Quartal – bei 5.000&nbsp;€ greift das Minimum (19,80&nbsp;€ im Jahr). Trade Republic: Die Zahl der Anleihen nennt Trade Republic nicht mehr (zum Start am 15.09.2023: 500); US-Dollar-Anleihen laut Pressemitteilung vom 15.10.2025; Limit-Orders nur für ganze Nennwert-Stücke, keine Sparpläne. Revolut: Anleihen kauft man über Revolut Securities Europe UAB (Litauen), nur als Market-Order; Revolut „berät nicht in Steuerfragen“ und verweist auf die Steuerpflichten am Wohnsitz. Scalable Capital: zwei Festzinsanleihen von Goldman Sachs (3 und 5 Jahre), laut Scalable wird das Angebot „nach und nach erweitert“. finanzen.net zero: Produktseite und Handelszeiten nennen Aktien, ETFs, Fonds, Derivate und Kryptowährungen – keine Anleihen; nur eine Vergleichsseite von finanzen.net listet „Anleihen“, das deckt sich nicht mit den Produktseiten. Sparkasse: Preisaushang der Sparkasse Siegen, Depot 8,93&nbsp;€ je Quartal plus 0,0595&nbsp;% vom Kurswert je Quartal (mind. 1,79&nbsp;€ je Posten) – bei 5.000&nbsp;€ rund 48&nbsp;€ im Jahr.</p>
-        <p><strong>Quellen je Anbieter</strong> (nur eigene Seiten der Anbieter). Smartbroker+: <a href="https://www.smartbrokerplus.de/de-de/anleihen-kaufen/" rel="noopener">Anleihen kaufen</a>, <a href="https://www.smartbrokerplus.de/de-de/konditionen/" rel="noopener">Konditionen</a> · Traders Place: <a href="https://www.tradersplace.de/angebot/uebersicht/anleihen" rel="noopener">Anleihen</a>, <a href="https://www.tradersplace.de/" rel="noopener">Startseite (Depot 0&nbsp;€, Baader Bank, über 40 Handelsplätze)</a> · DEGIRO: <a href="https://www.degiro.de/data/pdf/de/Preisverzeichnis.pdf" rel="noopener">Preisverzeichnis, gültig ab 01.01.2026</a>, <a href="https://www.degiro.de/helpdesk/steuer/kann-degiro-eine-steuerbescheinigung-ausstellen" rel="noopener">Helpdesk: Steuerbescheinigung</a> · Interactive Brokers: <a href="https://www.interactivebrokers.ie/de/pricing/commissions-bonds-europe.php?re=europe" rel="noopener">Provisionen Anleihen Europa</a>, <a href="https://www.interactivebrokers.ie/de/trading/products-bonds.php" rel="noopener">Anleihen-Marktplatz</a>, <a href="https://www.interactivebrokers.ie/en/support/tax-nonus-forms.php" rel="noopener">Steuerformulare für Kunden außerhalb der USA</a> · flatex: <a href="https://www.flatex.de/produkte-handel/produkte/anleihen/" rel="noopener">Anleihen</a>, <a href="https://www.flatex.de/preise/" rel="noopener">Preise, Stand 16.12.2025</a> · DKB: <a href="https://www.dkb.de/privatkunden/investieren/depot" rel="noopener">Depot</a> · maxblue: <a href="https://www.maxblue.de/wertpapierhandel/handeln/direct-trade.html" rel="noopener">Direct Trade</a>, <a href="https://www.maxblue.de/wertpapierhandel/handeln/depot.html" rel="noopener">Depot (40 Börsenplätze, Depot 0&nbsp;€)</a>, <a href="https://www.maxblue.de/service-kontakt/informationen/preise-leistungen.html" rel="noopener">Preise &amp; Leistungen, Stand 03.03.2026</a> · S Broker: <a href="https://www.sbroker.de/pdf/preismodell.pdf" rel="noopener">Preis- und Leistungsübersicht, gültig ab 01.07.2026</a>, <a href="https://www.sbroker.de/wertpapiere/anleihen.html" rel="noopener">Anleihen</a>, <a href="https://www.sbroker.de/rocken-statt-zocken" rel="noopener">Sofortorder</a> · 1822direkt: <a href="https://www.1822direkt.de/anlegen-depot/leistungen-und-konditionen/" rel="noopener">Leistungen und Konditionen</a> · comdirect: <a href="https://www.comdirect.de/depot/" rel="noopener">Depot</a>, <a href="https://www.comdirect.de/wertpapierhandel/anleihen-informationen.html" rel="noopener">Anleihen</a> · Commerzbank: <a href="https://www.commerzbank.de/privatkunden/investieren/depot/depot-eroeffnen/" rel="noopener">DirektDepot, Konditionen vom 21.01.2026</a> · ING: <a href="https://www.ing.de/sparen-anlegen/direkt-depot/konditionen/" rel="noopener">Konditionen</a>, <a href="https://www.ing.de/wertpapiere/anleihen/" rel="noopener">Anleihen</a>, <a href="https://www.ing.de/sparen-anlegen/direkt-depot/handelsplaetze/handelspartner/" rel="noopener">Direkthandelspartner</a> · Consorsbank: <a href="https://www.consorsbank.de/web/Wertpapierhandel/Preismodell" rel="noopener">Preismodell</a>, <a href="https://www.consorsbank.de/web/Service/Preise-Zinsen/Preise-Zinsen-Wertpapiere" rel="noopener">Preise Wertpapiere</a> · Sparkasse Siegen: <a href="https://www.sparkasse-siegen.de/content/dam/myif/spk-siegen/work/dokumente/pdf/preise-leistungen/preisaushang.pdf" rel="noopener">Preisaushang vom 03.08.2026</a> · Trade Republic: <a href="https://support.traderepublic.com/de-de/1614" rel="noopener">Wie kann ich in Anleihen investieren?</a>, <a href="https://support.traderepublic.com/de-de/809-Was-ist-die-Ex_Post-Kosteninformation" rel="noopener">Ein Euro Fremdkostenpauschale</a>, <a href="https://assets.traderepublic.com/assets/files/230915_TradeRepublic_Pressemitteilung_Anleihen_DE_DE.pdf" rel="noopener">Pressemitteilung zum Start, 15.09.2023</a>, <a href="https://assets.traderepublic.com/assets/files/251015_TradeRepublic_PressRelease_Fixed_Income_AT_DE.pdf" rel="noopener">Pressemitteilung US-Dollar-Anleihen, 15.10.2025</a> · Revolut: <a href="https://help.revolut.com/de-DE/help/wealth/stocks/bonds/bonds-fees/" rel="noopener">Gebühren für Anleihen</a>, <a href="https://help.revolut.com/de-DE/help/wealth/stocks/bonds/buy-bonds-in-the-revolut-app/" rel="noopener">Anleihen kaufen (nur Market-Orders, Handelszeiten)</a>, <a href="https://www.revolut.com/de-DE/bonds/" rel="noopener">Anleihen (ab 2&nbsp;€, Revolut Securities Europe UAB)</a>, <a href="https://help.revolut.com/de-DE/help/wealth/stocks/licences-regulations/tax-information-for-stocks/reporting-taxes-on-my-investments/" rel="noopener">Steuern auf Trading</a> · Scalable Capital: <a href="https://de.scalable.capital/anleihen" rel="noopener">Anleihen</a>, <a href="https://help.scalable.capital/handeln-1541d52f/in-welche-finanzprodukte-kann-ich-investieren-65438ba9" rel="noopener">Hilfe: Finanzprodukte</a> · finanzen.net zero: <a href="https://www.finanzen.net/zero/" rel="noopener">Produktseite</a>, <a href="https://www.finanzen.net/zero/handelszeiten/" rel="noopener">Handelszeiten</a>, <a href="https://www.finanzen.net/online-broker-vergleich/finanzen-net-zero" rel="noopener">Vergleichsseite von finanzen.net</a> · N26: <a href="https://n26.com/de-de/anlagemoeglichkeiten" rel="noopener">Anlagemöglichkeiten</a> · onvista bank: <a href="https://hilfe.onvista.de/de/warum-wird-der-geschaeftsbetrieb-der-onvista-bank-eingestellt" rel="noopener">Einstellung des Geschäftsbetriebs</a>.</p>
-      </div>
-    </details>
   </main>
   <footer class="fuss">
     <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
@@ -282,18 +324,95 @@ window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']
 MC.navInit();
 </script>
 <script>
-// Broker-Vergleich aus broker.json (seit 30.09.2026): Tabelle, Handykarten, Kostenbalken und Stand kommen aus einer Quelle.
+// Broker-Vergleich aus broker.json (Konzept „Kosten offen“, 01.10.2026): Die Datei enthält je Anbieter das Preismodell in
+// Bausteinen (fix, pct, min, max, staffel, marginal, plus) – die Seite rechnet daraus die Kosten für den gewählten Betrag
+// und schreibt den Rechenweg dazu. Dieselbe Rechnung steht in scripts/statische_tabellen.py (Fassung ohne JavaScript).
 // Zeitgebundene Textteile ({t, bis}) verschwinden nach ihrem Datum; Handelszeiten werden tagesaktuell in MEZ/MESZ umgerechnet.
 (function () {
-  var box = document.getElementById("bv-tabelle");
+  var box = document.getElementById("bk-liste");
   if (!box || !window.MC || !MC.load) return;
   var heute = new Date(), iso = heute.getFullYear() + "-" + String(heute.getMonth() + 1).padStart(2, "0") + "-" + String(heute.getDate()).padStart(2, "0");
-  var EUR = "&nbsp;€";
+  var EUR = "&nbsp;€", PZ = "&nbsp;%";
   function gilt(x) { return x != null && (typeof x === "string" || !x.bis || iso <= x.bis); }
   function txt(x) { return typeof x === "string" ? x : x.t + (x.zeige_bis ? " (Angebot bis " + MC.datum(x.bis) + ")" : ""); }
   function liste(a) { return (a || []).filter(gilt).map(txt); }
   function smalls(a) { return liste(a).map(function (t) { return "<small>" + t + "</small>"; }).join(""); }
-  function geld(v, ab) { return (ab ? "ab " : "") + MC.zahl(v, 2) + EUR; }
+  function eur(v) { return MC.zahl(v, 2) + EUR; }
+  function glatt(v) { return MC.zahl(v, Math.round(v * 100) % 100 ? 2 : 0) + EUR; }   // Beträge und Grenzen: 5.000 €, aber 9,90 €
+  function pz(v) { return String(v).replace(".", ",") + PZ; }
+  function rund(v) { return Math.round(v * 100 + 1e-6) / 100; }
+  function anteil(v, B) { var p = v / B * 100; return v > 0 && p < 0.005 ? "unter 0,01" + PZ : MC.zahl(p, 2) + PZ; }   // Kosten in Prozent vom Kaufbetrag
+
+  // ---- Rechnung: ein Preisbaustein {fix, pct, min, max} für den Betrag B → Wert, Formel, ob Mindest-/Höchstpreis greift
+  function baustein(p, B) {
+    var f = [];
+    if (p.fix) f.push(eur(p.fix));
+    if (p.pct) f.push(pz(p.pct) + " von " + glatt(B));
+    var roh = rund((p.fix || 0) + B * (p.pct || 0) / 100), v = roh, grenze = "";
+    if (p.min != null && roh < p.min) { v = p.min; grenze = "Mindestpreis"; }
+    if (p.max != null && roh > p.max) { v = p.max; grenze = "Höchstpreis"; }
+    var einfach = !p.pct;   // nur ein fester Betrag
+    return { v: v, roh: roh, formel: einfach ? ((p.ft || (p.fix ? "Festpreis" : "")) + " " + eur(p.fix || 0)).trim() : f.join(" + "), grenze: grenze, einfach: einfach };
+  }
+  function stufe(st, i, alle) {   // Beschriftung einer Preisstufe
+    if (st.t) return st.t;
+    if (st.unter != null) return "unter " + glatt(st.unter);
+    if (st.bis != null) return "bis " + glatt(st.bis);
+    var v = alle[i - 1] || {};
+    return v.unter != null ? "ab " + glatt(v.unter) : v.bis != null ? "über " + glatt(v.bis) : "";
+  }
+  // Handelsweg w für den Betrag B → { v, kurz, schritte[] }
+  function rechne(w, B) {
+    var kurz, schritte = [], v, b;
+    if (w.staffel) {
+      var i = 0;
+      while (i < w.staffel.length - 1 && !(w.staffel[i].unter != null ? B < w.staffel[i].unter : w.staffel[i].bis != null ? B <= w.staffel[i].bis : true)) i++;
+      b = baustein(w.staffel[i], B);
+      var name = stufe(w.staffel[i], i, w.staffel);
+      kurz = (name ? name + ": " : "") + (b.grenze ? b.grenze + " " + eur(b.v) : b.formel);
+      schritte.push("Preisstufe " + name + ": " + b.formel + (b.einfach ? "" : " = " + eur(b.roh)));
+      if (b.grenze) schritte.push(b.grenze + " " + eur(b.v) + " greift");
+      v = b.v;
+    } else if (w.marginal) {
+      var rest = B, unten = 0, f = [], sum = 0;
+      w.marginal.forEach(function (m) {
+        if (rest <= 0) return;
+        var teil = m.bis != null ? Math.min(rest, m.bis - unten) : rest;
+        f.push(pz(m.pct) + " von " + glatt(teil)); sum += teil * m.pct / 100; rest -= teil; unten = m.bis;
+      });
+      sum = rund(sum); v = sum; kurz = f.join(" + ");
+      schritte.push(kurz + " = " + eur(sum));
+      if (w.min != null && sum < w.min) { v = w.min; kurz = "Mindestpreis " + eur(v); schritte.push(kurz + " greift"); }
+      if (w.max != null && sum > w.max) { v = w.max; kurz = "Höchstpreis " + eur(v); schritte.push(kurz + " greift"); }
+    } else {
+      b = baustein(w, B); v = b.v;
+      kurz = b.grenze ? b.grenze + " " + eur(b.v) : b.formel;
+      schritte.push(b.formel + (b.einfach ? "" : " = " + eur(b.roh)));
+      if (b.grenze) schritte.push(b.grenze + " " + eur(b.v) + " greift");
+    }
+    (w.plus || []).forEach(function (p) {
+      var x = baustein(p, B);
+      kurz += " + " + eur(x.v) + " " + (p.k || p.t);
+      schritte.push("+ " + eur(x.v) + " " + p.t + (x.einfach ? "" : " (" + x.formel + (x.grenze ? ", " + x.grenze + " greift" : "") + ")"));
+      v += x.v;
+    });
+    return { v: rund(v), kurz: kurz, schritte: schritte, w: w };
+  }
+  function guenstigster(b, B) {   // günstigster Weg mit Limit (bei Gleichstand der zuerst genannte)
+    var r = null;
+    b.wege.forEach(function (w) { if (w.nur_info) return; var x = rechne(w, B); if (!r || x.v < r.v - 1e-9) r = x; });
+    return r;
+  }
+  // Depot im Jahr: fester Betrag + Prozent vom Depotwert; pmin = Mindestbetrag des Prozent-Teils (z. B. „mindestens 1,79 € je Posten und Quartal“)
+  function depot(b, B) {
+    var d = b.depot || {};
+    if (d.fix == null && d.pct == null) return 0;
+    var v = (d.fix || 0) + Math.max(B * (d.pct || 0) / 100, d.pmin || 0);
+    if (d.min != null && v < d.min) v = d.min;
+    if (d.max != null && v > d.max) v = d.max;
+    return rund(v);
+  }
+
   // Handelszeit: Uhrzeiten mit festem UTC-Abstand → Stunde und Zonenname in Europe/Berlin am heutigen Tag
   function zeit(h) {
     var roh = h.von + "–" + h.bis + " Uhr " + h.zone;
@@ -303,78 +422,105 @@ MC.navInit();
         var p = f.formatToParts(new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), std - h.utc)));
         var o = {}; p.forEach(function (x) { o[x.type] = x.value; }); return o;
       };
-      var a = teil(h.von), b = teil(h.bis);
-      return roh + " (" + a.timeZoneName + " " + (+a.hour) + "–" + (+b.hour) + " Uhr)";
+      var a = teil(h.von), z = teil(h.bis);
+      return roh + " (" + a.timeZoneName + " " + (+a.hour) + "–" + (+z.hour) + " Uhr)";
     } catch (e) { return roh; }
   }
   function handel(b) { return b.handelszeit ? b.handel.replace("{handelszeit}", zeit(b.handelszeit)) : b.handel; }
-  function hin(b) { return (b.hin || []).map(function (t) { return '<span class="hin warn">' + t + "</span>"; }).join(""); }
-  function k100w(b) { return liste(b.k100_w).join("; "); }
+  function hin(b) { return (b.hin || []).map(function (t) { return '<span class="hin">' + t + "</span>"; }).join(""); }
+  function quellen(b) {
+    return (b.quellen || []).map(function (q) { return '<a href="' + q.url + '" rel="noopener">' + q.t + "</a>" + (q.stand ? " (" + q.stand + ")" : ""); }).join(" · ");
+  }
 
   MC.load("broker.json").then(function (D) {
     var G = {}; D.gruppen.forEach(function (g) { G[g.id] = g; g.liste = []; });
     D.anbieter.forEach(function (b, i) { b._i = i; G[b.gruppe].liste.push(b); });
-    D.gruppen.forEach(function (g) { g.liste.sort(function (x, y) { return ((x.k5 == null ? 1e9 : x.k5) - (y.k5 == null ? 1e9 : y.k5)) || x._i - y._i; }); });
+    var mit = D.anbieter.filter(function (b) { return b.wege && b.wege.length; });
     var n = D.anbieter.length, stand = MC.datum(D.stand);
     document.querySelectorAll('[data-bv="stand"]').forEach(function (e) { e.textContent = stand; });
     document.querySelectorAll('[data-bv="anzahl"]').forEach(function (e) { e.textContent = n; });
-    document.getElementById("bv-leg").innerHTML = D.gruppen.map(function (g) { return '<li><span class="bdg ' + g.id + '">' + g.bdg + "</span>" + g.legende + "</li>"; }).join("");
+    document.querySelectorAll('[data-bv="mit"]').forEach(function (e) { e.textContent = mit.length; });
 
-    // Tabelle
-    var t = '<table class="bv-t"><caption class="sr-only">Broker für Anleihen im Vergleich, Stand ' + stand + '</caption>'
-      + '<thead><tr><th scope="col">Anbieter</th><th scope="col">Anleihen</th><th scope="col">Handelsplätze</th><th scope="col">Gebühr je Kauf</th><th scope="col" class="r">Kauf für 5.000' + EUR + '</th><th scope="col" class="r">Kauf für 100.000' + EUR + '</th><th scope="col">Depot</th></tr></thead>';
+    // ---- 1 Kostenliste für den Betrag B
+    var offen = {};   // aufgeklappte Anbieter bleiben beim Wechsel des Betrags offen
+    function zeichne(B) {
+      [].forEach.call(box.querySelectorAll("details.bk-d"), function (d) { offen[d.getAttribute("data-b")] = d.open; });
+      var zeilen = mit.map(function (b) { return { b: b, r: guenstigster(b, B), d: depot(b, B) }; });
+      zeilen.sort(function (x, y) { return x.r.v - y.r.v || x.b._i - y.b._i; });
+      var max = Math.max.apply(null, zeilen.map(function (x) { return x.r.v; })) || 1, min = zeilen[0].r.v;
+      box.innerHTML = zeilen.map(function (x) {
+        var b = x.b, r = x.r, w = r.w, d = b.depot || {};
+        var andere = b.wege.filter(function (y) { return y !== w; }).map(function (y) {
+          var a = rechne(y, B);
+          return "<span>" + y.name + ": <b>" + eur(a.v) + "</b> – " + a.kurz + (y.offen ? "; dazu " + y.offen : "") + (y.n ? " (" + y.n + ")" : "") + "</span>";
+        }).join("");
+        return '<li class="bk' + (r.v === min ? " min" : "") + '" data-g="' + b.gruppe + '">'
+          + '<div class="bk-z"><div class="bk-an"><b>' + b.name + '</b><span class="typ">' + b.typ + "</span>" + hin(b) + "</div>"
+          + '<div class="bk-ko"><div class="bk-bar"><i style="width:calc((100% - 150px) * ' + (r.v / max).toFixed(4) + ')"></i><b' + (r.v === min ? ' title="günstigster Preis"' : "") + ">" + eur(r.v) + '</b><span class="pz">' + anteil(r.v, B) + "</span></div>"
+          + (w.offen ? '<p class="bk-of">dazu ' + w.offen + "</p>" : "")
+          + '<details class="bk-d" data-b="' + b._i + '"' + (offen[b._i] ? " open" : "") + '><summary><span class="bk-rw">' + r.kurz + " · " + w.name + '</span><span class="bk-mehr">Rechnung und Quelle</span></summary><dl class="bk-dl">'
+          + "<dt>Preis laut Anbieter</dt><dd>" + b.preis + smalls(b.preis_n) + "</dd>"
+          + "<dt>Rechnung für " + glatt(B) + "</dt><dd><small>" + w.name + "</small>" + r.schritte.map(function (s) { return "<span>" + s + "</span>"; }).join("")
+          + '<span class="sum">= ' + eur(r.v) + " · " + anteil(r.v, B) + " vom Betrag</span>" + (w.n ? "<small>" + w.n + "</small>" : "") + "</dd>"
+          + (w.offen ? "<dt>Nicht enthalten</dt><dd>" + w.offen + "</dd>" : "")
+          + (andere ? "<dt>Andere Wege</dt><dd>" + andere + "</dd>" : "")
+          + "<dt>Depot</dt><dd>" + d.t + smalls(d.n) + "</dd>"
+          + "<dt>Quelle</dt><dd>" + quellen(b) + (b.notiz ? "<small>" + b.notiz + "</small>" : "") + "</dd></dl></details></div>"
+          + '<div class="bk-de' + (x.d > 0 ? " kostet" : "") + '"><span class="lab">Depot im Jahr: </span>' + glatt(x.d) + (d.kurz ? "<small>" + d.kurz + "</small>" : "") + "</div></div></li>";
+      }).join("");
+      document.querySelectorAll('[data-bv="betrag"]').forEach(function (e) { e.innerHTML = glatt(B); });
+      document.querySelectorAll('[data-bv="spanne"]').forEach(function (e) { e.innerHTML = eur(min) + " bis " + eur(max); });
+    }
+    // Betrag wählen: Knöpfe und freies Feld
+    var wahl = document.getElementById("bk-wahl"), frei = document.getElementById("bk-frei"), B0 = D.standard || 5000;
+    wahl.querySelector(".bk-knoepfe").innerHTML = D.betraege.map(function (v) {
+      return '<button type="button" class="lbtn" data-b="' + v + '" aria-pressed="' + (v === B0) + '">' + glatt(v) + "</button>";
+    }).join("");
+    function setze(B, vonFeld) {
+      [].forEach.call(wahl.querySelectorAll("button.lbtn"), function (k) { k.setAttribute("aria-pressed", String(+k.getAttribute("data-b") === B)); });
+      if (!vonFeld) frei.value = "";
+      zeichne(B);
+    }
+    wahl.addEventListener("click", function (e) { var k = e.target.closest("button.lbtn"); if (k) setze(+k.getAttribute("data-b")); });
+    frei.addEventListener("input", function () {
+      var v = parseInt(frei.value.replace(/[^\d]/g, ""), 10);
+      if (v >= 100 && v <= 10000000) setze(v, true);
+    });
+    wahl.hidden = false;
+    zeichne(B0);
+    document.getElementById("bv-leg2").innerHTML = D.gruppen.filter(function (g) { return g.balken; }).map(function (g) { return '<span class="' + (g.id === "ja" ? "" : g.id) + '">' + g.balken + "</span>"; }).join("") + '<span class="pkt">günstigster Preis</span>';
+
+    // ---- 2 Angebot: Tabelle (ab 901 px) und Karten (bis 900 px)
+    document.getElementById("bv-leg").innerHTML = D.gruppen.map(function (g) { return '<li><span class="bdg ' + g.id + '">' + g.bdg + "</span>" + g.legende + "</li>"; }).join("");
+    var t = '<table class="bv-t"><caption class="sr-only">Anleihen-Angebot der Broker im Vergleich, Stand ' + stand + '</caption>'
+      + '<thead><tr><th scope="col">Anbieter</th><th scope="col">Anleihen</th><th scope="col">Handelsplätze</th><th scope="col">Order mit Limit</th><th scope="col">Steuer</th></tr></thead>';
     var c = '<div class="bv-cards">';
-    // Bildwelt 2.0 (30.09.2026): günstigster Preis je Kostenspalte mit Kupon-Punkt (bei Gleichstand alle)
-    var mitK = D.anbieter.filter(function (b) { return b.gruppe !== "nein"; });
-    function tief(f) { var v = mitK.map(function (b) { return b[f]; }).filter(function (x) { return x != null; }); return v.length ? Math.min.apply(null, v) : null; }
-    var min5 = tief("k5"), min100 = tief("k100");
-    function kz(v, m) { return v != null && v === m ? ' min" title="günstigster Preis' : ""; }
+    function zelle(tag, x) { return "<" + tag + (x && x.warn ? ' class="warn"' : "") + ">" + (x ? x.t + (x.n ? "<small>" + x.n + "</small>" : "") : "–") + "</" + tag + ">"; }
     D.gruppen.forEach(function (g) {
       var nein = g.id === "nein";
-      t += '<tbody class="g-' + g.id + '"><tr class="grp"><th colspan="7" scope="rowgroup"><span class="bdg ' + g.id + '">' + g.bdg + "</span>" + g.titel
-        + ' <span class="n">· ' + g.liste.length + " Anbieter" + (nein ? "" : ", nach Kosten für 5.000" + EUR + " sortiert") + "</span></th></tr>";
+      t += '<tbody class="g-' + g.id + '"><tr class="grp"><th colspan="5" scope="rowgroup"><span class="bdg ' + g.id + '">' + g.bdg + "</span>" + g.titel + ' <span class="n">· ' + g.liste.length + " Anbieter</span></th></tr>";
       c += '<h3 class="bv-ch"><span class="bdg ' + g.id + '">' + g.bdg + "</span>" + g.titel + ' <span class="n">· ' + g.liste.length + '</span></h3><ul class="bvc-l">';
       g.liste.forEach(function (b) {
-        var kopf = '<th scope="row" class="an"><b>' + b.name + '</b><span class="typ">' + b.typ + "</span>" + hin(b) + "</th>";
+        var kopf = '<th scope="row" class="an"><b>' + b.name + '</b><span class="typ">' + b.typ + "</span></th>";
         if (nein) {
-          t += "<tr>" + kopf + '<td colspan="6">' + b.anleihen + smalls(b.anleihen_n) + "</td></tr>";
-          c += '<li class="bvc"><p class="bvc-h"><span><b>' + b.name + '</b><span class="typ">' + b.typ + "</span></span></p><dl><dt>Anleihen</dt><dd>" + b.anleihen + smalls(b.anleihen_n) + "</dd></dl>" + hin(b) + "</li>";
+          t += "<tr>" + kopf + '<td colspan="4">' + b.anleihen + smalls(b.anleihen_n) + "</td></tr>";
+          c += '<li class="bvc"><b>' + b.name + '</b><span class="typ">' + b.typ + "</span><dl><dt>Anleihen</dt><dd>" + b.anleihen + smalls(b.anleihen_n) + "</dd></dl></li>";
           return;
         }
-        var w100 = k100w(b);
-        t += "<tr>" + kopf + "<td>" + b.anleihen + smalls(b.anleihen_n) + "</td><td>" + handel(b) + smalls(b.handel_n) + "</td><td>" + b.gebuehr + smalls(b.gebuehr_n) + "</td>"
-          + '<td class="k' + kz(b.k5, min5) + '"><b>' + geld(b.k5, b.k5_ab) + "</b><small>" + b.k5_w + '</small></td><td class="k' + kz(b.k100, min100) + '"><b>' + geld(b.k100, b.k100_ab) + "</b><small>" + w100 + "</small></td>"
-          + "<td>" + b.depot + smalls(b.depot_n) + "</td></tr>";
-        c += '<li class="bvc"><p class="bvc-h"><span><b>' + b.name + '</b><span class="typ">' + b.typ + '</span></span><span class="bvc-k"><small>5.000' + EUR + " kaufen</small><b>" + geld(b.k5, b.k5_ab) + "</b><em>" + b.k5_w + "</em></span></p>"
-          + "<dl><dt>Anleihen</dt><dd>" + b.anleihen + smalls(b.anleihen_n) + "</dd><dt>Handel</dt><dd>" + handel(b) + smalls(b.handel_n) + "</dd><dt>Gebühr</dt><dd>" + b.gebuehr + smalls(b.gebuehr_n) + "</dd>"
-          + "<dt>100.000" + EUR + "</dt><dd>" + geld(b.k100, b.k100_ab) + "<small>" + w100 + "</small></dd><dt>Depot</dt><dd>" + b.depot + smalls(b.depot_n) + "</dd></dl>" + hin(b) + "</li>";
+        t += "<tr>" + kopf + "<td>" + b.anleihen + smalls(b.anleihen_n) + "</td><td>" + handel(b) + smalls(b.handel_n) + "</td>" + zelle("td", b.limit) + zelle("td", b.steuer) + "</tr>";
+        c += '<li class="bvc"><b>' + b.name + '</b><span class="typ">' + b.typ + "</span><dl><dt>Anleihen</dt><dd>" + b.anleihen + smalls(b.anleihen_n) + "</dd><dt>Handel</dt><dd>" + handel(b) + smalls(b.handel_n) + "</dd>"
+          + "<dt>Limit</dt>" + zelle("dd", b.limit) + "<dt>Steuer</dt>" + zelle("dd", b.steuer) + "</dl></li>";
       });
       t += "</tbody>"; c += "</ul>";
     });
-    box.innerHTML = t + "</table>" + c + "</div>";
+    document.getElementById("bv-tabelle").innerHTML = t + "</table>" + c + "</div>";
 
-    // Kostenbalken: alle Anbieter mit Kosten, aufsteigend; Achse in 10-€-Schritten mit Luft nach oben
-    var bars = [];
-    D.anbieter.forEach(function (b) {
-      if (b.k5 == null) return;
-      (b.balken || [{ k5: b.k5, n: b.balken_n }]).forEach(function (x) { bars.push({ b: b, k5: x.k5, n: gilt(x.n) ? txt(x.n) : "" }); });
-    });
-    bars.sort(function (x, y) { return x.k5 - y.k5 || x.b._i - y.b._i; });
-    var max = Math.max.apply(null, bars.map(function (x) { return x.k5; })), ax = Math.ceil(max / 10) * 10 + 20;
-    var ul = document.getElementById("bv-bars");
-    ul.innerHTML = bars.map(function (x) {
-      return '<li class="bar' + (x.b.gruppe === "aw" ? " aw" : "") + '"><span class="bar-l">' + x.b.name + (x.n ? "<small>" + x.n + "</small>" : "") + '</span><span class="bar-v"><i></i><b>' + geld(x.k5, x.b.k5_ab) + "</b></span></li>";
+    // ---- 3 Quellen je Anbieter
+    document.getElementById("bq").innerHTML = D.anbieter.map(function (b) {
+      return "<li><b>" + b.name + "</b><span>" + (quellen(b) || "–") + (b.notiz ? "<br>" + b.notiz : "") + "</span></li>";
     }).join("");
-    ul.style.setProperty("--gitter", (1000 / ax) + "%");
-    [].forEach.call(ul.querySelectorAll(".bar-v i"), function (i, k) { i.style.width = (bars[k].k5 / ax * 100) + "%"; });
-    var tk = "";
-    for (var v = 0; v < ax; v += 10) tk += '<i style="left:' + (v / ax * 100) + '%">' + v + "</i>";
-    document.getElementById("bv-ticks").innerHTML = tk;
-    document.getElementById("bv-leg2").innerHTML = D.gruppen.filter(function (g) { return g.balken; }).map(function (g) { return '<span class="' + (g.id === "ja" ? "" : g.id) + '">' + g.balken + "</span>"; }).join("");
-    var min = Math.min.apply(null, bars.map(function (x) { return x.k5; }));
-    document.querySelectorAll('[data-bv="spanne"]').forEach(function (e) { e.textContent = MC.zahl(min) + " bis " + MC.zahl(Math.round(max)); });
   }).catch(function () {
-    box.innerHTML = '<p class="klein">Die Übersicht konnte nicht geladen werden. Bitte lade die Seite neu.</p>';
+    box.innerHTML = '<li class="klein">Die Übersicht konnte nicht geladen werden. Bitte lade die Seite neu.</li>';
   });
 })();
 </script>

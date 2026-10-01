@@ -25,6 +25,7 @@ Passt eine Seite oder Datei nicht zum Erwarteten, gibt es eine Warnung und die S
 import datetime
 import html as htmllib
 import json
+import math
 import os
 import re
 import sys
@@ -61,70 +62,253 @@ def lade(site, name):
         return json.load(f)
 
 
-# ---------- Broker-Vergleich: dieselbe Tabelle wie das Skript in broker-vergleich.html ----------
-def broker_tabelle(D, heute):
+# ---------- Broker-Vergleich: dieselbe Rechnung und dieselben Zeilen wie das Skript in broker-vergleich.html ----------
+# broker.json enthält je Anbieter das Preismodell in Bausteinen (fix, pct, min, max, staffel, marginal, plus). Daraus
+# rechnen Seite und dieses Skript die Kosten – ändert sich die Rechnung an einer Stelle, muss sie an der anderen folgen.
+PZ = "&nbsp;%"
+
+
+def b_rund(v):
+    return math.floor(v * 100 + 1e-6 + 0.5) / 100   # wie rund() im Seitenskript
+
+
+def b_eur(v):
+    return zahl(v, 2) + EUR
+
+
+def b_glatt(v):
+    return zahl(v, 2 if round(v * 100) % 100 else 0) + EUR
+
+
+def b_pz(v):
+    return ("%g" % v).replace(".", ",") + PZ
+
+
+def b_baustein(p, B):
+    f = []
+    if p.get("fix"):
+        f.append(b_eur(p["fix"]))
+    if p.get("pct"):
+        f.append(b_pz(p["pct"]) + " von " + b_glatt(B))
+    roh = b_rund((p.get("fix") or 0) + B * (p.get("pct") or 0) / 100)
+    v, grenze = roh, ""
+    if p.get("min") is not None and roh < p["min"]:
+        v, grenze = p["min"], "Mindestpreis"
+    if p.get("max") is not None and roh > p["max"]:
+        v, grenze = p["max"], "Höchstpreis"
+    einfach = not p.get("pct")   # nur ein fester Betrag
+    return {"v": v, "roh": roh, "formel": ((p.get("ft") or ("Festpreis" if p.get("fix") else "")) + " " + b_eur(p.get("fix") or 0)).strip() if einfach else " + ".join(f), "grenze": grenze, "einfach": einfach}
+
+
+def b_stufe(st, i, alle):
+    if st.get("t"):
+        return st["t"]
+    if st.get("unter") is not None:
+        return "unter " + b_glatt(st["unter"])
+    if st.get("bis") is not None:
+        return "bis " + b_glatt(st["bis"])
+    v = alle[i - 1] if i else {}
+    if v.get("unter") is not None:
+        return "ab " + b_glatt(v["unter"])
+    return "über " + b_glatt(v["bis"]) if v.get("bis") is not None else ""
+
+
+def b_rechne(w, B):
+    schritte = []
+    if w.get("staffel"):
+        st = w["staffel"]
+        i = 0
+        while i < len(st) - 1 and not (B < st[i]["unter"] if st[i].get("unter") is not None else B <= st[i]["bis"] if st[i].get("bis") is not None else True):
+            i += 1
+        b = b_baustein(st[i], B)
+        name = b_stufe(st[i], i, st)
+        kurz = (name + ": " if name else "") + (b["grenze"] + " " + b_eur(b["v"]) if b["grenze"] else b["formel"])
+        schritte.append(f"Preisstufe {name}: " + b["formel"] + ("" if b["einfach"] else " = " + b_eur(b["roh"])))
+        if b["grenze"]:
+            schritte.append(b["grenze"] + " " + b_eur(b["v"]) + " greift")
+        v = b["v"]
+    elif w.get("marginal"):
+        rest, unten, f, summe = B, 0, [], 0
+        for m in w["marginal"]:
+            if rest <= 0:
+                break
+            teil = min(rest, m["bis"] - unten) if m.get("bis") is not None else rest
+            f.append(b_pz(m["pct"]) + " von " + b_glatt(teil))
+            summe += teil * m["pct"] / 100
+            rest -= teil
+            unten = m.get("bis")
+        summe = b_rund(summe)
+        v, kurz = summe, " + ".join(f)
+        schritte.append(kurz + " = " + b_eur(summe))
+        if w.get("min") is not None and summe < w["min"]:
+            v = w["min"]
+            kurz = "Mindestpreis " + b_eur(v)
+            schritte.append(kurz + " greift")
+        if w.get("max") is not None and summe > w["max"]:
+            v = w["max"]
+            kurz = "Höchstpreis " + b_eur(v)
+            schritte.append(kurz + " greift")
+    else:
+        b = b_baustein(w, B)
+        v = b["v"]
+        kurz = b["grenze"] + " " + b_eur(b["v"]) if b["grenze"] else b["formel"]
+        schritte.append(b["formel"] + ("" if b["einfach"] else " = " + b_eur(b["roh"])))
+        if b["grenze"]:
+            schritte.append(b["grenze"] + " " + b_eur(b["v"]) + " greift")
+    for p in w.get("plus") or []:
+        x = b_baustein(p, B)
+        kurz += " + " + b_eur(x["v"]) + " " + (p.get("k") or p["t"])
+        schritte.append("+ " + b_eur(x["v"]) + " " + p["t"] + ("" if x["einfach"] else " (" + x["formel"] + (", " + x["grenze"] + " greift" if x["grenze"] else "") + ")"))
+        v += x["v"]
+    return {"v": b_rund(v), "kurz": kurz, "schritte": schritte, "w": w}
+
+
+def b_guenstigster(b, B):
+    r = None
+    for w in b["wege"]:
+        if w.get("nur_info"):
+            continue
+        x = b_rechne(w, B)
+        if r is None or x["v"] < r["v"] - 1e-9:
+            r = x
+    return r
+
+
+def b_depot(b, B):
+    """Depot im Jahr: fester Betrag + Prozent vom Depotwert; pmin = Mindestbetrag des Prozent-Teils."""
+    d = b.get("depot") or {}
+    if d.get("fix") is None and d.get("pct") is None:
+        return 0
+    v = (d.get("fix") or 0) + max(B * (d.get("pct") or 0) / 100, d.get("pmin") or 0)
+    if d.get("min") is not None and v < d["min"]:
+        v = d["min"]
+    if d.get("max") is not None and v > d["max"]:
+        v = d["max"]
+    return b_rund(v)
+
+
+def broker_teile(D, heute):
+    """Kostenliste (für den Standardbetrag), Angebots-Tabelle und Quellenliste als HTML – wie das Seitenskript."""
     def gilt(x):
         return x is not None and (isinstance(x, str) or not x.get("bis") or heute <= x["bis"])
 
     def txt(x):
         return x if isinstance(x, str) else x["t"] + (f" (Angebot bis {datum(x['bis'])})" if x.get("zeige_bis") else "")
 
-    def liste(a):
-        return [txt(x) for x in (a or []) if gilt(x)]
-
     def smalls(a):
-        return "".join(f"<small>{t}</small>" for t in liste(a))
-
-    def geld(v, ab):
-        return ("ab " if ab else "") + zahl(v, 2) + EUR
+        return "".join(f"<small>{txt(x)}</small>" for x in (a or []) if gilt(x))
 
     def handel(b):
         h = b.get("handelszeit")   # im Browser zusätzlich in MEZ/MESZ umgerechnet; hier die Angabe des Anbieters
         return b["handel"].replace("{handelszeit}", f"{h['von']}–{h['bis']} Uhr {h['zone']}") if h else b["handel"]
 
     def hin(b):
-        return "".join(f'<span class="hin warn">{t}</span>' for t in b.get("hin") or [])
+        return "".join(f'<span class="hin">{t}</span>' for t in b.get("hin") or [])
 
-    gruppen = {g["id"]: [] for g in D["gruppen"]}
+    def quellen(b):
+        return " · ".join(f'<a href="{q["url"]}" rel="noopener">{q["t"]}</a>' + (f' ({q["stand"]})' if q.get("stand") else "") for q in b.get("quellen") or [])
+
+    def zelle(tag, x):
+        if not x:
+            return f"<{tag}>–</{tag}>"
+        return f'<{tag}' + (' class="warn"' if x.get("warn") else "") + f'>{x["t"]}' + (f'<small>{x["n"]}</small>' if x.get("n") else "") + f"</{tag}>"
+
+    # 1 Kostenliste
+    B = D.get("standard") or 5000
     for i, b in enumerate(D["anbieter"]):
-        gruppen[b["gruppe"]].append((1e9 if b.get("k5") is None else b["k5"], i, b))
-    t = ('<table class="bv-t"><caption class="sr-only">Broker für Anleihen im Vergleich, Stand ' + datum(D["stand"]) + "</caption>"
+        b["_i"] = i
+    mit = [b for b in D["anbieter"] if b.get("wege")]
+    zeilen = sorted(({"b": b, "r": b_guenstigster(b, B), "d": b_depot(b, B)} for b in mit), key=lambda x: (x["r"]["v"], x["b"]["_i"]))
+    hoch, tief = max(x["r"]["v"] for x in zeilen) or 1, zeilen[0]["r"]["v"]
+    li = ""
+    for x in zeilen:
+        b, r, w, d = x["b"], x["r"], x["r"]["w"], x["b"].get("depot") or {}
+        andere = ""
+        for y in b["wege"]:
+            if y is w:
+                continue
+            a = b_rechne(y, B)
+            andere += (f'<span>{y["name"]}: <b>{b_eur(a["v"])}</b> – {a["kurz"]}' + (f'; dazu {y["offen"]}' if y.get("offen") else "")
+                       + (f' ({y["n"]})' if y.get("n") else "") + "</span>")
+        ist_min = r["v"] == tief
+        pz = r["v"] / B * 100
+        anteil = "unter 0,01" + PZ if r["v"] > 0 and pz < 0.005 else zahl(pz, 2) + PZ
+        li += (f'<li class="bk{" min" if ist_min else ""}" data-g="{b["gruppe"]}">'
+               f'<div class="bk-z"><div class="bk-an"><b>{b["name"]}</b><span class="typ">{b["typ"]}</span>{hin(b)}</div>'
+               f'<div class="bk-ko"><div class="bk-bar"><i style="width:calc((100% - 150px) * {r["v"] / hoch:.4f})"></i><b'
+               + (' title="günstigster Preis"' if ist_min else "") + f'>{b_eur(r["v"])}</b><span class="pz">{anteil}</span></div>'
+               + (f'<p class="bk-of">dazu {w["offen"]}</p>' if w.get("offen") else "")
+               + f'<details class="bk-d" data-b="{b["_i"]}"><summary><span class="bk-rw">{r["kurz"]} · {w["name"]}</span>'
+               f'<span class="bk-mehr">Rechnung und Quelle</span></summary><dl class="bk-dl">'
+               f'<dt>Preis laut Anbieter</dt><dd>{b["preis"]}{smalls(b.get("preis_n"))}</dd>'
+               f'<dt>Rechnung für {b_glatt(B)}</dt><dd><small>{w["name"]}</small>' + "".join(f"<span>{s}</span>" for s in r["schritte"])
+               + f'<span class="sum">= {b_eur(r["v"])} · {anteil} vom Betrag</span>' + (f'<small>{w["n"]}</small>' if w.get("n") else "") + "</dd>"
+               + (f'<dt>Nicht enthalten</dt><dd>{w["offen"]}</dd>' if w.get("offen") else "")
+               + (f"<dt>Andere Wege</dt><dd>{andere}</dd>" if andere else "")
+               + f'<dt>Depot</dt><dd>{d.get("t", "–")}{smalls(d.get("n"))}</dd>'
+               f'<dt>Quelle</dt><dd>{quellen(b)}' + (f'<small>{b["notiz"]}</small>' if b.get("notiz") else "") + "</dd></dl></details></div>"
+               f'<div class="bk-de{" kostet" if x["d"] > 0 else ""}"><span class="lab">Depot im Jahr: </span>{b_glatt(x["d"])}'
+               + (f'<small>{d["kurz"]}</small>' if d.get("kurz") else "") + "</div></div></li>")
+
+    # 2 Angebot (nur die Tabelle; die Handy-Karten zeichnet das Seitenskript)
+    gruppen = {g["id"]: [] for g in D["gruppen"]}
+    for b in D["anbieter"]:
+        gruppen[b["gruppe"]].append(b)
+    t = ('<table class="bv-t"><caption class="sr-only">Anleihen-Angebot der Broker im Vergleich, Stand ' + datum(D["stand"]) + "</caption>"
          '<thead><tr><th scope="col">Anbieter</th><th scope="col">Anleihen</th><th scope="col">Handelsplätze</th>'
-         '<th scope="col">Gebühr je Kauf</th><th scope="col" class="r">Kauf für 5.000' + EUR + '</th>'
-         '<th scope="col" class="r">Kauf für 100.000' + EUR + '</th><th scope="col">Depot</th></tr></thead>')
+         '<th scope="col">Order mit Limit</th><th scope="col">Steuer</th></tr></thead>')
     for g in D["gruppen"]:
-        nein = g["id"] == "nein"
-        reihe = [b for _, _, b in sorted(gruppen[g["id"]], key=lambda x: (x[0], x[1]))]
-        t += (f'<tbody class="g-{g["id"]}"><tr class="grp"><th colspan="7" scope="rowgroup"><span class="bdg {g["id"]}">{g["bdg"]}</span>{g["titel"]}'
-              f' <span class="n">· {len(reihe)} Anbieter' + ("" if nein else ", nach Kosten für 5.000" + EUR + " sortiert") + "</span></th></tr>")
+        reihe = gruppen[g["id"]]
+        t += (f'<tbody class="g-{g["id"]}"><tr class="grp"><th colspan="5" scope="rowgroup"><span class="bdg {g["id"]}">{g["bdg"]}</span>{g["titel"]}'
+              f' <span class="n">· {len(reihe)} Anbieter</span></th></tr>')
         for b in reihe:
-            kopf = f'<th scope="row" class="an"><b>{b["name"]}</b><span class="typ">{b["typ"]}</span>{hin(b)}</th>'
-            if nein:
-                t += f'<tr>{kopf}<td colspan="6">{b["anleihen"]}{smalls(b.get("anleihen_n"))}</td></tr>'
+            kopf = f'<th scope="row" class="an"><b>{b["name"]}</b><span class="typ">{b["typ"]}</span></th>'
+            if g["id"] == "nein":
+                t += f'<tr>{kopf}<td colspan="4">{b["anleihen"]}{smalls(b.get("anleihen_n"))}</td></tr>'
                 continue
             t += (f'<tr>{kopf}<td>{b["anleihen"]}{smalls(b.get("anleihen_n"))}</td><td>{handel(b)}{smalls(b.get("handel_n"))}</td>'
-                  f'<td>{b["gebuehr"]}{smalls(b.get("gebuehr_n"))}</td>'
-                  f'<td class="k"><b>{geld(b["k5"], b.get("k5_ab"))}</b><small>{b["k5_w"]}</small></td>'
-                  f'<td class="k"><b>{geld(b["k100"], b.get("k100_ab"))}</b><small>{"; ".join(liste(b.get("k100_w")))}</small></td>'
-                  f'<td>{b["depot"]}{smalls(b.get("depot_n"))}</td></tr>')
+                  + zelle("td", b.get("limit")) + zelle("td", b.get("steuer")) + "</tr>")
         t += "</tbody>"
-    return t + "</table>"
+    t += "</table>"
+
+    # 3 Quellen je Anbieter
+    q = "".join(f'<li><b>{b["name"]}</b><span>{quellen(b) or "–"}' + (f'<br>{b["notiz"]}' if b.get("notiz") else "") + "</span></li>" for b in D["anbieter"])
+    return li, t, q, B
+
+
+def broker_probe(D):
+    """Selbsttest: Stimmen die gerechneten Kosten mit den Kontrollwerten („probe“) aus den Preisverzeichnissen überein?"""
+    for b in D["anbieter"]:
+        for betrag, soll in (b.get("probe") or {}).items():
+            ist = b_guenstigster(b, float(betrag))["v"]
+            if abs(ist - soll) > 0.005:
+                warn(f'broker.json: {b["name"]} – Rechnung für {betrag} € ergibt {ist:.2f} €, Kontrollwert ist {soll:.2f} €')
 
 
 def broker(site):
     pfad = os.path.join(site, "broker-vergleich.html")
     html_ = open(pfad, encoding="utf-8").read()
-    platz = re.compile(r'(<div id="bv-tabelle">)<p class="klein" id="bv-laden">[^<]*</p>(</div>)')
-    if not platz.search(html_):
-        return warn("broker-vergleich.html: Platzhalter #bv-tabelle nicht gefunden – Tabelle nicht vorab geschrieben")
     D = lade(site, "broker.json")
-    tabelle = broker_tabelle(D, datetime.date.today().isoformat())
-    neu = platz.sub(lambda m: m.group(1) + tabelle + m.group(2), html_, count=1)
-    # Der Hinweis „Die Tabelle braucht JavaScript“ stimmt dann nicht mehr
-    neu = re.sub(r'\n?<noscript><p class="klein">Die Tabelle braucht JavaScript\..*?</noscript>', "", neu, count=1, flags=re.S)
+    broker_probe(D)
+    li, tabelle, quellen, B = broker_teile(D, datetime.date.today().isoformat())
+    plaetze = (
+        (re.compile(r'(<ol class="bk-liste" id="bk-liste"[^>]*>)<li class="klein" id="bk-laden">[^<]*</li>(</ol>)'), li, "Kostenliste #bk-liste"),
+        (re.compile(r'(<div id="bv-tabelle">)<p class="klein" id="bv-laden">[^<]*</p>(</div>)'), tabelle, "Tabelle #bv-tabelle"),
+        (re.compile(r'(<ul class="bq" id="bq">)<li class="klein">[^<]*</li>(</ul>)'), quellen, "Quellenliste #bq"),
+    )
+    neu = html_
+    for muster, inhalt, name in plaetze:
+        if not muster.search(neu):
+            return warn(f"broker-vergleich.html: Platzhalter für {name} nicht gefunden – nichts vorab geschrieben")
+        neu = muster.sub(lambda m, inhalt=inhalt: m.group(1) + inhalt + m.group(2), neu, count=1)
+    # Stand und Anzahl stehen sonst erst nach dem Skript da
+    for schluessel, wert in (("stand", datum(D["stand"])), ("anzahl", str(len(D["anbieter"])))):
+        neu = re.sub(r'(<span data-bv="' + schluessel + r'">)[^<]*(</span>)', lambda m, wert=wert: m.group(1) + wert + m.group(2), neu)
+    # Der Hinweis „Die Liste braucht JavaScript“ stimmt dann nicht mehr
+    neu = re.sub(r'\n?<noscript><p class="klein">Die Liste braucht JavaScript\..*?</noscript>', "", neu, count=1, flags=re.S)
     with open(pfad, "w", encoding="utf-8") as f:
         f.write(neu)
-    print(f"broker-vergleich.html: {len(D['anbieter'])} Anbieter fest im HTML")
+    print(f"broker-vergleich.html: {len(D['anbieter'])} Anbieter fest im HTML (Kosten für {zahl(B)} €, Angebot, Quellen)")
 
 
 # ---------- Anleihen-ETFs: zehn Zeilen je Kategorie (vereinfachte Fassung von rowHtml der Seite) ----------
