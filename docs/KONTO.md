@@ -61,23 +61,29 @@ mit dem Daten-Stand („Keine Anlageberatung“ steht in der Fußzeile jeder Sei
 
 Seit 01.10.2026 (Nutzerwunsch: „eine Funktion ‚mein depot‘, wo du Anleihen rein legen kannst und den Nennwert
 reinschreiben kannst … darunter genau deine Zahlungen grafisch dargestellt“). Oben ein Formular: Anleihe von der
-Merkliste wählen, Nennwert eintragen, „Ins Depot legen“. Darunter die Tabelle (Anleihe, Kurs, Kupon, Fälligkeit,
-Nennwert als Eingabefeld, Kaufbetrag heute, Zinsen im Jahr, Herausnehmen) mit Summenzeile.
+Merkliste wählen, Nennwert eintragen, „Zum Depot hinzufügen“. Darunter die Tabelle (Anleihe, Kurs, Kupon, Fälligkeit,
+Nennwert als Eingabefeld, Kurswert, Zinsen pro Jahr, Entfernen) mit Summenzeile.
 
-Kurs und Kaufbetrag (Nutzerwunsch 01.10.2026: „in der Anleihe muss auch der aktuelle Kurs stehen. Bei der Rückzahlung
+Begriffe (seit 01.10.2026 abends, Nutzerwunsch: „überprüfe, ob die Begrifflichkeiten professionell sind, und optimiere“):
+die Fachwörter der übrigen Website – „Kurswert“ statt „Kaufbetrag heute“, „Kursgewinn“/„Kursverlust“ statt „Rückzahlung +/−“
+unter dem Kurswert, „Zinsen pro Jahr“, „Rückzahlung zum Nennwert (100 %)“, „Fremdwährungen“; bei den Knöpfen „hinzufügen“ und
+„entfernen“ statt „hineinlegen“ und „herausnehmen“. Unverändert, weil vom Nutzer wörtlich so vorgegeben: „Beispieldepot“ und
+die Zeile „* Andere Währungen werden zur Vereinfachung in EUR umgerechnet“.
+
+Kurs und Kurswert (Nutzerwunsch 01.10.2026: „in der Anleihe muss auch der aktuelle Kurs stehen. Bei der Rückzahlung
 muss die Differenz zwischen Kaufkurs und 100 % Rückzahlung erkenntlich sein“): Als Kaufkurs gilt der Schlusskurs von
-heute – das Depot rechnet, als wäre heute der Kauftag; ein eigener Kaufkurs wird nicht gespeichert. Kaufbetrag heute =
+heute – das Depot rechnet, als wäre heute der Kauftag; ein eigener Kaufkurs wird nicht gespeichert. Kurswert =
 Nennwert × Kurs, ohne Stückzinsen und Gebühren. Der Unterschied zur Rückzahlung zu 100 % (Kursgewinn grün, Kursverlust
-orange) steht unter dem Kaufbetrag, in der Summenzeile, im Satz über den Schaubildern, an jedem Rückzahlungsbalken und
-in der Liste „Alle Zahlungen einzeln“.
+orange) steht unter dem Kurswert, in der Summenzeile, im Satz über den Schaubildern, an jedem Rückzahlungsbalken und
+in der Liste „Alle Zahlungstermine“.
 
 Ins Depot kommen nur Anleihen mit festem Kupon oder ohne Kupon (Nutzerentscheid); alles andere steht
 ausgegraut mit Grund in der Auswahl (`grund()` in `konto.html`).
 
-Fremde Währungen (seit 01.10.2026 abends, Nutzerwunsch: „jetzt akzeptiere auch andere Währungen und rechne sie dann in
+Fremdwährungen (seit 01.10.2026 abends, Nutzerwunsch: „jetzt akzeptiere auch andere Währungen und rechne sie dann in
 EUR um. Füge ein * hinzu und weise auf Wechselkursrisiken hin. Der Wechselkurs wird hier als ‚fest‘ angenommen“): Der
 Nennwert steht in der Währung der Anleihe (so speichert ihn `konto.php` schon immer – am Server ändert sich nichts); hinter
-dem Eingabefeld steht das Währungskürzel, darunter der Betrag in Euro. Kaufbetrag, Zinsen und Rückzahlung werden mit dem
+dem Eingabefeld steht das Währungskürzel, darunter der Betrag in Euro. Kurswert, Zinsen und Rückzahlung werden mit dem
 Euro-Referenzkurs der EZB in Euro umgerechnet (`wechselkurse.json`, geschrieben von `scripts/update_wechselkurse.py` im
 täglichen Datenlauf; rund 30 Währungen, „1 Euro = x“). Der Kurs gilt für die ganze Laufzeit als fest. Das Sternchen
 steht nur einmal: am Namen der Anleihe in der Depot-Tabelle (Nutzerwunsch 01.10.2026: „das Sternchen soll nur einmal bei
@@ -116,15 +122,15 @@ Unter der Tabelle die Zahlungen (Fassung vom 01.10.2026 abends, Nutzerwunsch: �
 die Rückzahlungen von unterschiedlichen Anleihen müssen farblich unterschiedlich sein. Die nächsten 12 Monate sind
 uninteressant … 10 Jahre und danach gestrichelt mit dem Hinweis, die nächsten Jahre werden nicht angezeigt. Ganz unten
 muss die Summe aus Zinsen und Rückzahlung stehen“): ein Satz mit den Summen, ein Schaubild „Zahlungen je Jahr“ und der
-Aufklapper „Alle Zahlungen einzeln“. Das Schaubild (`jahresbild()`) reicht von heute bis zur
+Aufklapper „Alle Zahlungstermine“. Das Schaubild (`jahresbild()`) reicht von heute bis zur
 letzten Fälligkeit, höchstens 30 Jahre (`JAHRE_MAX`; Nutzerwunsch vom selben Abend: „das muss dynamisch sein … bis 30
 Jahre. So bleibt nicht alles weiß auf der rechten Seite“ – davor erst zehn, dann fest zwanzig Jahre). Bei vielen Jahren
 werden die Spalten schmal; die Zahlen über den Balken weichen dann nach oben aus, statt sich zu überdecken. Es
 hat drei Reihen mit eigener Höhe, in dieser
 Reihenfolge (Nutzerwunsch: „ganz oben sollen die Zinsen stehen, dann die 100 % Rückzahlung des Nennwertes und dann in
 der letzten Zeile alle Rückzahlungen, also Zinsen plus 100 % Nennwert“): Zinsen (gestapelt, der Kupon-Punkt markiert
-die nächste Zahlung), Rückzahlung des Nennwerts (100 %) mit der Differenz zum Kaufbetrag darunter, und „Alle
-Zahlungen: Zinsen plus Nennwert“. Eine Reihe mit der fortlaufend aufsummierten Rückzahlung und eine dunkle Zahlenzeile
+die nächste Zahlung), Rückzahlung zum Nennwert (100 %) mit der Differenz zum Kurswert darunter, und „Alle
+Zahlungen: Zinsen und Rückzahlung“. Eine Reihe mit der fortlaufend aufsummierten Rückzahlung und eine dunkle Zahlenzeile
 gab es am 01.10.2026 kurz; beide sind durch die dritte Reihe ersetzt. Jede Anleihe hat ihre Farbe (`FARBEN`, in der Reihenfolge des Hineinlegens) – in der Tabelle, in der Legende, in den Balken und in der Einzel-Liste; fährt man über
 ein Segment, nennt es Anleihe und Betrag. Seit 01.10.2026 abends sind es die Farben der Website (Nutzerwunsch: „passe die
 Farben an die Website an“): Tiefgrün, Tinte, Orange, danach Abstufungen aus denselben Familien. Das Orange (#DD803D) ist
@@ -173,7 +179,7 @@ SQLite-Datei `konto-daten/konto-<zufällig>.sqlite` (Fassung 3):
 | --- | --- | --- |
 | `nutzer` | E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet | „Konto löschen“ sofort; nach zwei Jahren ohne Anmeldung |
 | `favoriten` | ISIN und Zeitpunkt je Nutzer, höchstens 200 | „Entfernen“, mit dem Konto |
-| `depot` | Beispieldepot (seit 01.10.2026, Fassung 3): ISIN, gedachter Nennwert (ganze Zahl) und Zeitpunkt je Nutzer, höchstens 10 | „Herausnehmen“, mit dem Konto |
+| `depot` | Beispieldepot (seit 01.10.2026, Fassung 3): ISIN, gedachter Nennwert (ganze Zahl) und Zeitpunkt je Nutzer, höchstens 10 | „Entfernen“, mit dem Konto |
 | `links` | offene Registrierungen (Adresse, Hashwert des Passworts, vorgemerkte ISIN) und Links „Passwort vergessen“; jeweils Hashwert des Link-Kennworts und Ablauf | beim Einlösen; sonst nach Ablauf |
 | `sitzungen` | Hashwert des Cookies, Ablauf | Abmelden, Passwortwechsel; nach Ablauf |
 | `zaehler` | verschlüsselte Hashwerte von Adresse und IP-Adresse: verschickte E-Mails, falsche Passwörter | nach 24 Stunden |

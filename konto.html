@@ -457,7 +457,7 @@
             <th scope="col" data-col="vol" class="num"><button type="button" class="sortbtn" data-col="vol" title="Ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe (Mrd. = Milliarden)">Volumen</button></th>
             <th scope="col" data-col="stk" class="num"><button type="button" class="sortbtn" data-col="stk" title="Kleinster Nennwert (zugleich Mindestanlage) in der Währung der Anleihe">Stückelung</button></th>
             <th scope="col" data-col="seit" class="num" aria-sort="descending"><button type="button" class="sortbtn" data-col="seit">Gemerkt</button></th>
-            <th scope="col"><span class="sr-only">Ins Depot legen, Entfernen</span></th>
+            <th scope="col"><span class="sr-only">Zum Depot hinzufügen, Entfernen</span></th>
           </tr></thead>
           <tbody id="zeilen"></tbody>
         </table>
@@ -468,11 +468,11 @@
       </div>
       </div>
       <section class="kd" id="mein-depot" role="tabpanel" aria-labelledby="r-depot" hidden>
-        <p class="kd-intro">Bau dir ein Beispieldepot: Leg bis zu zehn Anleihen von deiner Merkliste hinein und trag einen Nennwert ein. Darunter siehst du, wann welche Zahlung käme. Hier wird nichts gekauft.</p>
+        <p class="kd-intro">Bau dir ein Beispieldepot: Füg bis zu zehn Anleihen von deiner Merkliste hinzu und trag jeweils einen Nennwert ein. Darunter siehst du, wann Zinsen und Rückzahlungen fällig wären. Hier wird nichts gekauft.</p>
         <form class="kd-neu" id="f-depot" action="konto.php" method="post">
           <div><label for="kd-isin">Anleihe von deiner Merkliste</label><select id="kd-isin" name="isin" required></select></div>
           <div><label for="kd-nenn">Nennwert</label><div class="kd-eur" id="kd-nenn-box"><input id="kd-nenn" name="nennwert" type="text" inputmode="numeric" autocomplete="off" maxlength="11" value="1.000" required><span id="kd-nenn-w">€</span></div></div>
-          <button type="submit" class="go">Ins Depot legen</button>
+          <button type="submit" class="go">Zum Depot hinzufügen</button>
           <p class="kf-status" id="kd-status" role="status" aria-live="polite"></p>
         </form>
         <div class="table-scroll" id="kd-liste" hidden>
@@ -484,16 +484,16 @@
               <th scope="col" class="num">Kupon</th>
               <th scope="col" class="num">Fälligkeit</th>
               <th scope="col" class="num" title="In der Währung der Anleihe">Nennwert</th>
-              <th scope="col" class="num" title="Nennwert mal Kurs, in Euro: Was die Anleihe heute kosten würde, ohne Stückzinsen und Gebühren. Darunter der Unterschied zur Rückzahlung zu 100 %.">Kaufbetrag heute</th>
-              <th scope="col" class="num" title="Kupon mal Nennwert, in Euro, vor Steuern">Zinsen im Jahr</th>
-              <th scope="col"><span class="sr-only">Herausnehmen</span></th>
+              <th scope="col" class="num" title="Nennwert mal Kurs von heute, in Euro – ohne Stückzinsen und Gebühren. Darunter der Kursgewinn oder Kursverlust bis zur Rückzahlung zu 100 %.">Kurswert</th>
+              <th scope="col" class="num" title="Kupon mal Nennwert, in Euro, vor Steuern">Zinsen pro Jahr</th>
+              <th scope="col"><span class="sr-only">Entfernen</span></th>
             </tr></thead>
             <tbody id="kd-zeilen"></tbody>
             <tfoot id="kd-summe"></tfoot>
           </table>
         </div>
         <details class="kd-fx" id="kd-fx" hidden><summary>* Andere Währungen werden zur Vereinfachung in EUR umgerechnet</summary><p id="kd-fx-t"></p></details>
-        <div class="kto-leer" id="kd-leer" hidden><p><b>Dein Depot ist noch leer.</b> Wähl oben eine Anleihe von deiner Merkliste, trag einen Nennwert ein – zum Beispiel 5.000 € – und leg sie hinein.</p></div>
+        <div class="kto-leer" id="kd-leer" hidden><p><b>Dein Depot ist noch leer.</b> Wähl oben eine Anleihe von deiner Merkliste, trag einen Nennwert ein – zum Beispiel 5.000 € – und füg sie hinzu.</p></div>
         <div id="kd-zahlungen" hidden>
           <h3 class="kd-h3" id="h-zahl">Zahlungen</h3>
           <p class="kd-zsum" id="kd-zsum"></p>
@@ -505,7 +505,7 @@
             <p class="kd-rest" id="kd-rest" hidden></p>
           </figure>
           <details class="more kd-einzeln">
-            <summary>Alle Zahlungen einzeln</summary>
+            <summary>Alle Zahlungstermine</summary>
             <div class="table-scroll"><table class="kd-z">
               <caption class="sr-only">Zahlungen deines Beispieldepots bis zur letzten Fälligkeit</caption>
               <thead><tr><th scope="col">Datum</th><th scope="col">Anleihe</th><th scope="col">Zahlung</th><th scope="col" class="num">Betrag</th></tr></thead>
@@ -522,8 +522,8 @@
           <p><strong>Rendite.</strong> Rendite bis zur Fälligkeit in % pro Jahr, von uns aus Kurs, Kupon und Fälligkeit berechnet – nach denselben Regeln wie in der <a href="anleihen-suche.html">Anleihen-Suche</a>, wo unter „Datenquellen und Methodik“ alle Einzelheiten stehen.</p>
           <p><strong>Stammdaten.</strong> Kupon, Fälligkeit, Art, Währung, Volumen und Stückelung aus dem Register der europäischen Wertpapieraufsicht ESMA (FIRDS). Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage, beide in der Währung der Anleihe.</p>
           <p><strong>Steckbrief.</strong> Ein Klick auf Name oder ISIN öffnet den Steckbrief der Anleihe mit Kursverlauf, Handel und Rechenbeispiel.</p>
-          <p><strong>Mein Depot.</strong> Ein Beispieldepot mit gedachten Beträgen, kein Bestand. Kaufbetrag heute = Nennwert × Schlusskurs, ohne Stückzinsen und Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Zinsen je Termin = Nennwert × Kupon, bei halbjährlicher Zahlung die Hälfte; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Der Unterschied zwischen Rückzahlung und Kaufbetrag ist der Kursgewinn oder Kursverlust bis zur Fälligkeit. Das Schaubild reicht von heute bis zur letzten Fälligkeit, höchstens 30 Jahre, jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung des Nennwerts, ganz unten beides zusammen; ins Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Satz, Schaubild und Einzel-Liste zeigen dann nur die Auswahl. Die Zinstermine sind aus der Fälligkeit abgeleitet (jährlich am Jahrestag, italienische Staatsanleihen und einige Fremdwährungen halbjährlich) – maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
-          <p><strong>Fremde Währungen.</strong> Anleihen in anderer Währung trägst du mit dem Nennwert in dieser Währung ein. Kaufbetrag, Zinsen und Rückzahlung rechnen wir zur Vereinfachung in Euro um; die Anleihe trägt in der Tabelle ein Sternchen (*). Umgerechnet wird mit dem jeweils neuesten Euro-Referenzkurs der Europäischen Zentralbank (sie veröffentlicht ihn an jedem Arbeitstag gegen 16 Uhr; das Datum steht im aufklappbaren Hinweis unter der Tabelle) – und dieser Kurs ist für die ganze Laufzeit als fest angenommen. Tatsächlich schwankt der Wechselkurs: Wie viel Euro eine Zahlung am Ende wert ist, steht erst am Zahltag fest (Wechselkursrisiko). Anleihen in US-Dollar, Pfund und einigen weiteren Währungen zahlen üblicherweise halbjährlich; so sind sie hier gerechnet. Für Währungen ohne EZB-Referenzkurs gibt es keine Umrechnung – solche Anleihen fehlen im Schaubild.</p>
+          <p><strong>Mein Depot.</strong> Ein Beispieldepot mit gedachten Beträgen, kein Bestand. Kurswert = Nennwert × Schlusskurs, ohne Stückzinsen und Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Zinsen je Termin = Nennwert × Kupon, bei halbjährlicher Zahlung die Hälfte; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Der Unterschied zwischen Rückzahlung und Kurswert ist der Kursgewinn oder Kursverlust bis zur Fälligkeit. Das Schaubild reicht von heute bis zur letzten Fälligkeit, höchstens 30 Jahre, jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung zum Nennwert, ganz unten beides zusammen; ins Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Satz, Schaubild und die Liste der Zahlungstermine zeigen dann nur die Auswahl. Die Zinstermine sind aus der Fälligkeit abgeleitet (jährlich am Jahrestag, italienische Staatsanleihen und einige Fremdwährungen halbjährlich) – maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
+          <p><strong>Fremdwährungen.</strong> Anleihen in anderer Währung trägst du mit dem Nennwert in dieser Währung ein. Kurswert, Zinsen und Rückzahlung rechnen wir zur Vereinfachung in Euro um; die Anleihe trägt in der Tabelle ein Sternchen (*). Umgerechnet wird mit dem jeweils neuesten Euro-Referenzkurs der Europäischen Zentralbank (sie veröffentlicht ihn an jedem Arbeitstag gegen 16 Uhr; das Datum steht im aufklappbaren Hinweis unter der Tabelle) – und dieser Kurs ist für die ganze Laufzeit als fest angenommen. Tatsächlich schwankt der Wechselkurs: Wie viel Euro eine Zahlung am Ende wert ist, steht erst am Zahltag fest (Wechselkursrisiko). Anleihen in US-Dollar, Pfund und einigen weiteren Währungen zahlen üblicherweise halbjährlich; so sind sie hier gerechnet. Für Währungen ohne EZB-Referenzkurs gibt es keine Umrechnung – solche Anleihen fehlen im Schaubild.</p>
           <p id="datastand"></p>
         </div>
       </details>
@@ -743,7 +743,7 @@ MC.navInit();
   function depotKnopf(o) {
     if (POS.some(p => p.isin === o.isin)) return `<button type="button" class="kto-dep drin" data-zum-depot title="Liegt in deinem Depot – Mein Depot öffnen" aria-label="${MC.esc(o.name)} liegt in deinem Depot – Mein Depot öffnen">✓<span class="l">Im Depot</span></button>`;
     const g = grund(o);
-    return `<button type="button" class="kto-dep" data-depot="${MC.esc(o.isin)}"${g ? " disabled" : ""} title="${MC.esc(g ? `Lässt sich nicht ins Depot legen: ${g}` : "Zu meinem Depot hinzufügen")}" aria-label="${MC.esc(o.name)} zu meinem Depot hinzufügen">+<span class="l">Zum Depot hinzufügen</span></button>`;
+    return `<button type="button" class="kto-dep" data-depot="${MC.esc(o.isin)}"${g ? " disabled" : ""} title="${MC.esc(g ? `Lässt sich dem Depot nicht hinzufügen: ${g}` : "Zu meinem Depot hinzufügen")}" aria-label="${MC.esc(o.name)} zu meinem Depot hinzufügen">+<span class="l">Zum Depot hinzufügen</span></button>`;
   }
   // Nennwert-Vorschlag: rund 1.000 in der Währung der Anleihe, mindestens die Stückelung und ein Vielfaches davon
   function nennVorschlag(o) {
@@ -755,7 +755,7 @@ MC.navInit();
   function insDepot(knopf) {
     const o = LISTE.find(x => x.isin === knopf.dataset.depot); if (!o) return;
     ZULETZT = "";
-    if (POS.length >= DEPOT_MAX) { NOTIZ = `Dein Depot ist voll (${DEPOT_MAX} Anleihen) – nimm erst eine heraus: <button type="button" class="kto-textbtn" id="zum-depot">Mein Depot öffnen</button>.`; statusText(); return; }
+    if (POS.length >= DEPOT_MAX) { NOTIZ = `Dein Depot ist voll (${DEPOT_MAX} Anleihen) – entferne erst eine: <button type="button" class="kto-textbtn" id="zum-depot">Mein Depot öffnen</button>.`; statusText(); return; }
     const nenn = nennVorschlag(o);
     knopf.disabled = true;
     NOTIZ = `<strong>${MC.esc(o.name)}</strong> liegt mit ${fmt(nenn)} ${o.cur && o.cur !== "EUR" ? MC.esc(o.cur) : "€"} Nennwert in deinem Depot – <button type="button" class="kto-textbtn" id="zum-depot">Nennwert ändern</button>.`;
@@ -781,7 +781,7 @@ MC.navInit();
   }
   function statusText() {
     const n = LISTE.length;
-    $("status").innerHTML = (n ? `<strong>${n} ${n === 1 ? "Anleihe" : "Anleihen"}</strong> auf deiner Merkliste${KSTAND ? ` · Kurse vom ${MC.esc(MC.datum(KSTAND))}` : ""}.${!ZULETZT && !NOTIZ ? " Mit <strong>+</strong> legst du eine Anleihe in dein Depot." : ""}` : "") +
+    $("status").innerHTML = (n ? `<strong>${n} ${n === 1 ? "Anleihe" : "Anleihen"}</strong> auf deiner Merkliste${KSTAND ? ` · Kurse vom ${MC.esc(MC.datum(KSTAND))}` : ""}.${!ZULETZT && !NOTIZ ? " Mit <strong>+</strong> fügst du eine Anleihe deinem Depot hinzu." : ""}` : "") +
       (ZULETZT ? ` ${MC.esc(ZULETZT)} entfernt – <button type="button" class="kto-textbtn" id="zurueck">rückgängig</button>.` : "") + (NOTIZ ? ` ${NOTIZ}` : "");
   }
   let lauf = 0;
@@ -881,7 +881,7 @@ MC.navInit();
   // Zinstermine vom Fälligkeitstag rückwärts (MC.bond.couponDates), jährlich, italienische Staatsanleihen halbjährlich; Zinsen je
   // Termin = Nennwert × Kupon ÷ Termine im Jahr; Rückzahlung zum Nennwert. Ins Schaubild kommen nur Anleihen mit festem Kupon
   // oder ohne Kupon; alles andere steht mit Grund in der Liste.
-  // Fremdwährungen (seit 01.10.2026 abends, Nutzerwunsch): Der Nennwert steht in der Währung der Anleihe; Kaufbetrag, Zinsen und
+  // Fremdwährungen (seit 01.10.2026 abends, Nutzerwunsch): Der Nennwert steht in der Währung der Anleihe; Kurswert, Zinsen und
   // Rückzahlung werden mit dem Euro-Referenzkurs der EZB (wechselkurse.json, 1 Euro = x Einheiten) in Euro umgerechnet. Der Kurs ist
   // für die ganze Laufzeit als fest angenommen. Das Sternchen steht nur einmal – am Namen der Anleihe in der Tabelle; darunter die Zeile
   // „* Andere Währungen werden zur Vereinfachung in EUR umgerechnet“, die aufgeklappt Kurs, Stichtag und Wechselkursrisiko nennt
@@ -928,7 +928,7 @@ MC.navInit();
     p.rechnet = !p.warum; p.fest = p.rechnet && o.kupon > 0;
     p.freq = HALBJAHR.includes(o.cur) || (isin.startsWith("IT") && o.art === 0) ? 2 : 1;   // wie anleihe.html
     p.zins = p.rechnet ? p.nennEur * o.kupon / 100 : null;
-    // Kaufbetrag heute = Nennwert × Schlusskurs (ohne Stückzinsen und Gebühren); diff = Rückzahlung zu 100 % minus Kaufbetrag – alles in Euro
+    // Kurswert = Nennwert × Schlusskurs (ohne Stückzinsen und Gebühren); diff = Rückzahlung zu 100 % minus Kurswert (Kursgewinn/-verlust) – alles in Euro
     p.kauf = typeof o.kurs === "number" && p.nennEur != null ? p.nennEur * o.kurs / 100 : null;
     p.diff = p.kauf != null && p.rechnet ? p.nennEur - p.kauf : null;
     return p;
@@ -950,9 +950,9 @@ MC.navInit();
       `<td class="num" data-l="Kupon">${fmtCoupon(o.kupon)}</td>` +
       `<td class="num" data-l="Fälligkeit">${o.faellig ? MC.datum(o.faellig) : "–"}</td>` +
       `<td class="num" data-l="Nennwert"><span class="kd-eur${p.cur ? " w3" : ""}"><input type="text" inputmode="numeric" autocomplete="off" maxlength="11" value="${fmt(p.nenn)}" data-nenn="${MC.esc(p.isin)}" aria-label="Nennwert ${MC.esc(o.name)}${p.cur ? " in " + MC.esc(p.cur) : ""}"><span>${p.cur ? MC.esc(p.cur) : "€"}</span></span>${p.fremd ? `<small>= ${eur(p.nennEur)}</small>` : ""}</td>` +
-      `<td class="num" data-l="Kaufbetrag heute">${p.kauf != null ? eur(p.kauf) + diffKlein(p.diff, "Rückzahlung ") : "–"}</td>` +
-      `<td class="num" data-l="Zinsen im Jahr">${p.zins != null ? eur(p.zins) : "–"}</td>` +
-      `<td><button type="button" class="kto-x" data-raus="${MC.esc(p.isin)}" aria-label="${MC.esc(o.name)} aus dem Depot nehmen" title="Aus dem Depot nehmen">×<span> Herausnehmen</span></button></td></tr>`;
+      `<td class="num" data-l="Kurswert">${p.kauf != null ? eur(p.kauf) + diffKlein(p.diff, p.diff < 0 ? "Kursverlust " : "Kursgewinn ") : "–"}</td>` +
+      `<td class="num" data-l="Zinsen pro Jahr">${p.zins != null ? eur(p.zins) : "–"}</td>` +
+      `<td><button type="button" class="kto-x" data-raus="${MC.esc(p.isin)}" aria-label="${MC.esc(o.name)} aus dem Depot entfernen" title="Aus dem Depot entfernen">×<span> Entfernen</span></button></td></tr>`;
   }
   function zeichneDepot() {
     const drin = new Set(POS.map(p => p.isin)), sel = $("kd-isin"), wahl = sel.value;
@@ -962,14 +962,14 @@ MC.navInit();
     if (wahl && Array.from(sel.options).some(x => x.value === wahl && !x.disabled)) sel.value = wahl;
     nennWaehrung();
     const voll = POS.length >= DEPOT_MAX; $("f-depot").classList.toggle("voll", voll);
-    if (voll) depotStatus(`Dein Depot ist voll: ${DEPOT_MAX} Anleihen. Nimm eine heraus, um eine andere hineinzulegen.`); else if (/^Dein Depot ist voll/.test($("kd-status").textContent)) depotStatus("");
+    if (voll) depotStatus(`Dein Depot ist voll: ${DEPOT_MAX} Anleihen. Entferne eine, um eine andere hinzuzufügen.`); else if (/^Dein Depot ist voll/.test($("kd-status").textContent)) depotStatus("");
     const pos = POS.slice().sort((a, b) => (a.o.faellig || "9999").localeCompare(b.o.faellig || "9999") || a.isin.localeCompare(b.isin));
     $("kd-liste").hidden = !pos.length; $("kd-leer").hidden = pos.length > 0;
     $("kd-zeilen").innerHTML = pos.map(depotZeile).join("");
     const zins = pos.reduce((x, p) => x + (p.zins || 0), 0), mitKurs = pos.filter(p => p.kauf != null), kauf = mitKurs.reduce((x, p) => x + p.kauf, 0), mitDiff = pos.filter(p => p.diff != null);
     const mitNenn = pos.filter(p => p.nennEur != null);   // Summen in Euro; fremde Währungen zum festen Kurs
     $("kd-summe").innerHTML = pos.length ? `<tr><th scope="row">Summe<small>${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}</small></th><td></td><td></td><td></td><td class="num" data-l="Nennwert">${mitNenn.length ? eur(mitNenn.reduce((x, p) => x + p.nennEur, 0), fremdIn(mitNenn) ? 2 : 0) : "–"}</td>` +
-      `<td class="num" data-l="Kaufbetrag heute">${mitKurs.length ? eur(kauf) + (mitDiff.length ? diffKlein(mitDiff.reduce((x, p) => x + p.diff, 0), "Rückzahlung ") : "") : "–"}</td><td class="num" data-l="Zinsen im Jahr">${eur(zins)}</td><td></td></tr>` : "";
+      `<td class="num" data-l="Kurswert">${mitKurs.length ? eur(kauf) + (mitDiff.length ? (d => diffKlein(d, d < 0 ? "Kursverlust " : "Kursgewinn "))(mitDiff.reduce((x, p) => x + p.diff, 0)) : "") : "–"}</td><td class="num" data-l="Zinsen pro Jahr">${eur(zins)}</td><td></td></tr>` : "";
     fxHinweis();
     if (MC.wischPruefen) MC.wischPruefen();
     zeichneZahlungen();
@@ -977,7 +977,7 @@ MC.navInit();
   // Schaubild „Zahlungen je Jahr“ (Fassung vom 01.10.2026 abends, Nutzerwunsch): von heute bis zur letzten Fälligkeit, höchstens
   // 30 Jahre – so bleibt rechts nichts leer. Jede Anleihe in ihrer Farbe, drei Reihen untereinander mit eigener Höhe: oben die Zinsen
   // (der Kupon-Punkt markiert die nächste Zahlung), darunter die Rückzahlung des Nennwerts zu 100 % (mit dem Unterschied zum
-  // Kaufbetrag von heute), ganz unten alle Zahlungen zusammen: Zinsen plus Nennwert. Läuft das Depot länger als 30 Jahre, folgt eine
+  // Kurswert von heute), ganz unten alle Zahlungen zusammen: Zinsen und Rückzahlung. Läuft das Depot länger als 30 Jahre, folgt eine
   // gestrichelte Spalte; was danach kommt, steht als Satz unter dem Bild. Bei vielen Jahren werden die Spalten schmal („eng“): Dann
   // stehen die Zahlen benachbarter Spalten abwechselnd eine Zeile höher, damit sie sich nicht überdecken.
   function jahresbild(el, sp, rest) {
@@ -1005,11 +1005,11 @@ MC.navInit();
       });
       return [svg, y];
     }
-    let s = `<svg class="kd-svg${eng ? " eng" : ""}" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Zinsen, Rückzahlung des Nennwerts und alle Zahlungen je Jahr, jede Anleihe in ihrer Farbe">`, punkt = false;
+    let s = `<svg class="kd-svg${eng ? " eng" : ""}" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Zinsen, Rückzahlung zum Nennwert und alle Zahlungen je Jahr, jede Anleihe in ihrer Farbe">`, punkt = false;
     // jedes zweite Jahr ganz leicht hinterlegt – so sieht man, wo ein neues Jahr anfängt (Nutzerwunsch 01.10.2026)
     for (let i = 1; i < n; i += 2) s += `<rect x="${(L + i * bw).toFixed(1)}" y="0" width="${bw.toFixed(1)}" height="${yS + 28}" rx="6" fill="#1A1A19" fill-opacity="0.045"/>`;
-    s += text(L, 14, "kd-r", "Zinsen", false) + linie(yZ) + text(L, yZ + 28, "kd-r", "Rückzahlung des Nennwerts (100 %)", false) + linie(yR) +
-      text(L, yR + 28, "kd-r", "Alle Zahlungen: Zinsen plus Nennwert", false) + linie(yS);
+    s += text(L, 14, "kd-r", "Zinsen", false) + linie(yZ) + text(L, yZ + 28, "kd-r", "Rückzahlung zum Nennwert (100 %)", false) + linie(yR) +
+      text(L, yR + 28, "kd-r", "Alle Zahlungen: Zinsen und Rückzahlung", false) + linie(yS);
     sp.forEach((x, i) => {
       const cx = L + (i + 0.5) * bw, b = Math.min(46, bw * 0.62);
       if (x.zins) {
@@ -1023,7 +1023,7 @@ MC.navInit();
         s += svg + (d ? text(cx, y, d < 0 ? "kd-m" : "kd-p", plus(d, 0)) : "") + text(cx, y - (d ? 15 : 0), "kd-w", kurz(x.rueck));
       } else s += leer(cx, yR);
       if (x.zins + x.rueck) {
-        const [svg, oben] = stapel(x.teile, t => t.zins + t.rueck, cx, b, yS, hS - (eng ? 44 : 30), ms, "Zinsen plus Nennwert");
+        const [svg, oben] = stapel(x.teile, t => t.zins + t.rueck, cx, b, yS, hS - (eng ? 44 : 30), ms, "Zinsen und Rückzahlung");
         s += svg + text(cx, platzS(cx, oben - 4, breite(kurz(x.zins + x.rueck)), 13), "kd-w", kurz(x.zins + x.rueck));
       } else s += leer(cx, yS);
       s += text(cx, yS + 19, "kd-a", x.k);
@@ -1038,7 +1038,7 @@ MC.navInit();
   function zeichneZahlungen() {
     if ($("mein-depot").hidden) return;   // das Schaubild braucht die sichtbare Breite – gezeichnet wird beim Öffnen des Reiters
     // Auswahl (Nutzerwunsch 01.10.2026): Die Farbkacheln über dem Schaubild sind Schalter – ein Klick blendet eine Anleihe aus oder
-    // wieder ein. Satz, Schaubild und Einzel-Liste zeigen dann nur die Auswahl; die Tabelle darüber bleibt das ganze Depot.
+    // wieder ein. Satz, Schaubild und die Liste der Zahlungstermine zeigen dann nur die Auswahl; die Tabelle darüber bleibt das ganze Depot.
     const alle = POS.filter(p => p.rechnet).sort((a, b) => a.o.faellig.localeCompare(b.o.faellig) || a.isin.localeCompare(b.isin));   // Reihenfolge wie die Tabelle
     [...AUS].forEach(i => { if (!alle.some(p => p.isin === i)) AUS.delete(i); });
     const z = zahlungen(), box = $("kd-zahlungen");
@@ -1066,21 +1066,21 @@ MC.navInit();
     });
     const rest = spaeter.length ? { von: bis + 1, bis: j1, zins: summe(spaeter, "Zinsen"), rueck: summe(spaeter, "Rückzahlung") } : null;
     jahresbild($("kd-jahre"), jahr, rest);
-    $("kd-j-u").textContent = (bis > j0 ? `${j0} bis ${bis}` : String(j0)) + (rest ? ` · ${rest.von} bis ${rest.bis} nicht im Bild` : " · bis zur letzten Fälligkeit");
+    $("kd-j-u").textContent = (bis > j0 ? `${j0} bis ${bis}` : String(j0)) + (rest ? ` · ${rest.von} bis ${rest.bis} nicht dargestellt` : " · bis zur letzten Fälligkeit");
     $("kd-rest").hidden = !rest;
-    if (rest) $("kd-rest").innerHTML = `Die Jahre ${rest.von} bis ${rest.bis} werden nicht angezeigt. Dort folgen noch ${rest.zins ? `<b>${eur(rest.zins)} Zinsen</b> und ` : ""}<b>${eur(rest.rueck, um(spaeter, "Rückzahlung") ? 2 : 0)} Rückzahlung</b>.`;
+    if (rest) $("kd-rest").innerHTML = `Die Jahre ${rest.von} bis ${rest.bis} sind nicht dargestellt. In dieser Zeit folgen noch ${rest.zins ? `<b>${eur(rest.zins)} Zinsen</b> und ` : ""}<b>${eur(rest.rueck, um(spaeter, "Rückzahlung") ? 2 : 0)} Rückzahlung</b>.`;
     const zi = summe(z, "Zinsen"), ru = summe(z, "Rückzahlung");
     $("kd-zsum").innerHTML = (auswahl ? `<b>Auswahl: ${rechnend.length} von ${alle.length} Anleihen.</b> ` : "") + `Bis zur letzten Fälligkeit am ${MC.datum(z[z.length - 1].tag)}: <b>${eur(zi)} Zinsen</b> und <b>${eur(ru, um(z, "Rückzahlung") ? 2 : 0)} Rückzahlung</b>, zusammen <b>${eur(zi + ru)}</b>.` +
-      (() => {   // Unterschied zwischen Kaufbetrag heute und Rückzahlung zu 100 %
+      (() => {   // Unterschied zwischen Kurswert heute und Rückzahlung zu 100 %
         const mit = rechnend.filter(p => p.diff != null), ohne = rechnend.length - mit.length; if (!mit.length) return "";
         const kauf = mit.reduce((a, p) => a + p.kauf, 0), d = mit.reduce((a, p) => a + p.diff, 0);
-        return ` Heute gekauft kostet ${ohne ? "das (ohne " + ohne + (ohne === 1 ? " Anleihe" : " Anleihen") + " ohne aktuellen Kurs)" : auswahl ? "die Auswahl" : "das Depot"} <b>${eur(kauf)}</b>, ohne Stückzinsen und Gebühren; zurückgezahlt werden <b class="${d < 0 ? "kd-minus" : "kd-plus"}">${eur(Math.abs(d))} ${d < 0 ? "weniger" : "mehr"}</b>.`;
+        return ` Der Kurswert ${auswahl ? "der Auswahl" : "des Depots"} beträgt heute <b>${eur(kauf)}</b>${ohne ? " (ohne " + ohne + (ohne === 1 ? " Anleihe" : " Anleihen") + " ohne aktuellen Kurs)" : ""}, ohne Stückzinsen und Gebühren; bis zur Fälligkeit ergibt sich ein <b class="${d < 0 ? "kd-minus" : "kd-plus"}">${d < 0 ? "Kursverlust" : "Kursgewinn"} von ${eur(Math.abs(d))}</b>.`;
       })();
     const zeilen = z.slice(0, 240).map(x => `<tr${x.art === "Rückzahlung" ? ' class="rz"' : ""}><td>${MC.datum(x.tag)}</td><th scope="row"><i class="kd-f" style="background: ${x.p.farbe}"></i>${MC.esc(x.p.o.name)} ${fmtCoupon(x.p.o.kupon)} ${x.p.o.faellig.slice(0, 4)}</th>` +
-      `<td>${x.art}${x.art === "Rückzahlung" && x.diff != null ? `<small>zu 100 %, Kauf heute zu ${fmt(x.p.o.kurs, 2)}</small>` : ""}</td><td class="num">${eur(x.betrag)}${x.p.fremd ? `<small>${fmt(x.roh, 2)} ${MC.esc(x.p.o.cur)}</small>` : ""}${x.art === "Rückzahlung" ? diffKlein(x.diff, "") : ""}</td></tr>`);
+      `<td>${x.art}${x.art === "Rückzahlung" && x.diff != null ? `<small>zu 100 %, Kurs heute ${fmt(x.p.o.kurs, 2)}</small>` : ""}</td><td class="num">${eur(x.betrag)}${x.p.fremd ? `<small>${fmt(x.roh, 2)} ${MC.esc(x.p.o.cur)}</small>` : ""}${x.art === "Rückzahlung" ? diffKlein(x.diff, "") : ""}</td></tr>`);
     if (z.length > 240) zeilen.push(`<tr><td colspan="4">… und ${z.length - 240} weitere Zahlungen bis ${MC.datum(z[z.length - 1].tag)}</td></tr>`);
     $("kd-plan").innerHTML = zeilen.join("");
-    $("kd-hinweis").textContent = "Zinstermine aus der Fälligkeit abgeleitet; Beträge vor Steuern und Kosten. Fällt ein Termin aufs Wochenende, wird am nächsten Bankarbeitstag gezahlt." +
+    $("kd-hinweis").textContent = "Zinstermine aus der Fälligkeit abgeleitet; Beträge vor Steuern und Kosten. Fällt ein Termin auf ein Wochenende oder einen Feiertag, wird am nächsten Bankarbeitstag gezahlt." +
       (fehlt.length ? ` Nicht im Schaubild: ${fehlt.map(p => `${p.o.name} (${p.warum})`).join(", ")}.` : "");
     if (MC.wischPruefen) MC.wischPruefen();
   }
@@ -1090,7 +1090,7 @@ MC.navInit();
     const fremd = POS.filter(p => p.fremd), kurse = [...new Set(fremd.map(p => p.o.cur))].sort().map(c => `1 € = ${fmtFx(FX.kurse[c])} ${MC.esc(c)}`).join(", ");
     $("kd-fx").hidden = !fremd.length;
     if (!fremd.length) return;
-    $("kd-fx-t").innerHTML = `In Euro umgerechnet mit dem Euro-Referenzkurs der EZB vom ${MC.datum(FX.stand)}: ${kurse}. Dieser Wechselkurs ist hier als <b>fest</b> angenommen – für den Kaufbetrag, alle Zinsen und die Rückzahlung bis zur Fälligkeit. Tatsächlich schwankt er (<b>Wechselkursrisiko</b>): Steigt der Euro gegenüber der Währung der Anleihe, sind Zinsen und Rückzahlung in Euro weniger wert; fällt er, sind sie mehr wert.`;
+    $("kd-fx-t").innerHTML = `In Euro umgerechnet mit dem Euro-Referenzkurs der EZB vom ${MC.datum(FX.stand)}: ${kurse}. Dieser Wechselkurs ist hier als <b>fest</b> angenommen – für den Kurswert, alle Zinsen und die Rückzahlung bis zur Fälligkeit. Tatsächlich schwankt er (<b>Wechselkursrisiko</b>): Steigt der Euro gegenüber der Währung der Anleihe, sind Zinsen und Rückzahlung in Euro weniger wert; fällt er, sind sie mehr wert.`;
   }
   // Währung hinter dem Nennwert-Feld: die der gewählten Anleihe
   function nennWaehrung() {
@@ -1124,8 +1124,8 @@ MC.navInit();
   window.addEventListener("hashchange", () => { if (location.hash === "#depot") reiter("depot"); else if (location.hash === "#merkliste") reiter("merk"); });
   reiter(location.hash === "#depot" ? "depot" : "merk");
 
-  // Hineinlegen, Nennwert ändern, Herausnehmen
-  const DEPOT_TEXT = { voll: "Das Depot fasst höchstens 10 Anleihen.", nennwert: "Bitte einen Nennwert als ganze Zahl eintragen, zum Beispiel 5.000.", isin: "Diese Anleihe lässt sich nicht ins Depot legen." };
+  // Hinzufügen, Nennwert ändern, Entfernen
+  const DEPOT_TEXT = { voll: "Das Depot fasst höchstens 10 Anleihen.", nennwert: "Bitte einen Nennwert als ganze Zahl eintragen, zum Beispiel 5.000.", isin: "Diese Anleihe lässt sich dem Depot nicht hinzufügen." };
   function depotStatus(text, fehler) { const el = $("kd-status"); el.className = "kf-status" + (fehler ? " fehler" : ""); el.textContent = text; }
   function depotSenden(isin, nenn) {
     NOTIZ = "";
