@@ -607,6 +607,88 @@
   }
   @media (max-width: 360px) { #bnd-broker { padding: 22px 16px 28px; } #bnd-broker .bc-go { min-width: 0; width: 100%; } }
   /* ==========================================================================================
+     Zinsatlas 01.10.2026 (Entwurf 02 des Nutzers, tmp/bondarium-zinsatlas-entwurf-02.pdf): eigener Auftritt für die vier Zinsen-Seiten,
+     ersetzt die vier Karten mit Spanne und Mini-Kurve unter „Märkte und Top-10-Listen“. Vier Flächen mit eigenem Motiv – Jahr und Länder,
+     10 minus 2 Jahre, Länder mit Ratings, Fälligkeit 2120 –, jede Fläche ist ein einziger Link. Die Motive zeigen Umfang und Zeiträume der
+     Zielseite, keine Finanzkennzahlen (die stehen mit Datenstand auf den Zielseiten). Ohne Skript und ohne Bilddateien; mit #bnd-zinsatlas
+     gekapselt. Schriftgrößen aus dem Raster darunter; nur die drei Motivzahlen haben eigene Größen (--za-*).
+     ========================================================================================== */
+  #bnd-zinsatlas { --za-jahr: 46px; --za-kurve: 40px; --za-ziel: 58px; }
+  #bnd-zinsatlas .za-dach { margin: 0 0 8px; font-size: var(--fs-label); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--green-text); }
+  #bnd-zinsatlas h2 { margin: 0; font-size: var(--fs-h2); line-height: 1.15; letter-spacing: -0.015em; }
+  #bnd-zinsatlas .za-sub { margin: 6px 0 20px; font-size: var(--fs-text); color: var(--text); }
+  #bnd-zinsatlas .za-reihe { display: grid; gap: 18px; }
+  #bnd-zinsatlas .za-r1 { grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); }
+  #bnd-zinsatlas .za-r2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1.04fr); margin-top: 18px; }
+  #bnd-zinsatlas .za-k { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; align-content: start; gap: 0 26px; min-width: 0; padding: 22px 22px 20px 24px; border: 1px solid var(--rule); border-radius: 18px; background: #fff; color: var(--ink); text-decoration: none; transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease; }
+  #bnd-zinsatlas .za-k > span, #bnd-zinsatlas .za-t > span, #bnd-zinsatlas .za-m > span { display: block; }
+  #bnd-zinsatlas .za-nr { margin: 0 0 14px; font-size: var(--fs-label); font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: var(--green-text); }
+  #bnd-zinsatlas h3 { margin: 0; font-size: var(--fs-h3); font-weight: 700; line-height: 1.15; letter-spacing: -0.015em; color: inherit; }
+  #bnd-zinsatlas .za-d { margin-top: 8px; max-width: 34em; font-size: var(--fs-ui); line-height: 1.5; color: var(--text); }
+  #bnd-zinsatlas .za-go { display: flex !important; align-items: center; justify-content: space-between; gap: 16px; align-self: end; margin-top: 18px; font-size: var(--fs-ui); font-weight: 700; color: var(--green-text); }
+  #bnd-zinsatlas .za-pf { display: grid !important; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--green); color: var(--ink); transition: background 0.15s ease; }
+  #bnd-zinsatlas .za-pf svg { width: 18px; height: 18px; transition: transform 0.15s ease; }
+  #bnd-zinsatlas .za-chips { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  #bnd-zinsatlas .za-chips i { display: block; padding: 5px 9px; border: 1px solid var(--rule); border-radius: 7px; background: var(--bg); font-size: var(--fs-meta); font-style: normal; line-height: 1.3; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #bnd-zinsatlas .za-k:hover { transform: translateY(-2px); border-color: var(--green-text); box-shadow: 0 1px 2px rgba(26,26,25,0.04), 0 14px 30px -12px rgba(26,26,25,0.22); }
+  #bnd-zinsatlas .za-k:hover .za-pf { background: var(--green-hover); }
+  #bnd-zinsatlas .za-k:hover .za-pf svg { transform: translateX(2px); }
+  #bnd-zinsatlas .za-k:focus-visible { outline: 3px solid var(--green-text); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { #bnd-zinsatlas .za-k, #bnd-zinsatlas .za-pf svg { transition: none; } #bnd-zinsatlas .za-k:hover, #bnd-zinsatlas .za-k:hover .za-pf svg { transform: none; } }
+  /* 01 Renditehistorie: hellgrüne Auftaktfläche, rechts Startjahr und die acht Länder der Zielseite */
+  #bnd-zinsatlas .za-hist { grid-template-columns: minmax(0, 1fr) minmax(0, 1.06fr); grid-template-areas: "t m" "g m"; grid-template-rows: 1fr auto; background: #EBF8E6; border-color: rgba(21,124,0,0.16); }
+  #bnd-zinsatlas .za-hist .za-t { grid-area: t; }
+  #bnd-zinsatlas .za-hist .za-go { grid-area: g; }
+  #bnd-zinsatlas .za-hist .za-m { grid-area: m; padding-left: 24px; border-left: 1px solid rgba(26,26,25,0.14); }
+  #bnd-zinsatlas .za-hist h3 { max-width: 9em; }
+  #bnd-zinsatlas .za-jahr { display: flex !important; align-items: center; gap: 12px; font-size: var(--za-jahr); font-weight: 800; line-height: 1; letter-spacing: -0.02em; color: var(--green-text); }
+  #bnd-zinsatlas .za-jahr svg { flex: none; width: 30px; height: 30px; }
+  #bnd-zinsatlas .za-ml { margin: 8px 0 16px; font-size: var(--fs-meta); color: var(--text); }
+  #bnd-zinsatlas .za-hist .za-chips i { border-color: transparent; background: rgba(255,255,255,0.78); }
+  /* 02 Zinskurve: dunkler Gegenpol, Motiv „10 Jahre minus 2 Jahre“ */
+  #bnd-zinsatlas .za-kurve { background: var(--ink); border-color: var(--ink); color: #fff; }
+  #bnd-zinsatlas .za-kurve .za-nr { color: var(--green); }
+  #bnd-zinsatlas .za-kurve .za-frage { margin-top: 6px; font-size: var(--fs-karte); color: rgba(255,255,255,0.86); }
+  #bnd-zinsatlas .za-kurve .za-m { display: flex !important; align-items: flex-end; gap: 16px; margin-top: 14px; }
+  #bnd-zinsatlas .za-kurve .za-m small { display: block; margin-bottom: 4px; font-size: var(--fs-label); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(255,255,255,0.72); }
+  #bnd-zinsatlas .za-kurve .za-m b { font-size: var(--za-kurve); font-weight: 800; line-height: 1; letter-spacing: -0.02em; color: var(--green); }
+  #bnd-zinsatlas .za-kurve .za-m em { margin-left: 8px; font-size: var(--fs-meta); font-style: normal; color: rgba(255,255,255,0.86); }
+  #bnd-zinsatlas .za-kurve .za-minus { flex: none; width: 22px; height: 2px; margin-bottom: 15px; background: rgba(255,255,255,0.6); }
+  #bnd-zinsatlas .za-kurve .za-d { margin-top: 14px; max-width: 15em; color: rgba(255,255,255,0.8); }
+  #bnd-zinsatlas .za-kurve .za-go { color: #fff; }
+  #bnd-zinsatlas .za-kurve:hover { border-color: var(--green); }
+  #bnd-zinsatlas .za-kurve:focus-visible { outline-color: var(--green-text); }
+  /* 03 Unternehmensanleihen: die sechs Reihen als vier Länder mit ihren Ratings */
+  #bnd-zinsatlas .za-unt .za-m { margin-top: 14px; }
+  /* 04 Langläufer: Zieljahr 2120 und die Fälligkeiten der sieben Anleihen auf einer Achse 2040–2120 */
+  #bnd-zinsatlas .za-lang { grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr); grid-template-areas: "t m" "g g"; grid-template-rows: 1fr auto; }
+  #bnd-zinsatlas .za-lang .za-t { grid-area: t; }
+  #bnd-zinsatlas .za-lang .za-go { grid-area: g; }
+  #bnd-zinsatlas .za-lang .za-m { grid-area: m; padding-left: 24px; border-left: 1px solid var(--rule); }
+  #bnd-zinsatlas .za-lang .za-ml { margin: 14px 0 6px; }
+  #bnd-zinsatlas .za-ziel { font-size: var(--za-ziel); font-weight: 800; line-height: 1; letter-spacing: -0.03em; color: var(--green-text); }
+  #bnd-zinsatlas .za-achse { position: relative; height: 10px; margin: 14px 5px 0; }
+  #bnd-zinsatlas .za-achse::before { content: ""; position: absolute; left: 0; right: 0; top: 4px; height: 1.5px; background: var(--green-text); opacity: 0.55; }
+  #bnd-zinsatlas .za-achse i { position: absolute; top: 0; width: 10px; height: 10px; margin-left: -5px; border: 1.5px solid var(--green-text); border-radius: 50%; background: var(--green); }
+  #bnd-zinsatlas .za-skala { display: flex !important; justify-content: space-between; margin-top: 6px; font-size: var(--fs-label); color: var(--text); }
+  @media (max-width: 860px) {   /* Tablet: die vier Flächen untereinander, jede behält ihren Aufbau */
+    #bnd-zinsatlas .za-reihe { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+    #bnd-zinsatlas .za-r2 { margin-top: 14px; }
+    #bnd-zinsatlas .za-kurve .za-d { max-width: none; }
+  }
+  @media (max-width: 600px) {   /* Handy: eine Spalte, dieselbe Reihenfolge – Historie, Zinskurve, Unternehmensrenditen, Langläufer */
+    #bnd-zinsatlas { --za-kurve: 36px; --za-ziel: 44px; }
+    #bnd-zinsatlas .za-k { padding: 20px 18px 18px 20px; }
+    #bnd-zinsatlas .za-hist, #bnd-zinsatlas .za-lang { grid-template-columns: minmax(0, 1fr); grid-template-areas: "t" "m" "g"; grid-template-rows: auto; }
+    #bnd-zinsatlas .za-hist .za-m, #bnd-zinsatlas .za-lang .za-m { padding-left: 0; border-left: 0; margin-top: 16px; }
+    #bnd-zinsatlas .za-hist h3 { max-width: none; }
+    #bnd-zinsatlas .za-jahr, #bnd-zinsatlas .za-hist .za-ml, #bnd-zinsatlas .za-achse, #bnd-zinsatlas .za-skala { display: none !important; }
+    #bnd-zinsatlas .za-hist .za-chips { display: flex !important; flex-wrap: wrap; }
+    #bnd-zinsatlas .za-lang .za-m { display: flex !important; flex-direction: row-reverse; justify-content: flex-end; align-items: center; gap: 16px; }
+    #bnd-zinsatlas .za-lang .za-ml { margin: 0; max-width: 8em; line-height: 1.35; }
+    #bnd-zinsatlas .za-pf { width: 44px; height: 44px; }
+  }
+  /* ==========================================================================================
      Schriftgrößen-Raster 01.10.2026 (Nutzerwunsch „Schriftgrößen passen teilweise nicht – einheitliches Bild“):
      vorher 20 Größen (u. a. 11,5 · 12,5 · 13,5 · 14,5 · 15,5 · 16,5 px), jetzt eine Leiter nach Rolle – gleiche Rolle, gleiche Größe.
      Label 12 · Meta 13 · Klein 14 · Bedienung 15 · Text 16 · Kartentitel 17 · Zwischentitel 21 · Kennzahl 24 · Überschrift 30.
@@ -826,13 +908,36 @@
           <a class="kc box" href="unternehmensanleihen-laender.html"><span class="kt"><span class="kicker">Unternehmens&shy;anleihen</span><b>nach Ländern</b><span class="kz"><span data-kz="spanne-uland">3,8–6,4&nbsp;%</span><small>Renditespanne · 6 Länder</small></span></span><svg class="kimg" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="5" width="18" height="31" rx="2" fill="#DCFBD3"/><path d="M26 15H33V27M13 11.5H15.5M18.5 11.5H21M13 17.5H15.5M18.5 17.5H21M13 23.5H15.5M18.5 23.5H21M15 36V30H19V36M4 36H25"/><circle cx="36" cy="36" r="10.5" fill="#fff" stroke="none"/><circle cx="36" cy="36" r="8.5" fill="#39FF14"/><g stroke-width="1.75"><circle cx="36" cy="36" r="4.5"/><ellipse cx="36" cy="36" rx="2" ry="4.5"/><path d="M31.5 36H40.5"/></g></svg></a>
           <a class="kc box" href="anleihen-etf.html"><span class="kt"><span class="kicker">Anleihen-ETFs</span><b>nach Kategorie</b><span class="kz"><span data-kz="etf-anzahl">908</span><small>ETFs · 7 Kategorien</small></span></span><svg class="kimg" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="6" width="8" height="15" rx="2" fill="#fff"/><rect x="19" y="3.5" width="8" height="17.5" rx="2" fill="#fff"/><rect x="29" y="7.5" width="8" height="13.5" rx="2" fill="#fff"/><path d="M5 21H41L37.5 29H8.5Z" fill="#DCFBD3"/><path d="M8.5 29L11 37H27"/><circle cx="36" cy="36" r="10.5" fill="#fff" stroke="none"/><circle cx="36" cy="36" r="8.5" fill="#39FF14"/><path d="M32.5 32.5h2.5v2.5h-2.5zM37 32.5h2.5v2.5H37zM32.5 37h2.5v2.5h-2.5zM37 37h2.5v2.5H37z" fill="#1A1A19" stroke="none"/></svg></a>
         </div>
+      </section>
 
-        <h3 class="k-lab">Zinsen <small>Wo der Markt heute steht – und wo er herkommt</small></h3>
-        <div class="kgrid k2">
-          <a class="kw box" href="renditen.html"><b>10‑jährige Staatsanleihen seit 1970</b><span class="kwv"><span id="kwv-rend"><span class="kw-n">−0,65</span> <span class="kw-bis">bis</span> <span class="kw-n">20,21</span>&nbsp;<span class="kw-e">%</span></span></span><span class="kwz"><svg class="spk" id="spk-rend" viewBox="0 0 110 34" aria-hidden="true"><path class="spk-a" d="M2.0 7.8 L3.9 8.2 L5.8 8.3 L7.7 4.7 L9.6 2.0 L11.5 5.7 L13.4 8.5 L15.2 12.0 L17.1 13.3 L19.0 9.9 L20.9 6.5 L22.8 3.0 L24.7 5.8 L26.6 8.0 L28.5 8.8 L30.4 10.7 L32.3 13.5 L34.2 13.0 L36.1 12.4 L38.0 10.7 L39.9 7.0 L41.8 6.6 L43.6 9.0 L45.5 12.5 L47.4 11.9 L49.3 11.5 L51.2 13.3 L53.1 14.9 L55.0 18.1 L56.9 18.0 L58.8 16.0 L60.7 17.3 L62.6 17.3 L64.5 19.5 L66.4 19.6 L68.2 21.2 L70.1 20.4 L72.0 18.7 L73.9 20.0 L75.8 21.6 L77.7 22.9 L79.6 23.4 L81.5 26.3 L83.4 26.3 L85.3 27.4 L87.2 29.4 L89.1 30.3 L91.0 29.7 L92.9 29.5 L94.8 31.4 L96.6 32.0 L98.5 31.8 L100.4 27.8 L102.3 23.8 L104.2 24.1 L106.1 23.4 L108.0 22.4 L108.0 34 L2.0 34 Z" fill="#DCFBD3"/><path class="spk-l" d="M2.0 7.8 L3.9 8.2 L5.8 8.3 L7.7 4.7 L9.6 2.0 L11.5 5.7 L13.4 8.5 L15.2 12.0 L17.1 13.3 L19.0 9.9 L20.9 6.5 L22.8 3.0 L24.7 5.8 L26.6 8.0 L28.5 8.8 L30.4 10.7 L32.3 13.5 L34.2 13.0 L36.1 12.4 L38.0 10.7 L39.9 7.0 L41.8 6.6 L43.6 9.0 L45.5 12.5 L47.4 11.9 L49.3 11.5 L51.2 13.3 L53.1 14.9 L55.0 18.1 L56.9 18.0 L58.8 16.0 L60.7 17.3 L62.6 17.3 L64.5 19.5 L66.4 19.6 L68.2 21.2 L70.1 20.4 L72.0 18.7 L73.9 20.0 L75.8 21.6 L77.7 22.9 L79.6 23.4 L81.5 26.3 L83.4 26.3 L85.3 27.4 L87.2 29.4 L89.1 30.3 L91.0 29.7 L92.9 29.5 L94.8 31.4 L96.6 32.0 L98.5 31.8 L100.4 27.8 L102.3 23.8 L104.2 24.1 L106.1 23.4 L108.0 22.4" fill="none" stroke="#157C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle class="spk-p" cx="108.0" cy="22.4" r="4" fill="#39FF14" stroke="#1A1A19" stroke-width="1.5"/></svg></span></a>
-          <a class="kw box" href="zinskurve.html"><b>Zinskurve: 10‑jährige minus 2‑jährige seit 1972</b><span class="kwv"><span id="kwv-zins"><span class="kw-n">−2,27</span> <span class="kw-bis">bis</span> <span class="kw-n">+2,94</span>&nbsp;<span class="kw-e">Pkt.</span></span></span><span class="kwz"><svg class="spk" id="spk-zins" viewBox="0 0 110 34" aria-hidden="true"><path class="spk-a" d="M2.0 15.4 L4.0 19.3 L5.9 14.4 L7.9 4.7 L9.9 5.3 L11.8 9.8 L13.8 10.6 L15.7 19.2 L17.7 24.4 L19.7 32.0 L21.6 22.3 L23.6 14.3 L25.6 13.1 L27.5 13.5 L29.5 12.7 L31.4 7.0 L33.4 8.7 L35.4 23.5 L37.3 22.7 L39.3 27.0 L41.3 28.8 L43.2 18.6 L45.2 12.2 L47.1 6.8 L49.1 2.0 L51.1 7.2 L53.0 15.2 L55.0 12.5 L57.0 18.9 L58.9 15.3 L60.9 13.2 L62.9 9.2 L64.8 9.8 L66.8 15.0 L68.7 19.7 L70.7 21.2 L72.7 17.4 L74.6 5.8 L76.6 6.3 L78.6 9.6 L80.5 10.6 L82.5 10.7 L84.4 13.4 L86.4 16.6 L88.4 17.4 L90.3 14.1 L92.3 14.5 L94.3 19.4 L96.2 21.2 L98.2 19.6 L100.1 19.2 L102.1 25.7 L104.1 23.7 L106.0 17.1 L108.0 18.7 L108.0 34 L2.0 34 Z" fill="#DCFBD3"/><path class="spk-l" d="M2.0 15.4 L4.0 19.3 L5.9 14.4 L7.9 4.7 L9.9 5.3 L11.8 9.8 L13.8 10.6 L15.7 19.2 L17.7 24.4 L19.7 32.0 L21.6 22.3 L23.6 14.3 L25.6 13.1 L27.5 13.5 L29.5 12.7 L31.4 7.0 L33.4 8.7 L35.4 23.5 L37.3 22.7 L39.3 27.0 L41.3 28.8 L43.2 18.6 L45.2 12.2 L47.1 6.8 L49.1 2.0 L51.1 7.2 L53.0 15.2 L55.0 12.5 L57.0 18.9 L58.9 15.3 L60.9 13.2 L62.9 9.2 L64.8 9.8 L66.8 15.0 L68.7 19.7 L70.7 21.2 L72.7 17.4 L74.6 5.8 L76.6 6.3 L78.6 9.6 L80.5 10.6 L82.5 10.7 L84.4 13.4 L86.4 16.6 L88.4 17.4 L90.3 14.1 L92.3 14.5 L94.3 19.4 L96.2 21.2 L98.2 19.6 L100.1 19.2 L102.1 25.7 L104.1 23.7 L106.0 17.1 L108.0 18.7" fill="none" stroke="#157C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle class="spk-p" cx="108.0" cy="18.7" r="4" fill="#39FF14" stroke="#1A1A19" stroke-width="1.5"/></svg></span></a>
-          <a class="kw box" href="unternehmensanleihen.html"><b>US-Unternehmens&shy;anleihen (10&nbsp;Jahre) seit 1984</b><span class="kwv"><span id="kwv-unt"><span class="kw-n">2,01</span> <span class="kw-bis">bis</span> <span class="kw-n">13,66</span>&nbsp;<span class="kw-e">%</span></span></span><span class="kwz"><svg class="spk" id="spk-unt" viewBox="0 0 110 34" aria-hidden="true"><path class="spk-a" d="M2.0 2.0 L4.6 5.7 L7.2 12.5 L9.8 12.0 L12.3 11.1 L14.9 12.4 L17.5 11.9 L20.1 13.5 L22.7 16.2 L25.3 19.6 L27.9 16.6 L30.4 18.1 L33.0 18.6 L35.6 18.9 L38.2 21.1 L40.8 19.2 L43.4 16.9 L46.0 19.6 L48.5 21.1 L51.1 24.0 L53.7 23.7 L56.3 24.2 L58.9 22.6 L61.5 22.2 L64.0 19.4 L66.6 20.8 L69.2 24.5 L71.8 25.6 L74.4 28.3 L77.0 27.6 L79.6 28.0 L82.1 28.4 L84.7 29.1 L87.3 28.8 L89.9 27.3 L92.5 29.2 L95.1 32.0 L97.7 31.6 L100.2 26.0 L102.8 23.8 L105.4 24.4 L108.0 24.2 L108.0 34 L2.0 34 Z" fill="#DCFBD3"/><path class="spk-l" d="M2.0 2.0 L4.6 5.7 L7.2 12.5 L9.8 12.0 L12.3 11.1 L14.9 12.4 L17.5 11.9 L20.1 13.5 L22.7 16.2 L25.3 19.6 L27.9 16.6 L30.4 18.1 L33.0 18.6 L35.6 18.9 L38.2 21.1 L40.8 19.2 L43.4 16.9 L46.0 19.6 L48.5 21.1 L51.1 24.0 L53.7 23.7 L56.3 24.2 L58.9 22.6 L61.5 22.2 L64.0 19.4 L66.6 20.8 L69.2 24.5 L71.8 25.6 L74.4 28.3 L77.0 27.6 L79.6 28.0 L82.1 28.4 L84.7 29.1 L87.3 28.8 L89.9 27.3 L92.5 29.2 L95.1 32.0 L97.7 31.6 L100.2 26.0 L102.8 23.8 L105.4 24.4 L108.0 24.2" fill="none" stroke="#157C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle class="spk-p" cx="108.0" cy="24.2" r="4" fill="#39FF14" stroke="#1A1A19" stroke-width="1.5"/></svg></span></a>
-          <a class="kw box" href="langlaeufer.html"><b>Besonders lang laufende Anleihen seit 2019</b><span class="kwv"><span id="kwv-lang"><span class="kw-n">−0,50</span> <span class="kw-bis">bis</span> <span class="kw-n">3,94</span>&nbsp;<span class="kw-e">%</span></span></span><span class="kwz"><svg class="spk" id="spk-lang" viewBox="0 0 110 34" aria-hidden="true"><path class="spk-a" d="M2.0 5.0 L3.2 6.0 L4.3 7.7 L5.5 8.2 L6.6 9.5 L7.8 10.0 L8.9 7.7 L10.1 2.0 L11.2 5.0 L12.4 4.6 L13.5 6.2 L14.7 5.4 L15.8 5.2 L17.0 4.8 L18.1 5.3 L19.3 3.1 L20.4 4.4 L21.6 2.9 L22.7 4.1 L23.9 6.0 L25.0 8.7 L26.2 9.0 L27.3 9.5 L28.5 10.7 L29.7 9.7 L30.8 6.8 L32.0 5.3 L33.1 8.4 L34.3 9.0 L35.4 6.4 L36.6 5.2 L37.7 8.7 L38.9 9.4 L40.0 8.6 L41.2 13.6 L42.3 16.7 L43.5 18.7 L44.6 22.2 L45.8 18.9 L46.9 19.6 L48.1 22.4 L49.2 26.0 L50.4 24.5 L51.5 21.4 L52.7 25.4 L53.8 24.9 L55.0 27.7 L56.2 26.1 L57.3 26.4 L58.5 27.8 L59.6 26.1 L60.8 26.7 L61.9 27.9 L63.1 28.3 L64.2 29.1 L65.4 29.2 L66.5 26.3 L67.7 25.9 L68.8 25.9 L70.0 26.8 L71.1 26.3 L72.3 27.9 L73.4 27.7 L74.6 26.8 L75.7 27.1 L76.9 26.1 L78.0 25.9 L79.2 26.7 L80.3 27.0 L81.5 24.9 L82.7 26.7 L83.8 27.3 L85.0 26.9 L86.1 29.0 L87.3 28.0 L88.4 29.1 L89.6 28.3 L90.7 29.4 L91.9 29.9 L93.0 29.7 L94.2 29.7 L95.3 29.7 L96.5 30.4 L97.6 30.8 L98.8 30.8 L99.9 30.1 L101.1 30.7 L102.2 30.8 L103.4 30.8 L104.5 30.5 L105.7 31.1 L106.8 31.1 L108.0 32.0 L108.0 34 L2.0 34 Z" fill="#DCFBD3"/><path class="spk-l" d="M2.0 5.0 L3.2 6.0 L4.3 7.7 L5.5 8.2 L6.6 9.5 L7.8 10.0 L8.9 7.7 L10.1 2.0 L11.2 5.0 L12.4 4.6 L13.5 6.2 L14.7 5.4 L15.8 5.2 L17.0 4.8 L18.1 5.3 L19.3 3.1 L20.4 4.4 L21.6 2.9 L22.7 4.1 L23.9 6.0 L25.0 8.7 L26.2 9.0 L27.3 9.5 L28.5 10.7 L29.7 9.7 L30.8 6.8 L32.0 5.3 L33.1 8.4 L34.3 9.0 L35.4 6.4 L36.6 5.2 L37.7 8.7 L38.9 9.4 L40.0 8.6 L41.2 13.6 L42.3 16.7 L43.5 18.7 L44.6 22.2 L45.8 18.9 L46.9 19.6 L48.1 22.4 L49.2 26.0 L50.4 24.5 L51.5 21.4 L52.7 25.4 L53.8 24.9 L55.0 27.7 L56.2 26.1 L57.3 26.4 L58.5 27.8 L59.6 26.1 L60.8 26.7 L61.9 27.9 L63.1 28.3 L64.2 29.1 L65.4 29.2 L66.5 26.3 L67.7 25.9 L68.8 25.9 L70.0 26.8 L71.1 26.3 L72.3 27.9 L73.4 27.7 L74.6 26.8 L75.7 27.1 L76.9 26.1 L78.0 25.9 L79.2 26.7 L80.3 27.0 L81.5 24.9 L82.7 26.7 L83.8 27.3 L85.0 26.9 L86.1 29.0 L87.3 28.0 L88.4 29.1 L89.6 28.3 L90.7 29.4 L91.9 29.9 L93.0 29.7 L94.2 29.7 L95.3 29.7 L96.5 30.4 L97.6 30.8 L98.8 30.8 L99.9 30.1 L101.1 30.7 L102.2 30.8 L103.4 30.8 L104.5 30.5 L105.7 31.1 L106.8 31.1 L108.0 32.0" fill="none" stroke="#157C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle class="spk-p" cx="108.0" cy="32.0" r="4" fill="#39FF14" stroke="#1A1A19" stroke-width="1.5"/></svg></span></a>
+      <section id="bnd-zinsatlas" aria-labelledby="h-zatlas">   <!-- Zinsatlas 01.10.2026 (Entwurf 02 des Nutzers): vier Flächen zu den vier Zinsen-Seiten, je ein Link; ersetzt die Karten mit Spanne und Mini-Kurve -->
+        <p class="za-dach">Zinsatlas</p>
+        <h2 id="h-zatlas">Zinsen in Bewegung.</h2>
+        <p class="za-sub">Vier Perspektiven auf den Anleihemarkt.</p>
+        <div class="za-reihe za-r1">
+          <a class="za-k za-hist" href="renditen.html">
+            <div class="za-t"><span class="za-nr">01 / Renditehistorie</span><h3>Staatsanleihen seit&nbsp;1970.</h3><span class="za-d">10-jährige Staatsanleihen aus acht Ländern: aktuelle Renditen und ihre Geschichte.</span></div>
+            <span class="za-m"><span class="za-jahr" aria-hidden="true">1970<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3 12h17M14.5 6.5L20 12l-5.5 5.5"/></svg></span><span class="za-ml" aria-hidden="true">bis heute · 10 Jahre Laufzeit</span><span class="za-chips"><i>USA</i><i>China</i><i>Deutschland</i><i>Indien</i><i>Japan</i><i>Großbritannien</i><i>Frankreich</i><i>Italien</i></span></span>
+            <span class="za-go">Renditehistorie ansehen<span class="za-pf" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></span>
+          </a>
+          <a class="za-k za-kurve" href="zinskurve.html">
+            <div class="za-t"><span class="za-nr">02 / Laufzeit</span><h3>Zinskurve</h3><span class="za-frage">Lang oder kurz?</span></div>
+            <span class="za-m"><span><small>Rendite</small><b>10</b><em>Jahre</em></span><span class="za-minus" aria-hidden="true"></span><span class="sr-only">minus</span><span><small>Rendite</small><b>2</b><em>Jahre</em></span></span>
+            <span class="za-d">Der Renditeabstand für Deutschland und die USA.</span>
+            <span class="za-go">Zinskurve ansehen<span class="za-pf" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></span>
+          </a>
+        </div>
+        <div class="za-reihe za-r2">
+          <a class="za-k za-unt" href="unternehmensanleihen.html">
+            <div class="za-t"><span class="za-nr">03 / Unternehmensrendite</span><h3>Unternehmensanleihen</h3><span class="za-d">Sechs Renditereihen, vier Länder. Jeweils zehn Jahre Laufzeit.</span></div>
+            <span class="za-m"><span class="za-chips"><i>USA · AAA–A</i><i>Japan · AA / A</i><i>China · AAA</i><i>Australien · A / BBB</i></span></span>
+            <span class="za-go">Renditereihen ansehen<span class="za-pf" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></span>
+          </a>
+          <a class="za-k za-lang" href="langlaeufer.html">
+            <div class="za-t"><span class="za-nr">04 / Kurs &amp; Rendite</span><h3>Langläufer</h3><span class="za-d">Sieben Anleihen: Kursverläufe seit 2019 und Fälligkeiten bis 2120.</span></div>
+            <span class="za-m" aria-hidden="true"><span class="za-ml">Fälligkeiten bis</span><span class="za-ziel">2120</span><span class="za-achse"><i style="left:0"></i><i style="left:12.5%"></i><i style="left:25%"></i><i style="left:40%"></i><i style="left:100%"></i></span><span class="za-skala"><span>2040</span><span>2120</span></span></span>
+            <span class="za-go">Langläufer ansehen<span class="za-pf" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></span>
+          </a>
         </div>
       </section>
     </div>
@@ -1032,98 +1137,7 @@ MC.navInit();
 })();
 
 
-// "Und jetzt konkret": Mini-Kurven aus den JSON-Dateien (statische Kurven im HTML sind der Rückfall; Zahlen seit 29.09.2026 entfernt)
-(function () {
-  if (!MC.load) return;
-  // Kurve in der tatsächlichen Breite zeichnen (viewBox = Pixel), damit Linie und Punkt bei jeder Kachelbreite gleich dick bleiben
-  var KURVEN = {};
-  // Seit 01.10.2026 (Zinsen-Block): Tiefgrün, Fläche Hauch, letzter Wert als Kupon-Punkt (Neon mit Tinten-Rand).
-  // nulllinie: gestrichelte Nulllinie, Abschnitte unter null in Orange (Zinskurve) – die Kurve selbst bleibt dieselbe.
-  var NULL = {};
-  function kurve(id, vals, nulllinie) {
-    var svg = document.getElementById(id); if (!svg || vals.length < 2) return;
-    KURVEN[id] = vals; if (nulllinie) NULL[id] = true;
-    var w = Math.round(svg.getBoundingClientRect().width) || 110, h = Math.round(svg.getBoundingClientRect().height) || 34, p = 6;
-    svg.setAttribute("viewBox", "0 0 " + w + " " + h);
-    var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals), r = (hi - lo) || 1, pts = [];
-    var Y = function (v) { return (p + (h - 2 * p) * (1 - (v - lo) / r)).toFixed(1); };
-    for (var i = 0; i < vals.length; i++) pts.push([(p + i * (w - 2 * p) / (vals.length - 1)).toFixed(1), Y(vals[i])]);
-    var d = "M" + pts.map(function (q) { return q[0] + " " + q[1]; }).join(" L"), e = pts[pts.length - 1];
-    var LINIE = ' fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
-    var g = "";
-    if (NULL[id] && lo < 0 && hi > 0) {
-      var y0 = Y(0), a0 = d + " L" + e[0] + " " + y0 + " L" + pts[0][0] + " " + y0 + " Z";
-      g = '<defs><clipPath id="' + id + '-o"><rect x="0" y="0" width="' + w + '" height="' + y0 + '"/></clipPath>' +
-        '<clipPath id="' + id + '-u"><rect x="0" y="' + y0 + '" width="' + w + '" height="' + (h - y0) + '"/></clipPath></defs>' +
-        '<path d="' + a0 + '" fill="#DCFBD3" clip-path="url(#' + id + '-o)"/><path d="' + a0 + '" fill="#FBE8D8" clip-path="url(#' + id + '-u)"/>' +
-        '<line x1="' + p + '" x2="' + (w - p) + '" y1="' + y0 + '" y2="' + y0 + '" stroke="#1A1A19" stroke-opacity="0.4" stroke-dasharray="2 3"/>' +
-        '<path d="' + d + '" stroke="#157C00"' + LINIE + ' clip-path="url(#' + id + '-o)"/><path d="' + d + '" stroke="#CF7430"' + LINIE + ' clip-path="url(#' + id + '-u)"/>';
-    } else {
-      g = '<path d="' + d + " L" + e[0] + " " + h + " L" + pts[0][0] + " " + h + ' Z" fill="#DCFBD3"/><path d="' + d + '" stroke="#157C00"' + LINIE + "/>";
-    }
-    svg.innerHTML = g + '<circle cx="' + e[0] + '" cy="' + e[1] + '" r="4" fill="#39FF14" stroke="#1A1A19" stroke-width="1.5"/>';
-  }
-  var zahl = MC.zahl, tag = MC.tag || function () { return ""; };   // Zahlen-/Datumsformat aus site.js
-  // Seit 30.09.2026 (Nutzerwunsch): nur die Spanne seit Beginn der Reihe (Tief bis Hoch) über alles, was die Zielseite zeigt – ohne Zusatzzeile
-  // Seit 01.10.2026 (Zinsen-Block, Mockup des Nutzers): Zahlen groß, „bis“ und Einheit klein – als eigene Spans
-  function wert(key, a, b, einheit) {
-    var el = document.getElementById("kwv-" + key); if (!el) return;
-    el.innerHTML = '<span class="kw-n">' + a + '</span> <span class="kw-bis">bis</span> <span class="kw-n">' + b + '</span>\u00a0<span class="kw-e">' + einheit + "</span>";
-  }
-  function spanne(werte) {
-    werte = werte.filter(function (v) { return typeof v === "number" && isFinite(v); });
-    return [Math.min.apply(null, werte), Math.max.apply(null, werte)];
-  }
-  var NBSP = "\u00a0", vz = function (v) { return (v > 0 ? "+" : "") + zahl(v, 2); };
-  var zeit = 0;
-  window.addEventListener("resize", function () { clearTimeout(zeit); zeit = setTimeout(function () { Object.keys(KURVEN).forEach(function (id) { kurve(id, KURVEN[id]); }); }, 150); });
-  MC.load("renditen.json").then(function (d) {
-    // alle acht Länder der Seite; die Jahresmittel 1970–2023 stecken nur in renditen.html (RY.annual) – ihr Tief (Deutschland 2020: −0,51)
-    // und Hoch (Italien 1982: 20,21) stehen deshalb hier fest, alles ab 2024 kommt aus renditen.json
-    var w = [-0.51, 20.21];
-    Object.keys(d.countries || {}).forEach(function (k) {
-      var c = d.countries[k];
-      Object.keys(c.range || {}).forEach(function (y) { if (c.range[y]) w.push(c.range[y][0], c.range[y][1]); });
-      Object.keys(c.annual || {}).forEach(function (y) { w.push(c.annual[y]); });
-      if (c.latest) w.push(c.latest.yield);
-    });
-    var s = spanne(w);
-    wert("rend", zahl(s[0], 2), zahl(s[1], 2), "%");
-    var de = d.countries && d.countries.de;
-    if (de) kurve("spk-rend", Object.keys(de.range).sort().map(function (y) { return (de.range[y][0] + de.range[y][1]) / 2; }));
-  }).catch(function () {});
-  MC.load("zinskurve.json").then(function (d) {
-    var w = [];   // alle Länder der Seite (Deutschland, USA): Monatswerte und heute
-    Object.keys(d.monate || {}).forEach(function (k) { d.monate[k].forEach(function (x) { if (x[1] !== null && x[2] !== null) w.push(x[2] - x[1]); }); });
-    Object.keys(d.heute || {}).forEach(function (k) { var h = d.heute[k]; if (h && h[1] !== null && h[2] !== null) w.push(h[2] - h[1]); });
-    if (!w.length) return;
-    var s = spanne(w);
-    wert("zins", vz(s[0]), vz(s[1]), "Pkt.");
-    var j = {}; ((d.monate && d.monate.DE) || []).forEach(function (m) { var y = m[0].slice(0, 4); (j[y] = j[y] || []).push(m[2] - m[1]); });
-    kurve("spk-zins", Object.keys(j).sort().map(function (y) { return j[y].reduce(function (a, b) { return a + b; }, 0) / j[y].length; }), true);
-  }).catch(function () {});
-  MC.load("unternehmen.json").then(function (d) {
-    // HQM-Kurve des U.S. Treasury (AAA bis A, 10 Jahre) – bis 30.09.2026 Moody's Baa, entfallen (Weiterverbreitung nur mit Zustimmung)
-    var s = d.series && d.series.us_hqm; if (!s) return;
-    var w = [];
-    Object.keys(s.range || {}).forEach(function (y) { if (s.range[y]) w.push(s.range[y][0], s.range[y][1]); });
-    if (s.latest) w.push(s.latest.yield);
-    var sp = spanne(w);
-    wert("unt", zahl(sp[0], 2), zahl(sp[1], 2), "%");
-    kurve("spk-unt", Object.keys(s.annual).sort().filter(function (y) { return s.annual[y] !== null; }).map(function (y) { return s.annual[y]; }));
-  }).catch(function () {});
-  MC.load("langlaeufer.json").then(function (d) {
-    // Rendite der Bund 0 % 2050 seit 2019 (Spanne und Kurve), damit alle vier Kästen Zinsen zeigen; bis 30.09.2026 stand hier der Kurs
-    var b = d.bonds && d.bonds.bund2050; if (!b) return;
-    var wk = b.weekly.filter(function (x) { return typeof x[2] === "number"; });
-    var w = wk.map(function (x) { return x[2]; });
-    [b.high, b.low, b.latest].forEach(function (x) { if (x) w.push(x.yield); });
-    var s = spanne(w);
-    wert("lang", zahl(s[0], 2), zahl(s[1], 2), "%");
-    kurve("spk-lang", wk.filter(function (_, i) { return i % 4 === 0; }).map(function (x) { return x[2]; }).concat(b.latest && typeof b.latest.yield === "number" ? [b.latest.yield] : []));
-  }).catch(function () {});
-  // Renditespannen der Top-10-Karten setzt seit 30.09.2026 der Deploy (scripts/kennzahlen.py, data-kz="spanne-…") – keine vier Extra-Abrufe mehr
-})();
+// Zinsatlas (seit 01.10.2026): ohne Skript – die Mini-Kurven und Spannen der alten Zinsen-Karten sind entfallen
 </script>
 </body>
 </html>
