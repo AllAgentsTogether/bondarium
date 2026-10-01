@@ -15,7 +15,8 @@
    dort sieht man ohne Querwischen nur die ersten Spalten („Bundesrepublik Deutschland“ ×7 war nicht unterscheidbar).
 
    Zeilen (Handauswahl in der Seite oder automatische Liste aus scripts/update_top10.py):
-     { isin, emittent?, art?, cur?, kupon, zins (Zahlungen je Jahr), faellig, kurs, datum?, rendite?, vol, stk }
+     { isin, emittent?, art?, cur?, kupon, zins (Zahlungen je Jahr), zt? (Zinstage „MM-TT“ laut Börsenliste), faellig, kurs,
+       datum?, rendite?, vol, stk }
    Rendite: Tageskurs aus kurse-auswahl.json → dessen Rendite (fehlt sie dort: leer, nicht nachrechnen); sonst die
    vorgegebene rendite der Zeile; sonst aus Kurs, Kupon und Datum berechnet (MC.bond, Valuta T+1 für USD/GBP, sonst T+2). */
 (function () {
@@ -36,7 +37,7 @@
       var cur = r.cur || def.cur, settle = MC.bond.settle(datum, cur);
       var yld = k ? (typeof k[1] === "number" ? k[1] : null)
         : "rendite" in r ? (typeof r.rendite === "number" ? r.rendite : null)
-        : MC.bond.yieldFromPrice({ coupon: r.kupon, freq: r.zins, maturity: r.faellig }, kurs, settle) * 100;
+        : MC.bond.yieldFromPrice({ coupon: r.kupon, freq: r.zins, maturity: r.faellig, days: r.zt }, kurs, settle) * 100;
       return {
         rank: i + 1, isin: r.isin, emittent: r.emittent || def.emittent || "", art: r.art || def.art, cur: cur,
         kupon: r.kupon, faellig: r.faellig, kurs: kurs, datum: datum, vol: r.vol, stk: r.stk, yld: yld,

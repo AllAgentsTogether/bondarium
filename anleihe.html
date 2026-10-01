@@ -325,16 +325,17 @@
         <p><strong>Kurse und Handel.</strong> Deutsche Börse, Nachhandelsdaten nach MiFIR Art. 13 (Börse Frankfurt, Tradegate; 15 Minuten verzögert, kostenlos veröffentlicht): jede Kursfeststellung mit Zeitpunkt, Kurs, Stückzahl und Handelsplatz. Daraus stammen Schlusskurs, Eröffnung, Hoch, Tief, die Zahl der Feststellungen und der Abschlüsse – alle vom Kursplatz (in der Regel Frankfurt); der Umsatz zählt Frankfurt und Tradegate zusammen, deshalb kann es Umsatz auf Tradegate geben, obwohl in Frankfurt kein Abschluss zustande kam. Ohne Abschluss ist der Kurs die Feststellung des Spezialisten (Taxe). Bundeswertpapiere: Kurs und Rendite der Deutschen Bundesbank. Täglich aktualisiert; der Kursverlauf wird seit dem 24.09.2026 gesammelt, für Bundeswertpapiere reicht er laut Bundesbank bis zur Ausgabe zurück.</p>
         <p><strong>Ältere Kurse von US-Staatsanleihen.</strong> Vor dem 24.09.2026 stammt der Kursverlauf der US-Treasuries vom U.S. Department of the Treasury (Bureau of the Fiscal Service, TreasuryDirect „FedInvest – Security Price Detail“): Preis zum Tagesende je 100 Dollar Nennwert, ohne Stückzinsen, bei TIPS ohne Inflationsfaktor; bis Ende 2023 ein Wert je Woche, danach täglich. Als Werk der US-Regierung frei nutzbar. Die Frankfurter Kurse lagen beim Vergleich am 25.09.2026 im Mittel rund 0,2 Punkte darunter (andere Uhrzeit und Preisermittlung) – daher kann der Verlauf am 24.09.2026 eine kleine Stufe zeigen.</p>
         <p><strong>Stammdaten.</strong> ESMA-Register FIRDS, gemeldet vom Handelsplatz (unverändert übernommen; weicht der Kurzname im Register – Kupon und Fälligkeit nach ISO 18774 – oder der Name vom Registerwert ab, steht der Widerspruch daneben, und es gibt weder Rendite noch Rechenbeispiel): Name, Währung, Kupon oder Zinsformel, Fälligkeit, ausgegebener Betrag, Stückelung, Rang (Seniorität), Besicherung oder Garantie und Rückzahlungsart (aus dem CFI-Code), erster Handelstag. Fehlt eine Angabe, steht „nicht gemeldet“. Emittent und Konzernsitz laut LEI-Register (GLEIF); Namen, die das Register nur in Großbuchstaben meldet, zeigen wir in üblicher Groß- und Kleinschreibung (die Originalschreibweise erscheint beim Überfahren des Namens). Die ESMA steht in keiner Verbindung zu dieser Seite. Der Titel über dem Registernamen ist aus Emittent (bei Staaten: Land), Kupon und Fälligkeit zusammengesetzt.</p>
+        <p id="q-zinstermine"><strong>Zinstermine.</strong> Das ESMA-Register nennt weder die Zinstermine noch die Zahl der Zinszahlungen im Jahr. Beides stammt aus der täglich veröffentlichten Liste der Deutschen Börse „Alle handelbaren Instrumente“ für die Börse Frankfurt: Sie nennt je Anleihe den letzten und den nächsten Zinstermin; daraus ergeben sich die Zinstage und ob jährlich, halbjährlich, vierteljährlich oder monatlich gezahlt wird. Dann steht „laut Deutscher Börse“ am Zinstermin. Fällt ein Zinstag auf ein Wochenende oder einen Feiertag, kommt das Geld am nächsten Bankarbeitstag. <strong>Geschätzt</strong> sind die Zinstermine, wenn die Liste für die Anleihe keine Termine nennt – etwa weil sie nicht in Frankfurt gehandelt wird oder der erste Zinstermin noch aussteht: Dann gilt der Jahrestag der Fälligkeit als Zinstermin; halbjährlich bei Anleihen in Dollar, Pfund und einigen weiteren Währungen mit einer ISIN aus dem Heimatmarkt der Währung, bei Dollar-Anleihen mit internationaler ISIN (außer von deutschen und österreichischen Emittenten), bei Staatsanleihen Italiens und Maltas und bei Euro-Unternehmensanleihen in der Bauart „Reg.S“; sonst jährlich. Bei geschätzten Terminen können Stückzinsen, Zahlungsplan und Rendite vom tatsächlichen Wert abweichen. Maßgeblich sind immer die Anleihebedingungen.</p>
         <p><strong>Kündigungsrecht.</strong> Gelesen aus dem Namen – die Klammer „Ausgabejahr(erstes Kündigungsjahr/Fälligkeitsjahr)“, „Und.“ für unbefristet – und aus der Rückzahlungsart im ESMA-Register; der Name hat Vorrang, weil das Register die Rückzahlungsart oft ungenau meldet. Kündigungsjahr gleich Ausgabejahr: Make-Whole; ohne Jahr im Namen, aber laut Register kündbar: Termin nicht gemeldet. Kündigungsrecht des Anlegers (Put) laut Register. Verbindlich sind nur die Anleihebedingungen; die Arten erklärt die Seite <a href="kuendbare-anleihen.html">Kündbare Anleihen</a>.</p>
         <p><strong>Von uns berechnet</strong> (alles andere steht so bei der Börse, der Deutschen Bundesbank oder im ESMA-Register):
-          Rendite bis Fälligkeit (jährliche Verzinsung, taggenau, Stückzinsen eingerechnet, Valuta zwei Börsentage nach dem Handelstag; Zinstermin am Jahrestag der Fälligkeit, bei Dollar-, Pfund- und einigen weiteren Währungen sowie italienischen Staatsanleihen halbjährlich; bei Bundeswertpapieren die Rendite der Bundesbank; keine Rendite bei variablem oder später wechselndem Kupon, Stufenzins, Wandel- und Tilgungsanleihen, bei Valuta nach der Fälligkeit und bei widersprüchlichen Registerangaben; keine Rendite und kein Aufschlag, wenn der Kurs eine Taxe ohne Umsatz ist und die berechnete Rendite unter 0 oder über 15 % liegt, mehr als einen Punkt unter Bund oder bei unter drei Monaten Restlaufzeit über 8 %) ·
+          Rendite bis Fälligkeit (jährliche Verzinsung, taggenau, Stückzinsen eingerechnet, Valuta zwei Börsentage nach dem Handelstag; Zinstermine wie unter „Zinstermine“ beschrieben; bei Bundeswertpapieren die Rendite der Bundesbank; keine Rendite bei variablem oder später wechselndem Kupon, Stufenzins, Wandel- und Tilgungsanleihen, bei Valuta nach der Fälligkeit und bei widersprüchlichen Registerangaben; keine Rendite und kein Aufschlag, wenn der Kurs eine Taxe ohne Umsatz ist und die berechnete Rendite unter 0 oder über 15 % liegt, mehr als einen Punkt unter Bund oder bei unter drei Monaten Restlaufzeit über 8 %) ·
           laufende Verzinsung (Kupon ÷ Kurs) ·
           Restlaufzeit und Alter des Kurses in Börsentagen (Montag bis Freitag) ·
           Veränderung zum Vortag (gegen unseren gespeicherten Schlusskurs) ·
           Umsatz in Geld (Stück × Kurs je Abschluss) ·
           Risikoaufschlag zu Bund (Differenz zur Rendite der Bundesanleihe gleicher Restlaufzeit, zwischen den beiden nächsten Bundeswertpapieren linear interpoliert; nur Euro, ab zwei Wochen bis 30 Jahre) ·
           Kursveränderung im gewählten Zeitraum und „inkl. Kupons“ (Kursveränderung plus Kupon × Tage ÷ 365 im Zeitraum, bezogen auf den Anfangskurs, ohne Wiederanlage, in der Währung der Anleihe) ·
-          Rechenbeispiel: Kurswert, Stückzinsen, Kaufpreis mit der eingetragenen Gebühr, Zinsen und Rückzahlung bis zur Fälligkeit (Zinstermine aus der Fälligkeit abgeleitet – der tatsächliche Termin kann abweichen), „Zahlungen − Kaufpreis“ vor Steuern. Das Rechenbeispiel nimmt an: Order heute zum letzten Schlusskurs, keine vorzeitige Kündigung, alle Zahlungen wie abgeleitet. Es ist keine Prognose.</p>
+          Rechenbeispiel: Kurswert, Stückzinsen, Kaufpreis mit der eingetragenen Gebühr, Zinsen und Rückzahlung bis zur Fälligkeit (Zinstermine wie unter „Zinstermine“ beschrieben), „Zahlungen − Kaufpreis“ vor Steuern. Das Rechenbeispiel nimmt an: Order heute zum letzten Schlusskurs, keine vorzeitige Kündigung, alle Zahlungen an den genannten Terminen. Es ist keine Prognose.</p>
         <p id="datastand">Daten-Stand: wird geladen</p>
       </div>
     </details>
@@ -371,7 +372,6 @@ const T = {
   boersen: { F: "Börse Frankfurt", T: "Tradegate", X: "Xetra", B: "Deutsche Bundesbank" },
   ref: { EURI: "Euribor", ESTR: "€STR", SOFR: "SOFR", SONI: "SONIA", LIBO: "Libor", FORMULA: "Formel laut Prospekt", SWAP: "Swapsatz" },
   einheit: { D: ["Tag", "Tage"], W: ["Woche", "Wochen"], M: ["Monat", "Monate"], Y: ["Jahr", "Jahre"] },
-  halbjahr: ["USD", "GBP", "CAD", "AUD", "NZD", "JPY", "MXN", "ZAR", "HKD", "SGD"],
   wtag: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
 };
 const p = new URLSearchParams(location.search);
@@ -400,15 +400,19 @@ const vz = (x, dec = 2) => { const r = Math.round(x * 10 ** dec) / 10 ** dec || 
 const json = url => MC.json ? MC.json(url) : MC.load(url);
 const parseZahl = s => Math.max(0, parseFloat(String(s).replace(/\./g, "").replace(",", ".")) || 0);
 
-// ---------- Zinstermine und Stückzinsen (bond.js, MC.bond; Zinstermin am Jahrestag der Fälligkeit angenommen) ----------
-// Termine vom Fälligkeitstag aus rückwärts, ein Monatsende bleibt Monatsende (31.08. → 28.02. → 31.08.) – wie scripts/update_kurse.py
-const anleiheB = (kupon, faellig, freq) => ({ coupon: kupon, freq, maturity: faellig });
+// ---------- Zinstermine und Stückzinsen (bond.js, MC.bond) ----------
+// Seit 02.10.2026: Zahlungen je Jahr und Zinstage stehen in den Stammdaten (Feld 15 der Zeile, scripts/update_zinstermine.py) –
+// laut Instrumentenliste der Deutschen Börse [freq, "MM-TT", …] oder, wo sie nichts sagt, geschätzt [freq]. Mit Zinstagen fallen die
+// Termine auf diese Tage; geschätzt: vom Fälligkeitstag aus rückwärts, ein Monatsende bleibt Monatsende – wie scripts/_common.py.
+const anleiheB = (kupon, faellig, freq, tage) => ({ coupon: kupon, freq, maturity: faellig, days: tage });
 // Zinstermine nach „ab“ (Date) bis einschließlich Fälligkeit, aufsteigend
-function kommendeTermine(faellig, freq, ab) { return MC.bond.couponDates(anleiheB(0, faellig, freq), isoOf(ab)).dates.map(t => new Date(t)); }
+function kommendeTermine(faellig, freq, ab, tage) { return MC.bond.couponDates(anleiheB(0, faellig, freq, tage), isoOf(ab)).dates.map(t => new Date(t)); }
+// Anteil des letzten Kupons am Fälligkeitstag (1 = voll; kleiner bei kurzer letzter Zinsperiode)
+const letzterKupon = (faellig, freq, tage) => MC.bond.couponDates(anleiheB(0, faellig, freq, tage), (faellig.slice(0, 4) - 1) + faellig.slice(4)).last;
 // Stückzinsen: Anteil des laufenden Kupons seit dem letzten Zinstermin (act/act), in % des Nennwerts.
 // Nur für Valuta VOR der Fälligkeit aufrufen.
-function stueckzins(kupon, faellig, freq, valuta) {
-  const b = anleiheB(kupon, faellig, freq), v = isoOf(valuta), cd = MC.bond.couponDates(b, v);
+function stueckzins(kupon, faellig, freq, valuta, tage) {
+  const b = anleiheB(kupon, faellig, freq, tage), v = isoOf(valuta), cd = MC.bond.couponDates(b, v);
   const letzter = new Date(cd.prev), naechster = new Date(cd.dates[0]);
   return { anteil: MC.bond.accrued(b, v), letzter, naechster, tage: Math.round((valuta - letzter) / 86400000), periode: Math.round((naechster - letzter) / 86400000) };
 }
@@ -462,7 +466,7 @@ function kurzName(emittent, art, land) {
 
 // ---------- Aufbau ----------
 function zeige(r, k, meta) {
-  const [name, art, ccy, kupon, faellig, vol, stk, , emittent, zinsart, land, , mehr, pruefRaw] = r;
+  const [name, art, ccy, kupon, faellig, vol, stk, , emittent, zinsart, land, , mehr, pruefRaw, zt] = r;
   const m = Array.isArray(mehr) ? mehr : ["---", "", null], fl = m[2] || null;
   const rs = m[0][0], rz = m[0][1], gar = m[0][2];
   // Datenprüfung (27.09.2026): Feld pruef aus dem Indexskript – Registerwerte bleiben, Widersprüche stehen daneben, keine Rendite
@@ -483,7 +487,10 @@ function zeige(r, k, meta) {
   const raten = "ABTL".includes(rz);
   const kue = MC.kuendigung ? MC.kuendigung(name, rz, faellig, m[1]) : { k: "n", jahr: null, put: false };
   const kueAb = kue.jahr ? `${kue.jahr <= heute.getFullYear() ? "seit" : "ab"} ${kue.jahr}` : "";
-  const freq = T.halbjahr.includes(ccy) || (ISIN.startsWith("IT") && art === 0) ? 2 : 1;   // BTP halbjährlich (wie _common.zinsfrequenz)
+  // Zinstermine: zt = [Zahlungen je Jahr, "MM-TT", …] laut Börsenliste, [Zahlungen je Jahr] = geschätzt (scripts/update_zinstermine.py)
+  const freq = Array.isArray(zt) && zt[0] > 0 ? zt[0] : 1, zinstage = Array.isArray(zt) && zt.length > 1 ? zt.slice(1) : null;
+  const rhythmus = { 2: "halbjährlich", 4: "vierteljährlich", 12: "monatlich" }[freq] || "";
+  const ztQuelle = zinstage ? "Zinstermine laut Deutscher Börse" : "Zinstermine geschätzt";
   const wName = (() => { try { const n = NAMEN.w && NAMEN.w.of(ccy); return n && n !== ccy ? n : ""; } catch (e) { return ""; } })();
   const wkn = /^DE/.test(ISIN) ? ISIN.slice(5, 11) : "";
   const alter = datum && MC.boersentage ? MC.boersentage(datum, heute) : null;   // Börsentage seit dem Kursdatum (gemeinsame Regel, site.js)
@@ -576,14 +583,15 @@ function zeige(r, k, meta) {
   const kueWert = { n: kue.put ? "nur Anleger (Put)" : "keines", m: "jederzeit (Make-Whole)", p: kueAb, t: kueAb, e: kueAb, u: "ja, Termin nicht gemeldet" }[kue.k] || "–";
   const kueKlein = { n: kue.put ? "laut Register" : "laut Name und Register", m: "Kündigungsjahr gleich Ausgabejahr im Namen", p: "im letzten Jahr vor der Fälligkeit, laut Name", t: "laut Name", e: "unbefristet, laut Name", u: "laut Register" }[kue.k] || "";
   const termine = zinsart === 0 && typeof kupon === "number" && kupon > 0 && faellig && !abgelaufen
-    ? [...new Set(kommendeTermine(faellig, freq, new Date(new Date(faellig + "T12:00:00Z").getTime() - 366 * 86400000)).map(d => isoOf(d).slice(5, 10)))].sort().map(md => md.slice(3) + "." + md.slice(0, 2) + ".").join(" und ") : "";
+    ? (l => freq === 12 ? `monatlich am ${+l[0].slice(0, 2)}.` : l.length > 1 ? l.slice(0, -1).join(", ") + " und " + l[l.length - 1] : l[0] + " jährlich")(
+      (zinstage || [...new Set(kommendeTermine(faellig, freq, new Date(new Date(faellig + "T12:00:00Z").getTime() - 366 * 86400000)).map(d => isoOf(d).slice(5, 10)))]).slice().sort().map(md => md.slice(3) + "." + md.slice(0, 2) + ".")) : "";
   const grp = (h, rows) => `<div class="gr"><h3>${h}</h3><dl>${rows.filter(Boolean).join("")}</dl></div>`;
   document.getElementById("merk-quelle").textContent = `ESMA-Register (FIRDS), Stand ${fmtDate(meta.stand)}`;
   document.getElementById("merkmale").innerHTML = [
     grp("Zins und Laufzeit", [
       kv(`${zinsart === 1 ? "Zinsformel" : "Kupon"}${hilf(zinsart === 1 ? "floater" : "kupon", "Kupon")}`, zinsart === 1 ? (zinsTxt ? MC.esc(zinsTxt) : "nicht gemeldet") : fmtCoupon(zinsart === 2 ? 0 : kupon) + (zinsart === 0 ? " fest" : ""),
         [zinsart === 2 ? "Nullkupon" : "", inflIdx && zinsart === 0 ? "auf den inflationsangepassten Nennwert" : ""].concat(wKupon.length ? [`laut Register · ${MC.esc(wKupon.join(" · "))}`] : []).filter(Boolean).join(" · ")),
-      termine ? kv(`Zinstermin${freq === 2 ? "e" : ""}${hilf("zinstermin", "Zinstermin")}`, `${termine}${freq === 1 ? " jährlich" : ""}`, "aus der Fälligkeit abgeleitet") : "",
+      termine ? kv(`Zinstermin${freq > 1 ? "e" : ""}${hilf("zinstermin", "Zinstermin")}`, termine, zinstage ? "laut Deutscher Börse" : 'geschätzt · <a href="#quellen" class="zt-warum">Erklärung</a>') : "",
       kv(`Fälligkeit${hilf("faelligkeit", "Fälligkeit")}`, faellig ? fmtDate(faellig) : "keine",
         [rueckTxt ? `Rückzahlungsart laut Register: ${MC.esc(rueckTxt)}` : ""].concat(wFaellig.length ? [`laut Register · ${MC.esc(wFaellig.join(" · "))}`] : []).filter(Boolean).join(" · ")),
       kv(`Kündigungsrecht Emittent${hilf("kuendbar", "Kündigung")}`, MC.esc(kueWert), [kueKlein, kue.put && kue.k !== "n" ? "Kündigungsrecht des Anlegers (Put) laut Register" : ""].filter(Boolean).join(" · ")),
@@ -626,10 +634,10 @@ function zeige(r, k, meta) {
   const rechenbar = kurs != null && (zinsart === 0 || zinsart === 2) && typeof (zinsart === 2 ? 0 : kupon) === "number" && faellig && !befund && !inflIdx && !nachFaellig;
   const zahlungsliste = () => {   // Restzahlungen je 1.000 bei Valuta nach der Fälligkeit (Randfall „fällig in wenigen Tagen“)
     if (!faellig || abgelaufen || zinsart === 1) return "";
-    const ks = zinsart === 0 && kupon > 0 ? kommendeTermine(faellig, freq, heuteUTC) : [];
-    const zeilen = ks.map(d => `<tr><td>${fmtDate(isoOf(d))} · Zinsen<small>${fmtCoupon(kupon)} ÷ ${freq}, je 1.000 ${MC.esc(ccy)}</small></td><td>${fmt(kupon / freq * 10, 2)} ${MC.esc(ccy)}</td></tr>`)
+    const ks = zinsart === 0 && kupon > 0 ? kommendeTermine(faellig, freq, heuteUTC, zinstage) : [], lk = ks.length ? letzterKupon(faellig, freq, zinstage) : 1;
+    const zeilen = ks.map((d, i) => `<tr><td>${fmtDate(isoOf(d))} · Zinsen<small>${fmtCoupon(kupon)} ÷ ${freq}${i === ks.length - 1 && lk !== 1 ? ", anteilig (kurze letzte Zinsperiode)" : ""}, je 1.000 ${MC.esc(ccy)}</small></td><td>${fmt(kupon / freq * (i === ks.length - 1 ? lk : 1) * 10, 2)} ${MC.esc(ccy)}</td></tr>`)
       .concat([`<tr><td>${fmtDate(faellig)} · Rückzahlung<small>100 %, je 1.000 ${MC.esc(ccy)}</small></td><td>${fmt(1000, 2)} ${MC.esc(ccy)}</td></tr>`]);
-    return `<h3>Zahlungen bis zur Fälligkeit</h3><table class="rt"><tbody>${zeilen.join("")}</tbody></table><p class="annahmen">Zinstermine aus der Fälligkeit abgeleitet${freq === 2 ? " (halbjährlich)" : ""}; maßgeblich sind die Anleihebedingungen.</p>`;
+    return `<h3>Zahlungen bis zur Fälligkeit</h3><table class="rt"><tbody>${zeilen.join("")}</tbody></table><p class="annahmen">${ztQuelle}${rhythmus ? ` (${rhythmus})` : ""}; maßgeblich sind die Anleihebedingungen.</p>`;
   };
   if (!rechenbar) {
     const grund = kurs == null ? "Kein aktueller Kurs."
@@ -648,24 +656,24 @@ function zeige(r, k, meta) {
     const kp = zinsart === 2 ? 0 : kupon;
     const rechne = () => {
       const nenn = parseZahl(document.getElementById("nenn").value), geb = parseZahl(document.getElementById("gebuehr").value);
-      const sz = kp > 0 ? stueckzins(kp, faellig, freq, valuta) : null;
+      const sz = kp > 0 ? stueckzins(kp, faellig, freq, valuta, zinstage) : null;
       const kurswert = nenn * kurs / 100, zinsen = sz ? nenn * sz.anteil / 100 : 0, preis = kurswert + zinsen + geb;
-      const ks = kp > 0 ? kommendeTermine(faellig, freq, valuta) : [];
-      const jeKupon = nenn * kp / freq / 100, kupons = jeKupon * ks.length, zahlungen = kupons + nenn;
+      const ks = kp > 0 ? kommendeTermine(faellig, freq, valuta, zinstage) : [], lk = ks.length ? letzterKupon(faellig, freq, zinstage) : 1;
+      const jeKupon = nenn * kp / freq / 100, kupons = jeKupon * (ks.length ? ks.length - 1 + lk : 0), zahlungen = kupons + nenn;
       const W = ` ${MC.esc(ccy)}`;
       const zeilen = [
         [`Kurswert<small>${fmt(nenn, 0)} × ${fmtKurs(kurs)} %</small>`, `${fmt(kurswert, 2)}${W}`],
-        [`Stückzinsen${hilf("stueckzinsen", "Stückzinsen")}<small>${sz ? `${fmtCoupon(kp)} × ${tage(sz.tage)} seit dem Zinstermin ${fmtDate(isoOf(sz.letzter))} (${freq === 2 ? "halbjährlich, " : ""}Periode ${tage(sz.periode)})` : "Nullkupon – keine"}</small>`, `${fmt(zinsen, 2)}${W}`],
+        [`Stückzinsen${hilf("stueckzinsen", "Stückzinsen")}<small>${sz ? `${fmtCoupon(kp)} × ${tage(sz.tage)} seit dem Zinstermin ${fmtDate(isoOf(sz.letzter))} (${rhythmus ? rhythmus + ", " : ""}Periode ${tage(sz.periode)})` : "Nullkupon – keine"}</small>`, `${fmt(zinsen, 2)}${W}`],
         [`Gebühr<small>wie eingetragen</small>`, `${fmt(geb, 2)}${W}`],
       ].map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("") +
         `<tr class="sum"><td>Kaufpreis<small>Valuta ${fmtDate(isoOf(valuta))}${hilf("valuta", "Valuta")}</small></td><td>${fmt(preis, 2)}${W}</td></tr>` +
         (raten ? "" : `<tr class="zw"><td colspan="2">Zahlungen bis ${fmtDate(faellig)}</td></tr>` +
-          (ks.length ? `<tr><td>Zinsen<small>${ks.length} × ${fmt(jeKupon, 2)}${W}${ks.length > 1 ? `, ${fmtDate(isoOf(ks[0]))} bis ${fmtDate(isoOf(ks[ks.length - 1]))}` : `, ${fmtDate(isoOf(ks[0]))}`}</small></td><td>${fmt(kupons, 2)}${W}</td></tr>` : "") +
+          (ks.length ? `<tr><td>Zinsen<small>${lk !== 1 && ks.length > 1 ? `${ks.length - 1} × ${fmt(jeKupon, 2)}${W} + ${fmt(jeKupon * lk, 2)}${W} (kurze letzte Zinsperiode)` : `${ks.length} × ${fmt(jeKupon * (ks.length > 1 ? 1 : lk), 2)}${W}`}${ks.length > 1 ? `, ${fmtDate(isoOf(ks[0]))} bis ${fmtDate(isoOf(ks[ks.length - 1]))}` : `, ${fmtDate(isoOf(ks[0]))}`}</small></td><td>${fmt(kupons, 2)}${W}</td></tr>` : "") +
           `<tr><td>Rückzahlung<small>100 % am ${fmtDate(faellig)}</small></td><td>${fmt(nenn, 2)}${W}</td></tr>` +
           `<tr class="diff"><td>Zahlungen − Kaufpreis<small>vor Steuern</small></td><td>${vz(zahlungen - preis)}${W}</td></tr>`);
       document.getElementById("kauf").innerHTML = zeilen;
       document.getElementById("kauf-note").innerHTML = [
-        `Annahmen: Order am ${fmtDate(isoOf(heuteUTC))} zum Schlusskurs vom ${fmtDate(datum)}, Valuta zwei Börsentage später; Zinstermine aus der Fälligkeit abgeleitet${freq === 2 ? " (halbjährlich)" : ""}; keine vorzeitige Kündigung.`,
+        `Annahmen: Order am ${fmtDate(isoOf(heuteUTC))} zum Schlusskurs vom ${fmtDate(datum)}, Valuta zwei Börsentage später; ${ztQuelle}${rhythmus ? ` (${rhythmus})` : ""}; keine vorzeitige Kündigung.`,
         raten ? "Tilgung in Raten laut Register: Der Zahlungsplan steht nicht in unseren Daten, deshalb ohne Zahlungen." : "",
         rend != null ? `Rendite ${fmt(rend, 2)} % pro Jahr (wie oben angegeben, ohne Gebühr).` : "",
         typeof stk === "number" && stk > 1 && nenn % stk ? `Der Nennwert ist kein Vielfaches der Stückelung (${fmtStk(stk)} ${MC.esc(ccy)}).` : "",
@@ -691,9 +699,9 @@ function zeige(r, k, meta) {
   const quelle = document.getElementById("verlauf-quelle");
   quelle.textContent = bund ? "Quelle: Deutsche Bundesbank, seit Ausgabe." : "Quelle: Börse Frankfurt bzw. Tradegate, gesammelt seit 24.09.2026.";
   const optKv = { name, waehrung: ccy, kopf: "zeitraum", neutral: true, kupon: zinsart === 0 && typeof kupon === "number" && !inflIdx ? kupon : zinsart === 2 ? 0 : null, faellig };
-  // Bildwelt 2.0 (30.09.2026): Kupontermine als Punktreihe unter dem Kursverlauf (fester Kupon; Termine aus der Fälligkeit abgeleitet wie oben)
+  // Bildwelt 2.0 (30.09.2026): Kupontermine als Punktreihe unter dem Kursverlauf (fester Kupon; Termine wie oben)
   if (zinsart === 0 && typeof kupon === "number" && kupon > 0 && faellig) {
-    try { optKv.termine = kommendeTermine(faellig, freq, new Date(Date.now() - 40 * 365 * 86400000)).map(isoOf); } catch (e) { /* ohne Punktreihe */ }
+    try { optKv.termine = kommendeTermine(faellig, freq, new Date(Date.now() - 40 * 365 * 86400000), zinstage).map(isoOf); } catch (e) { /* ohne Punktreihe */ }
   }
   if (MC.verlauf) MC.verlauf(ISIN, bund).then(v => {
     // US-Staatsanleihen (seit 29.09.2026): vor dem 24.09.2026 Tagespreise des U.S. Treasury (FedInvest, End of Day), danach Börse Frankfurt
@@ -702,6 +710,11 @@ function zeige(r, k, meta) {
     MC.kursChart(el, v, optKv);
   }).catch(() => { el.innerHTML = '<p class="kv-leer">Der Kursverlauf ist gerade nicht erreichbar.</p>'; });
 
+  // „Erklärung“ am geschätzten Zinstermin: klappt „Datenquellen und Methodik“ auf und springt zum Absatz „Zinstermine“
+  document.querySelectorAll(".zt-warum").forEach(a => a.addEventListener("click", e => {
+    e.preventDefault(); document.getElementById("quellen").open = true;
+    const z = document.getElementById("q-zinstermine"); if (z) z.scrollIntoView({ block: "center" });
+  }));
   document.getElementById("datastand").textContent = `Daten-Stand: Kurse ${k ? fmtDate(datum) : "–"} · Stammdaten ${fmtDate(meta.stand)}`;
   document.getElementById("inhalt").hidden = false;
 

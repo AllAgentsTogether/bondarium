@@ -47,7 +47,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import log_err, now_iso, ohne_rendite, today_iso, write_atomic, zinsfrequenz  # noqa: E402
+from _common import log_err, now_iso, ohne_rendite, today_iso, write_atomic, zins_felder, zinstermine_laden  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 INDEX, KURSE, VERLAUF = ROOT / "anleihen-index.json", ROOT / "anleihen-kurse.json", ROOT / "kurse"
@@ -61,7 +61,7 @@ MIN_TAGE = 20         # erst ab so vielen erfassten Börsentagen gilt die Rangli
                       # ihre bisherige Handauswahl – mit zwei, drei Tagen wäre die Reihenfolge Zufall
 TOP = 10
 AKTUELL_TAGE = 14     # Kurs höchstens so alt wie in der Suche
-# Zinszahlungen je Jahr und „Rendite sinnvoll?“: _common.zinsfrequenz / _common.ohne_rendite (wie update_kurse.py)
+# Zinszahlungen je Jahr, Zinstage und „Rendite sinnvoll?“: _common.zins_felder / _common.ohne_rendite (wie update_kurse.py)
 INFLATION = re.compile(r"infl|inflat|linker|\blkd\b|i/l|\btips\b|hicp|hvpi|\bcpi\b|\brpi\b|index", re.I)
 STRIPS = re.compile(r"strip|kupons? per|kapital per|zinsschein|principal|\bcoupon\b|\bcpn\b", re.I)
 WANDEL = re.compile(r"wandel|umtausch|conv|exch\.?|\b144a\b|options?anl|optionsschein", re.I)
@@ -127,6 +127,7 @@ def main() -> int:
         log_err("Top 10: Index oder Kurse fehlen – Dateien bleiben unverändert.")
         return 1
     emi, stand = idx.get("emittenten") or [], kd.get("stand")
+    termine = zinstermine_laden()   # Zinstage laut Börsenliste (update_zinstermine.py)
     ktage, kurse = kd.get("tage") or [], kd["kurse"]
     d_stand = datetime.date.fromisoformat(stand)
     grenze = (d_stand - datetime.timedelta(days=AKTUELL_TAGE)).isoformat()
@@ -185,7 +186,7 @@ def main() -> int:
         else:
             em = emittent_wm(r[1], emi[r[9]] if r[9] < len(emi) else "")
         return {"isin": isin, "emittent": em, "art": art, "cur": cur, "kupon": r[4],
-                "zins": zinsfrequenz(r), "faellig": r[5], "kurs": k[0], "datum": datum,
+                **zins_felder(r, termine), "faellig": r[5], "kurs": k[0], "datum": datum,
                 "rendite": k[1] if isinstance(k[1], (int, float)) else None,
                 "vol": r[6], "stk": r[7], "ht": ht, "um": round(um)}
 

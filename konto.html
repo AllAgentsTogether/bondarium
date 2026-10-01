@@ -555,8 +555,8 @@
           <p><strong>Rendite.</strong> Rendite bis zur Fälligkeit in % pro Jahr, von uns aus Kurs, Kupon und Fälligkeit berechnet – nach denselben Regeln wie in der <a href="anleihen-suche.html">Anleihen-Suche</a>, wo unter „Datenquellen und Methodik“ alle Einzelheiten stehen.</p>
           <p><strong>Stammdaten.</strong> Kupon, Fälligkeit, Art, Währung, Volumen und Stückelung aus dem Register der europäischen Wertpapieraufsicht ESMA (FIRDS). Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage, beide in der Währung der Anleihe.</p>
           <p><strong>Steckbrief.</strong> Ein Klick auf Name oder ISIN öffnet den Steckbrief der Anleihe mit Kursverlauf, Handel und Rechenbeispiel.</p>
-          <p><strong>Mein Depot.</strong> Ein Musterdepot mit gedachten Beträgen, kein Bestand. Kurswert = Nennwert × Schlusskurs, ohne Stückzinsen und Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Zinsen je Termin = Nennwert × Kupon, bei halbjährlicher Zahlung die Hälfte; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Der Unterschied zwischen Rückzahlung und Kurswert ist der Kursgewinn oder Kursverlust bis zur Fälligkeit. Das Schaubild reicht von heute bis zur letzten Fälligkeit, höchstens 30 Jahre, jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung zum Nennwert, ganz unten beides zusammen; ins Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Zusammenfassung, Schaubild und die Liste der Zahlungstermine zeigen dann nur die Auswahl. Die Zinstermine sind aus der Fälligkeit abgeleitet (jährlich am Jahrestag, italienische Staatsanleihen und einige Fremdwährungen halbjährlich) – maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
-          <p><strong>Fremdwährungen.</strong> Anleihen in anderer Währung trägst du mit dem Nennwert in dieser Währung ein. Kurswert, Zinsen und Rückzahlung rechnen wir zur Vereinfachung in Euro um; die Anleihe trägt in der Tabelle ein Sternchen (*). Umgerechnet wird mit dem jeweils neuesten Euro-Referenzkurs der Europäischen Zentralbank (sie veröffentlicht ihn an jedem Arbeitstag gegen 16 Uhr; das Datum steht im aufklappbaren Hinweis unter der Tabelle) – und dieser Kurs ist für die ganze Laufzeit als fest angenommen. Tatsächlich schwankt der Wechselkurs: Wie viel Euro eine Zahlung am Ende wert ist, steht erst am Zahltag fest (Wechselkursrisiko). Anleihen in US-Dollar, Pfund und einigen weiteren Währungen zahlen üblicherweise halbjährlich; so sind sie hier gerechnet. Für Währungen ohne EZB-Referenzkurs gibt es keine Umrechnung – solche Anleihen fehlen im Schaubild.</p>
+          <p><strong>Mein Depot.</strong> Ein Musterdepot mit gedachten Beträgen, kein Bestand. Kurswert = Nennwert × Schlusskurs, ohne Stückzinsen und Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Zinsen je Termin = Nennwert × Kupon ÷ Zahl der Zinstermine im Jahr; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Der Unterschied zwischen Rückzahlung und Kurswert ist der Kursgewinn oder Kursverlust bis zur Fälligkeit. Das Schaubild reicht von heute bis zur letzten Fälligkeit, höchstens 30 Jahre, jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung zum Nennwert, ganz unten beides zusammen; ins Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Zusammenfassung, Schaubild und die Liste der Zahlungstermine zeigen dann nur die Auswahl. Die Zinstermine stammen aus der Liste der Deutschen Börse „Alle handelbaren Instrumente“ (letzter und nächster Zinstermin je Anleihe); nennt sie für eine Anleihe keine, sind sie geschätzt – die Anleihe steht dann im Hinweis unter den Zahlungsterminen, die Regel im Steckbrief unter „Datenquellen und Methodik“. Maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
+          <p><strong>Fremdwährungen.</strong> Anleihen in anderer Währung trägst du mit dem Nennwert in dieser Währung ein. Kurswert, Zinsen und Rückzahlung rechnen wir zur Vereinfachung in Euro um; die Anleihe trägt in der Tabelle ein Sternchen (*). Umgerechnet wird mit dem jeweils neuesten Euro-Referenzkurs der Europäischen Zentralbank (sie veröffentlicht ihn an jedem Arbeitstag gegen 16 Uhr; das Datum steht im aufklappbaren Hinweis unter der Tabelle) – und dieser Kurs ist für die ganze Laufzeit als fest angenommen. Tatsächlich schwankt der Wechselkurs: Wie viel Euro eine Zahlung am Ende wert ist, steht erst am Zahltag fest (Wechselkursrisiko). Für Währungen ohne EZB-Referenzkurs gibt es keine Umrechnung – solche Anleihen fehlen im Schaubild.</p>
           <p id="datastand"></p>
         </div>
       </details>
@@ -831,7 +831,7 @@ MC.navInit();
     else if (!LISTE.length) $("status").textContent = "Kurse werden geladen …";
     if (!fav.length && !dep.length) { POS = []; $("quellen").hidden = true; zeichneDepot(); return; }
     const isins = fav.map(f => f[0]).concat(dep.map(d => d[0]));
-    Promise.all([ladeDaten(), ladeFx()]).then(([D]) => ladeStamm(isins.filter(i => !D.idx.has(i))).then(() => D)).then(D => {
+    Promise.all([ladeDaten(), ladeFx()]).then(([D]) => ladeStamm(isins.filter(i => !D.idx.has(i)).concat(dep.map(d => d[0]))).then(() => D)).then(D => {   // Depot: Stammdaten immer – dort stehen die Zinstermine
       if (nr !== lauf) return;
       LISTE = fav.map(f => anleihe(f[0], f[1], D)); KSTAND = D.kstand;
       POS = dep.map(d => position(d[0], d[1], D)); POS.forEach((p, i) => { p.farbe = FARBEN[i % FARBEN.length]; });   // vor zeichne(): der Depot-Knopf der Merkliste braucht den Depot-Inhalt
@@ -912,17 +912,17 @@ MC.navInit();
 
   // ---------- Mein Depot: Musterdepot mit Nennwert und Zahlungen (seit 01.10.2026) ----------
   // Je Anleihe ein gedachter Nennwert (konto.php, Tabelle depot) – kein Bestand, kein Kaufkurs. Gerechnet wird wie im Steckbrief:
-  // Zinstermine vom Fälligkeitstag rückwärts (MC.bond.couponDates), jährlich, italienische Staatsanleihen halbjährlich; Zinsen je
+  // Zinstermine wie im Steckbrief (seit 02.10.2026): Zahlungen je Jahr und Zinstage aus den Stammdaten anleihen/<teil>.json, Feld 15 –
+  // laut Instrumentenliste der Deutschen Börse [freq, "MM-TT", …] oder geschätzt [freq] (scripts/update_zinstermine.py); Zinsen je
   // Termin = Nennwert × Kupon ÷ Termine im Jahr; Rückzahlung zum Nennwert. Ins Schaubild kommen nur Anleihen mit festem Kupon
   // oder ohne Kupon; alles andere steht mit Grund in der Liste.
   // Fremdwährungen (seit 01.10.2026 abends, Nutzerwunsch): Der Nennwert steht in der Währung der Anleihe; Kurswert, Zinsen und
   // Rückzahlung werden mit dem Euro-Referenzkurs der EZB (wechselkurse.json, 1 Euro = x Einheiten) in Euro umgerechnet. Der Kurs ist
   // für die ganze Laufzeit als fest angenommen. Das Sternchen steht nur einmal – am Namen der Anleihe in der Tabelle; darunter die Zeile
   // „* Fremdwährungen werden zur Vereinfachung in Euro umgerechnet“, die aufgeklappt Kurs, Stichtag und Wechselkursrisiko nennt
-  // (Nutzerwunsch 01.10.2026: „das Sternchen soll nur einmal bei der Anleihe … zu sehen sein. Nicht überall!“). Halbjährliche Zinsen in den Währungen aus HALBJAHR – dieselbe Liste wie anleihe.html (T.halbjahr).
+  // (Nutzerwunsch 01.10.2026: „das Sternchen soll nur einmal bei der Anleihe … zu sehen sein. Nicht überall!“).
   const NENN_MAX = 100000000, eur = (v, dec = 2) => `${fmt(v, dec)} €`, plus = (v, dec = 2) => (v > 0 ? "+" : "") + fmt(v, dec);
   const diffKlein = (d, vor) => d == null ? "" : `<small class="${d < 0 ? "kd-minus" : "kd-plus"}">${vor}${plus(d)} €</small>`;
-  const HALBJAHR = ["USD", "GBP", "CAD", "AUD", "NZD", "JPY", "MXN", "ZAR", "HKD", "SGD"];
   let FX = null;   // wechselkurse.json: { stand, kurse: { USD: 1.1355, … } }; null = nicht geladen
   // wechselkurse.php liefert den zuletzt veröffentlichten EZB-Stand (fragt selbst nach, höchstens alle 30 Minuten); antwortet es
   // nicht, gilt die Datei aus dem täglichen Datenlauf
@@ -960,7 +960,8 @@ MC.navInit();
     p.cur = o.cur && o.cur !== "EUR" ? o.cur : "";   // Währung des Nennwerts, wenn nicht Euro (auch ohne Wechselkurs)
     p.nennEur = p.fx ? nenn / p.fx : null;   // Nennwert in Euro, zum festen Kurs
     p.rechnet = !p.warum; p.fest = p.rechnet && o.kupon > 0;
-    p.freq = HALBJAHR.includes(o.cur) || (isin.startsWith("IT") && o.art === 0) ? 2 : 1;   // wie anleihe.html
+    const zt = STAMM[isin] && Array.isArray(STAMM[isin][14]) ? STAMM[isin][14] : null;   // wie anleihe.html
+    p.freq = zt && zt[0] > 0 ? zt[0] : 1; p.tage = zt && zt.length > 1 ? zt.slice(1) : null;   // tage null = Zinstermine geschätzt
     p.zins = p.rechnet ? p.nennEur * o.kupon / 100 : null;
     // Kurswert = Nennwert × Schlusskurs (ohne Stückzinsen und Gebühren); diff = Rückzahlung zu 100 % minus Kurswert (Kursgewinn/-verlust) – alles in Euro
     p.kauf = typeof o.kurs === "number" && p.nennEur != null ? p.nennEur * o.kurs / 100 : null;
@@ -970,8 +971,11 @@ MC.navInit();
   function zahlungen() {
     const out = [];
     POS.filter(p => p.rechnet && !AUS.has(p.isin)).forEach(p => {
-      if (p.fest) MC.bond.couponDates({ coupon: p.o.kupon, freq: p.freq, maturity: p.o.faellig }, HEUTE_ISO).dates
-        .forEach(t => out.push({ tag: new Date(t).toISOString().slice(0, 10), p, art: "Zinsen", betrag: p.nennEur * p.o.kupon / p.freq / 100, roh: p.nenn * p.o.kupon / p.freq / 100 }));
+      if (p.fest) {
+        const cd = MC.bond.couponDates({ coupon: p.o.kupon, freq: p.freq, maturity: p.o.faellig, days: p.tage }, HEUTE_ISO);
+        cd.dates.forEach((t, i) => { const a = i === cd.dates.length - 1 ? cd.last : 1;   // kurze letzte Zinsperiode: anteilig
+          out.push({ tag: new Date(t).toISOString().slice(0, 10), p, art: "Zinsen", betrag: p.nennEur * p.o.kupon / p.freq / 100 * a, roh: p.nenn * p.o.kupon / p.freq / 100 * a }); });
+      }
       out.push({ tag: p.o.faellig, p, art: "Rückzahlung", betrag: p.nennEur, roh: p.nenn, diff: p.diff });
     });
     return out.sort((a, b) => a.tag < b.tag ? -1 : a.tag > b.tag ? 1 : a.art === b.art ? a.p.isin.localeCompare(b.p.isin) : a.art === "Zinsen" ? -1 : 1);
@@ -1114,7 +1118,8 @@ MC.navInit();
       `<td>${x.art}${x.art === "Rückzahlung" && x.diff != null ? `<small>zu 100 %, Kurs heute ${fmt(x.p.o.kurs, 2)}</small>` : ""}</td><td class="num">${eur(x.betrag)}${x.p.fremd ? `<small>${fmt(x.roh, 2)} ${MC.esc(x.p.o.cur)}</small>` : ""}${x.art === "Rückzahlung" ? diffKlein(x.diff, "") : ""}</td></tr>`);
     if (z.length > 240) zeilen.push(`<tr><td colspan="4">… und ${z.length - 240} weitere Zahlungen bis ${MC.datum(z[z.length - 1].tag)}</td></tr>`);
     $("kd-plan").innerHTML = zeilen.join("");
-    $("kd-hinweis").textContent = "Zinstermine aus der Fälligkeit abgeleitet; Beträge vor Steuern und Kosten. Fällt ein Termin auf ein Wochenende oder einen Feiertag, wird am nächsten Bankarbeitstag gezahlt." +
+    const gesch = POS.filter(p => p.fest && !p.tage && !AUS.has(p.isin)).map(p => p.o.name);
+    $("kd-hinweis").textContent = "Zinstermine laut Deutscher Börse" + (gesch.length ? `, geschätzt bei ${gesch.join(", ")}` : "") + "; Beträge vor Steuern und Kosten. Fällt ein Termin auf ein Wochenende oder einen Feiertag, wird am nächsten Bankarbeitstag gezahlt." +
       (fehlt.length ? ` Nicht im Schaubild: ${fehlt.map(p => `${p.o.name} (${p.warum})`).join(", ")}.` : "");
     if (MC.wischPruefen) MC.wischPruefen();
   }

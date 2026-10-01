@@ -93,8 +93,10 @@ Einzel-Liste steht zusätzlich der Betrag in der Währung der Anleihe. Unter der
 „* Fremdwährungen werden zur Vereinfachung in Euro umgerechnet“ (`<details id="kd-fx">`); erst ein Klick zeigt Kurs und
 Stichtag, „als fest angenommen“ und das Wechselkursrisiko (`fxHinweis()`). Währungen ohne
 EZB-Referenzkurs (auch die alten Euro-Vorgänger wie DEM) und der Fall, dass `wechselkurse.json` fehlt: „kein Wechselkurs
-für …“ – die Anleihe bleibt aus dem Schaubild. Zinstermine: halbjährlich in USD, GBP, CAD, AUD, NZD, JPY, MXN, ZAR, HKD,
-SGD (`HALBJAHR`, dieselbe Liste wie `T.halbjahr` in `anleihe.html` und `HALBJAEHRLICH` in `scripts/_common.py`).
+für …“ – die Anleihe bleibt aus dem Schaubild. Zinstermine (seit 02.10.2026): Zahlungen je
+Jahr und Zinstage aus den Stammdaten `anleihen/<teil>.json`, Feld 15 (`scripts/update_zinstermine.py`, Instrumentenliste der
+Deutschen Börse) – die Seite lädt dafür die Teildatei jeder Depot-Anleihe; ohne Angabe der Börse geschätzt, die Anleihe
+steht dann im Hinweis unter den Zahlungsterminen.
 
 Immer der neueste Kurs (seit 01.10.2026, Nutzerwunsch: „die EZB-Kurse sollen auch immer aktuell sein“): Der Datenlauf um
 10 Uhr holt den Kurs des Vortags – die EZB veröffentlicht erst gegen 16 Uhr. Deshalb lädt die Seite `wechselkurse.php`:
@@ -139,7 +141,7 @@ eine Spur heller als `--orange`, damit es sich bei Rot-Grün-Schwäche vom Tiefg
 die Prüfung über alle Paare, sieben bis zehn liegen enger beieinander (Zahlen, Legende und Liste helfen). Jedes zweite Jahr
 ist ganz leicht hinterlegt, damit man sieht, wo ein neues Jahr anfängt. Läuft das Depot länger als 30 Jahre, folgt eine gestrichelte Spalte, und unter dem Bild steht, welche Jahre fehlen und was dort noch kommt. Ein Schaubild der nächsten zwölf Monate
 gab es am 01.10.2026 kurz; es ist auf Nutzerwunsch entfernt. Gerechnet wird wie im Steckbrief:
-Zinstermine vom Fälligkeitstag rückwärts (`MC.bond.couponDates`), jährlich, italienische Staatsanleihen halbjährlich;
+Zinstermine an den Zinstagen laut Deutscher Börse, sonst geschätzt vom Fälligkeitstag rückwärts (`MC.bond.couponDates`);
 Zinsen je Termin = Nennwert × Kupon ÷ Termine im Jahr; Rückzahlung zum Nennwert; vor Steuern und Kosten, ohne
 vorzeitige Kündigung. Die Schaubilder zeichnen sich in der sichtbaren Breite (am Handy breiter als der Bildschirm,
 zum Wischen) und deshalb erst, wenn der Reiter offen ist. `konto.html#depot` öffnet den Reiter direkt.

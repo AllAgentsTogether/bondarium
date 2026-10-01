@@ -165,6 +165,17 @@ jobs:
         continue-on-error: true
         run: python scripts/update_anleihen_index.py
 
+      # Zinstermine (seit 02.10.2026): Das Register nennt weder Zinstermine noch die Zahl der Zinszahlungen im Jahr. Die
+      # Instrumentenliste der Deutschen Börse für Frankfurt („Alle handelbaren Instrumente“, börsentäglich, ~44 MB,
+      # wird zeilenweise gelesen) nennt je Anleihe den letzten und den nächsten Zinstermin. Schreibt
+      # zinstermine/zinstermine.json (wird committet, nicht veröffentlicht) und setzt die Zinstermine in die Stammdaten
+      # anleihen/<hh>.json. Läuft NACH dem Index (der schreibt die Teildateien wöchentlich neu) und VOR den Kursen
+      # (Rendite) und den Top-Listen. Schlägt es fehl, gelten die Termine des letzten Laufs.
+      - name: Zinstermine holen (Deutsche Börse, Instrumentenliste Frankfurt)
+        if: env.VOLL == '1'
+        continue-on-error: true
+        run: python scripts/update_zinstermine.py
+
       # Register der Anleihen-ETFs (seit 30.09.2026, docs/ETF-DATENBANK.md): etf-index.json aus der ETF-Liste der
       # Deutschen Börse (börsentäglich, ~0,5 MB), ihrer Monatsstatistik (Anlageklasse der Neuzugänge, Fondsvermögen,
       # Umsatz, XLM – eine Datei je Monat, nur solange der Vormonat fehlt) und ESMA FIRDS (Fonds-Datei, 1×/Woche).
@@ -269,7 +280,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add renditen.json unternehmen.json langlaeufer.json anleihen-index.json anleihen-kurse.json kurse-auswahl.json zinskurve.json realzins.json risikoaufschlaege.json top10-*.json suchindex.json ezb.json wechselkurse.json kurse kurse/jahre.json anleihen etf-*.json etf
+          git add renditen.json unternehmen.json langlaeufer.json anleihen-index.json anleihen-kurse.json kurse-auswahl.json zinskurve.json realzins.json risikoaufschlaege.json top10-*.json suchindex.json ezb.json wechselkurse.json kurse kurse/jahre.json anleihen zinstermine etf-*.json etf
           if ! git diff --cached --quiet; then
             git commit -m "Daten aktualisiert"
             # Vor dem Push mit dem Remote abgleichen (falls inzwischen gepusht wurde);
@@ -603,6 +614,8 @@ jobs:
               # ETF-Register (Liste der Deutschen Börse, börsentäglich) und die Kurse aller Anleihen-ETFs
               ("etf-index.json → stand", (_lade("etf-index.json") if os.path.exists("etf-index.json") else {}).get("stand"), 7),
               ("etf-kurse.json → stand", (_lade("etf-kurse.json") if os.path.exists("etf-kurse.json") else {}).get("stand"), 7),
+              # Zinstermine (Instrumentenliste der Deutschen Börse, börsentäglich)
+              ("zinstermine/zinstermine.json → stand", (_lade("zinstermine/zinstermine.json") if os.path.exists("zinstermine/zinstermine.json") else {}).get("stand"), 7),
               # Steckbrief anleihe.html: Teildateien Stammdaten (wöchentlich) und aktuelle Kurse (börsentäglich), Stichprobe 00
               ("anleihen/00.json → stand", (_lade("anleihen/00.json") if os.path.exists("anleihen/00.json") else {}).get("stand"), 16),
               (f"kurse/{heute.year}/00.json → stand", (_lade(f"kurse/{heute.year}/00.json") if os.path.exists(f"kurse/{heute.year}/00.json") else {}).get("stand"), 7),

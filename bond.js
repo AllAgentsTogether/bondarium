@@ -6,10 +6,14 @@
      <script src="site.js"></script><script src="bond.js"></script>
 
    Konventionen: Datumsangaben als ISO-Zeichenkette „JJJJ-MM-TT“, Kurse und Kupons in Prozent vom Nennwert,
-   Renditen als Dezimalzahl (0,0312 = 3,12 %). Anleihe-Objekt b = { coupon: 2.5, freq: 1 | 2 | 4, maturity: "2034-02-15" }.
-   Rechnung wie bisher: jährliche Verzinsung, Zeit taggenau (Tage / 365,25), Stückzinsen linear im Kuponzeitraum,
-   Kupontermine vom Fälligkeitstag rückwärts in Schritten von 12/freq Monaten (Monatsende bleibt Monatsende,
-   31.05. → 30.11.; für Fälligkeitstage bis zum 28. identisch mit der früheren Rechnung in langlaeufer.html).
+   Renditen als Dezimalzahl (0,0312 = 3,12 %). Anleihe-Objekt b = { coupon: 2.5, freq: 1 | 2 | 4 | 12, maturity: "2034-02-15",
+   days: ["04-30", "10-30"] (optional) }.
+   Rechnung wie bisher: jährliche Verzinsung, Zeit taggenau (Tage / 365,25), Stückzinsen linear im Kuponzeitraum.
+   Kupontermine (seit 02.10.2026 wie scripts/_common.py, zinszahlungen):
+     mit days  – die Zinstage „MM-TT“ laut Instrumentenliste der Deutschen Börse, jedes Jahr an diesen Tagen; der letzte Zins
+                 kommt am Fälligkeitstag, bei einer kurzen Schlussperiode (mehr als 20 Tage neben dem Zinstag) anteilig;
+     ohne days – geschätzt: vom Fälligkeitstag rückwärts in Schritten von 12/freq Monaten (Monatsende bleibt Monatsende,
+                 31.05. → 30.11.; für Fälligkeitstage bis zum 28. identisch mit der früheren Rechnung in langlaeufer.html).
 
    API (window.MC.bond):
      DAY                               86 400 000 (ms je Tag)
@@ -19,7 +23,8 @@
      settleDays(cur)                   Valuta in Tagen: USD/GBP 1, sonst 2
      settle(iso, cur)                  Valutatag zum Handelstag → ISO (= addDays(iso, settleDays(cur)))
      yearsTo(maturity, from)           Restlaufzeit in Jahren (Tage / 365,25)
-     couponDates(b, settle)            { dates: [künftige Kupontermine (ms), aufsteigend], prev: letzter Termin davor (ms) }
+     couponDates(b, settle)            { dates: [künftige Kupontermine (ms), aufsteigend], prev: letzter Termin davor (ms),
+                                         last: Anteil des letzten Kupons (1 = voll; kleiner bei kurzer Schlussperiode) }
                                        (Termine je Anleihe einmal erzeugt und zwischengespeichert – schnell für lange Reihen)
      accrued(b, settle)                Stückzinsen in % vom Nennwert
      pricer(b, settle)                 { price(y), slope(y) } – Clean-Kurs und Ableitung als Funktion der Rendite
@@ -66,16 +71,40 @@
     seq.unshift(t);   // erstes Element ≤ 1970
     return (CACHE[key] = seq);
   }
+  // Mit Zinstagen (b.days): alle Zinstage ab 1969, die mehr als TOL Tage vor der Fälligkeit liegen, dann der Fälligkeitstag.
+  // last = Anteil des letzten Kupons: 1, wenn die Fälligkeit (bis auf TOL Tage) auf einem Zinstag liegt, sonst nach Tagen.
+  var TOL = 20 * DAY;
+  function folgeTage(b) {
+    var key = b.maturity + "/" + b.freq + "/" + b.days.join(",");
+    if (CACHE[key]) return CACHE[key];
+    var mat = utc(b.maturity), jahr = new Date(mat).getUTCFullYear(), alle = [], j, i;
+    for (j = 1969; j <= jahr + 1; j++) for (i = 0; i < b.days.length; i++) {
+      var mo = +b.days[i].slice(0, 2), tg = +b.days[i].slice(3), letzter = new Date(Date.UTC(j, mo, 0, 12)).getUTCDate();
+      alle.push(Date.UTC(j, mo - 1, Math.min(tg, letzter), 12));
+    }
+    alle.sort(function (x, y) { return x - y; });
+    var seq = alle.filter(function (t) { return t < mat - TOL; });
+    var danach = alle.filter(function (t) { return t >= mat - TOL; })[0];
+    var voll = danach != null && Math.abs(danach - mat) <= TOL;
+    var last = voll || !seq.length ? 1 : b.freq * (mat - seq[seq.length - 1]) / DAY / 365.25;
+    seq.push(mat);
+    return (CACHE[key] = { seq: seq, last: last });
+  }
   function couponDates(b, settleIso) {
     var s = utc(settleIso), mat = utc(b.maturity), step = 12 / b.freq;
+    if (b.days && b.days.length) {
+      var f = folgeTage(b), q = f.seq, a = 1, e = q.length;
+      while (a < e) { var h = (a + e) >> 1; if (q[h] > s) e = h; else a = h + 1; }
+      return { dates: q.slice(a), prev: q[a - 1], last: f.last };
+    }
     if (s <= FLOOR) {
       var out = [], k = 0, t = mat;
       while (t > s) { out.unshift(t); k++; t = monthsBack(mat, k * step); }
-      return { dates: out, prev: t };
+      return { dates: out, prev: t, last: 1 };
     }
     var seq = folge(b), lo = 1, hi = seq.length;   // erster Termin nach dem Valutatag
     while (lo < hi) { var m = (lo + hi) >> 1; if (seq[m] > s) hi = m; else lo = m + 1; }
-    return { dates: seq.slice(lo), prev: seq[lo - 1] };
+    return { dates: seq.slice(lo), prev: seq[lo - 1], last: 1 };
   }
   function accrued(b, settleIso) {
     var s = utc(settleIso), cd = couponDates(b, settleIso);
@@ -86,7 +115,7 @@
   function pricer(b, settleIso) {
     var s = utc(settleIso), cd = couponDates(b, settleIso), dates = cd.dates, n = dates.length, c = b.coupon / b.freq;
     var tau = dates.map(function (t) { return (t - s) / DAY / 365.25; });
-    var cf = dates.map(function (t, i) { return c + (i === n - 1 ? 100 : 0); });
+    var cf = dates.map(function (t, i) { return i === n - 1 ? c * cd.last + 100 : c; });
     var acc = n ? c * (s - cd.prev) / (dates[0] - cd.prev) : 0;
     return {
       price: function (y) { var pv = 0; for (var i = 0; i < n; i++) pv += cf[i] / Math.pow(1 + y, tau[i]); return pv - acc; },

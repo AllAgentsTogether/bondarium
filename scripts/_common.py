@@ -194,8 +194,16 @@ def get_with_retry(url: str, headers: dict | None = None, timeout: int = 30,
 # Für update_kurse.py (Rendite, Aufschlag, Bund-Verlauf), update_top10.py (Auswahl) und update_langlaeufer.py
 # (Ausreißer) – eine Regel an einer Stelle. Hintergrund: Prüfbericht Datenbasis der Anleihen vom 26.09.2026.
 
-# Halbjährliche Zinszahlung nach Währung (US-/britische Konvention usw.), sonst jährlich (Euro-Konvention)
-HALBJAEHRLICH = {"USD", "GBP", "CAD", "AUD", "NZD", "JPY", "MXN", "ZAR", "HKD", "SGD"}
+# Zinstermine (seit 02.10.2026): Die Termine stehen in zinstermine/zinstermine.json – aus der Instrumentenliste der
+# Deutschen Börse (scripts/update_zinstermine.py). Nur wo sie fehlen, gilt die Schätzregel zinsfrequenz().
+# Währungen mit halbjährlicher Zinszahlung im Heimatmarkt und das ISIN-Land dieses Markts. Gemessen an der Börsenliste
+# (02.10.2026): mit Heimat-ISIN zahlen praktisch alle halbjährlich, mit internationaler ISIN (XS, DE, FR …) die meisten
+# jährlich – außer in US-Dollar (dort 88 % halbjährlich; deutsche und österreichische Emittenten jährlich) und Yen.
+HEIMATMARKT = {"USD": "US", "GBP": "GB", "CAD": "CA", "AUD": "AU", "NZD": "NZ", "JPY": "JP", "MXN": "MX", "ZAR": "ZA",
+               "HKD": "HK", "SGD": "SG"}
+REG_S = re.compile(r"reg\.?\s?s\b|144a", re.I)             # Hochzins-Bauart (Rule 144A/Regulation S): meist halbjährlich
+MTN = re.compile(r"med|mtn|m\.-t\.", re.I)                 # Medium-Term Notes: auch mit „Reg.S“ jährlich
+ZINSTERMINE = Path(__file__).resolve().parent.parent / "zinstermine" / "zinstermine.json"
 INFLATION = re.compile(r"infl|inflat|linker|\blkd\b|i/l|\btips\b|hicp|hvpi|\bcpi\b|\brpi\b|index", re.I)
 FLR = re.compile(r"FLR\b|floating|\bFRN\b|variab|\bvar\.", re.I)          # variabel, Fix-to-Float, Reset – „FLR“ ohne Wortgrenze davor: WM klebt es an den Emittenten („AGFLR-Anleihe“, 27.09.2026)
 STUFE = re.compile(r"stufenz|step[ -]?up|step[ -]?down|\bstep\b", re.I)     # Stufenzins
@@ -224,9 +232,95 @@ def tilgung_wesentlich(name: str, jahr_heute: int | None = None) -> bool:
 
 
 def zinsfrequenz(zeile: list) -> int:
-    """Zinszahlungen je Jahr einer Indexzeile [isin, name, art, waehrung, …]: halbjährlich in USD/GBP/CAD/AUD/NZD/
-    JPY/MXN/ZAR/HKD/SGD und bei italienischen Staatsanleihen (BTP – ISIN IT, Art Staat), sonst jährlich."""
-    return 2 if zeile[3] in HALBJAEHRLICH or (zeile[0].startswith("IT") and zeile[2] == 0) else 1
+    """GESCHÄTZTE Zinszahlungen je Jahr einer Indexzeile [isin, name, art, waehrung, …] – nur für Anleihen ohne
+    Zinstermine in der Börsenliste (zinsplan()). Halbjährlich: Staatsanleihen Italiens und Maltas; Anleihen in einer
+    Währung aus HEIMATMARKT mit der ISIN dieses Markts; US-Dollar-Anleihen von Staaten und – außer bei deutscher oder
+    österreichischer ISIN bzw. Konzernsitz dort – von allen anderen; Yen-Anleihen; Euro-Unternehmensanleihen mit
+    „Reg.S“/„144A“ im Namen, die keine Medium-Term Notes sind. Sonst jährlich."""
+    isin, name, art, cur = zeile[0], zeile[1] or "", zeile[2], zeile[3]
+    land = isin[:2]
+    if art == 0 and land in ("IT", "MT"):
+        return 2
+    if cur in HEIMATMARKT:
+        if land == HEIMATMARKT[cur] or cur == "JPY":
+            return 2
+        if cur == "USD":
+            return 2 if art == 0 or not (land in ("DE", "AT") or zeile[11] in ("DE", "AT")) else 1
+        return 1
+    if cur == "EUR" and art == 2 and REG_S.search(name) and not MTN.search(name):
+        return 2
+    return 1
+
+
+def zinstermine_laden() -> dict:
+    """{ISIN: [zahlungen_je_jahr, "MM-TT", …]} aus zinstermine/zinstermine.json (update_zinstermine.py); leer, wenn
+    die Datei fehlt."""
+    try:
+        return json.loads(ZINSTERMINE.read_text(encoding="utf-8")).get("termine") or {}
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def zinsplan(zeile: list, termine: dict) -> tuple[int, list | None]:
+    """(Zahlungen je Jahr, Zinstage ["MM-TT", …] oder None) einer Indexzeile: aus der Börsenliste, sonst geschätzt
+    (zinsfrequenz(), Tage None = am Jahrestag der Fälligkeit)."""
+    e = termine.get(zeile[0])
+    if e and len(e) > 1:
+        return e[0], e[1:]
+    return zinsfrequenz(zeile), None
+
+
+def zins_felder(zeile: list, termine: dict) -> dict:
+    """Felder einer Listenzeile (Top-10-Dateien): zins = Zahlungen je Jahr, zt = Zinstage ["MM-TT", …] laut Börsenliste –
+    zt fehlt, wenn der Rhythmus geschätzt ist (die Seiten nennen dann keinen Zinstermin)."""
+    freq, tage = zinsplan(zeile, termine)
+    return {"zins": freq, "zt": tage} if tage else {"zins": freq}
+
+
+def monate_zurueck(d: datetime.date, m: int) -> datetime.date:
+    """Datum minus m Monate, ohne Monatsüberlauf (31.05. → 30.11.)."""
+    j, mo = divmod(d.year * 12 + d.month - 1 - m, 12)
+    mo += 1
+    letzter = (datetime.date(j + (mo == 12), mo % 12 + 1, 1) - datetime.timedelta(days=1)).day
+    return datetime.date(j, mo, min(d.day, letzter))
+
+
+ENDE_TOLERANZ = 20   # Tage: Ein Zinstermin so kurz vor der Fälligkeit ist der Fälligkeitstag selbst (Bankarbeitstag-Verschiebung)
+
+
+def zinszahlungen(kupon: float, faellig: datetime.date, valuta: datetime.date, freq: int,
+                  tage: list | None = None) -> tuple[datetime.date, list[tuple[datetime.date, float]]]:
+    """(letzter Zinstermin bis zum Valutatag, [(Termin, Zins in % des Nennwerts) …] nach dem Valutatag bis zur Fälligkeit).
+    Mit tage (Zinstage „MM-TT“ aus der Börsenliste) fallen die Termine jedes Jahr auf diese Tage; der letzte Zins kommt am
+    Fälligkeitstag – liegt der mehr als ENDE_TOLERANZ Tage hinter dem letzten Zinstag, anteilig nach Tagen (kurze
+    Schlussperiode). Ohne tage (Schätzung): vom Fälligkeitstag in Schritten von 12/freq Monaten rückwärts, ein Monatsende
+    bleibt Monatsende (31.08. → 28.02. → 31.08.). Dieselbe Rechnung in bond.js (couponDates)."""
+    c = kupon / freq
+    if not tage:
+        termine, t, k = [], faellig, 0
+        while t > valuta:
+            termine.insert(0, (t, c))
+            k += 1
+            t = monate_zurueck(faellig, k * 12 // freq)
+        return t, termine
+
+    def im_jahr(j: int) -> list[datetime.date]:
+        out = []
+        for md in tage:
+            mo, tg = int(md[:2]), int(md[3:])
+            letzter = (datetime.date(j + (mo == 12), mo % 12 + 1, 1) - datetime.timedelta(days=1)).day
+            out.append(datetime.date(j, mo, min(tg, letzter)))
+        return out
+    grenze = faellig - datetime.timedelta(days=ENDE_TOLERANZ)
+    alle = sorted(d for j in range(valuta.year - 1, faellig.year + 1) for d in im_jahr(j))
+    vorher = max(d for d in alle if d <= valuta and d < grenze)
+    termine = [(d, c) for d in alle if valuta < d < grenze]
+    davor = max(d for d in alle if d < grenze)                 # letzter Zinstag vor der Fälligkeit
+    naechster = min((d for d in alle + im_jahr(faellig.year + 1) if d >= grenze), default=None)
+    regulaer = naechster is not None and abs((naechster - faellig).days) <= ENDE_TOLERANZ
+    schluss = c if regulaer else kupon * (faellig - davor).days / 365.25
+    termine.append((faellig, schluss))
+    return vorher, termine
 
 
 def ohne_rendite(zeile: list) -> str | None:

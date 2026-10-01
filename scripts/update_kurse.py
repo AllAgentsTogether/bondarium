@@ -61,9 +61,10 @@ Schreibt (alle im Website-Ordner):
 
 Die Seite rechnet nichts nach: Die Rendite bis Fälligkeit steht fertig in der Datei (jährliche Verzinsung,
 Zeit taggenau, Valuta zwei Börsentage nach dem Handelstag – wie auf den Länder- und Langläufer-Seiten).
-Zinstermine werden vom Fälligkeitstag aus zurückgerechnet, ein Monatsende bleibt Monatsende (31.08. → 28.02. →
-31.08.); halbjährlich zahlen Anleihen in USD/GBP/CAD/AUD/NZD/JPY/MXN/ZAR/HKD/SGD und italienische Staatsanleihen
-(BTP), alle übrigen jährlich (_common.zinsfrequenz).
+Zinstermine (seit 02.10.2026): aus der Instrumentenliste der Deutschen Börse (zinstermine/zinstermine.json,
+scripts/update_zinstermine.py) – Zahlungen je Jahr und die Zinstage. Nur wo die Liste nichts sagt, wird geschätzt:
+Termine vom Fälligkeitstag aus zurückgerechnet, ein Monatsende bleibt Monatsende (31.08. → 28.02. → 31.08.),
+Zahlungen je Jahr nach _common.zinsfrequenz (Währung, ISIN-Land, Bauart). Beides in _common.zinsplan/zinszahlungen.
 Eine Rendite bis Fälligkeit (und damit einen Aufschlag) gibt es nur für festen Kupon oder Nullkupon mit
 Rückzahlung am Ende auf einmal (_common.ohne_rendite, seit 26.09.2026 laut Prüfbericht Datenbasis). Ohne
 Rendite bleiben: variabel verzinste und Fix-to-Float-Anleihen („FLR“ im Namen), Stufenzinsanleihen, Wandel-
@@ -111,7 +112,7 @@ import urllib.error
 from pathlib import Path
 
 from _common import (INFLATION, ausreisser, get_with_retry, log_err, now_iso, ohne_rendite, today_iso, write_atomic,
-                     zinsfrequenz)
+                     zinsplan, zinstermine_laden, zinszahlungen)
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT_SUCHE = ROOT / "anleihen-kurse.json"
@@ -137,7 +138,15 @@ MIN_ANTEIL = 0.5                 # weniger als 50 % der Kurse des Vortags → Qu
 NULLKUPON_MIN = 0.5             # „Nullkupon“ mit weniger Rendite (Laufzeit > 1 Jahr) passt nicht zum Kurs → keine Rendite
 NIEDRIGZINS = {"CHF", "JPY"}     # dort sind Nullkupons nahe oder über 100 plausibel
 AUFSCHLAG_MIN = -1.0             # Nicht-Staat mehr als 1 Punkt UNTER Bund: Kurs oder Stammdaten unplausibel → keine Rendite
-# Halbjährliche Währungen, INFLATION, zinsfrequenz, ohne_rendite: _common.py (dieselben Regeln wie update_top10.py)
+# INFLATION, zinsplan (Zinstermine), ohne_rendite: _common.py (dieselben Regeln wie update_top10.py)
+ZINSTERMINE = None   # {ISIN: [zahlungen_je_jahr, "MM-TT", …]} – beim ersten Gebrauch geladen (zinstermine())
+
+
+def zinstermine() -> dict:
+    global ZINSTERMINE
+    if ZINSTERMINE is None:
+        ZINSTERMINE = zinstermine_laden()
+    return ZINSTERMINE
 ISIN_RE = re.compile(r"\b[A-Z]{2}[A-Z0-9]{9}[0-9]\b")
 BOERSE_NAME = {"F": "Börse Frankfurt", "T": "Tradegate", "X": "Xetra", "B": "Deutsche Bundesbank"}
 
@@ -182,28 +191,15 @@ def lade_json(path: Path, leer):
 
 
 # ---------- Rendite (jährliche Verzinsung, wie langlaeufer.html / anleihen-laender.html) ----------
-def _monate_zurueck(d: datetime.date, m: int) -> datetime.date:
-    j, mo = divmod(d.year * 12 + d.month - 1 - m, 12)
-    mo += 1
-    letzter = (datetime.date(j + (mo == 12), mo % 12 + 1, 1) - datetime.timedelta(days=1)).day
-    return datetime.date(j, mo, min(d.day, letzter))
-
-
-def rendite(kupon: float, faellig: datetime.date, kurs: float, valuta: datetime.date, freq: int):
-    """Rendite bis Fälligkeit in % aus dem Kurs (clean, % des Nennwerts); None, wenn nicht bestimmbar."""
+def rendite(kupon: float, faellig: datetime.date, kurs: float, valuta: datetime.date, freq: int, tage: list | None = None):
+    """Rendite bis Fälligkeit in % aus dem Kurs (clean, % des Nennwerts); None, wenn nicht bestimmbar.
+    freq = Zinszahlungen je Jahr, tage = Zinstage „MM-TT“ aus der Börsenliste (None: aus der Fälligkeit geschätzt)."""
     if faellig <= valuta:
         return None
-    # Zinstermine vom Fälligkeitstag aus zurückrechnen (nicht Schritt für Schritt – sonst wandert der Tag am
-    # Monatsende: 31.08. → 28.02. → 28.08. statt 31.08.)
-    termine, t, k = [], faellig, 0
-    while t > valuta:
-        termine.insert(0, t)
-        k += 1
-        t = _monate_zurueck(faellig, k * 12 // freq)
-    vorher, c = t, kupon / freq
-    stueckzins = c * (valuta - vorher).days / max(1, (termine[0] - vorher).days)
-    zeiten = [(x - valuta).days / 365.25 for x in termine]
-    flows = [c + (100 if i == len(termine) - 1 else 0) for i in range(len(termine))]
+    vorher, zahlungen = zinszahlungen(kupon, faellig, valuta, freq, tage)
+    stueckzins = kupon / freq * (valuta - vorher).days / max(1, (zahlungen[0][0] - vorher).days)
+    zeiten = [(t - valuta).days / 365.25 for t, _ in zahlungen]
+    flows = [z + (100 if i == len(zahlungen) - 1 else 0) for i, (_, z) in enumerate(zahlungen)]
 
     def preis(y):
         return sum(f / (1 + y) ** z for f, z in zip(flows, zeiten)) - stueckzins
@@ -237,7 +233,7 @@ def rendite_und_aufschlag(z: list, kurs: float, valuta: datetime.date, kurve: li
     f = datetime.date.fromisoformat(z[5])
     if (f - valuta).days < 14:
         return None, None
-    r = rendite(float(z[4]), f, kurs, valuta, zinsfrequenz(z))
+    r = rendite(float(z[4]), f, kurs, valuta, *zinsplan(z, zinstermine()))
     if r is None or not RENDITE_GRENZEN[0] < r < RENDITE_GRENZEN[1]:
         return None, None
     jahre = (f - valuta).days / 365.25

@@ -61,7 +61,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import get_with_retry, log_err, now_iso, ohne_rendite, today_iso, write_atomic, zinsfrequenz  # noqa: E402
+from _common import get_with_retry, log_err, now_iso, ohne_rendite, today_iso, write_atomic, zins_felder, zinstermine_laden  # noqa: E402
 from update_top10 import AKTUELL_TAGE, INFLATION, STAATSNAME, STRIPS, WANDEL, emittent_wm, lade, plus_boersentage  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -123,6 +123,7 @@ def main() -> int:
         return 1
 
     emi, stand = idx.get("emittenten") or [], kd.get("stand")
+    termine = zinstermine_laden()   # Zinstage laut Börsenliste (update_zinstermine.py)
     ktage, kurse = kd.get("tage") or [], kd["kurse"]
     d_stand = datetime.date.fromisoformat(stand)
     grenze = (d_stand - datetime.timedelta(days=AKTUELL_TAGE)).isoformat()
@@ -162,7 +163,7 @@ def main() -> int:
             em = BEZEICHNUNG.sub("", em).strip() or em
             em = em.title() if em.isupper() and " " in em else em   # „HESSEN, LAND“ → „Hessen, Land“, „NRW.BANK“ bleibt
         zeilen[gruppe[r[2]]].append({"isin": isin, "emittent": em,
-                                     "art": ART[r[2]], "cur": r[3], "kupon": r[4], "zins": zinsfrequenz(r), "faellig": r[5],
+                                     "art": ART[r[2]], "cur": r[3], "kupon": r[4], **zins_felder(r, termine), "faellig": r[5],
                                      "kurs": k[0], "datum": datum, "rendite": k[1] if isinstance(k[1], (int, float)) else None,
                                      "vol": r[6], "stk": r[7], "ezb": auf_liste})
     leer = [key for key, z in zeilen.items() if not z]
