@@ -1,20 +1,23 @@
-# Benutzerbereich „Mein Depot“
+# Benutzerbereich „Mein Bondarium“
 
-Stand 30.09.2026 (abends: Anmeldung mit Passwort statt per E-Mail-Link). Besucher registrieren sich mit E-Mail-Adresse
-und Passwort und merken sich Anleihen. Die Merkliste („Depot“) liegt auf dem Server und ist auf jedem Gerät da, auf dem
-man sich anmeldet. Es ist eine Merkliste, kein Wertpapierdepot: keine Bestände, keine Kaufpreise, keine Orders.
+Stand 01.10.2026. Der Bereich hieß bis 01.10.2026 „Mein Depot“; seit dem Nutzerentscheid von diesem Tag heißt er
+„Mein Bondarium“ (Seite und Menü) und hat zwei Reiter nebeneinander: **Merkliste** und **Mein Depot**. Besucher
+registrieren sich mit E-Mail-Adresse und Passwort (seit 30.09.2026 abends, vorher Anmeldung per E-Mail-Link) und
+merken sich Anleihen. „Mein Depot“ ist ein Beispieldepot: gemerkte Anleihen mit einem gedachten Nennwert, darunter
+die Zahlungen als Schaubild. Beides liegt auf dem Server und ist auf jedem Gerät da, auf dem man sich anmeldet. Es
+ist ein Planspiel, kein Wertpapierdepot: keine echten Bestände, keine Kaufpreise, keine Orders.
 
 ## Bausteine
 
 | Datei | Aufgabe |
 | --- | --- |
-| `konto.html` | Seite „Mein Depot“: Anmelden, Registrieren, Passwort vergessen – oder die Merkliste. Für alle gleich, `noindex`. |
-| `konto.js` | Spricht mit `konto.php` (`MC.konto`), zeichnet den Merken-Knopf. Geladen auf `konto.html`, `anleihe.html`, `anleihen-suche.html`. |
+| `konto.html` | Seite „Mein Bondarium“: Anmelden, Registrieren, Passwort vergessen – oder die Reiter „Merkliste“ und „Mein Depot“. Für alle gleich, `noindex`. Lädt `bond.js` für die Zinstermine. |
+| `konto.js` | Spricht mit `konto.php` (`MC.konto`, darunter `depot(isin, nennwert)`), zeichnet den Merken-Knopf („Merken“ / „Gemerkt“). Geladen auf `konto.html`, `anleihe.html`, `anleihen-suche.html`. |
 | `konto.php` | Schnittstelle auf dem Server (PHP bei STRATO), Antwort immer JSON. |
 | `konto-daten/` | Entsteht nur auf dem Server: SQLite-Datei mit zufälligem Namen. Nicht im Repository, nicht im Bau. |
 | `pdf.js` | Kleiner PDF-Schreiber im Browser (`MC.pdf`: Helvetica, WinAnsi, Linien, Flächen, SVG-Pfade fürs Logo, Links; A4 hoch oder quer) für den Depot-Auszug. Nur auf `konto.html`. |
 | `base.css` | `.merkbtn` (Merken-Knopf). |
-| `scripts/nav.py` | Menüpunkt „Mein Depot“ (`LINKS`). |
+| `scripts/nav.py` | Menüpunkt „Mein Bondarium“ (`LINKS`). |
 | `rechtliches.html#konto` | Abschnitt der Datenschutzerklärung. |
 
 ## Abläufe
@@ -32,35 +35,57 @@ verlängert: `__Host-bondarium-sitzung` (zufällige Kennung; HttpOnly, Secure, S
 **Passwort vergessen.** `aktion=vergessen` schickt einen Link (30 Minuten, einmal) auf `konto.html#passwort=<Kennwort>`;
 `aktion=passwort-neu` setzt das Passwort, meldet alle Geräte ab und das aktuelle an.
 
-**Angemeldet.** Merken, Entfernen, Abmelden, Passwort ändern (mit dem aktuellen Passwort; andere Geräte werden
-abgemeldet, eine E-Mail weist darauf hin), Konto löschen (mit Passwort).
+**Angemeldet.** Merken, Entfernen, ins Depot legen (`aktion=depot` mit ISIN und Nennwert; Nennwert 0 nimmt die
+Anleihe heraus), Abmelden, Passwort ändern (mit dem aktuellen Passwort; andere Geräte werden abgemeldet, eine E-Mail
+weist darauf hin), Konto löschen (mit Passwort).
 
 Der Teil hinter `#` eines Links geht nicht an den Server und steht in keinem Log; die Seite nimmt ihn sofort aus der
 Adresse. Wer nicht angemeldet ist, löst keine Anfrage an `konto.php` aus: `konto.js` fragt den Stand nur ab, wenn der
 Merker `bondarium-angemeldet` da ist. Klickt ein nicht angemeldeter Besucher auf „Merken“, führt der Knopf auf
-`konto.html?merken=<ISIN>`; die ISIN geht mit der Anmeldung oder Registrierung mit und liegt danach im Depot. Ist jemand
-schon angemeldet, legt `?merken=` nichts von selbst ab (ein fremder Link soll nichts ins Depot legen können) – die
+`konto.html?merken=<ISIN>`; die ISIN geht mit der Anmeldung oder Registrierung mit und steht danach auf der Merkliste. Ist jemand
+schon angemeldet, legt `?merken=` nichts von selbst ab (ein fremder Link soll nichts auf die Merkliste setzen können) – die
 Seite zeigt dann einen Knopf.
 
-## Tabelle und Depot-Auszug
+## Reiter „Merkliste“: Tabelle und PDF-Auszug
 
-„Mein Depot“ und der PDF-Auszug zeigen dieselben Spalten wie die Anleihen-Suche (Nutzerwunsch 30.09.2026): Anleihe (Name,
+Die Merkliste ist unverändert die Tabelle vom 30.09.2026 (Nutzerwunsch 01.10.2026: „so wie die aktuell schon
+existierende“, ohne Filter). Sie und der PDF-Auszug zeigen dieselben Spalten wie die Anleihen-Suche: Anleihe (Name,
 darunter der Registername), Rendite, Kurs, Kupon, Fälligkeit, Restlaufzeit, Art, ISIN, Währung, Volumen, Stückelung;
-„Mein Depot“ dazu „Gemerkt“ und „Entfernen“. Formate und Regeln wie in `anleihen-suche.html` (Rendite ohne Befund und ohne
+die Seite dazu „Gemerkt“ und „Entfernen“. Formate und Regeln wie in `anleihen-suche.html` (Rendite ohne Befund und ohne
 unplausible Taxe, „?“ bei fraglicher Taxe, „*“ bei Realrendite, „Daten?“ bei Widerspruch im ESMA-Register). Die Tabelle
 ist breit; auf schmalen Bildschirmen wischt man quer, am Handy erscheint jede Anleihe als Karte mit allen Werten. Über der
 Tabelle stehen Anzahl und Kursdatum, darunter wie auf den übrigen Datenseiten der Aufklapper „Datenquellen und Methodik“
 mit dem Daten-Stand („Keine Anlageberatung“ steht in der Fußzeile jeder Seite).
 
-## Depot teilen (PDF)
+## Reiter „Mein Depot“: Beispieldepot und Zahlungen
 
-Über der Tabelle stehen „Depot teilen“ und „Als PDF speichern“. „Depot teilen“ öffnet das Teilen-Menü des Geräts (Web
+Seit 01.10.2026 (Nutzerwunsch: „eine Funktion ‚mein depot‘, wo du Anleihen rein legen kannst und den Nennwert
+reinschreiben kannst … darunter genau deine Zahlungen grafisch dargestellt“). Oben ein Formular: Anleihe von der
+Merkliste wählen, Nennwert eintragen, „Ins Depot legen“. Darunter die Tabelle (Anleihe, Kupon, Fälligkeit, Nennwert als
+Eingabefeld, Zinsen im Jahr, Herausnehmen) mit Summenzeile. Kein Kaufkurs, kein Depotwert, kein Gewinn und Verlust.
+
+Ins Depot kommen vorerst nur Euro-Anleihen mit festem Kupon oder ohne Kupon (Nutzerentscheid); alles andere steht
+ausgegraut mit Grund in der Auswahl (`grund()` in `konto.html`). Der Nennwert ist eine ganze Zahl von 1 bis 100 Mio.;
+liegt er unter der Stückelung oder ist er kein Vielfaches davon, steht ein Hinweis in der Zeile.
+
+Unter der Tabelle die Zahlungen: ein Satz mit den Summen, zwei Schaubilder (nächste 12 Monate je Monat; je Jahr bis
+zur letzten Fälligkeit, höchstens 30 Jahre) und der Aufklapper „Alle Zahlungen einzeln“. Jedes Schaubild hat zwei
+Reihen mit eigener Höhe – oben Rückzahlungen (Tinte), unten Zinsen (Tiefgrün) –, weil eine Rückzahlung sonst jeden
+Zinsbalken unsichtbar machte; der Kupon-Punkt markiert die nächste Zinszahlung. Gerechnet wird wie im Steckbrief:
+Zinstermine vom Fälligkeitstag rückwärts (`MC.bond.couponDates`), jährlich, italienische Staatsanleihen halbjährlich;
+Zinsen je Termin = Nennwert × Kupon ÷ Termine im Jahr; Rückzahlung zum Nennwert; vor Steuern und Kosten, ohne
+vorzeitige Kündigung. Die Schaubilder zeichnen sich in der sichtbaren Breite (am Handy breiter als der Bildschirm,
+zum Wischen) und deshalb erst, wenn der Reiter offen ist. `konto.html#depot` öffnet den Reiter direkt.
+
+## Merkliste teilen (PDF)
+
+Über der Tabelle stehen „Merkliste teilen“ und „Als PDF speichern“. „Merkliste teilen“ öffnet das Teilen-Menü des Geräts (Web
 Share API mit Datei – Handy, Tablet, Safari); wo der Browser keine Dateien teilen kann, wird das PDF heruntergeladen.
 Nutzerentscheid: nichts Persönliches im PDF (kein Name, keine E-Mail-Adresse), und das PDF geht nicht über den Server.
-Dateiname `Bondarium-Depot-JJJJ-MM-TT.pdf`.
+Dateiname `Bondarium-Merkliste-JJJJ-MM-TT.pdf`. Das Beispieldepot steht nicht im PDF.
 
 Gestaltung schlicht: A4 hochkant, Helvetica, grünes Band mit dem Logo der Website (Bildzeichen „Orbit“ und
-Wortmarke als Vektor, die Wortmarke aus der Kopfzeile der Seite gelesen), „Depot-Auszug“ mit Datum, Anzahl und Kursstand,
+Wortmarke als Vektor, die Wortmarke aus der Kopfzeile der Seite gelesen), „Merkliste“ mit Datum, Anzahl und Kursstand,
 die Tabelle in der gewählten Sortierung (Name mit Link auf den Steckbrief). Damit alle Angaben der Suche hochkant passen, stehen
 je zwei übereinander: Name über ISIN · Registername, Fälligkeit über Restlaufzeit, Art über Währung, Volumen über Stückelung
 (Nutzerwunsch; kurz vorher war der Auszug quer mit elf Spalten). Unten Erklärungen, „Keine Anlageberatung“ und
@@ -69,12 +94,13 @@ Wunsch des Nutzers wieder entfernt (Commit 684be7e).
 
 ## Was gespeichert wird
 
-SQLite-Datei `konto-daten/konto-<zufällig>.sqlite` (Fassung 2):
+SQLite-Datei `konto-daten/konto-<zufällig>.sqlite` (Fassung 3):
 
 | Tabelle | Inhalt | Löschung |
 | --- | --- | --- |
 | `nutzer` | E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet | „Konto löschen“ sofort; nach zwei Jahren ohne Anmeldung |
 | `favoriten` | ISIN und Zeitpunkt je Nutzer, höchstens 200 | „Entfernen“, mit dem Konto |
+| `depot` | Beispieldepot (seit 01.10.2026, Fassung 3): ISIN, gedachter Nennwert (ganze Zahl) und Zeitpunkt je Nutzer, höchstens 50 | „Herausnehmen“, mit dem Konto |
 | `links` | offene Registrierungen (Adresse, Hashwert des Passworts, vorgemerkte ISIN) und Links „Passwort vergessen“; jeweils Hashwert des Link-Kennworts und Ablauf | beim Einlösen; sonst nach Ablauf |
 | `sitzungen` | Hashwert des Cookies, Ablauf | Abmelden, Passwortwechsel; nach Ablauf |
 | `zaehler` | verschlüsselte Hashwerte von Adresse und IP-Adresse: verschickte E-Mails, falsche Passwörter | nach 24 Stunden |

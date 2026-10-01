@@ -1,4 +1,5 @@
-/* konto.js – Benutzerbereich „Mein Depot“ im Browser (seit 30.09.2026): Anmeldung mit E-Mail und Passwort, Merkliste.
+/* konto.js – Benutzerbereich im Browser (seit 30.09.2026): Anmeldung mit E-Mail und Passwort, Merkliste und – seit
+   01.10.2026 – das Beispieldepot „Mein Depot“ (gemerkte Anleihen mit gedachtem Nennwert).
    Spricht mit konto.php (Beschreibung dort und in docs/KONTO.md). Geladen auf konto.html, anleihe.html und
    anleihen-suche.html – nach site.js:
      <script src="site.js"></script><script src="konto.js"></script>
@@ -8,12 +9,14 @@
    Stand ab.
 
    API (window.MC.konto):
-     bereit()                 Promise mit dem Stand { angemeldet, email, favoriten: [[isin, zeit], …] } – fragt höchstens einmal
+     bereit()                 Promise mit dem Stand { angemeldet, email, favoriten: [[isin, zeit], …],
+                              depot: [[isin, nennwert, zeit], …] } – fragt höchstens einmal
      stand()                  derselbe Stand, sofort (vor bereit(): nicht angemeldet)
      hat(isin)                true, wenn die Anleihe in der Merkliste steht
      knopf(isin[, klasse])    HTML des Merken-Knopfs; Klick, Beschriftung und Zustand übernimmt dieses Skript –
                               auch für Knöpfe, die eine Seite später ins Dokument schreibt
      merken(isin), entfernen(isin)            Promise mit dem neuen Stand; abgelehnt mit { status } bei Fehlern
+     depot(isin, nennwert)                   ins Beispieldepot legen oder Nennwert ändern (0 = herausnehmen) → wie merken
      registrieren(email, passwort[, isin])   E-Mail mit Bestätigungslink anfordern → Promise { ok, status, stunden }
      bestaetigen(kennwort, passwort)         Registrierung abschließen (Link aus der E-Mail + Passwort) → { ok, status, gemerkt }
      anmelden(email, passwort[, isin])       → Promise { ok, status, gemerkt }
@@ -29,13 +32,13 @@
   MC = window.MC = MC || {};
 
   var API = "konto.php", SEITE = "konto.html";
-  var st = { angemeldet: false, email: "", favoriten: [] }, menge = {}, hoerer = [], abfrage = null;
+  var st = { angemeldet: false, email: "", favoriten: [], depot: [] }, menge = {}, hoerer = [], abfrage = null;
 
   function markiert() { return /(?:^|;\s*)bondarium-angemeldet=1(?:;|$)/.test(document.cookie); }
   function esc(s) { return MC.esc ? MC.esc(s) : String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
 
   function uebernimm(j) {
-    st = { angemeldet: !!(j && j.angemeldet), email: (j && j.email) || "", favoriten: (j && j.angemeldet && j.favoriten) || [] };
+    st = { angemeldet: !!(j && j.angemeldet), email: (j && j.email) || "", favoriten: (j && j.angemeldet && j.favoriten) || [], depot: (j && j.angemeldet && j.depot) || [] };
     menge = {};
     st.favoriten.forEach(function (f) { menge[f[0]] = true; });
     knoepfe();
@@ -62,8 +65,10 @@
     return abfrage;
   }
 
-  function aendere(aktion, isin) {
-    return sende("POST", { aktion: aktion, isin: isin }).then(function (j) {
+  function aendere(aktion, isin, nennwert) {
+    var felder = { aktion: aktion, isin: isin };
+    if (nennwert != null) felder.nennwert = String(nennwert);
+    return sende("POST", felder).then(function (j) {
       if (j.ok) return uebernimm(j);
       if (j.status === "anmelden") uebernimm(null);   // Anmeldung abgelaufen
       throw j;
@@ -72,18 +77,18 @@
 
   // ---------- Merken-Knopf ----------
   var STERN = '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false"><path d="M12 3.2l2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 17.1 6.6 20l1.1-6.1-4.5-4.3 6.1-.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
-  function inhalt(drin) { return STERN + "<span>" + (drin ? "Im Depot" : "Merken") + "</span>"; }
+  function inhalt(drin) { return STERN + "<span>" + (drin ? "Gemerkt" : "Merken") + "</span>"; }
   function zeichne(b) {
     var drin = !!menge[b.getAttribute("data-merk")];
     b.setAttribute("aria-pressed", drin ? "true" : "false");
-    b.title = drin ? "Aus deinem Depot entfernen" : "In dein Depot legen";
+    b.title = drin ? "Von deiner Merkliste nehmen" : "Auf deine Merkliste setzen";
     b.innerHTML = inhalt(drin);
   }
   function knoepfe() { Array.prototype.forEach.call(document.querySelectorAll("button[data-merk]"), zeichne); }
   function knopf(isin, klasse) {
     var drin = !!menge[isin];
     return '<button type="button" class="merkbtn' + (klasse ? " " + esc(klasse) : "") + '" data-merk="' + esc(isin) + '" aria-pressed="' + drin +
-      '" title="' + (drin ? "Aus deinem Depot entfernen" : "In dein Depot legen") + '">' + inhalt(drin) + "</button>";
+      '" title="' + (drin ? "Von deiner Merkliste nehmen" : "Auf deine Merkliste setzen") + '">' + inhalt(drin) + "</button>";
   }
   function melde(text) {
     var el = document.getElementById("merk-status");
@@ -101,10 +106,10 @@
       if (!st.angemeldet) { location.href = SEITE + "?merken=" + encodeURIComponent(isin); return; }
       var weg = !!menge[isin];
       return aendere(weg ? "entfernen" : "merken", isin).then(function () {
-        melde(weg ? "Anleihe " + isin + " aus dem Depot entfernt" : "Anleihe " + isin + " ins Depot gelegt");
+        melde(weg ? "Anleihe " + isin + " von der Merkliste genommen" : "Anleihe " + isin + " auf die Merkliste gesetzt");
       }, function (j) {
         if (j && j.status === "anmelden") { location.href = SEITE + "?merken=" + encodeURIComponent(isin); return; }
-        var text = j && j.status === "voll" ? "Depot voll (" + (j.max || 200) + " Anleihen)" : "Hat nicht geklappt";
+        var text = j && j.status === "voll" ? "Merkliste voll (" + (j.max || 200) + " Anleihen)" : "Hat nicht geklappt";
         b.querySelector("span").textContent = text; melde(text);
         setTimeout(function () { zeichne(b); }, 3000);
       });
@@ -126,6 +131,7 @@
     knopf: knopf,
     merken: function (isin) { return aendere("merken", isin); },
     entfernen: function (isin) { return aendere("entfernen", isin); },
+    depot: function (isin, nennwert) { return aendere("depot", isin, nennwert); },
     registrieren: function (email, passwort, isin, falle) { return sende("POST", { aktion: "registrieren", email: email, passwort: passwort, isin: isin || "", website: falle || "" }); },
     bestaetigen: function (kennwort, passwort) { return sende("POST", { aktion: "bestaetigen", token: kennwort, passwort: passwort }).then(an); },
     anmelden: function (email, passwort, isin) { return sende("POST", { aktion: "anmelden", email: email, passwort: passwort, isin: isin || "" }).then(an); },

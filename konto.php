@@ -1,7 +1,8 @@
 <?php
 /**
- * Benutzerbereich „Mein Depot“ (konto.html, seit 30.09.2026): Konto mit E-Mail-Adresse und Passwort und eine Merkliste
- * für Anleihen. Dokumentation: docs/KONTO.md. Der Browser spricht über konto.js mit diesem Skript; die Antwort ist
+ * Benutzerbereich (konto.html, seit 30.09.2026): Konto mit E-Mail-Adresse und Passwort, eine Merkliste für Anleihen und
+ * – seit 01.10.2026 – ein Beispieldepot („Mein Depot“: gemerkte Anleihen mit einem gedachten Nennwert, kein echter
+ * Bestand). Dokumentation: docs/KONTO.md. Der Browser spricht über konto.js mit diesem Skript; die Antwort ist
  * immer JSON ({"status": …}).
  *
  * Abläufe (seit 30.09.2026 abends mit Passwort; vorher Anmeldung nur per E-Mail-Link):
@@ -14,13 +15,16 @@
  *                  verlängert sich bei Nutzung).
  *   Vergessen      aktion=vergessen (E-Mail) → E-Mail mit Link (30 Minuten, einmal); aktion=passwort-neu (Kennwort des
  *                  Links, neues Passwort) setzt es, meldet alle Geräte ab und das aktuelle an.
- *   Angemeldet     aktion=status | merken | entfernen | abmelden | passwort-aendern | loeschen
+ *   Angemeldet     aktion=status | merken | entfernen | depot | abmelden | passwort-aendern | loeschen
+ *                  depot (isin, nennwert): legt die Anleihe mit diesem Nennwert ins Beispieldepot oder ändert ihn;
+ *                  nennwert 0 nimmt sie heraus
  *   Links          führen auf konto.html#bestaetigen=… bzw. #passwort=… – der Teil hinter „#“ erscheint in keinem
  *                  Server-Log; aktion=link-pruefen sagt der Seite, ob der Link noch gilt und zu welcher Adresse er gehört.
  *
  * Gespeichert wird in einer SQLite-Datei im Ordner konto-daten/ (per .htaccess gesperrt, Dateiname zufällig):
  *   nutzer     E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet
  *   favoriten  ISIN und Zeitpunkt je Nutzer
+ *   depot      Beispieldepot: ISIN, gedachter Nennwert (ganze Zahl in der Währung der Anleihe) und Zeitpunkt je Nutzer
  *   links      offene Registrierungen und Links zum Zurücksetzen: Hashwert des Link-Kennworts, Adresse, Ablauf, bei
  *              Registrierungen der Hashwert des Passworts und die vorgemerkte ISIN – nach Ablauf gelöscht (aufraeumen)
  *   sitzungen  Anmeldungen (nur der Hashwert des Cookies, Ablauf)
@@ -41,7 +45,7 @@
  *
  * Status: ok · methode · anfrage · ursprung · aktion · email · passwort (zu schwach) · zugang (E-Mail oder Passwort
  *         falsch) · zuviel · versand · link (abgelaufen oder benutzt) · anmelden (nicht angemeldet) · isin · voll ·
- *         speicher (Datenbank nicht nutzbar) · fehler
+ *         nennwert (keine ganze Zahl von 0 bis NENNWERT_MAX) · speicher (Datenbank nicht nutzbar) · fehler
  * Ändert sich hier etwas an den verarbeiteten Daten, muss die Datenschutzerklärung (rechtliches.html) mit – und der
  * Betreiber vorher gefragt werden.
  *
@@ -59,6 +63,8 @@ const RESET_MINUTEN      = 30;    // Link „Passwort vergessen“
 const SITZUNG_TAGE       = 90;
 const RUHE_TAGE          = 730;   // Konto ohne Anmeldung seit so vielen Tagen wird gelöscht
 const MAX_FAVORITEN      = 200;
+const MAX_DEPOT          = 50;          // Anleihen im Beispieldepot
+const NENNWERT_MAX       = 100000000;   // gedachter Nennwert je Anleihe, in der Währung der Anleihe
 const PW_MIN             = 10;
 const PW_MAX             = 200;
 const COOKIE             = LOKAL ? 'bondarium-sitzung' : '__Host-bondarium-sitzung';
@@ -263,6 +269,13 @@ function db(): PDO
             $db->exec('PRAGMA user_version = 2');
             $db->exec('COMMIT');
         }
+        if ($fassung < 3) {
+            // Fassung 3 (01.10.2026): Beispieldepot – je Nutzer Anleihen mit einem gedachten Nennwert
+            $db->exec('BEGIN IMMEDIATE');
+            $db->exec('CREATE TABLE IF NOT EXISTS depot (nutzer INTEGER NOT NULL REFERENCES nutzer(id) ON DELETE CASCADE, isin TEXT NOT NULL, nennwert INTEGER NOT NULL, seit INTEGER NOT NULL, PRIMARY KEY (nutzer, isin))');
+            $db->exec('PRAGMA user_version = 3');
+            $db->exec('COMMIT');
+        }
     } catch (Throwable $e) {
         error_log('konto.php: Datenbank nicht nutzbar – ' . $e->getMessage());
         antwort(503, 'speicher');
@@ -408,6 +421,24 @@ function favoriten(int $id): array
     return $aus;
 }
 
+/** Beispieldepot in der Reihenfolge des Hineinlegens: [[ISIN, Nennwert, Zeitpunkt], …] */
+function depot(int $id): array
+{
+    $s = db()->prepare('SELECT isin, nennwert, seit FROM depot WHERE nutzer = ? ORDER BY seit, isin');
+    $s->execute([$id]);
+    $aus = [];
+    foreach ($s->fetchAll(PDO::FETCH_NUM) as $z) {
+        $aus[] = [(string)$z[0], (int)$z[1], (int)$z[2]];
+    }
+    return $aus;
+}
+
+/** Was die Seite über ein angemeldetes Konto wissen muss */
+function konto_stand(int $id, string $email): array
+{
+    return ['angemeldet' => true, 'email' => $email, 'favoriten' => favoriten($id), 'depot' => depot($id)];
+}
+
 function merke(int $id, string $isin): bool
 {
     $db = db();
@@ -426,7 +457,7 @@ function merke(int $id, string $isin): bool
 function stand(int $id, string $email, ?string $isin): array
 {
     $gemerkt = $isin !== null && merke($id, $isin) ? $isin : null;
-    return ['angemeldet' => true, 'email' => $email, 'favoriten' => favoriten($id), 'gemerkt' => $gemerkt];
+    return konto_stand($id, $email) + ['gemerkt' => $gemerkt];
 }
 
 /**
@@ -508,7 +539,7 @@ try {
         case 'status':
             aufraeumen();   // öffnet die Datenbank auch ohne Anmeldung: So meldet die Nach-Deploy-Prüfung eine Störung (503 „speicher“)
             $n = nutzer();
-            antwort(200, 'ok', $n === null ? ['angemeldet' => false] : ['angemeldet' => true, 'email' => $n['email'], 'favoriten' => favoriten($n['id'])]);
+            antwort(200, 'ok', $n === null ? ['angemeldet' => false] : konto_stand($n['id'], $n['email']));
             // no break – antwort() beendet das Skript
 
         case 'registrieren':
@@ -704,7 +735,39 @@ try {
             } else {
                 db()->prepare('DELETE FROM favoriten WHERE nutzer = ? AND isin = ?')->execute([$n['id'], $isin]);
             }
-            antwort(200, 'ok', ['angemeldet' => true, 'email' => $n['email'], 'favoriten' => favoriten($n['id'])]);
+            antwort(200, 'ok', konto_stand($n['id'], $n['email']));
+
+        case 'depot':
+            $n = angemeldet();
+            $isin = strtoupper(trim((string)($_POST['isin'] ?? '')));
+            if (!ist_isin($isin)) {
+                antwort(422, 'isin');
+            }
+            $roh = trim((string)($_POST['nennwert'] ?? ''));
+            if (!preg_match('/^\d{1,9}$/', $roh) || (int)$roh > NENNWERT_MAX) {
+                antwort(422, 'nennwert', ['max' => NENNWERT_MAX]);
+            }
+            $db = db();
+            if ((int)$roh === 0) {
+                $db->prepare('DELETE FROM depot WHERE nutzer = ? AND isin = ?')->execute([$n['id'], $isin]);
+            } else {
+                $db->exec('BEGIN IMMEDIATE');
+                $s = $db->prepare('SELECT 1 FROM depot WHERE nutzer = ? AND isin = ?');
+                $s->execute([$n['id'], $isin]);
+                if ($s->fetchColumn()) {
+                    $db->prepare('UPDATE depot SET nennwert = ? WHERE nutzer = ? AND isin = ?')->execute([(int)$roh, $n['id'], $isin]);
+                } else {
+                    $s = $db->prepare('SELECT COUNT(*) FROM depot WHERE nutzer = ?');
+                    $s->execute([$n['id']]);
+                    if ((int)$s->fetchColumn() >= MAX_DEPOT) {
+                        $db->exec('COMMIT');
+                        antwort(409, 'voll', ['max' => MAX_DEPOT]);
+                    }
+                    $db->prepare('INSERT INTO depot (nutzer, isin, nennwert, seit) VALUES (?, ?, ?, ?)')->execute([$n['id'], $isin, (int)$roh, time()]);
+                }
+                $db->exec('COMMIT');
+            }
+            antwort(200, 'ok', konto_stand($n['id'], $n['email']));
 
         case 'abmelden':
             $t = $_COOKIE[COOKIE] ?? '';
@@ -729,6 +792,7 @@ try {
             }
             $db->exec('BEGIN IMMEDIATE');
             $db->prepare('DELETE FROM favoriten WHERE nutzer = ?')->execute([$n['id']]);
+            $db->prepare('DELETE FROM depot WHERE nutzer = ?')->execute([$n['id']]);
             $db->prepare('DELETE FROM sitzungen WHERE nutzer = ?')->execute([$n['id']]);
             $db->prepare('DELETE FROM links WHERE email = ?')->execute([$n['email']]);
             $db->prepare('DELETE FROM nutzer WHERE id = ?')->execute([$n['id']]);
