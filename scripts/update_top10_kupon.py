@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""update_top10_kupon.py – je 30 Staats- und Unternehmensanleihen mit dem höchsten Kupon (seit 01.10.2026).
+"""update_top10_kupon.py – je 30 Anleihen mit dem höchsten Kupon für Staaten, öffentliche Emittenten und Unternehmen
+(seit 01.10.2026).
 
 Nutzerwunsch 01.10.2026: „TOP 10 nach Coupon. Voraussetzung: in der EZB-Liste. Mindestens zwei Jahre Restlaufzeit.
 Unternehmensanleihen.“ Am selben Tag erweitert: „da sollen jetzt alle Anleihen rein, auch Staatsanleihen – mach daraus
@@ -23,15 +24,15 @@ Liest:
 Schreibt:
   top10-anleihen-kupon.json
   {updated, updatedAt, stand (Kursstand), ezb: {stand, anzahl}, regeln: {min_jahre, max_stueckelung, waehrungen, g10},
-   kandidaten: {staat, unternehmen}, gruppen: {"staat": [Zeile …], "unternehmen": [Zeile …]}}
+   kandidaten: {staat, oeffentlich, unternehmen}, gruppen: {"staat": [Zeile …], "oeffentlich": […], "unternehmen": […]}}
   Zeile wie in update_top10.py, ohne Handelstage und Umsatz, dazu ezb (steht auf der EZB-Liste: true/false):
   {isin, emittent, art, cur, kupon, zins (Zinszahlungen/Jahr), faellig, kurs, datum, rendite|null, vol, stk, ezb}
 
 Auswahl:
-  Vorgabe     zwei Ranglisten: Art „Staat“ (Zentralstaaten) und Art „Unternehmen“ (wie in der Suche: einschließlich
-              Banken und Versicherer); ISIN auf der EZB-Liste, Restlaufzeit ab Valuta mindestens MIN_JAHRE Jahre.
-              Art „Öffentlich“ (Bundesländer, Förderbanken, Supranationale) steht seit der Teilung in keiner Liste –
-              verlangt waren Staatsanleihen und Unternehmen.
+  Vorgabe     drei Ranglisten, eine je Art des Index: „Staat“ (Zentralstaaten), „Öffentlich“ (Bundesländer, Regionen,
+              Förderbanken, Supranationale – als dritte Tabelle am 01.10.2026 abends ergänzt, Nutzerwunsch) und
+              „Unternehmen“ (wie in der Suche: einschließlich Banken und Versicherer); ISIN auf der EZB-Liste,
+              Restlaufzeit ab Valuta mindestens MIN_JAHRE Jahre.
   G10-Regel   Staatsanleihen der G10-Länder außerhalb des Europäischen Wirtschaftsraums (G10_AUSSERHALB_EWR: USA,
               Kanada, Japan, Schweiz, Großbritannien) zählen auch ohne Eintrag in der EZB-Liste mit (Nutzerentscheid
               01.10.2026, Anlass: US-Staatsanleihen). Begründung: Die EZB lässt als Emittenten „EEA or non-EEA G10
@@ -75,11 +76,14 @@ MAX_STUECKELUNG = 10000
 WAEHRUNGEN = ("EUR", "USD")
 TOP = 30
 ART = ("Staat", "Öffentlich", "Unternehmen")
-GRUPPEN = (("staat", 0), ("unternehmen", 2))   # Schlüssel in der Datei → Art im Index
+GRUPPEN = (("staat", 0), ("oeffentlich", 1), ("unternehmen", 2))   # Schlüssel in der Datei → Art im Index
 G10_AUSSERHALB_EWR = ("US", "CA", "JP", "CH", "GB")
 # Im WM-Kurznamen klebt das Währungskürzel teils ohne Leerzeichen am Emittenten („… International asEO-Medium-Term“) –
 # emittent_wm schneidet nur an einer Wortgrenze. Hier nachschneiden, statt die gemeinsame Regel der Top-10-Seiten zu ändern.
 GEKLEBT = re.compile(r"(?<=[a-z.)])[A-Z]{2}-[A-Z0-9].*$")
+# Bundesländer und Förderbanken: Der Kurzname hängt die Wertpapierbezeichnung ohne das übliche Kürzel an
+# („HESSEN, LAND SCHATZANW.V.1998(2029)SER.9802“) – ab der Bezeichnung abschneiden, Versalien in Normalschrift.
+BEZEICHNUNG = re.compile(r"\s*(?:Landessch|Schatzanw|Landesobl|Kassenobl|Inh\.-Schv|Öff\.?\s?Pfdbr)\S*.*$", re.I)
 
 
 def ezb_liste(heute: datetime.date):
@@ -154,6 +158,9 @@ def main() -> int:
         if (datetime.date.fromisoformat(r[5]) - valuta).days / 365.25 < MIN_JAHRE:
             continue
         em = (STAATSNAME.get(r[11]) if r[2] == 0 else None) or GEKLEBT.sub("", emittent_wm(name, emi[r[9]] if r[9] < len(emi) else "")).strip()
+        if r[2] == 1:
+            em = BEZEICHNUNG.sub("", em).strip() or em
+            em = em.title() if em.isupper() and " " in em else em   # „HESSEN, LAND“ → „Hessen, Land“, „NRW.BANK“ bleibt
         zeilen[gruppe[r[2]]].append({"isin": isin, "emittent": em,
                                      "art": ART[r[2]], "cur": r[3], "kupon": r[4], "zins": zinsfrequenz(r), "faellig": r[5],
                                      "kurs": k[0], "datum": datum, "rendite": k[1] if isinstance(k[1], (int, float)) else None,

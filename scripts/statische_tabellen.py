@@ -17,8 +17,8 @@ Fassung (innerHTML) – mit Sortieren, Aufklappen und den Handy-Karten. Die Quel
                           <tbody id="kpis-body">           ← top10-…-laender.json, Gruppe „deutschland“ – erst wenn die
                                                              automatische Rangliste gilt („aktiv“); bis dahin zeigt die
                                                              Seite ihre Handauswahl, die nur das Seitenskript kennt
-  anleihen-kupon.html     <tbody id="kpis-staat">, <tbody id="kpis-unternehmen">
-                                                           ← top10-anleihen-kupon.json, Gruppen „staat“ und „unternehmen“ (seit 01.10.2026)
+  anleihen-kupon.html     <tbody id="kpis-staat">, <tbody id="kpis-oeffentlich">, <tbody id="kpis-unternehmen">
+                                                           ← top10-anleihen-kupon.json, je Gruppe eine Tabelle (seit 01.10.2026)
 
 Passt eine Seite oder Datei nicht zum Erwarteten, gibt es eine Warnung und die Seite bleibt, wie sie ist.
 """
@@ -241,12 +241,12 @@ def laender(site, seite, datei):
 
 
 def kupon(site, seite="anleihen-kupon.html", datei="top10-anleihen-kupon.json"):
-    """Top 30 nach Kupon (seit 01.10.2026), zwei Tabellen: dieselben Zeilen wie das Seitenskript, Spalten wie die Länder-Seiten."""
+    """Top 30 nach Kupon (seit 01.10.2026), drei Tabellen: dieselben Zeilen wie das Seitenskript, Spalten wie die Länder-Seiten."""
     pfad = os.path.join(site, seite)
     D = lade(site, datei)
     html_ = open(pfad, encoding="utf-8").read()
     geschrieben = []
-    for key in ("staat", "unternehmen"):
+    for key in ("staat", "oeffentlich", "unternehmen"):
         reihe = (D.get("gruppen") or {}).get(key) or []
         leer = re.compile(r'(<tbody id="kpis-' + key + r'">)\s*(</tbody>)')
         if not reihe or not leer.search(html_):

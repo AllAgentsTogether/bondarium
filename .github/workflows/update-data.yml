@@ -241,7 +241,7 @@ jobs:
         continue-on-error: true
         run: python scripts/update_top10.py
 
-      # Top 30 nach Kupon (seit 01.10.2026): je eine Rangliste für Staats- und Unternehmensanleihen auf der EZB-Liste
+      # Top 30 nach Kupon (seit 01.10.2026): je eine Rangliste für Staaten, öffentliche Emittenten und Unternehmen auf der EZB-Liste
       # notenbankfähiger Sicherheiten (Staatsanleihen der G10-Länder außerhalb Europas auch ohne Eintrag),
       # Restlaufzeit ab zwei Jahren, Stückelung bis 10.000. Lädt die Tagesdatei der EZB; fehlt sie, bleibt die Liste vom Vortag stehen.
       - name: Top 30 nach Kupon berechnen (Index, Kurse, EZB-Liste)
