@@ -292,6 +292,7 @@ jobs:
           if command -v php >/dev/null 2>&1; then
             php -l kontakt.php
             php -l konto.php
+            php -l wechselkurse.php
             php -l aufruf.php
             php -l statistik-bericht.php
             php -l strato-cron/refresh.php
@@ -312,6 +313,7 @@ jobs:
           cp .htaccess _site/.htaccess
           cp kontakt.php _site/kontakt.php   # Kontaktformular (ueber-uns.html#kontakt, seit 30.09.2026)
           cp aufruf.php statistik-bericht.php _site/   # Besucherzählung und täglicher Bericht (seit 01.10.2026, docs/STATISTIK.md); Daten legt das Skript auf dem Server an (statistik-daten/, nie im Bau)
+          cp wechselkurse.php _site/wechselkurse.php   # neuester EZB-Referenzkurs für „Mein Depot“ (seit 01.10.2026): fragt selbst bei der EZB nach, höchstens alle 30 Minuten; Zwischenstand in wechselkurs-daten/ (legt das Skript an, nie im Bau)
           cp konto.php _site/konto.php   # Benutzerbereich (konto.html, seit 30.09.2026): Anmelde-Link und Merkliste; die Datenbank legt das Skript auf dem Server an (konto-daten/, nie im Bau)
           python3 scripts/security_txt.py _site   # /.well-known/security.txt (Adresse für Sicherheitsmeldungen, RFC 9116)
           cp -r kurse _site/kurse   # Kursverlauf: kurse/<Jahr>/<teil>.json und kurse/bund/<ISIN>.json

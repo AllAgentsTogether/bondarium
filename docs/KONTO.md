@@ -85,7 +85,28 @@ Betrag trägt ein Sternchen – in Tabelle, Summenzeile, Satz, Legende, an den Z
 der Tabelle ausführlich und im Schaubild kurz: Kurs und Stichtag, „als fest angenommen“, Wechselkursrisiko. Währungen ohne
 EZB-Referenzkurs (auch die alten Euro-Vorgänger wie DEM) und der Fall, dass `wechselkurse.json` fehlt: „kein Wechselkurs
 für …“ – die Anleihe bleibt aus dem Schaubild. Zinstermine: halbjährlich in USD, GBP, CAD, AUD, NZD, JPY, MXN, ZAR, HKD,
-SGD (`HALBJAHR`, dieselbe Liste wie `T.halbjahr` in `anleihe.html` und `HALBJAEHRLICH` in `scripts/_common.py`). Der Nennwert ist eine ganze Zahl von 1 bis 100 Mio.;
+SGD (`HALBJAHR`, dieselbe Liste wie `T.halbjahr` in `anleihe.html` und `HALBJAEHRLICH` in `scripts/_common.py`).
+
+Immer der neueste Kurs (seit 01.10.2026, Nutzerwunsch: „die EZB-Kurse sollen auch immer aktuell sein“): Der Datenlauf um
+10 Uhr holt den Kurs des Vortags – die EZB veröffentlicht erst gegen 16 Uhr. Deshalb lädt die Seite `wechselkurse.php`:
+Das Skript fragt selbst bei der EZB nach (höchstens alle 30 Minuten, nach einem Fehlschlag nach 5 Minuten, gar nicht mehr,
+sobald der Kurs von heute da ist) und legt den Stand in `wechselkurs-daten/kurse.json` ab (Ordner legt das Skript an,
+git-ignoriert, nie im Bau). Es nimmt keine Eingaben an und speichert nichts über Besucher; der Browser spricht nur mit
+bondarium.de. Antwortet es nicht, nimmt die Seite `wechselkurse.json` aus dem Datenlauf.
+
+Knopf in der Merkliste (seit 01.10.2026, Nutzerwunsch: „in der Merkliste muss es auch einen Button geben, zu meinem Depot
+hinzufügen“): In jeder Zeile steht vor dem × ein rundes „+“ (`depotKnopf()`; am Handy ausgeschrieben „Zum Depot
+hinzufügen“). Ein Klick legt die Anleihe mit einem Nennwert-Vorschlag ins Depot (`nennVorschlag()`: rund 1.000 in der
+Währung der Anleihe, mindestens die Stückelung) und meldet das in der Statuszeile mit dem Verweis „Nennwert ändern“. Liegt
+die Anleihe schon im Depot, zeigt der Knopf einen Haken und öffnet „Mein Depot“; lässt sie sich nicht rechnen, ist er
+gesperrt und nennt den Grund. Damit die Tabelle so breit bleibt wie bisher (1.180 px), ist die Namensspalte 26 px schmaler
+und der Spaltenabstand 1 px kleiner.
+
+Auswahl im Schaubild (seit 01.10.2026, Nutzerwunsch: „bei Zahlungen je Jahr soll die Farbkachel klickbar sein, so dass ich
+mir auch nur ein paar Werte aus dem Depot zusammenklicken kann“): Die Legende besteht aus Schaltern (`.kd-wahl`,
+`aria-pressed`). Ein Klick blendet eine Anleihe aus oder wieder ein; Satz („Auswahl: 3 von 10 Anleihen“), Schaubild
+(Zeitachse bis zur letzten Fälligkeit der Auswahl) und Einzel-Liste zeigen nur die Auswahl, die Tabelle darüber bleibt das
+ganze Depot. „Alle zeigen“ setzt zurück. Die Auswahl (`AUS`) gilt nur für diesen Seitenaufruf und wird nirgends gespeichert. Der Nennwert ist eine ganze Zahl von 1 bis 100 Mio.;
 liegt er unter der Stückelung oder ist er kein Vielfaches davon, steht ein Hinweis in der Zeile. Ins Depot passen höchstens zehn Anleihen (`MAX_DEPOT` in
 `konto.php`, `DEPOT_MAX` in `konto.html`); ist es voll, ist das Formular gesperrt.
 

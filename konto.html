@@ -91,11 +91,11 @@
   .kto-teilen-status.fehler { color: var(--down); }
   .kto-status strong { color: var(--ink); font-weight: 600; }
   .kto-t { width: 100%; min-width: 1180px; border-collapse: collapse; margin-top: 8px; font-size: 13.5px; }   /* Spalten wie die Anleihen-Suche; schmaler Bildschirm: querwischen */
-  .kto-t th, .kto-t td { padding: 10px 10px 10px 0; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+  .kto-t th, .kto-t td { padding: 10px 9px 10px 0; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
   .kto-t thead th { font-size: 11px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; color: var(--text); border-bottom: 1px solid rgba(26,26,25,0.35); white-space: nowrap; }
   .kto-t .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .kto-t thead .num .sortbtn { flex-direction: row-reverse; }
-  .kto-t tbody th { font-weight: 400; line-height: 1.4; min-width: 190px; }
+  .kto-t tbody th { font-weight: 400; line-height: 1.4; min-width: 164px; }
   .kto-t td.isin { font-variant-numeric: tabular-nums; white-space: nowrap; letter-spacing: 0.01em; }
   /* Breiter Bildschirm: Die Tabelle ragt links und rechts über die 1000-px-Spalte hinaus, damit alle Spalten ohne Wischen zu sehen sind */
   @media (min-width: 1240px) { #liste.table-scroll { width: 1180px; margin-left: -90px; overflow: visible; background: none; } }
@@ -112,6 +112,15 @@
   .kto-x span { display: none; }
   .kto-x:hover { color: var(--down); border-color: var(--down); }
   .kto-x[disabled] { opacity: 0.5; cursor: default; }
+  .kto-t td:last-child { white-space: nowrap; }
+  /* Knopf „Zu meinem Depot hinzufügen“ (seit 01.10.2026): rund wie das ×, damit die Tabelle so breit bleibt wie bisher – dafür ist
+     die Namensspalte 26 px schmaler und der Spaltenabstand 1 px kleiner. Am Handy steht der Knopf ausgeschrieben in der Karte. */
+  .kto-dep { font: inherit; font-size: 16px; font-weight: 600; line-height: 1; color: var(--green-text); background: none; border: 1px solid currentColor; border-radius: 999px; width: 28px; height: 28px; padding: 0; margin-right: 4px; cursor: pointer; white-space: nowrap; display: inline-grid; place-items: center; vertical-align: top; }
+  .kto-dep:hover { background: var(--green-tint-2); }
+  .kto-dep:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .kto-dep .l { display: none; }
+  .kto-dep.drin { font-size: 13px; color: var(--ink); background: var(--green-tint-2); border-color: var(--green-text); }
+  .kto-dep[disabled] { color: var(--text); opacity: 0.45; cursor: default; background: none; }
   .kto-leer { max-width: 640px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); padding: 20px 22px; margin-top: 14px; font-size: 16px; line-height: 1.6; }
   .kto-leer[hidden], #liste[hidden] { display: none; }
   .kto-leer p + p { margin-top: 12px; }
@@ -202,7 +211,14 @@
   .kd-svg .kd-p { font-size: 12px; font-weight: 600; fill: #157C00; }
   .kd-svg .kd-m { font-size: 12px; font-weight: 600; fill: #A2561C; }
   .kd-leg { list-style: none; display: flex; flex-wrap: wrap; gap: 5px 18px; margin: 0 0 14px; padding: 0; font-size: 13px; color: var(--text); }
-  .kd-leg li { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .kd-leg li { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; }
+  .kd-leg { gap: 6px 8px; }
+  .kd-leg-h { font-size: 12.5px; line-height: 1.5; color: var(--text); margin: 0 0 8px; }
+  .kd-leg-h[hidden] { display: none; }
+  .kd-wahl { font: inherit; font-size: 13px; line-height: 1.3; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.25); border-radius: 999px; padding: 5px 12px 5px 9px; display: inline-flex; align-items: center; gap: 7px; text-align: left; cursor: pointer; }
+  .kd-wahl:hover { border-color: var(--ink); }
+  .kd-wahl:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .kd-wahl[aria-pressed="false"] { color: var(--text); background: none; border-style: dashed; text-decoration: line-through; }
   .kd-f { display: inline-block; width: 11px; height: 11px; border-radius: 3px; flex: none; margin-right: 7px; vertical-align: -1px; }
   .kd-leg .kd-f { margin-right: 0; }
   .kd-svg .kd-l { font-size: 12px; fill: #55544F; }
@@ -237,7 +253,9 @@
     .kto-t tbody td[data-l]::before { content: attr(data-l); display: block; font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
     .kto-t tbody td[data-l] { font-size: 15px; font-weight: 600; text-align: left; }
     .kto-t tbody td small { font-weight: 400; }
-    .kto-t tbody td:last-child { grid-column: 1 / -1; text-align: right; width: auto; }
+    .kto-t tbody td:last-child { grid-column: 1 / -1; text-align: right; width: auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 10px; white-space: normal; }
+    .kto-dep, .kto-dep.drin { width: auto; height: auto; padding: 7px 12px; margin-right: 0; font-size: 13px; display: inline-flex; gap: 5px; }
+    .kto-dep .l { display: inline; }
     .kto-t tbody td.isin { grid-column: span 2; }   /* zwölf Zeichen passen nicht in ein Drittel */
     #liste.table-scroll.ueberlauf::before { display: none; }   /* Karten statt Tabelle: nichts zu wischen */
     .kto-reiter button { font-size: 16px; padding: 11px 14px 10px; }
@@ -433,7 +451,7 @@
             <th scope="col" data-col="vol" class="num"><button type="button" class="sortbtn" data-col="vol" title="Ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe (Mrd. = Milliarden)">Volumen</button></th>
             <th scope="col" data-col="stk" class="num"><button type="button" class="sortbtn" data-col="stk" title="Kleinster Nennwert (zugleich Mindestanlage) in der Währung der Anleihe">Stückelung</button></th>
             <th scope="col" data-col="seit" class="num" aria-sort="descending"><button type="button" class="sortbtn" data-col="seit">Gemerkt</button></th>
-            <th scope="col"><span class="sr-only">Entfernen</span></th>
+            <th scope="col"><span class="sr-only">Ins Depot legen, Entfernen</span></th>
           </tr></thead>
           <tbody id="zeilen"></tbody>
         </table>
@@ -475,7 +493,8 @@
           <p class="kd-zsum" id="kd-zsum"></p>
           <figure class="kd-karte" aria-labelledby="kd-j-t">
             <figcaption><b id="kd-j-t">Zahlungen je Jahr</b><span id="kd-j-u">bis zur letzten Fälligkeit</span></figcaption>
-            <ul class="kd-leg" id="kd-leg" aria-label="Farben der Anleihen"></ul>
+            <p class="kd-leg-h" id="kd-leg-h" hidden>Klick auf eine Anleihe blendet sie aus oder wieder ein – so stellst du dir eine Auswahl zusammen.</p>
+            <ul class="kd-leg" id="kd-leg" aria-label="Anleihen im Schaubild – an- und abwählen"></ul>
             <div class="chart-scroll" id="kd-jahre"></div>
             <p class="kd-rest" id="kd-rest" hidden></p>
             <p class="kd-fx" id="kd-fx2" hidden></p>
@@ -498,8 +517,8 @@
           <p><strong>Rendite.</strong> Rendite bis zur Fälligkeit in % pro Jahr, von uns aus Kurs, Kupon und Fälligkeit berechnet – nach denselben Regeln wie in der <a href="anleihen-suche.html">Anleihen-Suche</a>, wo unter „Datenquellen und Methodik“ alle Einzelheiten stehen.</p>
           <p><strong>Stammdaten.</strong> Kupon, Fälligkeit, Art, Währung, Volumen und Stückelung aus dem Register der europäischen Wertpapieraufsicht ESMA (FIRDS). Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage, beide in der Währung der Anleihe.</p>
           <p><strong>Steckbrief.</strong> Ein Klick auf Name oder ISIN öffnet den Steckbrief der Anleihe mit Kursverlauf, Handel und Rechenbeispiel.</p>
-          <p><strong>Mein Depot.</strong> Ein Beispieldepot mit gedachten Beträgen, kein Bestand. Kaufbetrag heute = Nennwert × Schlusskurs, ohne Stückzinsen und Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Zinsen je Termin = Nennwert × Kupon, bei halbjährlicher Zahlung die Hälfte; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Der Unterschied zwischen Rückzahlung und Kaufbetrag ist der Kursgewinn oder Kursverlust bis zur Fälligkeit. Das Schaubild reicht von heute bis zur letzten Fälligkeit, höchstens 30 Jahre, jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung des Nennwerts, ganz unten beides zusammen; ins Depot passen höchstens zehn Anleihen. Die Zinstermine sind aus der Fälligkeit abgeleitet (jährlich am Jahrestag, italienische Staatsanleihen und einige Fremdwährungen halbjährlich) – maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
-          <p><strong>Fremde Währungen.</strong> Anleihen in anderer Währung trägst du mit dem Nennwert in dieser Währung ein. Kaufbetrag, Zinsen und Rückzahlung rechnen wir in Euro um und kennzeichnen sie mit einem Sternchen (*). Umgerechnet wird mit dem Euro-Referenzkurs der Europäischen Zentralbank vom letzten Arbeitstag – und dieser Kurs ist für die ganze Laufzeit als fest angenommen. Tatsächlich schwankt der Wechselkurs: Wie viel Euro eine Zahlung am Ende wert ist, steht erst am Zahltag fest (Wechselkursrisiko). Anleihen in US-Dollar, Pfund und einigen weiteren Währungen zahlen üblicherweise halbjährlich; so sind sie hier gerechnet. Für Währungen ohne EZB-Referenzkurs gibt es keine Umrechnung – solche Anleihen fehlen im Schaubild.</p>
+          <p><strong>Mein Depot.</strong> Ein Beispieldepot mit gedachten Beträgen, kein Bestand. Kaufbetrag heute = Nennwert × Schlusskurs, ohne Stückzinsen und Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Zinsen je Termin = Nennwert × Kupon, bei halbjährlicher Zahlung die Hälfte; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Der Unterschied zwischen Rückzahlung und Kaufbetrag ist der Kursgewinn oder Kursverlust bis zur Fälligkeit. Das Schaubild reicht von heute bis zur letzten Fälligkeit, höchstens 30 Jahre, jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung des Nennwerts, ganz unten beides zusammen; ins Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Satz, Schaubild und Einzel-Liste zeigen dann nur die Auswahl. Die Zinstermine sind aus der Fälligkeit abgeleitet (jährlich am Jahrestag, italienische Staatsanleihen und einige Fremdwährungen halbjährlich) – maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
+          <p><strong>Fremde Währungen.</strong> Anleihen in anderer Währung trägst du mit dem Nennwert in dieser Währung ein. Kaufbetrag, Zinsen und Rückzahlung rechnen wir in Euro um und kennzeichnen sie mit einem Sternchen (*). Umgerechnet wird mit dem jeweils neuesten Euro-Referenzkurs der Europäischen Zentralbank (sie veröffentlicht ihn an jedem Arbeitstag gegen 16 Uhr; das Datum steht im Hinweis unter der Tabelle) – und dieser Kurs ist für die ganze Laufzeit als fest angenommen. Tatsächlich schwankt der Wechselkurs: Wie viel Euro eine Zahlung am Ende wert ist, steht erst am Zahltag fest (Wechselkursrisiko). Anleihen in US-Dollar, Pfund und einigen weiteren Währungen zahlen üblicherweise halbjährlich; so sind sie hier gerechnet. Für Währungen ohne EZB-Referenzkurs gibt es keine Umrechnung – solche Anleihen fehlen im Schaubild.</p>
           <p id="datastand"></p>
         </div>
       </details>
@@ -712,7 +731,33 @@ MC.navInit();
       `<td class="num" data-l="Volumen">${MC.esc(fmtVol(o.vol, o.cur))}</td>` +
       `<td class="num" data-l="Stückelung">${MC.esc(fmtStk(o.stk))}</td>` +
       `<td class="num leise" data-l="Gemerkt">${MC.esc(new Date(o.seit * 1000).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }))}</td>` +
-      `<td><button type="button" class="kto-x" data-weg="${MC.esc(o.isin)}" aria-label="${MC.esc(o.name)} von der Merkliste entfernen" title="Von der Merkliste entfernen">×<span> Entfernen</span></button></td></tr>`;
+      `<td>${depotKnopf(o)}<button type="button" class="kto-x" data-weg="${MC.esc(o.isin)}" aria-label="${MC.esc(o.name)} von der Merkliste entfernen" title="Von der Merkliste entfernen">×<span> Entfernen</span></button></td></tr>`;
+  }
+  // Knopf „Zu meinem Depot hinzufügen“ in jeder Zeile der Merkliste (seit 01.10.2026, Nutzerwunsch). Liegt die Anleihe schon im
+  // Depot, führt er dorthin; lässt sie sich nicht rechnen (grund()), ist er gesperrt und nennt den Grund.
+  function depotKnopf(o) {
+    if (POS.some(p => p.isin === o.isin)) return `<button type="button" class="kto-dep drin" data-zum-depot title="Liegt in deinem Depot – Mein Depot öffnen" aria-label="${MC.esc(o.name)} liegt in deinem Depot – Mein Depot öffnen">✓<span class="l">Im Depot</span></button>`;
+    const g = grund(o);
+    return `<button type="button" class="kto-dep" data-depot="${MC.esc(o.isin)}"${g ? " disabled" : ""} title="${MC.esc(g ? `Lässt sich nicht ins Depot legen: ${g}` : "Zu meinem Depot hinzufügen")}" aria-label="${MC.esc(o.name)} zu meinem Depot hinzufügen">+<span class="l">Zum Depot hinzufügen</span></button>`;
+  }
+  // Nennwert-Vorschlag: rund 1.000 in der Währung der Anleihe, mindestens die Stückelung und ein Vielfaches davon
+  function nennVorschlag(o) {
+    const stk = typeof o.stk === "number" && o.stk > 0 ? o.stk : 0;
+    if (stk >= 1000) return Math.min(NENN_MAX, Math.ceil(stk));
+    return stk >= 1 && Number.isInteger(stk) ? Math.ceil(1000 / stk) * stk : 1000;
+  }
+  let NOTIZ = "";   // Meldung in der Statuszeile der Merkliste nach „Zu meinem Depot hinzufügen“ (HTML)
+  function insDepot(knopf) {
+    const o = LISTE.find(x => x.isin === knopf.dataset.depot); if (!o) return;
+    ZULETZT = "";
+    if (POS.length >= DEPOT_MAX) { NOTIZ = `Dein Depot ist voll (${DEPOT_MAX} Anleihen) – nimm erst eine heraus: <button type="button" class="kto-textbtn" id="zum-depot">Mein Depot öffnen</button>.`; statusText(); return; }
+    const nenn = nennVorschlag(o);
+    knopf.disabled = true;
+    NOTIZ = `<strong>${MC.esc(o.name)}</strong> liegt mit ${fmt(nenn)} ${o.cur && o.cur !== "EUR" ? MC.esc(o.cur) : "€"} Nennwert in deinem Depot – <button type="button" class="kto-textbtn" id="zum-depot">Nennwert ändern</button>.`;
+    K.depot(o.isin, nenn).catch(a => {
+      NOTIZ = ""; knopf.disabled = false;
+      if (a && a.status !== "anmelden") { NOTIZ = MC.esc(DEPOT_TEXT[a.status] || TEXT[a.status] || TEXT.fehler); statusText(); }
+    });
   }
   // Liste in der gewählten Sortierung – für die Tabelle und den PDF-Auszug
   function sortiert() {
@@ -731,8 +776,8 @@ MC.navInit();
   }
   function statusText() {
     const n = LISTE.length;
-    $("status").innerHTML = (n ? `<strong>${n} ${n === 1 ? "Anleihe" : "Anleihen"}</strong> auf deiner Merkliste${KSTAND ? ` · Kurse vom ${MC.esc(MC.datum(KSTAND))}` : ""}.` : "") +
-      (ZULETZT ? ` ${MC.esc(ZULETZT)} entfernt – <button type="button" class="kto-textbtn" id="zurueck">rückgängig</button>.` : "");
+    $("status").innerHTML = (n ? `<strong>${n} ${n === 1 ? "Anleihe" : "Anleihen"}</strong> auf deiner Merkliste${KSTAND ? ` · Kurse vom ${MC.esc(MC.datum(KSTAND))}` : ""}.${!ZULETZT && !NOTIZ ? " Mit <strong>+</strong> legst du eine Anleihe in dein Depot." : ""}` : "") +
+      (ZULETZT ? ` ${MC.esc(ZULETZT)} entfernt – <button type="button" class="kto-textbtn" id="zurueck">rückgängig</button>.` : "") + (NOTIZ ? ` ${NOTIZ}` : "");
   }
   let lauf = 0;
   function zeigeDepot(stand) {
@@ -750,9 +795,10 @@ MC.navInit();
     Promise.all([ladeDaten(), ladeFx()]).then(([D]) => ladeStamm(isins.filter(i => !D.idx.has(i))).then(() => D)).then(D => {
       if (nr !== lauf) return;
       LISTE = fav.map(f => anleihe(f[0], f[1], D)); KSTAND = D.kstand;
+      POS = dep.map(d => position(d[0], d[1], D)); POS.forEach((p, i) => { p.farbe = FARBEN[i % FARBEN.length]; });   // vor zeichne(): der Depot-Knopf der Merkliste braucht den Depot-Inhalt
       if (fav.length) { $("liste").hidden = false; $("teilen-box").hidden = false; zeichne(); }
       statusText();
-      POS = dep.map(d => position(d[0], d[1], D)); POS.forEach((p, i) => { p.farbe = FARBEN[i % FARBEN.length]; }); zeichneDepot();
+      zeichneDepot();
       $("datastand").textContent = `Daten-Stand: Kurse vom ${MC.datum(D.kstand)} (Deutsche Börse, Bundesbank) · Stammdaten vom ${MC.datum(D.stand)} (ESMA-Register)`;
       $("quellen").hidden = false;
     }).catch(err => {
@@ -761,9 +807,10 @@ MC.navInit();
       // ohne Kursdaten wenigstens die Listen zeigen (ISIN mit Link zum Steckbrief)
       const ohne = isin => ({ isin, name: isin, reg: "", rendite: null, kurs: null, kupon: null, faellig: "", cur: "", hinweis: "Kursdaten gerade nicht erreichbar" });
       LISTE = fav.map(f => Object.assign(ohne(f[0]), { seit: f[1] }));
+      POS = dep.map(d => ({ isin: d[0], nenn: d[1], o: ohne(d[0]), rechnet: false, zins: null, warum: "Kursdaten gerade nicht erreichbar" }));
       if (fav.length) { $("liste").hidden = false; $("teilen-box").hidden = false; zeichne(); }
       $("quellen").hidden = true; statusText();
-      POS = dep.map(d => ({ isin: d[0], nenn: d[1], o: ohne(d[0]), rechnet: false, zins: null, warum: "Kursdaten gerade nicht erreichbar" })); zeichneDepot();
+      zeichneDepot();
     });
   }
   function zeige(stand) {
@@ -837,7 +884,12 @@ MC.navInit();
   const diffKlein = (d, vor, stern = "") => d == null ? "" : `<small class="${d < 0 ? "kd-minus" : "kd-plus"}">${vor}${plus(d)} €${stern}</small>`;
   const HALBJAHR = ["USD", "GBP", "CAD", "AUD", "NZD", "JPY", "MXN", "ZAR", "HKD", "SGD"];
   let FX = null;   // wechselkurse.json: { stand, kurse: { USD: 1.1355, … } }; null = nicht geladen
-  function ladeFx() { return MC.json("wechselkurse.json").then(d => { FX = d && d.kurse && d.stand ? d : null; }, () => { FX = null; }); }
+  // wechselkurse.php liefert den zuletzt veröffentlichten EZB-Stand (fragt selbst nach, höchstens alle 30 Minuten); antwortet es
+  // nicht, gilt die Datei aus dem täglichen Datenlauf
+  function ladeFx() {
+    const nimm = d => { if (!(d && d.kurse && d.stand)) throw new Error("leer"); FX = d; };
+    return MC.json("wechselkurse.php").then(nimm).catch(() => MC.json("wechselkurse.json").then(nimm)).catch(() => { FX = null; });
+  }
   const fxKurs = cur => cur === "EUR" ? 1 : FX && typeof FX.kurse[cur] === "number" && FX.kurse[cur] > 0 ? FX.kurse[cur] : null;
   const fmtFx = v => v.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 4 });
   const stern = liste => liste.some(p => p.fremd) ? "*" : "";
@@ -846,6 +898,7 @@ MC.navInit();
   // als benachbarte Flächen geprüft (Farbsehschwächen: kleinster Abstand 9,1; Normalsicht 19,6); Tinte und Grau sind die neutralen
   // Plätze neun und zehn. Hell sind Türkis, Gelb und Rosa – deshalb stehen Zahlen am Balken, eine Legende darüber, und die Liste darunter.
   const DEPOT_MAX = 10, JAHRE_MAX = 30, FARBEN = ["#157C00", "#2A78D6", "#EB6834", "#1BAF7A", "#EDA100", "#E87BA4", "#4A3AA7", "#E34948", "#1A1A19", "#8E8D86"];
+  const AUS = new Set();   // im Schaubild abgewählte Anleihen (ISIN) – nur für diesen Seitenaufruf, wird nirgends gespeichert
   let POS = [];   // { isin, nenn (Währung der Anleihe), o (wie anleihe()), fx, fremd, stern, nennEur, freq, fest, rechnet, zins (im Jahr, Euro, oder null), warum }
   function nennLesen(text) { const n = parseInt(String(text).replace(/[.\s€]/g, "").replace(/,\d*$/, ""), 10); return n >= 1 && n <= NENN_MAX ? n : NaN; }
   // Warum eine Anleihe nicht gerechnet werden kann ("" = sie kann)
@@ -873,7 +926,7 @@ MC.navInit();
   }
   function zahlungen() {
     const out = [];
-    POS.filter(p => p.rechnet).forEach(p => {
+    POS.filter(p => p.rechnet && !AUS.has(p.isin)).forEach(p => {
       if (p.fest) MC.bond.couponDates({ coupon: p.o.kupon, freq: p.freq, maturity: p.o.faellig }, HEUTE_ISO).dates
         .forEach(t => out.push({ tag: new Date(t).toISOString().slice(0, 10), p, art: "Zinsen", betrag: p.nennEur * p.o.kupon / p.freq / 100, roh: p.nenn * p.o.kupon / p.freq / 100 }));
       out.push({ tag: p.o.faellig, p, art: "Rückzahlung", betrag: p.nennEur, roh: p.nenn, diff: p.diff });
@@ -974,15 +1027,27 @@ MC.navInit();
   }
   function zeichneZahlungen() {
     if ($("mein-depot").hidden) return;   // das Schaubild braucht die sichtbare Breite – gezeichnet wird beim Öffnen des Reiters
+    // Auswahl (Nutzerwunsch 01.10.2026): Die Farbkacheln über dem Schaubild sind Schalter – ein Klick blendet eine Anleihe aus oder
+    // wieder ein. Satz, Schaubild und Einzel-Liste zeigen dann nur die Auswahl; die Tabelle darüber bleibt das ganze Depot.
+    const alle = POS.filter(p => p.rechnet).sort((a, b) => a.o.faellig.localeCompare(b.o.faellig) || a.isin.localeCompare(b.isin));   // Reihenfolge wie die Tabelle
+    [...AUS].forEach(i => { if (!alle.some(p => p.isin === i)) AUS.delete(i); });
     const z = zahlungen(), box = $("kd-zahlungen");
-    box.hidden = !z.length;
+    box.hidden = !alle.length;
     const fehlt = POS.filter(p => !p.rechnet);
-    if (!z.length) { if (POS.length) { box.hidden = false; $("kd-zsum").textContent = "Für diese Auswahl lässt sich keine Zahlung berechnen."; $("kd-jahre").innerHTML = $("kd-plan").innerHTML = $("kd-leg").innerHTML = ""; $("kd-rest").hidden = true; $("kd-hinweis").textContent = ""; } return; }
+    const leeren = text => { $("kd-zsum").textContent = text; $("kd-jahre").innerHTML = $("kd-plan").innerHTML = ""; $("kd-j-u").textContent = ""; $("kd-rest").hidden = $("kd-fx2").hidden = true; $("kd-hinweis").textContent = ""; };
+    $("kd-leg-h").hidden = alle.length < 2;
+    $("kd-leg").innerHTML = alle.map(p => {
+      const an = !AUS.has(p.isin);
+      return `<li><button type="button" class="kd-wahl" aria-pressed="${an}" data-wahl="${MC.esc(p.isin)}" title="${an ? "Im Schaubild – Klick blendet aus" : "Ausgeblendet – Klick blendet ein"}"><i class="kd-f" style="${an ? `background: ${p.farbe}` : `box-shadow: inset 0 0 0 2px ${p.farbe}`}"></i>${MC.esc(p.o.name)} ${fmtCoupon(p.o.kupon)} ${p.o.faellig.slice(0, 4)}${p.fremd ? ` · ${MC.esc(p.o.cur)}*` : ""}</button></li>`;
+    }).join("") + (AUS.size ? `<li><button type="button" class="kto-textbtn" data-wahl="alle">Alle zeigen</button></li>` : "");
+    if (!alle.length) { if (POS.length) { box.hidden = false; leeren("Für diese Auswahl lässt sich keine Zahlung berechnen."); } return; }
+    if (!z.length) { leeren("Keine Anleihe ausgewählt – klick oben auf eine Anleihe, um sie wieder einzublenden."); return; }
+    $("kd-fx2").hidden = !z.some(x => x.p.fremd);
     const summe = (liste, art) => liste.filter(x => x.art === art).reduce((a, x) => a + x.betrag, 0);
     const st = (liste, art) => liste.some(x => x.p.fremd && (!art || x.art === art)) ? "*" : "";   // Sternchen: Summe enthält umgerechnete Beträge
     // Je Jahr von heute bis zur letzten Fälligkeit, höchstens JAHRE_MAX Jahre (Nutzerwunsch: dynamisch, bis 30 Jahre – rechts soll
     // nichts leer bleiben); was danach kommt, fasst „rest“ zusammen
-    const rechnend = POS.filter(p => p.rechnet).sort((a, b) => a.o.faellig.localeCompare(b.o.faellig) || a.isin.localeCompare(b.isin));   // Reihenfolge wie die Tabelle
+    const rechnend = alle.filter(p => !AUS.has(p.isin)), auswahl = rechnend.length < alle.length;
     const j0 = new Date().getFullYear(), j1 = +z[z.length - 1].tag.slice(0, 4), bis = Math.min(j1, j0 + JAHRE_MAX - 1), jahr = [], spaeter = z.filter(x => +x.tag.slice(0, 4) > bis);
     for (let j = j0; j <= bis; j++) jahr.push({ k: String(j), zins: 0, rueck: 0, diff: 0, teile: rechnend.map(p => ({ p, zins: 0, rueck: 0 })) });
     z.forEach(x => {
@@ -995,13 +1060,12 @@ MC.navInit();
     $("kd-j-u").textContent = (bis > j0 ? `${j0} bis ${bis}` : String(j0)) + (rest ? ` · ${rest.von} bis ${rest.bis} nicht im Bild` : " · bis zur letzten Fälligkeit");
     $("kd-rest").hidden = !rest;
     if (rest) $("kd-rest").innerHTML = `Die Jahre ${rest.von} bis ${rest.bis} werden nicht angezeigt. Dort folgen noch ${rest.zins ? `<b>${eur(rest.zins)}${st(spaeter, "Zinsen")} Zinsen</b> und ` : ""}<b>${eur(rest.rueck, st(spaeter, "Rückzahlung") ? 2 : 0)}${st(spaeter, "Rückzahlung")} Rückzahlung</b>.`;
-    $("kd-leg").innerHTML = rechnend.map(p => `<li><i class="kd-f" style="background: ${p.farbe}"></i>${MC.esc(p.o.name)} ${fmtCoupon(p.o.kupon)} ${p.o.faellig.slice(0, 4)}${p.fremd ? ` · ${MC.esc(p.o.cur)}*` : ""}</li>`).join("");
     const zi = summe(z, "Zinsen"), ru = summe(z, "Rückzahlung");
-    $("kd-zsum").innerHTML = `Bis zur letzten Fälligkeit am ${MC.datum(z[z.length - 1].tag)}: <b>${eur(zi)}${st(z, "Zinsen")} Zinsen</b> und <b>${eur(ru, st(z, "Rückzahlung") ? 2 : 0)}${st(z, "Rückzahlung")} Rückzahlung</b>, zusammen <b>${eur(zi + ru)}${st(z)}</b>.` +
+    $("kd-zsum").innerHTML = (auswahl ? `<b>Auswahl: ${rechnend.length} von ${alle.length} Anleihen.</b> ` : "") + `Bis zur letzten Fälligkeit am ${MC.datum(z[z.length - 1].tag)}: <b>${eur(zi)}${st(z, "Zinsen")} Zinsen</b> und <b>${eur(ru, st(z, "Rückzahlung") ? 2 : 0)}${st(z, "Rückzahlung")} Rückzahlung</b>, zusammen <b>${eur(zi + ru)}${st(z)}</b>.` +
       (() => {   // Unterschied zwischen Kaufbetrag heute und Rückzahlung zu 100 %
-        const mit = POS.filter(p => p.diff != null), ohne = POS.filter(p => p.rechnet && p.diff == null).length; if (!mit.length) return "";
+        const mit = rechnend.filter(p => p.diff != null), ohne = rechnend.length - mit.length; if (!mit.length) return "";
         const kauf = mit.reduce((a, p) => a + p.kauf, 0), d = mit.reduce((a, p) => a + p.diff, 0);
-        return ` Heute gekauft kostet ${ohne ? "das (ohne " + ohne + (ohne === 1 ? " Anleihe" : " Anleihen") + " ohne aktuellen Kurs)" : "das Depot"} <b>${eur(kauf)}${stern(mit)}</b>, ohne Stückzinsen und Gebühren; zurückgezahlt werden <b class="${d < 0 ? "kd-minus" : "kd-plus"}">${eur(Math.abs(d))}${stern(mit)} ${d < 0 ? "weniger" : "mehr"}</b>.`;
+        return ` Heute gekauft kostet ${ohne ? "das (ohne " + ohne + (ohne === 1 ? " Anleihe" : " Anleihen") + " ohne aktuellen Kurs)" : auswahl ? "die Auswahl" : "das Depot"} <b>${eur(kauf)}${stern(mit)}</b>, ohne Stückzinsen und Gebühren; zurückgezahlt werden <b class="${d < 0 ? "kd-minus" : "kd-plus"}">${eur(Math.abs(d))}${stern(mit)} ${d < 0 ? "weniger" : "mehr"}</b>.`;
       })();
     const zeilen = z.slice(0, 240).map(x => `<tr${x.art === "Rückzahlung" ? ' class="rz"' : ""}><td>${MC.datum(x.tag)}</td><th scope="row"><i class="kd-f" style="background: ${x.p.farbe}"></i>${MC.esc(x.p.o.name)} ${fmtCoupon(x.p.o.kupon)} ${x.p.o.faellig.slice(0, 4)}</th>` +
       `<td>${x.art}${x.art === "Rückzahlung" && x.diff != null ? `<small>zu 100 %, Kauf heute zu ${fmt(x.p.o.kurs, 2)}</small>` : ""}</td><td class="num">${eur(x.betrag)}${x.p.stern}${x.p.fremd ? `<small>${fmt(x.roh, 2)} ${MC.esc(x.p.o.cur)}</small>` : ""}${x.art === "Rückzahlung" ? diffKlein(x.diff, "", x.p.stern) : ""}</td></tr>`);
@@ -1025,6 +1089,13 @@ MC.navInit();
     $("kd-nenn-w").textContent = fremd ? cur : "€"; $("kd-nenn-box").classList.toggle("w3", fremd);
     return fremd ? cur : "";
   }
+  $("kd-leg").addEventListener("click", e => {
+    const b = e.target.closest("[data-wahl]"); if (!b) return;
+    const w = b.dataset.wahl;
+    if (w === "alle") AUS.clear(); else if (AUS.has(w)) AUS.delete(w); else AUS.add(w);
+    zeichneZahlungen();
+    const neu = $("kd-leg").querySelector(`[data-wahl="${w}"]`) || $("kd-leg").querySelector("[data-wahl]"); if (neu) neu.focus();   // die Legende wurde neu gezeichnet
+  });
   let breiteT = 0;
   window.addEventListener("resize", () => { clearTimeout(breiteT); breiteT = setTimeout(() => { if (!$("depot").hidden) zeichneZahlungen(); }, 150); });
 
@@ -1048,6 +1119,7 @@ MC.navInit();
   const DEPOT_TEXT = { voll: "Das Depot fasst höchstens 10 Anleihen.", nennwert: "Bitte einen Nennwert als ganze Zahl eintragen, zum Beispiel 5.000.", isin: "Diese Anleihe lässt sich nicht ins Depot legen." };
   function depotStatus(text, fehler) { const el = $("kd-status"); el.className = "kf-status" + (fehler ? " fehler" : ""); el.textContent = text; }
   function depotSenden(isin, nenn) {
+    NOTIZ = "";
     return K.depot(isin, nenn).then(() => depotStatus(""), a => { if (a && a.status !== "anmelden") depotStatus(DEPOT_TEXT[a.status] || TEXT[a.status] || TEXT.fehler, true); });
   }
   $("kd-isin").addEventListener("change", e => {   // Vorschlag: mindestens die Stückelung
@@ -1084,12 +1156,15 @@ MC.navInit();
     zeichne();
   });
   $("zeilen").addEventListener("click", e => {
+    const d = e.target.closest("[data-depot]"); if (d) { insDepot(d); return; }
+    if (e.target.closest("[data-zum-depot]")) { reiterWahl("depot", true); return; }
     const b = e.target.closest("[data-weg]"); if (!b) return;
     const isin = b.dataset.weg;
-    b.disabled = true; ZULETZT = isin;
+    b.disabled = true; ZULETZT = isin; NOTIZ = "";
     K.entfernen(isin).catch(a => { ZULETZT = ""; b.disabled = false; if (a && a.status !== "anmelden") hinweis(TEXT.fehler, true); });
   });
   $("status").addEventListener("click", e => {
+    if (e.target.closest("#zum-depot")) { NOTIZ = ""; statusText(); reiterWahl("depot", true); return; }
     if (!e.target.closest("#zurueck") || !ZULETZT) return;
     const isin = ZULETZT; ZULETZT = "";
     K.merken(isin).catch(a => { if (a && a.status !== "anmelden") hinweis(TEXT.fehler, true); });
