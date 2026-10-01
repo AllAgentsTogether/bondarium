@@ -118,7 +118,7 @@
     <div class="b2-kopf">
       <div>
         <h1>Unternehmens&shy;anleihen nach Laufzeit: die meistgehandelten je Restlaufzeit</h1>
-        <p class="sub">Welche Unternehmensanleihen handeln Anleger am häufigsten – von Anleihen, die in wenigen Monaten fällig werden, bis zur 100-jährigen? Fünf Tabellen mit den meistgehandelten Anleihen je Restlaufzeit, Unternehmen aus aller Welt ohne Banken und Versicherer – mit Kurs, Kupon, Rendite, Volumen und Stückelung.</p>
+        <p class="sub">Welche Unternehmensanleihen handeln Anleger am häufigsten – von Anleihen, die in wenigen Monaten fällig werden, bis zur 100-jährigen? Fünf Tabellen mit den meistgehandelten Anleihen je Restlaufzeit, Unternehmen aus aller Welt – mit Kurs, Kupon, Rendite, Volumen und Stückelung.</p>
       </div>
       <div class="b2-spot"><img src="spot-unternehmensanleihen-laufzeit.svg" alt="" width="232" height="160"></div>
     </div>
@@ -421,7 +421,7 @@ function TOP10_AKTIV(d) {
   // Zeitraum relativ statt mit Datum (Nutzerwunsch 01.10.2026): volles Fenster (60 Börsentage) = rund drei Monate
   const zeit = f.tage >= f.soll ? "in den letzten drei Monaten" : `in den letzten ${f.tage} Börsentagen`;
   const set = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
-  set("m-rang", `<strong>Meistgehandelt</strong> heißt: an den meisten Börsentagen umgesetzt. Gezählt wird der Handel an der Börse Frankfurt und bei Tradegate ${zeit}; bei Gleichstand zählt der höhere Umsatz. Die Listen werden jeden Börsentag neu berechnet – eine Gruppe hat weniger als zehn Anleihen, wenn nicht mehr gehandelt wurden. Durchsucht werden alle Unternehmensanleihen mit festem Kupon oder Nullkupon und aktuellem Kurs; nicht berücksichtigt sind variabel verzinste und unbefristete Anleihen, Anleihen von Banken, Versicherern und anderen Finanzdienstleistern (am Namen des Emittenten erkannt; Finanzierungstöchter von Industriekonzernen zählen mit) sowie nachrangige Anleihen, Wandelanleihen und 144A-Anleihen.`);
+  set("m-rang", `<strong>Meistgehandelt</strong> heißt: an den meisten Börsentagen umgesetzt. Gezählt wird der Handel an der Börse Frankfurt und bei Tradegate ${zeit}; bei Gleichstand zählt der höhere Umsatz. Die Listen werden jeden Börsentag neu berechnet – eine Gruppe hat weniger als zehn Anleihen, wenn nicht mehr gehandelt wurden. Durchsucht werden alle Unternehmensanleihen mit festem Kupon oder Nullkupon und aktuellem Kurs – Banken und Versicherer zählen wie in der Anleihen-Suche zu den Unternehmen; nicht berücksichtigt sind variabel verzinste und unbefristete Anleihen sowie nachrangige Anleihen, Wandelanleihen und 144A-Anleihen.`);
   // Übergangshinweis und die Notizen unter den Tabellen beschreiben die Handauswahl – mit der automatischen Liste ausblenden
   const ue = document.getElementById("uebergang"); if (ue) ue.hidden = true;
   document.querySelectorAll(".lzsec > p.note").forEach(p => { p.hidden = true; });

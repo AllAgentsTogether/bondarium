@@ -30,8 +30,11 @@ Auswahl:
               keine FLR-/Fix-to-Float-, Stufenzins-, Wandel- oder Tilgungsanleihen (außer kurzer Tilgung erst am Ende;
               _common.ohne_rendite – für sie gibt es keine Rendite bis Fälligkeit)
   Staat       Art „Staat“ (Zentralstaaten; nicht Länder, Kommunen, Förderbanken, Supranationale)
-  Unternehmen Art „Unternehmen“ ohne Banken, Versicherer und Finanzdienstleister (am Namen des Emittenten
-              erkannt), ohne Wandel-/Umtauschanleihen und 144A-Tranchen, nicht unbefristet
+  Unternehmen Art „Unternehmen“ wie in der Anleihen-Suche, also einschließlich Banken und Versicherer; ohne
+              Wandel-/Umtauschanleihen und 144A-Tranchen, nicht unbefristet. Bis 01.10.2026 fielen Banken, Versicherer
+              und Finanzdienstleister über eine Namensliste heraus (Nutzerentscheid 01.10.2026: einheitlich mit der
+              Suche; die Liste war zudem lückenhaft – Gegenprobe mit der EZB-Liste notenbankfähiger Sicherheiten:
+              424 von 4.119 Kreditinstituten nicht erkannt, etwa Caixabank, BPCE, Swedbank)
   Länder      zusätzlich Restlaufzeit über einem Jahr; Land = Sitz (bei Unternehmen: des Konzerns, GLEIF)
 Schutz: Fehlen Index, Kurse oder Umsätze, bleiben die alten Dateien stehen; ebenso, wenn eine Seite insgesamt
 weniger als die Hälfte ihrer bisherigen Zeilen bekäme (Datenfehler).
@@ -62,14 +65,6 @@ AKTUELL_TAGE = 14     # Kurs höchstens so alt wie in der Suche
 INFLATION = re.compile(r"infl|inflat|linker|\blkd\b|i/l|\btips\b|hicp|hvpi|\bcpi\b|\brpi\b|index", re.I)
 STRIPS = re.compile(r"strip|kupons? per|kapital per|zinsschein|principal|\bcoupon\b|\bcpn\b", re.I)
 WANDEL = re.compile(r"wandel|umtausch|conv|exch\.?|\b144a\b|options?anl|optionsschein", re.I)
-FINANZ = re.compile(
-    r"\b(bank|banque|banco|banca|bancaria|sparkasse|landesbank|girozentrale|pfandbrief\w*|kreditanstalt|volksbank|"
-    r"raiffeisen\w*|genossenschaft\w*|hypo\w*|versicherung\w*|insurance|assurance|assicurazioni|reinsurance|rück\w*|"
-    r"allianz|axa|generali|munich re|münchener|hannover|zurich|swiss re|aegon|aviva|nn group|talanx|"
-    r"credit suisse|ubs|goldman|morgan stanley|jpmorgan|citigroup|hsbc|barclays|natixis|bnp|société générale|"
-    r"societe generale|ing|abn amro|rabobank|nordea|santander|unicredit|intesa|commerzbank|dekabank|nrw\.bank|"
-    r"kfw|bausparkasse|leasing bank|capital markets|investment bank|financial group|asset management|"
-    r"brokerage|securities)\b", re.I)
 GRUPPEN = [("sehr-kurzfristig", 1), ("kurzfristig", 3), ("mittelfristig", 7), ("langfristig", 30), ("sehr-langfristig", 1e9)]
 # Seit 30.09.2026 zusätzlich Australien, Belgien, Finnland, Irland, Kanada, Niederlande, Ungarn: in den ersten drei
 # Börsentagen 6 bis 14 gehandelte Anleihen je Land (Polen 9, Türkei und Südafrika 6). Für sie gibt es keine Handauswahl –
@@ -214,8 +209,7 @@ def main() -> int:
             if slug and jahre > 1:
                 staat_ld.setdefault(slug, []).append(z)
         else:
-            em_voll = emi[r[9]] if r[9] < len(emi) else ""
-            if WANDEL.search(r[1]) or FINANZ.search(em_voll) or FINANZ.search(r[1]) or (len(mehr) and (mehr[0] + "--")[1] in "PQ"):
+            if WANDEL.search(r[1]) or (len(mehr) and (mehr[0] + "--")[1] in "PQ"):
                 continue
             z = zeile(r, k, datum, "Unternehmen")
             if not z["ht"]:
