@@ -71,8 +71,21 @@ Nennwert × Kurs, ohne Stückzinsen und Gebühren. Der Unterschied zur Rückzahl
 orange) steht unter dem Kaufbetrag, in der Summenzeile, im Satz über den Schaubildern, an jedem Rückzahlungsbalken und
 in der Liste „Alle Zahlungen einzeln“.
 
-Ins Depot kommen vorerst nur Euro-Anleihen mit festem Kupon oder ohne Kupon (Nutzerentscheid); alles andere steht
-ausgegraut mit Grund in der Auswahl (`grund()` in `konto.html`). Der Nennwert ist eine ganze Zahl von 1 bis 100 Mio.;
+Ins Depot kommen nur Anleihen mit festem Kupon oder ohne Kupon (Nutzerentscheid); alles andere steht
+ausgegraut mit Grund in der Auswahl (`grund()` in `konto.html`).
+
+Fremde Währungen (seit 01.10.2026 abends, Nutzerwunsch: „jetzt akzeptiere auch andere Währungen und rechne sie dann in
+EUR um. Füge ein * hinzu und weise auf Wechselkursrisiken hin. Der Wechselkurs wird hier als ‚fest‘ angenommen“): Der
+Nennwert steht in der Währung der Anleihe (so speichert ihn `konto.php` schon immer – am Server ändert sich nichts); hinter
+dem Eingabefeld steht das Währungskürzel, darunter der Betrag in Euro. Kaufbetrag, Zinsen und Rückzahlung werden mit dem
+Euro-Referenzkurs der EZB in Euro umgerechnet (`wechselkurse.json`, geschrieben von `scripts/update_wechselkurse.py` im
+täglichen Datenlauf; rund 30 Währungen, „1 Euro = x“). Der Kurs gilt für die ganze Laufzeit als fest. Jeder umgerechnete
+Betrag trägt ein Sternchen – in Tabelle, Summenzeile, Satz, Legende, an den Zahlen im Schaubild und in der Einzel-Liste
+(dort steht zusätzlich der Betrag in der Währung der Anleihe). Der Hinweis dazu (`fxHinweis()`, orange Kante) steht unter
+der Tabelle ausführlich und im Schaubild kurz: Kurs und Stichtag, „als fest angenommen“, Wechselkursrisiko. Währungen ohne
+EZB-Referenzkurs (auch die alten Euro-Vorgänger wie DEM) und der Fall, dass `wechselkurse.json` fehlt: „kein Wechselkurs
+für …“ – die Anleihe bleibt aus dem Schaubild. Zinstermine: halbjährlich in USD, GBP, CAD, AUD, NZD, JPY, MXN, ZAR, HKD,
+SGD (`HALBJAHR`, dieselbe Liste wie `T.halbjahr` in `anleihe.html` und `HALBJAEHRLICH` in `scripts/_common.py`). Der Nennwert ist eine ganze Zahl von 1 bis 100 Mio.;
 liegt er unter der Stückelung oder ist er kein Vielfaches davon, steht ein Hinweis in der Zeile. Ins Depot passen höchstens zehn Anleihen (`MAX_DEPOT` in
 `konto.php`, `DEPOT_MAX` in `konto.html`); ist es voll, ist das Formular gesperrt.
 

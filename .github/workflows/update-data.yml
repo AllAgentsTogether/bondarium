@@ -236,6 +236,13 @@ jobs:
         continue-on-error: true
         run: python scripts/update_ezb.py
 
+      # Euro-Referenzkurse der EZB (seit 01.10.2026): „Mein Depot“ (konto.html) rechnet Anleihen in fremder Währung damit in Euro um.
+      # Scheitert der Abruf, bleibt wechselkurse.json vom Vortag stehen. Sekunden.
+      - name: Wechselkurse holen (EZB-Referenzkurse)
+        if: env.VOLL == '1'
+        continue-on-error: true
+        run: python scripts/update_wechselkurse.py
+
       - name: Top 10 berechnen (aus Kursverlauf und Index)
         if: env.VOLL == '1'
         continue-on-error: true
@@ -262,7 +269,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add renditen.json unternehmen.json langlaeufer.json anleihen-index.json anleihen-kurse.json kurse-auswahl.json zinskurve.json realzins.json risikoaufschlaege.json top10-*.json suchindex.json ezb.json kurse kurse/jahre.json anleihen etf-*.json etf
+          git add renditen.json unternehmen.json langlaeufer.json anleihen-index.json anleihen-kurse.json kurse-auswahl.json zinskurve.json realzins.json risikoaufschlaege.json top10-*.json suchindex.json ezb.json wechselkurse.json kurse kurse/jahre.json anleihen etf-*.json etf
           if ! git diff --cached --quiet; then
             git commit -m "Daten aktualisiert"
             # Vor dem Push mit dem Remote abgleichen (falls inzwischen gepusht wurde);
