@@ -17,8 +17,7 @@ Fassung (innerHTML) – mit Sortieren, Aufklappen und den Handy-Karten. Die Quel
                           <tbody id="kpis-body">           ← top10-…-laender.json, Gruppe „deutschland“ – erst wenn die
                                                              automatische Rangliste gilt („aktiv“); bis dahin zeigt die
                                                              Seite ihre Handauswahl, die nur das Seitenskript kennt
-  unternehmensanleihen-kupon.html
-                          <tbody id="kpis-body">           ← top10-unternehmensanleihen-kupon.json, Gruppe „kupon“ (seit 01.10.2026)
+  anleihen-kupon.html     <tbody id="kpis-body">           ← top10-anleihen-kupon.json, Gruppe „kupon“ (seit 01.10.2026)
 
 Passt eine Seite oder Datei nicht zum Erwarteten, gibt es eine Warnung und die Seite bleibt, wie sie ist.
 """
@@ -216,7 +215,7 @@ def laender_zeile(r, rang, stand):
     kupon = zahl(r["kupon"], 3 if round(r["kupon"] * 1000) % 10 else 2) if isinstance(r.get("kupon"), (int, float)) else "–"
     rendite = zahl(r["rendite"], 2) + " %" if isinstance(r.get("rendite"), (int, float)) else "–"
     vol = f"{r['vol'] / 1e9:.3g}".replace(".", ",") + " Mrd." if isinstance(r.get("vol"), (int, float)) else "–"
-    stk = zahl(r["stk"], 0 if float(r["stk"]).is_integer() else 2) if isinstance(r.get("stk"), (int, float)) else "–"
+    stk = zahl(r["stk"], 0 if float(r["stk"]).is_integer() else 3 if round(r["stk"] * 1000) % 10 else 2) if isinstance(r.get("stk"), (int, float)) else "–"
     return (f'<tr><td class="num rk">{rang}</td><th scope="row">{esc(r.get("emittent") or "")}<small class="fa-mobil">fällig {datum(r.get("faellig"))}</small></th>'
             f'<td class="num">{rendite}</td><td class="num">{zahl(r.get("kurs"), 2)}</td><td class="num">{kupon} %</td>'
             f'<td class="num">{datum(r.get("faellig"))}</td><td class="num">{rest}</td>'
@@ -240,8 +239,8 @@ def laender(site, seite, datei):
     print(f"{seite}: {len(reihe)} Anleihen (Deutschland) fest im HTML")
 
 
-def kupon(site, seite="unternehmensanleihen-kupon.html", datei="top10-unternehmensanleihen-kupon.json"):
-    """Top 10 nach Kupon (seit 01.10.2026): dieselben Zeilen wie das Seitenskript, gleiche Spalten wie die Länder-Seiten."""
+def kupon(site, seite="anleihen-kupon.html", datei="top10-anleihen-kupon.json"):
+    """Top 30 nach Kupon (seit 01.10.2026): dieselben Zeilen wie das Seitenskript, gleiche Spalten wie die Länder-Seiten."""
     pfad = os.path.join(site, seite)
     D = lade(site, datei)
     reihe = (D.get("gruppen") or {}).get("kupon") or []
@@ -262,7 +261,7 @@ def main():
     for name, schritt in (("Broker", lambda: broker(site)), ("ETFs", lambda: etfs(site)),
                           ("Staatsanleihen nach Ländern", lambda: laender(site, "anleihen-laender.html", "top10-staatsanleihen-laender.json")),
                           ("Unternehmensanleihen nach Ländern", lambda: laender(site, "unternehmensanleihen-laender.html", "top10-unternehmensanleihen-laender.json")),
-                          ("Unternehmensanleihen nach Kupon", lambda: kupon(site))):
+                          ("Anleihen nach Kupon", lambda: kupon(site))):
         try:
             schritt()
         except Exception as e:   # Daten oder Seite anders als erwartet: Seite bleibt, wie sie ist

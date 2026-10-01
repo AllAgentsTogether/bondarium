@@ -62,7 +62,7 @@ jobs:
         continue-on-error: true
         run: python scripts/update_top10.py
 
-      - name: Top 10 nach Kupon neu berechnen
+      - name: Top 30 nach Kupon neu berechnen
         if: steps.pruefen.outputs.holen == '1'
         continue-on-error: true
         run: python scripts/update_top10_kupon.py

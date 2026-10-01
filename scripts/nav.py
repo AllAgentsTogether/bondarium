@@ -111,8 +111,8 @@ ANLEIHEN = ("Anleihen", "anleihen.html", [
     ("nach Ländern – Unternehmensanleihen", "unternehmensanleihen-laender.html"),
     ("Anleihen-ETFs", "anleihen-etf.html"),
     # „Anleihen-ETF: Vor- und Nachteile“ seit 01.10.2026 nicht mehr hier – Erklärartikel gehört zur Akademie (Verstehen)
-    "Top 10 nach Kupon",   # Nutzerwunsch 01.10.2026: eigene Kategorie – höchster Kupon unter den Anleihen der EZB-Liste
-    ("Unternehmensanleihen", "unternehmensanleihen-kupon.html"),
+    "Top 30 nach Kupon",   # Nutzerwunsch 01.10.2026: eigene Kategorie – höchster Kupon unter den Anleihen der EZB-Liste;
+    ("Alle Anleihen", "anleihen-kupon.html"),   # zuerst Top 10 Unternehmensanleihen, am selben Tag auf alle Arten und 30 erweitert
     "Beispiele",
     ("nach Ziel – Anleihen-Beispiele", "guide.html"),
 ])
