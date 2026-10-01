@@ -334,7 +334,7 @@ window.MC = (function () {
     // Label, sonst das aria-label des inneren SVGs übernehmen (das SVG wird
     // dann versteckt, um Doppelnennungen zu vermeiden), sonst Standardtext.
     var m = !label && svgStr.match(/ role="img" aria-label="([^"]*)"/);
-    var aria = label ? esc(label) : m ? m[1] : "Interaktives Diagramm – Werte mit den Pfeiltasten abrufbar";
+    var aria = label ? esc(label) : m ? m[1] : "Interaktives Schaubild – Werte mit den Pfeiltasten abrufbar";
     if (m) svgStr = svgStr.replace(' role="img" aria-label="' + m[1] + '"', ' aria-hidden="true"');
     // Seit 30.09.2026 stehen die Tooltip-Daten nicht mehr als JSON im Attribut (risikoaufschlaege.html hatte 220 KB
     // data-hover im DOM): data-hover trägt nur noch eine kurze Kennung, die Daten liegen in HOVER_DATEN (JS).
@@ -342,7 +342,7 @@ window.MC = (function () {
     HOVER_DATEN[id] = { d: clean, t: Date.now() };
     aufraeumen();
     return '<div class="hovergraph" tabindex="0" role="group" aria-label="' + aria +
-      '" aria-roledescription="Diagramm"' + (opts && opts.mode === "nearest" ? ' data-hover-mode="nearest"' : "") +
+      '" aria-roledescription="Schaubild"' + (opts && opts.mode === "nearest" ? ' data-hover-mode="nearest"' : "") +
       ' data-hover="' + id + '">' + svgStr + "</div>";
   }
   // Kennung → Daten. Einträge, deren Chart nicht mehr im Dokument steht (neu gezeichnet, z. B. nach Resize), werden

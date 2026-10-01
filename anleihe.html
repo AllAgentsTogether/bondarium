@@ -304,7 +304,7 @@
     </div>
 
     <div id="nix" class="leer" hidden>
-      <p id="nix-text"><b>Diese Anleihe kennen wir nicht.</b> Entweder ist die ISIN nicht an einer deutschen Börse gelistet oder die Anleihe ist fällig.</p>
+      <p id="nix-text"><b>Diese Anleihe kennen wir nicht.</b> Entweder ist die Anleihe nicht an einer deutschen Börse gelistet oder sie ist fällig.</p>
       <form class="nix-suche" action="anleihen-suche.html" method="get" role="search"><label class="sr-only" for="nix-q">Anleihe suchen</label><input type="search" id="nix-q" name="q" placeholder="Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit">Suchen</button></form>
     </div>
 
@@ -323,16 +323,16 @@
         <p><strong>Kurse und Handel.</strong> Deutsche Börse, Nachhandelsdaten nach MiFIR Art. 13 (Börse Frankfurt, Tradegate; 15 Minuten verzögert, kostenlos veröffentlicht): jede Kursfeststellung mit Zeitpunkt, Kurs, Stückzahl und Handelsplatz. Daraus stammen Schlusskurs, Eröffnung, Hoch, Tief, die Zahl der Feststellungen und der Abschlüsse – alle vom Kursplatz (in der Regel Frankfurt); der Umsatz zählt Frankfurt und Tradegate zusammen, deshalb kann es Umsatz auf Tradegate geben, obwohl in Frankfurt kein Abschluss zustande kam. Ohne Abschluss ist der Kurs die Feststellung des Spezialisten (Taxe). Bundeswertpapiere: Kurs und Rendite der Deutschen Bundesbank. Täglich aktualisiert; der Kursverlauf wird seit dem 24.09.2026 gesammelt, für Bundeswertpapiere reicht er laut Bundesbank bis zur Ausgabe zurück.</p>
         <p><strong>Ältere Kurse von US-Staatsanleihen.</strong> Vor dem 24.09.2026 stammt der Kursverlauf der US-Treasuries vom U.S. Department of the Treasury (Bureau of the Fiscal Service, TreasuryDirect „FedInvest – Security Price Detail“): Preis zum Tagesende je 100 Dollar Nennwert, ohne Stückzinsen, bei TIPS ohne Inflationsfaktor; bis Ende 2023 ein Wert je Woche, danach täglich. Als Werk der US-Regierung frei nutzbar. Die Frankfurter Kurse lagen beim Vergleich am 25.09.2026 im Mittel rund 0,2 Punkte darunter (andere Uhrzeit und Preisermittlung) – daher kann der Verlauf am 24.09.2026 eine kleine Stufe zeigen.</p>
         <p><strong>Stammdaten.</strong> ESMA-Register FIRDS, gemeldet vom Handelsplatz (unverändert übernommen; weicht der Kurzname im Register – Kupon und Fälligkeit nach ISO 18774 – oder der Name vom Registerwert ab, steht der Widerspruch daneben, und es gibt weder Rendite noch Rechenbeispiel): Name, Währung, Kupon oder Zinsformel, Fälligkeit, ausgegebener Betrag, Stückelung, Rang (Seniorität), Besicherung oder Garantie und Rückzahlungsart (aus dem CFI-Code), erster Handelstag. Fehlt eine Angabe, steht „nicht gemeldet“. Emittent und Konzernsitz laut LEI-Register (GLEIF); Namen, die das Register nur in Großbuchstaben meldet, zeigen wir in üblicher Groß- und Kleinschreibung (die Originalschreibweise erscheint beim Überfahren des Namens). Die ESMA steht in keiner Verbindung zu dieser Seite. Der Titel über dem Registernamen ist aus Emittent (bei Staaten: Land), Kupon und Fälligkeit zusammengesetzt.</p>
-        <p><strong>Kündigungsrecht.</strong> Gelesen aus dem Namen – die Klammer „Ausgabejahr(erstes Kündigungsjahr/Fälligkeitsjahr)“, „Und.“ für ohne Fälligkeit – und aus der Rückzahlungsart im ESMA-Register; der Name hat Vorrang, weil das Register die Rückzahlungsart oft ungenau meldet. Kündigungsjahr gleich Ausgabejahr: Make-Whole; ohne Jahr im Namen, aber laut Register kündbar: Termin nicht gemeldet. Kündigungsrecht des Gläubigers (Put) laut Register. Verbindlich sind nur die Anleihebedingungen; die Arten erklärt die Seite <a href="kuendbare-anleihen.html">Kündbare Anleihen</a>.</p>
+        <p><strong>Kündigungsrecht.</strong> Gelesen aus dem Namen – die Klammer „Ausgabejahr(erstes Kündigungsjahr/Fälligkeitsjahr)“, „Und.“ für unbefristet – und aus der Rückzahlungsart im ESMA-Register; der Name hat Vorrang, weil das Register die Rückzahlungsart oft ungenau meldet. Kündigungsjahr gleich Ausgabejahr: Make-Whole; ohne Jahr im Namen, aber laut Register kündbar: Termin nicht gemeldet. Kündigungsrecht des Anlegers (Put) laut Register. Verbindlich sind nur die Anleihebedingungen; die Arten erklärt die Seite <a href="kuendbare-anleihen.html">Kündbare Anleihen</a>.</p>
         <p><strong>Von uns berechnet</strong> (alles andere steht so bei der Börse, der Deutschen Bundesbank oder im ESMA-Register):
           Rendite bis Fälligkeit (jährliche Verzinsung, taggenau, Stückzinsen eingerechnet, Valuta zwei Börsentage nach dem Handelstag; Zinstermin am Jahrestag der Fälligkeit, bei Dollar-, Pfund- und einigen weiteren Währungen sowie italienischen Staatsanleihen halbjährlich; bei Bundeswertpapieren die Rendite der Bundesbank; keine Rendite bei variablem oder später wechselndem Kupon, Stufenzins, Wandel- und Tilgungsanleihen, bei Valuta nach der Fälligkeit und bei widersprüchlichen Registerangaben; keine Rendite und kein Aufschlag, wenn der Kurs eine Taxe ohne Umsatz ist und die berechnete Rendite unter 0 oder über 15 % liegt, mehr als einen Punkt unter Bund oder bei unter drei Monaten Restlaufzeit über 8 %) ·
           laufende Verzinsung (Kupon ÷ Kurs) ·
           Restlaufzeit und Alter des Kurses in Börsentagen (Montag bis Freitag) ·
           Veränderung zum Vortag (gegen unseren gespeicherten Schlusskurs) ·
           Umsatz in Geld (Stück × Kurs je Abschluss) ·
-          Aufschlag zu Bund (Differenz zur Rendite der Bundesanleihe gleicher Restlaufzeit, zwischen den beiden nächsten Bundeswertpapieren linear interpoliert; nur Euro, ab zwei Wochen bis 30 Jahre) ·
+          Risikoaufschlag zu Bund (Differenz zur Rendite der Bundesanleihe gleicher Restlaufzeit, zwischen den beiden nächsten Bundeswertpapieren linear interpoliert; nur Euro, ab zwei Wochen bis 30 Jahre) ·
           Kursveränderung im gewählten Zeitraum und „inkl. Kupons“ (Kursveränderung plus Kupon × Tage ÷ 365 im Zeitraum, bezogen auf den Anfangskurs, ohne Wiederanlage, in der Währung der Anleihe) ·
-          Rechenbeispiel: Kurswert, Stückzinsen, Kaufpreis mit der eingetragenen Gebühr, Kupons und Rückzahlung bis zur Fälligkeit (Zinstermine aus der Fälligkeit abgeleitet – der tatsächliche Termin kann abweichen), „Zahlungen − Kaufpreis“ vor Steuern. Das Rechenbeispiel nimmt an: Order heute zum letzten Schlusskurs, keine vorzeitige Kündigung, alle Zahlungen wie abgeleitet. Es ist keine Prognose.</p>
+          Rechenbeispiel: Kurswert, Stückzinsen, Kaufpreis mit der eingetragenen Gebühr, Zinsen und Rückzahlung bis zur Fälligkeit (Zinstermine aus der Fälligkeit abgeleitet – der tatsächliche Termin kann abweichen), „Zahlungen − Kaufpreis“ vor Steuern. Das Rechenbeispiel nimmt an: Order heute zum letzten Schlusskurs, keine vorzeitige Kündigung, alle Zahlungen wie abgeleitet. Es ist keine Prognose.</p>
         <p id="datastand">Daten-Stand: wird geladen</p>
       </div>
     </details>
@@ -490,11 +490,11 @@ function zeige(r, k, meta) {
   // --- Kopf: Chips, lesbarer Titel, Registername, ISIN und Datenstand ---
   const kurz = kurzName(emittent, art, land);
   const titel = kurz ? `${kurz}${zinsart === 1 ? " variabel" : zinsart === 2 ? " Nullkupon" : typeof kupon === "number" ? " " + fmtCoupon(kupon) : ""}` : name;
-  const titelFa = faellig ? `fällig ${fmtDate(faellig)}` : "ohne Fälligkeit";
+  const titelFa = faellig ? `fällig ${fmtDate(faellig)}` : "unbefristet";
   // Seitentitel höchstens ~60 Zeichen: gekürzt wird der Emittent (an einer Wortgrenze), nie Kupon oder Fälligkeit (seit 30.09.2026;
   // vorher schnitt slice(0, 44) mitten in der Angabe ab: „SIEMENS FINANCIERINGSMAATSCHAPPIJ 3,625 % · –“)
   const zusatz = kurz ? titel.slice(kurz.length) : "", MAXT = 48;
-  let kopf = kurz || name, ende = ` · ${faellig ? fmtDate(faellig) : "ohne Fälligkeit"}`;
+  let kopf = kurz || name, ende = ` · ${faellig ? fmtDate(faellig) : "unbefristet"}`;
   if (kopf.length + zusatz.length + ende.length > MAXT && faellig) ende = ` · ${faellig.slice(0, 4)}`;   // zuerst: nur das Fälligkeitsjahr
   if (kopf.length + zusatz.length + ende.length > MAXT) {   // dann: Emittent an einer Wortgrenze kürzen – nie mitten im Wort
     const platz = MAXT - zusatz.length - ende.length - 1, cut = kopf.lastIndexOf(" ", platz);
@@ -512,10 +512,10 @@ function zeige(r, k, meta) {
   document.getElementById("titel").innerHTML = `${MC.esc(titel)} <span class="fa">· ${titelFa}</span>`;
   const emiL = lesbar(emittent);
   document.getElementById("reg").innerHTML = `Registername <b>${MC.esc(name)}</b>${emittent ? ` · Emittent <b${emiL !== emittent ? ` title="${MC.esc(emittent)} (Schreibweise im LEI-Register)"` : ""}>${MC.esc(emiL)}</b>` : ""}`;
-  const kueChip = { n: kue.put ? "Kündigungsrecht Gläubiger (Put)" : "Ohne Kündigungsrecht", m: "Make-Whole-Kündigung", p: `Kündigungsrecht ${kueAb}`, t: `Kündigungsrecht ${kueAb}`, e: `Kündigungsrecht ${kueAb}`, u: "Kündbar laut Register" }[kue.k] || "";
+  const kueChip = { n: kue.put ? "Kündigungsrecht des Anlegers (Put)" : "Ohne Kündigungsrecht", m: "Make-Whole-Kündigung", p: `Kündigungsrecht ${kueAb}`, t: `Kündigungsrecht ${kueAb}`, e: `Kündigungsrecht ${kueAb}`, u: "Kündbar laut Register" }[kue.k] || "";
   const chips = [T.artChip[art], ccy, T.zinsChip[zinsart], inflIdx ? "Inflationsindexiert" : "",
     rs === "U" || rs === "J" || gar === "O" || gar === "Q" || gar === "J" ? "Rang: nachrangig" : "", kueChip,
-    faellig ? (abgelaufen ? "Fälligkeit erreicht" : `Restlaufzeit ${RL(jahre(faellig))}`) : "Ohne Fälligkeit"].filter(Boolean);
+    faellig ? (abgelaufen ? "Fälligkeit erreicht" : `Restlaufzeit ${RL(jahre(faellig))}`) : "Unbefristet"].filter(Boolean);
   document.getElementById("chips").innerHTML = chips.map(c => `<li>${MC.esc(c)}</li>`).join("");
   const wtag = datum ? T.wtag[new Date(datum + "T12:00:00Z").getUTCDay()] : "";
   // Kopfzeile: nur Kennung und Kopierknopf – Kursdatum und Quelle stehen seit 30.09.2026 nur noch in der Kachel „Kurs“ (vorher doppelt).
@@ -536,20 +536,20 @@ function zeige(r, k, meta) {
 
   // --- Kopfzahlen: Kurs · Rendite · Kupon · Fälligkeit ---
   const rendGrund = !k ? "kein Kurs" : nachFaellig ? (abgelaufen ? "Fälligkeit erreicht" : "Valuta liegt nach der Fälligkeit") : befund ? "Registerangaben widersprüchlich"
-    : zinsart === 1 ? "Kupon variabel" : unsicher ? "Taxe ohne Umsatz, Wert außerhalb der Plausibilitätsgrenzen" : !faellig ? "ohne Fälligkeit" : ohneRendite(name);
+    : zinsart === 1 ? "Kupon variabel" : unsicher ? "Taxe ohne Umsatz, Wert außerhalb der Plausibilitätsgrenzen" : !faellig ? "unbefristet" : ohneRendite(name);
   const rendU = rend != null ? [(real ? "Realrendite, " : "") + "pro Jahr bis zur Fälligkeit" + (kue.k === "t" || kue.k === "e" ? " (nicht bis zum Kündigungstermin)" : ""),
     taxe ? "aus Taxe ohne Umsatz" : "", ccy !== "EUR" ? `in ${MC.esc(ccy)}` : ""].filter(Boolean).join(" · ") : rendGrund;
   let zinsTxt = "";
   if (fl && zinsart === 1) {
     const refK = String(fl[0] || "").toUpperCase(), refN = T.ref[refK] || T.ref[refK.slice(0, 4)] || (fl[0] ? MC.esc(fl[0]) : "");
-    const spr = refN && typeof fl[3] === "number" && fl[3] !== 0 ? ` ${fl[3] < 0 ? "−" : "+"} ${fmt(Math.abs(fl[3]) / 100, 2)} Punkte` : "";
+    const spr = refN && typeof fl[3] === "number" && fl[3] !== 0 ? ` ${fl[3] < 0 ? "−" : "+"} ${fmt(Math.abs(fl[3]) / 100, 2)} Prozentpunkte` : "";
     const per = fl[1] && typeof fl[2] === "number" && fl[2] > 0 && fl[2] < 900 && T.einheit[fl[1]] && !(fl[1] === "D" && fl[2] < 28) ?   /* Tage-Angaben meinen meist die Laufzeit des Referenzzinses (€STR/SOFR), nicht den Anpassungsrhythmus */ `Zinsanpassung alle ${fl[2]} ${T.einheit[fl[1]][fl[2] === 1 ? 0 : 1]}` : "";
     zinsTxt = [refN ? refN + spr : "Referenzzins nicht gemeldet", per].filter(Boolean).join(" · ");
   }
   const kuponWert = zinsart === 1 ? "variabel" : zinsart === 2 ? "0 %" : fmtCoupon(kupon);
   const kuponU = zinsart === 1 ? (zinsTxt ? MC.esc(zinsTxt) : "Referenzzins nicht gemeldet") : zinsart === 2 ? "Nullkupon – keine laufenden Zinszahlungen"
     : typeof kupon === "number" ? `fest · ${fmt(kupon * 10, 2)} ${MC.esc(ccy)} je 1.000 ${MC.esc(ccy)} pro Jahr${inflIdx ? ", auf den inflationsangepassten Nennwert" : ""}` : "";
-  const faelligU = faellig ? (abgelaufen ? "Termin erreicht" : `Restlaufzeit ${RL(jahre(faellig))}${raten ? " · Tilgung in Raten" : ""}`) : kue.jahr ? `Kündigungsrecht Emittent ${kueAb}` : "kein Endtermin im Register";
+  const faelligU = faellig ? (abgelaufen ? "Termin erreicht" : `Restlaufzeit ${RL(jahre(faellig))}${raten ? " · Tilgung in Raten" : ""}`) : kue.jahr ? `Kündigungsrecht Emittent ${kueAb}` : "unbefristet laut Register";
   const kachel = (kk, w, u, leise, ber) => `<div class="kachel"><div class="k">${kk}</div><div class="w${leise ? " leise" : ""}">${w}</div><div class="u">${ber ? BER + " " : ""}${u}</div></div>`;
   document.getElementById("kacheln").innerHTML = [
     kachel("Kurs", kurs != null ? `${fmt(kurs, 2)} %` : "kein Kurs", k ? `${bund ? "Kurs der Bundesbank" : "Schlusskurs"} ${wtag} ${fmtDate(datum)}${alter ? ` · ${alter} ${alter === 1 ? "Börsentag" : "Börsentage"} alt` : ""}${bund ? "" : ` · ${MC.esc(T.boersen[k[3]] || "")}, 15 Min. verzögert`}` : "keine Kursfeststellung", kurs == null),
@@ -563,7 +563,7 @@ function zeige(r, k, meta) {
   document.getElementById("neben").innerHTML = [
     dif != null ? `<span>Zum Vortag <b>${vz(dif)} Pkt.</b> (${vz(dif / vor * 100)} %, Vortag ${fmt(vor, 2)} %)</span>` : "",
     lfd != null ? `<span>Laufende Verzinsung <b>${fmt(lfd, 2)} %</b>${BER}</span>` : "",
-    `<span>Aufschlag zu Bund${hilf("spread", "Aufschlag")} ${auf != null ? `<b>${vz(auf)} Pkt.</b>${BER}` : bund ? "<b>–</b> Bundeswertpapier ist die Bezugsgröße" : `<b>–</b> ${unsicher ? "nicht berechnet (Plausibilitätsregel)" : "nur bei Euro-Anleihen mit Rendite bis 30 Jahre berechnet"}`}</span>`,
+    `<span>Risikoaufschlag zu Bund${hilf("spread", "Risikoaufschlag")} ${auf != null ? `<b>${vz(auf)} Pkt.</b>${BER}` : bund ? "<b>–</b> Bundeswertpapier ist die Bezugsgröße" : `<b>–</b> ${unsicher ? "nicht berechnet (Plausibilitätsregel)" : "nur bei Euro-Anleihen mit Rendite bis 30 Jahre berechnet"}`}</span>`,
   ].filter(Boolean).join("");
 
   // --- Merkmale in drei Gruppen ---
@@ -571,8 +571,8 @@ function zeige(r, k, meta) {
   const garRang = "NOQJ".includes(gar) ? (meta.garantie || {})[gar] || "" : "";
   const rangTxt = (meta.rang || {})[rs] || garRang, garTxt = (art === 0 && gar === "T") || garRang ? "" : (meta.garantie || {})[gar] || "";
   const rueckTxt = (meta.rueckzahlung || {})[rz] || "";
-  const kueWert = { n: kue.put ? "nur Gläubiger (Put)" : "keines", m: "jederzeit (Make-Whole)", p: kueAb, t: kueAb, e: kueAb, u: "ja, Termin nicht gemeldet" }[kue.k] || "–";
-  const kueKlein = { n: kue.put ? "laut Register" : "laut Name und Register", m: "Kündigungsjahr gleich Ausgabejahr im Namen", p: "im letzten Jahr vor der Fälligkeit, laut Name", t: "laut Name", e: "ohne Fälligkeit, laut Name", u: "laut Register" }[kue.k] || "";
+  const kueWert = { n: kue.put ? "nur Anleger (Put)" : "keines", m: "jederzeit (Make-Whole)", p: kueAb, t: kueAb, e: kueAb, u: "ja, Termin nicht gemeldet" }[kue.k] || "–";
+  const kueKlein = { n: kue.put ? "laut Register" : "laut Name und Register", m: "Kündigungsjahr gleich Ausgabejahr im Namen", p: "im letzten Jahr vor der Fälligkeit, laut Name", t: "laut Name", e: "unbefristet, laut Name", u: "laut Register" }[kue.k] || "";
   const termine = zinsart === 0 && typeof kupon === "number" && kupon > 0 && faellig && !abgelaufen
     ? [...new Set(kommendeTermine(faellig, freq, new Date(new Date(faellig + "T12:00:00Z").getTime() - 366 * 86400000)).map(d => isoOf(d).slice(5, 10)))].sort().map(md => md.slice(3) + "." + md.slice(0, 2) + ".").join(" und ") : "";
   const grp = (h, rows) => `<div class="gr"><h3>${h}</h3><dl>${rows.filter(Boolean).join("")}</dl></div>`;
@@ -584,10 +584,10 @@ function zeige(r, k, meta) {
       termine ? kv(`Zinstermin${freq === 2 ? "e" : ""}${hilf("zinstermin", "Zinstermin")}`, `${termine}${freq === 1 ? " jährlich" : ""}`, "aus der Fälligkeit abgeleitet") : "",
       kv(`Fälligkeit${hilf("faelligkeit", "Fälligkeit")}`, faellig ? fmtDate(faellig) : "keine",
         [rueckTxt ? `Rückzahlungsart laut Register: ${MC.esc(rueckTxt)}` : ""].concat(wFaellig.length ? [`laut Register · ${MC.esc(wFaellig.join(" · "))}`] : []).filter(Boolean).join(" · ")),
-      kv(`Kündigungsrecht Emittent${hilf("kuendbar", "Kündigung")}`, MC.esc(kueWert), [kueKlein, kue.put && kue.k !== "n" ? "Kündigungsrecht Gläubiger (Put) laut Register" : ""].filter(Boolean).join(" · ")),
+      kv(`Kündigungsrecht Emittent${hilf("kuendbar", "Kündigung")}`, MC.esc(kueWert), [kueKlein, kue.put && kue.k !== "n" ? "Kündigungsrecht des Anlegers (Put) laut Register" : ""].filter(Boolean).join(" · ")),
       kv("Erster Handelstag", m[1] ? fmtDate(m[1]) : "nicht gemeldet", m[1] ? "an einer deutschen Börse" : ""),
     ]),
-    grp("Schuldner", [
+    grp("Emittent und Rang", [
       kv(`Emittent${hilf("emittent", "Emittent")}`, MC.esc(emiL || "nicht gemeldet"), emittent ? "laut LEI-Register (GLEIF)" : ""),
       kv("Art · Land", MC.esc([T.art[art], land ? landName(land) : ""].filter(Boolean).join(" · ")), ""),
       kv(`Rang${hilf(rs === "U" || rs === "J" ? "nachranganleihe" : "senior", "Rang")}`, rangTxt ? MC.esc(rangTxt) : "nicht gemeldet", "laut ESMA-Register"),
@@ -625,7 +625,7 @@ function zeige(r, k, meta) {
   const zahlungsliste = () => {   // Restzahlungen je 1.000 bei Valuta nach der Fälligkeit (Randfall „fällig in wenigen Tagen“)
     if (!faellig || abgelaufen || zinsart === 1) return "";
     const ks = zinsart === 0 && kupon > 0 ? kommendeTermine(faellig, freq, heuteUTC) : [];
-    const zeilen = ks.map(d => `<tr><td>${fmtDate(isoOf(d))} · Kupon<small>${fmtCoupon(kupon)} ÷ ${freq}, je 1.000 ${MC.esc(ccy)}</small></td><td>${fmt(kupon / freq * 10, 2)} ${MC.esc(ccy)}</td></tr>`)
+    const zeilen = ks.map(d => `<tr><td>${fmtDate(isoOf(d))} · Zinsen<small>${fmtCoupon(kupon)} ÷ ${freq}, je 1.000 ${MC.esc(ccy)}</small></td><td>${fmt(kupon / freq * 10, 2)} ${MC.esc(ccy)}</td></tr>`)
       .concat([`<tr><td>${fmtDate(faellig)} · Rückzahlung<small>100 %, je 1.000 ${MC.esc(ccy)}</small></td><td>${fmt(1000, 2)} ${MC.esc(ccy)}</td></tr>`]);
     return `<h3>Zahlungen bis zur Fälligkeit</h3><table class="rt"><tbody>${zeilen.join("")}</tbody></table><p class="annahmen">Zinstermine aus der Fälligkeit abgeleitet${freq === 2 ? " (halbjährlich)" : ""}; maßgeblich sind die Anleihebedingungen.</p>`;
   };
@@ -658,14 +658,14 @@ function zeige(r, k, meta) {
       ].map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("") +
         `<tr class="sum"><td>Kaufpreis<small>Valuta ${fmtDate(isoOf(valuta))}${hilf("valuta", "Valuta")}</small></td><td>${fmt(preis, 2)}${W}</td></tr>` +
         (raten ? "" : `<tr class="zw"><td colspan="2">Zahlungen bis ${fmtDate(faellig)}</td></tr>` +
-          (ks.length ? `<tr><td>Kupons<small>${ks.length} × ${fmt(jeKupon, 2)}${W}${ks.length > 1 ? `, ${fmtDate(isoOf(ks[0]))} bis ${fmtDate(isoOf(ks[ks.length - 1]))}` : `, ${fmtDate(isoOf(ks[0]))}`}</small></td><td>${fmt(kupons, 2)}${W}</td></tr>` : "") +
+          (ks.length ? `<tr><td>Zinsen<small>${ks.length} × ${fmt(jeKupon, 2)}${W}${ks.length > 1 ? `, ${fmtDate(isoOf(ks[0]))} bis ${fmtDate(isoOf(ks[ks.length - 1]))}` : `, ${fmtDate(isoOf(ks[0]))}`}</small></td><td>${fmt(kupons, 2)}${W}</td></tr>` : "") +
           `<tr><td>Rückzahlung<small>100 % am ${fmtDate(faellig)}</small></td><td>${fmt(nenn, 2)}${W}</td></tr>` +
           `<tr class="diff"><td>Zahlungen − Kaufpreis<small>vor Steuern</small></td><td>${vz(zahlungen - preis)}${W}</td></tr>`);
       document.getElementById("kauf").innerHTML = zeilen;
       document.getElementById("kauf-note").innerHTML = [
         `Annahmen: Order am ${fmtDate(isoOf(heuteUTC))} zum Schlusskurs vom ${fmtDate(datum)}, Valuta zwei Börsentage später; Zinstermine aus der Fälligkeit abgeleitet${freq === 2 ? " (halbjährlich)" : ""}; keine vorzeitige Kündigung.`,
         raten ? "Tilgung in Raten laut Register: Der Zahlungsplan steht nicht in unseren Daten, deshalb ohne Zahlungen." : "",
-        rend != null ? `Rendite ${fmt(rend, 2)} % p. a. (Kopfzahl, ohne Gebühr).` : "",
+        rend != null ? `Rendite ${fmt(rend, 2)} % pro Jahr (wie oben angegeben, ohne Gebühr).` : "",
         typeof stk === "number" && stk > 1 && nenn % stk ? `Der Nennwert ist kein Vielfaches der Stückelung (${fmtStk(stk)} ${MC.esc(ccy)}).` : "",
         "Keine Prognose.",
       ].filter(Boolean).join(" ");

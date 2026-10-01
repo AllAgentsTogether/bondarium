@@ -136,7 +136,7 @@
       var t = zeitOf(d);
       if (t < t0 || t > tLetzt) return;
       mitTerminen++;
-      g.push('<circle cx="' + X(t).toFixed(1) + '" cy="' + (H - mb) + '" r="3.2" fill="#157C00" stroke="#FBFAF7" stroke-width="1.5"><title>Kupontermin ' + datumLang(d) + '</title></circle>');
+      g.push('<circle cx="' + X(t).toFixed(1) + '" cy="' + (H - mb) + '" r="3.2" fill="#157C00" stroke="#FBFAF7" stroke-width="1.5"><title>Zinstermin ' + datumLang(d) + '</title></circle>');
     });
     g.push('<circle cx="' + xs[xs.length - 1] + '" cy="' + ys[ys.length - 1] + '" r="5" fill="#39FF14" stroke="#1A1A19" stroke-width="1.5"/>');
     var tips = T.map(function (t, i) {
@@ -157,16 +157,16 @@
     if (typeof o.kupon === "number" && einheit === "%") {
       var gs = (K[K.length - 1] - K[0] + o.kupon * (tLetzt - zeitOf(T[0])) / 864e5 / 365) / K[0] * 100;
       if (Math.abs(gs) < 0.05) gs = 0;
-      inkl = ' · inkl. Kupons <span class="kv-ver ' + cls(gs) + '">' + (gs > 0 ? "+" : "") + zahl(gs, 1) + "\u00a0%</span>";
+      inkl = ' · inkl. Zinsen <span class="kv-ver ' + cls(gs) + '">' + (gs > 0 ? "+" : "") + zahl(gs, 1) + "\u00a0%</span>";
     }
     var titel = o.kopf === "zeitraum" ? datumLang(T[0]) + " bis " + datumLang(T[T.length - 1]) : "Kursverlauf seit " + datumLang(T[0]);   // Steckbrief: Überschrift steht schon über dem Chart
     el.innerHTML = '<div class="kv-kopf"><span class="kv-titel">' + titel +
       ' <span class="kv-ver ' + cls(ver) + '">' + (ver > 0 ? "+" : "") + zahl(ver, 1) + "\u00a0%</span>" + inkl + (o.neutral && inkl ? ' <span class="ber">berechnet</span>' : "") + "</span>" + knoepfe + "</div>" +
       hoverWrap(svg, [{ x: xs, y: ys, tips: tips }]) +
       (mitUmsatz || inkl || mitF || mitTerminen ? '<p class="kv-legende">' + (mitUmsatz ? '<span class="kv-punkt" aria-hidden="true"></span>Tag mit Umsatz; die Linie verbindet die täglichen Schlusskurse.' : "") +
-        (mitF ? " Kreis: Fälligkeit zum Rückzahlungskurs 100\u00a0%." : "") +
-        (mitTerminen ? " Grüne Punkte auf der Zeitachse: Kupontermine." : "") +
-        (inkl ? " „Inkl. Kupons“: Kursänderung plus Kupon × Tage ÷ 365 im Zeitraum, bezogen auf den Anfangskurs, ohne Wiederanlage." : "") + "</p>" : "");
+        (mitF ? " Kreis: Fälligkeit, Rückzahlung zum Nennwert (100\u00a0%)." : "") +
+        (mitTerminen ? " Grüne Punkte auf der Zeitachse: Zinstermine." : "") +
+        (inkl ? " „Inkl. Zinsen“: Kursänderung plus Kupon × Tage ÷ 365 im Zeitraum, bezogen auf den Anfangskurs, ohne Wiederanlage." : "") + "</p>" : "");
     el.onclick = function (e) {
       var b = e.target.closest ? e.target.closest(".kv-btn") : null;
       if (!b) return;

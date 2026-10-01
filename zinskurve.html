@@ -183,7 +183,7 @@
 
     <div class="heute" id="heute">
       <div class="hk" data-land="DE" style="--c:#157C00"><span class="hk-l"><span class="sw" aria-hidden="true"></span>Deutschland · Bundesanleihen</span><b class="hk-v"><span class="v">+0,35</span><small>Prozentpunkte</small></b><span class="hk-s s normal">normal</span><span class="hk-d d">10 Jahre 3,63&nbsp;% · 2 Jahre 3,28&nbsp;% · Stand 25.09.2026</span></div>
-      <div class="hk" data-land="US" style="--c:#1A1A19"><span class="hk-l"><span class="sw" aria-hidden="true"></span>USA · Treasuries</span><b class="hk-v"><span class="v">+0,31</span><small>Prozentpunkte</small></b><span class="hk-s s normal">normal</span><span class="hk-d d">10 Jahre 5,18&nbsp;% · 2 Jahre 4,87&nbsp;% · Stand 24.09.2026</span></div>
+      <div class="hk" data-land="US" style="--c:#1A1A19"><span class="hk-l"><span class="sw" aria-hidden="true"></span>USA · US-Staatsanleihen</span><b class="hk-v"><span class="v">+0,31</span><small>Prozentpunkte</small></b><span class="hk-s s normal">normal</span><span class="hk-d d">10 Jahre 5,18&nbsp;% · 2 Jahre 4,87&nbsp;% · Stand 24.09.2026</span></div>
     </div>
 
     <p class="eyebrow" id="eyebrow-zk">10 Jahre minus 2 Jahre · Monatsdurchschnitte · 1972 – 2026 · Stand: 25.09.2026</p>
@@ -191,10 +191,10 @@
       <button type="button" class="leg" data-key="DE" aria-pressed="true" title="Deutschland ausblenden"><span class="sw-line" style="--c:#157C00" aria-hidden="true"></span>Deutschland</button>
       <button type="button" class="leg" data-key="US" aria-pressed="true" title="USA ausblenden"><span class="sw-line" style="--c:#1A1A19" aria-hidden="true"></span>USA</button>
       <span class="leg"><span class="sw-area" aria-hidden="true"></span>unter null: Kurve invers – kurz bringt mehr als lang</span>
-      <span class="leg-hint">Deutschland oder USA antippen bzw. anklicken blendet die Kurve aus und wieder ein; im Chart zeigt Tippen (oder die Maus) den Wert je Monat. Mit der Maus hebt Überfahren eine Kurve hervor (Esc löst).</span>
+      <span class="leg-hint">Deutschland oder USA antippen bzw. anklicken blendet die Kurve aus und wieder ein; im Schaubild zeigt Tippen (oder die Maus) den Wert je Monat. Mit der Maus hebt Überfahren eine Kurve hervor (Esc löst).</span>
     </div>
-    <div id="chart-zk" class="chart-scroll"><noscript><p class="note">Der Chart braucht JavaScript. Die aktuellen Abstände stehen in den Kacheln oben, die Daten als Datei: <a href="zinskurve.json">zinskurve.json</a>.</p></noscript></div>
-    <p class="note">Rendite der 10-jährigen minus Rendite der 2-jährigen Staatsanleihe, in Prozentpunkten; Monatsdurchschnitte, der letzte Punkt ist der laufende Monat. Über null steigt die Zinskurve (normal), unter null ist sie invers.</p>
+    <div id="chart-zk" class="chart-scroll"><noscript><p class="note">Das Schaubild braucht JavaScript. Die aktuellen Abstände stehen in den Kacheln oben, die Daten als Datei: <a href="zinskurve.json">zinskurve.json</a>.</p></noscript></div>
+    <p class="note">Rendite der 10-jährigen minus Rendite der 2-jährigen Staatsanleihe, in Prozentpunkten; Monatsdurchschnitte, der letzte Punkt ist der laufende Monat. Über null steigt die Zinskurve, unter null ist sie invers.</p>
 
     <section class="kap" id="lesen" aria-labelledby="h-lesen">
       <div class="k-text">
@@ -214,7 +214,7 @@
         <path d="M90 166 C 190 130, 300 96, 400 82" fill="none" stroke="#157C00" stroke-width="3" stroke-linecap="round"/><circle cx="400" cy="82" r="4" fill="#157C00"/><text x="410" y="78" font-size="14" font-weight="600" fill="#157C00">steil</text>
         <path d="M90 126 C 190 122, 300 119, 400 116" fill="none" stroke="#55544F" stroke-width="3" stroke-linecap="round"/><circle cx="400" cy="116" r="4" fill="#55544F"/><text x="410" y="120" font-size="14" font-weight="600" fill="#55544F">flach</text>
         <path d="M90 82 C 190 100, 300 120, 400 150" fill="none" stroke="#CF7430" stroke-width="3" stroke-linecap="round"/><circle cx="400" cy="150" r="4" fill="#CF7430"/><text x="410" y="158" font-size="14" font-weight="600" fill="#CF7430">invers</text>
-      </svg><p class="sb-f">Der große Chart oben zeigt für jeden Monat genau diesen Abstand: 10 Jahre (rechtes Ende) minus 2 Jahre (linkes Ende). Hier bei „steil“ +2 Punkte, bei „flach“ +0,2, bei „invers“ −1.</p></div>
+      </svg><p class="sb-f">Das große Schaubild oben zeigt für jeden Monat genau diesen Abstand: 10 Jahre (rechtes Ende) minus 2 Jahre (linkes Ende). Hier bei „steil“ +2 Prozentpunkte, bei „flach“ +0,2, bei „invers“ −1.</p></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Der Abstand sagt dir, wie viel Zins die lange Laufzeit extra bringt – nicht, wie hoch das allgemeine Zinsniveau ist. Beides zusammen lesen: das Niveau bei <a href="renditen.html">Staatsanleihen seit 1970</a>, die Form hier.</span></p>
     </section>
 
@@ -229,7 +229,7 @@
         <div class="wz normal"><span class="w1">Normal</span><span class="w2"><b>Abwägen.</b> Etwas Aufschlag für lang – lohnt sich, wenn du das Geld sicher so lange entbehren kannst.</span></div>
         <div class="wz flach"><span class="w1">Flach</span><span class="w2"><b>Kurz bleiben.</b> Kaum Aufschlag für lang – kurze Laufzeit, später neu anlegen, oder eine Leiter.</span></div>
         <div class="wz invers"><span class="w1">Invers</span><span class="w2"><b>Kurz bringt mehr – noch.</b> Der Markt erwartet ein fallendes allgemeines Zinsniveau; lang sichert den heutigen Zins.</span></div>
-        <p class="sb-f">Abstand über 1 Punkt = steil, 0,3 bis 1 = normal, 0 bis 0,3 = flach, unter 0 = invers – so stufen auch die Kacheln oben ein. Keine Empfehlung, sondern die Logik hinter dem Chart.</p></div>
+        <p class="sb-f">Abstand über 1 Prozentpunkt = steil, 0,3 bis 1 = normal, 0 bis 0,3 = flach, unter 0 = invers – so stufen auch die Kacheln oben ein. Keine Empfehlung, sondern die Logik hinter dem Schaubild.</p></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Steil – lang lohnt. Normal – abwägen. Flach – kurz bleiben oder Leiter. Invers – kurz bringt mehr, lang sichert. Dein Ziel entscheidet: <a href="anlageziele.html#zinsen-sichern">Zins sichern</a> oder <a href="anlageziele.html#kurzfristig">Geld parken</a>.</span></p>
     </section>
 
@@ -269,7 +269,7 @@
     <details class="quellen" id="quellen">
       <summary>Datenquellen und Methodik</summary>
       <div class="quellen-body">
-        <p><strong>Methodik.</strong> Gezeigt wird die Rendite der 10-jährigen minus die Rendite der 2-jährigen Staatsanleihe in Prozentpunkten. Der Chart zeigt Monatsdurchschnitte (der laufende Monat aus den bisherigen Handelstagen), die Kacheln oben den jüngsten Tageswert. Einstufung der Kacheln: über 1 Punkt „steil“, 0,3 bis 1 „normal“, 0 bis 0,3 „flach“, unter 0 „invers“ – eine grobe Lesehilfe, keine amtliche Definition.</p>
+        <p><strong>Methodik.</strong> Gezeigt wird die Rendite der 10-jährigen minus die Rendite der 2-jährigen Staatsanleihe in Prozentpunkten. Das Schaubild zeigt Monatsdurchschnitte (der laufende Monat aus den bisherigen Handelstagen), die Kacheln oben den jüngsten Tageswert. Einstufung der Kacheln: über 1 Prozentpunkt „steil“, 0,3 bis 1 „normal“, 0 bis 0,3 „flach“, unter 0 „invers“ – eine grobe Lesehilfe, keine amtliche Definition.</p>
         <p><strong>Datenquellen.</strong> Deutschland: <a href="https://www.bundesbank.de/de/statistiken/geld-und-kapitalmaerkte/zinssaetze-und-renditen/zinsstruktur-am-rentenmarkt">Deutsche Bundesbank</a>, Zinsstrukturkurve am Rentenmarkt (Svensson-Methode), börsennotierte Bundeswertpapiere mit Restlaufzeit 2 und 10 Jahre – Monatswerte seit September 1972, Tageswerte seit August 1997 (Zeitreihen BBSIS, abgerufen über die Bundesbank-API). Das sind Nullkupon-Renditen; der Tageswert auf <a href="renditen.html">Staatsanleihen seit 1970</a> ist die Rendite einer 10-jährigen Bundesanleihe mit jährlichem Kupon und liegt deshalb meist einige Hundertstel darunter. USA: <a href="https://www.federalreserve.gov/releases/h15/">Federal Reserve, Statistical Release H.15</a>, Treasury constant maturities 2 und 10 Jahre, Tageswerte seit Juni 1976; Monatsdurchschnitte aus den Handelstagen. Rezessionen: Datierung des <a href="https://www.nber.org/research/business-cycle-dating">NBER</a>. Aktualisierung täglich um 10 Uhr; die Bundesbank veröffentlicht den Tageswert am Abend, die Fed am Folgetag – „Stand“ nennt jeweils den letzten Wert.</p>
         <p>Diese Seite erklärt und zeigt Daten; sie empfiehlt keine Anlage. Keine Anlageberatung.</p>
         <p id="datastand">Daten-Stand: 25.09.2026</p>
@@ -374,7 +374,7 @@ MC.navInit();
         + `<circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="3.5" fill="${LAND[l].color}"/>`
         + `<text x="${(e.px + 9).toFixed(1)}" y="${(e.py + 4.5).toFixed(1)}" font-family="${SANS}" font-size="${FS}" font-weight="600" fill="${LAND[l].color}" paint-order="stroke" stroke="#FBFAF7" stroke-width="3" stroke-linejoin="round">${LAND[l].name}</text></g>`;
       series.push({ x: pts.map(p => +p[0].toFixed(1)), y: pts.map(p => +p[1].toFixed(1)), color: LAND[l].color,
-        tips: pts.map(p => `${LAND[l].name} ${monLabel(p[2][0])}: ${vz(p[2][2] - p[2][1])} Punkte (10 J. ${fmt(p[2][2], 2)}\u00A0%, 2 J. ${fmt(p[2][1], 2)}\u00A0%)`) });
+        tips: pts.map(p => `${LAND[l].name} ${monLabel(p[2][0])}: ${vz(p[2][2] - p[2][1])} Prozentpunkte (10 J. ${fmt(p[2][2], 2)}\u00A0%, 2 J. ${fmt(p[2][1], 2)}\u00A0%)`) });
     }
     const aria = `Abstand zwischen 10-jähriger und 2-jähriger Staatsanleihe in Prozentpunkten, Monatsdurchschnitte ${monLabel(m0)} bis ${monLabel(m1)}: ${zeigen.map(l => { const m = d.monate[l]; const s = m[m.length - 1]; return `${LAND[l].name} zuletzt ${vz(s[2] - s[1])}`; }).join(", ")}. Werte mit den Pfeiltasten abrufbar.`;
     const svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${MC.esc(aria)}" xmlns="http://www.w3.org/2000/svg">

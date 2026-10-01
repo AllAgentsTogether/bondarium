@@ -154,7 +154,7 @@
     if (y > 0.25 || y < -0.05) hinweis = " Die Rendite ist unplausibel – prüfe Kurs und Fälligkeit (Kurs in Prozent des Nennwerts, z. B. 96,50).";
     else if (einfach) hinweis = " Restlaufzeit unter einem Kuponabschnitt: einfache Verzinsung aufs Jahr hochgerechnet, wie am Geldmarkt üblich.";
     ok("r1", "Rendite bei Kauf zu " + pct(kurs) + " mit Valuta " + fmtDate(settle) + ", bis zur Fälligkeit gehalten, vor Steuern und Gebühren. Letzter Zinstermin: " + fmtDate(sched.prev) + ", nächster: " + fmtDate(sched.next[0]) + "." + hinweis,
-      "Rendite pro Jahr " + pct(y * 100) + ". Du zahlst " + geld1(gesamt) + ", Gewinn vor Steuer " + geld1(gewinn) + "." + hinweis);
+      "Rendite pro Jahr " + pct(y * 100) + ". Du zahlst " + geld1(gesamt) + ", Ertrag vor Steuern " + geld1(gewinn) + "." + hinweis);
     var g = $("r1-gewinn"); if (g) g.className = "big " + (gewinn >= 0 ? "up" : "down");
   }
 
@@ -205,7 +205,7 @@
     var abg = 25 / (1 + 0.25 * (+kist) / 100);   // Kirchensteuer mindert die Abgeltungsteuer: 25 % / (1 + 0,25 × Kirchensteuersatz)
     ok("r3", "Steuersatz auf Zinsen: " + pct(satz * 100, 3).replace(",000", "") + (kist !== "0"
       ? " (Abgeltungsteuer " + pct(abg, 2) + " – die Kirchensteuer mindert sie –, Solidaritätszuschlag 5,5\u00A0% darauf und Kirchensteuer " + kist + "\u00A0% darauf)"
-      : " (Abgeltungsteuer 25\u00A0% + Solidaritätszuschlag 5,5\u00A0% darauf)") + ". Der Freistellungsauftrag (Sparer-Pauschbetrag 1.000\u00A0€ je Person, 2.000\u00A0€ bei Zusammenveranlagung) gilt je Jahr für alle Kapitalerträge zusammen. Ohne Zinseszins gerechnet; persönliche Umstände (Günstigerprüfung, Verlusttopf) nicht berücksichtigt.",
+      : " (Abgeltungsteuer 25\u00A0% + Solidaritätszuschlag 5,5\u00A0% darauf)") + ". Der Freistellungsauftrag (Sparerpauschbetrag 1.000\u00A0€ je Person, 2.000\u00A0€ bei Zusammenveranlagung) gilt je Jahr für alle Kapitalerträge zusammen. Ohne Zinseszins gerechnet; persönliche Umstände (Günstigerprüfung, Verlusttopf) nicht berücksichtigt.",
       "Zinsen pro Jahr netto " + eur(net) + ", Nettorendite " + pct(nettoRend) + ".");
   }
 

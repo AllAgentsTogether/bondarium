@@ -83,14 +83,14 @@
   function zeichne(b) {
     var drin = !!menge[b.getAttribute("data-merk")];
     b.setAttribute("aria-pressed", drin ? "true" : "false");
-    b.title = drin ? "Von deiner Merkliste nehmen" : "Auf deine Merkliste setzen";
+    b.title = drin ? "Von deiner Merkliste entfernen" : "Zu deiner Merkliste hinzufügen";
     b.innerHTML = inhalt(drin);
   }
   function knoepfe() { Array.prototype.forEach.call(document.querySelectorAll("button[data-merk]"), zeichne); }
   function knopf(isin, klasse) {
     var drin = !!menge[isin];
     return '<button type="button" class="merkbtn' + (klasse ? " " + esc(klasse) : "") + '" data-merk="' + esc(isin) + '" aria-pressed="' + drin +
-      '" title="' + (drin ? "Von deiner Merkliste nehmen" : "Auf deine Merkliste setzen") + '">' + inhalt(drin) + "</button>";
+      '" title="' + (drin ? "Von deiner Merkliste entfernen" : "Zu deiner Merkliste hinzufügen") + '">' + inhalt(drin) + "</button>";
   }
   function melde(text) {
     var el = document.getElementById("merk-status");
@@ -108,7 +108,7 @@
       if (!st.angemeldet) { location.href = SEITE + "?merken=" + encodeURIComponent(isin); return; }
       var weg = !!menge[isin];
       return aendere(weg ? "entfernen" : "merken", isin).then(function () {
-        melde(weg ? "Anleihe " + isin + " von der Merkliste genommen" : "Anleihe " + isin + " auf die Merkliste gesetzt");
+        melde(weg ? "Anleihe " + isin + " von der Merkliste entfernt" : "Anleihe " + isin + " zur Merkliste hinzugefügt");
       }, function (j) {
         if (j && j.status === "anmelden") { location.href = SEITE + "?merken=" + encodeURIComponent(isin); return; }
         var text = j && j.status === "voll" ? "Merkliste voll (" + (j.max || 200) + " Anleihen)" : "Hat nicht geklappt";
