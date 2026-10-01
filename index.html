@@ -567,73 +567,6 @@
   .itab tbody:not(.sortiert) tr.gr-ende > td { border-bottom: 2px solid rgba(26,26,25,0.2); }
   @media (min-width: 601px) { .itab td.nm a { display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; } }   /* lange Emittentennamen mit Auslassung */
   /* ==========================================================================================
-     Broker im Vergleich auf der Startseite 01.10.2026 (Nutzerwunsch, Variante „Preisstrahl“ aus drei Vorschlägen):
-     links fragt Tobias (Sprechblase und Laufzeit-Ring wie bei den vier Zielen), rechts die Antwort als Punkte auf einer
-     Euro-Achse – ein Punkt je Anbieter, Kaufbetrag wählbar. Die Zahlen setzt der Deploy aus broker.json
-     (scripts/statische_tabellen.py, broker_start). Schriftgrößen nur aus dem Raster (--fs-*).
-     ========================================================================================== */
-  .bv [hidden] { display: none; }
-  .bv-bub { position: relative; display: block; padding: 14px 16px; border-radius: 12px; background: #E8FFE3; color: var(--ink); font-weight: 600; font-size: var(--fs-text); line-height: 1.35; letter-spacing: -0.01em; }
-  .bv-bub::after { content: ""; position: absolute; left: 24px; bottom: -6px; width: 13px; height: 13px; border-radius: 2px; background: inherit; transform: rotate(45deg); }
-  .bv-ring { position: relative; flex: none; display: block; width: 56px; height: 56px; }
-  .bv-ring img { position: absolute; left: 7px; top: 7px; width: 42px; height: 42px; border-radius: 50%; background: #fff; object-fit: cover; }
-  .bv-ring svg { position: absolute; inset: 0; width: 56px; height: 56px; overflow: visible; }
-  .bv-karte { display: grid; grid-template-columns: 290px minmax(0, 1fr); grid-template-rows: 1fr auto; overflow: hidden; }
-  .bv-frage { padding: 14px 14px 0; border-right: 1px solid var(--rule); }
-  .bv-frage .bv-bub { min-height: 100px; display: grid; place-items: center start; }
-  .bv-wer { display: grid; grid-template-columns: 56px minmax(0, 1fr); column-gap: 12px; align-items: center; margin: 18px 0 16px; }
-  .bv-wer b { display: block; font-size: var(--fs-ui); font-weight: 600; line-height: 1.3; }
-  .bv-wer small { display: block; font-size: var(--fs-meta); font-weight: 500; line-height: 1.35; color: var(--text); }
-  .bv-cta { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 12px 14px 13px 16px; border-top: 1px solid var(--rule); border-right: 1px solid var(--rule); color: var(--green-text); font-size: var(--fs-ui); font-weight: 600; text-decoration: none; transition: background-color .15s ease, color .15s ease; }
-  .bv-cta svg { width: 17px; height: 17px; flex: none; }
-  .bv-cta:hover { background: var(--green); color: var(--ink); }
-  .bv-cta:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
-  .bv-antwort { grid-column: 2; grid-row: 1 / 3; padding: 20px 26px 18px; min-width: 0; }
-  .bv-oben { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; }
-  .bv-satz { margin: 0; font-size: var(--fs-text); line-height: 1.4; color: var(--text); }
-  .bv-satz strong { display: block; margin-top: 2px; font-size: var(--fs-zahl); font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .bv-wahl { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-  .bv-wahl span { font-size: var(--fs-meta); color: var(--text); margin-right: 4px; }
-  .bv-wahl button { font: inherit; font-size: var(--fs-klein); font-weight: 600; line-height: 1.2; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.22); border-radius: 999px; padding: 7px 12px; cursor: pointer; font-variant-numeric: tabular-nums; transition: background-color .15s ease, border-color .15s ease, color .15s ease; }
-  .bv-wahl button:hover { border-color: var(--ink); }
-  .bv-wahl button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
-  .bv-wahl button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
-  .bv-strahl { position: relative; height: 153px; margin: 6px 12px 0; }   /* Höhe setzt das Skript: höchste Säule aller Beträge */
-  .bv-strahl .bv-linie { position: absolute; left: -12px; right: -12px; bottom: 30px; height: 2px; border-radius: 2px; background: #E4E3DF; }
-  .bv-strahl .bv-span { position: absolute; bottom: 29.5px; height: 3px; border-radius: 3px; background: var(--green-text); opacity: .4; left: 0; width: 0; transition: left .55s cubic-bezier(.3,.8,.3,1), width .55s cubic-bezier(.3,.8,.3,1); }
-  .bv-strahl .bv-tick { position: absolute; bottom: 0; transform: translateX(-50%); font-size: var(--fs-label); font-weight: 500; color: var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .bv-strahl .bv-tick::before { content: ""; position: absolute; left: 50%; bottom: 22px; width: 1px; height: 6px; background: #C9C8C2; }
-  .bv-p { position: absolute; left: 0; bottom: 21px; width: 20px; height: 20px; margin-left: -10px; padding: 0; border-radius: 50%; border: 2px solid var(--ink); background: #fff; cursor: pointer; transition: left .55s cubic-bezier(.3,.8,.3,1), bottom .55s cubic-bezier(.3,.8,.3,1), transform .15s ease, background-color .3s ease, opacity .35s ease, box-shadow .15s ease; }
-  .bv-p.aw { border-style: dashed; }   /* Anbieter mit nur einer Auswahl an Anleihen */
-  .bv-p.min { background: var(--green); }   /* der eine Neon-Punkt: niedrigster Preis */
-  .bv-p:hover, .bv-p.an { transform: scale(1.22); z-index: 2; box-shadow: 0 0 0 4px rgba(57,255,20,0.35); }
-  .bv-p:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; z-index: 2; }
-  .bv-strahl.wartet .bv-p { opacity: 0; transform: scale(.3) translateY(-26px); }
-  .bv-tip { position: absolute; z-index: 3; left: 0; bottom: 0; transform: translate(-50%, 0); pointer-events: none; white-space: nowrap; background: var(--ink); color: #fff; border-radius: 8px; padding: 6px 10px; font-size: var(--fs-meta); line-height: 1.25; opacity: 0; transition: opacity .12s ease; }
-  .bv-tip b { font-weight: 700; }
-  .bv-tip span { color: var(--green); font-weight: 700; font-variant-numeric: tabular-nums; }
-  .bv-tip.da { opacity: 1; }
-  .bv-leg { display: flex; flex-wrap: wrap; gap: 6px 20px; margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--rule); font-size: var(--fs-meta); line-height: 1.4; color: var(--text); }
-  .bv-leg > span { display: inline-flex; align-items: center; gap: 7px; }
-  .bv-leg i { flex: none; width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--ink); background: #fff; }
-  .bv-leg i.aw { border-style: dashed; }
-  .bv-leg i.nein { border-color: #A9A8A2; background: #F3F2EE; }
-  @media (max-width: 860px) {
-    .bv-karte { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; }
-    .bv-frage { border-right: 0; border-bottom: 1px solid var(--rule); padding: 12px 12px 0; display: grid; grid-template-columns: 56px minmax(0, 1fr); column-gap: 14px; align-items: start; }
-    .bv-frage .bv-bub { grid-column: 2; grid-row: 1; min-height: 0; padding: 10px 12px; }
-    .bv-frage .bv-bub::after { left: -5px; top: 17px; bottom: auto; width: 12px; height: 12px; }
-    .bv-wer { display: contents; }
-    .bv-wer .bv-ring { grid-column: 1; grid-row: 1 / span 2; }
-    .bv-wer > span:last-child { grid-column: 2; grid-row: 2; margin: 8px 0 12px; }
-    .bv-wer b, .bv-wer small { display: inline; }
-    .bv-wer small::before { content: " · "; }
-    .bv-antwort { grid-column: 1; grid-row: 2; padding: 16px 14px 14px; }
-    .bv-cta { grid-row: 3; border-right: 0; }
-    .bv-p { width: 18px; height: 18px; margin-left: -9px; }
-  }
-  @media (prefers-reduced-motion: reduce) { .bv-p, .bv-strahl .bv-span { transition: none; } }
-  /* ==========================================================================================
      Schriftgrößen-Raster 01.10.2026 (Nutzerwunsch „Schriftgrößen passen teilweise nicht – einheitliches Bild“):
      vorher 20 Größen (u. a. 11,5 · 12,5 · 13,5 · 14,5 · 15,5 · 16,5 px), jetzt eine Leiter nach Rolle – gleiche Rolle, gleiche Größe.
      Label 12 · Meta 13 · Klein 14 · Bedienung 15 · Text 16 · Kartentitel 17 · Zwischentitel 21 · Kennzahl 24 · Überschrift 30.
@@ -788,26 +721,6 @@
           </table>
         </div>
         <p class="itab-note">Rendite p.a. = jährliche Rendite bis zur Fälligkeit beim Kauf zum aktuellen Kurs. Mindestanlage = kleinster handelbarer Betrag. <a href="begriffe.html#rendite">Mehr im Glossar →</a></p>
-      </section>
-
-      <section class="bv" id="broker" aria-labelledby="h-bv">   <!-- seit 01.10.2026 (Nutzerwunsch, Variante „Preisstrahl“): der Broker-Vergleich auf der Startseite – Tobias fragt, die Antwort ist ein Punkt je Anbieter auf einer Euro-Achse. Zahlen, Stand und Namen setzt der Deploy aus broker.json (scripts/kennzahlen.py: data-kz; scripts/statische_tabellen.py: #bv-daten, #bv-spanne, #bv-ohne) – hier steht nur der Rückfall, nichts von Hand pflegen -->
-        <div class="bt"><h2 id="h-bv">Broker im Vergleich</h2><p class="bsub"><span data-kz="broker-anzahl">18</span> Anbieter · jede Zahl aus dem Preisverzeichnis des Anbieters · Stand <span data-kz="broker-stand">01.10.2026</span></p></div>
-        <div class="bv-karte box">
-          <div class="bv-frage">
-            <span class="bv-bub">„Und bei welchem Broker kaufe ich die?“</span>
-            <div class="bv-wer"><span class="bv-ring"><img src="guide-tobias.webp" width="248" height="248" alt="" loading="lazy" decoding="async"><svg viewBox="0 0 56 56" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="28" cy="28" r="27" stroke="#E4E3DF"/><path d="M28 1A27 27 0 0 1 51.38 41.5" stroke="#157C00" stroke-width="3" stroke-linecap="butt"/><circle cx="51.38" cy="41.5" r="3.75" fill="#39FF14" stroke-width="1.5"/></svg></span><span><b>Tobias, 39</b><small>will 30.000&nbsp;€ anlegen</small></span></div>
-          </div>
-          <a class="bv-cta" href="broker-vergleich.html"><span>Alle <span data-kz="broker-anzahl">18</span> Anbieter mit Rechenweg</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a>
-          <div class="bv-antwort">
-            <div class="bv-oben">
-              <p class="bv-satz">Derselbe Kauf über <span id="bv-betrag">5.000&nbsp;€</span> kostet je nach Anbieter<strong id="bv-spanne">0 bis 18,40&nbsp;€</strong></p>
-              <div class="bv-wahl" id="bv-wahl" role="group" aria-label="Kaufbetrag wählen" hidden><span>Kaufbetrag</span></div>
-            </div>
-            <div class="bv-strahl wartet" id="bv-strahl" hidden><i class="bv-linie"></i><i class="bv-span"></i><span class="bv-tip" id="bv-tip" role="status"></span></div>
-            <p class="bv-leg"><span id="bv-leg-p" hidden><i></i>ein Punkt = ein Anbieter – antippen zeigt Name und Preis</span><span id="bv-leg-aw" hidden><i class="aw"></i>nur eine Auswahl an Anleihen</span><span><i class="nein"></i><span>ohne normale Anleihen: <span id="bv-ohne">finanzen.net zero, N26, Scalable Capital</span></span></span></p>
-          </div>
-        </div>
-        <script type="application/json" id="bv-daten">{"betraege":[1000,5000,10000,25000,100000],"standard":5000,"anbieter":[{"n":"1822direkt","g":"ja","k":[9.9,17.4,29.9,54.9,54.9]},{"n":"comdirect","g":"ja","k":[9.9,17.4,29.9,59.9,59.9]},{"n":"Commerzbank","g":"ja","k":[9.9,17.4,29.9,67.4,254.9]},{"n":"Consorsbank","g":"ja","k":[10.9,18.4,30.9,68.4,69.95]},{"n":"DEGIRO","g":"ja","k":[4.9,4.9,4.9,4.9,4.9]},{"n":"DKB","g":"ja","k":[10.0,10.0,15.0,30.0,30.0]},{"n":"flatex","g":"ja","k":[7.9,7.9,7.9,7.9,7.9]},{"n":"ING","g":"ja","k":[7.4,17.4,29.9,67.4,69.9]},{"n":"Interactive Brokers","g":"ja","k":[1.0,5.0,10.0,13.75,32.5]},{"n":"maxblue","g":"ja","k":[8.9,12.5,25.0,58.9,58.9]},{"n":"S Broker","g":"ja","k":[3.45,13.45,25.95,54.99,54.99]},{"n":"Smartbroker+","g":"ja","k":[0.0,0.0,0.0,0.0,0.0]},{"n":"Traders Place","g":"ja","k":[0.0,0.0,0.0,0.0,0.0]},{"n":"Revolut","g":"aw","k":[2.5,12.5,25.0,62.5,250.0]},{"n":"Trade Republic","g":"aw","k":[1.0,1.0,1.0,1.0,1.0]}]}</script>
       </section>
 
       <section class="konkret" aria-labelledby="h-konkret">
@@ -1116,77 +1029,6 @@ MC.navInit();
     kurve("spk-lang", wk.filter(function (_, i) { return i % 4 === 0; }).map(function (x) { return x[2]; }).concat(b.latest && typeof b.latest.yield === "number" ? [b.latest.yield] : []));
   }).catch(function () {});
   // Renditespannen der Top-10-Karten setzt seit 30.09.2026 der Deploy (scripts/kennzahlen.py, data-kz="spanne-…") – keine vier Extra-Abrufe mehr
-})();
-
-// Broker im Vergleich („Preisstrahl“, seit 01.10.2026): ein Punkt je Anbieter auf einer Euro-Achse, Kaufbetrag wählbar.
-// Die Kosten rechnet nicht diese Seite: Der Deploy schreibt sie aus broker.json in #bv-daten (scripts/statische_tabellen.py, broker_start).
-(function () {
-  var strahl = document.getElementById("bv-strahl"), quelle = document.getElementById("bv-daten"), D;
-  try { D = JSON.parse(quelle.textContent); } catch (e) { return; }
-  if (!strahl || !D || !D.anbieter || D.anbieter.length < 3) return;
-  var NB = " ", tip = document.getElementById("bv-tip"), wahl = document.getElementById("bv-wahl"), span = strahl.querySelector(".bv-span");
-  var aktiv = null, idx = Math.max(0, D.betraege.indexOf(D.standard));
-  function eur(v) { return MC.zahl(v, 2) + NB + "€"; }
-  function glatt(v) { return MC.zahl(v, Math.round(v * 100) % 100 ? 2 : 0) + NB + "€"; }   // 5.000 €, aber 9,90 €
-  D.betraege.forEach(function (b, i) {
-    var k = document.createElement("button"); k.type = "button"; k.textContent = glatt(b); k.setAttribute("aria-pressed", String(i === idx));
-    k.addEventListener("click", function () { idx = i; [].forEach.call(wahl.querySelectorAll("button"), function (x, j) { x.setAttribute("aria-pressed", String(j === i)); }); zeichne(); });
-    wahl.appendChild(k);
-  });
-  var punkte = D.anbieter.map(function (a) {
-    var p = document.createElement("button"), t = document.createElement("span"); t.innerHTML = a.n; a.text = t.textContent;   // Namen in broker.json dürfen HTML-Zeichen enthalten
-    p.type = "button"; p.className = "bv-p" + (a.g === "aw" ? " aw" : "");
-    p.addEventListener("mouseenter", function () { zeige(p, a); }); p.addEventListener("focus", function () { zeige(p, a); });
-    p.addEventListener("mouseleave", weg); p.addEventListener("blur", weg);
-    p.addEventListener("click", function () { zeige(p, a); });
-    strahl.appendChild(p); return { el: p, a: a };
-  });
-  function zeige(p, a) {   // Name und Preis über dem Punkt, am Rand in die Fläche geschoben
-    if (aktiv) aktiv.classList.remove("an"); aktiv = p; p.classList.add("an");
-    tip.innerHTML = "<b>" + MC.esc(a.text) + "</b> · <span>" + eur(a.k[idx]) + "</span>";
-    var w = strahl.clientWidth, x = parseFloat(p.style.left), halb = tip.offsetWidth / 2;
-    tip.style.left = Math.max(halb - 12, Math.min(w + 12 - halb, x)) + "px";
-    tip.style.bottom = (parseFloat(p.style.bottom) + p.offsetHeight + 9) + "px"; tip.classList.add("da");
-  }
-  function weg() { if (aktiv) aktiv.classList.remove("an"); aktiv = null; tip.classList.remove("da"); }
-  function achse(i) {   // Ende der Achse: runde Zahl über dem höchsten Preis, höchstens fünf Marken
-    var max = Math.max.apply(null, D.anbieter.map(function (a) { return a.k[i]; }));
-    var st = [1, 2, 5, 10, 20, 25, 50, 100, 200, 500].filter(function (s) { return max / s <= 4.2; })[0] || 1000;
-    return { st: st, ende: Math.max(st, Math.ceil(max / st) * st) };
-  }
-  function stapeln(xs, schritt) {   // gleiche und nahe Preise übereinander: je Punkt die unterste freie Reihe
-    var reihen = []; return xs.map(function (x) { var r = 0; while (reihen[r] != null && x - reihen[r] < schritt) r++; reihen[r] = x; return r; });
-  }
-  function zeichne() {
-    weg();
-    var w = strahl.clientWidth, schritt = (punkte[0].el.offsetWidth || 20) + 3, hoch = 1;
-    D.betraege.forEach(function (b, i) {   // höchste Säule über alle Beträge: die Fläche springt beim Umschalten nicht
-      var e = achse(i).ende; hoch = Math.max(hoch, Math.max.apply(null, stapeln(D.anbieter.map(function (a) { return a.k[i] / e * w; }).sort(function (x, y) { return x - y; }), schritt)) + 1);
-    });
-    strahl.style.height = (21 + hoch * schritt + 40) + "px";
-    var werte = punkte.map(function (p) { return p.a.k[idx]; }), max = Math.max.apply(null, werte), min = Math.min.apply(null, werte), ax = achse(idx);
-    [].forEach.call(strahl.querySelectorAll(".bv-tick"), function (t) { strahl.removeChild(t); });
-    for (var v = 0; v <= ax.ende + 1e-9; v += ax.st) { var t = document.createElement("span"); t.className = "bv-tick"; t.textContent = glatt(v); t.style.left = (v / ax.ende * w) + "px"; strahl.appendChild(t); }
-    var sortiert = punkte.slice().sort(function (x, y) { return x.a.k[idx] - y.a.k[idx]; });
-    var reihe = stapeln(sortiert.map(function (p) { return p.a.k[idx] / ax.ende * w; }), schritt);
-    sortiert.forEach(function (p, i) {
-      p.el.style.left = (p.a.k[idx] / ax.ende * w) + "px"; p.el.style.bottom = (21 + reihe[i] * schritt) + "px";
-      p.el.classList.toggle("min", p.a.k[idx] === min);
-      p.el.setAttribute("aria-label", p.a.text + ": " + eur(p.a.k[idx]));
-    });
-    span.style.left = (min / ax.ende * w) + "px"; span.style.width = ((max - min) / ax.ende * w) + "px";
-    document.getElementById("bv-betrag").textContent = glatt(D.betraege[idx]);
-    document.getElementById("bv-spanne").textContent = (min ? glatt(min) : "0") + " bis " + glatt(max);
-  }
-  wahl.hidden = strahl.hidden = false; document.getElementById("bv-leg-p").hidden = false;
-  document.getElementById("bv-leg-aw").hidden = !D.anbieter.some(function (a) { return a.g === "aw"; });
-  zeichne();
-  function los() {   // die Punkte fallen nacheinander auf die Achse, sobald der Strahl zu sehen ist
-    punkte.forEach(function (p, i) { p.el.style.transitionDelay = (i * 45) + "ms"; }); strahl.classList.remove("wartet");
-    setTimeout(function () { punkte.forEach(function (p) { p.el.style.transitionDelay = ""; }); }, punkte.length * 45 + 600);
-  }
-  if ("IntersectionObserver" in window) { var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { io.disconnect(); los(); } }, { threshold: 0.4 }); io.observe(strahl); } else los();
-  window.addEventListener("resize", zeichne);
 })();
 </script>
 </body>

@@ -12,10 +12,6 @@ Jetzt stehen die Zeilen im ausgelieferten HTML. Im Browser ersetzt das Seitenskr
 Fassung (innerHTML) – mit Sortieren, Aufklappen und den Handy-Karten. Die Quell-HTML im Repository bleiben unverändert.
 
   broker-vergleich.html   <div id="bv-tabelle">            ← broker.json (gleiche Tabelle wie das Seitenskript)
-  index.html              <script id="bv-daten">, #bv-spanne, #bv-ohne
-                                                           ← broker.json: Kosten je Anbieter und Kaufbetrag für den
-                                                             „Preisstrahl“ der Startseite (seit 01.10.2026) – die Startseite
-                                                             rechnet nicht selbst, sie zeichnet nur diese Zahlen
   anleihen-etf.html       <table class="etf" data-gruppe>  ← top10-anleihen-etfs.json, Kurse aus kurse-auswahl.json
   anleihen-laender.html, unternehmensanleihen-laender.html
                           <tbody id="kpis-body">           ← top10-…-laender.json, Gruppe „deutschland“ – erst wenn die
@@ -328,41 +324,6 @@ def broker(site):
     print(f"broker-vergleich.html: {len(D['anbieter'])} Anbieter fest im HTML (Kosten für {zahl(B)} €, Angebot und Handelsplätze in einer Liste, Quellen)")
 
 
-# ---------- Startseite: Broker im Vergleich als „Preisstrahl“ (ein Punkt je Anbieter auf einer Euro-Achse) ----------
-def broker_start_daten(D):
-    """Kosten je Anbieter (günstigster Handelsweg) für jeden Kaufbetrag aus broker.json – als JSON für das Skript der
-    Startseite –, dazu die Spanne für den Standardbetrag und die Anbieter ohne normale Anleihen als Text."""
-    betraege = D["betraege"]
-    mit = [b for b in D["anbieter"] if b.get("wege")]
-    daten = {"betraege": betraege, "standard": D.get("standard") or betraege[0],
-             "anbieter": [{"n": b["name"], "g": b["gruppe"], "k": [b_guenstigster(b, B)["v"] for B in betraege]} for b in mit]}
-    k = sorted(b_guenstigster(b, daten["standard"])["v"] for b in mit)
-    spanne = (b_glatt(k[0]) if k[0] else "0") + " bis " + b_glatt(k[-1])
-    ohne = ", ".join(b["name"] for b in D["anbieter"] if not b.get("wege"))
-    # im <script>-Block darf kein „</“ stehen
-    return json.dumps(daten, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/"), spanne, ohne
-
-
-def broker_start(site):
-    pfad = os.path.join(site, "index.html")
-    html_ = open(pfad, encoding="utf-8").read()
-    D = lade(site, "broker.json")
-    daten, spanne, ohne = broker_start_daten(D)
-    plaetze = (
-        (re.compile(r'(<script type="application/json" id="bv-daten">).*?(</script>)', re.S), daten, "Daten #bv-daten"),
-        (re.compile(r'(<strong id="bv-spanne">)[^<]*(</strong>)'), spanne, "Spanne #bv-spanne"),
-        (re.compile(r'(<span id="bv-ohne">)[^<]*(</span>)'), ohne, "Anbieter ohne Anleihen #bv-ohne"),
-    )
-    neu = html_
-    for muster, inhalt, name in plaetze:
-        if not muster.search(neu):
-            return warn(f"index.html: Platzhalter für {name} nicht gefunden – Broker-Zahlen der Startseite bleiben beim Rückfall")
-        neu = muster.sub(lambda m, inhalt=inhalt: m.group(1) + inhalt + m.group(2), neu, count=1)
-    with open(pfad, "w", encoding="utf-8") as f:
-        f.write(neu)
-    print(f"index.html: Broker-Preisstrahl – {daten.count(chr(34) + 'n' + chr(34))} Anbieter, {len(D['betraege'])} Kaufbeträge, Spanne {spanne}")
-
-
 # ---------- Anleihen-ETFs: zehn Zeilen je Kategorie (vereinfachte Fassung von rowHtml der Seite) ----------
 SYM = {"EUR": "€", "USD": "$", "GBP": "£", "JPY": "¥"}
 
@@ -501,7 +462,7 @@ def main():
     site = sys.argv[1] if len(sys.argv) > 1 else "_site"
     if not os.path.isdir(site):
         raise SystemExit(f"Ordner nicht gefunden: {site}")
-    for name, schritt in (("Broker", lambda: broker(site)), ("Broker auf der Startseite", lambda: broker_start(site)), ("ETFs", lambda: etfs(site)),
+    for name, schritt in (("Broker", lambda: broker(site)), ("ETFs", lambda: etfs(site)),
                           ("Staatsanleihen nach Ländern", lambda: laender(site, "anleihen-laender.html", "top10-staatsanleihen-laender.json")),
                           ("Unternehmensanleihen nach Ländern", lambda: laender(site, "unternehmensanleihen-laender.html", "top10-unternehmensanleihen-laender.json")),
                           ("Anleihen nach Kupon", lambda: kupon(site))):
