@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""update_top10_kupon.py – die 30 Anleihen mit dem höchsten Kupon auf der EZB-Liste (seit 01.10.2026).
+"""update_top10_kupon.py – je 30 Staats- und Unternehmensanleihen mit dem höchsten Kupon (seit 01.10.2026).
 
 Nutzerwunsch 01.10.2026: „TOP 10 nach Coupon. Voraussetzung: in der EZB-Liste. Mindestens zwei Jahre Restlaufzeit.
 Unternehmensanleihen.“ Am selben Tag erweitert: „da sollen jetzt alle Anleihen rein, auch Staatsanleihen – mach daraus
-eine Top 30“. Seite: anleihen-kupon.html (Menü „Anleihen“, Gruppe „Top 30 nach Kupon“; bis dahin
+eine Top 30“; danach: „Top 30 jeweils für Staatsanleihen und Unternehmen“ und US-Staatsanleihen über die G10-Regel
+(siehe Auswahl). Seite: anleihen-kupon.html (Menü „Anleihen“, Gruppe „Top 30 nach Kupon“; bis dahin
 unternehmensanleihen-kupon.html, per .htaccess weitergeleitet). Der Dateiname behält „top10“, weil der Datenlauf
 top10-*.json committet.
 
@@ -21,15 +22,23 @@ Liest:
                         wird (ecb.europa.eu → Disclaimer & Copyright, gelesen am 01.10.2026) – steht so auf der Seite.
 Schreibt:
   top10-anleihen-kupon.json
-  {updated, updatedAt, stand (Kursstand), ezb: {stand, anzahl}, regeln: {min_jahre, max_stueckelung, waehrungen}, kandidaten,
-   gruppen: {"kupon": [Zeile …]}}
-  Zeile wie in update_top10.py, ohne Handelstage und Umsatz:
-  {isin, emittent, art, cur, kupon, zins (Zinszahlungen/Jahr), faellig, kurs, datum, rendite|null, vol, stk}
+  {updated, updatedAt, stand (Kursstand), ezb: {stand, anzahl}, regeln: {min_jahre, max_stueckelung, waehrungen, g10},
+   kandidaten: {staat, unternehmen}, gruppen: {"staat": [Zeile …], "unternehmen": [Zeile …]}}
+  Zeile wie in update_top10.py, ohne Handelstage und Umsatz, dazu ezb (steht auf der EZB-Liste: true/false):
+  {isin, emittent, art, cur, kupon, zins (Zinszahlungen/Jahr), faellig, kurs, datum, rendite|null, vol, stk, ezb}
 
 Auswahl:
-  Vorgabe     alle drei Arten des Index – Staat, Öffentlich (Bundesländer, Förderbanken, Supranationale) und
-              Unternehmen (wie in der Suche: einschließlich Banken und Versicherer) –, ISIN auf der EZB-Liste,
-              Restlaufzeit ab Valuta mindestens MIN_JAHRE Jahre
+  Vorgabe     zwei Ranglisten: Art „Staat“ (Zentralstaaten) und Art „Unternehmen“ (wie in der Suche: einschließlich
+              Banken und Versicherer); ISIN auf der EZB-Liste, Restlaufzeit ab Valuta mindestens MIN_JAHRE Jahre.
+              Art „Öffentlich“ (Bundesländer, Förderbanken, Supranationale) steht seit der Teilung in keiner Liste –
+              verlangt waren Staatsanleihen und Unternehmen.
+  G10-Regel   Staatsanleihen der G10-Länder außerhalb des Europäischen Wirtschaftsraums (G10_AUSSERHALB_EWR: USA,
+              Kanada, Japan, Schweiz, Großbritannien) zählen auch ohne Eintrag in der EZB-Liste mit (Nutzerentscheid
+              01.10.2026, Anlass: US-Staatsanleihen). Begründung: Die EZB lässt als Emittenten „EEA or non-EEA G10
+              countries“ zu, verlangt aber eine Emission im EWR bzw. Euroraum (ecb.europa.eu, Eligibility criteria for
+              marketable assets, gelesen am 01.10.2026) – diese Staatsanleihen scheitern nur am Emissionsort. Für sie
+              gibt es damit keine Bonitätsprüfung der EZB; die Seite sagt das. Bei Euro und Dollar betrifft es heute
+              die USA (244 Anleihen) und Kanada (3).
   Währung     Euro oder US-Dollar (WAEHRUNGEN) – so hatte der Nutzer die Liste zuletzt angesehen („nur Dollar und Euro“)
   Stückelung  höchstens MAX_STUECKELUNG in der Währung der Anleihe (Nutzerwunsch 01.10.2026: erst „bis 1.000“, dann
               „geh bis zu einer Stückelung von 10.000“). In der ersten Fassung hatten vier der zehn eine Stückelung
@@ -66,12 +75,11 @@ MAX_STUECKELUNG = 10000
 WAEHRUNGEN = ("EUR", "USD")
 TOP = 30
 ART = ("Staat", "Öffentlich", "Unternehmen")
+GRUPPEN = (("staat", 0), ("unternehmen", 2))   # Schlüssel in der Datei → Art im Index
+G10_AUSSERHALB_EWR = ("US", "CA", "JP", "CH", "GB")
 # Im WM-Kurznamen klebt das Währungskürzel teils ohne Leerzeichen am Emittenten („… International asEO-Medium-Term“) –
 # emittent_wm schneidet nur an einer Wortgrenze. Hier nachschneiden, statt die gemeinsame Regel der Top-10-Seiten zu ändern.
 GEKLEBT = re.compile(r"(?<=[a-z.)])[A-Z]{2}-[A-Z0-9].*$")
-# Bundesländer und Förderbanken: Der Kurzname hängt die Wertpapierbezeichnung ohne das übliche Kürzel an
-# („HESSEN, LAND SCHATZANW.V.1998(2029)SER.9802“) – ab der Bezeichnung abschneiden, Versalien in Normalschrift.
-BEZEICHNUNG = re.compile(r"\s*(?:Landessch|Schatzanw|Landesobl|Kassenobl|Inh\.-Schv|Öff\.?\s?Pfdbr)\S*.*$", re.I)
 
 
 def ezb_liste(heute: datetime.date):
@@ -103,11 +111,11 @@ def ezb_liste(heute: datetime.date):
 def main() -> int:
     idx, kd = lade(INDEX), lade(KURSE)
     if not idx or not idx.get("rows") or not kd or not isinstance(kd.get("kurse"), dict):
-        log_err("Top 10 nach Kupon: Index oder Kurse fehlen – Datei bleibt unverändert.")
+        log_err("Top 30 nach Kupon: Index oder Kurse fehlen – Datei bleibt unverändert.")
         return 1
     ezb_tag, ezb = ezb_liste(datetime.date.fromisoformat(today_iso()))
     if not ezb:
-        log_err("Top 10 nach Kupon: keine EZB-Liste der letzten Tage abrufbar – Datei bleibt unverändert.")
+        log_err("Top 30 nach Kupon: keine EZB-Liste der letzten Tage abrufbar – Datei bleibt unverändert.")
         return 1
 
     emi, stand = idx.get("emittenten") or [], kd.get("stand")
@@ -115,10 +123,14 @@ def main() -> int:
     d_stand = datetime.date.fromisoformat(stand)
     grenze = (d_stand - datetime.timedelta(days=AKTUELL_TAGE)).isoformat()
 
-    zeilen = []
+    zeilen = {key: [] for key, _ in GRUPPEN}
+    gruppe = {art: key for key, art in GRUPPEN}
     for r in idx["rows"]:
         isin, name = r[0], r[1]
-        if r[2] not in (0, 1, 2) or r[3] not in WAEHRUNGEN or isin not in ezb:
+        if r[2] not in gruppe or r[3] not in WAEHRUNGEN:
+            continue
+        auf_liste = isin in ezb
+        if not auf_liste and not (r[2] == 0 and r[11] in G10_AUSSERHALB_EWR):
             continue
         if not isinstance(r[7], (int, float)) or r[7] > MAX_STUECKELUNG:
             continue
@@ -142,24 +154,25 @@ def main() -> int:
         if (datetime.date.fromisoformat(r[5]) - valuta).days / 365.25 < MIN_JAHRE:
             continue
         em = (STAATSNAME.get(r[11]) if r[2] == 0 else None) or GEKLEBT.sub("", emittent_wm(name, emi[r[9]] if r[9] < len(emi) else "")).strip()
-        if r[2] == 1:
-            em = BEZEICHNUNG.sub("", em).strip() or em
-            em = em.title() if em.isupper() else em
-        zeilen.append({"isin": isin, "emittent": em,
-                       "art": ART[r[2]], "cur": r[3], "kupon": r[4], "zins": zinsfrequenz(r), "faellig": r[5],
-                       "kurs": k[0], "datum": datum, "rendite": k[1] if isinstance(k[1], (int, float)) else None,
-                       "vol": r[6], "stk": r[7]})
-    if not zeilen:
-        log_err("Top 10 nach Kupon: keine Anleihe erfüllt die Regeln – Datei bleibt unverändert.")
+        zeilen[gruppe[r[2]]].append({"isin": isin, "emittent": em,
+                                     "art": ART[r[2]], "cur": r[3], "kupon": r[4], "zins": zinsfrequenz(r), "faellig": r[5],
+                                     "kurs": k[0], "datum": datum, "rendite": k[1] if isinstance(k[1], (int, float)) else None,
+                                     "vol": r[6], "stk": r[7], "ezb": auf_liste})
+    leer = [key for key, z in zeilen.items() if not z]
+    if leer:
+        log_err(f"Top 30 nach Kupon: keine Anleihe erfüllt die Regeln ({', '.join(leer)}) – Datei bleibt unverändert.")
         return 1
 
-    top = sorted(zeilen, key=lambda x: (-x["kupon"], -(x["vol"] or 0), x["isin"]))[:TOP]
+    top = {key: sorted(z, key=lambda x: (-x["kupon"], -(x["vol"] or 0), x["isin"]))[:TOP] for key, z in zeilen.items()}
     write_atomic(OUT, {"updated": today_iso(), "updatedAt": now_iso(), "stand": stand,
                        "ezb": {"stand": ezb_tag.isoformat(), "anzahl": len(ezb)},
-                       "regeln": {"min_jahre": MIN_JAHRE, "max_stueckelung": MAX_STUECKELUNG, "waehrungen": list(WAEHRUNGEN)},
-                       "kandidaten": len(zeilen), "gruppen": {"kupon": top}}, indent=None)
-    print(f"{OUT.name}: {len(top)} von {len(zeilen)} Anleihen (Kurse {stand}, EZB-Liste {ezb_tag.isoformat()} mit {len(ezb)} Papieren); "
-          f"Kupon {top[0]['kupon']} % bis {top[-1]['kupon']} %")
+                       "regeln": {"min_jahre": MIN_JAHRE, "max_stueckelung": MAX_STUECKELUNG, "waehrungen": list(WAEHRUNGEN),
+                                  "g10": list(G10_AUSSERHALB_EWR)},
+                       "kandidaten": {key: len(z) for key, z in zeilen.items()}, "gruppen": top}, indent=None)
+    for key, z in top.items():
+        print(f"{OUT.name}, {key}: {len(z)} von {len(zeilen[key])} Anleihen, Kupon {z[0]['kupon']} % bis {z[-1]['kupon']} %, "
+              f"davon ohne EZB-Liste (G10-Regel) {sum(1 for x in z if not x['ezb'])}")
+    print(f"Kurse {stand}, EZB-Liste {ezb_tag.isoformat()} mit {len(ezb)} Papieren")
     return 0
 
 

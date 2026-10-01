@@ -17,7 +17,8 @@ Fassung (innerHTML) – mit Sortieren, Aufklappen und den Handy-Karten. Die Quel
                           <tbody id="kpis-body">           ← top10-…-laender.json, Gruppe „deutschland“ – erst wenn die
                                                              automatische Rangliste gilt („aktiv“); bis dahin zeigt die
                                                              Seite ihre Handauswahl, die nur das Seitenskript kennt
-  anleihen-kupon.html     <tbody id="kpis-body">           ← top10-anleihen-kupon.json, Gruppe „kupon“ (seit 01.10.2026)
+  anleihen-kupon.html     <tbody id="kpis-staat">, <tbody id="kpis-unternehmen">
+                                                           ← top10-anleihen-kupon.json, Gruppen „staat“ und „unternehmen“ (seit 01.10.2026)
 
 Passt eine Seite oder Datei nicht zum Erwarteten, gibt es eine Warnung und die Seite bleibt, wie sie ist.
 """
@@ -240,18 +241,24 @@ def laender(site, seite, datei):
 
 
 def kupon(site, seite="anleihen-kupon.html", datei="top10-anleihen-kupon.json"):
-    """Top 30 nach Kupon (seit 01.10.2026): dieselben Zeilen wie das Seitenskript, gleiche Spalten wie die Länder-Seiten."""
+    """Top 30 nach Kupon (seit 01.10.2026), zwei Tabellen: dieselben Zeilen wie das Seitenskript, Spalten wie die Länder-Seiten."""
     pfad = os.path.join(site, seite)
     D = lade(site, datei)
-    reihe = (D.get("gruppen") or {}).get("kupon") or []
     html_ = open(pfad, encoding="utf-8").read()
-    leer = re.compile(r'(<tbody id="kpis-body">)\s*(</tbody>)')
-    if not reihe or not leer.search(html_):
-        return warn(f"{seite}: leere Tabelle #kpis-body oder Gruppe „kupon“ fehlt – nichts vorab geschrieben")
-    zeilen = "".join(laender_zeile(r, i + 1, D.get("stand")) for i, r in enumerate(reihe))
-    with open(pfad, "w", encoding="utf-8") as f:
-        f.write(leer.sub(lambda m: m.group(1) + zeilen + m.group(2), html_, count=1))
-    print(f"{seite}: {len(reihe)} Anleihen fest im HTML")
+    geschrieben = []
+    for key in ("staat", "unternehmen"):
+        reihe = (D.get("gruppen") or {}).get(key) or []
+        leer = re.compile(r'(<tbody id="kpis-' + key + r'">)\s*(</tbody>)')
+        if not reihe or not leer.search(html_):
+            warn(f"{seite}: leere Tabelle #kpis-{key} oder Gruppe „{key}“ fehlt – nichts vorab geschrieben")
+            continue
+        zeilen = "".join(laender_zeile(r, i + 1, D.get("stand")) for i, r in enumerate(reihe))
+        html_ = leer.sub(lambda m: m.group(1) + zeilen + m.group(2), html_, count=1)
+        geschrieben.append(f"{len(reihe)} {key}")
+    if geschrieben:
+        with open(pfad, "w", encoding="utf-8") as f:
+            f.write(html_)
+        print(f"{seite}: {', '.join(geschrieben)} fest im HTML")
 
 
 def main():
