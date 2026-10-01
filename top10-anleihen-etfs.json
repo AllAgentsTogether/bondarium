@@ -1,17 +1,17 @@
 {
- "stand": "2026-09-30",
- "updated": "2026-09-30",
- "updatedAt": "2026-09-30T11:00:20Z",
+ "stand": "2026-10-01",
+ "updated": "2026-10-01",
+ "updatedAt": "2026-10-01T08:01:54Z",
  "quelle": "Deutsche Börse: Liste der handelbaren ETFs & ETPs (Stammdaten, Kosten) und Monatsstatistik ETFs & ETPs (Umsatz im Xetra-Orderbuch, Fondsvermögen der Anteilsklasse, XLM); Kategorie, Laufzeit und Absicherung aus Name und Index abgeleitet",
  "statistik": "2026-08",
  "umsatz": {
   "von": "2025-09",
   "bis": "2026-08"
  },
- "anzahl": 908,
+ "anzahl": 909,
  "gruppen": {
   "kurze-laufzeiten": {
-   "anzahl": 85,
+   "anzahl": 86,
    "etfs": [
     {
      "isin": "IE000RHYOR04",
@@ -117,7 +117,7 @@
      "gruppe": "kurze-laufzeiten",
      "erster_handelstag": "2016-01-12",
      "vermoegen": 2230.49,
-     "umsatz12": 333.98,
+     "umsatz12": 333.99,
      "xlm": 7.8,
      "kurzname": "iShares EUR Corp Bond 0-3Yr ESG SRI"
     },
@@ -559,7 +559,7 @@
      "gruppe": "breit-gestreut",
      "erster_handelstag": "2019-06-20",
      "vermoegen": 2297.65,
-     "umsatz12": 633.32,
+     "umsatz12": 633.31,
      "xlm": 8.2,
      "kurzname": "Vanguard Global Aggregate Bond"
     },
@@ -607,7 +607,7 @@
      "gruppe": "breit-gestreut",
      "erster_handelstag": "2021-08-27",
      "vermoegen": 1876.02,
-     "umsatz12": 222.6,
+     "umsatz12": 222.61,
      "xlm": 10.9,
      "kurzname": "iShares Global Aggregate Bond ESG SRI"
     },
@@ -1635,7 +1635,7 @@
      "gruppe": "schwellenlaender",
      "erster_handelstag": "2019-11-25",
      "vermoegen": 1096.93,
-     "umsatz12": 162.27,
+     "umsatz12": 162.28,
      "xlm": 41.4,
      "kurzname": "iShares JP Morgan Advanced USD EM Bond"
     },
