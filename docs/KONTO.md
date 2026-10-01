@@ -3,7 +3,7 @@
 Stand 01.10.2026. Der Bereich hieß bis 01.10.2026 „Mein Depot“; seit dem Nutzerentscheid von diesem Tag heißt er
 „Mein Bondarium“ (Seite und Menü) und hat zwei Reiter nebeneinander: **Merkliste** und **Mein Depot**. Besucher
 registrieren sich mit E-Mail-Adresse und Passwort (seit 30.09.2026 abends, vorher Anmeldung per E-Mail-Link) und
-merken sich Anleihen. „Mein Depot“ ist ein Beispieldepot: gemerkte Anleihen mit einem gedachten Nennwert, darunter
+merken sich Anleihen. „Mein Depot“ ist ein Musterdepot: gemerkte Anleihen mit einem gedachten Nennwert, darunter
 die Zahlungen als Schaubild. Beides liegt auf dem Server und ist auf jedem Gerät da, auf dem man sich anmeldet. Es
 ist ein Planspiel, kein Wertpapierdepot: keine echten Bestände, keine Kaufpreise, keine Orders.
 
@@ -57,7 +57,7 @@ ist breit; auf schmalen Bildschirmen wischt man quer, am Handy erscheint jede An
 Tabelle stehen Anzahl und Kursdatum, darunter wie auf den übrigen Datenseiten der Aufklapper „Datenquellen und Methodik“
 mit dem Daten-Stand („Keine Anlageberatung“ steht in der Fußzeile jeder Seite).
 
-## Reiter „Mein Depot“: Beispieldepot und Zahlungen
+## Reiter „Mein Depot“: Musterdepot und Zahlungen
 
 Seit 01.10.2026 (Nutzerwunsch: „eine Funktion ‚mein depot‘, wo du Anleihen rein legen kannst und den Nennwert
 reinschreiben kannst … darunter genau deine Zahlungen grafisch dargestellt“). Oben ein Formular: Anleihe von der
@@ -67,8 +67,9 @@ Nennwert als Eingabefeld, Kurswert, Zinsen pro Jahr, Entfernen) mit Summenzeile.
 Begriffe (seit 01.10.2026 abends, Nutzerwunsch: „überprüfe, ob die Begrifflichkeiten professionell sind, und optimiere“):
 die Fachwörter der übrigen Website – „Kurswert“ statt „Kaufbetrag heute“, „Kursgewinn“/„Kursverlust“ statt „Rückzahlung +/−“
 unter dem Kurswert, „Zinsen pro Jahr“, „Rückzahlung zum Nennwert (100 %)“, „Fremdwährungen“; bei den Knöpfen „hinzufügen“ und
-„entfernen“ statt „hineinlegen“ und „herausnehmen“. Unverändert, weil vom Nutzer wörtlich so vorgegeben: „Beispieldepot“ und
-die Zeile „* Andere Währungen werden zur Vereinfachung in EUR umgerechnet“.
+„entfernen“ statt „hineinlegen“ und „herausnehmen“. Auf Rückfrage vom Nutzer bestätigt („ja“): „Musterdepot“ statt
+„Beispieldepot“ – auch im Datenschutztext (`rechtliches.html#konto`) – und die Sternchen-Zeile
+„* Fremdwährungen werden zur Vereinfachung in Euro umgerechnet“ statt „* Andere Währungen … in EUR …“.
 
 Kurs und Kurswert (Nutzerwunsch 01.10.2026: „in der Anleihe muss auch der aktuelle Kurs stehen. Bei der Rückzahlung
 muss die Differenz zwischen Kaufkurs und 100 % Rückzahlung erkenntlich sein“): Als Kaufkurs gilt der Schlusskurs von
@@ -89,7 +90,7 @@ täglichen Datenlauf; rund 30 Währungen, „1 Euro = x“). Der Kurs gilt für 
 steht nur einmal: am Namen der Anleihe in der Depot-Tabelle (Nutzerwunsch 01.10.2026: „das Sternchen soll nur einmal bei
 der Anleihe, die nicht EUR ist, zu sehen sein. Nicht überall!“) – nicht an Beträgen, Summen, Legende oder Schaubild. In der
 Einzel-Liste steht zusätzlich der Betrag in der Währung der Anleihe. Unter der Tabelle steht zugeklappt nur die Zeile
-„* Andere Währungen werden zur Vereinfachung in EUR umgerechnet“ (`<details id="kd-fx">`); erst ein Klick zeigt Kurs und
+„* Fremdwährungen werden zur Vereinfachung in Euro umgerechnet“ (`<details id="kd-fx">`); erst ein Klick zeigt Kurs und
 Stichtag, „als fest angenommen“ und das Wechselkursrisiko (`fxHinweis()`). Währungen ohne
 EZB-Referenzkurs (auch die alten Euro-Vorgänger wie DEM) und der Fall, dass `wechselkurse.json` fehlt: „kein Wechselkurs
 für …“ – die Anleihe bleibt aus dem Schaubild. Zinstermine: halbjährlich in USD, GBP, CAD, AUD, NZD, JPY, MXN, ZAR, HKD,
@@ -148,7 +149,7 @@ zum Wischen) und deshalb erst, wenn der Reiter offen ist. `konto.html#depot` öf
 Über der Tabelle stehen „Merkliste teilen“ und „Als PDF speichern“. „Merkliste teilen“ öffnet das Teilen-Menü des Geräts (Web
 Share API mit Datei – Handy, Tablet, Safari); wo der Browser keine Dateien teilen kann, wird das PDF heruntergeladen.
 Nutzerentscheid: nichts Persönliches im PDF (kein Name, keine E-Mail-Adresse), und das PDF geht nicht über den Server.
-Dateiname `Bondarium-Merkliste-JJJJ-MM-TT.pdf`. Das Beispieldepot steht nicht im PDF.
+Dateiname `Bondarium-Merkliste-JJJJ-MM-TT.pdf`. Das Musterdepot steht nicht im PDF.
 
 **Geteilte Merkliste übernehmen** (seit 01.10.2026, Nutzerwunsch: „im geteilten Dokument soll stehen: in meine
 Merkliste übernehmen … eine andere Person soll diese Merkliste in ihre Merkliste bei Bondarium übernehmen können“).
@@ -179,7 +180,7 @@ SQLite-Datei `konto-daten/konto-<zufällig>.sqlite` (Fassung 3):
 | --- | --- | --- |
 | `nutzer` | E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet | „Konto löschen“ sofort; nach zwei Jahren ohne Anmeldung |
 | `favoriten` | ISIN und Zeitpunkt je Nutzer, höchstens 200 | „Entfernen“, mit dem Konto |
-| `depot` | Beispieldepot (seit 01.10.2026, Fassung 3): ISIN, gedachter Nennwert (ganze Zahl) und Zeitpunkt je Nutzer, höchstens 10 | „Entfernen“, mit dem Konto |
+| `depot` | Musterdepot (seit 01.10.2026, Fassung 3): ISIN, gedachter Nennwert (ganze Zahl) und Zeitpunkt je Nutzer, höchstens 10 | „Entfernen“, mit dem Konto |
 | `links` | offene Registrierungen (Adresse, Hashwert des Passworts, vorgemerkte ISIN) und Links „Passwort vergessen“; jeweils Hashwert des Link-Kennworts und Ablauf | beim Einlösen; sonst nach Ablauf |
 | `sitzungen` | Hashwert des Cookies, Ablauf | Abmelden, Passwortwechsel; nach Ablauf |
 | `zaehler` | verschlüsselte Hashwerte von Adresse und IP-Adresse: verschickte E-Mails, falsche Passwörter | nach 24 Stunden |

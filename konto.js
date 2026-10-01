@@ -1,5 +1,5 @@
 /* konto.js – Benutzerbereich im Browser (seit 30.09.2026): Anmeldung mit E-Mail und Passwort, Merkliste und – seit
-   01.10.2026 – das Beispieldepot „Mein Depot“ (gemerkte Anleihen mit gedachtem Nennwert).
+   01.10.2026 – das Musterdepot „Mein Depot“ (gemerkte Anleihen mit gedachtem Nennwert).
    Spricht mit konto.php (Beschreibung dort und in docs/KONTO.md). Geladen auf konto.html, anleihe.html und
    anleihen-suche.html – nach site.js:
      <script src="site.js"></script><script src="konto.js"></script>
@@ -16,7 +16,7 @@
      knopf(isin[, klasse])    HTML des Merken-Knopfs; Klick, Beschriftung und Zustand übernimmt dieses Skript –
                               auch für Knöpfe, die eine Seite später ins Dokument schreibt
      merken(isin), entfernen(isin)            Promise mit dem neuen Stand; abgelehnt mit { status } bei Fehlern
-     depot(isin, nennwert)                   ins Beispieldepot legen oder Nennwert ändern (0 = herausnehmen) → wie merken
+     depot(isin, nennwert)                   ins Musterdepot legen oder Nennwert ändern (0 = herausnehmen) → wie merken
      uebernehmen(isins)                      geteilte Merkliste (Array von ISINs) auf die eigene setzen → Promise mit der
                                              Antwort { neu, uebrig, max, … }; abgelehnt mit { status } bei Fehlern
      registrieren(email, passwort[, isin])   E-Mail mit Bestätigungslink anfordern → Promise { ok, status, stunden }

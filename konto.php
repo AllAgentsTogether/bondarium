@@ -1,7 +1,7 @@
 <?php
 /**
  * Benutzerbereich (konto.html, seit 30.09.2026): Konto mit E-Mail-Adresse und Passwort, eine Merkliste für Anleihen und
- * – seit 01.10.2026 – ein Beispieldepot („Mein Depot“: gemerkte Anleihen mit einem gedachten Nennwert, kein echter
+ * – seit 01.10.2026 – ein Musterdepot („Mein Depot“: gemerkte Anleihen mit einem gedachten Nennwert, kein echter
  * Bestand). Dokumentation: docs/KONTO.md. Der Browser spricht über konto.js mit diesem Skript; die Antwort ist
  * immer JSON ({"status": …}).
  *
@@ -18,7 +18,7 @@
  *   Angemeldet     aktion=status | merken | entfernen | uebernehmen | depot | abmelden | passwort-aendern | loeschen
  *                  uebernehmen (isins, durch Komma getrennt): setzt eine geteilte Merkliste auf die eigene – der Link im
  *                  PDF-Auszug führt auf konto.html#liste=…, die Seite fragt nach, erst der Klick ruft diese Aktion
- *                  depot (isin, nennwert): legt die Anleihe mit diesem Nennwert ins Beispieldepot oder ändert ihn;
+ *                  depot (isin, nennwert): legt die Anleihe mit diesem Nennwert ins Musterdepot oder ändert ihn;
  *                  nennwert 0 nimmt sie heraus
  *   Links          führen auf konto.html#bestaetigen=… bzw. #passwort=… – der Teil hinter „#“ erscheint in keinem
  *                  Server-Log; aktion=link-pruefen sagt der Seite, ob der Link noch gilt und zu welcher Adresse er gehört.
@@ -26,7 +26,7 @@
  * Gespeichert wird in einer SQLite-Datei im Ordner konto-daten/ (per .htaccess gesperrt, Dateiname zufällig):
  *   nutzer     E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet
  *   favoriten  ISIN und Zeitpunkt je Nutzer
- *   depot      Beispieldepot: ISIN, gedachter Nennwert (ganze Zahl in der Währung der Anleihe) und Zeitpunkt je Nutzer
+ *   depot      Musterdepot: ISIN, gedachter Nennwert (ganze Zahl in der Währung der Anleihe) und Zeitpunkt je Nutzer
  *   links      offene Registrierungen und Links zum Zurücksetzen: Hashwert des Link-Kennworts, Adresse, Ablauf, bei
  *              Registrierungen der Hashwert des Passworts und die vorgemerkte ISIN – nach Ablauf gelöscht (aufraeumen)
  *   sitzungen  Anmeldungen (nur der Hashwert des Cookies, Ablauf)
@@ -65,7 +65,7 @@ const RESET_MINUTEN      = 30;    // Link „Passwort vergessen“
 const SITZUNG_TAGE       = 90;
 const RUHE_TAGE          = 730;   // Konto ohne Anmeldung seit so vielen Tagen wird gelöscht
 const MAX_FAVORITEN      = 200;
-const MAX_DEPOT          = 10;          // Anleihen im Beispieldepot (Nutzerentscheid 01.10.2026; je Anleihe eine Farbe im Schaubild)
+const MAX_DEPOT          = 10;          // Anleihen im Musterdepot (Nutzerentscheid 01.10.2026; je Anleihe eine Farbe im Schaubild)
 const NENNWERT_MAX       = 100000000;   // gedachter Nennwert je Anleihe, in der Währung der Anleihe
 const PW_MIN             = 10;
 const PW_MAX             = 200;
@@ -272,7 +272,7 @@ function db(): PDO
             $db->exec('COMMIT');
         }
         if ($fassung < 3) {
-            // Fassung 3 (01.10.2026): Beispieldepot – je Nutzer Anleihen mit einem gedachten Nennwert
+            // Fassung 3 (01.10.2026): Musterdepot – je Nutzer Anleihen mit einem gedachten Nennwert
             $db->exec('BEGIN IMMEDIATE');
             $db->exec('CREATE TABLE IF NOT EXISTS depot (nutzer INTEGER NOT NULL REFERENCES nutzer(id) ON DELETE CASCADE, isin TEXT NOT NULL, nennwert INTEGER NOT NULL, seit INTEGER NOT NULL, PRIMARY KEY (nutzer, isin))');
             $db->exec('PRAGMA user_version = 3');
@@ -423,7 +423,7 @@ function favoriten(int $id): array
     return $aus;
 }
 
-/** Beispieldepot in der Reihenfolge des Hineinlegens: [[ISIN, Nennwert, Zeitpunkt], …] */
+/** Musterdepot in der Reihenfolge des Hineinlegens: [[ISIN, Nennwert, Zeitpunkt], …] */
 function depot(int $id): array
 {
     $s = db()->prepare('SELECT isin, nennwert, seit FROM depot WHERE nutzer = ? ORDER BY seit, isin');

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mein Bondarium – Merkliste und Depot</title>
-<meta name="description" content="Dein Benutzerbereich bei Bondarium: Anleihen merken, ein Beispieldepot bauen und sehen, wann welche Zahlung käme.">
+<meta name="description" content="Dein Benutzerbereich bei Bondarium: Anleihen merken, ein Musterdepot anlegen und sehen, wann welche Zahlung käme.">
 <link rel="canonical" href="https://www.bondarium.de/konto.html">
 <meta name="robots" content="noindex, follow">
 <meta name="author" content="Bondarium">
@@ -18,7 +18,7 @@
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
  <style>
   /* Benutzerbereich „Mein Bondarium“ (seit 30.09.2026, bis 01.10.2026 „Mein Depot“): Anmeldung mit E-Mail und Passwort, Merkliste und
-     – seit 01.10.2026 – „Mein Depot“ (Beispieldepot mit Nennwert und Zahlungen, Stile .kd-*). Schnittstelle konto.php, Skript konto.js,
+     – seit 01.10.2026 – „Mein Depot“ (Musterdepot mit Nennwert und Zahlungen, Stile .kd-*). Schnittstelle konto.php, Skript konto.js,
      Beschreibung docs/KONTO.md. Die Seite ist für alle gleich (kein Inhalt vom Server im HTML) und steht nicht im Suchindex (noindex).
      Farbvariablen, .go, .sortbtn, .table-scroll und .sr-only kommen aus base.css. */
   h1 { margin-bottom: 10px; }
@@ -160,7 +160,7 @@
   .kto-reiter i:empty { display: none; }
   .kto-reiter button[aria-selected="true"] i { background: var(--green); }
   #p-merk[hidden], .kd[hidden] { display: none; }
-  /* Mein Depot: Beispieldepot mit Nennwert, darunter die Zahlungen als Schaubild */
+  /* Mein Depot: Musterdepot mit Nennwert, darunter die Zahlungen als Schaubild */
   .kd-intro { font-size: 16.5px; line-height: 1.55; color: var(--text); max-width: 720px; margin: 18px 0 18px; }
   .kd-neu { display: grid; grid-template-columns: minmax(0, 1fr) 170px auto; gap: 10px 14px; align-items: end; background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); padding: 16px 18px 18px; }
   .kd-neu label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 5px; }
@@ -352,7 +352,7 @@
     <div class="b2-kopf">
       <div>
         <h1>Mein Bondarium</h1>
-        <p class="sub">Merke dir Anleihen, bau dir ein Beispieldepot und sieh, wann welche Zahlung käme – auf jedem Gerät.</p>
+        <p class="sub">Merke dir Anleihen, leg ein Musterdepot an und sieh, wann welche Zahlung käme – auf jedem Gerät.</p>
       </div>
       <div class="b2-spot"><img src="spot-konto.svg" alt="" width="232" height="160"></div>
     </div>
@@ -420,7 +420,7 @@
         <li><b>Registrieren</b><span>E-Mail-Adresse und Passwort wählen, die Adresse über den Link in der E-Mail bestätigen. Das Konto gilt auf jedem Gerät.</span></li>
         <li><b>Merken</b><span>In der <a href="anleihen-suche.html">Anleihen-Suche</a> und auf jedem Steckbrief steht der Knopf „Merken“.</span></li>
         <li><b>Wiedersehen</b><span>Hier steht deine Merkliste mit Kurs und Rendite vom letzten Börsentag – auf jedem Gerät, auf dem du dich anmeldest.</span></li>
-        <li><b>Depot bauen</b><span>Leg gemerkte Anleihen mit einem Nennwert in dein Beispieldepot. Ein Schaubild zeigt, wann Zinsen und Rückzahlungen kämen.</span></li>
+        <li><b>Musterdepot anlegen</b><span>Füg gemerkte Anleihen mit einem Nennwert deinem Musterdepot hinzu. Ein Schaubild zeigt, wann Zinsen und Rückzahlungen kämen.</span></li>
       </ol>
       <p class="kto-klein">Merkliste und Depot sind ein Planspiel. Hier wird nichts gekauft oder verkauft, und es ist kein Wertpapierdepot bei einer Bank. Keine Anlageberatung.</p>
       </div>
@@ -468,7 +468,7 @@
       </div>
       </div>
       <section class="kd" id="mein-depot" role="tabpanel" aria-labelledby="r-depot" hidden>
-        <p class="kd-intro">Bau dir ein Beispieldepot: Füg bis zu zehn Anleihen von deiner Merkliste hinzu und trag jeweils einen Nennwert ein. Darunter siehst du, wann Zinsen und Rückzahlungen fällig wären. Hier wird nichts gekauft.</p>
+        <p class="kd-intro">Leg dir ein Musterdepot an: Füg bis zu zehn Anleihen von deiner Merkliste hinzu und trag jeweils einen Nennwert ein. Darunter siehst du, wann Zinsen und Rückzahlungen fällig wären. Hier wird nichts gekauft.</p>
         <form class="kd-neu" id="f-depot" action="konto.php" method="post">
           <div><label for="kd-isin">Anleihe von deiner Merkliste</label><select id="kd-isin" name="isin" required></select></div>
           <div><label for="kd-nenn">Nennwert</label><div class="kd-eur" id="kd-nenn-box"><input id="kd-nenn" name="nennwert" type="text" inputmode="numeric" autocomplete="off" maxlength="11" value="1.000" required><span id="kd-nenn-w">€</span></div></div>
@@ -477,7 +477,7 @@
         </form>
         <div class="table-scroll" id="kd-liste" hidden>
           <table class="kd-t">
-            <caption class="sr-only">Dein Beispieldepot</caption>
+            <caption class="sr-only">Dein Musterdepot</caption>
             <thead><tr>
               <th scope="col">Anleihe</th>
               <th scope="col" class="num" title="Schlusskurs in % des Nennwerts">Kurs</th>
@@ -492,7 +492,7 @@
             <tfoot id="kd-summe"></tfoot>
           </table>
         </div>
-        <details class="kd-fx" id="kd-fx" hidden><summary>* Andere Währungen werden zur Vereinfachung in EUR umgerechnet</summary><p id="kd-fx-t"></p></details>
+        <details class="kd-fx" id="kd-fx" hidden><summary>* Fremdwährungen werden zur Vereinfachung in Euro umgerechnet</summary><p id="kd-fx-t"></p></details>
         <div class="kto-leer" id="kd-leer" hidden><p><b>Dein Depot ist noch leer.</b> Wähl oben eine Anleihe von deiner Merkliste, trag einen Nennwert ein – zum Beispiel 5.000 € – und füg sie hinzu.</p></div>
         <div id="kd-zahlungen" hidden>
           <h3 class="kd-h3" id="h-zahl">Zahlungen</h3>
@@ -507,7 +507,7 @@
           <details class="more kd-einzeln">
             <summary>Alle Zahlungstermine</summary>
             <div class="table-scroll"><table class="kd-z">
-              <caption class="sr-only">Zahlungen deines Beispieldepots bis zur letzten Fälligkeit</caption>
+              <caption class="sr-only">Zahlungen deines Musterdepots bis zur letzten Fälligkeit</caption>
               <thead><tr><th scope="col">Datum</th><th scope="col">Anleihe</th><th scope="col">Zahlung</th><th scope="col" class="num">Betrag</th></tr></thead>
               <tbody id="kd-plan"></tbody>
             </table></div>
@@ -522,7 +522,7 @@
           <p><strong>Rendite.</strong> Rendite bis zur Fälligkeit in % pro Jahr, von uns aus Kurs, Kupon und Fälligkeit berechnet – nach denselben Regeln wie in der <a href="anleihen-suche.html">Anleihen-Suche</a>, wo unter „Datenquellen und Methodik“ alle Einzelheiten stehen.</p>
           <p><strong>Stammdaten.</strong> Kupon, Fälligkeit, Art, Währung, Volumen und Stückelung aus dem Register der europäischen Wertpapieraufsicht ESMA (FIRDS). Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage, beide in der Währung der Anleihe.</p>
           <p><strong>Steckbrief.</strong> Ein Klick auf Name oder ISIN öffnet den Steckbrief der Anleihe mit Kursverlauf, Handel und Rechenbeispiel.</p>
-          <p><strong>Mein Depot.</strong> Ein Beispieldepot mit gedachten Beträgen, kein Bestand. Kurswert = Nennwert × Schlusskurs, ohne Stückzinsen und Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Zinsen je Termin = Nennwert × Kupon, bei halbjährlicher Zahlung die Hälfte; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Der Unterschied zwischen Rückzahlung und Kurswert ist der Kursgewinn oder Kursverlust bis zur Fälligkeit. Das Schaubild reicht von heute bis zur letzten Fälligkeit, höchstens 30 Jahre, jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung zum Nennwert, ganz unten beides zusammen; ins Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Satz, Schaubild und die Liste der Zahlungstermine zeigen dann nur die Auswahl. Die Zinstermine sind aus der Fälligkeit abgeleitet (jährlich am Jahrestag, italienische Staatsanleihen und einige Fremdwährungen halbjährlich) – maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
+          <p><strong>Mein Depot.</strong> Ein Musterdepot mit gedachten Beträgen, kein Bestand. Kurswert = Nennwert × Schlusskurs, ohne Stückzinsen und Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Zinsen je Termin = Nennwert × Kupon, bei halbjährlicher Zahlung die Hälfte; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Der Unterschied zwischen Rückzahlung und Kurswert ist der Kursgewinn oder Kursverlust bis zur Fälligkeit. Das Schaubild reicht von heute bis zur letzten Fälligkeit, höchstens 30 Jahre, jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung zum Nennwert, ganz unten beides zusammen; ins Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Satz, Schaubild und die Liste der Zahlungstermine zeigen dann nur die Auswahl. Die Zinstermine sind aus der Fälligkeit abgeleitet (jährlich am Jahrestag, italienische Staatsanleihen und einige Fremdwährungen halbjährlich) – maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
           <p><strong>Fremdwährungen.</strong> Anleihen in anderer Währung trägst du mit dem Nennwert in dieser Währung ein. Kurswert, Zinsen und Rückzahlung rechnen wir zur Vereinfachung in Euro um; die Anleihe trägt in der Tabelle ein Sternchen (*). Umgerechnet wird mit dem jeweils neuesten Euro-Referenzkurs der Europäischen Zentralbank (sie veröffentlicht ihn an jedem Arbeitstag gegen 16 Uhr; das Datum steht im aufklappbaren Hinweis unter der Tabelle) – und dieser Kurs ist für die ganze Laufzeit als fest angenommen. Tatsächlich schwankt der Wechselkurs: Wie viel Euro eine Zahlung am Ende wert ist, steht erst am Zahltag fest (Wechselkursrisiko). Anleihen in US-Dollar, Pfund und einigen weiteren Währungen zahlen üblicherweise halbjährlich; so sind sie hier gerechnet. Für Währungen ohne EZB-Referenzkurs gibt es keine Umrechnung – solche Anleihen fehlen im Schaubild.</p>
           <p id="datastand"></p>
         </div>
@@ -541,7 +541,7 @@
         </details>
         <details id="d-weg">
           <summary>Konto löschen</summary>
-          <p>Dein Konto, deine E-Mail-Adresse, dein Passwort, deine Merkliste und dein Beispieldepot werden sofort und endgültig gelöscht. Du kannst dich danach jederzeit neu registrieren – mit leerer Merkliste.</p>
+          <p>Dein Konto, deine E-Mail-Adresse, dein Passwort, deine Merkliste und dein Musterdepot werden sofort und endgültig gelöscht. Du kannst dich danach jederzeit neu registrieren – mit leerer Merkliste.</p>
           <form class="kf" id="f-loeschen" action="konto.php" method="post">
             <input class="sr-only" id="lo-email" name="email" type="email" autocomplete="username" tabindex="-1" aria-hidden="true" readonly>
             <div><label for="lo-pw">Passwort zur Bestätigung</label><div class="kto-pw"><input id="lo-pw" name="passwort" type="password" autocomplete="current-password" maxlength="200" required><button type="button" class="kto-auge" aria-pressed="false" aria-controls="lo-pw">anzeigen</button></div></div>
@@ -876,7 +876,7 @@ MC.navInit();
   });
   K.beiAenderung(zeige);
 
-  // ---------- Mein Depot: Beispieldepot mit Nennwert und Zahlungen (seit 01.10.2026) ----------
+  // ---------- Mein Depot: Musterdepot mit Nennwert und Zahlungen (seit 01.10.2026) ----------
   // Je Anleihe ein gedachter Nennwert (konto.php, Tabelle depot) – kein Bestand, kein Kaufkurs. Gerechnet wird wie im Steckbrief:
   // Zinstermine vom Fälligkeitstag rückwärts (MC.bond.couponDates), jährlich, italienische Staatsanleihen halbjährlich; Zinsen je
   // Termin = Nennwert × Kupon ÷ Termine im Jahr; Rückzahlung zum Nennwert. Ins Schaubild kommen nur Anleihen mit festem Kupon
@@ -884,7 +884,7 @@ MC.navInit();
   // Fremdwährungen (seit 01.10.2026 abends, Nutzerwunsch): Der Nennwert steht in der Währung der Anleihe; Kurswert, Zinsen und
   // Rückzahlung werden mit dem Euro-Referenzkurs der EZB (wechselkurse.json, 1 Euro = x Einheiten) in Euro umgerechnet. Der Kurs ist
   // für die ganze Laufzeit als fest angenommen. Das Sternchen steht nur einmal – am Namen der Anleihe in der Tabelle; darunter die Zeile
-  // „* Andere Währungen werden zur Vereinfachung in EUR umgerechnet“, die aufgeklappt Kurs, Stichtag und Wechselkursrisiko nennt
+  // „* Fremdwährungen werden zur Vereinfachung in Euro umgerechnet“, die aufgeklappt Kurs, Stichtag und Wechselkursrisiko nennt
   // (Nutzerwunsch 01.10.2026: „das Sternchen soll nur einmal bei der Anleihe … zu sehen sein. Nicht überall!“). Halbjährliche Zinsen in den Währungen aus HALBJAHR – dieselbe Liste wie anleihe.html (T.halbjahr).
   const NENN_MAX = 100000000, eur = (v, dec = 2) => `${fmt(v, dec)} €`, plus = (v, dec = 2) => (v > 0 ? "+" : "") + fmt(v, dec);
   const diffKlein = (d, vor) => d == null ? "" : `<small class="${d < 0 ? "kd-minus" : "kd-plus"}">${vor}${plus(d)} €</small>`;
@@ -1084,7 +1084,7 @@ MC.navInit();
       (fehlt.length ? ` Nicht im Schaubild: ${fehlt.map(p => `${p.o.name} (${p.warum})`).join(", ")}.` : "");
     if (MC.wischPruefen) MC.wischPruefen();
   }
-  // Hinweis zum Sternchen: zugeklappt nur die Zeile „* Andere Währungen werden zur Vereinfachung in EUR umgerechnet“; aufgeklappt
+  // Hinweis zum Sternchen: zugeklappt nur die Zeile „* Fremdwährungen werden zur Vereinfachung in Euro umgerechnet“; aufgeklappt
   // Kurs, Stichtag, „als fest angenommen“ und das Wechselkursrisiko
   function fxHinweis() {
     const fremd = POS.filter(p => p.fremd), kurse = [...new Set(fremd.map(p => p.o.cur))].sort().map(c => `1 € = ${fmtFx(FX.kurse[c])} ${MC.esc(c)}`).join(", ");
@@ -1317,7 +1317,7 @@ MC.navInit();
       if (!wegKnopf.dataset.sicher) { wegKnopf.dataset.sicher = "1"; wegKnopf.textContent = "Ja, jetzt endgültig löschen"; return null; }   // erster Klick fragt nach
       return K.loeschen(f.passwort.value).then(a => { wegZurueck(); return a; });
     },
-    (a, f) => { leere(f); $("d-weg").open = false; hinweis("Dein Konto, deine Merkliste und dein Beispieldepot sind gelöscht."); },
+    (a, f) => { leere(f); $("d-weg").open = false; hinweis("Dein Konto, deine Merkliste und dein Musterdepot sind gelöscht."); },
     { zugang: "Das Passwort stimmt nicht." });
   $("d-weg").addEventListener("toggle", wegZurueck);
 
