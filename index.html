@@ -500,7 +500,7 @@
     .hero-karte .hk-z { font-size: 21px; }
     .hero-karte .hk-kopf { font-size: 13px; }
     .hero-karte .hk-achse { height: 14px; }
-    .hero-karte .hk-achse::before { top: 6px; }
+    .hero-karte .hk-achse::before, .hero-karte .hk-achse::after { top: 6px; }
     .hero-karte .hk-achse i { width: 6px; height: 6px; }
     .hero-karte .hk-achse i:last-child { width: 13px; height: 13px; }
   }
@@ -511,11 +511,14 @@
   .hk-art { flex: none; border-radius: 999px; padding: 3px 9px; background: #E8FFE3; color: var(--green-text); font-size: 12px; font-weight: 600; }
   .hk-rend { display: flex; align-items: baseline; gap: 8px; font-size: 13px; color: var(--text); }
   .hk-z { font-size: 26px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; color: var(--green-text); font-variant-numeric: tabular-nums; }
-  .hk-achse { position: relative; display: flex; align-items: center; justify-content: space-between; height: 16px; margin: 2px 0 0; }
-  .hk-achse::before { content: ""; position: absolute; left: 4px; right: 8px; top: 7px; height: 2px; background: #E4E3DF; }
-  .hk-achse i { position: relative; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--green-text); }
+  /* Kupon-Zeitachse mit festem, gestauchtem Maßstab (01.10.2026, Nutzerwahl „30 Jahre, gestaucht“): links heute, rechts 30 Jahre,
+     Lage x = ln(1 + Jahre) / ln(31); --x je Punkt und --p (Rückzahlung) setzt das Skript. Grün = verbleibende Laufzeit, grau = Rest bis 30 Jahre. */
+  .hk-achse { position: relative; height: 16px; margin: 2px 0 0; --p: 1; }
+  .hk-achse::before, .hk-achse::after { content: ""; position: absolute; left: 4px; top: 7px; height: 2px; }
+  .hk-achse::before { right: 8px; background: #E4E3DF; }
+  .hk-achse::after { width: calc((100% - 12px) * var(--p)); background: var(--green-text); opacity: .35; }
+  .hk-achse i { position: absolute; z-index: 1; top: 50%; left: calc(4px + (100% - 12px) * var(--x, 1)); width: 8px; height: 8px; border-radius: 50%; background: var(--green-text); transform: translate(-50%, -50%); }
   .hk-achse i:last-child { width: 16px; height: 16px; background: var(--green); border: 2px solid var(--ink); }
-  .hk-achse i:only-child { margin-left: auto; }   /* Nullkupon: nur der Rückzahlungspunkt, rechts */
   .hk-fuss { display: flex; justify-content: space-between; gap: 10px; font-size: 11.5px; color: var(--text); white-space: nowrap; }
   .hk-fuss b { font-weight: 600; color: var(--ink); }
   @media (prefers-reduced-motion: reduce) { .hero-karte { transition: none; } .hero-karte:hover { transform: none; } }
@@ -829,15 +832,22 @@ window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']
 
 // Hero-Karte (01.10.2026): jede Stunde zufällig eine Anleihe aus allen Einträgen der vier Top-10-Listen (keine ETFs).
 // Der Zufall hängt an der Stundennummer: innerhalb einer Stunde zeigt jeder Aufruf dieselbe Anleihe, zur vollen Stunde wechselt sie.
-// Kupon-Zeitachse: ein Punkt je Jahr mit noch ausstehendem Kupon (höchstens 12), der letzte ist die Rückzahlung.
+// Kupon-Zeitachse mit festem, gestauchtem 30-Jahre-Maßstab (01.10.2026): der große Punkt sitzt bei der Restlaufzeit (ab 30 Jahren ganz rechts),
+// davor ein Punkt je ausstehendem jährlichem Kupontermin; wo die Termine enger als 8 px stünden, wird ausgedünnt (die grüne Linie zeigt die Laufzeit trotzdem).
 (function () {
   var karte = document.querySelector(".hero-karte"), a = document.querySelector(".hk-achse");
   if (!karte || !a) return;
+  function lage(jahre) { return Math.min(Math.log(1 + Math.max(jahre, 0)) / Math.log(31), 1); }
   function achse(faellig, kupon) {
-    var f = faellig.split("-"), heute = new Date(), n = 0;
-    for (var j = heute.getFullYear(); j <= +f[0]; j++) if (new Date(j, f[1] - 1, f[2]) > heute) n++;
-    n = kupon > 0 ? Math.min(Math.max(n, 1), 12) : 1;
-    a.innerHTML = new Array(n + 1).join("<i></i>");
+    var f = faellig.split("-"), heute = new Date(), JAHR = 365.25 * 864e5;
+    var p = lage((new Date(f[0], f[1] - 1, f[2]) - heute) / JAHR), w = Math.max(a.clientWidth - 12, 100), html = "", letzt = -1;
+    for (var j = heute.getFullYear(); kupon > 0 && j < +f[0]; j++) {
+      var t = (new Date(j, f[1] - 1, f[2]) - heute) / JAHR, x = lage(t);
+      if (t <= 0 || (x - letzt) * w < 8 || (p - x) * w < 10) continue;
+      html += '<i style="--x:' + x.toFixed(4) + '"></i>'; letzt = x;
+    }
+    a.style.setProperty("--p", p.toFixed(4));
+    a.innerHTML = html + '<i style="--x:' + p.toFixed(4) + '"></i>';
   }
   achse(a.getAttribute("data-faellig"), 1);
   if (!MC.load || !window.matchMedia || !matchMedia("(min-width: 941px)").matches) return;   // Karte erscheint erst ab 941 px
