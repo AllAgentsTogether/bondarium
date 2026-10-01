@@ -79,10 +79,12 @@ EUR um. Füge ein * hinzu und weise auf Wechselkursrisiken hin. Der Wechselkurs 
 Nennwert steht in der Währung der Anleihe (so speichert ihn `konto.php` schon immer – am Server ändert sich nichts); hinter
 dem Eingabefeld steht das Währungskürzel, darunter der Betrag in Euro. Kaufbetrag, Zinsen und Rückzahlung werden mit dem
 Euro-Referenzkurs der EZB in Euro umgerechnet (`wechselkurse.json`, geschrieben von `scripts/update_wechselkurse.py` im
-täglichen Datenlauf; rund 30 Währungen, „1 Euro = x“). Der Kurs gilt für die ganze Laufzeit als fest. Jeder umgerechnete
-Betrag trägt ein Sternchen – in Tabelle, Summenzeile, Satz, Legende, an den Zahlen im Schaubild und in der Einzel-Liste
-(dort steht zusätzlich der Betrag in der Währung der Anleihe). Der Hinweis dazu (`fxHinweis()`, orange Kante) steht unter
-der Tabelle ausführlich und im Schaubild kurz: Kurs und Stichtag, „als fest angenommen“, Wechselkursrisiko. Währungen ohne
+täglichen Datenlauf; rund 30 Währungen, „1 Euro = x“). Der Kurs gilt für die ganze Laufzeit als fest. Das Sternchen
+steht nur einmal: am Namen der Anleihe in der Depot-Tabelle (Nutzerwunsch 01.10.2026: „das Sternchen soll nur einmal bei
+der Anleihe, die nicht EUR ist, zu sehen sein. Nicht überall!“) – nicht an Beträgen, Summen, Legende oder Schaubild. In der
+Einzel-Liste steht zusätzlich der Betrag in der Währung der Anleihe. Unter der Tabelle steht zugeklappt nur die Zeile
+„* Andere Währungen werden zur Vereinfachung in EUR umgerechnet“ (`<details id="kd-fx">`); erst ein Klick zeigt Kurs und
+Stichtag, „als fest angenommen“ und das Wechselkursrisiko (`fxHinweis()`). Währungen ohne
 EZB-Referenzkurs (auch die alten Euro-Vorgänger wie DEM) und der Fall, dass `wechselkurse.json` fehlt: „kein Wechselkurs
 für …“ – die Anleihe bleibt aus dem Schaubild. Zinstermine: halbjährlich in USD, GBP, CAD, AUD, NZD, JPY, MXN, ZAR, HKD,
 SGD (`HALBJAHR`, dieselbe Liste wie `T.halbjahr` in `anleihe.html` und `HALBJAEHRLICH` in `scripts/_common.py`).
