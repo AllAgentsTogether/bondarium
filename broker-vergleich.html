@@ -87,6 +87,12 @@
   .bk-ang, .bk-hp { font-size: 13.5px; line-height: 1.45; color: var(--ink); padding-top: 4px; }
   .bk-ang small, .bk-hp small { display: block; font-size: 12.5px; line-height: 1.4; color: var(--text); margin-top: 3px; }
   .bk-ang .bdg { margin-right: 4px; font-size: 12px; padding: 2px 8px; }
+  /* Handelsplätze: vier Börsen als Marken – ✓ vom Anbieter genannt, – nicht genannt, ? Anbieter nennt keine Börsen beim Namen */
+  .bk-b { list-style: none; margin: 0 0 5px; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; }
+  .bk-b li { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; line-height: 1.3; border: 1px solid transparent; border-radius: 999px; padding: 2px 8px; white-space: nowrap; }
+  .bk-b li.ja { background: #DCFBD3; color: #157C00; font-weight: 600; }
+  .bk-b li.nein { color: var(--text); border-color: rgba(26,26,25,0.14); }
+  .bk-b li.ka { color: var(--text); border: 1px dashed rgba(26,26,25,0.30); }
   .bk-ang .lab, .bk-hp .lab, .bk-de .lab { display: none; font-size: 13px; font-weight: 400; color: var(--text); }
   .bk-de { text-align: right; font-size: 15px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; padding-top: 3px; white-space: nowrap; }
   .bk-de small { display: block; font-size: 12.5px; font-weight: 400; line-height: 1.35; color: var(--text); white-space: normal; }
@@ -150,6 +156,7 @@
       .bk-z:not(:has(details[open])) details.bk-d { grid-column: 2 / -1; }
     }
     .bk-ang .lab, .bk-hp .lab { display: inline; }
+    .bk-hp .bk-b { display: inline-flex; vertical-align: middle; margin: 0 0 3px 2px; }
     .bk-ang small, .bk-hp small { margin-top: 1px; }
     details.bk-d { grid-row: 4; }
   }
@@ -260,7 +267,7 @@
 
     <section class="section" id="kosten" aria-labelledby="h-kosten">
       <h2 id="h-kosten">Was kostet dein Kauf – und was bekommst du?</h2>
-      <p class="bv-in">Wähle deinen Betrag. Bei jedem Anbieter steht, was der Kauf einer Anleihe kostet, <strong>wie die Zahl entsteht</strong>, welche Anleihen es dort gibt und an welchen Handelsplätzen du kaufen kannst – gerechnet mit den Preisen aus seinem Preisverzeichnis, über den günstigsten Handelsweg, den er für Anleihen nennt. Nicht jede Trading-App hat normale Anleihen im Angebot.</p>
+      <p class="bv-in">Wähle deinen Betrag. Bei jedem Anbieter steht, was der Kauf einer Anleihe kostet, <strong>wie die Zahl entsteht</strong>, welche Anleihen es dort gibt und welche der vier wichtigsten Börsen er unterstützt – gerechnet mit den Preisen aus seinem Preisverzeichnis, über den günstigsten Handelsweg, den er für Anleihen nennt. Nicht jede Trading-App hat normale Anleihen im Angebot.</p>
       <div class="bk-wahl" id="bk-wahl" role="group" aria-label="Kaufbetrag wählen" hidden>
         <span class="bk-wahl-t">Kaufbetrag</span>
         <span class="bk-knoepfe lands"></span>
@@ -273,7 +280,7 @@
       </div>
 <noscript><p class="klein">Die Liste braucht JavaScript. Alle Angaben stehen auch in der Datei <a href="broker.json">broker.json</a>.</p></noscript>
       <p class="bv-leg2" id="bv-leg2"></p>
-      <p class="klein">Prozent = Kosten im Verhältnis zum Kaufbetrag. Depot im Jahr = Preis für ein Depot, in dem nur diese Anleihe liegt. In keiner Zahl steckt die Spanne zwischen Geld- und Briefkurs – sie kommt bei jedem Anbieter dazu. Wo ein Anbieter fremde Kosten nicht beziffert, steht das in Orange dabei. Nicht mehr dabei: die onvista bank – ihr Betrieb endete <a href="https://hilfe.onvista.de/de/gibt-es-onvista-noch-nach-ende-2025" rel="noopener">am 31.12.2025</a>.</p>
+      <p class="klein">Prozent = Kosten im Verhältnis zum Kaufbetrag. Depot im Jahr = Preis für ein Depot, in dem nur diese Anleihe liegt. In keiner Zahl steckt die Spanne zwischen Geld- und Briefkurs – sie kommt bei jedem Anbieter dazu. Wo ein Anbieter fremde Kosten nicht beziffert, steht das in Orange dabei. Handelsplätze: Gezeigt sind die vier Börsen, die für Anleihen von Privatanlegern am wichtigsten sind (unsere Einschätzung, siehe <a href="handelsplaetze.html">Handelsplätze verstehen</a>) – ✓ heißt, der Anbieter nennt die Börse als Handelsplatz, – heißt nicht genannt, ? heißt, der Anbieter nennt keine Börsen beim Namen. Ob es eine bestimmte Anleihe dort gibt, zeigt erst die Suche nach der ISIN. Nicht mehr dabei: die onvista bank – ihr Betrieb endete <a href="https://hilfe.onvista.de/de/gibt-es-onvista-noch-nach-ende-2025" rel="noopener">am 31.12.2025</a>.</p>
     </section>
 
     <section class="section" id="methodik" aria-labelledby="h-methodik">
@@ -289,7 +296,7 @@
     <section class="section" id="pruefen" aria-labelledby="h-pruefen">
       <h2 id="h-pruefen">So prüfst du deinen Broker</h2>
       <p class="bv-in">Sechs Fragen, bevor du ein Depot eröffnest – oder bevor du bei deinem jetzigen Broker kaufst.</p>
-      <ol class="bv-steps"><li><h3>Gibt es deine Anleihe?</h3><p>Gib die <b>ISIN</b> der Anleihe, die dich interessiert, in die Suche deines Brokers ein. Findet er sie nicht, kannst du sie dort nicht kaufen.</p></li><li><h3>Kannst du den Handelsplatz wählen?</h3><p>Gut ist eine Auswahl: Börse Stuttgart oder Frankfurt, gettex, Tradegate, Direkthandel. Wo viel gehandelt wird, ist die Spanne klein. Welche Plätze ein Anbieter nennt, steht oben in der Liste.</p></li><li><h3>Geht eine Order mit Limit?</h3><p>Nur mit Limit zahlst du nie mehr als geplant. Ob dein Broker das bei Anleihen kann, steht oben im Aufklapper.</p></li><li><h3>Was kostet dein Betrag?</h3><p>Fester Betrag plus Prozent plus Börsenentgelt. <b>0,25&nbsp;%</b> sind bei 10.000&nbsp;€ schon 25&nbsp;€ – bei jedem Kauf und jedem Verkauf.</p></li><li><h3>Kostet das Depot etwas?</h3><p>Online-Depots sind meist kostenlos. In der Filiale zahlst du oft jedes Jahr – das steht oben in der Spalte „Depot im Jahr“.</p></li><li><h3>Wer kümmert sich um die Steuer?</h3><p>Deutsche Banken und Broker führen die Steuer ab und nehmen deinen Freistellungsauftrag. Bei Brokern im Ausland erklärst du die Zinsen selbst.</p></li></ol>
+      <ol class="bv-steps"><li><h3>Gibt es deine Anleihe?</h3><p>Gib die <b>ISIN</b> der Anleihe, die dich interessiert, in die Suche deines Brokers ein. Findet er sie nicht, kannst du sie dort nicht kaufen.</p></li><li><h3>Kannst du den Handelsplatz wählen?</h3><p>Gut ist eine Auswahl: Börse Stuttgart oder Frankfurt, gettex, Tradegate, Direkthandel. Wo viel gehandelt wird, ist die Spanne klein. Welche der vier wichtigsten Börsen ein Anbieter nennt, steht oben in der Liste.</p></li><li><h3>Geht eine Order mit Limit?</h3><p>Nur mit Limit zahlst du nie mehr als geplant. Ob dein Broker das bei Anleihen kann, steht oben im Aufklapper.</p></li><li><h3>Was kostet dein Betrag?</h3><p>Fester Betrag plus Prozent plus Börsenentgelt. <b>0,25&nbsp;%</b> sind bei 10.000&nbsp;€ schon 25&nbsp;€ – bei jedem Kauf und jedem Verkauf.</p></li><li><h3>Kostet das Depot etwas?</h3><p>Online-Depots sind meist kostenlos. In der Filiale zahlst du oft jedes Jahr – das steht oben in der Spalte „Depot im Jahr“.</p></li><li><h3>Wer kümmert sich um die Steuer?</h3><p>Deutsche Banken und Broker führen die Steuer ab und nehmen deinen Freistellungsauftrag. Bei Brokern im Ausland erklärst du die Zinsen selbst.</p></li></ol>
     </section>
 
     <div class="weiter">
@@ -448,7 +455,16 @@ MC.navInit();
     var ohne = D.anbieter.filter(function (b) { return !(b.wege && b.wege.length); });
     function zelle(x) { return x ? "<dd" + (x.warn ? ' class="warn"' : "") + ">" + x.t + (x.n ? "<small>" + x.n + "</small>" : "") + "</dd>" : "<dd>–</dd>"; }
     function angebot(b) { return '<div class="bk-ang"><span class="lab">Anleihen: </span>' + (b.gruppe === "aw" ? '<span class="bdg aw">' + G.aw.bdg + "</span> " : "") + b.anleihen + smalls(b.anleihen_n) + "</div>"; }
-    function plaetze(b) { return '<div class="bk-hp"><span class="lab">Handelsplätze: </span>' + (b.handel ? handel(b) + smalls(b.handel_n) : "–") + "</div>"; }
+    // Handelsplätze: die vier Börsen aus D.boersen einheitlich als Marken (✓ genannt, – nicht genannt, ? Anbieter nennt keine Börsen), darunter was es außerdem gibt
+    var MARKE = { ja: ["✓", "ja"], nein: ["–", "nicht genannt"], ka: ["?", "keine Angabe"] };
+    function plaetze(b) {
+      if (!b.handel) return '<div class="bk-hp"><span class="lab">Handelsplätze: </span>–</div>';
+      var m = b.boersen ? '<ul class="bk-b">' + (D.boersen || []).map(function (x) {
+        var v = b.boersen[x.id], k = v === true ? "ja" : v === false ? "nein" : "ka";
+        return '<li class="' + k + '"><span aria-hidden="true">' + MARKE[k][0] + '</span><span class="sr-only">' + MARKE[k][1] + ": </span>" + x.name + "</li>";
+      }).join("") + "</ul>" : "";
+      return '<div class="bk-hp"><span class="lab">Handelsplätze: </span>' + m + "<small>" + handel(b) + "</small>" + smalls(b.handel_n) + "</div>";
+    }
     function kopf(b) { return '<div class="bk-an"><b>' + b.name + '</b><span class="typ">' + b.typ + "</span>" + hin(b) + "</div>"; }
     function quelle(b) { return "<dt>Quelle</dt><dd>" + (quellen(b) || "–") + (b.notiz ? "<small>" + b.notiz + "</small>" : "") + "</dd>"; }
     function zeichne(B) {

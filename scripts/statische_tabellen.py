@@ -219,8 +219,20 @@ def broker_teile(D, heute):
         return ('<div class="bk-ang"><span class="lab">Anleihen: </span>' + (f'<span class="bdg aw">{G["aw"]["bdg"]}</span> ' if b["gruppe"] == "aw" else "")
                 + b["anleihen"] + smalls(b.get("anleihen_n")) + "</div>")
 
+    marke = {"ja": ("✓", "ja"), "nein": ("–", "nicht genannt"), "ka": ("?", "keine Angabe")}
+
     def plaetze(b):
-        return '<div class="bk-hp"><span class="lab">Handelsplätze: </span>' + (handel(b) + smalls(b.get("handel_n")) if b.get("handel") else "–") + "</div>"
+        """Die vier Börsen aus D["boersen"] einheitlich als Marken, darunter was es außerdem gibt."""
+        if not b.get("handel"):
+            return '<div class="bk-hp"><span class="lab">Handelsplätze: </span>–</div>'
+        m = ""
+        if b.get("boersen"):
+            for x in D.get("boersen") or []:
+                v = b["boersen"].get(x["id"])
+                k = "ja" if v is True else "nein" if v is False else "ka"
+                m += f'<li class="{k}"><span aria-hidden="true">{marke[k][0]}</span><span class="sr-only">{marke[k][1]}: </span>{x["name"]}</li>'
+            m = f'<ul class="bk-b">{m}</ul>'
+        return f'<div class="bk-hp"><span class="lab">Handelsplätze: </span>{m}<small>{handel(b)}</small>{smalls(b.get("handel_n"))}</div>'
 
     def kopf(b):
         return f'<div class="bk-an"><b>{b["name"]}</b><span class="typ">{b["typ"]}</span>{hin(b)}</div>'
