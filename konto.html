@@ -128,6 +128,19 @@
   .kto-weg:hover { background: #A2561C; }
   .kto-weg:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
   .kto-weg[disabled] { opacity: 0.6; cursor: default; }
+  /* Geteilte Merkliste übernehmen (Link im PDF-Auszug, seit 01.10.2026) */
+  .kto-geteilt { background: #fff; border: 1.5px solid #1A1A19; border-radius: 16px; box-shadow: var(--shadow); padding: 18px 22px 18px; margin: 0 0 22px; max-width: 720px; }
+  .kto-geteilt[hidden], #geteilt-ja[hidden] { display: none; }
+  .kto-geteilt h2 { font-size: 22px; margin: 0 0 6px; }
+  .kto-geteilt p { font-size: 15.5px; line-height: 1.55; margin: 0; }
+  .kto-geteilt ul { list-style: none; margin: 12px 0 0; padding: 0; columns: 2; column-gap: 28px; font-size: 14px; line-height: 1.45; }
+  .kto-geteilt li { break-inside: avoid; padding: 4px 0; border-bottom: 1px solid var(--rule); }
+  .kto-geteilt li small { color: var(--text); font-variant-numeric: tabular-nums; }
+  .kto-geteilt li.da { color: var(--text); }
+  .kto-geteilt-a { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin-top: 16px !important; }
+  .kto-geteilt .go { border: 0; cursor: pointer; font-family: inherit; }
+  .kto-geteilt .go[disabled] { opacity: 0.6; cursor: default; }
+  @media (max-width: 600px) { .kto-geteilt { padding: 16px 16px; } .kto-geteilt ul { columns: 1; } }
   /* Zwei Reiter nebeneinander: „Merkliste“ und „Mein Depot“ (seit 01.10.2026, Nutzerentscheid) – einer ist offen */
   .kto-reiter { display: flex; gap: 8px; margin: 22px 0 0; border-bottom: 2px solid var(--rub-line); }
   .kto-reiter button { font: inherit; font-size: 17px; font-weight: 600; line-height: 1.2; color: var(--text); background: none; border: 0; border-radius: 12px 12px 0 0; padding: 12px 20px 11px; margin-bottom: -2px; border-bottom: 3px solid transparent; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
@@ -315,6 +328,13 @@
     </div>
     <noscript><p class="note">Der Benutzerbereich braucht JavaScript.</p></noscript>
     <p class="kto-hinweis" id="hinweis" role="status" aria-live="polite" hidden></p>
+    <section class="kto-geteilt" id="geteilt" aria-labelledby="h-geteilt" hidden>
+      <h2 id="h-geteilt">Geteilte Merkliste</h2>
+      <p id="geteilt-text"></p>
+      <ul id="geteilt-liste"></ul>
+      <p class="kto-geteilt-a"><button type="button" class="go" id="geteilt-ja" hidden></button><button type="button" class="kto-textbtn" id="geteilt-nein">Nicht übernehmen</button></p>
+      <p class="kf-status" id="geteilt-status" role="status" aria-live="polite"></p>
+    </section>
     <p class="kto-lade" id="lade">Wird geladen …</p>
 
     <div class="kto-anm" id="anmelden" hidden>
@@ -740,7 +760,59 @@ MC.navInit();
   function zeige(stand) {
     if (stand.angemeldet) zeigeDepot(stand);
     else { lauf++; LISTE = []; ZULETZT = ""; if (!["bestaetigen", "neu"].includes(MODUS)) modus("anmelden"); zeigeTeil("anmelden"); }
+    zeigeGeteilt(stand);
   }
+
+  // ---------- Geteilte Merkliste übernehmen (seit 01.10.2026, Nutzerwunsch) ----------
+  // Der PDF-Auszug trägt den Knopf „In meine Merkliste übernehmen“; er führt auf konto.html#liste=ISIN,ISIN,… Der Teil hinter „#“
+  // geht nicht an den Server und wird sofort aus der Adresse genommen. Nichts wird von selbst übernommen (ein fremder Link soll nichts
+  // auf die Merkliste setzen können): Die Seite zeigt die Anleihen und fragt; erst der Klick ruft konto.php (aktion=uebernehmen).
+  // Wer nicht angemeldet ist, meldet sich erst an – die Liste bleibt so lange im Speicher dieser Seite, nirgends sonst.
+  let GETEILT = [];
+  function listeAusLink() {
+    const m = /^#liste=([A-Za-z0-9,]{12,2800})$/.exec(location.hash);
+    if (!m) return false;
+    GETEILT = m[1].toUpperCase().split(",").filter((x, i, a) => ISIN_RE.test(x) && a.indexOf(x) === i).slice(0, 200);
+    try { history.replaceState(null, "", location.pathname); } catch (e) {}
+    return GETEILT.length > 0;
+  }
+  let GETEILT_NEU = [];   // was der Knopf übernimmt: bekannt und noch nicht gemerkt
+  function zeigeGeteilt(stand) {
+    const box = $("geteilt"), n = GETEILT.length, ja = $("geteilt-ja"), wort = k => `${k} ${k === 1 ? "Anleihe" : "Anleihen"}`;
+    box.hidden = !n; if (!n) return;
+    // D = Anleihedaten (null, solange sie laden; false, wenn sie nicht zu laden sind – dann gilt jede ISIN als bekannt)
+    function zeichneBox(D) {
+      const bekannt = i => !D || D.idx.has(i) || !!STAMM[i], da = i => stand.angemeldet && K.hat(i);
+      const fremd = GETEILT.filter(i => !bekannt(i)).length, schon = GETEILT.filter(da).length;
+      GETEILT_NEU = GETEILT.filter(i => bekannt(i) && !da(i));
+      $("geteilt-text").innerHTML = !stand.angemeldet
+        ? `Jemand hat eine Merkliste mit dir geteilt: <b>${wort(n)}</b>. Melde dich an – dann kannst du sie in deine eigene Merkliste übernehmen. Noch kein Konto? Registriere dich und klick nach dem Bestätigen deiner E-Mail-Adresse noch einmal auf den Knopf im PDF.`
+        : GETEILT_NEU.length ? `Jemand hat eine Merkliste mit dir geteilt: <b>${wort(n)}</b>.${schon ? ` ${schon === 1 ? "Eine steht" : schon + " stehen"} schon auf deiner Merkliste.` : ""}${fremd ? ` ${fremd === 1 ? "Eine kennt" : fremd + " kennt"} Bondarium nicht – sie ${fremd === 1 ? "bleibt" : "bleiben"} draußen.` : ""} Übernommen wird nur, was du hier bestätigst.`
+        : schon === n ? `Alle ${wort(n)} dieser geteilten Merkliste stehen schon auf deiner Merkliste.` : "In dieser geteilten Merkliste ist nichts, was sich übernehmen lässt.";
+      ja.hidden = !stand.angemeldet || !GETEILT_NEU.length; ja.disabled = D === null;
+      ja.textContent = D === null ? "Wird geprüft …" : `${wort(GETEILT_NEU.length)} in meine Merkliste übernehmen`;
+      $("geteilt-nein").textContent = stand.angemeldet && !GETEILT_NEU.length ? "Schließen" : "Nicht übernehmen";
+      $("geteilt-liste").innerHTML = GETEILT.slice(0, 30).map(i => {
+        const o = D && bekannt(i) ? anleihe(i, 0, D) : { name: i, kupon: null, faellig: "" };
+        return `<li${da(i) || !bekannt(i) ? ' class="da"' : ""}>${MC.esc(o.name)}${o.name !== i ? ` <small>${fmtCoupon(o.kupon)}${o.faellig ? " · " + o.faellig.slice(0, 4) : ""} · ${MC.esc(i)}</small>` : ""}${da(i) ? " <small>· schon gemerkt</small>" : !bekannt(i) ? " <small>· Bondarium unbekannt</small>" : ""}</li>`;
+      }).join("") + (n > 30 ? `<li>… und ${n - 30} weitere</li>` : "");
+    }
+    zeichneBox(null);
+    ladeDaten().then(D => ladeStamm(GETEILT.filter(i => !D.idx.has(i))).then(() => D)).then(D => { if (GETEILT.length === n) zeichneBox(D); }, () => { if (GETEILT.length === n) zeichneBox(false); });
+  }
+  $("geteilt-nein").addEventListener("click", () => { GETEILT = []; $("geteilt").hidden = true; });
+  $("geteilt-ja").addEventListener("click", e => {
+    const st = $("geteilt-status"); e.currentTarget.disabled = true; st.className = "kf-status"; st.textContent = "Einen Moment …";
+    const liste = GETEILT.slice(), neu = GETEILT_NEU.slice(); GETEILT = [];   // vor der Antwort leeren: Die Antwort zeichnet die Seite neu
+    K.uebernehmen(neu).then(a => {
+      st.textContent = ""; $("geteilt").hidden = true; reiterWahl("merk");
+      hinweis(`${a.neu === 1 ? "1 Anleihe ist" : a.neu + " Anleihen sind"} neu auf deiner Merkliste.` + (a.uebrig ? ` ${a.uebrig} ${a.uebrig === 1 ? "passte" : "passten"} nicht mehr – die Merkliste fasst höchstens ${a.max || 200}.` : ""));
+    }, a => {
+      GETEILT = liste; $("geteilt-ja").disabled = false;
+      if (a && a.status === "anmelden") { st.textContent = ""; return; }
+      st.className = "kf-status fehler"; st.textContent = TEXT[a && a.status] || TEXT.fehler;
+    });
+  });
   K.beiAenderung(zeige);
 
   // ---------- Mein Depot: Beispieldepot mit Nennwert und Zahlungen (seit 01.10.2026) ----------
@@ -1024,7 +1096,15 @@ MC.navInit();
         P.text(R, y, "Merkliste", { gr: 24, fett: true });
         y += 20;
         P.text(R, y, `Erstellt am ${datum} um ${uhr} Uhr · ${n} ${n === 1 ? "Anleihe" : "Anleihen"}${KSTAND ? ` · Kurse vom ${MC.datum(KSTAND)}` : ""}`, { gr: 9.5, farbe: GRAU });
-        y += 30;
+        // Knopf für Empfänger (Nutzerwunsch 01.10.2026): öffnet konto.html#liste=ISIN,… – dort lässt sich die Liste in die eigene
+        // Merkliste übernehmen. Die ISINs stehen hinter „#“, gehen also beim Öffnen nicht an den Server.
+        const kt = "In meine Merkliste übernehmen", kb = P.weite(kt, 10, true) + 28, ziel = `${LINK}konto.html#liste=${liste.map(o => o.isin).join(",")}`;
+        P.rechteck(R, y + 12, kb, 24, GRUEN, 6);
+        P.text(R + 14, y + 28, kt, { gr: 10, fett: true, farbe: INK });
+        P.link(R, y + 12, kb, 24, ziel);
+        P.text(R + kb + 12, y + 23, "Für alle, die diese Liste bekommen: Der Knopf öffnet bondarium.de.", { gr: 8, farbe: GRAU });
+        P.text(R + kb + 12, y + 33, `Dort ${n === 1 ? "lässt sich die Anleihe" : "lassen sich die " + n + " Anleihen"} mit einem Klick in die eigene Merkliste übernehmen.`, { gr: 8, farbe: GRAU });
+        y += 30 + 36;
       } else { P.text(R, y, "Merkliste – Fortsetzung", { gr: 12, fett: true }); y += 22; }
       SP.forEach((s, i) => {
         P.text(s.r ? rx(i) : lx(i), y, s.t.toUpperCase(), { gr: 6.5, fett: true, farbe: GRAU, rechts: s.r });
@@ -1128,6 +1208,8 @@ MC.navInit();
     return true;
   }
   window.addEventListener("hashchange", ausLink);   // Link in einem Tab geöffnet, in dem die Seite schon steht: kein Neuladen, nur „#…“ ändert sich
+  window.addEventListener("hashchange", () => { if (listeAusLink()) zeigeGeteilt(K.stand()); });
+  listeAusLink();
   if (!ausLink()) {
     K.bereit().then(stand => {
       if (stand.angemeldet && VOR) {

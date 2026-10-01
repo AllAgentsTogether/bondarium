@@ -37,7 +37,7 @@ verlängert: `__Host-bondarium-sitzung` (zufällige Kennung; HttpOnly, Secure, S
 
 **Angemeldet.** Merken, Entfernen, ins Depot legen (`aktion=depot` mit ISIN und Nennwert; Nennwert 0 nimmt die
 Anleihe heraus), Abmelden, Passwort ändern (mit dem aktuellen Passwort; andere Geräte werden abgemeldet, eine E-Mail
-weist darauf hin), Konto löschen (mit Passwort).
+weist darauf hin), Konto löschen (mit Passwort). Dazu `aktion=uebernehmen` für eine geteilte Merkliste (siehe unten).
 
 Der Teil hinter `#` eines Links geht nicht an den Server und steht in keinem Log; die Seite nimmt ihn sofort aus der
 Adresse. Wer nicht angemeldet ist, löst keine Anfrage an `konto.php` aus: `konto.js` fragt den Stand nur ab, wenn der
@@ -99,6 +99,18 @@ zum Wischen) und deshalb erst, wenn der Reiter offen ist. `konto.html#depot` öf
 Share API mit Datei – Handy, Tablet, Safari); wo der Browser keine Dateien teilen kann, wird das PDF heruntergeladen.
 Nutzerentscheid: nichts Persönliches im PDF (kein Name, keine E-Mail-Adresse), und das PDF geht nicht über den Server.
 Dateiname `Bondarium-Merkliste-JJJJ-MM-TT.pdf`. Das Beispieldepot steht nicht im PDF.
+
+**Geteilte Merkliste übernehmen** (seit 01.10.2026, Nutzerwunsch: „im geteilten Dokument soll stehen: in meine
+Merkliste übernehmen … eine andere Person soll diese Merkliste in ihre Merkliste bei Bondarium übernehmen können“).
+Auf der ersten Seite des PDFs steht der grüne Knopf „In meine Merkliste übernehmen“. Er führt auf
+`konto.html#liste=ISIN,ISIN,…` – die ISINs stehen hinter „#“, gehen beim Öffnen also nicht an den Server, und die Seite
+nimmt sie sofort aus der Adresse. Die Seite zeigt den Kasten „Geteilte Merkliste“ mit den Anleihen und fragt nach;
+nichts wird von selbst übernommen (ein fremder Link soll nichts auf die Merkliste setzen können). Erst der Klick ruft
+`aktion=uebernehmen` (`MC.konto.uebernehmen(isins)`): übernommen wird, was Bondarium kennt und noch nicht gemerkt ist,
+bis die Merkliste voll ist (200); die Antwort nennt `neu` und `uebrig`. Wer nicht angemeldet ist, meldet sich erst an –
+die Liste bleibt so lange im Speicher der Seite (kein Cookie, kein Browser-Speicher); nach einer neuen Registrierung
+muss der Knopf im PDF noch einmal geklickt werden. Gespeichert wird nichts Neues: nur ISINs auf der Merkliste des
+Empfängers, wie beim Merken. Wer mit wem teilt, erfährt der Server nicht.
 
 Gestaltung schlicht: A4 hochkant, Helvetica, grünes Band mit dem Logo der Website (Bildzeichen „Orbit“ und
 Wortmarke als Vektor, die Wortmarke aus der Kopfzeile der Seite gelesen), „Merkliste“ mit Datum, Anzahl und Kursstand,

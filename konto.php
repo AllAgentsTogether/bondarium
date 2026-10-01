@@ -15,7 +15,9 @@
  *                  verlängert sich bei Nutzung).
  *   Vergessen      aktion=vergessen (E-Mail) → E-Mail mit Link (30 Minuten, einmal); aktion=passwort-neu (Kennwort des
  *                  Links, neues Passwort) setzt es, meldet alle Geräte ab und das aktuelle an.
- *   Angemeldet     aktion=status | merken | entfernen | depot | abmelden | passwort-aendern | loeschen
+ *   Angemeldet     aktion=status | merken | entfernen | uebernehmen | depot | abmelden | passwort-aendern | loeschen
+ *                  uebernehmen (isins, durch Komma getrennt): setzt eine geteilte Merkliste auf die eigene – der Link im
+ *                  PDF-Auszug führt auf konto.html#liste=…, die Seite fragt nach, erst der Klick ruft diese Aktion
  *                  depot (isin, nennwert): legt die Anleihe mit diesem Nennwert ins Beispieldepot oder ändert ihn;
  *                  nennwert 0 nimmt sie heraus
  *   Links          führen auf konto.html#bestaetigen=… bzw. #passwort=… – der Teil hinter „#“ erscheint in keinem
@@ -736,6 +738,45 @@ try {
                 db()->prepare('DELETE FROM favoriten WHERE nutzer = ? AND isin = ?')->execute([$n['id'], $isin]);
             }
             antwort(200, 'ok', konto_stand($n['id'], $n['email']));
+
+        case 'uebernehmen':
+            // Geteilte Merkliste (Link im PDF-Auszug, seit 01.10.2026): alle gültigen ISINs, die noch fehlen, bis die Merkliste voll ist
+            $n = angemeldet();
+            $isins = [];
+            foreach (explode(',', strtoupper((string)($_POST['isins'] ?? ''))) as $i) {
+                $i = trim($i);
+                if (ist_isin($i)) {
+                    $isins[$i] = true;
+                }
+                if (count($isins) >= MAX_FAVORITEN) {
+                    break;
+                }
+            }
+            if (!$isins) {
+                antwort(422, 'isin');
+            }
+            $db = db();
+            $db->exec('BEGIN IMMEDIATE');
+            $s = $db->prepare('SELECT isin FROM favoriten WHERE nutzer = ?');
+            $s->execute([$n['id']]);
+            $da = array_flip($s->fetchAll(PDO::FETCH_COLUMN));
+            $neu = 0;
+            $uebrig = 0;
+            $jetzt = time();
+            $ein = $db->prepare('INSERT OR IGNORE INTO favoriten (nutzer, isin, seit) VALUES (?, ?, ?)');
+            foreach (array_keys($isins) as $i) {
+                if (isset($da[$i])) {
+                    continue;
+                }
+                if (count($da) + $neu >= MAX_FAVORITEN) {
+                    $uebrig++;
+                    continue;
+                }
+                $ein->execute([$n['id'], $i, $jetzt]);
+                $neu++;
+            }
+            $db->exec('COMMIT');
+            antwort(200, 'ok', konto_stand($n['id'], $n['email']) + ['neu' => $neu, 'uebrig' => $uebrig, 'max' => MAX_FAVORITEN]);
 
         case 'depot':
             $n = angemeldet();

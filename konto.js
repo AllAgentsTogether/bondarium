@@ -17,6 +17,8 @@
                               auch für Knöpfe, die eine Seite später ins Dokument schreibt
      merken(isin), entfernen(isin)            Promise mit dem neuen Stand; abgelehnt mit { status } bei Fehlern
      depot(isin, nennwert)                   ins Beispieldepot legen oder Nennwert ändern (0 = herausnehmen) → wie merken
+     uebernehmen(isins)                      geteilte Merkliste (Array von ISINs) auf die eigene setzen → Promise mit der
+                                             Antwort { neu, uebrig, max, … }; abgelehnt mit { status } bei Fehlern
      registrieren(email, passwort[, isin])   E-Mail mit Bestätigungslink anfordern → Promise { ok, status, stunden }
      bestaetigen(kennwort, passwort)         Registrierung abschließen (Link aus der E-Mail + Passwort) → { ok, status, gemerkt }
      anmelden(email, passwort[, isin])       → Promise { ok, status, gemerkt }
@@ -132,6 +134,13 @@
     merken: function (isin) { return aendere("merken", isin); },
     entfernen: function (isin) { return aendere("entfernen", isin); },
     depot: function (isin, nennwert) { return aendere("depot", isin, nennwert); },
+    uebernehmen: function (isins) {
+      return sende("POST", { aktion: "uebernehmen", isins: isins.join(",") }).then(function (j) {
+        if (j.ok) { uebernimm(j); return j; }
+        if (j.status === "anmelden") uebernimm(null);
+        throw j;
+      });
+    },
     registrieren: function (email, passwort, isin, falle) { return sende("POST", { aktion: "registrieren", email: email, passwort: passwort, isin: isin || "", website: falle || "" }); },
     bestaetigen: function (kennwort, passwort) { return sende("POST", { aktion: "bestaetigen", token: kennwort, passwort: passwort }).then(an); },
     anmelden: function (email, passwort, isin) { return sende("POST", { aktion: "anmelden", email: email, passwort: passwort, isin: isin || "" }).then(an); },
