@@ -289,29 +289,6 @@
       "probe": {"1000": 0, "5000": 0, "10000": 0, "25000": 0, "100000": 0}
     },
     {
-      "name": "Sparkasse",
-      "typ": "Filialbank, Beispiel Sparkasse Siegen",
-      "gruppe": "ja",
-      "anleihen": "Staats- und Unternehmensanleihen",
-      "boersen": {"stuttgart": null, "frankfurt": null, "tradegate": null, "gettex": null},
-      "handel": "nennt keine Börse beim Namen – nur „inländische“ und „ausländische Börsen“",
-      "limit": {"t": "ja", "n": "nicht ausgeführtes Limit: 5&nbsp;€"},
-      "steuer": {"t": "führt die Bank ab"},
-      "preis": "Order über das Internet: 14,90&nbsp;€ Grundpreis + 0,5&nbsp;% vom Kurswert. Order beim Berater: 19,90&nbsp;€ + 0,7&nbsp;%. Einen Mindest- oder Höchstpreis nennt der Preisaushang nicht. Alle Preise zuzüglich fremder Kosten.",
-      "preis_n": ["Rabatt für Kunden von 14 bis unter 30 Jahren"],
-      "wege": [
-        {"name": "online über die Börse", "fix": 14.9, "pct": 0.5, "offen": "fremde Kosten (z.&nbsp;B. Courtage, Clearinggebühren), nicht beziffert"},
-        {"name": "Order beim Berater", "fix": 19.9, "pct": 0.7, "offen": "fremde Kosten, nicht beziffert"}
-      ],
-      "depot": {"t": "8,93&nbsp;€ Grundpreis je Quartal + 0,0595&nbsp;% vom Kurswert je Quartal, mindestens 1,79&nbsp;€ je Posten", "n": ["bei Anleihen mindestens vom Nennwert gerechnet"], "fix": 35.72, "pct": 0.238, "pmin": 7.16},
-      "quellen": [
-        {"t": "Preisaushang", "url": "https://www.sparkasse-siegen.de/content/dam/myif/spk-siegen/work/dokumente/pdf/preise-leistungen/preisaushang.pdf", "stand": "Stand 03.08.2026"},
-        {"t": "Preis- und Leistungsverzeichnis", "url": "https://www.sparkasse-siegen.de/content/dam/myif/spk-siegen/work/dokumente/pdf/preise-leistungen/preis-leistungsverzeichnis.pdf", "stand": "Stand 12.08.2026"}
-      ],
-      "notiz": "Jede Sparkasse hat ihr eigenes Preisverzeichnis; die Zahlen gelten für die Sparkasse Siegen.",
-      "probe": {"1000": 19.9, "5000": 39.9, "10000": 64.9, "25000": 139.9, "100000": 514.9}
-    },
-    {
       "name": "Traders Place",
       "typ": "Wertpapierinstitut, Depot bei der Baader Bank",
       "gruppe": "ja",

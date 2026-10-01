@@ -17,10 +17,12 @@ In den Quell-HTML stehen die Werte als lesbarer Rückfall, markiert mit data-kz:
     <span data-kz="etf-top-anzahl">70</span>, „etf-kosten-spanne“, „etf-kosten-guenstig“, „etf-stand“
          Kosten der ETFs auf der Seite anleihen-etf.html (top10-anleihen-etfs.json): Anzahl, niedrigste bis höchste
          laufende Kosten, Anzahl mit höchstens 0,2 % und das Datum der ETF-Liste – für etf-oder-anleihe.html
-    <span data-kz="broker-spanne">0 bis rund 40&nbsp;€</span>, „broker-stand“
+    <span data-kz="broker-spanne">0 bis rund 18&nbsp;€</span>, „broker-stand“, „broker-anzahl“
          Broker-Vergleich (broker.json, seit 01.10.2026): niedrigste bis höchste Kosten für einen Kauf über den
          Standardbetrag (5.000 €), je Anbieter der günstigste Handelsweg – gerechnet mit derselben Funktion wie die
-         Seite (scripts/statische_tabellen.py) – und der Tag der Prüfung; für steuern-handelskosten.html, erste-anleihe.html
+         Seite (scripts/statische_tabellen.py) –, der Tag der Prüfung und die Zahl der Anbieter; für
+         steuern-handelskosten.html, erste-anleihe.html, kaufen.html. Dazu wird die Wendung „NN Anbieter/Broker im Vergleich“
+         in Titeln, Beschreibungen und Knöpfen auf die Zahl der Anbieter gesetzt.
 
 Außerdem wird in Meta-/og-/JSON-LD-Texten die Wendung „Suche über rund NN.000 Anleihen“ auf die aktuelle Zahl gesetzt
 (nur diese Wendung – Zahlen wie „Börse Frankfurt rund 27.700 Anleihen“ bleiben unberührt).
@@ -88,6 +90,8 @@ def main():
     if b:
         try:
             from statische_tabellen import b_guenstigster
+            if b.get("anbieter"):
+                werte["broker-anzahl"] = str(len(b["anbieter"]))
             betrag = b.get("standard") or 5000
             k = sorted(b_guenstigster(x, betrag)["v"] for x in b.get("anbieter", []) if x.get("wege"))
             if len(k) >= 3:
@@ -102,6 +106,8 @@ def main():
     span_re = re.compile(r'(<span data-kz="([a-z-]+)">)([^<]*)(</span>)')
     # nur die feste Wendung „Suche über rund NN.000 Anleihen“ – andere Zahlen (z. B. je Börse) bleiben unberührt
     meta_re = re.compile(r'Suche über rund \d{1,3}\.\d{3} Anleihen')
+    # „19 Anbieter im Vergleich“ / „19 Broker im Vergleich“ (Titel, Beschreibungen, Knöpfe) – Zahl aus broker.json
+    broker_re = re.compile(r'\b\d+( (?:Anbieter|Broker) im Vergleich)')
     for fname in sorted(os.listdir(site)):
         if not fname.endswith(".html"):
             continue
@@ -110,6 +116,8 @@ def main():
         neu = span_re.sub(lambda m: m.group(1) + werte.get(m.group(2), m.group(3)) + m.group(4), html)
         if "anleihen-kurs" in werte:
             neu = meta_re.sub("Suche über " + werte["anleihen-kurs"] + " Anleihen", neu)
+        if "broker-anzahl" in werte:
+            neu = broker_re.sub(lambda m: werte["broker-anzahl"] + m.group(1), neu)
         if neu != html:
             with open(path, "w", encoding="utf-8") as f:
                 f.write(neu)

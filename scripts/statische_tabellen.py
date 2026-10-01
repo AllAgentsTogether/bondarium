@@ -7,7 +7,7 @@ Läuft im GitHub-Workflow auf dem Veröffentlichungsordner, NACH kennzahlen.py u
     python3 scripts/statische_tabellen.py _site
 
 Warum: KI-Crawler (GPTBot, ClaudeBot, PerplexityBot …) und ein Teil der Suchmaschinen führen kein JavaScript aus.
-Für sie standen die 19 Broker und die 70 ETFs bisher nicht auf der Seite – nur „Die Übersicht wird geladen …“.
+Für sie standen die Broker und die 70 ETFs bisher nicht auf der Seite – nur „Die Übersicht wird geladen …“.
 Jetzt stehen die Zeilen im ausgelieferten HTML. Im Browser ersetzt das Seitenskript sie wie bisher durch seine eigene
 Fassung (innerHTML) – mit Sortieren, Aufklappen und den Handy-Karten. Die Quell-HTML im Repository bleiben unverändert.
 
