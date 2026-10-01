@@ -706,6 +706,25 @@ window.MC = (function () {
     return r ? '<span class="pill" style="background:' + r.color + '">' + esc(r.label) + '</span>' : "";
   }
 
+  // Besucherzählung (seit 01.10.2026, docs/STATISTIK.md): meldet den Seitenaufruf an aufruf.php – ohne Cookies und
+  // ohne Speicherung im Browser. Gesendet werden nur Pfad (ohne Suchparameter), Herkunft (Referrer) und utm_source.
+  // Nicht gezählt: lokale Dateien, automatisierte Browser, „Global Privacy Control“ und „Do Not Track“.
+  (function zaehlen() {
+    try {
+      var n = navigator, l = location;
+      if (!/^https?:$/.test(l.protocol) || n.webdriver || n.globalPrivacyControl || n.doNotTrack === "1" || window.doNotTrack === "1") return;
+      var q = (l.search.match(/[?&]utm_source=([^&#]*)/) || [])[1] || "";
+      var daten = "p=" + encodeURIComponent(l.pathname) + "&r=" + encodeURIComponent(document.referrer || "") + "&q=" + q.slice(0, 100);
+      var senden = function () {
+        if (n.sendBeacon) n.sendBeacon("/aufruf.php", new Blob([daten], { type: "application/x-www-form-urlencoded" }));
+        else fetch("/aufruf.php", { method: "POST", body: daten, keepalive: true, credentials: "omit",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" } }).catch(function () {});
+      };
+      // vorab geladene Seiten (Prerender) erst zählen, wenn sie wirklich gezeigt werden
+      if (document.prerendering) document.addEventListener("prerenderingchange", senden, { once: true }); else senden();
+    } catch (e) { /* Zählen darf die Seite nie stören */ }
+  })();
+
   return { esc: esc, minus: minus, zahl: zahl, datum: datum, tag: tag, STALE_TAGE: STALE_TAGE, boersentage: boersentage, veraltet: veraltet,
     restlaufzeit: restlaufzeit, kuendigung: kuendigung, kuendigungFeld: kuendigungFeld, load: load, json: json, navInit: navInit, hoverWrap: hoverWrap, wischPruefen: wischPruefen,
     percentile: percentile, stats: stats, rate: rate, pctText: pctText, ratePill: ratePill,

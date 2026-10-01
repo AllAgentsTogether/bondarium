@@ -277,6 +277,8 @@ jobs:
           if command -v php >/dev/null 2>&1; then
             php -l kontakt.php
             php -l konto.php
+            php -l aufruf.php
+            php -l statistik-bericht.php
             php -l strato-cron/refresh.php
           else
             echo "::warning::php fehlt auf dem Runner – Syntaxprüfung übersprungen"
@@ -294,6 +296,7 @@ jobs:
           rm -f _site/package.json _site/package-lock.json   # Build-Metadaten gehören nicht auf den Webroot
           cp .htaccess _site/.htaccess
           cp kontakt.php _site/kontakt.php   # Kontaktformular (ueber-uns.html#kontakt, seit 30.09.2026)
+          cp aufruf.php statistik-bericht.php _site/   # Besucherzählung und täglicher Bericht (seit 01.10.2026, docs/STATISTIK.md); Daten legt das Skript auf dem Server an (statistik-daten/, nie im Bau)
           cp konto.php _site/konto.php   # Benutzerbereich (konto.html, seit 30.09.2026): Anmelde-Link und Merkliste; die Datenbank legt das Skript auf dem Server an (konto-daten/, nie im Bau)
           python3 scripts/security_txt.py _site   # /.well-known/security.txt (Adresse für Sicherheitsmeldungen, RFC 9116)
           cp -r kurse _site/kurse   # Kursverlauf: kurse/<Jahr>/<teil>.json und kurse/bund/<ISIN>.json
@@ -522,6 +525,20 @@ jobs:
           antwort=$(curl -s --max-time 30 "https://www.bondarium.de/konto.php?aktion=status" || true)
           echo "konto.php?aktion=status -> $antwort"
           case "$antwort" in *'"status":"ok"'*) ;; *) echo "::error::Benutzerbereich antwortet nicht mit „ok“ – Anmelden und Merkliste sind gestört"; exit 1;; esac
+
+      # Besucherzählung (seit 01.10.2026): Datenordner und Berichts-Skript dürfen nie abrufbar sein, aufruf.php antwortet
+      # immer mit 204. Die Prüfung zählt selbst nichts (GET wird nicht gezählt).
+      - name: Nach-Deploy-Prüfung (Besucherzählung – Datenordner gesperrt, Zähler antwortet)
+        continue-on-error: true
+        run: |
+          for pfad in statistik-daten/ statistik-daten/index.html statistik-daten/.sperre statistik-bericht.php; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://www.bondarium.de/$pfad" || echo "000")
+            echo "$pfad -> HTTP $code"
+            if [ "$code" = "200" ]; then echo "::error::/$pfad ist öffentlich abrufbar – sofort sperren!"; exit 1; fi
+          done
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://www.bondarium.de/aufruf.php" || echo "000")
+          echo "aufruf.php -> HTTP $code"
+          if [ "$code" != "204" ]; then echo "::error::aufruf.php antwortet nicht mit 204 – die Besucherzählung ist gestört"; exit 1; fi
 
       # ----- Automatische Alarm-Prüfung: schlägt fehl (= E-Mail von GitHub), wenn
       #       Daten veraltet sind. Nur im Abruf-Lauf (1×/Tag), nicht bei

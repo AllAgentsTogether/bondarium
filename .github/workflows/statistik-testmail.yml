@@ -1,0 +1,23 @@
+name: Statistik – Testmail
+
+# Schickt sofort einen Besucherbericht über den laufenden Tag an info@bondarium.com (seit 01.10.2026, docs/STATISTIK.md).
+# Der Versand läuft über den Webserver bei STRATO (aufruf.php, aktion=testmail), genau wie der tägliche Bericht – so
+# lässt sich die Zustellung prüfen. Schlüssel: derselbe wie für den 10-Uhr-Auslöser (TRIGGER_KEY). Höchstens einmal in
+# fünf Minuten (sonst HTTP 429).
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  testmail:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Testbericht anfordern
+        env:
+          TRIGGER_KEY: ${{ secrets.TRIGGER_KEY }}
+        run: |
+          KEY=$(printf '%s' "$TRIGGER_KEY" | tr -d '\r\n')
+          code=$(curl -s -o antwort.txt -w "%{http_code}" --max-time 90 -H "X-Trigger-Key: $KEY" --data "aktion=testmail" https://www.bondarium.de/aufruf.php || echo 000)
+          echo "HTTP $code: $(cat antwort.txt 2>/dev/null)"
+          [ "$code" = "200" ]
