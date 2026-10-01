@@ -188,7 +188,7 @@ def b_depot(b, B):
 
 
 def broker_teile(D, heute):
-    """Kostenliste (für den Standardbetrag), Angebots-Tabelle und Quellenliste als HTML – wie das Seitenskript."""
+    """Liste „Kosten und Angebot“ (für den Standardbetrag) und Quellenliste als HTML – wie das Seitenskript."""
     def gilt(x):
         return x is not None and (isinstance(x, str) or not x.get("bis") or heute <= x["bis"])
 
@@ -208,16 +208,29 @@ def broker_teile(D, heute):
     def quellen(b):
         return " · ".join(f'<a href="{q["url"]}" rel="noopener">{q["t"]}</a>' + (f' ({q["stand"]})' if q.get("stand") else "") for q in b.get("quellen") or [])
 
-    def zelle(tag, x):
+    def zelle(x):
         if not x:
-            return f"<{tag}>–</{tag}>"
-        return f'<{tag}' + (' class="warn"' if x.get("warn") else "") + f'>{x["t"]}' + (f'<small>{x["n"]}</small>' if x.get("n") else "") + f"</{tag}>"
+            return "<dd>–</dd>"
+        return "<dd" + (' class="warn"' if x.get("warn") else "") + f'>{x["t"]}' + (f'<small>{x["n"]}</small>' if x.get("n") else "") + "</dd>"
 
-    # 1 Kostenliste
+    G = {g["id"]: g for g in D["gruppen"]}
+
+    def angebot(b):
+        return ('<div class="bk-ang"><span class="lab">Anleihen: </span>' + (f'<span class="bdg aw">{G["aw"]["bdg"]}</span> ' if b["gruppe"] == "aw" else "")
+                + b["anleihen"] + smalls(b.get("anleihen_n")) + "</div>")
+
+    def kopf(b):
+        return f'<div class="bk-an"><b>{b["name"]}</b><span class="typ">{b["typ"]}</span>{hin(b)}</div>'
+
+    def quelle(b):
+        return f'<dt>Quelle</dt><dd>{quellen(b) or "–"}' + (f'<small>{b["notiz"]}</small>' if b.get("notiz") else "") + "</dd>"
+
+    # 1 Kosten und Angebot
     B = D.get("standard") or 5000
     for i, b in enumerate(D["anbieter"]):
         b["_i"] = i
     mit = [b for b in D["anbieter"] if b.get("wege")]
+    ohne = [b for b in D["anbieter"] if not b.get("wege")]
     zeilen = sorted(({"b": b, "r": b_guenstigster(b, B), "d": b_depot(b, B)} for b in mit), key=lambda x: (x["r"]["v"], x["b"]["_i"]))
     hoch, tief = max(x["r"]["v"] for x in zeilen) or 1, zeilen[0]["r"]["v"]
     li = ""
@@ -233,47 +246,34 @@ def broker_teile(D, heute):
         ist_min = r["v"] == tief
         pz = r["v"] / B * 100
         anteil = "unter 0,01" + PZ if r["v"] > 0 and pz < 0.005 else zahl(pz, 2) + PZ
-        li += (f'<li class="bk{" min" if ist_min else ""}" data-g="{b["gruppe"]}">'
-               f'<div class="bk-z"><div class="bk-an"><b>{b["name"]}</b><span class="typ">{b["typ"]}</span>{hin(b)}</div>'
-               f'<div class="bk-ko"><div class="bk-bar"><i style="width:calc((100% - 150px) * {r["v"] / hoch:.4f})"></i><b'
+        li += (f'<li class="bk{" min" if ist_min else ""}" data-g="{b["gruppe"]}"><div class="bk-z">' + kopf(b)
+               + f'<div class="bk-ko"><div class="bk-bar"><i style="width:calc((100% - 150px) * {r["v"] / hoch:.4f})"></i><b'
                + (' title="günstigster Preis"' if ist_min else "") + f'>{b_eur(r["v"])}</b><span class="pz">{anteil}</span></div>'
-               + (f'<p class="bk-of">dazu {w["offen"]}</p>' if w.get("offen") else "")
-               + f'<details class="bk-d" data-b="{b["_i"]}"><summary><span class="bk-rw">{r["kurz"]} · {w["name"]}</span>'
-               f'<span class="bk-mehr">Rechnung und Quelle</span></summary><dl class="bk-dl">'
+               f'<p class="bk-rw">{r["kurz"]} · {w["name"]}</p>'
+               + (f'<p class="bk-of">dazu {w["offen"]}</p>' if w.get("offen") else "") + "</div>"
+               + angebot(b)
+               + f'<div class="bk-de{" kostet" if x["d"] > 0 else ""}"><span class="lab">Depot im Jahr: </span>{b_glatt(x["d"])}'
+               + (f'<small>{d["kurz"]}</small>' if d.get("kurz") else "") + "</div>"
+               f'<details class="bk-d" data-b="{b["_i"]}"><summary><span class="bk-mehr">Rechnung, Handelsplätze und Quelle</span></summary><dl class="bk-dl">'
                f'<dt>Preis laut Anbieter</dt><dd>{b["preis"]}{smalls(b.get("preis_n"))}</dd>'
                f'<dt>Rechnung für {b_glatt(B)}</dt><dd><small>{w["name"]}</small>' + "".join(f"<span>{s}</span>" for s in r["schritte"])
                + f'<span class="sum">= {b_eur(r["v"])} · {anteil} vom Betrag</span>' + (f'<small>{w["n"]}</small>' if w.get("n") else "") + "</dd>"
                + (f'<dt>Nicht enthalten</dt><dd>{w["offen"]}</dd>' if w.get("offen") else "")
                + (f"<dt>Andere Wege</dt><dd>{andere}</dd>" if andere else "")
                + f'<dt>Depot</dt><dd>{d.get("t", "–")}{smalls(d.get("n"))}</dd>'
-               f'<dt>Quelle</dt><dd>{quellen(b)}' + (f'<small>{b["notiz"]}</small>' if b.get("notiz") else "") + "</dd></dl></details></div>"
-               f'<div class="bk-de{" kostet" if x["d"] > 0 else ""}"><span class="lab">Depot im Jahr: </span>{b_glatt(x["d"])}'
-               + (f'<small>{d["kurz"]}</small>' if d.get("kurz") else "") + "</div></div></li>")
+               f'<dt>Handelsplätze</dt><dd>{handel(b)}{smalls(b.get("handel_n"))}</dd>'
+               "<dt>Order mit Limit</dt>" + zelle(b.get("limit")) + "<dt>Steuer</dt>" + zelle(b.get("steuer"))
+               + quelle(b) + "</dl></details></div></li>")
+    if ohne:
+        li += f'<li class="bk-grp">{G["nein"]["titel"]} <span class="n">· {len(ohne)} Anbieter</span></li>'
+        for b in ohne:
+            li += ('<li class="bk ohne" data-g="nein"><div class="bk-z">' + kopf(b) + '<div class="bk-ko"><p class="bk-rw">–</p></div>' + angebot(b)
+                   + '<div class="bk-de"><span class="lab">Depot im Jahr: </span>–</div>'
+                   f'<details class="bk-d" data-b="{b["_i"]}"><summary><span class="bk-mehr">Quelle</span></summary><dl class="bk-dl">' + quelle(b) + "</dl></details></div></li>")
 
-    # 2 Angebot (nur die Tabelle; die Handy-Karten zeichnet das Seitenskript)
-    gruppen = {g["id"]: [] for g in D["gruppen"]}
-    for b in D["anbieter"]:
-        gruppen[b["gruppe"]].append(b)
-    t = ('<table class="bv-t"><caption class="sr-only">Anleihen-Angebot der Broker im Vergleich, Stand ' + datum(D["stand"]) + "</caption>"
-         '<thead><tr><th scope="col">Anbieter</th><th scope="col">Anleihen</th><th scope="col">Handelsplätze</th>'
-         '<th scope="col">Order mit Limit</th><th scope="col">Steuer</th></tr></thead>')
-    for g in D["gruppen"]:
-        reihe = gruppen[g["id"]]
-        t += (f'<tbody class="g-{g["id"]}"><tr class="grp"><th colspan="5" scope="rowgroup"><span class="bdg {g["id"]}">{g["bdg"]}</span>{g["titel"]}'
-              f' <span class="n">· {len(reihe)} Anbieter</span></th></tr>')
-        for b in reihe:
-            kopf = f'<th scope="row" class="an"><b>{b["name"]}</b><span class="typ">{b["typ"]}</span></th>'
-            if g["id"] == "nein":
-                t += f'<tr>{kopf}<td colspan="4">{b["anleihen"]}{smalls(b.get("anleihen_n"))}</td></tr>'
-                continue
-            t += (f'<tr>{kopf}<td>{b["anleihen"]}{smalls(b.get("anleihen_n"))}</td><td>{handel(b)}{smalls(b.get("handel_n"))}</td>'
-                  + zelle("td", b.get("limit")) + zelle("td", b.get("steuer")) + "</tr>")
-        t += "</tbody>"
-    t += "</table>"
-
-    # 3 Quellen je Anbieter
+    # 2 Quellen je Anbieter
     q = "".join(f'<li><b>{b["name"]}</b><span>{quellen(b) or "–"}' + (f'<br>{b["notiz"]}' if b.get("notiz") else "") + "</span></li>" for b in D["anbieter"])
-    return li, t, q, B
+    return li, q, B
 
 
 def broker_probe(D):
@@ -290,10 +290,9 @@ def broker(site):
     html_ = open(pfad, encoding="utf-8").read()
     D = lade(site, "broker.json")
     broker_probe(D)
-    li, tabelle, quellen, B = broker_teile(D, datetime.date.today().isoformat())
+    li, quellen, B = broker_teile(D, datetime.date.today().isoformat())
     plaetze = (
-        (re.compile(r'(<ol class="bk-liste" id="bk-liste"[^>]*>)<li class="klein" id="bk-laden">[^<]*</li>(</ol>)'), li, "Kostenliste #bk-liste"),
-        (re.compile(r'(<div id="bv-tabelle">)<p class="klein" id="bv-laden">[^<]*</p>(</div>)'), tabelle, "Tabelle #bv-tabelle"),
+        (re.compile(r'(<ol class="bk-liste" id="bk-liste"[^>]*>)<li class="klein" id="bk-laden">[^<]*</li>(</ol>)'), li, "Liste #bk-liste"),
         (re.compile(r'(<ul class="bq" id="bq">)<li class="klein">[^<]*</li>(</ul>)'), quellen, "Quellenliste #bq"),
     )
     neu = html_
@@ -308,7 +307,7 @@ def broker(site):
     neu = re.sub(r'\n?<noscript><p class="klein">Die Liste braucht JavaScript\..*?</noscript>', "", neu, count=1, flags=re.S)
     with open(pfad, "w", encoding="utf-8") as f:
         f.write(neu)
-    print(f"broker-vergleich.html: {len(D['anbieter'])} Anbieter fest im HTML (Kosten für {zahl(B)} €, Angebot, Quellen)")
+    print(f"broker-vergleich.html: {len(D['anbieter'])} Anbieter fest im HTML (Kosten für {zahl(B)} € und Angebot in einer Liste, Quellen)")
 
 
 # ---------- Anleihen-ETFs: zehn Zeilen je Kategorie (vereinfachte Fassung von rowHtml der Seite) ----------
