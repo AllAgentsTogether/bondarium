@@ -191,6 +191,7 @@
   .kd-svg .kd-w { font-size: 12px; font-weight: 600; fill: #1A1A19; }
   .kd-svg .kd-a { font-size: 13px; font-weight: 500; fill: #1A1A19; }
   .kd-svg .kd-b { font-size: 12px; fill: #55544F; }
+  .kd-svg.eng .kd-a { font-size: 12px; }
   .kd-svg .kd-r { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; fill: #55544F; }
   .kd-svg .kd-p { font-size: 12px; font-weight: 600; fill: #157C00; }
   .kd-svg .kd-m { font-size: 12px; font-weight: 600; fill: #A2561C; }
@@ -466,7 +467,7 @@
           <h3 class="kd-h3" id="h-zahl">Zahlungen</h3>
           <p class="kd-zsum" id="kd-zsum"></p>
           <figure class="kd-karte" aria-labelledby="kd-j-t">
-            <figcaption><b id="kd-j-t">Zahlungen je Jahr</b><span id="kd-j-u">die nächsten 20 Jahre</span></figcaption>
+            <figcaption><b id="kd-j-t">Zahlungen je Jahr</b><span id="kd-j-u">bis zur letzten Fälligkeit</span></figcaption>
             <ul class="kd-leg" id="kd-leg" aria-label="Farben der Anleihen"></ul>
             <div class="chart-scroll" id="kd-jahre"></div>
             <p class="kd-rest" id="kd-rest" hidden></p>
@@ -489,7 +490,7 @@
           <p><strong>Rendite.</strong> Rendite bis zur Fälligkeit in % pro Jahr, von uns aus Kurs, Kupon und Fälligkeit berechnet – nach denselben Regeln wie in der <a href="anleihen-suche.html">Anleihen-Suche</a>, wo unter „Datenquellen und Methodik“ alle Einzelheiten stehen.</p>
           <p><strong>Stammdaten.</strong> Kupon, Fälligkeit, Art, Währung, Volumen und Stückelung aus dem Register der europäischen Wertpapieraufsicht ESMA (FIRDS). Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage, beide in der Währung der Anleihe.</p>
           <p><strong>Steckbrief.</strong> Ein Klick auf Name oder ISIN öffnet den Steckbrief der Anleihe mit Kursverlauf, Handel und Rechenbeispiel.</p>
-          <p><strong>Mein Depot.</strong> Ein Beispieldepot mit gedachten Beträgen, kein Bestand. Kaufbetrag heute = Nennwert × Schlusskurs, ohne Stückzinsen und Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Zinsen je Termin = Nennwert × Kupon, bei halbjährlicher Zahlung die Hälfte; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Der Unterschied zwischen Rückzahlung und Kaufbetrag ist der Kursgewinn oder Kursverlust bis zur Fälligkeit. Das Schaubild zeigt die nächsten zwanzig Jahre, jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung des Nennwerts, ganz unten beides zusammen; ins Depot passen höchstens zehn Anleihen. Die Zinstermine sind aus der Fälligkeit abgeleitet (jährlich am Jahrestag, italienische Staatsanleihen halbjährlich) – maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Vorerst nur Anleihen in Euro mit festem Kupon oder ohne Kupon.</p>
+          <p><strong>Mein Depot.</strong> Ein Beispieldepot mit gedachten Beträgen, kein Bestand. Kaufbetrag heute = Nennwert × Schlusskurs, ohne Stückzinsen und Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Zinsen je Termin = Nennwert × Kupon, bei halbjährlicher Zahlung die Hälfte; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Der Unterschied zwischen Rückzahlung und Kaufbetrag ist der Kursgewinn oder Kursverlust bis zur Fälligkeit. Das Schaubild reicht von heute bis zur letzten Fälligkeit, höchstens 30 Jahre, jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung des Nennwerts, ganz unten beides zusammen; ins Depot passen höchstens zehn Anleihen. Die Zinstermine sind aus der Fälligkeit abgeleitet (jährlich am Jahrestag, italienische Staatsanleihen halbjährlich) – maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Vorerst nur Anleihen in Euro mit festem Kupon oder ohne Kupon.</p>
           <p id="datastand"></p>
         </div>
       </details>
@@ -825,7 +826,7 @@ MC.navInit();
   // Eine Farbe je Anleihe (Nutzerwunsch 01.10.2026), in der Reihenfolge des Hineinlegens – höchstens zehn. Die ersten acht sind
   // als benachbarte Flächen geprüft (Farbsehschwächen: kleinster Abstand 9,1; Normalsicht 19,6); Tinte und Grau sind die neutralen
   // Plätze neun und zehn. Hell sind Türkis, Gelb und Rosa – deshalb stehen Zahlen am Balken, eine Legende darüber, und die Liste darunter.
-  const DEPOT_MAX = 10, JAHRE_MAX = 20, FARBEN = ["#157C00", "#2A78D6", "#EB6834", "#1BAF7A", "#EDA100", "#E87BA4", "#4A3AA7", "#E34948", "#1A1A19", "#8E8D86"];
+  const DEPOT_MAX = 10, JAHRE_MAX = 30, FARBEN = ["#157C00", "#2A78D6", "#EB6834", "#1BAF7A", "#EDA100", "#E87BA4", "#4A3AA7", "#E34948", "#1A1A19", "#8E8D86"];
   let POS = [];   // { isin, nenn, o (wie anleihe()), freq, fest, rechnet, zins (im Jahr oder null), warum }
   function nennLesen(text) { const n = parseInt(String(text).replace(/[.\s€]/g, "").replace(/,\d*$/, ""), 10); return n >= 1 && n <= NENN_MAX ? n : NaN; }
   // Warum eine Anleihe nicht gerechnet werden kann ("" = sie kann)
@@ -886,17 +887,27 @@ MC.navInit();
     if (MC.wischPruefen) MC.wischPruefen();
     zeichneZahlungen();
   }
-  // Schaubild „Zahlungen je Jahr“ (Fassung vom 01.10.2026 abends, Nutzerwunsch): die nächsten zwanzig Jahre, jede Anleihe in ihrer
-  // Farbe, drei Reihen untereinander mit eigener Höhe – oben die Zinsen (der Kupon-Punkt markiert die nächste Zahlung), darunter die
-  // Rückzahlung des Nennwerts zu 100 % (mit dem Unterschied zum Kaufbetrag von heute), ganz unten alle Zahlungen zusammen: Zinsen plus
-  // Nennwert. Läuft das Depot länger, folgt eine gestrichelte Spalte; was danach kommt, steht als Satz unter dem Bild.
+  // Schaubild „Zahlungen je Jahr“ (Fassung vom 01.10.2026 abends, Nutzerwunsch): von heute bis zur letzten Fälligkeit, höchstens
+  // 30 Jahre – so bleibt rechts nichts leer. Jede Anleihe in ihrer Farbe, drei Reihen untereinander mit eigener Höhe: oben die Zinsen
+  // (der Kupon-Punkt markiert die nächste Zahlung), darunter die Rückzahlung des Nennwerts zu 100 % (mit dem Unterschied zum
+  // Kaufbetrag von heute), ganz unten alle Zahlungen zusammen: Zinsen plus Nennwert. Läuft das Depot länger als 30 Jahre, folgt eine
+  // gestrichelte Spalte; was danach kommt, steht als Satz unter dem Bild. Bei vielen Jahren werden die Spalten schmal („eng“): Dann
+  // stehen die Zahlen benachbarter Spalten abwechselnd eine Zeile höher, damit sie sich nicht überdecken.
   function jahresbild(el, sp, rest) {
-    const n = sp.length + (rest ? 1 : 0), L = 6, R = 6, W = Math.max(el.clientWidth || 0, n * 44 + L + R), bw = (W - L - R) / n, werte = bw >= 44;
+    const n = sp.length + (rest ? 1 : 0), L = 6, R = 6, breit = el.clientWidth || 0, W = Math.max(breit, n * (breit >= 860 ? 28 : 44) + L + R), bw = (W - L - R) / n, eng = bw < 44;
     const mz = Math.max(1, ...sp.map(x => x.zins)), mr = Math.max(1, ...sp.map(x => x.rueck)), ms = Math.max(1, ...sp.map(x => x.zins + x.rueck));
-    const hZ = 150, hR = 150, hS = 150, yZ = 34 + hZ, yR = yZ + 48 + hR, yS = yR + 48 + hS, H = yS + 30;
+    const hZ = 150, hR = 150 + (eng ? 28 : 0), hS = 150 + (eng ? 14 : 0), yZ = 34 + hZ, yR = yZ + 48 + hR, yS = yR + 48 + hS, H = yS + 30;
     const kurz = v => fmt(v, bw >= 64 && v !== Math.round(v) ? 2 : 0), text = (x, y, kl, t, anker) => `<text x="${x.toFixed(1)}" y="${y.toFixed(1)}"${anker === false ? "" : ' text-anchor="middle"'} class="${kl}">${t}</text>`;
     const linie = y => `<line x1="${L}" y1="${y}" x2="${W - R}" y2="${y}" stroke="#1A1A19" stroke-width="1.5"/>`;
     const leer = (cx, y) => `<line x1="${(cx - 7).toFixed(1)}" y1="${y - 5}" x2="${(cx + 7).toFixed(1)}" y2="${y - 5}" stroke="#C9C8C2" stroke-width="2" stroke-linecap="round"/>`;
+    // Zahlen über den Balken, je Reihe: Stößt eine Zahl an eine schon gesetzte (geschätzte Breite, 13 px Zeilenhöhe), rückt sie so
+    // lange eine Zeile höher, bis sie frei steht. platz() liefert die Grundlinie der untersten Zeile des Blocks.
+    const breite = t => 4 + [...t].reduce((a, c) => a + (/[.,]/.test(c) ? 3.5 : 7), 0);
+    const platz = () => { const da = []; return (cx, y, b, h) => {
+      for (let frei = false; !frei;) { frei = true; for (const k of da) if (cx - b / 2 < k.x1 && cx + b / 2 > k.x0 && y - h < k.y && y > k.y - k.h) { y = k.y - k.h - 1; frei = false; } }
+      da.push({ x0: cx - b / 2, x1: cx + b / 2, y, h }); return y;
+    }; };
+    const platzZ = platz(), platzR = platz(), platzS = platz();
     // gestapelte Segmente einer Spalte, von unten nach oben, mit 2 px Abstand; liefert die Oberkante
     function stapel(teile, wert, cx, b, y0, hoehe, max, was) {
       let y = y0, svg = "";
@@ -907,30 +918,31 @@ MC.navInit();
       });
       return [svg, y];
     }
-    let s = `<svg class="kd-svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Zinsen, Rückzahlung des Nennwerts und alle Zahlungen je Jahr, jede Anleihe in ihrer Farbe">`, punkt = false;
+    let s = `<svg class="kd-svg${eng ? " eng" : ""}" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Zinsen, Rückzahlung des Nennwerts und alle Zahlungen je Jahr, jede Anleihe in ihrer Farbe">`, punkt = false;
     s += text(L, 14, "kd-r", "Zinsen", false) + linie(yZ) + text(L, yZ + 28, "kd-r", "Rückzahlung des Nennwerts (100 %)", false) + linie(yR) +
       text(L, yR + 28, "kd-r", "Alle Zahlungen: Zinsen plus Nennwert", false) + linie(yS);
     sp.forEach((x, i) => {
       const cx = L + (i + 0.5) * bw, b = Math.min(46, bw * 0.62);
       if (x.zins) {
-        const [svg, oben] = stapel(x.teile, t => t.zins, cx, b, yZ, hZ - 30, mz, "Zinsen");
-        s += svg + (werte ? text(cx, oben - (punkt ? 4 : 11), "kd-w", kurz(x.zins)) : "");
+        const [svg, oben] = stapel(x.teile, t => t.zins, cx, b, yZ, hZ - (eng ? 44 : 30), mz, "Zinsen");
+        s += svg + text(cx, platzZ(cx, oben - (punkt ? 4 : 11), breite(kurz(x.zins)), 13), "kd-w", kurz(x.zins));
         if (!punkt) { s += `<circle cx="${cx.toFixed(1)}" cy="${(oben + 2).toFixed(1)}" r="6" fill="#39FF14" stroke="#1A1A19" stroke-width="2"/>`; punkt = true; }
       } else s += leer(cx, yZ);
       if (x.rueck) {
-        const [svg, oben] = stapel(x.teile, t => t.rueck, cx, b, yR, hR - 44, mr, "Rückzahlung"), d = Math.round(x.diff);
-        s += svg + (werte ? (d ? text(cx, oben - 4, d < 0 ? "kd-m" : "kd-p", plus(d, 0)) : "") + text(cx, oben - (d ? 19 : 4), "kd-w", kurz(x.rueck)) : "");
+        const [svg, oben] = stapel(x.teile, t => t.rueck, cx, b, yR, 106, mr, "Rückzahlung"), d = Math.round(x.diff);
+        const y = platzR(cx, oben - 4, Math.max(breite(kurz(x.rueck)), d ? breite(plus(d, 0)) : 0), d ? 28 : 13);
+        s += svg + (d ? text(cx, y, d < 0 ? "kd-m" : "kd-p", plus(d, 0)) : "") + text(cx, y - (d ? 15 : 0), "kd-w", kurz(x.rueck));
       } else s += leer(cx, yR);
       if (x.zins + x.rueck) {
-        const [svg, oben] = stapel(x.teile, t => t.zins + t.rueck, cx, b, yS, hS - 30, ms, "Zinsen plus Nennwert");
-        s += svg + (werte ? text(cx, oben - 4, "kd-w", kurz(x.zins + x.rueck)) : "");
+        const [svg, oben] = stapel(x.teile, t => t.zins + t.rueck, cx, b, yS, hS - (eng ? 44 : 30), ms, "Zinsen plus Nennwert");
+        s += svg + text(cx, platzS(cx, oben - 4, breite(kurz(x.zins + x.rueck)), 13), "kd-w", kurz(x.zins + x.rueck));
       } else s += leer(cx, yS);
       s += text(cx, yS + 19, "kd-a", x.k);
     });
     if (rest) {   // gestrichelte Spalte: Die Jahre danach werden nicht angezeigt
       const cx = L + (sp.length + 0.5) * bw, b = Math.min(46, bw * 0.62), kasten = y => `<rect x="${(cx - b / 2).toFixed(1)}" y="${y - 58}" width="${b.toFixed(1)}" height="54" rx="6" fill="none" stroke="#8E8D86" stroke-width="1.5" stroke-dasharray="4 4"/>` + text(cx, y - 27, "kd-l", "…");
       s += `<line x1="${(cx - bw / 2).toFixed(1)}" y1="6" x2="${(cx - bw / 2).toFixed(1)}" y2="${yS + 26}" stroke="#8E8D86" stroke-width="1.5" stroke-dasharray="4 4"/>`;
-      s += kasten(yZ) + kasten(yR) + kasten(yS) + text(cx, yS + 19, "kd-a", bw >= 58 ? `ab ${rest.von}` : `${rest.von}+`);
+      s += kasten(yZ) + kasten(yR) + kasten(yS) + text(cx, yS + 19, "kd-a", bw >= 58 ? `ab ${rest.von}` : eng ? "…" : `${rest.von}+`);
     }
     el.innerHTML = s + "</svg>";
   }
@@ -941,9 +953,10 @@ MC.navInit();
     const fehlt = POS.filter(p => !p.rechnet);
     if (!z.length) { if (POS.length) { box.hidden = false; $("kd-zsum").textContent = "Für diese Auswahl lässt sich keine Zahlung berechnen."; $("kd-jahre").innerHTML = $("kd-plan").innerHTML = $("kd-leg").innerHTML = ""; $("kd-rest").hidden = true; $("kd-hinweis").textContent = ""; } return; }
     const summe = (liste, art) => liste.filter(x => x.art === art).reduce((a, x) => a + x.betrag, 0);
-    // Je Jahr, immer JAHRE_MAX Jahre ab heute (Nutzerwunsch: „die nächsten 20 Jahre“); was danach kommt, fasst „rest“ zusammen
+    // Je Jahr von heute bis zur letzten Fälligkeit, höchstens JAHRE_MAX Jahre (Nutzerwunsch: dynamisch, bis 30 Jahre – rechts soll
+    // nichts leer bleiben); was danach kommt, fasst „rest“ zusammen
     const rechnend = POS.filter(p => p.rechnet).sort((a, b) => a.o.faellig.localeCompare(b.o.faellig) || a.isin.localeCompare(b.isin));   // Reihenfolge wie die Tabelle
-    const j0 = new Date().getFullYear(), j1 = +z[z.length - 1].tag.slice(0, 4), bis = j0 + JAHRE_MAX - 1, jahr = [], spaeter = z.filter(x => +x.tag.slice(0, 4) > bis);
+    const j0 = new Date().getFullYear(), j1 = +z[z.length - 1].tag.slice(0, 4), bis = Math.min(j1, j0 + JAHRE_MAX - 1), jahr = [], spaeter = z.filter(x => +x.tag.slice(0, 4) > bis);
     for (let j = j0; j <= bis; j++) jahr.push({ k: String(j), zins: 0, rueck: 0, diff: 0, teile: rechnend.map(p => ({ p, zins: 0, rueck: 0 })) });
     z.forEach(x => {
       const j = jahr[+x.tag.slice(0, 4) - j0]; if (!j) return;
@@ -952,7 +965,7 @@ MC.navInit();
     });
     const rest = spaeter.length ? { von: bis + 1, bis: j1, zins: summe(spaeter, "Zinsen"), rueck: summe(spaeter, "Rückzahlung") } : null;
     jahresbild($("kd-jahre"), jahr, rest);
-    $("kd-j-u").textContent = `die nächsten ${JAHRE_MAX} Jahre: ${j0} bis ${bis}` + (rest ? ` · ${rest.von} bis ${rest.bis} nicht im Bild` : "");
+    $("kd-j-u").textContent = (bis > j0 ? `${j0} bis ${bis}` : String(j0)) + (rest ? ` · ${rest.von} bis ${rest.bis} nicht im Bild` : " · bis zur letzten Fälligkeit");
     $("kd-rest").hidden = !rest;
     if (rest) $("kd-rest").innerHTML = `Die Jahre ${rest.von} bis ${rest.bis} werden nicht angezeigt. Dort folgen noch ${rest.zins ? `<b>${eur(rest.zins)} Zinsen</b> und ` : ""}<b>${eur(rest.rueck, 0)} Rückzahlung</b>.`;
     $("kd-leg").innerHTML = rechnend.map(p => `<li><i class="kd-f" style="background: ${p.farbe}"></i>${MC.esc(p.o.name)} ${fmtCoupon(p.o.kupon)} ${p.o.faellig.slice(0, 4)}</li>`).join("");
