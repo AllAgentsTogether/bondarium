@@ -80,13 +80,16 @@ Unter der Tabelle die Zahlungen (Fassung vom 01.10.2026 abends, Nutzerwunsch: �
 die Rückzahlungen von unterschiedlichen Anleihen müssen farblich unterschiedlich sein. Die nächsten 12 Monate sind
 uninteressant … 10 Jahre und danach gestrichelt mit dem Hinweis, die nächsten Jahre werden nicht angezeigt. Ganz unten
 muss die Summe aus Zinsen und Rückzahlung stehen“): ein Satz mit den Summen, ein Schaubild „Zahlungen je Jahr“ und der
-Aufklapper „Alle Zahlungen einzeln“. Das Schaubild (`jahresbild()`) zeigt höchstens zehn Jahre (`JAHRE_MAX`) und hat
-vier Reihen mit eigener Höhe: Rückzahlung (gestapelt, darunter die Differenz zum Kaufbetrag), Zinsen (gestapelt, der
-Kupon-Punkt markiert die nächste Zahlung), Rückzahlung kumuliert und ganz unten die Summe aus Zinsen und Rückzahlung
-als dunkle Zahlenzeile. Jede Anleihe hat ihre Farbe (`FARBEN`, in der Reihenfolge des Hineinlegens; acht geprüfte
+Aufklapper „Alle Zahlungen einzeln“. Das Schaubild (`jahresbild()`) zeigt immer die nächsten
+zwanzig Jahre (`JAHRE_MAX`; Nutzerwunsch vom selben Abend, davor zehn) und hat drei Reihen mit eigener Höhe, in dieser
+Reihenfolge (Nutzerwunsch: „ganz oben sollen die Zinsen stehen, dann die 100 % Rückzahlung des Nennwertes und dann in
+der letzten Zeile alle Rückzahlungen, also Zinsen plus 100 % Nennwert“): Zinsen (gestapelt, der Kupon-Punkt markiert
+die nächste Zahlung), Rückzahlung des Nennwerts (100 %) mit der Differenz zum Kaufbetrag darunter, und „Alle
+Zahlungen: Zinsen plus Nennwert“. Eine Reihe mit der fortlaufend aufsummierten Rückzahlung und eine dunkle Zahlenzeile
+gab es am 01.10.2026 kurz; beide sind durch die dritte Reihe ersetzt. Jede Anleihe hat ihre Farbe (`FARBEN`, in der Reihenfolge des Hineinlegens; acht geprüfte
 Farbtöne, dazu Tinte und Grau) – in der Tabelle, in der Legende, in den Balken und in der Einzel-Liste; fährt man über
-ein Segment, nennt es Anleihe und Betrag. Läuft das Depot länger als zehn Jahre, folgt eine gestrichelte Spalte „ab
-JJJJ“, und unter dem Bild steht, welche Jahre fehlen und was dort noch kommt. Ein Schaubild der nächsten zwölf Monate
+ein Segment, nennt es Anleihe und Betrag. Läuft das Depot länger als zwanzig Jahre, folgt eine gestrichelte Spalte
+„JJJJ+“, und unter dem Bild steht, welche Jahre fehlen und was dort noch kommt. Ein Schaubild der nächsten zwölf Monate
 gab es am 01.10.2026 kurz; es ist auf Nutzerwunsch entfernt. Gerechnet wird wie im Steckbrief:
 Zinstermine vom Fälligkeitstag rückwärts (`MC.bond.couponDates`), jährlich, italienische Staatsanleihen halbjährlich;
 Zinsen je Termin = Nennwert × Kupon ÷ Termine im Jahr; Rückzahlung zum Nennwert; vor Steuern und Kosten, ohne
