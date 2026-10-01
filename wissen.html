@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Verstehen: Wissen über Anleihen – Bondarium</title>
-<meta name="description" content="Stufe 1 – Verstehen: Anleihen einfach erklärt – Arten, Zinsniveau, Laufzeit, Bonität, Risiko, ETFs, Kündigung, Handelsplätze, Steuern und das Glossar.">
+<title>Akademie: Wissen über Anleihen – Bondarium</title>
+<meta name="description" content="Die Akademie von Bondarium: Anleihen von Grund auf erklärt, die passende Anleihe auswählen und Themen für Fortgeschrittene – 17 Themen und das Glossar.">
 <link rel="canonical" href="https://www.bondarium.de/wissen.html">
 <meta name="robots" content="index, follow">
 <meta name="author" content="Bondarium">
@@ -12,15 +12,15 @@
 <meta property="og:site_name" content="Bondarium">
 <meta property="og:locale" content="de_DE">
 <meta property="og:url" content="https://www.bondarium.de/wissen.html">
-<meta property="og:title" content="Verstehen: Wissen über Anleihen – Bondarium">
-<meta property="og:description" content="Stufe 1 – Verstehen: Anleihen einfach erklärt – Arten, Zinsniveau, Laufzeit, Bonität, Risiko, ETFs, Kündigung, Handelsplätze, Steuern und das Glossar.">
+<meta property="og:title" content="Akademie: Wissen über Anleihen – Bondarium">
+<meta property="og:description" content="Die Akademie von Bondarium: Anleihen von Grund auf erklärt, die passende Anleihe auswählen und Themen für Fortgeschrittene – 17 Themen und das Glossar.">
 <meta property="og:image" content="https://www.bondarium.de/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Bondarium: Finde Anleihen, die zu deinem Leben passen">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Verstehen: Wissen über Anleihen – Bondarium">
-<meta name="twitter:description" content="Stufe 1 – Verstehen: Anleihen einfach erklärt – Arten, Zinsniveau, Laufzeit, Bonität, Risiko, ETFs, Kündigung, Handelsplätze, Steuern und das Glossar.">
+<meta name="twitter:title" content="Akademie: Wissen über Anleihen – Bondarium">
+<meta name="twitter:description" content="Die Akademie von Bondarium: Anleihen von Grund auf erklärt, die passende Anleihe auswählen und Themen für Fortgeschrittene – 17 Themen und das Glossar.">
 <meta name="twitter:image" content="https://www.bondarium.de/og-image.png">
 <link rel="icon" href="favicon.svg?v=2" type="image/svg+xml">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2">
@@ -35,9 +35,23 @@
   .crossnav b { color: var(--ink); font-weight: 600; }
   .crossnav { line-height: 1.9; }
   /* Stufen-Leiste am Handy kompakt: Regel steht seit 30.09.2026 zentral in base.css (.tueren.stufen-kopf). */
+  /* Akademie-Übersicht (seit 01.10.2026 abends): drei Abschnitte wie die drei Spalten im Menü – Grundlagen, Auswählen,
+     Für Fortgeschrittene –, darunter das Glossar. Die Leiste oben springt zu den Abschnitten. */
+  .ak-teil { margin-top: 44px; scroll-margin-top: 104px; }
+  .ak-teil > h2 { font-size: 28px; margin-bottom: 4px; }
+  .ak-teil > p { font-size: 16.5px; line-height: 1.5; color: var(--text); max-width: 660px; margin: 0 0 18px; }
+  .ak-glossar { margin-top: 44px; }
+  @media (min-width: 941px) { .hub.hub-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); } }   /* fünf Themen in einer Reihe statt 4 + 1 */
+  @media (max-width: 600px) { .ak-teil { margin-top: 34px; scroll-margin-top: 70px; } .ak-teil > h2 { font-size: 24px; } .ak-glossar { margin-top: 34px; } }
+  /* Sprungleiste am Handy: drei Wörter in einer Zeile – „Für“ entfällt, die dritte Spalte ist breiter */
+  @media (max-width: 600px) {
+    .tueren.stufen-kopf { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr); }
+    .tueren.stufen-kopf .verb { font-size: 14.5px; white-space: nowrap; }
+    .tueren.stufen-kopf .nur-breit { display: none; }
+  }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","headline":"Verstehen – Wissen über Anleihen: Grundlagen, Anleihe-Arten, Zinsniveau, Laufzeit, Bonität, Risiko, ETF, Kündbare Anleihen, Handelsplätze, Steuern, Glossar","description":"Stufe 1 – Verstehen: Anleihen einfach erklärt – Arten, Zinsniveau, Laufzeit, Bonität, Risiko, ETFs, Kündigung, Handelsplätze, Steuern und das Glossar.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-30","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/wissen.html"}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Verstehen","item":"https://www.bondarium.de/wissen.html"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","headline":"Akademie – Wissen über Anleihen: Grundlagen, Auswählen, Für Fortgeschrittene und das Glossar","description":"Die Akademie von Bondarium: Anleihen von Grund auf erklärt, die passende Anleihe auswählen und Themen für Fortgeschrittene – 17 Themen und das Glossar.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-30","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/wissen.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Akademie","item":"https://www.bondarium.de/wissen.html"}]}</script>
 </head>
 <body>
 <a class="skip-link" href="#main">Zum Inhalt springen</a>
@@ -47,14 +61,38 @@
     <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen"><span class="nav-toggle-i" aria-hidden="true"></span></button>
     <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">
       <div class="nav-group nav-akademie">
-        <a href="./#akademie" class="nav-group-btn current" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
-        <div class="nav-group-menu">
-          <a href="wissen.html" class="nav-stufe current">Verstehen</a>
-          <a href="entscheiden.html" class="nav-stufe">Entscheiden</a>
-          <a href="kaufen.html" class="nav-stufe">Kaufen</a>
-          <a href="vertiefen.html" class="nav-stufe">Vertiefen</a>
-          <span class="nav-cap">Werkzeuge</span>
-          <a href="rechner.html">Anleihen-Rechner</a>
+        <a href="wissen.html" class="nav-group-btn current" aria-expanded="false"><span>Akademie</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu nav-mega">
+          <a href="wissen.html" class="nav-ov current">Übersicht</a>
+          <div class="nav-spalten">
+          <div class="nav-spalte">
+          <span class="nav-cap">Grundlagen</span>
+          <a href="grundlagen.html">Anleihen einfach erklärt</a>
+          <a href="anleihe-arten.html">Anleihe-Arten</a>
+          <a href="zinsniveau.html">Zinsniveau</a>
+          <a href="laufzeit.html">Laufzeit</a>
+          <a href="bonitaet.html">Bonität und Ratings</a>
+          <a href="risiko.html">Risiko kennen</a>
+          <a href="kuendbare-anleihen.html">Kündbare Anleihen</a>
+          </div>
+          <div class="nav-spalte">
+          <span class="nav-cap">Auswählen</span>
+          <a href="anlegerprofile.html">Sind Anleihen etwas für dich?</a>
+          <a href="anlageziele.html">Welche Anleihe wozu?</a>
+          <a href="guide.html">Vier Beispiele nach Ziel</a>
+          <a href="etf-oder-anleihe.html">ETF oder Anleihe?</a>
+          <a href="anleihen-etf-erklaert.html">Anleihen-ETF: Vor- und Nachteile</a>
+          </div>
+          <div class="nav-spalte">
+          <span class="nav-cap">Für Fortgeschrittene</span>
+          <a href="fortgeschrittene.html">Zinskurve, Duration &amp; Co.</a>
+          <a href="duration.html">Duration und Konvexität</a>
+          <a href="rendite-lesen.html">Rendite richtig lesen</a>
+          <a href="anleihenleiter.html">Leiter, Hantel, Roll-down</a>
+          <a href="markttechnik.html">Markttechnik lesen</a>
+          </div>
+          </div>
+          <a href="begriffe.html" class="nav-fuss">Glossar<small>Fachbegriffe von A bis Z</small></a>
         </div>
       </div>
       <div class="nav-group nav-anleihen">
@@ -63,149 +101,201 @@
           <a href="anleihen.html" class="nav-ov">Übersicht</a>
           <a href="anleihen-suche.html" class="nav-hl">Anleihen-Suche</a>
           <span class="nav-cap">Top 10 meistgehandelt</span>
-          <a href="staatsanleihen-laufzeit.html">nach Laufzeit – Staatsanleihen</a>
-          <a href="unternehmensanleihen-laufzeit.html">nach Laufzeit – Unternehmensanleihen</a>
-          <a href="anleihen-laender.html">nach Ländern – Staatsanleihen</a>
-          <a href="unternehmensanleihen-laender.html">nach Ländern – Unternehmensanleihen</a>
+          <a href="staatsanleihen-laufzeit.html">Staatsanleihen nach Laufzeit</a>
+          <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>
+          <a href="unternehmensanleihen-laufzeit.html">Unternehmensanleihen nach Laufzeit</a>
+          <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
           <a href="anleihen-etf.html">Anleihen-ETFs</a>
-          <span class="nav-cap">Top 30 nach Kupon</span>
-          <a href="anleihen-kupon.html">Alle Anleihen</a>
-          <span class="nav-cap">Beispiele</span>
-          <a href="guide.html">nach Ziel – Anleihen-Beispiele</a>
+          <span class="nav-cap">Top 30</span>
+          <a href="anleihen-kupon.html">Höchste Kupons</a>
+        </div>
+      </div>
+      <div class="nav-group nav-kaufen">
+        <a href="kaufen.html" class="nav-group-btn" aria-expanded="false"><span>Kaufen</span><span class="nav-caret" aria-hidden="true"></span></a>
+        <div class="nav-group-menu">
+          <a href="kaufen.html" class="nav-ov">Übersicht</a>
+          <a href="erste-anleihe.html">Deine erste Anleihe</a>
+          <a href="broker-vergleich.html">Broker im Vergleich</a>
+          <a href="handelsplaetze.html">Handelsplätze</a>
+          <a href="steuern-handelskosten.html">Steuern und Handelskosten</a>
+          <a href="rechner.html">Rechner</a>
         </div>
       </div>
       <div class="nav-group nav-zinsen">
         <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
         <div class="nav-group-menu">
           <a href="beobachten.html" class="nav-ov">Übersicht</a>
-          <span class="nav-cap">Zins</span>
-          <a href="renditen.html">Staatsanleihen seit 1970</a>
+          <a href="renditen.html">Renditen Staatsanleihen seit 1970</a>
           <a href="zinskurve.html">Zinskurve seit 1972</a>
           <a href="realzins.html">Realzins seit 1970</a>
-          <span class="nav-cap">Risiko</span>
-          <a href="unternehmensanleihen.html">Unternehmensanleihen seit 1984</a>
-          <a href="risikoaufschlaege.html">Risikoaufschläge</a>
+          <a href="unternehmensanleihen.html">Renditen Unternehmensanleihen seit 1984</a>
+          <a href="risikoaufschlaege.html">Risikoaufschläge seit 1984</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
       </div>
-      <a href="konto.html">Mein Bondarium</a>
-      <a href="ueber-uns.html">Über uns</a>
+      <a href="konto.html" class="nav-konto">Mein Bondarium</a>
     </nav>
     <form class="kopfsuche" action="anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche"><input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>
+    <a class="kopfkonto" href="konto.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.2-4 4-5.5 7.5-5.5s6.3 1.5 7.5 5.5"/></svg><span>Mein Bondarium</span></a>
   </header>
-  <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><span aria-current="page">Verstehen</span></li></ol></nav>
+  <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><span aria-current="page">Akademie</span></li></ol></nav>
   <main id="main">
 
-  <nav class="tueren stufen-kopf" aria-label="Die drei Stufen">
-          <a href="wissen.html" aria-current="page" style="--c:#39FF14;--ci:#1A1A19;--ct:#157C00;--tint:#DFFFD9"><span class="txt"><span class="kopf"><span class="verb">Verstehen</span></span><span class="sub"><b>Von Grund auf&nbsp;erklärt.</b></span></span><svg class="ill" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 14C20 10.5 13 10 7 11V34C13 33 20 33.5 24 37Z" fill="#DCFBD3"/><path d="M24 14C28 10.5 35 10 41 11V34C35 33 28 33.5 24 37Z" fill="#fff"/><path d="M29 19.5L36 18.5M29 24.5L36 23.5M29 29.5L33.5 29"/><circle cx="24" cy="5.5" r="3.5" fill="#39FF14"/></svg></a>
-          <a href="entscheiden.html" style="--c:#39FF14;--ci:#1A1A19;--ct:#157C00;--tint:#DFFFD9"><span class="txt"><span class="kopf"><span class="verb">Entscheiden</span></span><span class="sub"><b>Welche Anleihe passt zu&nbsp;dir?</b></span></span><svg class="ill" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="24" cy="39" rx="11" ry="3" fill="#DCFBD3" stroke="none"/><path d="M24 39V27C24 21 14 19.5 13 12M24 27C24 21 34 19.5 35 12"/><circle cx="13" cy="8.5" r="4" fill="#fff"/><circle cx="35" cy="8.5" r="4.5" fill="#39FF14"/></svg></a>
-          <a href="kaufen.html" style="--c:#39FF14;--ci:#1A1A19;--ct:#157C00;--tint:#DFFFD9"><span class="txt"><span class="kopf"><span class="verb">Kaufen</span></span><span class="sub"><b>Broker wählen, Order&nbsp;aufgeben.</b></span></span><svg class="ill" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="5" width="25" height="32" rx="4" fill="#DCFBD3"/><path d="M14.5 13H28.5M14.5 19H28.5M14.5 25H21"/><circle cx="34" cy="33" r="7.5" fill="#39FF14"/><path d="M30.5 33.25L33 35.5L37.5 30.75"/></svg></a>
-        </nav>   <!-- seit 28.09.2026 (Nutzerwunsch): dieselben Kacheln wie auf der Startseite als Navigation zwischen den Stufen -->
-  <h1>Verstehen</h1>
-  <p class="sub">Wissen über Anleihen – <span id="w-n">11</span> Themen von den Grundlagen bis zum Glossar. Zeit zum Stöbern.</p>
+  <nav class="tueren stufen-kopf" aria-label="Die drei Bereiche der Akademie">
+          <a href="#grundlagen" style="--c:#39FF14;--ci:#1A1A19;--ct:#157C00;--tint:#DFFFD9"><span class="txt"><span class="kopf"><span class="verb">Grundlagen</span></span><span class="sub"><b>Von Grund auf&nbsp;erklärt.</b></span></span><svg class="ill" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 14C20 10.5 13 10 7 11V34C13 33 20 33.5 24 37Z" fill="#DCFBD3"/><path d="M24 14C28 10.5 35 10 41 11V34C35 33 28 33.5 24 37Z" fill="#fff"/><path d="M29 19.5L36 18.5M29 24.5L36 23.5M29 29.5L33.5 29"/><circle cx="24" cy="5.5" r="3.5" fill="#39FF14"/></svg></a>
+          <a href="#auswaehlen" style="--c:#39FF14;--ci:#1A1A19;--ct:#157C00;--tint:#DFFFD9"><span class="txt"><span class="kopf"><span class="verb">Auswählen</span></span><span class="sub"><b>Welche Anleihe passt zu&nbsp;dir?</b></span></span><svg class="ill" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="24" cy="39" rx="11" ry="3" fill="#DCFBD3" stroke="none"/><path d="M24 39V27C24 21 14 19.5 13 12M24 27C24 21 34 19.5 35 12"/><circle cx="13" cy="8.5" r="4" fill="#fff"/><circle cx="35" cy="8.5" r="4.5" fill="#39FF14"/></svg></a>
+          <a href="#fortgeschrittene" style="--c:#39FF14;--ci:#1A1A19;--ct:#157C00;--tint:#DFFFD9"><span class="txt"><span class="kopf"><span class="verb"><span class="nur-breit">Für </span>Fortgeschrittene</span></span><span class="sub"><b>Duration, Rendite, Strategien.</b></span></span><svg class="ill" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 32C21 31 24 15 37 13V38H12Z" fill="#DCFBD3" stroke="none"/><path d="M8 7V38H42"/><path d="M12 32C21 31 24 15 37 13"/><circle cx="37" cy="12.5" r="4.5" fill="#39FF14"/></svg></a>
+        </nav>   <!-- seit 01.10.2026 abends: die drei Bereiche der Akademie als Sprungleiste (vorher: Wechsel zwischen den Stufen Verstehen, Entscheiden, Kaufen) -->
+  <h1>Akademie</h1>
+  <p class="sub">Wissen über Anleihen – <span id="w-n">17</span> Themen in drei Bereichen, dazu das Glossar. Zeit zum Stöbern.</p>
 
-  <div class="hub">
-    <a class="hub-card" href="grundlagen.html">
-      <img class="hub-img" src="spot-grundlagen.svg" alt="" width="160" height="110">
-      <h2>Grundlagen</h2>
-      <p class="desc">Anleihen einfach erklärt</p>
-    </a>
-    <a class="hub-card" href="anleihe-arten.html">
-      <img class="hub-img" src="spot-anleihe-arten.svg" alt="" width="160" height="110">
-      <h2>Anleihe-Arten</h2>
-      <p class="desc">Staat, Pfandbrief, Floater &amp; Co.</p>
-    </a>
-    <a class="hub-card" href="zinsniveau.html">
-      <img class="hub-img" src="spot-zinsniveau.svg" alt="" width="160" height="110">
-      <h2>Zinsniveau</h2>
-      <p class="desc">Warum es steigt und fällt</p>
-    </a>
-    <a class="hub-card" href="laufzeit.html">
-      <img class="hub-img" src="spot-laufzeit.svg" alt="" width="160" height="110">
-      <h2>Laufzeit</h2>
-      <p class="desc">Kurz oder lang – Risiko und Chance</p>
-    </a>
-    <a class="hub-card" href="bonitaet.html">
-      <img class="hub-img" src="spot-bonitaet.svg" alt="" width="160" height="110">
-      <h2>Bonität und Ratings</h2>
-      <p class="desc">Wie sicher ist dein Geld?</p>
-    </a>
-    <a class="hub-card" href="risiko.html">
-      <img class="hub-img" src="spot-risiko.svg" alt="" width="160" height="110">
-      <h2>Risiko kennen</h2>
-      <p class="desc">Was schiefgehen kann</p>
-    </a>
-    <a class="hub-card" href="anleihen-etf-erklaert.html">
-      <img class="hub-img" src="spot-anleihen-etf-erklaert.svg" alt="" width="160" height="110">
-      <h2>Anleihen-ETF</h2>
-      <p class="desc">Vor- und Nachteile</p>
-    </a>
-    <a class="hub-card" href="kuendbare-anleihen.html">
-      <img class="hub-img" src="spot-kuendbare-anleihen.svg" alt="" width="160" height="110">
-      <h2>Kündbare Anleihen</h2>
-      <p class="desc">Sechs Kündigungsarten und ihre Folgen</p>
-    </a>
-    <a class="hub-card" href="handelsplaetze.html">
-      <img class="hub-img" src="spot-handelsplaetze.svg" alt="" width="160" height="110">
-      <h2>Handelsplätze</h2>
-      <p class="desc">Frankfurt, Stuttgart, gettex &amp; Co. – wer den Kurs stellt</p>
-    </a>
-    <a class="hub-card" href="steuern-handelskosten.html">
-      <img class="hub-img" src="spot-steuern-handelskosten.svg" alt="" width="160" height="110">
-      <h2>Steuern und Handelskosten</h2>
-      <p class="desc">Was zwischen brutto und netto liegt</p>
-    </a>
-    <a class="hub-card gl" href="begriffe.html">
+  <section class="ak-teil" id="grundlagen" aria-labelledby="h-grundlagen">
+    <h2 id="h-grundlagen">Grundlagen</h2>
+    <p>Was du vor dem ersten Kauf wissen solltest – von Grund auf erklärt.</p>
+    <div class="hub">
+      <a class="hub-card" href="grundlagen.html">
+        <img class="hub-img" src="spot-grundlagen.svg" alt="" width="160" height="110">
+        <h3>Anleihen einfach erklärt</h3>
+        <p class="desc">Die Grundlagen in sechs kurzen Schritten</p>
+      </a>
+      <a class="hub-card" href="anleihe-arten.html">
+        <img class="hub-img" src="spot-anleihe-arten.svg" alt="" width="160" height="110">
+        <h3>Anleihe-Arten</h3>
+        <p class="desc">Staat, Pfandbrief, Floater &amp; Co.</p>
+      </a>
+      <a class="hub-card" href="zinsniveau.html">
+        <img class="hub-img" src="spot-zinsniveau.svg" alt="" width="160" height="110">
+        <h3>Zinsniveau</h3>
+        <p class="desc">Warum es steigt und fällt</p>
+      </a>
+      <a class="hub-card" href="laufzeit.html">
+        <img class="hub-img" src="spot-laufzeit.svg" alt="" width="160" height="110">
+        <h3>Laufzeit</h3>
+        <p class="desc">Kurz oder lang – Risiko und Chance</p>
+      </a>
+      <a class="hub-card" href="bonitaet.html">
+        <img class="hub-img" src="spot-bonitaet.svg" alt="" width="160" height="110">
+        <h3>Bonität und Ratings</h3>
+        <p class="desc">Wie sicher ist dein Geld?</p>
+      </a>
+      <a class="hub-card" href="risiko.html">
+        <img class="hub-img" src="spot-risiko.svg" alt="" width="160" height="110">
+        <h3>Risiko kennen</h3>
+        <p class="desc">Was schiefgehen kann</p>
+      </a>
+      <a class="hub-card" href="kuendbare-anleihen.html">
+        <img class="hub-img" src="spot-kuendbare-anleihen.svg" alt="" width="160" height="110">
+        <h3>Kündbare Anleihen</h3>
+        <p class="desc">Sechs Kündigungsarten und ihre Folgen</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="ak-teil" id="auswaehlen" aria-labelledby="h-auswaehlen">
+    <h2 id="h-auswaehlen">Auswählen</h2>
+    <p>Sind Anleihen etwas für dich – und welche? Von der ersten Frage bis zum Beispiel.</p>
+    <div class="hub hub-5">
+      <a class="hub-card" href="anlegerprofile.html">
+        <img class="hub-img" src="spot-anlegerprofile.svg" alt="" width="160" height="110">
+        <h3>Sind Anleihen etwas für dich?</h3>
+        <p class="desc">Zwei typische Anleger und ihre Gründe</p>
+      </a>
+      <a class="hub-card" href="anlageziele.html">
+        <img class="hub-img" src="spot-anlageziele.svg" alt="" width="160" height="110">
+        <h3>Welche Anleihe wozu?</h3>
+        <p class="desc">Sechs Ziele – vom Parken bis zum Depot</p>
+      </a>
+      <a class="hub-card" href="guide.html">
+        <img class="hub-img" src="spot-guide.svg" alt="" width="160" height="110">
+        <h3>Vier Beispiele nach Ziel</h3>
+        <p class="desc">Vier Menschen, vier Wege – bis in die Suche</p>
+      </a>
+      <a class="hub-card" href="etf-oder-anleihe.html">
+        <img class="hub-img" src="spot-etf-oder-anleihe.svg" alt="" width="160" height="110">
+        <h3>ETF oder Anleihe?</h3>
+        <p class="desc">Drei Unterschiede, eine Entscheidungstabelle</p>
+      </a>
+      <a class="hub-card" href="anleihen-etf-erklaert.html">
+        <img class="hub-img" src="spot-anleihen-etf-erklaert.svg" alt="" width="160" height="110">
+        <h3>Anleihen-ETF</h3>
+        <p class="desc">Vor- und Nachteile</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="ak-teil" id="fortgeschrittene" aria-labelledby="h-fortgeschrittene">
+    <h2 id="h-fortgeschrittene">Für Fortgeschrittene</h2>
+    <p>Fünf Themen, die auf den Grundlagen aufbauen: Kursrisiko rechnen, Renditen richtig lesen, ein Depot planen und den Markt deuten.</p>
+    <div class="hub hub-5">
+      <a class="hub-card" href="fortgeschrittene.html">
+        <img class="hub-img" src="spot-fortgeschrittene.svg" alt="" width="160" height="110">
+        <h3>Zinskurve, Duration &amp; Co.</h3>
+        <p class="desc">Der Überblick für Fortgeschrittene – Spreads, Kleingedrucktes, Fremdwährung</p>
+      </a>
+      <a class="hub-card" href="duration.html">
+        <img class="hub-img" src="spot-duration.svg" alt="" width="160" height="110">
+        <h3>Duration und Konvexität</h3>
+        <p class="desc">Den Hebel rechnen – für Anleihe und Depot</p>
+      </a>
+      <a class="hub-card" href="rendite-lesen.html">
+        <img class="hub-img" src="spot-rendite-lesen.svg" alt="" width="160" height="110">
+        <h3>Rendite richtig lesen</h3>
+        <p class="desc">Kupon, Yield to Worst, netto – welche Zahl zählt</p>
+      </a>
+      <a class="hub-card" href="anleihenleiter.html">
+        <img class="hub-img" src="spot-anleihenleiter.svg" alt="" width="160" height="110">
+        <h3>Leiter, Hantel, Roll-down</h3>
+        <p class="desc">Depot-Strategien für jede Zinskurve</p>
+      </a>
+      <a class="hub-card" href="markttechnik.html">
+        <img class="hub-img" src="spot-markttechnik.svg" alt="" width="160" height="110">
+        <h3>Markttechnik lesen</h3>
+        <p class="desc">Auktionen, EZB, Swap-Spread, Breakeven</p>
+      </a>
+    </div>
+  </section>
+
+  <div class="hub ak-glossar">
+    <a class="hub-card next" href="begriffe.html">
       <img class="hub-img" src="spot-begriffe.svg" alt="" width="160" height="110">
       <h2>Glossar</h2>
-      <p class="desc">Alle Fachbegriffe kurz erklärt</p>
-    </a>
-    <a class="hub-card stufe-weiter" href="vertiefen.html">
-      <img class="hub-img" src="spot-fortgeschrittene.svg" alt="" width="160" height="110">
-      <h2>Vertiefen →</h2>
-      <p class="desc">Für Fortgeschrittene: Duration, Rendite lesen, Depot-Strategien, Markttechnik</p>
-    </a>
-    <a class="hub-card next" href="entscheiden.html">
-      <img class="hub-img" src="spot-next-2.svg" alt="" width="160" height="110">
-      <h2>Nächste Stufe: Entscheiden</h2>
-      <p class="desc">Sind Anleihen etwas für dich – und welche?</p>
+      <p class="desc">Alle Fachbegriffe von A bis Z, jeder in wenigen Sätzen erklärt</p>
     </a>
   </div>
 
-  <nav class="crossnav crossnav-gruppen" aria-label="Weiter auf dem Weg">
-    <p class="crossnav-t">Weiter auf dem Weg</p>
+  <nav class="crossnav crossnav-gruppen" aria-label="Weiter">
+    <p class="crossnav-t">Weiter</p>
     <div class="crossnav-gs">
-      <div class="crossnav-g"><p class="crossnav-gt">Entscheiden</p><ul class="crossnav-l">
-        <li><a href="anlegerprofile.html">Sind Anleihen etwas für dich?</a></li>
-        <li><a href="anlageziele.html">Welche Anleihe wozu?</a></li>
-        <li><a href="rechner.html">Rechner</a></li>
-      </ul></div>
-      <div class="crossnav-g"><p class="crossnav-gt">Kaufen</p><ul class="crossnav-l">
-        <li><a href="erste-anleihe.html">Deine erste Anleihe</a></li>
-        <li><a href="broker-vergleich.html">Broker im Vergleich</a></li>
-      </ul></div>
-      <div class="crossnav-g"><p class="crossnav-gt">Zinsen</p><ul class="crossnav-l">
-        <li><a href="renditen.html">Staatsanleihen seit 1970</a></li>
-        <li><a href="unternehmensanleihen.html">Unternehmensanleihen seit 1984</a></li>
-        <li><a href="langlaeufer.html">Langläufer</a></li>
-        <li><a href="zinskurve.html">Zinskurve seit 1972</a></li>
-        <li><a href="realzins.html">Realzins seit 1970</a></li>
-        <li><a href="risikoaufschlaege.html">Risikoaufschläge seit 1984</a></li>
-      </ul></div>
       <div class="crossnav-g"><p class="crossnav-gt">Anleihen</p><ul class="crossnav-l">
         <li><a href="anleihen-suche.html">Anleihen-Suche</a></li>
         <li><a href="staatsanleihen-laufzeit.html">Top 10 nach Laufzeit</a></li>
         <li><a href="anleihen-laender.html">Top 10 nach Ländern</a></li>
+        <li><a href="anleihen-kupon.html">Höchste Kupons</a></li>
         <li><a href="anleihen-etf.html">Anleihen-ETFs</a></li>
-        <li><a href="guide.html">Anleihen-Beispiele nach Ziel</a></li>
+      </ul></div>
+      <div class="crossnav-g"><p class="crossnav-gt">Kaufen</p><ul class="crossnav-l">
+        <li><a href="erste-anleihe.html">Deine erste Anleihe</a></li>
+        <li><a href="broker-vergleich.html">Broker im Vergleich</a></li>
+        <li><a href="handelsplaetze.html">Handelsplätze</a></li>
+        <li><a href="steuern-handelskosten.html">Steuern und Handelskosten</a></li>
+        <li><a href="rechner.html">Rechner</a></li>
+      </ul></div>
+      <div class="crossnav-g"><p class="crossnav-gt">Zinsen</p><ul class="crossnav-l">
+        <li><a href="renditen.html">Renditen Staatsanleihen seit 1970</a></li>
+        <li><a href="zinskurve.html">Zinskurve seit 1972</a></li>
+        <li><a href="realzins.html">Realzins seit 1970</a></li>
+        <li><a href="unternehmensanleihen.html">Renditen Unternehmensanleihen seit 1984</a></li>
+        <li><a href="risikoaufschlaege.html">Risikoaufschläge seit 1984</a></li>
+        <li><a href="langlaeufer.html">Langläufer</a></li>
       </ul></div>
     </div>
   </nav>
   </main>
   <footer class="fuss">
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="guide.html">Anleihen-Beispiele nach Ziel</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
-    <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html" aria-current="page">Verstehen</a><a href="entscheiden.html">Entscheiden</a><a href="kaufen.html">Kaufen</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Staatsanleihen seit 1970</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
+    <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html#grundlagen">Grundlagen</a><a href="wissen.html#auswaehlen">Auswählen</a><a href="wissen.html#fortgeschrittene">Für Fortgeschrittene</a><a href="begriffe.html">Glossar</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="anleihen-kupon.html">Höchste Kupons</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-kauf"><p class="fuss-k" id="f-kauf">Kaufen</p><a href="erste-anleihe.html">Deine erste Anleihe</a><a href="broker-vergleich.html">Broker im Vergleich</a><a href="steuern-handelskosten.html">Steuern und Handelskosten</a><a href="rechner.html">Rechner</a></nav>
+    <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen Staatsanleihen</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
@@ -220,7 +310,7 @@ window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']
 MC.navInit();
 
 // Anzahl der Themen aus den Kacheln (30.09.2026) – nicht mehr von Hand
-(function () { var n = document.querySelectorAll(".hub > .hub-card:not(.next):not(.stufe-weiter)").length, e = document.getElementById("w-n"); if (e && n) e.textContent = n; })();
+(function () { var n = document.querySelectorAll(".ak-teil .hub-card").length, e = document.getElementById("w-n"); if (e && n) e.textContent = n; })();
 </script>
 </body>
 </html>

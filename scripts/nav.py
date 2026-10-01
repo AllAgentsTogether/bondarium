@@ -12,29 +12,29 @@ absolute Pfade (`/…`), weil sie unter beliebigen URLs ausgeliefert wird.
 Die aktive Seite erhält `class="current"` am Gruppenkopf und am Eintrag;
 site.js setzt daraus `aria-current`.
 
-Menü „Der Weg“ (Konzept A, seit 25.09.2026): vier Stufen als Aufklapper –
-Verstehen, Entscheiden, Kaufen (seit 29.09.2026 drei; Einordnen ist jetzt das Menü „Zinsen“) – dazu rechts der Link „Über uns“
-(LINKS). Der frühere Knopf „Anleihen-Suche“ (BUTTONS) ist seit 25.09.2026 abends
-ein Eintrag im Menü Kaufen; BUTTONS bleibt als Mechanismus erhalten. Der Gruppenkopf
-ist ein Link auf die Übersichtsseite der Stufe (wissen.html, entscheiden.html,
-kaufen.html, beobachten.html – seit 25.09.2026 spät hat jede Stufe eine). Einträge in GROUPS:
+Menü seit 01.10.2026 abends (Nutzerentscheid „Navigation neu“, Diagramm im Chat): vier Aufklapper in der Reihenfolge
+des Weges – Akademie (lernen), Anleihen (finden), Kaufen, Zinsen (beobachten) –, rechts das Suchfeld und der Knopf
+„Mein Bondarium“ (KONTO). „Über uns“ steht nur noch in der Fußzeile. Jede Seite steht genau einmal im Menü und ist
+mit zwei Klicks erreichbar. Der Gruppenkopf ist ein Link auf die Übersichtsseite (wissen.html, anleihen.html,
+kaufen.html, beobachten.html).
+  * AKADEMIE: drei Spalten (Grundlagen, Auswählen, Für Fortgeschrittene) mit allen Themen direkt im Aufklapper, darunter
+    über die ganze Breite das Glossar. Die Übersicht wissen.html trägt dieselben drei Abschnitte (#grundlagen,
+    #auswaehlen, #fortgeschrittene); die früheren Übersichten entscheiden.html und vertiefen.html leiten dorthin (.htaccess).
+  * MENUS (ANLEIHEN, KAUFEN, ZINSEN): einfache Listen. Einträge:
   ("Beschriftung", "datei.html")  Menüeintrag
-  ("Beschriftung", "datei.html", "klasse")  Menüeintrag mit CSS-Klasse (nav-hl = dezenter Rahmen, für die Suche im Menü Kaufen)
-  "Beschriftung"                  Gruppenüberschrift im Aufklapper (kleine graue Zeile)
-  None                            Trennlinie
-Hat eine Stufe ihre Übersichtsseite nicht selbst als Eintrag (der Normalfall),
-schreibt das Skript zusätzlich den Eintrag „Übersicht“ mit der Klasse nav-ov – base.css zeigt ihn nur im Handy-Akkordeon, wo der Kopf nicht
-navigiert, sondern auf- und zuklappt.
+  ("Beschriftung", "datei.html", "klasse")  Menüeintrag mit CSS-Klasse (nav-hl = dezenter Rahmen, für die Anleihen-Suche)
+  "Beschriftung"                  Gruppenüberschrift im Aufklapper (grüner Chip)
+Jeder Aufklapper bekommt zusätzlich den Eintrag „Übersicht“ mit der Klasse nav-ov – base.css zeigt ihn nur im
+Handy-Akkordeon, wo der Kopf nicht navigiert, sondern auf- und zuklappt.
+Vorher (25.09.–01.10.2026): „Der Weg“ mit den Stufen Verstehen, Entscheiden, Kaufen, Vertiefen unter „Akademie“.
 
-Menü ändern: nur GROUPS, VERTIEFEN, AKADEMIE_EXTRA, ANLEIHEN, ZINSEN, BUTTONS, LINKS anpassen und das Skript laufen lassen.
+Menü ändern: nur AKADEMIE, ANLEIHEN, KAUFEN, ZINSEN, KONTO, FOOTER anpassen und das Skript laufen lassen.
 
 Seit 30.09.2026 schreibt das Skript außerdem (alles idempotent, --check meldet Abweichungen):
   * die Brotkrumen-Zeile <nav class="krumen"> direkt unter der Kopfzeile – erzeugt aus dem JSON-LD
     BreadcrumbList der Seite (nicht auf index.html und 404.html; ohne BreadcrumbList keine Zeile),
-  * die gemeinsame Fußzeile <footer class="fuss"> (FOOTER; vier Spalten wie früher nur auf der Startseite),
+  * die gemeinsame Fußzeile <footer class="fuss"> (FOOTER; fünf Spalten in der Reihenfolge des Menüs),
   * den Rückfall-Block für window.MC (FALLBACK) in einheitlicher Minimalform, falls site.js nicht lädt.
-Der Menüpunkt „Akademie“ zeigt auf ./#akademie (404.html: /#akademie) – nicht auf index.html#akademie: Diese Form
-fasst der Deploy-sed (href="index.html" → "/") nicht, und .htaccess leitete sie per 301 von index.html auf / um.
 """
 import html
 import json
@@ -43,103 +43,75 @@ import os
 import re
 import sys
 
-# (Beschriftung, Ziel des Gruppenkopfs, Einträge) – siehe Kopf der Datei
-GROUPS = [
-    ("Verstehen", "wissen.html", [
-        # Seit 26.09.2026 nach Kenntnisstand geteilt (Nutzerwunsch „in Anfänger und Fortgeschrittene aufteilen“):
-        # Anfänger = die Grundbegriffe, die man vor dem ersten Kauf kennen sollte; Fortgeschrittene = Themen,
-        # die diese Grundlagen voraussetzen (ETF ohne festes Ende, Zinskurve/Duration/Spreads …).
-        "Anfänger",
+# Akademie: (Beschriftung, Übersichtsseite, Spalten, Fußeintrag). Spalte = (Überschrift, Sprungmarke auf der Übersicht, Einträge).
+# Grundlagen = was man vor dem ersten Kauf wissen sollte (bis 01.10.2026 „Verstehen“); Auswählen = passt das zu mir und was
+# (bis 01.10.2026 „Entscheiden“, dazu die vier Beispiele nach Ziel und der ETF-Artikel); Für Fortgeschrittene = bis 01.10.2026 „Vertiefen“.
+AKADEMIE = ("Akademie", "wissen.html", [
+    ("Grundlagen", "grundlagen", [
         ("Anleihen einfach erklärt", "grundlagen.html"),
         ("Anleihe-Arten", "anleihe-arten.html"),
-        ("Zinsniveau", "zinsniveau.html"),   # seit 26.09.2026: erklärt, was das Zinsniveau bewegt – vor „Laufzeit“, die zeigt, was es mit der Anleihe macht
+        ("Zinsniveau", "zinsniveau.html"),   # erklärt, was das Zinsniveau bewegt – vor „Laufzeit“, die zeigt, was es mit der Anleihe macht
         ("Laufzeit", "laufzeit.html"),
         ("Bonität und Ratings", "bonitaet.html"),
         ("Risiko kennen", "risiko.html"),
-        # Seit 01.10.2026 (Nutzerwunsch „Rollen strikt trennen“): Verstehen = alles bis zum ersten Kauf; die Profi-Themen und
-        # „Zinskurve, Duration & Co.“ gehören nur noch zu Vertiefen (VERTIEFEN) – keine Seite mehr in beiden Stufen.
-        "Weiterführend",
-        ("Anleihen-ETF: Vor- und Nachteile", "anleihen-etf-erklaert.html"),
-        ("Kündbare Anleihen", "kuendbare-anleihen.html"),   # seit 27.09.2026: sechs Kündigungsarten und ihre Folgen
-        ("Handelsplätze", "handelsplaetze.html"),   # seit 28.09.2026: Profimarkt, Börse, elf Plätze in einer Tabelle
-        ("Steuern und Handelskosten", "steuern-handelskosten.html"),
-        "Nachschlagen",
-        ("Glossar", "begriffe.html"),
+        ("Kündbare Anleihen", "kuendbare-anleihen.html"),
     ]),
-    ("Entscheiden", "entscheiden.html", [
-        # Seit 27.09.2026 mit Gruppenköpfen wie Verstehen und Kaufen (Nutzerwunsch): Orientieren = passt das zu mir,
-        # Werkzeuge = Anleitungen und Rechner
-        "Orientieren",
+    ("Auswählen", "auswaehlen", [
         ("Sind Anleihen etwas für dich?", "anlegerprofile.html"),
         ("Welche Anleihe wozu?", "anlageziele.html"),
+        ("Vier Beispiele nach Ziel", "guide.html"),   # Anleitungen, keine Liste – bis 01.10.2026 im Menü „Anleihen“
         ("ETF oder Anleihe?", "etf-oder-anleihe.html"),
-        "Werkzeuge",
-        ("Rechner", "rechner.html"),   # „Vier Anleitungen nach Ziel“ (guide.html) seit 29.09.2026 im Menü „Anleihen“
+        ("Anleihen-ETF: Vor- und Nachteile", "anleihen-etf-erklaert.html"),
     ]),
-    ("Kaufen", "kaufen.html", [
-        # Seit 29.09.2026 nur noch „So kaufst du“ – Anleihen-Suche und Top 10 stehen im Menü „Anleihen“ (ANLEIHEN)
-        "So kaufst du",
-        ("Deine erste Anleihe", "erste-anleihe.html"),
-        ("Broker im Vergleich", "broker-vergleich.html"),
+    ("Für Fortgeschrittene", "fortgeschrittene", [
+        ("Zinskurve, Duration & Co.", "fortgeschrittene.html"),
+        ("Duration und Konvexität", "duration.html"),
+        ("Rendite richtig lesen", "rendite-lesen.html"),
+        ("Leiter, Hantel, Roll-down", "anleihenleiter.html"),
+        ("Markttechnik lesen", "markttechnik.html"),
     ]),
-]
-# Seit 28.09.2026 (Nutzerwunsch): In der Kopfzeile steht nur noch ein Aufklapper „Akademie“; er öffnet die vier Stufen
-# (Verstehen, Entscheiden, Kaufen, Einordnen) als Einträge mit Unterzeile – Ziel ist jeweils die Übersichtsseite der Stufe,
-# die oben dieselben vier Kacheln als Navigation trägt. GROUPS bleibt die Quelle für Rubrik und „current“.
-AKADEMIE = ("Akademie", "./#akademie", "/#akademie")   # (Beschriftung, Ziel relativ, Ziel absolut für 404.html)
-# Seit 30.09.2026 (Audit „Orientierung fehlt“): unter den drei Stufen die Vertiefungsseiten und der Rechner direkt im
-# Aufklapper – vorher nur über die Übersichten erreichbar. Einträge wie in ANLEIHEN (Chip = Zeichenkette).
-# Seit 30.09.2026 abends (Nutzerwunsch „Vertiefen muss klickbar sein, die vier Punkte haben nichts im Dropdown zu suchen“):
-# „Vertiefen“ ist ein Stufen-Eintrag wie Verstehen/Entscheiden/Kaufen und führt auf die Übersicht vertiefen.html mit den
-# vier Profi-Themen (VERTIEFEN); die Themen selbst stehen nicht mehr im Aufklapper.
-# Seit 01.10.2026 strikt getrennt von Verstehen (nicht mehr in GROUPS) und mit „Für Fortgeschrittene“ als fünftem Thema.
-VERTIEFEN = ("Vertiefen", "vertiefen.html", ["fortgeschrittene.html", "duration.html", "rendite-lesen.html", "anleihenleiter.html",
-                                             "markttechnik.html"])
-AKADEMIE_EXTRA = [
-    "Werkzeuge",
-    ("Anleihen-Rechner", "rechner.html"),
-]
-# Seit 29.09.2026 (Nutzerwunsch „den Teil aus der Akademie heraustrennen“): zweiter Aufklapper „Anleihen“ mit allem, was
-# konkrete Anleihen zeigt – Suche, Top-10-Listen, ETFs und die Beispiele der Redaktion (guide.html). Kopf = Übersichtsseite
-# anleihen.html (Kacheln in Menüreihenfolge); Einträge wie früher die Stufen-Menüs: Chips (nav-cap), nav-hl, nav-ov.
+], ("Glossar", "begriffe.html", "Fachbegriffe von A bis Z"))
+# „Anleihen“: alles, was konkrete Anleihen zeigt – Suche und Ranglisten. Art zuerst („Staatsanleihen nach Laufzeit“), damit
+# man die Liste beim Überfliegen findet. „Top 10“ muss direkt draufstehen (Nutzerwunsch 29.09.2026).
 ANLEIHEN = ("Anleihen", "anleihen.html", [
     ("Anleihen-Suche", "anleihen-suche.html", "nav-hl"),
-    "Top 10 meistgehandelt",   # Nutzerwunsch 29.09.2026: „Top 10“ muss direkt draufstehen
-    ("nach Laufzeit – Staatsanleihen", "staatsanleihen-laufzeit.html"),
-    ("nach Laufzeit – Unternehmensanleihen", "unternehmensanleihen-laufzeit.html"),
-    ("nach Ländern – Staatsanleihen", "anleihen-laender.html"),
-    ("nach Ländern – Unternehmensanleihen", "unternehmensanleihen-laender.html"),
+    "Top 10 meistgehandelt",
+    ("Staatsanleihen nach Laufzeit", "staatsanleihen-laufzeit.html"),
+    ("Staatsanleihen nach Ländern", "anleihen-laender.html"),
+    ("Unternehmensanleihen nach Laufzeit", "unternehmensanleihen-laufzeit.html"),
+    ("Unternehmensanleihen nach Ländern", "unternehmensanleihen-laender.html"),
     ("Anleihen-ETFs", "anleihen-etf.html"),
-    # „Anleihen-ETF: Vor- und Nachteile“ seit 01.10.2026 nicht mehr hier – Erklärartikel gehört zur Akademie (Verstehen)
-    "Top 30 nach Kupon",   # Nutzerwunsch 01.10.2026: eigene Kategorie – höchster Kupon unter den Anleihen der EZB-Liste;
-    ("Alle Anleihen", "anleihen-kupon.html"),   # drei Top 30 auf einer Seite: Staat, Öffentlich, Unternehmen (zuerst Top 10 nur Unternehmensanleihen)
-    "Beispiele",
-    ("nach Ziel – Anleihen-Beispiele", "guide.html"),
+    "Top 30",   # höchster Kupon unter den Anleihen der EZB-Liste – drei Top 30 auf einer Seite: Staat, Öffentlich, Unternehmen
+    ("Höchste Kupons", "anleihen-kupon.html"),
 ])
-# Seit 29.09.2026 (Nutzerwunsch): dritter Aufklapper „Zinsen“ – die frühere Stufe 4 „Einordnen“ (Marktdaten, täglich aktuell)
-# steht nicht mehr in der Akademie. Kopf = Übersicht beobachten.html (Dateiname bleibt, damit alle Links gelten).
+# „Kaufen“ (seit 01.10.2026 eigener Hauptpunkt): alles, was man beim Kauf braucht – Anleitung, Broker, Handelsplätze,
+# Steuern und Kosten, Rechner (der Rechner stand vorher doppelt: unter Entscheiden und unter „Werkzeuge“).
+KAUFEN = ("Kaufen", "kaufen.html", [
+    ("Deine erste Anleihe", "erste-anleihe.html"),
+    ("Broker im Vergleich", "broker-vergleich.html"),
+    ("Handelsplätze", "handelsplaetze.html"),
+    ("Steuern und Handelskosten", "steuern-handelskosten.html"),
+    ("Rechner", "rechner.html"),
+])
+# „Zinsen“: Marktdaten, täglich aktuell. Kopf = Übersicht beobachten.html (Dateiname bleibt, damit alle Links gelten).
+# „Renditen“ steht vor Staats- und Unternehmensanleihen, damit die Einträge nicht wie die Listen im Menü „Anleihen“ klingen.
 ZINSEN = ("Zinsen", "beobachten.html", [
-    "Zins",
-    ("Staatsanleihen seit 1970", "renditen.html"),
+    ("Renditen Staatsanleihen seit 1970", "renditen.html"),
     ("Zinskurve seit 1972", "zinskurve.html"),
     ("Realzins seit 1970", "realzins.html"),
-    "Risiko",
-    ("Unternehmensanleihen seit 1984", "unternehmensanleihen.html"),
-    ("Risikoaufschläge", "risikoaufschlaege.html"),
+    ("Renditen Unternehmensanleihen seit 1984", "unternehmensanleihen.html"),
+    ("Risikoaufschläge seit 1984", "risikoaufschlaege.html"),
     ("Langläufer", "langlaeufer.html"),
 ])
 # Die Aufklapper neben der Akademie, in dieser Reihenfolge; Rubrik-Schlüssel je Menü; Zusatzseiten, die zu einem Menü zählen
-MENUS = [ANLEIHEN, ZINSEN]
-MENU_RUBRIK = {"Anleihen": "anleihen", "Zinsen": "zinsen"}
+MENUS = [ANLEIHEN, KAUFEN, ZINSEN]
+MENU_RUBRIK = {"Anleihen": "anleihen", "Kaufen": "kaufen", "Zinsen": "zinsen"}
 MENU_EXTRA = {"Anleihen": ["anleihe.html"]}
-STUFE_ZEILE = {"Verstehen": "Von Grund auf erklärt", "Entscheiden": "Welche Anleihe passt zu dir?",
-               "Kaufen": "Broker wählen, Order aufgeben"}   # wie die Kacheln (28.09.2026 an den Inhalt angepasst)
-# Knopf rechts (immer sichtbar, am Handy ganz oben im Akkordeon) – seit 25.09.2026 abends leer:
-# Nutzerwunsch „Die Anleihen-Suche soll ganz oben raus“ → Eintrag im Menü Kaufen (Gruppe „Finden“)
-BUTTONS = []
-# Direktlinks ohne Aufklapper (ganz rechts). „Mein Bondarium“ (seit 30.09.2026, bis 01.10.2026 „Mein Depot“): Benutzerbereich konto.html –
-# Anmeldung, Merkliste und das Musterdepot „Mein Depot“
-LINKS = [("Mein Bondarium", "konto.html"), ("Über uns", "ueber-uns.html")]   # seit 30.09.2026 abends: vor Über uns (Nutzerwunsch); Name seit 01.10.2026 (Nutzerentscheid)
+# Knopf „Mein Bondarium“ rechts außen, hinter dem Suchfeld (Benutzerbereich konto.html: Anmeldung, Merkliste und das Musterdepot „Mein Depot“). Bis 1000 px
+# steht er stattdessen als letzter Eintrag im Burger-Menü (Klasse nav-konto) – base.css zeigt jeweils nur eines von beiden.
+KONTO = ("Mein Bondarium", "konto.html")
+KONTO_BILD = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" '
+              'aria-hidden="true" focusable="false"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.2-4 4-5.5 7.5-5.5s6.3 1.5 7.5 5.5"/></svg>')
 # Suchfeld rechts außen (seit 26.09.2026, Nutzerwunsch „Feld ganz oben rechts … direkt in die Anleihensuche“):
 # schickt q an die Anleihen-Suche; leer abgeschickt führt site.js direkt auf die Suchseite (Fokus ins Suchfeld).
 # Im DOM nach dem Menü (Tab-Reihenfolge Marke → Menü → Suche); der Lupen-Knopf steht per CSS links im Feld.
@@ -162,18 +134,20 @@ BRAND = ('<a class="brand" href="{home}" aria-label="bondarium – Startseite">'
 
 START_RE = re.compile(r'  <(?:header|div) class="topbar"(?: data-rubrik="[a-z]+")?>\n')
 # Ende der Kopfzeile, samt einer schon geschriebenen Brotkrumen-Zeile (idempotent)
-END_RE = re.compile(r'    </nav>\n(?:    <form class="kopfsuche"[^\n]*\n)?  </(?:header|div)>\n(?:  <nav class="krumen"[^\n]*\n)?')
+END_RE = re.compile(r'    </nav>\n(?:    <form class="kopfsuche"[^\n]*\n)?(?:    <a class="kopfkonto[^\n]*\n)?  </(?:header|div)>\n(?:  <nav class="krumen"[^\n]*\n)?')
 FOOTER_RE = re.compile(r'  <footer\b[^>]*>.*?</footer>\n', re.S)
 LDJSON_RE = re.compile(r'<script type="application/ld\+json">(.*?)</script>', re.S)
 SITE = "https://www.bondarium.de/"
 
-# Fußzeile aller Seiten (seit 30.09.2026; Vorbild: Startseite, dort seit 29.09.2026). Spalten: (Überschrift, id, Links)
+# Fußzeile aller Seiten (seit 30.09.2026; seit 01.10.2026 fünf Spalten in der Reihenfolge des Menüs). Spalten: (Überschrift, id, Links)
 FOOTER = [
+    ("Akademie", "f-akad", [("Grundlagen", "wissen.html#grundlagen"), ("Auswählen", "wissen.html#auswaehlen"),
+                            ("Für Fortgeschrittene", "wissen.html#fortgeschrittene"), ("Glossar", "begriffe.html")]),
     ("Anleihen", "f-anl", [("Anleihen-Suche", "anleihen-suche.html"), ("Top-10-Listen", "anleihen.html"),
-                           ("Anleihen-Beispiele nach Ziel", "guide.html"), ("Anleihen-ETFs", "anleihen-etf.html")]),
-    ("Akademie", "f-akad", [("Verstehen", "wissen.html"), ("Entscheiden", "entscheiden.html"), ("Kaufen", "kaufen.html"),
-                            ("Glossar", "begriffe.html")]),
-    ("Zinsen", "f-zins", [("Staatsanleihen seit 1970", "renditen.html"), ("Zinskurve", "zinskurve.html"),
+                           ("Höchste Kupons", "anleihen-kupon.html"), ("Anleihen-ETFs", "anleihen-etf.html")]),
+    ("Kaufen", "f-kauf", [("Deine erste Anleihe", "erste-anleihe.html"), ("Broker im Vergleich", "broker-vergleich.html"),
+                          ("Steuern und Handelskosten", "steuern-handelskosten.html"), ("Rechner", "rechner.html")]),
+    ("Zinsen", "f-zins", [("Renditen Staatsanleihen", "renditen.html"), ("Zinskurve", "zinskurve.html"),
                           ("Risikoaufschläge", "risikoaufschlaege.html"), ("Langläufer", "langlaeufer.html")]),
     ("Bondarium", "f-bond", [("Über uns", "ueber-uns.html"), ("Datenquellen", "rechtliches.html#haftung"),
                              ("Impressum", "rechtliches.html#impressum"), ("Datenschutz", "rechtliches.html#datenschutz")]),
@@ -194,24 +168,25 @@ FALLBACK_RE = re.compile(
     r'(?:(?://[^\n]*\n)?window\.MC\.\w+ = window\.MC\.\w+ \|\| [^\n]*;\n)*')
 
 
-RUBRIK = {"Verstehen": "verstehen", "Entscheiden": "entscheiden", "Kaufen": "kaufen"}
-# Seiten außerhalb der Aufklapper (die Anleihen-Suche steht seit 25.09.2026 abends im Menü Kaufen;
-# anleihe.html ist der Steckbrief einer einzelnen Anleihe, erreichbar aus der Suche und den Datenseiten)
+# Seiten außerhalb der Aufklapper (anleihe.html ist der Steckbrief einer einzelnen Anleihe und zählt zum Menü „Anleihen“ – MENU_EXTRA)
 RUBRIK_EXTRA = {"ueber-uns.html": "ueber"}
 
 
 def links(items):
-    """Nur die Einträge (Beschriftung, Datei) einer Gruppe – ohne Überschriften und Trennlinien."""
+    """Nur die Einträge (Beschriftung, Datei) einer Gruppe – ohne Überschriften."""
     return [i for i in items if isinstance(i, tuple)]
 
 
+def akademie_seiten():
+    """Alle Seiten der Akademie: Übersicht, Themen der drei Spalten, Glossar."""
+    return [AKADEMIE[1]] + [e[1] for _, _, eintraege in AKADEMIE[2] for e in eintraege] + [AKADEMIE[3][1]]
+
+
 def rubrik(page):
-    """Rubrik der Seite (Kennfarbe in base.css): verstehen, entscheiden, kaufen, beobachten, ueber – sonst start (Startseite, Rechtliches, 404)."""
-    for label, target, items in GROUPS:
-        if page == target or any(i[1] == page for i in links(items)):
-            return RUBRIK[label]
-    if page == VERTIEFEN[1] or page in VERTIEFEN[2]:
-        return "verstehen"   # Vertiefen gehört zur Akademie und trägt deren Kennfarbe
+    """Rubrik der Seite (data-rubrik am <header>): verstehen (Akademie), anleihen, kaufen, zinsen, ueber – sonst start
+    (Startseite, Mein Bondarium, Rechtliches, 404). Die Kennfarbe ist seit 26.09.2026 überall dasselbe Grün."""
+    if page in akademie_seiten():
+        return "verstehen"
     for label, target, items in MENUS:
         if page == target or page in MENU_EXTRA.get(label, []) or any(i[1] == page for i in links(items)):
             return MENU_RUBRIK[label]
@@ -223,10 +198,10 @@ def menu_items(items, page, p):
     out = []
     for it in items:
         if isinstance(it, str):
-            out.append(f'          <span class="nav-cap">{it}</span>')
+            out.append(f'          <span class="nav-cap">{html.escape(it, quote=False)}</span>')
         else:
             cls = " ".join(x for x in ((it[2] if len(it) > 2 else ""), "current" if it[1] == page else "") if x)
-            out.append(f'          <a href="{p}{it[1]}"' + (f' class="{cls}"' if cls else "") + f'>{it[0]}</a>')
+            out.append(f'          <a href="{p}{it[1]}"' + (f' class="{cls}"' if cls else "") + f'>{html.escape(it[0], quote=False)}</a>')
     return out
 
 
@@ -288,23 +263,26 @@ def render(page, absolute=False):
            '<span class="nav-toggle-i" aria-hidden="true"></span></button>',
            '    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">']
     rub = rubrik(page)
-    cur = " current" if rub in RUBRIK.values() else ""
+    # Aufklapper „Akademie“: drei Spalten mit allen Themen, darunter das Glossar über die ganze Breite
+    a_label, a_target, spalten, fuss = AKADEMIE
+    cur = " current" if rub == "verstehen" else ""
     out.append('      <div class="nav-group nav-akademie">')
-    out.append(f'        <a href="{AKADEMIE[2] if absolute else AKADEMIE[1]}" class="nav-group-btn{cur}" aria-expanded="false">'
-               f'<span>{AKADEMIE[0]}</span><span class="nav-caret" aria-hidden="true"></span></a>')
-    out.append('        <div class="nav-group-menu">')
-    for label, target, items in GROUPS:
-        in_group = page == target or any(i[1] == page for i in links(items))
-        c = ' class="nav-stufe current"' if in_group else ' class="nav-stufe"'
-        out.append(f'          <a href="{p}{target}"{c}>{label}</a>')   # seit 28.09.2026 ohne Unterzeile (Nutzerwunsch)
-    c = ' class="nav-stufe current"' if page == VERTIEFEN[1] or page in VERTIEFEN[2] else ' class="nav-stufe"'
-    out.append(f'          <a href="{p}{VERTIEFEN[1]}"{c}>{VERTIEFEN[0]}</a>')
-    out += menu_items(AKADEMIE_EXTRA, page, p)
+    out.append(f'        <a href="{p}{a_target}" class="nav-group-btn{cur}" aria-expanded="false">'
+               f'<span>{a_label}</span><span class="nav-caret" aria-hidden="true"></span></a>')
+    out.append('        <div class="nav-group-menu nav-mega">')
+    out.append(f'          <a href="{p}{a_target}" class="nav-ov{" current" if page == a_target else ""}">Übersicht</a>')
+    out.append('          <div class="nav-spalten">')
+    for titel, _, eintraege in spalten:
+        out.append('          <div class="nav-spalte">')
+        out += menu_items([titel] + eintraege, page, p)
+        out.append('          </div>')
+    out.append('          </div>')
+    c = " current" if page == fuss[1] else ""
+    out.append(f'          <a href="{p}{fuss[1]}" class="nav-fuss{c}">{fuss[0]}<small>{fuss[2]}</small></a>')
     out.append("        </div>")
     out.append("      </div>")
-    # Aufklapper „Anleihen“ und „Zinsen“ (seit 29.09.2026): Übersicht (nur Handy), Chips, Einträge.
-    # Der Kopf ist „current“, wenn die Seite zu diesem Menü gehört (Rubrik) – ein Eintrag, der zusätzlich in einem
-    # anderen Menü steht (z. B. anleihen-etf-erklaert.html), markiert dort nur den Eintrag selbst.
+    # Aufklapper „Anleihen“, „Kaufen“ und „Zinsen“: Übersicht (nur Handy), Chips, Einträge.
+    # Der Kopf ist „current“, wenn die Seite zu diesem Menü gehört (Rubrik).
     for a_label, a_target, a_items in MENUS:
         out.append(f'      <div class="nav-group nav-{MENU_RUBRIK[a_label]}">')
         c_kopf = " current" if rub == MENU_RUBRIK[a_label] else ""
@@ -316,14 +294,11 @@ def render(page, absolute=False):
         out += menu_items(a_items, page, p)
         out.append("        </div>")
         out.append("      </div>")
-    for label, target in BUTTONS:
-        c = " current" if target == page else ""
-        out.append(f'      <a href="{p}{target}" class="nav-cta{c}">{label}</a>')
-    for label, target in LINKS:
-        c = ' class="current"' if target == page else ""
-        out.append(f'      <a href="{p}{target}"{c}>{label}</a>')
+    c = " current" if page == KONTO[1] else ""
+    out.append(f'      <a href="{p}{KONTO[1]}" class="nav-konto{c}">{KONTO[0]}</a>')   # nur im Burger-Menü sichtbar (base.css)
     out.append("    </nav>")
     out.append(SEARCH.format(p=p))
+    out.append(f'    <a class="kopfkonto{c}" href="{p}{KONTO[1]}"' + (' aria-current="page"' if c else "") + f'>{KONTO_BILD}<span>{KONTO[0]}</span></a>')
     out.append("  </header>")
     return "\n".join(out) + "\n"
 

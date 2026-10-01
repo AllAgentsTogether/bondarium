@@ -56,6 +56,9 @@ RewriteRule ^anleihen-sehr-langfristig\.html$ /staatsanleihen-laufzeit.html#sehr
 RewriteRule ^optimierung\.html$ /wissen.html [R=301,L]
 # Top 10 nach Kupon hieß am 01.10.2026 für einige Stunden unternehmensanleihen-kupon.html (nur Unternehmensanleihen)
 RewriteRule ^unternehmensanleihen-kupon\.html$ /anleihen-kupon.html [R=301,L]
+# Navigation neu (01.10.2026 abends): Die Übersichten „Entscheiden“ und „Vertiefen“ sind Abschnitte der Akademie-Übersicht
+RewriteRule ^entscheiden\.html$ /wissen.html#auswaehlen [R=301,NE,L]
+RewriteRule ^vertiefen\.html$ /wissen.html#fortgeschrittene [R=301,NE,L]
 # ---- Aktien-Teil (23.09.2026) archiviert (Ordner website_aktien_archiv) ----
 # Die Seiten liegen noch auf dem Server (der Deploy löscht nichts), werden aber
 # dauerhaft auf die passende Anleihen-Seite umgeleitet.

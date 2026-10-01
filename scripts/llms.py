@@ -47,7 +47,7 @@ HINWEISE = """Zur Einordnung:
 """
 
 # Reihenfolge der Abschnitte (Name der zweiten Brotkrume); alles Übrige folgt alphabetisch, „Optional“ am Ende.
-ABSCHNITTE = ["Verstehen", "Entscheiden", "Kaufen", "Anleihen", "Zinsen"]
+ABSCHNITTE = ["Akademie", "Anleihen", "Kaufen", "Zinsen"]
 OPTIONAL = {"ueber-uns.html", "rechtliches.html"}
 OHNE_VOLLTEXT = {"rechtliches.html"}   # Impressum und Datenschutz: nur verlinkt
 
