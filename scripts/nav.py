@@ -58,19 +58,19 @@ AKADEMIE = ("Akademie", "wissen.html", [
     ]),
     ("Auswählen", "auswaehlen", [
         ("Sind Anleihen etwas für dich?", "anlegerprofile.html"),
-        ("Welche Anleihe wozu?", "anlageziele.html"),
+        ("Welche Anleihe wozu passt?", "anlageziele.html"),
         ("Wie viel Anleihen ins Depot?", "anleihen-anteil.html"),   # seit 01.10.2026: Anleihen neben Aktien – Mischung, Faustregeln, Nachjustieren
-        ("Vier Beispiele nach Ziel", "guide.html"),   # Anleitungen, keine Liste – bis 01.10.2026 im Menü „Anleihen“
+        ("Anleihen-Beispiele nach Ziel", "guide.html"),   # Anleitungen, keine Liste – bis 01.10.2026 im Menü „Anleihen“
         ("ETF oder Anleihe?", "etf-oder-anleihe.html"),
         ("Anleihen-ETF: Vor- und Nachteile", "anleihen-etf-erklaert.html"),
         ("Anleihen für Unternehmen", "anleihen-fuer-unternehmen.html"),   # seit 01.10.2026: Depot, LEI, Steuern, Bilanz – Hausbegriff „Unternehmen“ (nicht „Firmen“); die Listen im Menü „Anleihen“ heißen „Unternehmensanleihen …“
     ]),
     ("Für Fortgeschrittene", "fortgeschrittene", [
-        ("Zinskurve, Duration & Co.", "fortgeschrittene.html"),
+        ("Mehr aus Anleihen herausholen", "fortgeschrittene.html"),
         ("Duration und Konvexität", "duration.html"),
         ("Rendite richtig lesen", "rendite-lesen.html"),
         ("Leiter, Hantel, Roll-down", "anleihenleiter.html"),
-        ("Markttechnik lesen", "markttechnik.html"),
+        ("Marktsignale lesen", "markttechnik.html"),
     ]),
 ], ("Glossar", "begriffe.html", "Fachbegriffe von A bis Z"))
 # „Anleihen“: alles, was konkrete Anleihen zeigt – Suche und Ranglisten. Art zuerst („Staatsanleihen nach Laufzeit“), damit
@@ -84,7 +84,7 @@ ANLEIHEN = ("Anleihen", "anleihen.html", [
     ("Unternehmensanleihen nach Ländern", "unternehmensanleihen-laender.html"),
     ("Anleihen-ETFs", "anleihen-etf.html"),
     "Top 30",   # höchster Kupon unter den Anleihen der EZB-Liste – drei Top 30 auf einer Seite: Staat, Öffentlich, Unternehmen
-    ("Höchste Kupons", "anleihen-kupon.html"),
+    ("Anleihen nach Kupon", "anleihen-kupon.html"),
 ])
 # „Kaufen“ (seit 01.10.2026 eigener Hauptpunkt): alles, was man beim Kauf braucht – Anleitung, Broker, Handelsplätze,
 # Steuern und Kosten, Rechner (der Rechner stand vorher doppelt: unter Entscheiden und unter „Werkzeuge“).
@@ -146,12 +146,12 @@ FOOTER = [
     ("Akademie", "f-akad", [("Grundlagen", "wissen.html#grundlagen"), ("Auswählen", "wissen.html#auswaehlen"),
                             ("Für Fortgeschrittene", "wissen.html#fortgeschrittene"), ("Glossar", "begriffe.html")]),
     ("Anleihen", "f-anl", [("Anleihen-Suche", "anleihen-suche.html"), ("Top-10-Listen", "anleihen.html"),
-                           ("Höchste Kupons", "anleihen-kupon.html"), ("Anleihen-ETFs", "anleihen-etf.html")]),
+                           ("Anleihen nach Kupon", "anleihen-kupon.html"), ("Anleihen-ETFs", "anleihen-etf.html")]),
     ("Kaufen", "f-kauf", [("Deine erste Anleihe", "erste-anleihe.html"), ("Broker im Vergleich", "broker-vergleich.html"),
                           ("Steuern und Handelskosten", "steuern-handelskosten.html"), ("Rechner", "rechner.html")]),
     ("Zinsen", "f-zins", [("Renditen Staatsanleihen", "renditen.html"), ("Zinskurve", "zinskurve.html"),
                           ("Risikoaufschläge", "risikoaufschlaege.html"), ("Langläufer", "langlaeufer.html")]),
-    ("Bondarium", "f-bond", [("Über uns", "ueber-uns.html"), ("Datenquellen", "rechtliches.html#haftung"),
+    ("Bondarium", "f-bond", [("Über uns", "ueber-uns.html"), ("Haftung und Datenquellen", "rechtliches.html#haftung"),
                              ("Impressum", "rechtliches.html#impressum"), ("Datenschutz", "rechtliches.html#datenschutz")]),
 ]
 FOOTER_HINWEIS = 'Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="{p}rechtliches.html">Rechtliches</a>'

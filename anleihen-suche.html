@@ -209,7 +209,7 @@
     .kpis tr.zdet > td { display: block; padding: 0; }
     .kpis tr.zdet .det { position: static; width: auto; max-width: none; margin: 0; border-radius: 0 0 12px 12px; border-top: 0; box-shadow: var(--shadow); }
   }
-  /* Solide Auswahl (01.10.2026, Nutzerwunsch): ein Schalter über den Filtern, sechs Grundregeln für Privatanleger als Vorfilter */
+  /* Grundfilter (bis 01.10.2026 abends „Solide Auswahl“; Nutzerwunsch): ein Schalter über den Filtern, sechs Grundregeln für Privatanleger als Vorfilter */
   .solide { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 14px; max-width: 1000px; }
   .sol-btn { font: inherit; font-size: 13px; line-height: 1.2; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.18); border-radius: 999px; padding: 7px 14px 7px 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 9px; }
   .sol-btn { text-align: left; }
@@ -264,20 +264,20 @@
           <div class="nav-spalte">
           <span class="nav-cap">Auswählen</span>
           <a href="anlegerprofile.html">Sind Anleihen etwas für dich?</a>
-          <a href="anlageziele.html">Welche Anleihe wozu?</a>
+          <a href="anlageziele.html">Welche Anleihe wozu passt?</a>
           <a href="anleihen-anteil.html">Wie viel Anleihen ins Depot?</a>
-          <a href="guide.html">Vier Beispiele nach Ziel</a>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
           <a href="etf-oder-anleihe.html">ETF oder Anleihe?</a>
           <a href="anleihen-etf-erklaert.html">Anleihen-ETF: Vor- und Nachteile</a>
           <a href="anleihen-fuer-unternehmen.html">Anleihen für Unternehmen</a>
           </div>
           <div class="nav-spalte">
           <span class="nav-cap">Für Fortgeschrittene</span>
-          <a href="fortgeschrittene.html">Zinskurve, Duration &amp; Co.</a>
+          <a href="fortgeschrittene.html">Mehr aus Anleihen herausholen</a>
           <a href="duration.html">Duration und Konvexität</a>
           <a href="rendite-lesen.html">Rendite richtig lesen</a>
           <a href="anleihenleiter.html">Leiter, Hantel, Roll-down</a>
-          <a href="markttechnik.html">Markttechnik lesen</a>
+          <a href="markttechnik.html">Marktsignale lesen</a>
           </div>
           </div>
           <a href="begriffe.html" class="nav-fuss">Glossar<small>Fachbegriffe von A bis Z</small></a>
@@ -295,7 +295,7 @@
           <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
           <a href="anleihen-etf.html">Anleihen-ETFs</a>
           <span class="nav-cap">Top 30</span>
-          <a href="anleihen-kupon.html">Höchste Kupons</a>
+          <a href="anleihen-kupon.html">Anleihen nach Kupon</a>
         </div>
       </div>
       <div class="nav-group nav-kaufen">
@@ -342,7 +342,7 @@
     </form>
 
     <div class="solide" id="solide-z">
-      <button type="button" class="sol-btn" id="solide" aria-pressed="false"><span class="sol-sw" aria-hidden="true"></span><span><b>Solide Auswahl</b> <small>6 Grundregeln für Privatanleger</small></span></button>
+      <button type="button" class="sol-btn" id="solide" aria-pressed="false"><span class="sol-sw" aria-hidden="true"></span><span><b>Grundfilter</b> <small>6 Grundregeln für Privatanleger</small></span></button>
       <details class="sol-mehr"><summary>Was heißt das?</summary>
         <ol class="sol-regeln">
           <li><b>Restlaufzeit mindestens 8 Monate</b> <small>– sonst fressen die Kaufkosten den Ertrag</small></li>
@@ -431,10 +431,10 @@
   </main>
   <footer class="fuss">
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html#grundlagen">Grundlagen</a><a href="wissen.html#auswaehlen">Auswählen</a><a href="wissen.html#fortgeschrittene">Für Fortgeschrittene</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html" aria-current="page">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="anleihen-kupon.html">Höchste Kupons</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html" aria-current="page">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="anleihen-kupon.html">Anleihen nach Kupon</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-kauf"><p class="fuss-k" id="f-kauf">Kaufen</p><a href="erste-anleihe.html">Deine erste Anleihe</a><a href="broker-vergleich.html">Broker im Vergleich</a><a href="steuern-handelskosten.html">Steuern und Handelskosten</a><a href="rechner.html">Rechner</a></nav>
     <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen Staatsanleihen</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
-    <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
+    <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Haftung und Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
 </div>
@@ -552,8 +552,8 @@ const FILTER = [
     key: r => r[5] ? bucket(Math.max(0, jahre(r[5])), [[1, "a"], [3, "b"], [7, "c"], [30, "d"], [Infinity, "e"]]) : "u" },
   // Kündigung (seit 27.09.2026, erklärt auf kuendbare-anleihen.html): Art des Kündigungsrechts des Emittenten, dazu „a“ =
   // Kündigungsrecht des Anlegers (Put). Eine Anleihe kann zwei Schlüssel haben (z. B. Make-Whole und Put) – daher Array.
-  { k: "kue", opts: () => [["n", "nicht kündbar", "feste Laufzeit"], ["m", "Make-Whole", "zum Barwert – harmlos"],
-      ["p", "kurz vor Fälligkeit", "höchstens ein Jahr früher – harmlos"], ["t", "ab festem Termin", "zu 100\u00a0%, Jahre vor Fälligkeit – beachten"],
+  { k: "kue", opts: () => [["n", "nicht kündbar", "feste Laufzeit"], ["m", "Make-Whole", "zum Barwert – meist ohne Nachteil"],
+      ["p", "kurz vor Fälligkeit", "höchstens ein Jahr früher – meist ohne Nachteil"], ["t", "ab festem Termin", "zu 100\u00a0%, Jahre vor Fälligkeit – beachten"],
       ["e", "unbefristet, mit Kündigungstermin", "läuft weiter, wenn nicht gekündigt"], ["u", "Termin unklar", "laut Register oder Fix-to-Float – Bedingungen prüfen"],
       ["a", "du kannst kündigen (Put)", "ein Vorteil für dich"]],
     kurz: v => ({ n: "nein", m: "Make-Whole", p: "kurz vor Ende", t: "fester Termin", e: "unbefristet", u: "unklar", a: "Put" })[v] || v,
@@ -612,7 +612,7 @@ const unsicher = r => { const k = KURSE[r[0]]; if (!k || k[4] || k[3] === "B" ||
 // Datenprüfung (27.09.2026): r[14] = Befunde des Indexskripts ({} = keiner) – bei Befund keine Rendite, Kennzeichen „Daten?“
 const pruefVon = r => r[14] && typeof r[14] === "object" ? r[14] : {};
 const befund = r => Object.keys(pruefVon(r)).length > 0;
-// Solide Auswahl (01.10.2026, Nutzerwunsch): sechs Grundregeln als Vorfilter vor allen übrigen Filtern – Restlaufzeit ab 8 Monaten,
+// Grundfilter (bis 01.10.2026 abends „Solide Auswahl“; Nutzerwunsch): sechs Grundregeln als Vorfilter vor allen übrigen Filtern – Restlaufzeit ab 8 Monaten,
 // Kündigung keine/Make-Whole/kurz vor Fälligkeit, Volumen ab 100 Mio., Stückelung bis 10.000 (Währung der Anleihe), Euro oder
 // US-Dollar, Datenprüfung ohne Befund. Eigener Schalter statt gesetzter Filter: 8 Monate und 10.000 sind keine Filterstufen.
 const solide = r => {
@@ -671,7 +671,7 @@ function zeile(r) {
     `<td class="num">${kurs}</td>` +
     `<td class="num">${fmtCoupon(r[4])}</td><td class="num">${!r[5] && pruefVon(r).faelligName ? L("pruefUnklar") : fmtDate(r[5])}</td>` +
     `<td class="num">${r[5] ? RL(jahre(r[5])) : "–"}</td>` +
-    `<td class="txt art">${MC.esc(ART[r[2]])}</td><td class="isin"><a href="anleihe.html?isin=${encodeURIComponent(r[0])}" title="Steckbrief öffnen">${MC.esc(r[0])}</a></td><td class="txt">${MC.esc(r[3])}</td>` +
+    `<td class="txt art">${MC.esc(ART[r[2]])}</td><td class="isin"><a href="anleihe.html?isin=${encodeURIComponent(r[0])}" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">${MC.esc(r[0])}</a></td><td class="txt">${MC.esc(r[3])}</td>` +
     `<td class="num">${fmtVol(r[6], r[3])}</td><td class="num">${fmtStk(r[7])}</td></tr>` + (offen ? detailZeile(r) : "");
 }
 // Kurzansicht (seit 26.09.2026): vier Kennzahlen zum Einordnen – alles Weitere (Kursverlauf, Handel, Aufschlag zu Bund, Rang,

@@ -567,6 +567,46 @@
   .itab tbody:not(.sortiert) tr.gr-ende > td { border-bottom: 2px solid rgba(26,26,25,0.2); }
   @media (min-width: 601px) { .itab td.nm a { display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; } }   /* lange Emittentennamen mit Auslassung */
   /* ==========================================================================================
+     Depot-Check 01.10.2026 (Entwurf des Nutzers, tmp/bondarium-broker-anleitung-und-mockup.pdf): eigener Auftritt für den
+     Broker-Vergleich zwischen Akademie und „Sechs Beispiele“. Dunkle Bühne über die ganze Inhaltsbreite, links Text und Hauptknopf,
+     rechts die leicht geneigte Depot-Karte mit den drei Prüfpunkten (alle drei führen zu #kosten, keine Bewertung eines Brokers).
+     Ohne Skript und ohne Bilddateien; mit #bnd-broker gekapselt. Die Anbieterzahl setzt der Deploy aus broker.json (data-kz).
+     ========================================================================================== */
+  #bnd-broker { display: grid; grid-template-columns: minmax(0, 1fr) 300px; align-items: center; gap: 28px 56px; padding: 32px 48px 34px 42px; border-radius: 18px; background: var(--ink); color: #fff; }
+  #bnd-broker .bc-k { display: flex; align-items: center; gap: 9px; margin: 0 0 18px; font-size: var(--fs-label); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; }
+  #bnd-broker .bc-k::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+  #bnd-broker h2 { margin: 0; font-size: var(--fs-h2); line-height: 1.2; letter-spacing: -0.015em; color: #fff; }
+  #bnd-broker h2 em { display: block; font-style: normal; color: var(--green); }
+  #bnd-broker .bc-sub { max-width: 430px; margin: 14px 0 0; font-size: var(--fs-text); line-height: 1.55; color: rgba(255,255,255,0.8); }
+  #bnd-broker .bc-go { display: inline-flex; align-items: center; justify-content: space-between; gap: 28px; min-width: 230px; min-height: 48px; margin-top: 24px; padding: 12px 18px 12px 20px; border-radius: 9px; background: var(--green); color: var(--ink); font-size: var(--fs-ui); font-weight: 700; text-decoration: none; transition: background 0.15s ease; }
+  #bnd-broker .bc-go svg { flex: none; width: 18px; height: 18px; transition: transform 0.15s ease; }
+  #bnd-broker .bc-go:hover { background: var(--green-hover); }
+  #bnd-broker .bc-go:hover svg { transform: translateX(3px); }
+  #bnd-broker .bc-go:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  #bnd-broker .bc-meta { margin: 12px 0 0; font-size: var(--fs-meta); color: rgba(255,255,255,0.72); }
+  #bnd-broker .bc-karte { padding: 20px 18px 14px 20px; border-radius: 12px; background: #fff; color: var(--ink); box-shadow: 7px 9px 0 rgba(0,0,0,0.55); transform: rotate(-3deg); }
+  #bnd-broker .bc-kk { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0; font-size: var(--fs-label); font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text); }
+  #bnd-broker .bc-kk svg { flex: none; width: 20px; height: 20px; color: var(--green-text); }
+  #bnd-broker .bc-kt { margin: 12px 0 8px; font-size: var(--fs-h3); font-weight: 700; line-height: 1.25; letter-spacing: -0.015em; color: var(--ink); }
+  #bnd-broker ul { list-style: none; margin: 0; padding: 0; }
+  #bnd-broker li { margin: 0; padding: 0; }
+  #bnd-broker li a { display: flex; align-items: center; gap: 12px; min-height: 40px; margin: 0 -8px; padding: 6px 8px; border-radius: 8px; color: var(--ink); font-size: var(--fs-ui); font-weight: 700; text-decoration: none; transition: background 0.15s ease; }
+  #bnd-broker li a svg { flex: none; width: 20px; height: 20px; color: var(--green-text); }
+  #bnd-broker li a .bc-pf { width: 16px; height: 16px; margin-left: auto; transition: transform 0.15s ease; }
+  #bnd-broker li a:hover { background: var(--green-tint); }
+  #bnd-broker li a:hover .bc-pf { transform: translateX(2px); }
+  #bnd-broker li a:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+  #bnd-broker .bc-kf { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 10px 0 0; padding-top: 12px; border-top: 1px dashed rgba(26,26,25,0.3); font-size: var(--fs-label); color: var(--text); }
+  #bnd-broker .bc-bar { flex: none; width: 37px; height: 16px; background: repeating-linear-gradient(90deg, rgba(26,26,25,0.45) 0 1px, transparent 1px 4px); }
+  @media (pointer: coarse) { #bnd-broker li a { min-height: 44px; } }
+  @media (max-width: 860px) { #bnd-broker { grid-template-columns: minmax(0, 1fr) 270px; gap: 28px 34px; padding: 34px 34px 34px 30px; } }
+  @media (max-width: 700px) {   /* Handy: eine Spalte – erst Text und Knopf, dann die Karte */
+    #bnd-broker { grid-template-columns: minmax(0, 1fr); padding: 26px 20px 32px; }
+    #bnd-broker .bc-karte { max-width: 340px; margin: 4px 6px 0 2px; transform: rotate(-2deg); }
+    #bnd-broker li a { min-height: 44px; }
+  }
+  @media (max-width: 360px) { #bnd-broker { padding: 22px 16px 28px; } #bnd-broker .bc-go { min-width: 0; width: 100%; } }
+  /* ==========================================================================================
      Schriftgrößen-Raster 01.10.2026 (Nutzerwunsch „Schriftgrößen passen teilweise nicht – einheitliches Bild“):
      vorher 20 Größen (u. a. 11,5 · 12,5 · 13,5 · 14,5 · 15,5 · 16,5 px), jetzt eine Leiter nach Rolle – gleiche Rolle, gleiche Größe.
      Label 12 · Meta 13 · Klein 14 · Bedienung 15 · Text 16 · Kartentitel 17 · Zwischentitel 21 · Kennzahl 24 · Überschrift 30.
@@ -629,20 +669,20 @@
           <div class="nav-spalte">
           <span class="nav-cap">Auswählen</span>
           <a href="anlegerprofile.html">Sind Anleihen etwas für dich?</a>
-          <a href="anlageziele.html">Welche Anleihe wozu?</a>
+          <a href="anlageziele.html">Welche Anleihe wozu passt?</a>
           <a href="anleihen-anteil.html">Wie viel Anleihen ins Depot?</a>
-          <a href="guide.html">Vier Beispiele nach Ziel</a>
+          <a href="guide.html">Anleihen-Beispiele nach Ziel</a>
           <a href="etf-oder-anleihe.html">ETF oder Anleihe?</a>
           <a href="anleihen-etf-erklaert.html">Anleihen-ETF: Vor- und Nachteile</a>
           <a href="anleihen-fuer-unternehmen.html">Anleihen für Unternehmen</a>
           </div>
           <div class="nav-spalte">
           <span class="nav-cap">Für Fortgeschrittene</span>
-          <a href="fortgeschrittene.html">Zinskurve, Duration &amp; Co.</a>
+          <a href="fortgeschrittene.html">Mehr aus Anleihen herausholen</a>
           <a href="duration.html">Duration und Konvexität</a>
           <a href="rendite-lesen.html">Rendite richtig lesen</a>
           <a href="anleihenleiter.html">Leiter, Hantel, Roll-down</a>
-          <a href="markttechnik.html">Markttechnik lesen</a>
+          <a href="markttechnik.html">Marktsignale lesen</a>
           </div>
           </div>
           <a href="begriffe.html" class="nav-fuss">Glossar<small>Fachbegriffe von A bis Z</small></a>
@@ -660,7 +700,7 @@
           <a href="unternehmensanleihen-laender.html">Unternehmensanleihen nach Ländern</a>
           <a href="anleihen-etf.html">Anleihen-ETFs</a>
           <span class="nav-cap">Top 30</span>
-          <a href="anleihen-kupon.html">Höchste Kupons</a>
+          <a href="anleihen-kupon.html">Anleihen nach Kupon</a>
         </div>
       </div>
       <div class="nav-group nav-kaufen">
@@ -725,7 +765,7 @@
       </section>
 
       <section class="weg-b" id="akademie" aria-labelledby="h-akademie">   <!-- seit 28.09.2026 (Nutzerwunsch) unter „Was willst du erreichen?“ mit Überschrift „Unsere Akademie“; vorher direkt unter dem Hero -->
-        <div class="bt"><h2 id="h-akademie">Akademie: in drei Schritten zur ersten Anleihe</h2><p class="bsub">Grundlagen, auswählen, kaufen – ein Weg statt vieler Einzelseiten.</p></div>   <!-- seit 29.09.2026 (UX-Review Nr. 10) als Lernpfad; darunter „Vertiefen“ (vorher eigener Abschnitt „Lerne alles über Anleihen“, Nr. 11) -->
+        <div class="bt"><h2 id="h-akademie">In drei Schritten zur ersten Anleihe</h2><p class="bsub">Grundlagen, auswählen, kaufen – ein Weg statt vieler Einzelseiten.</p></div>   <!-- seit 29.09.2026 (UX-Review Nr. 10) als Lernpfad; darunter „Vertiefen“ (vorher eigener Abschnitt „Lerne alles über Anleihen“, Nr. 11) -->
         <div class="tueren pfad">
           <a href="wissen.html#grundlagen" style="--c:#39FF14;--ci:#1A1A19;--ct:#157C00;--tint:#DFFFD9"><span class="txt"><span class="kopf"><span class="nr" aria-hidden="true">1</span><span class="verb">Grundlagen</span></span><span class="sub"><b>Von Grund auf&nbsp;erklärt.</b></span><span class="mehr">Was ist eine Anleihe, was Rendite, was Risiko?</span></span><svg class="ill" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 14C20 10.5 13 10 7 11V34C13 33 20 33.5 24 37Z" fill="#DCFBD3"/><path d="M24 14C28 10.5 35 10 41 11V34C35 33 28 33.5 24 37Z" fill="#fff"/><path d="M29 19.5L36 18.5M29 24.5L36 23.5M29 29.5L33.5 29"/><circle cx="24" cy="5.5" r="3.5" fill="#39FF14"/></svg></a>
           <a href="wissen.html#auswaehlen" style="--c:#39FF14;--ci:#1A1A19;--ct:#157C00;--tint:#DFFFD9"><span class="txt"><span class="kopf"><span class="nr" aria-hidden="true">2</span><span class="verb">Auswählen</span></span><span class="sub"><b>Welche Anleihe passt zu&nbsp;dir?</b></span><span class="mehr">Ziel, Laufzeit, Staat oder Unternehmen.</span></span><svg class="ill" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="24" cy="39" rx="11" ry="3" fill="#DCFBD3" stroke="none"/><path d="M24 39V27C24 21 14 19.5 13 12M24 27C24 21 34 19.5 35 12"/><circle cx="13" cy="8.5" r="4" fill="#fff"/><circle cx="35" cy="8.5" r="4.5" fill="#39FF14"/></svg></a>
@@ -733,8 +773,28 @@
         </div>
         <div class="vertiefen">
           <a class="vk box" href="anlageziele.html"><svg class="vk-ill" viewBox="36 12 248 142" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M55.4 143.4C101.8 143.4 108.2 111.4 148.2 108.2C191.4 105 205.8 60.2 244.2 55.4V149.8H55.4Z" fill="#DCFBD3" stroke="none"/><path d="M55.4 143.4C101.8 143.4 108.2 111.4 148.2 108.2C191.4 105 205.8 60.2 244.2 55.4" stroke="#157C00" stroke-width="3.2" stroke-dasharray="0 9.6"/><path d="M41 149.8H271.4M55.4 143.4V103.4M148.2 108.2V68.2M244.2 55.4V17"/><path d="M55.4 103.4H90.6L85 112.2L90.6 121H55.4Z" fill="#fff"/><path d="M148.2 68.2H183.4L177.8 77L183.4 85.8H148.2Z" fill="#C1FCB3"/><path d="M244.2 17H279.4L273.8 25.8L279.4 34.6H244.2Z" fill="#39FF14"/><g fill="#1A1A19" stroke="none" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="9.6" font-weight="800"><text x="63.5" y="115.8">1&#160;J.</text><text x="152.9" y="80.6">10&#160;J.</text><text x="248.4" y="29.5">30&#160;J.</text></g></svg><span class="vk-t"><span class="kicker">Anlageziele</span><b>Welche Anleihe passt zu welchem Ziel?</b><span class="desc">Sechs Ziele – vom Parken bis zum Depot.</span></span></a>
-          <a class="vk box" href="anleihen-etf-erklaert.html"><svg class="vk-ill" viewBox="-4 -4 296 124" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="116" height="112" rx="12" fill="#fff"/><path d="M0 28V12A12 12 0 0 1 12 0H104A12 12 0 0 1 116 12V28Z" fill="#DCFBD3"/><path d="M14 46H82M14 60H62"/><path d="M16 90H96" stroke="#E4E3DF"/><g fill="#157C00" stroke="none"><circle cx="16" cy="90" r="4"/><circle cx="36" cy="90" r="4"/><circle cx="56" cy="90" r="4"/><circle cx="76" cy="90" r="4"/></g><circle cx="98" cy="90" r="6" fill="#39FF14"/><text x="137.5" y="62" text-anchor="middle" fill="#55544F" stroke="none" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="500">oder</text><g transform="rotate(-14 180 38)"><rect x="167" y="15" width="26" height="46" rx="5" fill="#fff"/><path d="M173 27H187"/></g><g transform="rotate(-7 202.5 37.25)"><rect x="189.5" y="14.25" width="26" height="46" rx="5" fill="#fff"/><path d="M195.5 26.25H209.5"/></g><g transform="rotate(14 270 38)"><rect x="257" y="15" width="26" height="46" rx="5" fill="#fff"/><path d="M263 27H277"/></g><g transform="rotate(7 247.5 37.25)"><rect x="234.5" y="14.25" width="26" height="46" rx="5" fill="#fff"/><path d="M240.5 26.25H254.5"/></g><g><rect x="212" y="10" width="26" height="46" rx="5" fill="#DCFBD3"/><path d="M218 22H232"/></g><path d="M162 60H278L268 114H172Z" fill="#DCFBD3"/><text x="220" y="93" text-anchor="middle" fill="#1A1A19" stroke="none" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="800">ETF</text></svg><span class="vk-t"><span class="kicker">Anleihen-ETF</span><b>ETF oder Einzelanleihe?</b><span class="desc">Vor- und Nachteile im Vergleich.</span></span></a>
-          <nav class="vt" aria-labelledby="vt-k"><p class="vt-k" id="vt-k">Tiefer einsteigen</p><div class="vt-l"><a href="wissen.html#fortgeschrittene"><span class="vt-t"><b>Für Fortgeschrittene</b><span>Duration, Risikoaufschläge, Anleihenleiter</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="risiko.html"><span class="vt-t"><b>Risiko kennen</b><span>Die sieben Risiken von Anleihen</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="langlaeufer.html"><span class="vt-t"><b>Langläufer</b><span>30 bis 100 Jahre Laufzeit</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="anlegerprofile.html"><span class="vt-t"><b>Anlegerprofile</b><span>Für wen Anleihen passen</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="begriffe.html"><span class="vt-t"><b>Glossar</b><span>67 Begriffe von A bis Z</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></div></nav>
+          <a class="vk box" href="anleihen-etf-erklaert.html"><svg class="vk-ill" viewBox="-4 -4 296 124" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="116" height="112" rx="12" fill="#fff"/><path d="M0 28V12A12 12 0 0 1 12 0H104A12 12 0 0 1 116 12V28Z" fill="#DCFBD3"/><path d="M14 46H82M14 60H62"/><path d="M16 90H96" stroke="#E4E3DF"/><g fill="#157C00" stroke="none"><circle cx="16" cy="90" r="4"/><circle cx="36" cy="90" r="4"/><circle cx="56" cy="90" r="4"/><circle cx="76" cy="90" r="4"/></g><circle cx="98" cy="90" r="6" fill="#39FF14"/><text x="137.5" y="62" text-anchor="middle" fill="#55544F" stroke="none" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="500">oder</text><g transform="rotate(-14 180 38)"><rect x="167" y="15" width="26" height="46" rx="5" fill="#fff"/><path d="M173 27H187"/></g><g transform="rotate(-7 202.5 37.25)"><rect x="189.5" y="14.25" width="26" height="46" rx="5" fill="#fff"/><path d="M195.5 26.25H209.5"/></g><g transform="rotate(14 270 38)"><rect x="257" y="15" width="26" height="46" rx="5" fill="#fff"/><path d="M263 27H277"/></g><g transform="rotate(7 247.5 37.25)"><rect x="234.5" y="14.25" width="26" height="46" rx="5" fill="#fff"/><path d="M240.5 26.25H254.5"/></g><g><rect x="212" y="10" width="26" height="46" rx="5" fill="#DCFBD3"/><path d="M218 22H232"/></g><path d="M162 60H278L268 114H172Z" fill="#DCFBD3"/><text x="220" y="93" text-anchor="middle" fill="#1A1A19" stroke="none" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif" font-size="15" font-weight="800">ETF</text></svg><span class="vk-t"><span class="kicker">Anleihen-ETF</span><b>Anleihen-ETF: Vor- und Nachteile</b><span class="desc">Im Vergleich mit einzelnen Anleihen.</span></span></a>
+          <nav class="vt" aria-labelledby="vt-k"><p class="vt-k" id="vt-k">Tiefer einsteigen</p><div class="vt-l"><a href="wissen.html#fortgeschrittene"><span class="vt-t"><b>Für Fortgeschrittene</b><span>Duration, Risikoaufschläge, Anleihenleiter</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="risiko.html"><span class="vt-t"><b>Risiko kennen</b><span>Die sieben Risiken von Anleihen</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="langlaeufer.html"><span class="vt-t"><b>Langläufer</b><span>30 bis 100 Jahre Laufzeit</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="anlegerprofile.html"><span class="vt-t"><b>Sind Anleihen etwas für dich?</b><span>Zwei typische Anleger</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="begriffe.html"><span class="vt-t"><b>Glossar</b><span>67 Begriffe von A bis Z</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></div></nav>
+        </div>
+      </section>
+
+      <section id="bnd-broker" aria-labelledby="h-bcheck">   <!-- Depot-Check 01.10.2026 (Entwurf des Nutzers): eigener Auftritt für den Broker-Vergleich; die Anbieterzahl setzt der Deploy aus broker.json -->
+        <div class="bc-t">
+          <p class="bc-k">Broker-Vergleich</p>
+          <h2 id="h-bcheck">Deine Anleihe steht fest. <em>Dein Broker auch?</em></h2>
+          <p class="bc-sub">Finde heraus, wo du Anleihen kaufen kannst – und was dein Kauf dort kostet.</p>
+          <a class="bc-go" href="broker-vergleich.html">Broker vergleichen<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a>
+          <p class="bc-meta"><span data-kz="broker-anzahl">18</span> Anbieter · Preise mit Quellen</p>
+        </div>
+        <div class="bc-karte">
+          <p class="bc-kk">Dein Depot-Check<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><path d="M8 12h8"/></svg></p>
+          <p class="bc-kt">Passt dein Depot zu&nbsp;deinem&nbsp;Plan?</p>
+          <ul>
+            <li><a href="broker-vergleich.html#kosten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg>Anleihen-Angebot<svg class="bc-pf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg></a></li>
+            <li><a href="broker-vergleich.html#kosten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6 3.5h12v17l-2-1.4-2 1.4-2-1.4-2 1.4-2-1.4-2 1.4z"/><path d="M9.5 8.5h5M9.5 12h5M9.5 15.5h2.5"/></svg>Kaufkosten<svg class="bc-pf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg></a></li>
+            <li><a href="broker-vergleich.html#kosten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 9.5L12 4.5l8.5 5"/><path d="M5 20h14M4 17.5h16"/><path d="M6.5 10.5v6M10 10.5v6M14 10.5v6M17.5 10.5v6"/></svg>Handelsplätze<svg class="bc-pf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 5l7 7-7 7"/></svg></a></li>
+          </ul>
+          <p class="bc-kf">Erst vergleichen. Dann kaufen.<span class="bc-bar" aria-hidden="true"></span></p>
         </div>
       </section>
 
@@ -779,10 +839,10 @@
   </main>
   <footer class="fuss">
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html#grundlagen">Grundlagen</a><a href="wissen.html#auswaehlen">Auswählen</a><a href="wissen.html#fortgeschrittene">Für Fortgeschrittene</a><a href="begriffe.html">Glossar</a></nav>
-    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="anleihen-kupon.html">Höchste Kupons</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
+    <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="anleihen-kupon.html">Anleihen nach Kupon</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
     <nav aria-labelledby="f-kauf"><p class="fuss-k" id="f-kauf">Kaufen</p><a href="erste-anleihe.html">Deine erste Anleihe</a><a href="broker-vergleich.html">Broker im Vergleich</a><a href="steuern-handelskosten.html">Steuern und Handelskosten</a><a href="rechner.html">Rechner</a></nav>
     <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen Staatsanleihen</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
-    <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
+    <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Haftung und Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
     <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
 </div>
