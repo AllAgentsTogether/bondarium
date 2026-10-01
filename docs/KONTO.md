@@ -125,9 +125,12 @@ Reihenfolge (Nutzerwunsch: „ganz oben sollen die Zinsen stehen, dann die 100 %
 der letzten Zeile alle Rückzahlungen, also Zinsen plus 100 % Nennwert“): Zinsen (gestapelt, der Kupon-Punkt markiert
 die nächste Zahlung), Rückzahlung des Nennwerts (100 %) mit der Differenz zum Kaufbetrag darunter, und „Alle
 Zahlungen: Zinsen plus Nennwert“. Eine Reihe mit der fortlaufend aufsummierten Rückzahlung und eine dunkle Zahlenzeile
-gab es am 01.10.2026 kurz; beide sind durch die dritte Reihe ersetzt. Jede Anleihe hat ihre Farbe (`FARBEN`, in der Reihenfolge des Hineinlegens; acht geprüfte
-Farbtöne, dazu Tinte und Grau) – in der Tabelle, in der Legende, in den Balken und in der Einzel-Liste; fährt man über
-ein Segment, nennt es Anleihe und Betrag. Läuft das Depot länger als 30 Jahre, folgt eine gestrichelte Spalte, und unter dem Bild steht, welche Jahre fehlen und was dort noch kommt. Ein Schaubild der nächsten zwölf Monate
+gab es am 01.10.2026 kurz; beide sind durch die dritte Reihe ersetzt. Jede Anleihe hat ihre Farbe (`FARBEN`, in der Reihenfolge des Hineinlegens) – in der Tabelle, in der Legende, in den Balken und in der Einzel-Liste; fährt man über
+ein Segment, nennt es Anleihe und Betrag. Seit 01.10.2026 abends sind es die Farben der Website (Nutzerwunsch: „passe die
+Farben an die Website an“): Tiefgrün, Tinte, Orange, danach Abstufungen aus denselben Familien. Das Orange (#DD803D) ist
+eine Spur heller als `--orange`, damit es sich bei Rot-Grün-Schwäche vom Tiefgrün abhebt; die ersten sechs Farben bestehen
+die Prüfung über alle Paare, sieben bis zehn liegen enger beieinander (Zahlen, Legende und Liste helfen). Jedes zweite Jahr
+ist ganz leicht hinterlegt, damit man sieht, wo ein neues Jahr anfängt. Läuft das Depot länger als 30 Jahre, folgt eine gestrichelte Spalte, und unter dem Bild steht, welche Jahre fehlen und was dort noch kommt. Ein Schaubild der nächsten zwölf Monate
 gab es am 01.10.2026 kurz; es ist auf Nutzerwunsch entfernt. Gerechnet wird wie im Steckbrief:
 Zinstermine vom Fälligkeitstag rückwärts (`MC.bond.couponDates`), jährlich, italienische Staatsanleihen halbjährlich;
 Zinsen je Termin = Nennwert × Kupon ÷ Termine im Jahr; Rückzahlung zum Nennwert; vor Steuern und Kosten, ohne

@@ -900,10 +900,13 @@ MC.navInit();
   const fmtFx = v => v.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 4 });
   const fremdIn = liste => liste.some(p => p.fremd);   // Summe enthält umgerechnete Beträge → zwei Nachkommastellen
   const HEUTE_ISO = (d => `${d.getFullYear()}-${zwei(d.getMonth() + 1)}-${zwei(d.getDate())}`)(new Date());
-  // Eine Farbe je Anleihe (Nutzerwunsch 01.10.2026), in der Reihenfolge des Hineinlegens – höchstens zehn. Die ersten acht sind
-  // als benachbarte Flächen geprüft (Farbsehschwächen: kleinster Abstand 9,1; Normalsicht 19,6); Tinte und Grau sind die neutralen
-  // Plätze neun und zehn. Hell sind Türkis, Gelb und Rosa – deshalb stehen Zahlen am Balken, eine Legende darüber, und die Liste darunter.
-  const DEPOT_MAX = 10, JAHRE_MAX = 30, FARBEN = ["#157C00", "#2A78D6", "#EB6834", "#1BAF7A", "#EDA100", "#E87BA4", "#4A3AA7", "#E34948", "#1A1A19", "#8E8D86"];
+  // Eine Farbe je Anleihe (Nutzerwunsch 01.10.2026), in der Reihenfolge des Hineinlegens – höchstens zehn. Seit 01.10.2026 abends
+  // die Farben der Website (Nutzerwunsch: „passe die Farben an die Website an“): Tiefgrün, Tinte, Orange, danach Abstufungen aus
+  // denselben Familien (Dunkelgrün, helles Grün, Grau, mittleres Grün, helles Orange, Braun, Hellgrün). Das Orange ist eine Spur
+  // heller als --orange (#CF7430), weil sich das Original bei Rot-Grün-Schwäche kaum vom Tiefgrün abhebt (Abstand 5,3; so 9,3).
+  // Geprüft über alle Paare: die ersten sechs bestehen (Farbsehschwächen ≥ 9,3; Normalsicht ≥ 16); sieben bis zehn liegen enger
+  // beieinander (bis 6,3 / 12,7) – dafür stehen Zahlen am Balken, die Legende mit Schaltern darüber und die Liste darunter.
+  const DEPOT_MAX = 10, JAHRE_MAX = 30, FARBEN = ["#157C00", "#1A1A19", "#DD803D", "#054F3A", "#76DBB6", "#76756D", "#46AE8B", "#FFAF7B", "#683101", "#5BCF4C"];
   const AUS = new Set();   // im Schaubild abgewählte Anleihen (ISIN) – nur für diesen Seitenaufruf, wird nirgends gespeichert
   let POS = [];   // { isin, nenn (Währung der Anleihe), o (wie anleihe()), fx, fremd, nennEur, freq, fest, rechnet, zins (im Jahr, Euro, oder null), warum }
   function nennLesen(text) { const n = parseInt(String(text).replace(/[.\s€]/g, "").replace(/,\d*$/, ""), 10); return n >= 1 && n <= NENN_MAX ? n : NaN; }
@@ -1003,6 +1006,8 @@ MC.navInit();
       return [svg, y];
     }
     let s = `<svg class="kd-svg${eng ? " eng" : ""}" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Zinsen, Rückzahlung des Nennwerts und alle Zahlungen je Jahr, jede Anleihe in ihrer Farbe">`, punkt = false;
+    // jedes zweite Jahr ganz leicht hinterlegt – so sieht man, wo ein neues Jahr anfängt (Nutzerwunsch 01.10.2026)
+    for (let i = 1; i < n; i += 2) s += `<rect x="${(L + i * bw).toFixed(1)}" y="0" width="${bw.toFixed(1)}" height="${yS + 28}" rx="6" fill="#1A1A19" fill-opacity="0.045"/>`;
     s += text(L, 14, "kd-r", "Zinsen", false) + linie(yZ) + text(L, yZ + 28, "kd-r", "Rückzahlung des Nennwerts (100 %)", false) + linie(yR) +
       text(L, yR + 28, "kd-r", "Alle Zahlungen: Zinsen plus Nennwert", false) + linie(yS);
     sp.forEach((x, i) => {
