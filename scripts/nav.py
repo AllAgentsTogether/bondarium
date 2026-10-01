@@ -56,18 +56,13 @@ GROUPS = [
         ("Laufzeit", "laufzeit.html"),
         ("Bonität und Ratings", "bonitaet.html"),
         ("Risiko kennen", "risiko.html"),
-        "Fortgeschrittene",
+        # Seit 01.10.2026 (Nutzerwunsch „Rollen strikt trennen“): Verstehen = alles bis zum ersten Kauf; die Profi-Themen und
+        # „Zinskurve, Duration & Co.“ gehören nur noch zu Vertiefen (VERTIEFEN) – keine Seite mehr in beiden Stufen.
+        "Weiterführend",
         ("Anleihen-ETF: Vor- und Nachteile", "anleihen-etf-erklaert.html"),
-        ("Zinskurve, Duration & Co.", "fortgeschrittene.html"),
         ("Kündbare Anleihen", "kuendbare-anleihen.html"),   # seit 27.09.2026: sechs Kündigungsarten und ihre Folgen
         ("Handelsplätze", "handelsplaetze.html"),   # seit 28.09.2026: Profimarkt, Börse, elf Plätze in einer Tabelle
-        # Seit 27.09.2026 (Nutzerwunsch „Profi-Wissen“): rechnen, Strategien, Steuern, Markttechnik
-        "Profi",
-        ("Duration und Konvexität", "duration.html"),
-        ("Rendite richtig lesen", "rendite-lesen.html"),
-        ("Leiter, Hantel, Roll-down", "anleihenleiter.html"),
         ("Steuern und Handelskosten", "steuern-handelskosten.html"),
-        ("Markttechnik lesen", "markttechnik.html"),
         "Nachschlagen",
         ("Glossar", "begriffe.html"),
     ]),
@@ -97,7 +92,9 @@ AKADEMIE = ("Akademie", "./#akademie", "/#akademie")   # (Beschriftung, Ziel rel
 # Seit 30.09.2026 abends (Nutzerwunsch „Vertiefen muss klickbar sein, die vier Punkte haben nichts im Dropdown zu suchen“):
 # „Vertiefen“ ist ein Stufen-Eintrag wie Verstehen/Entscheiden/Kaufen und führt auf die Übersicht vertiefen.html mit den
 # vier Profi-Themen (VERTIEFEN); die Themen selbst stehen nicht mehr im Aufklapper.
-VERTIEFEN = ("Vertiefen", "vertiefen.html", ["duration.html", "rendite-lesen.html", "anleihenleiter.html", "markttechnik.html"])
+# Seit 01.10.2026 strikt getrennt von Verstehen (nicht mehr in GROUPS) und mit „Für Fortgeschrittene“ als fünftem Thema.
+VERTIEFEN = ("Vertiefen", "vertiefen.html", ["fortgeschrittene.html", "duration.html", "rendite-lesen.html", "anleihenleiter.html",
+                                             "markttechnik.html"])
 AKADEMIE_EXTRA = [
     "Werkzeuge",
     ("Anleihen-Rechner", "rechner.html"),
@@ -108,14 +105,14 @@ AKADEMIE_EXTRA = [
 ANLEIHEN = ("Anleihen", "anleihen.html", [
     ("Anleihen-Suche", "anleihen-suche.html", "nav-hl"),
     "Top 10 meistgehandelt",   # Nutzerwunsch 29.09.2026: „Top 10“ muss direkt draufstehen
-    ("Staatsanleihen nach Laufzeit", "staatsanleihen-laufzeit.html"),
-    ("Unternehmensanleihen nach Laufzeit", "unternehmensanleihen-laufzeit.html"),
-    ("Staatsanleihen nach Ländern", "anleihen-laender.html"),
-    ("Unternehmensanleihen nach Ländern", "unternehmensanleihen-laender.html"),
+    ("nach Laufzeit – Staatsanleihen", "staatsanleihen-laufzeit.html"),
+    ("nach Laufzeit – Unternehmensanleihen", "unternehmensanleihen-laufzeit.html"),
+    ("nach Ländern – Staatsanleihen", "anleihen-laender.html"),
+    ("nach Ländern – Unternehmensanleihen", "unternehmensanleihen-laender.html"),
     ("Anleihen-ETFs", "anleihen-etf.html"),
-    ("Anleihen-ETF: Vor- und Nachteile", "anleihen-etf-erklaert.html"),   # seit 30.09.2026 auch hier (Seite zählt zur Stufe Verstehen)
+    # „Anleihen-ETF: Vor- und Nachteile“ seit 01.10.2026 nicht mehr hier – Erklärartikel gehört zur Akademie (Verstehen)
     "Beispiele",
-    ("Anleihen-Beispiele nach Ziel", "guide.html"),
+    ("nach Ziel – Anleihen-Beispiele", "guide.html"),
 ])
 # Seit 29.09.2026 (Nutzerwunsch): dritter Aufklapper „Zinsen“ – die frühere Stufe 4 „Einordnen“ (Marktdaten, täglich aktuell)
 # steht nicht mehr in der Akademie. Kopf = Übersicht beobachten.html (Dateiname bleibt, damit alle Links gelten).
@@ -133,7 +130,7 @@ ZINSEN = ("Zinsen", "beobachten.html", [
 MENUS = [ANLEIHEN, ZINSEN]
 MENU_RUBRIK = {"Anleihen": "anleihen", "Zinsen": "zinsen"}
 MENU_EXTRA = {"Anleihen": ["anleihe.html"]}
-STUFE_ZEILE = {"Verstehen": "Vom Einstieg bis zum Profi", "Entscheiden": "Welche Anleihe passt zu dir?",
+STUFE_ZEILE = {"Verstehen": "Von Grund auf erklärt", "Entscheiden": "Welche Anleihe passt zu dir?",
                "Kaufen": "Broker wählen, Order aufgeben"}   # wie die Kacheln (28.09.2026 an den Inhalt angepasst)
 # Knopf rechts (immer sichtbar, am Handy ganz oben im Akkordeon) – seit 25.09.2026 abends leer:
 # Nutzerwunsch „Die Anleihen-Suche soll ganz oben raus“ → Eintrag im Menü Kaufen (Gruppe „Finden“)
@@ -197,7 +194,7 @@ FALLBACK_RE = re.compile(
 RUBRIK = {"Verstehen": "verstehen", "Entscheiden": "entscheiden", "Kaufen": "kaufen"}
 # Seiten außerhalb der Aufklapper (die Anleihen-Suche steht seit 25.09.2026 abends im Menü Kaufen;
 # anleihe.html ist der Steckbrief einer einzelnen Anleihe, erreichbar aus der Suche und den Datenseiten)
-RUBRIK_EXTRA = {"ueber-uns.html": "ueber", VERTIEFEN[1]: "verstehen"}   # vertiefen.html gehört zur Akademie
+RUBRIK_EXTRA = {"ueber-uns.html": "ueber"}
 
 
 def links(items):
@@ -210,6 +207,8 @@ def rubrik(page):
     for label, target, items in GROUPS:
         if page == target or any(i[1] == page for i in links(items)):
             return RUBRIK[label]
+    if page == VERTIEFEN[1] or page in VERTIEFEN[2]:
+        return "verstehen"   # Vertiefen gehört zur Akademie und trägt deren Kennfarbe
     for label, target, items in MENUS:
         if page == target or page in MENU_EXTRA.get(label, []) or any(i[1] == page for i in links(items)):
             return MENU_RUBRIK[label]
@@ -292,8 +291,7 @@ def render(page, absolute=False):
                f'<span>{AKADEMIE[0]}</span><span class="nav-caret" aria-hidden="true"></span></a>')
     out.append('        <div class="nav-group-menu">')
     for label, target, items in GROUPS:
-        # die vier Vertiefen-Themen gehören inhaltlich zu Verstehen (Rubrik), markieren im Menü aber „Vertiefen“
-        in_group = page == target or (page not in VERTIEFEN[2] and any(i[1] == page for i in links(items)))
+        in_group = page == target or any(i[1] == page for i in links(items))
         c = ' class="nav-stufe current"' if in_group else ' class="nav-stufe"'
         out.append(f'          <a href="{p}{target}"{c}>{label}</a>')   # seit 28.09.2026 ohne Unterzeile (Nutzerwunsch)
     c = ' class="nav-stufe current"' if page == VERTIEFEN[1] or page in VERTIEFEN[2] else ' class="nav-stufe"'
