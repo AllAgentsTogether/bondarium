@@ -73,15 +73,21 @@ in der Liste „Alle Zahlungen einzeln“.
 
 Ins Depot kommen vorerst nur Euro-Anleihen mit festem Kupon oder ohne Kupon (Nutzerentscheid); alles andere steht
 ausgegraut mit Grund in der Auswahl (`grund()` in `konto.html`). Der Nennwert ist eine ganze Zahl von 1 bis 100 Mio.;
-liegt er unter der Stückelung oder ist er kein Vielfaches davon, steht ein Hinweis in der Zeile.
+liegt er unter der Stückelung oder ist er kein Vielfaches davon, steht ein Hinweis in der Zeile. Ins Depot passen höchstens zehn Anleihen (`MAX_DEPOT` in
+`konto.php`, `DEPOT_MAX` in `konto.html`); ist es voll, ist das Formular gesperrt.
 
-Unter der Tabelle die Zahlungen: ein Satz mit den Summen, zwei Schaubilder (nächste 12 Monate je Monat; je Jahr bis
-zur letzten Fälligkeit, höchstens 30 Jahre) und der Aufklapper „Alle Zahlungen einzeln“. Jedes Schaubild hat
-Reihen mit eigener Höhe – oben Rückzahlungen, darunter Zinsen (Tiefgrün) –, weil eine Rückzahlung sonst jeden
-Zinsbalken unsichtbar machte; der Kupon-Punkt markiert die nächste Zinszahlung. Der Rückzahlungsbalken ist Tinte
-(Kaufbetrag heute) mit grüner Kappe (Kursgewinn) oder gestrichelter Kappe darüber (Kursverlust), die Zahl steht unter
-dem Betrag. Das Jahres-Schaubild hat ganz unten eine dritte Reihe „Rückzahlung kumuliert“ (Nutzerwunsch 01.10.2026):
-die bis zu diesem Jahr zurückgezahlte Summe. Gerechnet wird wie im Steckbrief:
+Unter der Tabelle die Zahlungen (Fassung vom 01.10.2026 abends, Nutzerwunsch: „max 10 Anleihen ins Depot. Die Zinsen und
+die Rückzahlungen von unterschiedlichen Anleihen müssen farblich unterschiedlich sein. Die nächsten 12 Monate sind
+uninteressant … 10 Jahre und danach gestrichelt mit dem Hinweis, die nächsten Jahre werden nicht angezeigt. Ganz unten
+muss die Summe aus Zinsen und Rückzahlung stehen“): ein Satz mit den Summen, ein Schaubild „Zahlungen je Jahr“ und der
+Aufklapper „Alle Zahlungen einzeln“. Das Schaubild (`jahresbild()`) zeigt höchstens zehn Jahre (`JAHRE_MAX`) und hat
+vier Reihen mit eigener Höhe: Rückzahlung (gestapelt, darunter die Differenz zum Kaufbetrag), Zinsen (gestapelt, der
+Kupon-Punkt markiert die nächste Zahlung), Rückzahlung kumuliert und ganz unten die Summe aus Zinsen und Rückzahlung
+als dunkle Zahlenzeile. Jede Anleihe hat ihre Farbe (`FARBEN`, in der Reihenfolge des Hineinlegens; acht geprüfte
+Farbtöne, dazu Tinte und Grau) – in der Tabelle, in der Legende, in den Balken und in der Einzel-Liste; fährt man über
+ein Segment, nennt es Anleihe und Betrag. Läuft das Depot länger als zehn Jahre, folgt eine gestrichelte Spalte „ab
+JJJJ“, und unter dem Bild steht, welche Jahre fehlen und was dort noch kommt. Ein Schaubild der nächsten zwölf Monate
+gab es am 01.10.2026 kurz; es ist auf Nutzerwunsch entfernt. Gerechnet wird wie im Steckbrief:
 Zinstermine vom Fälligkeitstag rückwärts (`MC.bond.couponDates`), jährlich, italienische Staatsanleihen halbjährlich;
 Zinsen je Termin = Nennwert × Kupon ÷ Termine im Jahr; Rückzahlung zum Nennwert; vor Steuern und Kosten, ohne
 vorzeitige Kündigung. Die Schaubilder zeichnen sich in der sichtbaren Breite (am Handy breiter als der Bildschirm,
@@ -110,7 +116,7 @@ SQLite-Datei `konto-daten/konto-<zufällig>.sqlite` (Fassung 3):
 | --- | --- | --- |
 | `nutzer` | E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet | „Konto löschen“ sofort; nach zwei Jahren ohne Anmeldung |
 | `favoriten` | ISIN und Zeitpunkt je Nutzer, höchstens 200 | „Entfernen“, mit dem Konto |
-| `depot` | Beispieldepot (seit 01.10.2026, Fassung 3): ISIN, gedachter Nennwert (ganze Zahl) und Zeitpunkt je Nutzer, höchstens 50 | „Herausnehmen“, mit dem Konto |
+| `depot` | Beispieldepot (seit 01.10.2026, Fassung 3): ISIN, gedachter Nennwert (ganze Zahl) und Zeitpunkt je Nutzer, höchstens 10 | „Herausnehmen“, mit dem Konto |
 | `links` | offene Registrierungen (Adresse, Hashwert des Passworts, vorgemerkte ISIN) und Links „Passwort vergessen“; jeweils Hashwert des Link-Kennworts und Ablauf | beim Einlösen; sonst nach Ablauf |
 | `sitzungen` | Hashwert des Cookies, Ablauf | Abmelden, Passwortwechsel; nach Ablauf |
 | `zaehler` | verschlüsselte Hashwerte von Adresse und IP-Adresse: verschickte E-Mails, falsche Passwörter | nach 24 Stunden |
