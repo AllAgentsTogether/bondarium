@@ -80,7 +80,7 @@
   .kto-leise[disabled] { opacity: 0.6; cursor: default; }
   .kto-status { margin: 18px 0 0; font-size: 14px; color: var(--text); min-height: 1.6em; }
   /* Leiste über der Tabelle: Anzahl links, „Depot teilen“ rechts (seit 30.09.2026) */
-  .kto-leiste { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 18px; margin-top: 18px; }
+  .kto-leiste { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 18px; margin-top: 16px; padding-bottom: 4px; }
   .kto-leiste .kto-status { margin: 0; }
   .kto-teilen { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
   .kto-teilen[hidden] { display: none; }
@@ -92,23 +92,26 @@
   .kto-teilen-status.fehler { color: var(--down); }
   .kto-status strong { color: var(--ink); font-weight: 600; }
   /* Filter der Merkliste (seit 02.10.2026): derselbe Filterstandard wie die Anleihen-Suche – filter.css/filter.js */
-  #mf-box { margin-top: 6px; }
+  #mf-box { margin-top: 20px; }
   #mf-box[hidden] { display: none; }
   .kto-t td.mf-leer { padding: 18px 12px; text-align: left; font-size: 14px; color: var(--text); white-space: normal; }
-  .kto-t { width: 100%; min-width: 1180px; border-collapse: collapse; margin-top: 8px; font-size: 13.5px; }   /* Spalten wie die Anleihen-Suche; schmaler Bildschirm: querwischen */
-  .kto-t th, .kto-t td { padding: 10px 9px 10px 0; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
-  .kto-t thead th { font-size: 11px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; color: var(--text); border-bottom: 1px solid rgba(26,26,25,0.35); white-space: nowrap; }
+  .kto-t { width: 100%; min-width: 1180px; border-collapse: collapse; margin-top: 10px; font-size: 13.5px; }   /* Spalten wie die Anleihen-Suche; schmaler Bildschirm: querwischen */
+  .kto-t th, .kto-t td { padding: 13px 9px 13px 0; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+  .kto-t thead th { font-size: 11px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; color: var(--text); border-bottom: 1px solid rgba(26,26,25,0.35); white-space: nowrap; padding-top: 8px; padding-bottom: 8px; vertical-align: bottom; }
   .kto-t .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .kto-t thead .num .sortbtn { flex-direction: row-reverse; }
-  .kto-t tbody th { font-weight: 400; line-height: 1.4; min-width: 164px; }
+  .kto-t tbody th { font-weight: 400; line-height: 1.4; width: 180px; min-width: 180px; max-width: 180px; }
   .kto-t td.isin { font-variant-numeric: tabular-nums; white-space: nowrap; letter-spacing: 0.01em; }
-  /* Breiter Bildschirm: Die Tabelle ragt links und rechts über die 1000-px-Spalte hinaus, damit alle Spalten ohne Wischen zu sehen sind */
-  @media (min-width: 1240px) { #liste.table-scroll { width: 1180px; margin-left: -90px; overflow: visible; background: none; } }
+  /* Breiter Bildschirm: Der ganze angemeldete Bereich (Kontoleiste, Reiter, Filter, Tabelle) ist 1180 px breit und ragt gleichmäßig
+     über die 1000-px-Spalte hinaus – so haben alle Blöcke eine gemeinsame linke Kante und die Tabelle passt ohne Wischen
+     (seit 02.10.2026; vorher ragte nur die Tabelle hinaus und stand gegen Filter und Reiter versetzt). */
+  @media (min-width: 1240px) { #depot { width: 1180px; margin-left: -90px; } #liste.table-scroll { overflow: visible; background: none; } }
   .kto-t td.isin a { color: var(--green-text); }
   .kto-pruef { display: inline-block; font-size: 11px; line-height: 1.2; color: var(--orange-text); border: 1px solid var(--orange); border-radius: 3px; padding: 0 4px; margin-left: 6px; vertical-align: 1px; white-space: nowrap; cursor: help; }
   .kto-t tbody th a { font-weight: 600; color: var(--ink); text-decoration: none; overflow-wrap: anywhere; }
   .kto-t tbody th a:hover { color: var(--green-text); text-decoration: underline; }
   .kto-t small { display: block; font-size: 12.5px; color: var(--text); font-variant-numeric: tabular-nums; }
+  .kto-t tbody th small { margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* Registername einzeilig, voll im title – gleich hohe Zeilen (02.10.2026) */
   .kto-t td small { font-size: 12px; }
   .kto-t td.leise { color: var(--text); }
   .kto-t .fraglich { color: var(--text); border-bottom: 1px dotted currentColor; cursor: help; }
@@ -156,7 +159,7 @@
   .kto-geteilt .go[disabled] { opacity: 0.6; cursor: default; }
   @media (max-width: 600px) { .kto-geteilt { padding: 16px 16px; } .kto-geteilt ul { columns: 1; } }
   /* Zwei Reiter nebeneinander: „Merkliste“ und „Mein Depot“ (seit 01.10.2026, Nutzerentscheid) – einer ist offen */
-  .kto-reiter { display: flex; gap: 8px; margin: 22px 0 0; border-bottom: 2px solid var(--rub-line); }
+  .kto-reiter { display: flex; gap: 8px; margin: 28px 0 0; border-bottom: 2px solid var(--rub-line); }
   .kto-reiter button { font: inherit; font-size: 17px; font-weight: 600; line-height: 1.2; color: var(--text); background: none; border: 0; border-radius: 12px 12px 0 0; padding: 12px 20px 11px; margin-bottom: -2px; border-bottom: 3px solid transparent; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
   .kto-reiter button:hover { color: var(--ink); }
   .kto-reiter button[aria-selected="true"] { color: var(--ink); background: #fff; border-bottom-color: #1A1A19; }
@@ -259,7 +262,7 @@
     .kto-t thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
     .kto-t tbody tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 12px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); padding: 14px 14px 12px; margin-bottom: 12px; }
     .kto-t tbody tr:hover > :is(td, th) { background: none; }
-    .kto-t tbody th, .kto-t tbody td { display: block; padding: 0; border: 0; text-align: left; white-space: normal; min-width: 0; width: auto; }
+    .kto-t tbody th, .kto-t tbody td { display: block; padding: 0; border: 0; text-align: left; white-space: normal; min-width: 0; width: auto; max-width: none; }
     .kto-t tbody th { grid-column: 1 / -1; font-size: 15.5px; }
     .kto-t tbody td[data-l]::before { content: attr(data-l); display: block; font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
     .kto-t tbody td[data-l] { font-size: 15px; font-weight: 600; text-align: left; }
@@ -766,7 +769,7 @@ MC.navInit();
     const unter = [o.reg, o.hinweis].filter(Boolean).map(MC.esc).join(" · ");
     const pruef = o.befund ? ' <span class="kto-pruef" title="Widerspruch im ESMA-Register – Registerwerte unverändert gezeigt, keine Rendite">Daten?</span>' : "";
     const steck = `anleihe.html?isin=${encodeURIComponent(o.isin)}`;
-    return `<tr><th scope="row"><a href="${steck}">${MC.esc(o.name)}</a>${pruef}${unter ? `<small>${unter}</small>` : ""}</th>` +
+    return `<tr><th scope="row"><a href="${steck}">${MC.esc(o.name)}</a>${pruef}${unter ? `<small title="${unter}">${unter}</small>` : ""}</th>` +
       `<td class="num" data-l="Rendite">${rend}</td><td class="num" data-l="Kurs"${o.kurs != null ? ` title="${MC.esc(`Schlusskurs vom ${MC.datum(o.datum)}${o.boerse ? ", " + o.boerse : ""}`)}"` : ""}>${kurs}</td>` +
       `<td class="num" data-l="Kupon">${fmtCoupon(o.kupon)}</td>` +
       `<td class="num" data-l="Fälligkeit">${o.faellig ? MC.datum(o.faellig) : (o.cur ? "unbefristet" : "–")}</td>` +
