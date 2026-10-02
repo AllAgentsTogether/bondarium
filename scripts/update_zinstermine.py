@@ -36,6 +36,8 @@ Schreibt:
   anleihen/<hh>.json             Teildateien des Steckbriefs: jede Zeile einer Anleihe mit festem Kupon über 0 bekommt
                                  als 15. Feld [zahlungen_je_jahr, "MM-TT", …] laut Liste oder – geschätzt – nur
                                  [zahlungen_je_jahr] (_common.zinsfrequenz). anleihe.html und konto.html lesen es.
+                                 Ein 16. Feld (Bonitätsstufe laut EZB, update_bonitaet.py) bleibt unberührt; steht es
+                                 ohne Zinstermine da, ist das 15. Feld der Platzhalter 0.
                                  update_anleihen_index.py schreibt die Teildateien wöchentlich neu (ohne das Feld);
                                  dieses Skript läuft danach und setzt es wieder ein.
 
@@ -185,11 +187,13 @@ def teildateien(zeilen: dict, termine: dict) -> int:
         for isin, row in d["rows"].items():
             r = zeilen.get(isin)   # nur Anleihen mit festem Kupon; alle anderen bleiben ohne das Feld
             e = (termine.get(isin) or [zinsfrequenz(r)]) if r else None
-            alt = row[14] if len(row) > 14 else None
+            alt = (row[14] if len(row) > 14 else None) or None   # 0 = Platzhalter von update_bonitaet.py
             if e != alt:
+                rest = row[15:]        # Feld 16 (Bonitätsstufe laut EZB, update_bonitaet.py) bleibt stehen
                 del row[14:]
-                if e:
-                    row.append(e)
+                if e or rest:
+                    row.append(e or 0)
+                    row.extend(rest)
                 neu = True
         if neu:
             write_atomic(pfad, d, indent=None)

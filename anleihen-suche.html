@@ -362,6 +362,7 @@
       <div class="fgrp" data-f="rest"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-rest"><span class="flab">Restlaufzeit</span><span class="fval"></span></button><div class="fpanel" id="fp-rest" hidden></div></div>
       <div class="fgrp" data-f="rendite"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-rendite"><span class="flab">Rendite</span><span class="fval"></span></button><div class="fpanel" id="fp-rendite" hidden></div></div>
       <div class="fgrp" data-f="kupon"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-kupon"><span class="flab">Kupon</span><span class="fval"></span></button><div class="fpanel" id="fp-kupon" hidden></div></div>
+      <div class="fgrp" data-f="bon"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-bon"><span class="flab">Bonität</span><span class="fval"></span></button><div class="fpanel" id="fp-bon" hidden></div></div>
       <div class="fgrp neben" data-f="zins"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-zins"><span class="flab">Zinsart</span><span class="fval"></span></button><div class="fpanel" id="fp-zins" hidden></div></div>
       <div class="fgrp neben" data-f="kue"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-kue"><span class="flab">Kündigung</span><span class="fval"></span></button><div class="fpanel" id="fp-kue" hidden></div></div>
       <div class="fgrp neben" data-f="vol"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-vol"><span class="flab">Volumen</span><span class="fval"></span></button><div class="fpanel" id="fp-vol" hidden></div></div>
@@ -491,6 +492,7 @@ const T = {
     pruef: "Jede Anleihe wird gegen den Kurznamen im ESMA-Register (Kupon und Fälligkeit nach ISO 18774) und gegen ihren Namen geprüft. Weicht etwas ab, bleiben die Registerwerte stehen, der Widerspruch steht daneben („Daten?“) und es gibt keine Rendite – die Quelle wird nicht verändert.",
     vol: "Ausgegebener Nennbetrag in der Währung der Anleihe – 100 Mio. Yen sind also weniger als 100 Mio. Euro. Unter 100 Mio. stellt die Börse oft nur kleine Stückzahlen; wer vor der Fälligkeit verkaufen will, braucht Geduld oder nimmt Abschläge in Kauf. Ein Anhaltspunkt für die Handelbarkeit, keine Garantie.",
     land: "Sitz des Konzerns laut LEI-Register.",
+    bon: d => `Von uns aus der Liste der notenbankfähigen Sicherheiten der EZB vom ${d} abgelesen: Der Bewertungsabschlag der EZB zeigt, ob eine Anleihe zu den Bonitätsstufen 1 und 2 (AAA bis A−) oder zur Stufe 3 (BBB+ bis BBB−) gehört. Kein Rating, keine Empfehlung. „Keine Angabe“ heißt nur: Die Anleihe steht nicht auf der Liste. <a href="bonitaet.html">Bonität und Ratings erklärt →</a>`,
     kue: 'Abgeleitet aus dem Namen – „2024(27/34)“ heißt kündbar ab 2027 – und dem ESMA-Register. Verbindlich sind die Anleihebedingungen. <a href="kuendbare-anleihen.html">Kündigungsarten erklärt →</a>',
   },
 };
@@ -506,7 +508,7 @@ function L(k) { return T[k] != null ? T[k] : k; }
 // Fehlt suchindex.json, baut die Seite dieselben Zeilen aus anleihen-index.json und anleihen-kurse.json (Rückfall, wie bisher).
 const MAX = 200;
 const AKTUELL_TAGE = 14;   // Kurs höchstens so alt (Kalendertage vor dem Stand) – ältere Anleihen stehen nicht in der Suche (Nutzerregel 26.09.2026: nur, was täglich aktuell gehalten werden kann)
-let IDX = null, HAY = null, KEYS = null, SOL = null, EMI = [], ART = ["Staat", "Öffentlich", "Unternehmen"], KURSE = {}, KTAGE = [], KSTAND = "", BOERSEN = {};
+let IDX = null, HAY = null, KEYS = null, SOL = null, EMI = [], ART = ["Staat", "Öffentlich", "Unternehmen"], KURSE = {}, KTAGE = [], KSTAND = "", BOERSEN = {}, EZB = "";   // EZB: Stand der EZB-Liste (Filter Bonität)
 const S = { q: "", col: "rest", dir: -1, f: {}, offen: new Set(), solide: false };   // Standard seit 29.09.2026: längste Restlaufzeit zuerst
 
 // ---------- Formatierung ----------
@@ -547,6 +549,11 @@ const FILTER = [
   { k: "w", liste: true, key: r => r[3] || null, name: wName, kurz: c => c },
   { k: "kupon", opts: () => [["a", "bis 1\u00a0%"], ["b", "über 1 bis 3\u00a0%"], ["c", "über 3 bis 4\u00a0%"], ["g", "über 4 bis 5\u00a0%"], ["d", "über 5 bis 7\u00a0%"], ["e", "über 7\u00a0%"], ["v", "variabel"]],
     key: r => r[4] === "var" ? "v" : typeof r[4] === "number" ? bucket(r[4], [[1, "a"], [3, "b"], [4, "c"], [5, "g"], [7, "d"], [Infinity, "e"]]) : null },
+  // Bonität laut EZB (seit 02.10.2026, scripts/update_bonitaet.py): Feld 22 des Suchindex – 1 = Bonitätsstufen 1 und 2, 3 = Stufe 3,
+  // fehlt = nicht auf der EZB-Liste. Ohne Suchindex (Rückfall auf die Einzeldateien) gibt es die Angabe nicht.
+  { k: "bon", opts: () => [["a", "AAA bis A−", "Bonitätsstufen 1 und 2 der EZB"], ["b", "BBB+ bis BBB−", "Bonitätsstufe 3 der EZB"],
+      ["k", "keine Angabe", "nicht auf der EZB-Liste – sagt nichts über die Bonität"]],
+    key: r => !EZB ? null : r[22] === 1 ? "a" : r[22] === 3 ? "b" : r[22] == null ? "k" : null, hintHtml: () => L("hint").bon(EZB ? fmtDate(EZB) : "–") },
   { k: "zins", opts: () => L("zins").map((t, i) => [String(i), t]), key: r => r[10] == null ? null : String(r[10]) },
   { k: "rest", opts: () => [["a", "bis 1 Jahr"], ["b", "1 bis 3 Jahre"], ["c", "3 bis 7 Jahre"], ["d", "7 bis 30 Jahre"], ["e", "über 30 Jahre"], ["u", "unbefristet"]],
     key: r => r[5] ? bucket(Math.max(0, jahre(r[5])), [[1, "a"], [3, "b"], [7, "c"], [30, "d"], [Infinity, "e"]]) : "u" },
@@ -838,7 +845,7 @@ function laden() {
     .catch(err => { console.warn("suchindex.json nicht geladen – Rückfall auf anleihen-index.json und anleihen-kurse.json:", err);
       return Promise.all([json("anleihen-index.json"), json("anleihen-kurse.json")]).then(([ix, ku]) => ausEinzeldateien(ix, ku)); })
     .then(d => {
-      KTAGE = d.tage || []; KSTAND = d.kstand || ""; BOERSEN = d.boersen || {}; ART = d.art || ART; EMI = d.emittenten || [];
+      KTAGE = d.tage || []; KSTAND = d.kstand || ""; BOERSEN = d.boersen || {}; ART = d.art || ART; EMI = d.emittenten || []; EZB = d.ezb || "";
       if (!KSTAND) { st.classList.remove("laedt"); st.textContent = L("errorKurse"); return; }
       // Bereits fällige Anleihen (Fälligkeit heute oder früher) ausblenden – die Stammdaten kommen wöchentlich (Nutzerbefund 25.09.2026);
       // nur Anleihen mit Kurs höchstens AKTUELL_TAGE vor dem Kursstand

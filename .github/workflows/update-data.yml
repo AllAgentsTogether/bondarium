@@ -176,6 +176,18 @@ jobs:
         continue-on-error: true
         run: python scripts/update_zinstermine.py
 
+      # Bonitätsstufe laut EZB (seit 02.10.2026): Ratings der Agenturen sind lizenzpflichtig. Die Liste der
+      # notenbankfähigen Sicherheiten der EZB (täglich, ~1 MB, dieselbe Datei wie für „Anleihen nach Kupon“) nennt je
+      # Wertpapier den Bewertungsabschlag; daraus liest das Skript mit der Abschlagstabelle der EZB ab, ob eine Anleihe
+      # zu den Bonitätsstufen 1 und 2 (AAA bis A−) oder zur Stufe 3 (BBB+ bis BBB−) gehört. Schreibt
+      # bonitaet/ezb-stufen.json (wird committet, nicht veröffentlicht) und setzt die Stufe in die Stammdaten
+      # anleihen/<hh>.json. Läuft NACH dem Index und den Zinsterminen und VOR dem Suchindex. Schlägt es fehl oder passt
+      # die Tabelle nicht mehr zur Liste, gelten die Stufen des letzten Laufs.
+      - name: Bonitätsstufe ablesen (EZB, Liste der notenbankfähigen Sicherheiten)
+        if: env.VOLL == '1'
+        continue-on-error: true
+        run: python scripts/update_bonitaet.py
+
       # Register der Anleihen-ETFs (seit 30.09.2026, docs/ETF-DATENBANK.md): etf-index.json aus der ETF-Liste der
       # Deutschen Börse (börsentäglich, ~0,5 MB), ihrer Monatsstatistik (Anlageklasse der Neuzugänge, Fondsvermögen,
       # Umsatz, XLM – eine Datei je Monat, nur solange der Vormonat fehlt) und ESMA FIRDS (Fonds-Datei, 1×/Woche).
@@ -280,7 +292,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add renditen.json unternehmen.json langlaeufer.json anleihen-index.json anleihen-kurse.json kurse-auswahl.json zinskurve.json realzins.json risikoaufschlaege.json top10-*.json suchindex.json ezb.json wechselkurse.json kurse kurse/jahre.json anleihen zinstermine etf-*.json etf
+          git add renditen.json unternehmen.json langlaeufer.json anleihen-index.json anleihen-kurse.json kurse-auswahl.json zinskurve.json realzins.json risikoaufschlaege.json top10-*.json suchindex.json ezb.json wechselkurse.json kurse kurse/jahre.json anleihen zinstermine bonitaet etf-*.json etf
           if ! git diff --cached --quiet; then
             git commit -m "Daten aktualisiert"
             # Vor dem Push mit dem Remote abgleichen (falls inzwischen gepusht wurde);
@@ -616,6 +628,8 @@ jobs:
               ("etf-kurse.json → stand", (_lade("etf-kurse.json") if os.path.exists("etf-kurse.json") else {}).get("stand"), 7),
               # Zinstermine (Instrumentenliste der Deutschen Börse, börsentäglich)
               ("zinstermine/zinstermine.json → stand", (_lade("zinstermine/zinstermine.json") if os.path.exists("zinstermine/zinstermine.json") else {}).get("stand"), 7),
+              # Bonitätsstufe laut EZB (Liste der notenbankfähigen Sicherheiten, täglich Mo–Fr)
+              ("bonitaet/ezb-stufen.json → stand", (_lade("bonitaet/ezb-stufen.json") if os.path.exists("bonitaet/ezb-stufen.json") else {}).get("stand"), 7),
               # Steckbrief anleihe.html: Teildateien Stammdaten (wöchentlich) und aktuelle Kurse (börsentäglich), Stichprobe 00
               ("anleihen/00.json → stand", (_lade("anleihen/00.json") if os.path.exists("anleihen/00.json") else {}).get("stand"), 16),
               (f"kurse/{heute.year}/00.json → stand", (_lade(f"kurse/{heute.year}/00.json") if os.path.exists(f"kurse/{heute.year}/00.json") else {}).get("stand"), 7),

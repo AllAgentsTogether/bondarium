@@ -5,8 +5,8 @@ Aufruf (im Stammordner, NACH scripts/update_anleihen_index.py und scripts/update
 
     python3 scripts/suchindex.py
 
-Liest  anleihen-index.json (Stammdaten, ESMA FIRDS + GLEIF) und anleihen-kurse.json (Tageskurse, Deutsche Börse/Bundesbank),
-schreibt suchindex.json. Vorher lud die Suche beide Dateien vollständig (~8,8 MB, gzip ~1,5 MB), obwohl sie nur Anleihen mit
+Liest  anleihen-index.json (Stammdaten, ESMA FIRDS + GLEIF), anleihen-kurse.json (Tageskurse, Deutsche Börse/Bundesbank) und
+bonitaet/ezb-stufen.json (Bonitätsstufe laut EZB, seit 02.10.2026), schreibt suchindex.json. Vorher lud die Suche beide Dateien vollständig (~8,8 MB, gzip ~1,5 MB), obwohl sie nur Anleihen mit
 aktuellem Kurs zeigt und die Tagesdaten (Eröffnung, Hoch, Tief …) nur der Steckbrief anleihe.html braucht.
 
 suchindex.json enthält nur, was die Suche zeigt, filtert und sortiert:
@@ -19,7 +19,8 @@ suchindex.json enthält nur, was die Suche zeigt, filtert und sortiert:
 
 Zeile: [isin, name, art, waehrung, kupon, faellig, volumen, stueckelung, boerse, emittent (Index), zinsart, land, extra,
         "<Rückzahlungsart><Jahr erster Handelstag>", pruef (Objekt oder 0),
-        kurs, rendite, tag, boerse_kurs, umsatz, vortag, aufschlag]
+        kurs, rendite, tag, boerse_kurs, umsatz, vortag, aufschlag,
+        bonitaet (nur bei Anleihen der EZB-Liste: 1 = Bonitätsstufen 1 und 2, 3 = Stufe 3, 0 = Stufe offen)]
 """
 import json
 import re
@@ -29,6 +30,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 INDEX, KURSE, OUT = ROOT / "anleihen-index.json", ROOT / "anleihen-kurse.json", ROOT / "suchindex.json"
+BONITAET = ROOT / "bonitaet" / "ezb-stufen.json"   # Bonitätsstufe laut EZB (scripts/update_bonitaet.py); fehlt die Datei: ohne Angabe
 AKTUELL_TAGE = 14   # wie anleihen-suche.html: Kurs höchstens so viele Kalendertage vor dem Kursstand
 
 # ---------- Emittent lesbar (gleiche Regel wie lesbar() in anleihe.html – bei Änderungen beide anpassen) ----------
@@ -90,6 +92,11 @@ def main():
         print("::error::suchindex.py: anleihen-kurse.json ohne Stand oder Kurse – suchindex.json unverändert", file=sys.stderr)
         return 1
     grenze = (date.fromisoformat(kstand) - timedelta(days=AKTUELL_TAGE)).isoformat()
+    try:
+        bon = json.loads(BONITAET.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001 – ohne die Datei zeigt die Suche keine Bonitätsstufe, sonst ändert sich nichts
+        bon = {}
+    stufen = bon.get("stufen") or {}
     emis, emi_idx, rows = ix.get("emittenten") or [], {}, []
     for r in ix.get("rows") or []:
         k = kurse.get(r[0])
@@ -105,17 +112,20 @@ def main():
         ab = mehr[1][:4] if len(mehr) > 1 and isinstance(mehr[1], str) else ""
         pruef = r[14] if len(r) > 14 and isinstance(r[14], dict) and r[14] else 0
         rows.append(r[:9] + [ei] + r[10:13] + [rz + ab, pruef, k[0], k[1], k[2], k[3], k[4],
-                              k[6] if len(k) > 6 else None, k[7] if len(k) > 7 else None])
+                              k[6] if len(k) > 6 else None, k[7] if len(k) > 7 else None]
+                    + ([stufen[r[0]]] if r[0] in stufen else []))
     liste = [""] + [n for n, _ in sorted(emi_idx.items(), key=lambda x: x[1])]
     out = {
         "stand": ix.get("stand"), "kstand": kstand, "tage": tage, "boersen": ku.get("boersen") or {},
         "art": ix.get("art"), "anzahl": len(ix.get("rows") or []), "aktuellTage": AKTUELL_TAGE,
+        "ezb": bon.get("stand") or "",   # Stand der EZB-Liste hinter der Bonitätsstufe
         "quelle": "scripts/suchindex.py aus anleihen-index.json und anleihen-kurse.json",
         "emittenten": liste, "rows": rows,
     }
     OUT.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     print(f"suchindex.json: {len(rows)} Anleihen mit Kurs (von {out['anzahl']} im Register), {len(liste) - 1} Emittenten, "
-          f"{OUT.stat().st_size / 1e6:.1f} MB (Kurse {kstand}, Stammdaten {out['stand']})")
+          f"{OUT.stat().st_size / 1e6:.1f} MB (Kurse {kstand}, Stammdaten {out['stand']}); "
+          f"{sum(1 for r in rows if len(r) > 22)} mit Bonitätsstufe laut EZB ({out['ezb'] or 'keine Datei'})")
     return 0
 
 
