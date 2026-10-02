@@ -192,13 +192,38 @@ Euro-Zeichen mitten im Text: macOS-Vorschau (PDFKit) kennt für die Standardschr
 zeichnet es breiter, der folgende Text liefe hinein. `tx()` setzt deshalb jedes Stück einzeln und lässt hinter „€“ ein
 Viertel Geviert Luft. Rechtsbündige Beträge sind nicht betroffen.
 
+## Mehrere Musterdepots
+
+Seit 02.10.2026 (Nutzerentscheid nach PDF-Mockup, Antworten: fünf Depots mit je zehn Anleihen, eigene Namen, PDF-Knopf zum
+Übernehmen behalten). Server: Fassung 4 der Datenbank – Tabelle `musterdepots` (Nummer, Nutzer, Name, angelegt), die Anleihen in
+`depot` hängen am Musterdepot (`muster`) statt am Nutzer. Beim Umbau wurde das bisherige Depot jedes Nutzers „Musterdepot 1“.
+`status` liefert `depots: [[Nummer, Name, [[ISIN, Nennwert, Zeit], …]], …]` (ohne eigenes Depot `[[0, "Musterdepot 1", []]]` –
+angelegt wird es erst beim ersten Hinzufügen) und für ältere Seiten noch `depot` (das erste). Aktionen: `depot` mit `muster`,
+`muster-neu` (name), `muster-name` (muster, name), `muster-weg` (muster; das letzte bleibt: Status `letztes`),
+`muster-uebernehmen` (name, liste „ISIN~Nennwert,…“). Grenzen: `MAX_MUSTER` = 5 (Status `mustervoll`), `MAX_DEPOT` = 10 je
+Depot, Namen ohne Steuerzeichen, höchstens `NAME_MAX` = 40 Zeichen; leerer Name beim Anlegen → „Musterdepot N“.
+
+Seite: Über dem Formular eine Leiste mit allen Depots als Pillen (das offene dunkel, die Zahl nennt die Anleihen),
+„+ Neues Musterdepot“ (fragt nur nach dem Namen, inline), rechts „Vergleichen“, „Umbenennen“ (inline an der Pille) und
+„Löschen“ (fragt einmal nach). Welches Depot offen ist (`AKTIV`), gilt nur für den Seitenaufruf – beim Öffnen das erste;
+gespeichert wird es nirgends. Formular, Tabelle, Schaubild, „+“ der Merkliste und PDF beziehen sich auf das offene Depot.
+„Vergleichen“ zeigt statt des Depots eine Tabelle aller Depots: Anleihen, Nennwert, Kurswert mit Kursgewinn/-verlust, Zinsen
+pro Jahr, Zinsen bis zur Fälligkeit und von wann bis wann zurückgezahlt wird (alles in Euro, gerechnet mit `position()` und
+`zahlungen()` wie im Depot). Ein Klick auf den Namen öffnet das Depot. Der Reiter „Mein Depot“ zählt alle Anleihen aller Depots.
+
+PDF: Dachzeile „Musterdepot“, darunter der Name (lange Namen kleiner, bis 15 pt); rechts daneben der grüne Knopf
+„In meine Musterdepots übernehmen“ → `konto.html#muster=ISIN~Nennwert,…&n=Name`. Die Seite zeigt dann den Kasten
+„Geteiltes Musterdepot“ und fragt nach (wie bei der geteilten Merkliste); erst der Klick legt es als neues Musterdepot an.
+Bei fünf Depots sagt der Kasten, dass erst eins gelöscht werden muss. Dateiname mit dem Namen des Depots.
+
 ## Zum Depot hinzufügen im Steckbrief
 
 Seit 02.10.2026 (Nutzerentscheid nach PDF-Mockup): In `anleihe.html` steht neben „Merken“ der Knopf „Zum Depot hinzufügen“
-(Form wie `.merkbtn`, Funktion `depotFeld()`). Er öffnet ein kleines Feld mit dem Nennwert – vorgeschlagen ist der Betrag aus
-dem Rechenbeispiel, liegt die Anleihe schon im Depot, ihr Nennwert. Gespeichert wird über `MC.konto.depot(isin, nennwert)`
-wie in Mein Depot; die Merkliste bleibt unverändert. Danach zeigt der Knopf „Im Depot“, darunter „Liegt mit … in deinem
-Musterdepot · Mein Depot öffnen“; ein neuer Klick ändert den Nennwert oder nimmt die Anleihe heraus. Dieselbe Regel wie
+(Form wie `.merkbtn`, Funktion `depotFeld()`). Er öffnet ein kleines Feld mit Musterdepot (Auswahl nur bei mehreren Depots;
+vorgewählt das erste, in dem die Anleihe liegt) und Nennwert – vorgeschlagen ist der Betrag aus dem Rechenbeispiel, liegt die
+Anleihe im gewählten Depot schon, ihr Nennwert. Gespeichert wird über `MC.konto.depot(isin, nennwert)`
+wie in Mein Depot; die Merkliste bleibt unverändert. Danach zeigt der Knopf „Im Depot“, darunter „Liegt mit … in ‚Name‘ · Mein Depot öffnen“
+(bei mehreren Depots alle mit Nennwert); ein neuer Klick ändert den Nennwert oder nimmt die Anleihe heraus. Dieselbe Regel wie
 `grund()` in `konto.html`: ohne Fälligkeit, nach der Fälligkeit, mit variablem Zins oder ohne Kupon ist der Knopf gesperrt und
 nennt den Grund; bei Fremdwährungen prüft das Feld beim Öffnen, ob es einen EZB-Kurs gibt. Ist das Depot voll, sagt das Feld
 es. Nicht angemeldet führt der Knopf auf `konto.html?merken=<ISIN>&depot=1`: Nach dem Anmelden steht die Anleihe auf der
@@ -206,13 +231,14 @@ Merkliste, „Mein Depot“ ist offen und die Anleihe im Formular ausgewählt (h
 
 ## Was gespeichert wird
 
-SQLite-Datei `konto-daten/konto-<zufällig>.sqlite` (Fassung 3):
+SQLite-Datei `konto-daten/konto-<zufällig>.sqlite` (Fassung 4):
 
 | Tabelle | Inhalt | Löschung |
 | --- | --- | --- |
 | `nutzer` | E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet | „Konto löschen“ sofort; nach zwei Jahren ohne Anmeldung |
 | `favoriten` | ISIN und Zeitpunkt je Nutzer, höchstens 200 | „Entfernen“, mit dem Konto |
-| `depot` | Musterdepot (seit 01.10.2026, Fassung 3): ISIN, gedachter Nennwert (ganze Zahl) und Zeitpunkt je Nutzer, höchstens 10 | „Entfernen“, mit dem Konto |
+| `musterdepots` | Musterdepots (seit 02.10.2026, Fassung 4): Nummer, Nutzer, Name (höchstens 40 Zeichen), angelegt am; höchstens 5 je Nutzer | „Löschen“, mit dem Konto |
+| `depot` | Anleihen der Musterdepots (seit 01.10.2026, Fassung 3; seit Fassung 4 je Musterdepot statt je Nutzer): Nummer des Musterdepots, ISIN, gedachter Nennwert (ganze Zahl) und Zeitpunkt, höchstens 10 je Depot | „Entfernen“, mit dem Musterdepot, mit dem Konto |
 | `links` | offene Registrierungen (Adresse, Hashwert des Passworts, vorgemerkte ISIN) und Links „Passwort vergessen“; jeweils Hashwert des Link-Kennworts und Ablauf | beim Einlösen; sonst nach Ablauf |
 | `sitzungen` | Hashwert des Cookies, Ablauf | Abmelden, Passwortwechsel; nach Ablauf |
 | `zaehler` | verschlüsselte Hashwerte von Adresse und IP-Adresse: verschickte E-Mails, falsche Passwörter | nach 24 Stunden |

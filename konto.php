@@ -1,8 +1,8 @@
 <?php
 /**
  * Benutzerbereich (konto.html, seit 30.09.2026): Konto mit E-Mail-Adresse und Passwort, eine Merkliste für Anleihen und
- * – seit 01.10.2026 – ein Musterdepot („Mein Depot“: gemerkte Anleihen mit einem gedachten Nennwert, kein echter
- * Bestand). Dokumentation: docs/KONTO.md. Der Browser spricht über konto.js mit diesem Skript; die Antwort ist
+ * – seit 01.10.2026 – Musterdepots („Mein Depot“: Anleihen mit einem gedachten Nennwert, kein echter Bestand; seit
+ * 02.10.2026 bis zu MAX_MUSTER Depots mit eigenem Namen). Dokumentation: docs/KONTO.md. Der Browser spricht über konto.js mit diesem Skript; die Antwort ist
  * immer JSON ({"status": …}).
  *
  * Abläufe (seit 30.09.2026 abends mit Passwort; vorher Anmeldung nur per E-Mail-Link):
@@ -15,18 +15,24 @@
  *                  verlängert sich bei Nutzung).
  *   Vergessen      aktion=vergessen (E-Mail) → E-Mail mit Link (30 Minuten, einmal); aktion=passwort-neu (Kennwort des
  *                  Links, neues Passwort) setzt es, meldet alle Geräte ab und das aktuelle an.
- *   Angemeldet     aktion=status | merken | entfernen | uebernehmen | depot | abmelden | passwort-aendern | loeschen
+ *   Angemeldet     aktion=status | merken | entfernen | uebernehmen | depot | muster-neu | muster-name | muster-weg |
+ *                  muster-uebernehmen | abmelden | passwort-aendern | loeschen
  *                  uebernehmen (isins, durch Komma getrennt): setzt eine geteilte Merkliste auf die eigene – der Link im
  *                  PDF-Auszug führt auf konto.html#liste=…, die Seite fragt nach, erst der Klick ruft diese Aktion
- *                  depot (isin, nennwert): legt die Anleihe mit diesem Nennwert ins Musterdepot oder ändert ihn;
- *                  nennwert 0 nimmt sie heraus
+ *                  depot (isin, nennwert, muster): legt die Anleihe mit diesem Nennwert in das Musterdepot „muster“
+ *                  (Nummer aus „depots“; fehlt sie, das erste) oder ändert ihn; nennwert 0 nimmt sie heraus
+ *                  muster-neu (name) legt ein Musterdepot an, muster-name (muster, name) benennt es um, muster-weg
+ *                  (muster) löscht es samt Anleihen – das letzte bleibt; muster-uebernehmen (name, liste
+ *                  „ISIN~Nennwert,…“) legt ein geteiltes Musterdepot als neues an (Knopf im PDF, konto.html#muster=…)
  *   Links          führen auf konto.html#bestaetigen=… bzw. #passwort=… – der Teil hinter „#“ erscheint in keinem
  *                  Server-Log; aktion=link-pruefen sagt der Seite, ob der Link noch gilt und zu welcher Adresse er gehört.
  *
  * Gespeichert wird in einer SQLite-Datei im Ordner konto-daten/ (per .htaccess gesperrt, Dateiname zufällig):
  *   nutzer     E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet
  *   favoriten  ISIN und Zeitpunkt je Nutzer
- *   depot      Musterdepot: ISIN, gedachter Nennwert (ganze Zahl in der Währung der Anleihe) und Zeitpunkt je Nutzer
+ *   musterdepots  Musterdepots je Nutzer: Nummer, Name (vom Nutzer, höchstens NAME_MAX Zeichen), angelegt am
+ *   depot      Anleihen der Musterdepots: Nummer des Musterdepots, ISIN, gedachter Nennwert (ganze Zahl in der Währung
+ *              der Anleihe) und Zeitpunkt
  *   links      offene Registrierungen und Links zum Zurücksetzen: Hashwert des Link-Kennworts, Adresse, Ablauf, bei
  *              Registrierungen der Hashwert des Passworts und die vorgemerkte ISIN – nach Ablauf gelöscht (aufraeumen)
  *   sitzungen  Anmeldungen (nur der Hashwert des Cookies, Ablauf)
@@ -47,7 +53,9 @@
  *
  * Status: ok · methode · anfrage · ursprung · aktion · email · passwort (zu schwach) · zugang (E-Mail oder Passwort
  *         falsch) · zuviel · versand · link (abgelaufen oder benutzt) · anmelden (nicht angemeldet) · isin · voll ·
- *         nennwert (keine ganze Zahl von 0 bis NENNWERT_MAX) · speicher (Datenbank nicht nutzbar) · fehler
+ *         nennwert (keine ganze Zahl von 0 bis NENNWERT_MAX) · muster (kein eigenes Musterdepot) · name (leer) ·
+ *         mustervoll (schon MAX_MUSTER Musterdepots) · letztes (das letzte Musterdepot bleibt) · speicher (Datenbank nicht
+ *         nutzbar) · fehler
  * Ändert sich hier etwas an den verarbeiteten Daten, muss die Datenschutzerklärung (rechtliches.html) mit – und der
  * Betreiber vorher gefragt werden.
  *
@@ -65,7 +73,9 @@ const RESET_MINUTEN      = 30;    // Link „Passwort vergessen“
 const SITZUNG_TAGE       = 90;
 const RUHE_TAGE          = 730;   // Konto ohne Anmeldung seit so vielen Tagen wird gelöscht
 const MAX_FAVORITEN      = 200;
-const MAX_DEPOT          = 10;          // Anleihen im Musterdepot (Nutzerentscheid 01.10.2026; je Anleihe eine Farbe im Schaubild)
+const MAX_DEPOT          = 10;          // Anleihen je Musterdepot (Nutzerentscheid 01.10.2026; je Anleihe eine Farbe im Schaubild)
+const MAX_MUSTER         = 5;           // Musterdepots je Konto (Nutzerentscheid 02.10.2026)
+const NAME_MAX           = 40;          // Zeichen im Namen eines Musterdepots
 const NENNWERT_MAX       = 100000000;   // gedachter Nennwert je Anleihe, in der Währung der Anleihe
 const PW_MIN             = 10;
 const PW_MAX             = 200;
@@ -278,6 +288,20 @@ function db(): PDO
             $db->exec('PRAGMA user_version = 3');
             $db->exec('COMMIT');
         }
+        if ($fassung < 4) {
+            // Fassung 4 (02.10.2026): mehrere Musterdepots je Nutzer mit eigenem Namen. Das bisherige Depot jedes Nutzers wird
+            // „Musterdepot 1“; die Anleihen hängen jetzt am Musterdepot statt am Nutzer.
+            $db->exec('BEGIN IMMEDIATE');
+            $db->exec('CREATE TABLE IF NOT EXISTS musterdepots (id INTEGER PRIMARY KEY, nutzer INTEGER NOT NULL REFERENCES nutzer(id) ON DELETE CASCADE, name TEXT NOT NULL, erstellt INTEGER NOT NULL)');
+            $db->exec('CREATE INDEX IF NOT EXISTS musterdepots_n ON musterdepots (nutzer)');
+            $db->exec('CREATE TABLE depot_neu (muster INTEGER NOT NULL REFERENCES musterdepots(id) ON DELETE CASCADE, isin TEXT NOT NULL, nennwert INTEGER NOT NULL, seit INTEGER NOT NULL, PRIMARY KEY (muster, isin))');
+            $db->exec("INSERT INTO musterdepots (nutzer, name, erstellt) SELECT nutzer, 'Musterdepot 1', MIN(seit) FROM depot GROUP BY nutzer ORDER BY nutzer");
+            $db->exec('INSERT INTO depot_neu (muster, isin, nennwert, seit) SELECT m.id, d.isin, d.nennwert, d.seit FROM depot d JOIN musterdepots m ON m.nutzer = d.nutzer');
+            $db->exec('DROP TABLE depot');
+            $db->exec('ALTER TABLE depot_neu RENAME TO depot');
+            $db->exec('PRAGMA user_version = 4');
+            $db->exec('COMMIT');
+        }
     } catch (Throwable $e) {
         error_log('konto.php: Datenbank nicht nutzbar – ' . $e->getMessage());
         antwort(503, 'speicher');
@@ -423,22 +447,83 @@ function favoriten(int $id): array
     return $aus;
 }
 
-/** Musterdepot in der Reihenfolge des Hineinlegens: [[ISIN, Nennwert, Zeitpunkt], …] */
-function depot(int $id): array
+/**
+ * Musterdepots in der Reihenfolge des Anlegens, je mit ihren Anleihen in der Reihenfolge des Hineinlegens:
+ * [[Nummer, Name, [[ISIN, Nennwert, Zeitpunkt], …]], …]. Wer noch keines hat, bekommt ein leeres „Musterdepot 1“ mit der
+ * Nummer 0 – angelegt wird es erst, wenn etwas hineinkommt (muster_erstes).
+ */
+function musterdepots(int $id): array
 {
-    $s = db()->prepare('SELECT isin, nennwert, seit FROM depot WHERE nutzer = ? ORDER BY seit, isin');
+    $db = db();
+    $s = $db->prepare('SELECT id, name FROM musterdepots WHERE nutzer = ? ORDER BY id');
     $s->execute([$id]);
     $aus = [];
+    $nr = [];
     foreach ($s->fetchAll(PDO::FETCH_NUM) as $z) {
-        $aus[] = [(string)$z[0], (int)$z[1], (int)$z[2]];
+        $nr[(int)$z[0]] = count($aus);
+        $aus[] = [(int)$z[0], (string)$z[1], []];
+    }
+    if (!$aus) {
+        return [[0, 'Musterdepot 1', []]];
+    }
+    $s = $db->prepare('SELECT d.muster, d.isin, d.nennwert, d.seit FROM depot d JOIN musterdepots m ON m.id = d.muster WHERE m.nutzer = ? ORDER BY d.seit, d.isin');
+    $s->execute([$id]);
+    foreach ($s->fetchAll(PDO::FETCH_NUM) as $z) {
+        $aus[$nr[(int)$z[0]]][2][] = [(string)$z[1], (int)$z[2], (int)$z[3]];
     }
     return $aus;
 }
 
-/** Was die Seite über ein angemeldetes Konto wissen muss */
+/** Nummer eines eigenen Musterdepots aus dem Formular (fehlt sie oder ist sie 0: das erste, notfalls neu angelegt) */
+function muster_lesen(int $id): int
+{
+    $m = (int)($_POST['muster'] ?? 0);
+    if ($m <= 0) {
+        return muster_erstes($id);
+    }
+    $s = db()->prepare('SELECT 1 FROM musterdepots WHERE id = ? AND nutzer = ?');
+    $s->execute([$m, $id]);
+    if (!$s->fetchColumn()) {
+        antwort(404, 'muster');
+    }
+    return $m;
+}
+
+function muster_erstes(int $id): int
+{
+    $db = db();
+    $s = $db->prepare('SELECT MIN(id) FROM musterdepots WHERE nutzer = ?');
+    $s->execute([$id]);
+    $m = (int)$s->fetchColumn();
+    if ($m > 0) {
+        return $m;
+    }
+    $db->prepare('INSERT INTO musterdepots (nutzer, name, erstellt) VALUES (?, ?, ?)')->execute([$id, 'Musterdepot 1', time()]);
+    return (int)$db->lastInsertId();
+}
+
+function muster_anzahl(int $id): int
+{
+    $s = db()->prepare('SELECT COUNT(*) FROM musterdepots WHERE nutzer = ?');
+    $s->execute([$id]);
+    return (int)$s->fetchColumn();
+}
+
+/** Name eines Musterdepots: ohne Steuerzeichen, Leerraum zusammengefasst, höchstens NAME_MAX Zeichen; leer → $ersatz */
+function name_lesen(string $roh, string $ersatz): string
+{
+    $n = trim((string)preg_replace('/\s+/u', ' ', (string)preg_replace('/[\x00-\x1F\x7F]/u', '', $roh)));
+    if ($n === '') {
+        return $ersatz;
+    }
+    return function_exists('mb_substr') ? mb_substr($n, 0, NAME_MAX, 'UTF-8') : substr($n, 0, NAME_MAX);
+}
+
+/** Was die Seite über ein angemeldetes Konto wissen muss. „depot“ (das erste Musterdepot) bleibt für ältere Seiten im Browser. */
 function konto_stand(int $id, string $email): array
 {
-    return ['angemeldet' => true, 'email' => $email, 'favoriten' => favoriten($id), 'depot' => depot($id)];
+    $m = musterdepots($id);
+    return ['angemeldet' => true, 'email' => $email, 'favoriten' => favoriten($id), 'depots' => $m, 'depot' => $m[0][2]];
 }
 
 function merke(int $id, string $isin): bool
@@ -789,25 +874,96 @@ try {
                 antwort(422, 'nennwert', ['max' => NENNWERT_MAX]);
             }
             $db = db();
+            $db->exec('BEGIN IMMEDIATE');
+            $m = muster_lesen($n['id']);
             if ((int)$roh === 0) {
-                $db->prepare('DELETE FROM depot WHERE nutzer = ? AND isin = ?')->execute([$n['id'], $isin]);
+                $db->prepare('DELETE FROM depot WHERE muster = ? AND isin = ?')->execute([$m, $isin]);
             } else {
-                $db->exec('BEGIN IMMEDIATE');
-                $s = $db->prepare('SELECT 1 FROM depot WHERE nutzer = ? AND isin = ?');
-                $s->execute([$n['id'], $isin]);
+                $s = $db->prepare('SELECT 1 FROM depot WHERE muster = ? AND isin = ?');
+                $s->execute([$m, $isin]);
                 if ($s->fetchColumn()) {
-                    $db->prepare('UPDATE depot SET nennwert = ? WHERE nutzer = ? AND isin = ?')->execute([(int)$roh, $n['id'], $isin]);
+                    $db->prepare('UPDATE depot SET nennwert = ? WHERE muster = ? AND isin = ?')->execute([(int)$roh, $m, $isin]);
                 } else {
-                    $s = $db->prepare('SELECT COUNT(*) FROM depot WHERE nutzer = ?');
-                    $s->execute([$n['id']]);
+                    $s = $db->prepare('SELECT COUNT(*) FROM depot WHERE muster = ?');
+                    $s->execute([$m]);
                     if ((int)$s->fetchColumn() >= MAX_DEPOT) {
                         $db->exec('COMMIT');
                         antwort(409, 'voll', ['max' => MAX_DEPOT]);
                     }
-                    $db->prepare('INSERT INTO depot (nutzer, isin, nennwert, seit) VALUES (?, ?, ?, ?)')->execute([$n['id'], $isin, (int)$roh, time()]);
+                    $db->prepare('INSERT INTO depot (muster, isin, nennwert, seit) VALUES (?, ?, ?, ?)')->execute([$m, $isin, (int)$roh, time()]);
                 }
-                $db->exec('COMMIT');
             }
+            $db->exec('COMMIT');
+            antwort(200, 'ok', konto_stand($n['id'], $n['email']) + ['muster' => $m]);
+
+        case 'muster-neu':
+        case 'muster-uebernehmen':
+            // Neues Musterdepot (Knopf „+ Neues Musterdepot“) oder ein geteiltes übernehmen (Knopf im PDF, konto.html#muster=…)
+            $n = angemeldet();
+            $liste = [];
+            if ($aktion === 'muster-uebernehmen') {
+                foreach (explode(',', strtoupper((string)($_POST['liste'] ?? ''))) as $teil) {
+                    $t = explode('~', trim($teil));
+                    if (count($t) === 2 && ist_isin($t[0]) && preg_match('/^\d{1,9}$/', $t[1]) && (int)$t[1] >= 1 && (int)$t[1] <= NENNWERT_MAX) {
+                        $liste[$t[0]] = (int)$t[1];
+                    }
+                    if (count($liste) >= MAX_DEPOT) {
+                        break;
+                    }
+                }
+                if (!$liste) {
+                    antwort(422, 'isin');
+                }
+            }
+            $db = db();
+            $db->exec('BEGIN IMMEDIATE');
+            $zahl = muster_anzahl($n['id']);
+            if ($zahl >= MAX_MUSTER) {
+                $db->exec('COMMIT');
+                antwort(409, 'mustervoll', ['max' => MAX_MUSTER]);
+            }
+            $jetzt = time();
+            if ($zahl === 0 && $aktion === 'muster-neu') {
+                muster_erstes($n['id']);   // das bisher nur gedachte „Musterdepot 1“ zuerst anlegen, damit das neue das zweite ist
+                $zahl = 1;
+            }
+            $name = name_lesen((string)($_POST['name'] ?? ''), 'Musterdepot ' . ($zahl + 1));
+            $db->prepare('INSERT INTO musterdepots (nutzer, name, erstellt) VALUES (?, ?, ?)')->execute([$n['id'], $name, $jetzt]);
+            $m = (int)$db->lastInsertId();
+            $ein = $db->prepare('INSERT INTO depot (muster, isin, nennwert, seit) VALUES (?, ?, ?, ?)');
+            $i = 0;
+            foreach ($liste as $isin => $nenn) {
+                $ein->execute([$m, $isin, $nenn, $jetzt + $i++]);   // Reihenfolge wie im PDF
+            }
+            $db->exec('COMMIT');
+            antwort(200, 'ok', konto_stand($n['id'], $n['email']) + ['muster' => $m, 'neu' => count($liste)]);
+
+        case 'muster-name':
+            $n = angemeldet();
+            $db = db();
+            $db->exec('BEGIN IMMEDIATE');
+            $m = muster_lesen($n['id']);
+            $name = name_lesen((string)($_POST['name'] ?? ''), '');
+            if ($name === '') {
+                $db->exec('COMMIT');
+                antwort(422, 'name', ['max' => NAME_MAX]);
+            }
+            $db->prepare('UPDATE musterdepots SET name = ? WHERE id = ?')->execute([$name, $m]);
+            $db->exec('COMMIT');
+            antwort(200, 'ok', konto_stand($n['id'], $n['email']) + ['muster' => $m]);
+
+        case 'muster-weg':
+            $n = angemeldet();
+            $db = db();
+            $db->exec('BEGIN IMMEDIATE');
+            $m = muster_lesen($n['id']);
+            if (muster_anzahl($n['id']) <= 1) {
+                $db->exec('COMMIT');
+                antwort(409, 'letztes');
+            }
+            $db->prepare('DELETE FROM depot WHERE muster = ?')->execute([$m]);
+            $db->prepare('DELETE FROM musterdepots WHERE id = ?')->execute([$m]);
+            $db->exec('COMMIT');
             antwort(200, 'ok', konto_stand($n['id'], $n['email']));
 
         case 'abmelden':
@@ -833,7 +989,8 @@ try {
             }
             $db->exec('BEGIN IMMEDIATE');
             $db->prepare('DELETE FROM favoriten WHERE nutzer = ?')->execute([$n['id']]);
-            $db->prepare('DELETE FROM depot WHERE nutzer = ?')->execute([$n['id']]);
+            $db->prepare('DELETE FROM depot WHERE muster IN (SELECT id FROM musterdepots WHERE nutzer = ?)')->execute([$n['id']]);
+            $db->prepare('DELETE FROM musterdepots WHERE nutzer = ?')->execute([$n['id']]);
             $db->prepare('DELETE FROM sitzungen WHERE nutzer = ?')->execute([$n['id']]);
             $db->prepare('DELETE FROM links WHERE email = ?')->execute([$n['email']]);
             $db->prepare('DELETE FROM nutzer WHERE id = ?')->execute([$n['id']]);

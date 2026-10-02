@@ -500,10 +500,11 @@ function kurzName(emittent, art, land) {
 }
 
 // ---------- Zum Musterdepot hinzufügen (seit 02.10.2026, Nutzerentscheid) ----------
-// Knopf neben „Merken“ (Form wie .merkbtn): öffnet ein kleines Feld mit dem Nennwert – vorgeschlagen ist der Betrag aus dem
-// Rechenbeispiel, liegt die Anleihe schon im Depot, ihr Nennwert. Gespeichert wird über konto.js (MC.konto.depot) wie in Mein Depot;
-// die Merkliste bleibt unverändert. Nicht angemeldet: konto.html?merken=<ISIN>&depot=1 – nach dem Anmelden steht die Anleihe auf der
-// Merkliste und ist in „Mein Depot“ zum Hinzufügen ausgewählt. a = { ccy, stk, warum } (warum: Grund, warum es nicht geht, sonst "").
+// Knopf neben „Merken“ (Form wie .merkbtn): öffnet ein kleines Feld mit Musterdepot (nur wenn es mehrere gibt) und Nennwert –
+// vorgeschlagen ist der Betrag aus dem Rechenbeispiel, liegt die Anleihe im gewählten Depot schon, ihr Nennwert. Gespeichert wird
+// über konto.js (MC.konto.depot) wie in Mein Depot; die Merkliste bleibt unverändert. Nicht angemeldet: konto.html?merken=<ISIN>&depot=1 –
+// nach dem Anmelden steht die Anleihe auf der Merkliste und ist in „Mein Depot“ zum Hinzufügen ausgewählt.
+// a = { ccy, stk, warum } (warum: Grund, warum es nicht geht, sonst "").
 const DEP_NENN_MAX = 100000000;   // wie NENNWERT_MAX in konto.php
 function depotFeld(a) {
   const K = MC.konto, idz = document.getElementById("idz"), vor = idz.querySelector(".merkbtn") || document.getElementById("kopie");
@@ -518,56 +519,74 @@ function depotFeld(a) {
   const pop = document.createElement("div");
   pop.className = "dep-pop"; pop.id = "dep-pop"; pop.hidden = true; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-labelledby", "dep-pop-t");
   pop.innerHTML = `<p class="dep-pop-t" id="dep-pop-t">Zum Musterdepot hinzufügen</p>` +
+    `<div id="dep-wahl" hidden><label for="dep-muster">Musterdepot</label><select id="dep-muster"></select></div>` +
     `<form class="dep-pop-z" id="dep-form" novalidate><div><label for="dep-nenn">Nennwert</label><span class="dep-eur"><input id="dep-nenn" type="text" inputmode="numeric" autocomplete="off" maxlength="11"><span>${MC.esc(W)}</span></span></div>` +
     `<button type="submit" class="go" id="dep-ok">Hinzufügen</button></form>` +
     `<p class="dep-pop-h" id="dep-h" role="status" aria-live="polite"></p>` +
     `<p class="dep-pop-f" id="dep-f" hidden><button type="button" id="dep-weg">Aus dem Depot entfernen</button><a href="konto.html#depot">Mein Depot öffnen</a></p>`;
   idz.appendChild(pop);
-  const $ = id => document.getElementById(id), feld = $("dep-nenn"), ok = $("dep-ok"), h = $("dep-h");
-  const nennVon = () => { const d = (K.stand().depot || []).find(x => x[0] === ISIN); return d ? d[1] : 0; };
+  const $ = id => document.getElementById(id), feld = $("dep-nenn"), ok = $("dep-ok"), h = $("dep-h"), wahl = $("dep-muster");
+  // Musterdepots aus konto.js: [[Nummer, Name, [[ISIN, Nennwert, Zeit], …]], …]; ohne eigenes Depot [[0, "Musterdepot 1", []]]
+  const depots = () => { const d = K.stand().depots || []; return d.length ? d : [[0, "Musterdepot 1", []]]; };
+  const nennIn = d => { const x = d[2].find(p => p[0] === ISIN); return x ? x[1] : 0; };
+  const liegtIn = () => depots().filter(d => nennIn(d) > 0);
+  const gewaehlt = () => depots().find(d => String(d[0]) === wahl.value) || depots()[0];
   const lies = t => { const n = parseInt(String(t).replace(/[.\s€]/g, "").replace(/,\d*$/, ""), 10); return n >= 1 && n <= DEP_NENN_MAX ? n : NaN; };
   const stkText = stk ? `Stückelung ${fmtStk(stk)} ${W}.` : "";
+  const betrag = n => `${MC.zahl(n, 0)} ${MC.esc(W)}`;
   let fx = W === "€";   // Fremdwährung: erst nach dem Blick in die EZB-Kurse
   function zeichne() {
-    const n = nennVon(), drin = n > 0;
+    const drin = liegtIn();
     b.disabled = !!a.warum;
-    b.setAttribute("aria-pressed", String(drin));
-    b.innerHTML = (drin ? HAKEN : PLUS) + `<span>${drin ? "Im Depot" : "Zum Depot hinzufügen"}</span>`;
-    b.title = a.warum ? `Lässt sich dem Musterdepot nicht hinzufügen: ${a.warum}` : drin ? "Nennwert ändern oder aus dem Musterdepot entfernen" : "Zu deinem Musterdepot hinzufügen";
-    info.innerHTML = drin ? `Liegt mit ${MC.zahl(n, 0)} ${MC.esc(W)} in deinem Musterdepot · <a href="konto.html#depot">Mein Depot öffnen</a>` : "";
+    b.setAttribute("aria-pressed", String(drin.length > 0));
+    b.innerHTML = (drin.length ? HAKEN : PLUS) + `<span>${drin.length ? "Im Depot" : "Zum Depot hinzufügen"}</span>`;
+    b.title = a.warum ? `Lässt sich dem Musterdepot nicht hinzufügen: ${a.warum}` : drin.length ? "Nennwert ändern, in ein weiteres Musterdepot legen oder entfernen" : "Zu einem deiner Musterdepots hinzufügen";
+    info.innerHTML = !drin.length ? "" : (drin.length === 1 ? `Liegt mit ${betrag(nennIn(drin[0]))} in „${MC.esc(drin[0][1])}“`
+      : `Liegt in ${drin.length} Musterdepots: ${drin.map(d => `„${MC.esc(d[1])}“ (${betrag(nennIn(d))})`).join(", ")}`) + ' · <a href="konto.html#depot">Mein Depot öffnen</a>';
   }
   function hinweis(text, fehler) { h.className = "dep-pop-h" + (fehler ? " fehler" : ""); h.textContent = text; }
   function zu(fokus) { pop.hidden = true; b.setAttribute("aria-expanded", "false"); if (fokus) b.focus(); }
-  function auf() {
-    const n = nennVon(), rb = lies(($("nenn") || {}).value || "");
+  // Feld für das gewählte Depot füllen: liegt die Anleihe dort, ihr Nennwert; sonst der Vorschlag aus dem Rechenbeispiel
+  function fuelle() {
+    const d = gewaehlt(), n = nennIn(d), rb = lies(($("nenn") || {}).value || "");
     $("dep-pop-t").textContent = n ? "Nennwert im Musterdepot" : "Zum Musterdepot hinzufügen";
-    ok.textContent = n ? "Speichern" : "Hinzufügen"; ok.disabled = false;
-    $("dep-f").hidden = !n;
+    ok.textContent = n ? "Speichern" : "Hinzufügen"; ok.disabled = !fx;
+    $("dep-f").hidden = !n; $("dep-weg").textContent = depots().length > 1 ? "Aus diesem Musterdepot entfernen" : "Aus dem Depot entfernen";
     feld.value = MC.zahl(n || (rb > 0 ? rb : stk && stk >= 1000 ? Math.ceil(stk) : stk >= 1 && Number.isInteger(stk) ? Math.ceil(5000 / stk) * stk : 5000), 0);
-    hinweis(n ? stkText : `Vorschlag: der Betrag aus dem Rechenbeispiel. ${stkText}`.trim());
+    if (fx) hinweis(n ? stkText : `Vorschlag: der Betrag aus dem Rechenbeispiel. ${stkText}`.trim());
+  }
+  function auf() {
+    const ds = depots(), drin = liegtIn();
+    wahl.innerHTML = ds.map(d => `<option value="${d[0]}">${MC.esc(d[1])} · ${d[2].length} von 10${nennIn(d) ? " · enthält sie" : ""}</option>`).join("");
+    wahl.value = String((drin[0] || ds[0])[0]);
+    $("dep-wahl").hidden = ds.length < 2;
+    fuelle();
     pop.hidden = false; b.setAttribute("aria-expanded", "true");
     pop.style.left = b.offsetLeft + "px";
     pop.style.setProperty("--pfeil", Math.max(14, b.offsetLeft - pop.offsetLeft + 18) + "px");
-    feld.focus(); feld.select();
+    (ds.length > 1 ? wahl : feld).focus(); if (ds.length < 2) feld.select();
     if (!fx) MC.json("wechselkurse.json").then(d => {
       fx = !!(d && d.kurse && d.kurse[a.ccy] > 0);
-      if (!fx) { hinweis(`Für ${a.ccy} gibt es keinen Euro-Referenzkurs der EZB – die Anleihe lässt sich dem Musterdepot nicht hinzufügen.`, true); ok.disabled = true; }
-    }, () => { fx = true; });   // ohne Kursdatei entscheidet Mein Depot (die Anleihe steht dort mit Grund)
+      if (!fx) hinweis(`Für ${a.ccy} gibt es keinen Euro-Referenzkurs der EZB – die Anleihe lässt sich dem Musterdepot nicht hinzufügen.`, true);
+      fuelle();
+    }, () => { fx = true; fuelle(); });   // ohne Kursdatei entscheidet Mein Depot (die Anleihe steht dort mit Grund)
   }
-  const fehler = j => j && j.status === "voll" ? `Dein Musterdepot ist voll (${j.max || 10} Anleihen). Entferne in Mein Depot erst eine Anleihe.`
+  const fehler = (j, d) => j && j.status === "voll" ? `„${d[1]}“ ist voll (${j.max || 10} Anleihen). Wähl ein anderes Musterdepot oder entferne in Mein Depot erst eine Anleihe.`
     : j && j.status === "netz" ? "Keine Verbindung zum Server. Bitte prüfe deine Internetverbindung." : "Das hat nicht geklappt. Bitte versuch es noch einmal.";
   function sende(n) {
+    const d = gewaehlt();
     ok.disabled = true; hinweis("Einen Moment …");
-    K.depot(ISIN, n).then(() => { zu(true); zeichne(); }, j => {
+    K.depot(ISIN, n, d[0]).then(() => { zu(true); zeichne(); }, j => {
       ok.disabled = false;
       if (j && j.status === "anmelden") { location.href = `konto.html?merken=${encodeURIComponent(ISIN)}&depot=1`; return; }
-      hinweis(fehler(j), true);
+      hinweis(fehler(j, d), true);
     });
   }
   b.addEventListener("click", () => {
     if (!pop.hidden) { zu(); return; }
     K.bereit().then(st => { if (!st.angemeldet) location.href = `konto.html?merken=${encodeURIComponent(ISIN)}&depot=1`; else auf(); });
   });
+  wahl.addEventListener("change", fuelle);
   $("dep-form").addEventListener("submit", e => {
     e.preventDefault();
     const n = lies(feld.value);

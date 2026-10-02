@@ -1,5 +1,5 @@
 /* konto.js – Benutzerbereich im Browser (seit 30.09.2026): Anmeldung mit E-Mail und Passwort, Merkliste und – seit
-   01.10.2026 – das Musterdepot „Mein Depot“ (gemerkte Anleihen mit gedachtem Nennwert).
+   01.10.2026 – Musterdepots „Mein Depot“ (Anleihen mit gedachtem Nennwert; seit 02.10.2026 bis zu fünf mit eigenem Namen).
    Spricht mit konto.php (Beschreibung dort und in docs/KONTO.md). Geladen auf konto.html, anleihe.html und
    anleihen-suche.html – nach site.js:
      <script src="site.js"></script><script src="konto.js"></script>
@@ -10,13 +10,18 @@
 
    API (window.MC.konto):
      bereit()                 Promise mit dem Stand { angemeldet, email, favoriten: [[isin, zeit], …],
-                              depot: [[isin, nennwert, zeit], …] } – fragt höchstens einmal
+                              depots: [[nummer, name, [[isin, nennwert, zeit], …]], …] } – fragt höchstens einmal.
+                              Wer noch kein Musterdepot hat, bekommt [[0, "Musterdepot 1", []]] (angelegt beim ersten Hinzufügen).
      stand()                  derselbe Stand, sofort (vor bereit(): nicht angemeldet)
      hat(isin)                true, wenn die Anleihe in der Merkliste steht
      knopf(isin[, klasse])    HTML des Merken-Knopfs; Klick, Beschriftung und Zustand übernimmt dieses Skript –
                               auch für Knöpfe, die eine Seite später ins Dokument schreibt
      merken(isin), entfernen(isin)            Promise mit dem neuen Stand; abgelehnt mit { status } bei Fehlern
-     depot(isin, nennwert)                   ins Musterdepot legen oder Nennwert ändern (0 = herausnehmen) → wie merken
+     depot(isin, nennwert[, muster])         in das Musterdepot „muster“ (Nummer; fehlt sie: das erste) legen oder Nennwert
+                                             ändern (0 = herausnehmen) → wie merken
+     musterNeu(name), musterName(muster, name), musterWeg(muster)   Musterdepot anlegen, umbenennen, löschen → Promise
+                                             mit der Antwort (muster = Nummer des neuen bzw. umbenannten); abgelehnt mit { status }
+     musterUebernehmen(name, liste)          geteiltes Musterdepot (liste: [[isin, nennwert], …]) als neues anlegen → wie musterNeu
      uebernehmen(isins)                      geteilte Merkliste (Array von ISINs) auf die eigene setzen → Promise mit der
                                              Antwort { neu, uebrig, max, … }; abgelehnt mit { status } bei Fehlern
      registrieren(email, passwort[, isin])   E-Mail mit Bestätigungslink anfordern → Promise { ok, status, stunden }
@@ -34,13 +39,15 @@
   MC = window.MC = MC || {};
 
   var API = "konto.php", SEITE = "konto.html";
-  var st = { angemeldet: false, email: "", favoriten: [], depot: [] }, menge = {}, hoerer = [], abfrage = null;
+  var st = { angemeldet: false, email: "", favoriten: [], depots: [] }, menge = {}, hoerer = [], abfrage = null;
 
   function markiert() { return /(?:^|;\s*)bondarium-angemeldet=1(?:;|$)/.test(document.cookie); }
   function esc(s) { return MC.esc ? MC.esc(s) : String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
 
   function uebernimm(j) {
-    st = { angemeldet: !!(j && j.angemeldet), email: (j && j.email) || "", favoriten: (j && j.angemeldet && j.favoriten) || [], depot: (j && j.angemeldet && j.depot) || [] };
+    var an = !!(j && j.angemeldet);
+    st = { angemeldet: an, email: (an && j.email) || "", favoriten: (an && j.favoriten) || [],
+      depots: (an && j.depots) || (an && j.depot ? [[0, "Musterdepot 1", j.depot]] : []) };
     menge = {};
     st.favoriten.forEach(function (f) { menge[f[0]] = true; });
     knoepfe();
@@ -67,12 +74,21 @@
     return abfrage;
   }
 
-  function aendere(aktion, isin, nennwert) {
+  function aendere(aktion, isin, nennwert, muster) {
     var felder = { aktion: aktion, isin: isin };
     if (nennwert != null) felder.nennwert = String(nennwert);
+    if (muster) felder.muster = String(muster);
     return sende("POST", felder).then(function (j) {
       if (j.ok) return uebernimm(j);
       if (j.status === "anmelden") uebernimm(null);   // Anmeldung abgelaufen
+      throw j;
+    });
+  }
+  // Musterdepots anlegen, umbenennen, löschen, übernehmen: Antwort mit dem neuen Stand (und „muster“)
+  function musterAktion(felder) {
+    return sende("POST", felder).then(function (j) {
+      if (j.ok) { uebernimm(j); return j; }
+      if (j.status === "anmelden") uebernimm(null);
       throw j;
     });
   }
@@ -133,7 +149,13 @@
     knopf: knopf,
     merken: function (isin) { return aendere("merken", isin); },
     entfernen: function (isin) { return aendere("entfernen", isin); },
-    depot: function (isin, nennwert) { return aendere("depot", isin, nennwert); },
+    depot: function (isin, nennwert, muster) { return aendere("depot", isin, nennwert, muster); },
+    musterNeu: function (name) { return musterAktion({ aktion: "muster-neu", name: name || "" }); },
+    musterName: function (muster, name) { return musterAktion({ aktion: "muster-name", muster: String(muster), name: name }); },
+    musterWeg: function (muster) { return musterAktion({ aktion: "muster-weg", muster: String(muster) }); },
+    musterUebernehmen: function (name, liste) {
+      return musterAktion({ aktion: "muster-uebernehmen", name: name || "", liste: liste.map(function (p) { return p[0] + "~" + p[1]; }).join(",") });
+    },
     uebernehmen: function (isins) {
       return sende("POST", { aktion: "uebernehmen", isins: isins.join(",") }).then(function (j) {
         if (j.ok) { uebernimm(j); return j; }
