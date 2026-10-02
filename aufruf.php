@@ -27,7 +27,11 @@
  * Ändert sich hier etwas an den verarbeiteten Daten, muss die Datenschutzerklärung (rechtliches.html#statistik) mit –
  * und der Betreiber vorher gefragt werden.
  *
- * Testmail: POST aktion=testmail mit Kopf X-Trigger-Key (Workflow „Statistik – Testmail“) – Bericht über den laufenden Tag.
+ * Testmail: POST aktion=testmail mit Kopf X-Trigger-Key (Workflow „Statistik – Testmail“) – Bericht über den laufenden Tag;
+ * mit art=erinnerung stattdessen eine Beispiel-Erinnerung vor einer Fälligkeit (erinnerung.php).
+ *
+ * Erinnerungen (seit 02.10.2026): Der erste gezählte Aufruf ab ERINNERUNG_STUNDE Uhr stößt auch den täglichen Versand der
+ * E-Mails „30 Tage vor jeder Fälligkeit“ an (erinnerung.php, Daten in konto-daten/) – ebenfalls erst nach der Antwort.
  *
  * Lokal testen (PHP-eigener Server): php -S 127.0.0.1:8090 – dann gilt der lokale Ursprung, und der Bericht landet
  * als PDF und E-Mail-Text in statistik-daten/ statt im Versand. Bericht von Hand: php aufruf.php bericht [JJJJ-MM-TT]
@@ -199,9 +203,15 @@ function stat_bericht_faellig(): ?string
     return $gestern;
 }
 
-// ---------- Kommandozeile (nur lokal): Bericht von Hand ----------
+// ---------- Kommandozeile (nur lokal): Bericht oder Erinnerungen von Hand ----------
 if (PHP_SAPI === 'cli') {
-    if (($argv[1] ?? '') !== 'bericht') { fwrite(STDERR, "Aufruf: php aufruf.php bericht [JJJJ-MM-TT]\n"); exit(1); }
+    if (($argv[1] ?? '') === 'erinnerung') {
+        require __DIR__ . '/erinnerung.php';
+        [$ok, $fehl] = erinnerungen_senden();
+        echo "Erinnerungen: $ok verschickt, $fehl fehlgeschlagen (konto-daten/lokal-mail.txt)\n";
+        exit;
+    }
+    if (($argv[1] ?? '') !== 'bericht') { fwrite(STDERR, "Aufruf: php aufruf.php bericht [JJJJ-MM-TT] | erinnerung\n"); exit(1); }
     require __DIR__ . '/statistik-bericht.php';
     $tag = $argv[2] ?? date('Y-m-d', strtotime('yesterday'));
     echo bericht_senden(stat_db(), $tag) ? "Bericht für $tag geschrieben (statistik-daten/)\n" : "Fehler\n";
@@ -224,8 +234,13 @@ if (($_POST['aktion'] ?? '') === 'testmail') {
     if (time() - (int)(stat_meta($db, 'testmail') ?? 0) < 300) { http_response_code(429); exit; }
     stat_meta_setzen($db, 'testmail', (string)time());
     try {
-        require __DIR__ . '/statistik-bericht.php';
-        $ok = bericht_senden($db, date('Y-m-d'), true);
+        if (($_POST['art'] ?? '') === 'erinnerung') {
+            require __DIR__ . '/erinnerung.php';
+            $ok = erinnerung_testmail(BERICHT_AN);
+        } else {
+            require __DIR__ . '/statistik-bericht.php';
+            $ok = bericht_senden($db, date('Y-m-d'), true);
+        }
         $meldung = $ok ? 'gesendet' : 'Versand fehlgeschlagen (mail)';
     } catch (Throwable $e) {
         error_log('aufruf.php Testmail: ' . $e->getMessage());
@@ -252,21 +267,39 @@ try {
 } catch (Throwable $e) {
     error_log('aufruf.php: ' . $e->getMessage());
 }
-if ($bericht === null) exit;
+$erinnerung = false;
+if ($pfad !== null) {
+    try {
+        require __DIR__ . '/erinnerung.php';
+        $erinnerung = erinnerung_faellig();
+    } catch (Throwable $e) {
+        error_log('aufruf.php Erinnerung: ' . $e->getMessage());
+    }
+}
+if ($bericht === null && !$erinnerung) exit;
 
-// Antwort abschließen, dann den Bericht bauen und verschicken
+// Antwort abschließen, dann den Bericht bauen und verschicken bzw. die Erinnerungen
 ignore_user_abort(true);
 if (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
-try {
-    require __DIR__ . '/statistik-bericht.php';
-    $ok = bericht_senden(stat_db(), $bericht);
-} catch (Throwable $e) {
-    error_log('aufruf.php Bericht: ' . $e->getMessage());
-    $ok = false;
+if ($bericht !== null) {
+    try {
+        require __DIR__ . '/statistik-bericht.php';
+        $ok = bericht_senden(stat_db(), $bericht);
+    } catch (Throwable $e) {
+        error_log('aufruf.php Bericht: ' . $e->getMessage());
+        $ok = false;
+    }
+    if (!$ok) {
+        // beim nächsten Aufruf frühestens in einer Stunde noch einmal versuchen
+        $db = stat_db();
+        stat_meta_setzen($db, 'bericht', '');
+        stat_meta_setzen($db, 'bericht_fehler', (string)time());
+    }
 }
-if (!$ok) {
-    // beim nächsten Aufruf frühestens in einer Stunde noch einmal versuchen
-    $db = stat_db();
-    stat_meta_setzen($db, 'bericht', '');
-    stat_meta_setzen($db, 'bericht_fehler', (string)time());
+if ($erinnerung) {
+    try {
+        erinnerungen_senden();
+    } catch (Throwable $e) {
+        error_log('aufruf.php Erinnerungen: ' . $e->getMessage());
+    }
 }

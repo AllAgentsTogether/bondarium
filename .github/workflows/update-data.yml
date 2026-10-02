@@ -318,6 +318,7 @@ jobs:
             php -l wechselkurse.php
             php -l aufruf.php
             php -l statistik-bericht.php
+            php -l erinnerung.php
             php -l strato-cron/refresh.php
           else
             echo "::warning::php fehlt auf dem Runner – Syntaxprüfung übersprungen"
@@ -336,6 +337,7 @@ jobs:
           cp .htaccess _site/.htaccess
           cp kontakt.php _site/kontakt.php   # Kontaktformular (ueber-uns.html#kontakt, seit 30.09.2026)
           cp aufruf.php statistik-bericht.php _site/   # Besucherzählung und täglicher Bericht (seit 01.10.2026, docs/STATISTIK.md); Daten legt das Skript auf dem Server an (statistik-daten/, nie im Bau)
+          cp erinnerung.php _site/   # E-Mail 30 Tage vor jeder Fälligkeit (seit 02.10.2026, docs/KONTO.md) – nur von aufruf.php eingebunden
           cp wechselkurse.php _site/wechselkurse.php   # neuester EZB-Referenzkurs für „Mein Depot“ (seit 01.10.2026): fragt selbst bei der EZB nach, höchstens alle 30 Minuten; Zwischenstand in wechselkurs-daten/ (legt das Skript an, nie im Bau)
           cp konto.php _site/konto.php   # Benutzerbereich (konto.html, seit 30.09.2026): Anmelde-Link und Merkliste; die Datenbank legt das Skript auf dem Server an (konto-daten/, nie im Bau)
           python3 scripts/security_txt.py _site   # /.well-known/security.txt (Adresse für Sicherheitsmeldungen, RFC 9116)
@@ -571,7 +573,7 @@ jobs:
       - name: Nach-Deploy-Prüfung (Besucherzählung – Datenordner gesperrt, Zähler antwortet)
         continue-on-error: true
         run: |
-          for pfad in statistik-daten/ statistik-daten/index.html statistik-daten/.sperre statistik-bericht.php; do
+          for pfad in statistik-daten/ statistik-daten/index.html statistik-daten/.sperre statistik-bericht.php erinnerung.php; do
             code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://www.bondarium.de/$pfad" || echo "000")
             echo "$pfad -> HTTP $code"
             if [ "$code" = "200" ]; then echo "::error::/$pfad ist öffentlich abrufbar – sofort sperren!"; exit 1; fi

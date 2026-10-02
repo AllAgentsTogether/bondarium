@@ -37,6 +37,10 @@ muss die Datenschutzerklärung (`rechtliches.html#statistik`) mit, und der Betre
 
 ## Bericht
 
+Seit 02.10.2026 stößt derselbe Weg auch die E-Mails „30 Tage vor jeder Fälligkeit“ an: Der erste gezählte Aufruf ab 7 Uhr ruft
+nach der Antwort `erinnerungen_senden()` aus `erinnerung.php` (Beschreibung in docs/KONTO.md). Der Workflow „Statistik –
+Testmail“ schickt mit der Auswahl `erinnerung` eine Beispiel-Erinnerung statt des Berichts.
+
 - Der erste Aufruf ab 6:00 Uhr (Berlin) verschickt den Bericht des Vortags. Das passiert erst nach der Antwort an den
   Browser, der Besucher wartet also nicht. Ohne Besucher am Morgen kommt der Bericht später. Tage ohne Zählung werden
   übersprungen. Scheitert der Versand, gibt es frühestens nach einer Stunde einen neuen Versuch.

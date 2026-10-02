@@ -24,11 +24,17 @@
  *                  muster-neu (name) legt ein Musterdepot an, muster-name (muster, name) benennt es um, muster-weg
  *                  (muster) löscht es samt Anleihen – das letzte bleibt; muster-uebernehmen (name, liste
  *                  „ISIN~Nennwert,…“) legt ein geteiltes Musterdepot als neues an (Knopf im PDF, konto.html#muster=…)
+ *                  erinnern (an = 1 | 0): E-Mail 30 Tage vor jeder Fälligkeit ein- oder ausschalten (seit 02.10.2026;
+ *                  verschickt werden die E-Mails von erinnerung.php, angestoßen von aufruf.php)
+ *   Ohne Anmeldung aktion=erinnerung-aus (token „Nummer.Prüfsumme“ aus dem Link in der Erinnerungs-E-Mail,
+ *                  konto.html#erinnerung-aus=…) schaltet die Erinnerung aus – ein Klick, ohne Passwort
  *   Links          führen auf konto.html#bestaetigen=… bzw. #passwort=… – der Teil hinter „#“ erscheint in keinem
  *                  Server-Log; aktion=link-pruefen sagt der Seite, ob der Link noch gilt und zu welcher Adresse er gehört.
  *
  * Gespeichert wird in einer SQLite-Datei im Ordner konto-daten/ (per .htaccess gesperrt, Dateiname zufällig):
- *   nutzer     E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet
+ *   nutzer     E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet, Erinnerung per E-Mail an/aus
+ *   erinnert   verschickte Erinnerungen: Nutzer, ISIN, Fälligkeit, Zeitpunkt – damit keine doppelt kommt; nach der
+ *              Fälligkeit gelöscht (erinnerung.php)
  *   favoriten  ISIN und Zeitpunkt je Nutzer
  *   musterdepots  Musterdepots je Nutzer: Nummer, Name (vom Nutzer, höchstens NAME_MAX Zeichen), angelegt am
  *   depot      Anleihen der Musterdepots: Nummer des Musterdepots, ISIN, gedachter Nennwert (ganze Zahl in der Währung
@@ -302,6 +308,15 @@ function db(): PDO
             $db->exec('PRAGMA user_version = 4');
             $db->exec('COMMIT');
         }
+        if ($fassung < 5) {
+            // Fassung 5 (02.10.2026): E-Mail 30 Tage vor jeder Fälligkeit – Schalter je Konto (anfangs aus) und die verschickten
+            // Erinnerungen (erinnerung.php trägt sie ein und löscht sie nach der Fälligkeit)
+            $db->exec('BEGIN IMMEDIATE');
+            $db->exec('ALTER TABLE nutzer ADD COLUMN erinnern INTEGER NOT NULL DEFAULT 0');
+            $db->exec('CREATE TABLE IF NOT EXISTS erinnert (nutzer INTEGER NOT NULL REFERENCES nutzer(id) ON DELETE CASCADE, isin TEXT NOT NULL, faellig TEXT NOT NULL, gesendet INTEGER NOT NULL, PRIMARY KEY (nutzer, isin, faellig))');
+            $db->exec('PRAGMA user_version = 5');
+            $db->exec('COMMIT');
+        }
     } catch (Throwable $e) {
         error_log('konto.php: Datenbank nicht nutzbar – ' . $e->getMessage());
         antwort(503, 'speicher');
@@ -523,7 +538,9 @@ function name_lesen(string $roh, string $ersatz): string
 function konto_stand(int $id, string $email): array
 {
     $m = musterdepots($id);
-    return ['angemeldet' => true, 'email' => $email, 'favoriten' => favoriten($id), 'depots' => $m, 'depot' => $m[0][2]];
+    $s = db()->prepare('SELECT erinnern FROM nutzer WHERE id = ?');
+    $s->execute([$id]);
+    return ['angemeldet' => true, 'email' => $email, 'favoriten' => favoriten($id), 'depots' => $m, 'depot' => $m[0][2], 'erinnern' => (int)$s->fetchColumn() === 1];
 }
 
 function merke(int $id, string $isin): bool
@@ -966,6 +983,28 @@ try {
             $db->exec('COMMIT');
             antwort(200, 'ok', konto_stand($n['id'], $n['email']));
 
+        case 'erinnern':
+            // E-Mail 30 Tage vor jeder Fälligkeit (seit 02.10.2026, Nutzerentscheid): an = 1 einschalten, 0 ausschalten
+            $n = angemeldet();
+            db()->prepare('UPDATE nutzer SET erinnern = ? WHERE id = ?')->execute([($_POST['an'] ?? '') === '1' ? 1 : 0, $n['id']]);
+            antwort(200, 'ok', konto_stand($n['id'], $n['email']));
+
+        case 'erinnerung-aus':
+            // Link „Ausschalten“ aus der Erinnerungs-E-Mail: „Nummer.Prüfsumme“ (dieselbe Prüfsumme bildet erinnerung.php).
+            // Schaltet nur aus – mehr kann der Link nicht. Ist dasselbe Konto hier angemeldet, kommt der neue Stand mit.
+            if (!preg_match('/^(\d{1,10})\.([0-9a-f]{32})$/', (string)($_POST['token'] ?? ''), $t)
+                || !hash_equals(schluessel_hash('erinnerung-aus:' . $t[1]), $t[2])) {
+                antwort(410, 'link');
+            }
+            $id = (int)$t[1];
+            $s = db()->prepare('UPDATE nutzer SET erinnern = 0 WHERE id = ?');
+            $s->execute([$id]);
+            if ($s->rowCount() === 0) {
+                antwort(410, 'link');
+            }
+            $n = nutzer();
+            antwort(200, 'ok', $n !== null && $n['id'] === $id ? konto_stand($n['id'], $n['email']) : ['angemeldet' => $n !== null]);
+
         case 'abmelden':
             $t = $_COOKIE[COOKIE] ?? '';
             if (ist_kennwort($t)) {
@@ -991,6 +1030,7 @@ try {
             $db->prepare('DELETE FROM favoriten WHERE nutzer = ?')->execute([$n['id']]);
             $db->prepare('DELETE FROM depot WHERE muster IN (SELECT id FROM musterdepots WHERE nutzer = ?)')->execute([$n['id']]);
             $db->prepare('DELETE FROM musterdepots WHERE nutzer = ?')->execute([$n['id']]);
+            $db->prepare('DELETE FROM erinnert WHERE nutzer = ?')->execute([$n['id']]);
             $db->prepare('DELETE FROM sitzungen WHERE nutzer = ?')->execute([$n['id']]);
             $db->prepare('DELETE FROM links WHERE email = ?')->execute([$n['email']]);
             $db->prepare('DELETE FROM nutzer WHERE id = ?')->execute([$n['id']]);

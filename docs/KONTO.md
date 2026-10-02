@@ -216,6 +216,34 @@ PDF: Dachzeile „Musterdepot“, darunter der Name (lange Namen kleiner, bis 15
 „Geteiltes Musterdepot“ und fragt nach (wie bei der geteilten Merkliste); erst der Klick legt es als neues Musterdepot an.
 Bei fünf Depots sagt der Kasten, dass erst eins gelöscht werden muss. Dateiname mit dem Namen des Depots.
 
+## E-Mail vor jeder Fälligkeit
+
+Seit 02.10.2026 (Nutzerentscheid nach PDF-Mockup; Antworten: fest 30 Tage vorher, Nennwert in der E-Mail). Im Reiter
+„Mein Depot“ steht unter der Tabelle der Schalter „E-Mail vor jeder Fälligkeit“ – einer für alle Musterdepots, anfangs aus
+(`aktion=erinnern`, Feld `erinnern` in `nutzer`, Fassung 5). Daneben die nächste Fälligkeit und wann die E-Mail dazu käme.
+`konto.html#erinnerung` öffnet den Reiter beim Schalter.
+
+Versand: `erinnerung.php` (nur eingebunden, per `.htaccess` gesperrt). `aufruf.php` ruft bei jedem gezählten Aufruf
+`erinnerung_faellig()`; der erste ab 7 Uhr (Berlin) verschickt nach der Antwort an den Browser – wie der Besucherbericht. Je
+Nutzer mit eingeschalteter Erinnerung: alle Anleihen seiner Musterdepots, die in 1 bis 30 Tagen fällig werden und für diese
+Fälligkeit noch keine Erinnerung hatten (Tabelle `erinnert`), in einer E-Mail; danach in `erinnert` eingetragen, nach der
+Fälligkeit gelöscht. Fälligkeit und Name kommen aus `anleihen/<teil>.json` (Name wie auf der Website: Land bzw. Emittent ohne
+Rechtsform, Kupon, Jahr). Inhalt nur Tatsachen – Anleihe, ISIN, Tag, Musterdepot, Nennwert, Rückzahlung zum Nennwert –, keine
+Vorschläge für andere Anleihen (sonst Werbung). Höchstens 300 E-Mails je Lauf; schlägt jeder Versand fehl, neuer Versuch nach
+einer Stunde. Absender `info@bondarium.com` über `mail()` wie bei der Registrierung.
+
+Ausschalten mit einem Klick: Jede E-Mail trägt `konto.html#erinnerung-aus=<Nummer>.<Prüfsumme>` (HMAC mit dem Schlüssel aus
+`meta`, `erinnerung_token()` bzw. `schluessel_hash('erinnerung-aus:<Nummer>')`). Die Seite schickt sie ohne Anmeldung an
+`aktion=erinnerung-aus`, das nur ausschaltet, und sagt es oben im Kasten.
+
+Freigabe: Der Schalter ist bis zum SPF-Eintrag der Domain verborgen (`ERINNERUNG_FREI = false` in `konto.html`;
+Nutzerentscheid: erst SPF und Test-E-Mail, dann live). Der Versand auf dem Server läuft schon – ohne Schalter schaltet aber
+niemand die Erinnerung ein. Zum Freischalten die Konstante auf `true` setzen.
+
+Testen: lokal `php aufruf.php erinnerung` (E-Mails in `konto-daten/lokal-mail.txt`); live der Workflow „Statistik – Testmail“
+mit Auswahl `erinnerung` – eine Beispiel-E-Mail an info@bondarium.com. Für die Zustellung an fremde Postfächer fehlt noch der
+SPF-Eintrag der Domain (siehe „E-Mail-Versand“).
+
 ## Zum Depot hinzufügen im Steckbrief
 
 Seit 02.10.2026 (Nutzerentscheid nach PDF-Mockup): In `anleihe.html` steht neben „Merken“ der Knopf „Zum Depot hinzufügen“
@@ -231,11 +259,12 @@ Merkliste, „Mein Depot“ ist offen und die Anleihe im Formular ausgewählt (h
 
 ## Was gespeichert wird
 
-SQLite-Datei `konto-daten/konto-<zufällig>.sqlite` (Fassung 4):
+SQLite-Datei `konto-daten/konto-<zufällig>.sqlite` (Fassung 5):
 
 | Tabelle | Inhalt | Löschung |
 | --- | --- | --- |
-| `nutzer` | E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet | „Konto löschen“ sofort; nach zwei Jahren ohne Anmeldung |
+| `nutzer` | E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet, Erinnerung per E-Mail an/aus (seit Fassung 5) | „Konto löschen“ sofort; nach zwei Jahren ohne Anmeldung |
+| `erinnert` | verschickte Erinnerungen (seit Fassung 5): Nutzer, ISIN, Fälligkeit, Zeitpunkt | nach der Fälligkeit, mit dem Konto |
 | `favoriten` | ISIN und Zeitpunkt je Nutzer, höchstens 200 | „Entfernen“, mit dem Konto |
 | `musterdepots` | Musterdepots (seit 02.10.2026, Fassung 4): Nummer, Nutzer, Name (höchstens 40 Zeichen), angelegt am; höchstens 5 je Nutzer | „Löschen“, mit dem Konto |
 | `depot` | Anleihen der Musterdepots (seit 01.10.2026, Fassung 3; seit Fassung 4 je Musterdepot statt je Nutzer): Nummer des Musterdepots, ISIN, gedachter Nennwert (ganze Zahl) und Zeitpunkt, höchstens 10 je Depot | „Entfernen“, mit dem Musterdepot, mit dem Konto |

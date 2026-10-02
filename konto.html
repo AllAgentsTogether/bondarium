@@ -209,6 +209,24 @@
   .kd-vt tbody th button:hover { color: var(--green-text); text-decoration: underline; }
   .kd-vt td.leise { color: var(--text); }
   @media (max-width: 600px) { .kd-dw-form input { width: 150px; } .kd-wahlleiste { justify-content: flex-start; } }
+  /* „E-Mail vor jeder Fälligkeit“ (seit 02.10.2026): eine ruhige Zeile mit Schalter unter der Tabelle */
+  .kd-erinnern { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 4px 14px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); padding: 12px 16px; margin: 18px 0 0; max-width: 900px; }
+  .kd-erinnern[hidden] { display: none; }
+  .kd-er-i { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: #F0EFEA; color: var(--text); }
+  .kd-erinnern.an .kd-er-i { background: var(--green-tint-2); color: var(--ink); }
+  .kd-er-t b { display: block; font-size: 15.5px; font-weight: 600; color: var(--ink); }
+  .kd-er-t span { display: block; font-size: 14px; line-height: 1.5; color: var(--text); margin-top: 1px; }
+  .kd-er-t span b { display: inline; font-size: inherit; }
+  .kd-erinnern .kf-status { grid-column: 2 / -1; margin: 0; }
+  .kd-erinnern .kf-status:empty { display: none; }
+  .kd-schalter { font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); background: none; border: 0; padding: 4px; display: inline-flex; align-items: center; gap: 9px; cursor: pointer; }
+  .kd-schalter:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 8px; }
+  .kd-schalter[disabled] { opacity: 0.6; cursor: default; }
+  .kd-schalter i { position: relative; width: 44px; height: 26px; border-radius: 13px; background: #CFCDC6; transition: background .15s; flex: none; }
+  .kd-schalter i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.25); transition: left .15s; }
+  .kd-schalter[aria-checked="true"] i { background: var(--green-text); }
+  .kd-schalter[aria-checked="true"] i::after { left: 21px; }
+  @media (max-width: 600px) { .kd-erinnern { grid-template-columns: auto minmax(0, 1fr); } .kd-schalter { grid-column: 2; justify-self: start; } }
   .kd-teilleiste { margin-top: 22px; }
   .kd-teilleiste[hidden] { display: none; }
   .kd-teilleiste ~ .table-scroll .kd-t { margin-top: 8px; }
@@ -437,6 +455,11 @@
       <p class="kto-geteilt-a"><button type="button" class="go" id="geteilt-ja" hidden></button><button type="button" class="kto-textbtn" id="geteilt-nein">Nicht übernehmen</button></p>
       <p class="kf-status" id="geteilt-status" role="status" aria-live="polite"></p>
     </section>
+    <section class="kto-geteilt" id="er-aus" aria-labelledby="h-er-aus" hidden>   <!-- Link „Ausschalten“ aus der Erinnerungs-E-Mail (seit 02.10.2026) -->
+      <h2 id="h-er-aus">E-Mail vor jeder Fälligkeit</h2>
+      <p id="er-aus-text"></p>
+      <p class="kto-geteilt-a"><button type="button" class="kto-textbtn" id="er-aus-zu">Schließen</button></p>
+    </section>
     <section class="kto-geteilt" id="geteilt-m" aria-labelledby="h-geteilt-m" hidden>   <!-- Knopf „In meine Musterdepots übernehmen“ im PDF (seit 02.10.2026) -->
       <h2 id="h-geteilt-m">Geteiltes Musterdepot</h2>
       <p id="geteilt-m-text"></p>
@@ -594,6 +617,12 @@
           </table>
         </div>
         <details class="kd-fx" id="kd-fx" hidden><summary>* Fremdwährungen werden zur Vereinfachung in Euro umgerechnet</summary><p id="kd-fx-t"></p></details>
+        <div class="kd-erinnern" id="erinnerung" hidden>   <!-- „E-Mail vor jeder Fälligkeit“ (seit 02.10.2026), gilt für alle Musterdepots -->
+          <span class="kd-er-i"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.8 7l8.2 6 8.2-6"/></svg></span>
+          <div class="kd-er-t"><b id="kd-er-titel">E-Mail vor jeder Fälligkeit</b><span id="kd-er-satz"></span></div>
+          <button type="button" class="kd-schalter" id="kd-er-schalter" role="switch" aria-checked="false" aria-labelledby="kd-er-titel"><i></i><span>Aus</span></button>
+          <p class="kf-status" id="kd-er-status" role="status" aria-live="polite"></p>
+        </div>
         <div class="kto-leer" id="kd-leer" hidden><p><b>Dieses Musterdepot ist noch leer.</b> Wähl oben eine Anleihe von deiner Merkliste, trag einen Nennwert ein – zum Beispiel 5.000 € – und füg sie hinzu. Im Steckbrief jeder Anleihe geht das auch mit „Zum Depot hinzufügen“.</p></div>
         <div id="kd-zahlungen" hidden>
           <h2 class="kd-h3" id="h-zahl">Zahlungen aus deinem Musterdepot</h2>
@@ -1183,6 +1212,7 @@ MC.navInit();
     fxHinweis();
     if (MC.wischPruefen) MC.wischPruefen();
     zeichneZahlungen();
+    zeichneErinnerung();
   }
   // Schaubild „Zahlungen je Jahr“ (Fassung vom 01.10.2026 abends, Nutzerwunsch): von heute bis zur letzten Fälligkeit, höchstens
   // 30 Jahre – so bleibt rechts nichts leer. Jede Anleihe in ihrer Farbe, drei Reihen untereinander mit eigener Höhe: oben die Zinsen
@@ -1406,6 +1436,56 @@ MC.navInit();
   $("kd-wahl").addEventListener("keydown", e => { if (e.key === "Escape" && EDIT) { EDIT = ""; zeichneWahl(); } });
   $("kd-vgl").addEventListener("click", e => { const m = e.target.closest("[data-muster]"); if (m) oeffne(+m.dataset.muster); });
 
+  // ---------- E-Mail vor jeder Fälligkeit (seit 02.10.2026, Nutzerentscheid nach PDF-Mockup) ----------
+  // Ein Schalter für alle Musterdepots (konto.php, aktion=erinnern), anfangs aus. Verschickt werden die E-Mails von erinnerung.php –
+  // 30 Tage vor jeder Fälligkeit, angestoßen vom ersten Seitenaufruf ab 7 Uhr. Daneben steht die nächste Fälligkeit und wann die
+  // E-Mail dazu käme. konto.html#erinnerung öffnet „Mein Depot“ und zeigt den Schalter (Link aus der Test-E-Mail).
+  const ERINNERUNG_TAGE = 30;
+  // Der Schalter erscheint erst, wenn die Domain einen SPF-Eintrag hat (Nutzerentscheid 02.10.2026: erst SPF und Test-E-Mail, dann
+  // live). Bis dahin ist nur der Versand auf dem Server bereit – ohne Schalter schaltet niemand die Erinnerung ein.
+  const ERINNERUNG_FREI = false;
+  let ER_SPRUNG = location.hash === "#erinnerung";
+  function zeichneErinnerung() {
+    const st = K.stand(), an = !!st.erinnern, box = $("erinnerung");
+    box.hidden = !st.angemeldet || !ERINNERUNG_FREI; if (box.hidden) return;
+    box.classList.toggle("an", an);
+    const b = $("kd-er-schalter"); b.setAttribute("aria-checked", String(an)); b.querySelector("span").textContent = an ? "An" : "Aus";
+    let next = null;   // nächste Fälligkeit aus allen Musterdepots
+    if (DDATA) DEPOTS.forEach(d => d[2].forEach(([i]) => { const o = anleihe(i, 0, DDATA); if (o.faellig && o.faellig > HEUTE_ISO && (!next || o.faellig < next.faellig)) next = o; }));
+    const mail = `<b>${MC.esc(st.email)}</b>`;
+    let satz = an ? `30 Tage bevor eine Anleihe aus einem deiner Musterdepots fällig wird, schreiben wir dir an ${mail}.`
+      : `Ausgeschaltet. Schaltest du sie ein, schreiben wir dir 30 Tage bevor eine Anleihe aus einem deiner Musterdepots fällig wird – an ${mail}.`;
+    if (an && next) {
+      const e = new Date(next.faellig + "T12:00:00Z"); e.setUTCDate(e.getUTCDate() - ERINNERUNG_TAGE);
+      const eIso = e.toISOString().slice(0, 10);
+      satz += ` Nächste Fälligkeit: ${MC.esc(next.name)} ${fmtCoupon(next.kupon)} ${next.faellig.slice(0, 4)} am ${MC.datum(next.faellig)}${eIso > HEUTE_ISO ? ` – die E-Mail dazu kommt am ${MC.datum(eIso)}` : ""}.`;
+    }
+    $("kd-er-satz").innerHTML = satz;
+    if (ER_SPRUNG && DDATA) { ER_SPRUNG = false; box.scrollIntoView({ block: "center" }); }
+  }
+  $("kd-er-schalter").addEventListener("click", e => {
+    const b = e.currentTarget, an = b.getAttribute("aria-checked") !== "true", st = $("kd-er-status");
+    b.disabled = true; st.className = "kf-status"; st.textContent = "";
+    K.erinnern(an).then(() => { b.disabled = false; $("kd-er-status").textContent = an ? "Eingeschaltet." : "Ausgeschaltet."; },
+      a => { b.disabled = false; if (a && a.status !== "anmelden") { st.className = "kf-status fehler"; st.textContent = TEXT[a.status] || TEXT.fehler; } });
+  });
+  // Link „Ausschalten“ aus der Erinnerungs-E-Mail: konto.html#erinnerung-aus=<Nummer>.<Prüfsumme> schaltet sofort aus – ein Klick, ohne
+  // Anmeldung (konto.php prüft die Prüfsumme). Der Teil hinter „#“ geht nicht an den Server und wird sofort aus der Adresse genommen.
+  function erinnerungAusLink() {
+    const m = /^#erinnerung-aus=(\d{1,10}\.[0-9a-f]{32})$/.exec(location.hash);
+    if (!m) return;
+    try { history.replaceState(null, "", location.pathname); } catch (e) {}
+    const t = $("er-aus-text"); $("er-aus").hidden = false; t.textContent = "Die Erinnerung wird ausgeschaltet …"; $("kd-er-status").textContent = "";
+    K.erinnerungAus(m[1]).then(a => {
+      t.innerHTML = a.ok ? "<b>Die Erinnerung ist ausgeschaltet.</b> Du bekommst keine E-Mails mehr vor Fälligkeiten. Wieder einschalten kannst du sie jederzeit – in „Mein Depot“ unter der Tabelle."
+        : a.status === "link" ? "Dieser Link gilt nicht mehr – vielleicht ist das Konto gelöscht. Wenn du angemeldet bist, findest du den Schalter in „Mein Depot“ unter der Tabelle."
+        : MC.esc(TEXT[a.status] || TEXT.fehler);
+    });
+  }
+  $("er-aus-zu").addEventListener("click", () => { $("er-aus").hidden = true; });
+  window.addEventListener("hashchange", erinnerungAusLink);
+  erinnerungAusLink();
+
   // Reiter „Merkliste“ und „Mein Depot“: nebeneinander, einer offen (Nutzerentscheid 01.10.2026). konto.html#depot öffnet „Mein Depot“.
   function reiter(r, fokus) {
     const depot = r === "depot";
@@ -1419,8 +1499,8 @@ MC.navInit();
   function reiterWahl(r, fokus) { reiter(r, fokus); try { history.replaceState(null, "", location.pathname + location.search + (r === "depot" ? "#depot" : "")); } catch (e) {} }
   document.querySelector(".kto-reiter").addEventListener("click", e => { const b = e.target.closest("[role=tab]"); if (b) reiterWahl(b.id === "r-depot" ? "depot" : "merk"); });
   document.querySelector(".kto-reiter").addEventListener("keydown", e => { if (e.key === "ArrowRight" || e.key === "ArrowLeft") { e.preventDefault(); reiterWahl(e.key === "ArrowRight" ? "depot" : "merk", true); } });
-  window.addEventListener("hashchange", () => { if (location.hash === "#depot") reiter("depot"); else if (location.hash === "#merkliste") reiter("merk"); });
-  reiter(location.hash === "#depot" ? "depot" : "merk");
+  window.addEventListener("hashchange", () => { if (location.hash === "#depot" || location.hash === "#erinnerung") reiter("depot"); else if (location.hash === "#merkliste") reiter("merk"); });
+  reiter(location.hash === "#depot" || location.hash === "#erinnerung" ? "depot" : "merk");
 
   // Hinzufügen, Nennwert ändern, Entfernen
   const DEPOT_TEXT = { voll: "Ein Musterdepot fasst höchstens 10 Anleihen.", muster: DW_TEXT.muster, nennwert: "Bitte einen Nennwert als ganze Zahl eintragen, zum Beispiel 5.000.", isin: "Diese Anleihe lässt sich dem Depot nicht hinzufügen." };

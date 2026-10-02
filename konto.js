@@ -12,6 +12,7 @@
      bereit()                 Promise mit dem Stand { angemeldet, email, favoriten: [[isin, zeit], …],
                               depots: [[nummer, name, [[isin, nennwert, zeit], …]], …] } – fragt höchstens einmal.
                               Wer noch kein Musterdepot hat, bekommt [[0, "Musterdepot 1", []]] (angelegt beim ersten Hinzufügen).
+                              Dazu erinnern: true, wenn die E-Mail vor jeder Fälligkeit eingeschaltet ist (seit 02.10.2026).
      stand()                  derselbe Stand, sofort (vor bereit(): nicht angemeldet)
      hat(isin)                true, wenn die Anleihe in der Merkliste steht
      knopf(isin[, klasse])    HTML des Merken-Knopfs; Klick, Beschriftung und Zustand übernimmt dieses Skript –
@@ -22,6 +23,8 @@
      musterNeu(name), musterName(muster, name), musterWeg(muster)   Musterdepot anlegen, umbenennen, löschen → Promise
                                              mit der Antwort (muster = Nummer des neuen bzw. umbenannten); abgelehnt mit { status }
      musterUebernehmen(name, liste)          geteiltes Musterdepot (liste: [[isin, nennwert], …]) als neues anlegen → wie musterNeu
+     erinnern(an)                            E-Mail vor jeder Fälligkeit ein- (true) oder ausschalten → wie merken
+     erinnerungAus(token)                    Link aus der Erinnerungs-E-Mail: schaltet ohne Anmeldung aus → Promise { ok, status }
      uebernehmen(isins)                      geteilte Merkliste (Array von ISINs) auf die eigene setzen → Promise mit der
                                              Antwort { neu, uebrig, max, … }; abgelehnt mit { status } bei Fehlern
      registrieren(email, passwort[, isin])   E-Mail mit Bestätigungslink anfordern → Promise { ok, status, stunden }
@@ -39,7 +42,7 @@
   MC = window.MC = MC || {};
 
   var API = "konto.php", SEITE = "konto.html";
-  var st = { angemeldet: false, email: "", favoriten: [], depots: [] }, menge = {}, hoerer = [], abfrage = null;
+  var st = { angemeldet: false, email: "", favoriten: [], depots: [], erinnern: false }, menge = {}, hoerer = [], abfrage = null;
 
   function markiert() { return /(?:^|;\s*)bondarium-angemeldet=1(?:;|$)/.test(document.cookie); }
   function esc(s) { return MC.esc ? MC.esc(s) : String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
@@ -47,7 +50,7 @@
   function uebernimm(j) {
     var an = !!(j && j.angemeldet);
     st = { angemeldet: an, email: (an && j.email) || "", favoriten: (an && j.favoriten) || [],
-      depots: (an && j.depots) || (an && j.depot ? [[0, "Musterdepot 1", j.depot]] : []) };
+      depots: (an && j.depots) || (an && j.depot ? [[0, "Musterdepot 1", j.depot]] : []), erinnern: !!(an && j.erinnern) };
     menge = {};
     st.favoriten.forEach(function (f) { menge[f[0]] = true; });
     knoepfe();
@@ -153,6 +156,16 @@
     musterNeu: function (name) { return musterAktion({ aktion: "muster-neu", name: name || "" }); },
     musterName: function (muster, name) { return musterAktion({ aktion: "muster-name", muster: String(muster), name: name }); },
     musterWeg: function (muster) { return musterAktion({ aktion: "muster-weg", muster: String(muster) }); },
+    erinnern: function (an) {
+      return sende("POST", { aktion: "erinnern", an: an ? "1" : "0" }).then(function (j) {
+        if (j.ok) return uebernimm(j);
+        if (j.status === "anmelden") uebernimm(null);
+        throw j;
+      });
+    },
+    erinnerungAus: function (token) {
+      return sende("POST", { aktion: "erinnerung-aus", token: token }).then(function (j) { if (j.ok && j.email) uebernimm(j); return j; });
+    },
     musterUebernehmen: function (name, liste) {
       return musterAktion({ aktion: "muster-uebernehmen", name: name || "", liste: liste.map(function (p) { return p[0] + "~" + p[1]; }).join(",") });
     },

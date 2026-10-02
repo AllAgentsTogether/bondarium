@@ -1,0 +1,239 @@
+<?php
+/**
+ * E-Mail 30 Tage vor jeder Fälligkeit (seit 02.10.2026, Nutzerentscheid nach PDF-Mockup; Dokumentation: docs/KONTO.md).
+ * Wer in „Mein Bondarium“ den Schalter „E-Mail vor jeder Fälligkeit“ einschaltet (konto.php, aktion=erinnern), bekommt eine
+ * kurze E-Mail, wenn eine Anleihe aus einem seiner Musterdepots in höchstens ERINNERUNG_TAGE Tagen fällig wird – je
+ * Anleihe und Fälligkeit einmal, mehrere in einer E-Mail. Nur Tatsachen (Anleihe, ISIN, Tag, Musterdepot, Nennwert), keine
+ * Vorschläge für andere Anleihen – sonst wäre es Werbung. Jede E-Mail trägt einen Link, der die Erinnerung mit einem Klick
+ * ausschaltet (konto.html#erinnerung-aus=Nummer.Prüfsumme; geprüft in konto.php, aktion=erinnerung-aus).
+ *
+ * Angestoßen wie der Besucherbericht: aufruf.php ruft erinnerung_faellig() bei jedem gezählten Aufruf; der erste Aufruf ab
+ * ERINNERUNG_STUNDE Uhr (Berlin) verschickt nach der Antwort an den Browser (erinnerungen_senden()). Die Fälligkeit jeder
+ * Anleihe kommt aus den Stammdaten anleihen/<teil>.json (wie der Steckbrief). Gelesen und geschrieben wird die Datenbank von
+ * konto.php (konto-daten/), erst ab deren Fassung 5. Wird nur eingebunden; direkt aufgerufen antwortet die Datei mit 404
+ * (zusätzlich per .htaccess gesperrt).
+ *
+ * Testmail: aufruf.php, aktion=testmail&art=erinnerung mit Kopf X-Trigger-Key (Workflow „Statistik – Testmail“, Auswahl
+ * „erinnerung“) – eine Beispiel-Erinnerung an BERICHT_AN. Lokal: php aufruf.php erinnerung – die E-Mails landen in
+ * konto-daten/lokal-mail.txt statt im Versand.
+ */
+declare(strict_types=1);
+
+if (realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) { http_response_code(404); exit; }
+
+const ERINNERUNG_TAGE    = 30;
+const ERINNERUNG_STUNDE  = 7;
+const ERINNERUNG_MAX     = 300;   // E-Mails je Lauf – was nicht mehr passt, geht beim nächsten Lauf
+const ERINNERUNG_ABSENDER = 'info@bondarium.com';
+const ERINNERUNG_DATEN   = __DIR__ . '/konto-daten';
+// Ländernamen für Staatsanleihen, falls PHP ohne intl läuft (sonst Locale::getDisplayRegion)
+const ERINNERUNG_LAENDER = ['DE' => 'Deutschland', 'FR' => 'Frankreich', 'IT' => 'Italien', 'ES' => 'Spanien', 'AT' => 'Österreich',
+    'NL' => 'Niederlande', 'BE' => 'Belgien', 'FI' => 'Finnland', 'IE' => 'Irland', 'PT' => 'Portugal', 'GR' => 'Griechenland',
+    'LU' => 'Luxemburg', 'SK' => 'Slowakei', 'SI' => 'Slowenien', 'LT' => 'Litauen', 'LV' => 'Lettland', 'EE' => 'Estland',
+    'HR' => 'Kroatien', 'CY' => 'Zypern', 'MT' => 'Malta', 'PL' => 'Polen', 'CZ' => 'Tschechien', 'HU' => 'Ungarn', 'RO' => 'Rumänien',
+    'BG' => 'Bulgarien', 'SE' => 'Schweden', 'DK' => 'Dänemark', 'NO' => 'Norwegen', 'CH' => 'Schweiz', 'GB' => 'Vereinigtes Königreich',
+    'US' => 'Vereinigte Staaten', 'CA' => 'Kanada', 'AU' => 'Australien', 'JP' => 'Japan', 'NZ' => 'Neuseeland', 'MX' => 'Mexiko',
+    'BR' => 'Brasilien', 'TR' => 'Türkei', 'ZA' => 'Südafrika', 'IS' => 'Island', 'IL' => 'Israel', 'CL' => 'Chile', 'ID' => 'Indonesien'];
+
+/** Datenbank von konto.php – nur, wenn es sie schon gibt und sie mindestens Fassung 5 hat */
+function erinnerung_db(): ?PDO
+{
+    static $db = false;
+    if ($db !== false) return $db;
+    $db = null;
+    if (!extension_loaded('pdo_sqlite')) return null;
+    $dateien = glob(ERINNERUNG_DATEN . '/konto-*.sqlite') ?: [];
+    sort($dateien);
+    if (!$dateien) return null;
+    $p = new PDO('sqlite:' . $dateien[0], null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_TIMEOUT => 5]);
+    $p->exec('PRAGMA foreign_keys = ON');
+    if ((int)$p->query('PRAGMA user_version')->fetchColumn() < 5) return null;
+    return $db = $p;
+}
+
+function erinnerung_meta(PDO $db, string $k): ?string
+{
+    $s = $db->prepare('SELECT v FROM meta WHERE k = ?');
+    $s->execute([$k]);
+    $v = $s->fetchColumn();
+    return $v === false ? null : (string)$v;
+}
+
+/** Ist der Lauf von heute fällig? Dann vormerken (nur ein Aufruf verschickt) und true. */
+function erinnerung_faellig(): bool
+{
+    if ((int)date('G') < ERINNERUNG_STUNDE) return false;
+    $db = erinnerung_db();
+    if ($db === null) return false;
+    $heute = date('Y-m-d');
+    if (erinnerung_meta($db, 'erinnerung') === $heute) return false;   // der übliche Fall: ohne Schreibsperre prüfen
+    $db->exec('BEGIN IMMEDIATE');
+    $fehler = (int)(erinnerung_meta($db, 'erinnerung_fehler') ?? 0);
+    if (erinnerung_meta($db, 'erinnerung') === $heute || time() - $fehler < 3600) { $db->exec('COMMIT'); return false; }   // nach einem Fehler höchstens stündlich
+    $db->prepare("INSERT OR REPLACE INTO meta (k, v) VALUES ('erinnerung', ?)")->execute([$heute]);
+    $db->exec('COMMIT');
+    return true;
+}
+
+/** Prüfsumme für den Link „Ausschalten“ – wie schluessel_hash() in konto.php, mit dem Schlüssel aus der Datenbank */
+function erinnerung_token(PDO $db, int $id): string
+{
+    $geheim = (string)erinnerung_meta($db, 'hmac');
+    return $id . '.' . substr(hash_hmac('sha256', 'erinnerung-aus:' . $id, $geheim), 0, 32);
+}
+
+/** Teildatei der Stammdaten wie MC.teil() in site.js */
+function erinnerung_teil(string $isin): string
+{
+    $h = 0;
+    for ($i = 0, $n = strlen($isin); $i < $n; $i++) $h = ($h * 31 + ord($isin[$i])) % 65536;
+    return sprintf('%02x', $h % 256);
+}
+
+/** Stammdaten einer Anleihe: [Name für die E-Mail, Fälligkeit JJJJ-MM-TT, Währung] oder null */
+function erinnerung_anleihe(string $isin): ?array
+{
+    static $teile = [];
+    $t = erinnerung_teil($isin);
+    if (!array_key_exists($t, $teile)) {
+        $roh = @file_get_contents(__DIR__ . '/anleihen/' . $t . '.json');
+        $j = $roh === false ? null : json_decode($roh, true);
+        $teile[$t] = is_array($j) && isset($j['rows']) && is_array($j['rows']) ? $j['rows'] : [];
+    }
+    $r = $teile[$t][$isin] ?? null;
+    if (!is_array($r) || empty($r[4])) return null;
+    [$name, $art, $cur, $kupon, $faellig] = [(string)$r[0], (int)$r[1], (string)$r[2], $r[3], (string)$r[4]];
+    $emittent = (string)($r[8] ?? '');
+    $land = (string)($r[10] ?? '');
+    $zinsart = (int)($r[9] ?? 0);
+    // Name wie auf der Website: bei Staaten das Land, sonst der Emittent ohne Rechtsform, notfalls der Registername
+    $kurz = '';
+    if ($art === 0 && $land !== '' && $land !== 'INT') {
+        $kurz = class_exists('Locale') ? (string)\Locale::getDisplayRegion('-' . $land, 'de') : '';
+        if ($kurz === '' || $kurz === $land) $kurz = ERINNERUNG_LAENDER[$land] ?? '';
+    }
+    if ($kurz === '' && $emittent !== '') {
+        $kurz = trim((string)preg_replace('/[\s,]+(AG|SE|KGaA|GmbH|mbH|S\.?A\.?|S\.?p\.?A\.?|N\.?V\.?|B\.?V\.?|plc|PLC|p\.l\.c\.|Inc\.?|Corp\.?|Corporation|Ltd\.?|Limited|LLC|A\/S|AB|ASA|Oyj|Aktiengesellschaft)\.?$/u', '', $emittent));
+    }
+    if ($kurz === '') $kurz = $name;
+    // Namen, die das Register nur in Großbuchstaben meldet, in üblicher Schreibung (wie lesbar() auf der Website, nur einfacher)
+    if (function_exists('mb_convert_case') && preg_match('/\p{Lu}{3}/u', $kurz) && mb_strtoupper($kurz, 'UTF-8') === $kurz) {
+        $kurz = mb_convert_case(mb_strtolower($kurz, 'UTF-8'), MB_CASE_TITLE, 'UTF-8');
+        $kurz = (string)preg_replace_callback('/(?<=\s)(De|Del|La|Le|Les|Of|And|Und|Der|Die|Das|Von|Für|Du|Des|Y|E)(?=\s)/u', fn($m) => mb_strtolower($m[1], 'UTF-8'), $kurz);
+    }
+    $k = $zinsart === 2 ? 0.0 : (is_numeric($kupon) ? (float)$kupon : null);
+    $kTxt = $k === null ? '' : ' ' . number_format($k, abs($k * 100 - round($k * 100)) > 1e-9 ? 3 : 2, ',', '.') . ' %';
+    return [$kurz . $kTxt . ' ' . substr($faellig, 0, 4), $faellig, $cur];
+}
+
+function erinnerung_datum(string $iso): string
+{
+    return substr($iso, 8, 2) . '.' . substr($iso, 5, 2) . '.' . substr($iso, 0, 4);
+}
+
+/** Text einer Erinnerung. $posten: [[Name, ISIN, Fälligkeit, Tage, Depotname, Nennwert, Währung], …] */
+function erinnerung_text(array $posten, string $aus): array
+{
+    usort($posten, fn($a, $b) => strcmp($a[2], $b[2]) ?: strcmp($a[4], $b[4]));
+    $isins = array_unique(array_column($posten, 1));
+    $tage = fn(int $t) => $t === 1 ? 'morgen' : "in $t Tagen";
+    if (count($isins) === 1) {
+        $p = $posten[0];
+        $depots = array_unique(array_column($posten, 4));
+        $betreff = 'Bondarium: Eine Anleihe aus deinem Musterdepot wird am ' . erinnerung_datum($p[2]) . ' fällig';
+        $kopf = $tage($p[3]) . ' wird eine Anleihe aus ' . (count($depots) === 1 ? 'deinem Musterdepot „' . $depots[0] . '“' : 'deinen Musterdepots') . ' fällig:';
+    } else {
+        $betreff = 'Bondarium: ' . count($isins) . ' Anleihen aus deinen Musterdepots werden bald fällig';
+        $kopf = 'bald werden ' . count($isins) . ' Anleihen aus deinen Musterdepots fällig:';
+    }
+    $bloecke = [];
+    foreach ($posten as $p) {
+        $w = $p[6] !== '' && $p[6] !== 'EUR' ? $p[6] : '€';
+        $bloecke[] = "  {$p[0]}\n  ISIN {$p[1]} · fällig am " . erinnerung_datum($p[2]) . (count($isins) > 1 ? ' (' . $tage($p[3]) . ')' : '') .
+            "\n  Musterdepot „{$p[4]}“ · Nennwert " . number_format((float)$p[5], 0, ',', '.') . " $w · Rückzahlung zum Nennwert (100 %)";
+    }
+    $text = $kopf . "\n\n" . implode("\n\n", $bloecke) . "\n\n" .
+        "Dein Musterdepot ansehen:\nhttps://www.bondarium.de/konto.html#depot\n\n" .
+        "Du bekommst diese E-Mail, weil du in „Mein Bondarium“ die Erinnerung vor jeder Fälligkeit eingeschaltet hast. Ausschalten kannst du sie mit einem Klick:\n" .
+        "https://www.bondarium.de/konto.html#$aus\n\n" .
+        "Musterdepots sind ein Planspiel – Bondarium kauft und verkauft nichts und kennt keine echten Bestände. Keine Anlageberatung.";
+    return [$betreff, $text];
+}
+
+/** E-Mail wie mail_senden() in konto.php (Kopf, Fuß, Absender); lokal in konto-daten/lokal-mail.txt */
+function erinnerung_mail(string $an, string $betreff, string $text): bool
+{
+    $text = "Hallo,\n\n" . $text . "\n\nBondarium – ein Angebot der urbanelo GmbH\nhttps://www.bondarium.de/rechtliches.html\n";
+    if (PHP_SAPI === 'cli-server' || PHP_SAPI === 'cli') {
+        return file_put_contents(ERINNERUNG_DATEN . '/lokal-mail.txt', "An: $an\nBetreff: $betreff\n\n$text\n----\n", FILE_APPEND) !== false;
+    }
+    $kopf = implode("\r\n", [
+        'From: Bondarium <' . ERINNERUNG_ABSENDER . '>',
+        'MIME-Version: 1.0',
+        'Content-Type: text/plain; charset=UTF-8',
+        'Content-Transfer-Encoding: base64',
+        'Auto-Submitted: auto-generated',
+    ]);
+    return mail($an, '=?UTF-8?B?' . base64_encode($betreff) . '?=', chunk_split(base64_encode($text)), $kopf, '-f ' . ERINNERUNG_ABSENDER);
+}
+
+/** Der tägliche Lauf: alle fälligen Erinnerungen verschicken. Gibt [verschickt, fehlgeschlagen] zurück. */
+function erinnerungen_senden(): array
+{
+    $db = erinnerung_db();
+    if ($db === null) return [0, 0];
+    $heute = date('Y-m-d');
+    $db->prepare('DELETE FROM erinnert WHERE faellig < ?')->execute([$heute]);
+    $s = $db->query('SELECT n.id, n.email, m.name, d.isin, d.nennwert FROM nutzer n JOIN musterdepots m ON m.nutzer = n.id JOIN depot d ON d.muster = m.id WHERE n.erinnern = 1 ORDER BY n.id, m.id, d.seit');
+    $je = [];
+    foreach ($s->fetchAll(PDO::FETCH_NUM) as [$id, $email, $depot, $isin, $nenn]) {
+        $je[(int)$id]['email'] = (string)$email;
+        $je[(int)$id]['posten'][] = [(string)$depot, (string)$isin, (int)$nenn];
+    }
+    $schon = $db->prepare('SELECT 1 FROM erinnert WHERE nutzer = ? AND isin = ? AND faellig = ?');
+    $merke = $db->prepare('INSERT OR IGNORE INTO erinnert (nutzer, isin, faellig, gesendet) VALUES (?, ?, ?, ?)');
+    $null = new DateTimeImmutable($heute);
+    $ok = 0;
+    $fehl = 0;
+    foreach ($je as $id => $u) {
+        if ($ok + $fehl >= ERINNERUNG_MAX) break;
+        $posten = [];
+        foreach ($u['posten'] as [$depot, $isin, $nenn]) {
+            $a = erinnerung_anleihe($isin);
+            if ($a === null) continue;
+            $tage = (int)$null->diff(new DateTimeImmutable($a[1]))->format('%r%a');
+            if ($tage < 1 || $tage > ERINNERUNG_TAGE) continue;
+            $schon->execute([$id, $isin, $a[1]]);
+            if ($schon->fetchColumn()) continue;
+            $posten[] = [$a[0], $isin, $a[1], $tage, $depot, $nenn, $a[2]];
+        }
+        if (!$posten) continue;
+        [$betreff, $text] = erinnerung_text($posten, 'erinnerung-aus=' . erinnerung_token($db, $id));
+        if (erinnerung_mail($u['email'], $betreff, $text)) {
+            foreach ($posten as $p) $merke->execute([$id, $p[1], $p[2], time()]);
+            $ok++;
+        } else {
+            $fehl++;
+        }
+    }
+    if ($fehl && !$ok) {
+        $db->prepare("INSERT OR REPLACE INTO meta (k, v) VALUES ('erinnerung', '')")->execute();   // in einer Stunde noch einmal versuchen
+        $db->prepare("INSERT OR REPLACE INTO meta (k, v) VALUES ('erinnerung_fehler', ?)")->execute([(string)time()]);
+    }
+    return [$ok, $fehl];
+}
+
+/** Beispiel-Erinnerung an $an (Testmail): eine Anleihe aus den Stammdaten, Nennwert erfunden, Link ohne Wirkung */
+function erinnerung_testmail(string $an): bool
+{
+    $posten = [];
+    foreach ([['DE000BU22072', 'Sicherheit (Beispiel)', 10000]] as [$isin, $depot, $nenn]) {
+        $a = erinnerung_anleihe($isin);
+        if ($a === null) continue;
+        $tage = max(1, (int)(new DateTimeImmutable(date('Y-m-d')))->diff(new DateTimeImmutable($a[1]))->format('%r%a'));
+        $posten[] = [$a[0], $isin, $a[1], $tage, $depot, $nenn, $a[2]];
+    }
+    if (!$posten) return false;
+    [$betreff, $text] = erinnerung_text($posten, 'erinnerung');
+    return erinnerung_mail($an, '[Test] ' . $betreff, $text . "\n\n(Test-E-Mail: So sieht die Erinnerung vor einer Fälligkeit aus. Musterdepot und Nennwert sind erfunden, „in … Tagen“ zählt bis zur echten Fälligkeit.)");
+}

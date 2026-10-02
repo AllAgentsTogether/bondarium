@@ -21,6 +21,8 @@ RewriteRule ^konto-daten(/|$) - [F,L]
 #      Schutz: eigene .htaccess im Ordner, dritter: *.sqlite unten). statistik-bericht.php wird nur eingebunden. ----
 RewriteRule ^statistik-daten(/|$) - [F,L]
 RewriteRule ^statistik-bericht\.php$ - [F,L]
+# ---- E-Mail vor der Fälligkeit (seit 02.10.2026): erinnerung.php wird nur von aufruf.php eingebunden ----
+RewriteRule ^erinnerung\.php$ - [F,L]
 # ---- HTTPS erzwingen ----
 # Beide Bedingungen (UND-verknüpft) verhindern eine Redirect-Schleife, wenn
 # Strato TLS vor dem Apache terminiert: dann ist %{HTTPS} zwar "off", aber
