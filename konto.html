@@ -1869,15 +1869,32 @@ MC.navInit();
     if (z.length) {
       // Der Satz „Bis zur letzten Fälligkeit … Kaufpreis …“ steht seit 03.10.2026 auch hier nicht mehr (Nutzerwunsch, wie über dem Schaubild)
       y += 8;
-      // Zahlungen pro Jahr: Jahrestabelle mit Balken (Zinsen grün, Rückzahlung Tinte), jedes zweite Jahr hinterlegt wie im Schaubild
-      const j0 = jetzt.getFullYear(), j1 = Math.min(+z[z.length - 1].tag.slice(0, 4), j0 + JAHRE_MAX - 1), jahr = [];
-      for (let j = j0; j <= j1; j++) jahr.push({ j, zins: 0, rueck: 0 });
-      const spaeter = { zins: 0, rueck: 0 };
-      z.forEach(x => { const r = jahr[+x.tag.slice(0, 4) - j0] || spaeter; r[x.art === "Zinsen" ? "zins" : "rueck"] += x.betrag; });
+      // Zahlungen pro Jahr: Jahrestabelle mit Balken (Zinsen grün, Rückzahlung Tinte), jedes zweite Jahr hinterlegt wie im Schaubild.
+      // Wie das Schaubild (Lösung D, seit 03.10.2026 auch hier): 30 Jahre einzeln, danach nur die Jahre mit einer Rückzahlung; mehr
+      // als zwei Jahre dazwischen stehen in einer schraffierten Zeile – „je …“, wenn die Zinsen in jedem dieser Jahre gleich sind,
+      // sonst „Ø …“ (Durchschnitt), nie eine Summe. Alles auf derselben Balkenskala.
+      const j0 = jetzt.getFullYear(), jE = +z[z.length - 1].tag.slice(0, 4), j1 = Math.min(jE, j0 + JAHRE_MAX - 1), alleJ = [];
+      for (let j = j0; j <= jE; j++) alleJ.push({ j, zins: 0, rueck: 0 });
+      z.forEach(x => { const r = alleJ[+x.tag.slice(0, 4) - j0]; if (r) r[x.art === "Zinsen" ? "zins" : "rueck"] += x.betrag; });
+      const jahr = alleJ.slice(0, j1 - j0 + 1);
+      let ab = j1 + 1;
+      alleJ.filter(r => r.j > j1 && r.rueck > 0).forEach(r => {
+        const l = alleJ.slice(ab - j0, r.j - j0), n = l.length;
+        if (n > 2) jahr.push({ j: l[0].j, bis: l[n - 1].j, je: l.every(x => Math.round(x.zins * 100) === Math.round(l[0].zins * 100)) ? "je " : "Ø ",
+          zins: l.reduce((a, x) => a + x.zins, 0) / n, rueck: 0 });
+        else jahr.push(...l);
+        jahr.push(r); ab = r.j + 1;
+      });
+      const zus = jahr.some(r => r.bis);
       const max = Math.max(...jahr.map(r => r.zins + r.rueck), 1), BX = R + 44, BW = 200, cZ = R + 340, cR = R + 430, cS = B - R;
+      // Schraffur wie im Schaubild: feine Linien unter 45°, auf das Rechteck (x, y, b, h) beschnitten
+      const schraffur = (x, yy, b, h) => { for (let u = x - h; u < x + b; u += 5) {
+        const x1 = Math.max(u, x), y1 = yy + h - (x1 - u), x2 = Math.min(u + h, x + b), y2 = yy + (u + h - x2);
+        if (x2 > x1) P.linie(x1, y1, x2, y2, [0.78, 0.78, 0.75], 0.6);
+      } };
       const jKopf = fort => {
         P.text(R, y, fort ? "Zahlungen pro Jahr – Fortsetzung" : "Zahlungen pro Jahr", { gr: 13, fett: true });
-        P.text(B - R, y, `${j0}${j1 > j0 ? ` bis ${j1}` : ""} · bis zur letzten Fälligkeit`, klein({ rechts: true, gr: 8 })); y += 18;
+        P.text(B - R, y, `${j0}${j1 > j0 ? ` bis ${j1}` : ""}${jE > j1 ? " je Jahr · danach die Fälligkeiten" : " · bis zur letzten Fälligkeit"}`, klein({ rechts: true, gr: 8 })); y += 18;
         P.text(R, y, "JAHR", { gr: 6.5, fett: true, farbe: GRAU });
         P.rechteck(BX, y - 6, 7, 7, GRUEN_T, 1.5); P.text(BX + 10, y, "Zinsen", klein({ gr: 6.5 }));
         P.rechteck(BX + 46, y - 6, 7, 7, INK, 1.5); P.text(BX + 56, y, "Rückzahlung zum Nennwert", klein({ gr: 6.5 }));
@@ -1888,20 +1905,23 @@ MC.navInit();
       };
       platz(18 + 24 + 16 * 3); jKopf(false);
       jahr.forEach((r, i) => {
-        if (y + 16 > UNTEN) { seite(false); jKopf(true); }
-        if (i % 2) P.rechteck(R, y, B - 2 * R, 16, HELL);
-        const g = y + 11;
-        P.text(R, g, String(r.j), { gr: 8.5, fett: true });
+        const h = r.bis ? 26 : 16, m = (h - 16) / 2, vor = r.je || "";   // zusammengefasste Zeile zweizeilig: „2056“ / „bis 2085“
+        if (y + h > UNTEN) { seite(false); jKopf(true); }
+        if (i % 2) P.rechteck(R, y, B - 2 * R, h, HELL);
+        if (r.bis) schraffur(BX, y + 2, BW, h - 4);
+        const g = y + 11 + m;
+        if (r.bis) { P.text(R, y + 11, String(r.j), { gr: 8.5, fett: true }); P.text(R, y + 21, `bis ${r.bis}`, klein({ gr: 7 })); }
+        else P.text(R, g, String(r.j), { gr: 8.5, fett: true });
         const wz = r.zins / max * BW, wr = r.rueck / max * BW;
-        if (wz > 0) P.rechteck(BX, y + 4, Math.max(wz, 1), 8, GRUEN_T);
-        if (wr > 0) P.rechteck(BX + wz, y + 4, wr, 8, INK);
-        P.text(cZ, g, r.zins ? eur(r.zins) : "–", { gr: 8.5, rechts: true });
+        if (wz > 0) P.rechteck(BX, y + 4 + m, Math.max(wz, 1), 8, GRUEN_T);
+        if (wr > 0) P.rechteck(BX + wz, y + 4 + m, wr, 8, INK);
+        P.text(cZ, g, r.zins ? vor + eur(r.zins) : "–", { gr: 8.5, rechts: true });
         P.text(cR, g, r.rueck ? eur(r.rueck, fremdIn(pos) ? 2 : 0) : "–", { gr: 8.5, rechts: true });
-        P.text(cS, g, eur(r.zins + r.rueck), { gr: 8.5, fett: true, rechts: true });
-        y += 16;
+        P.text(cS, g, vor + eur(r.zins + r.rueck), { gr: 8.5, fett: true, rechts: true });
+        y += h;
       });
       P.linie(R, y, B - R, y, LINIE, 0.5);
-      if (spaeter.zins || spaeter.rueck) { y += 12; tx(R, y, `Nach ${j1} folgen noch ${eur(spaeter.zins)} Zinsen und ${eur(spaeter.rueck, fremdIn(pos) ? 2 : 0)} Rückzahlung.`, klein({ gr: 8 })); }
+      if (zus) { y += 12; P.text(R, y, "Schraffiert: Jahre ohne Rückzahlung zusammengefasst – „je“ = Zinsen in jedem dieser Jahre, „Ø“ = Durchschnitt pro Jahr.", klein({ gr: 8 })); }
       y += 30;
       // Kommende Zinstermine – wie die Liste auf der Seite, im PDF aber höchstens die nächsten PDF_TERMINE; der Rest steht als Summe darunter
       const PDF_TERMINE = 24, alleZ = z.filter(x => x.art === "Zinsen"), zj = alleZ.slice(0, PDF_TERMINE), restZ = alleZ.slice(PDF_TERMINE);

@@ -196,7 +196,9 @@ wie bei der Merkliste – links Anzahl und Kursstand, rechts „Musterdepot teil
 Kupon, Fälligkeit mit Restlaufzeit, Nennwert in der Währung der Anleihe mit Euro-Betrag darunter, Kurswert mit
 Kursgewinn/-verlust, Zinsen pro Jahr) und Summe, „Zahlungen pro Jahr“ und die
 Zinstermine des nächsten Kalenderjahrs. Statt des farbigen Schaubilds steht eine Jahrestabelle mit Balken (Zinsen grün,
-Rückzahlung Tinte; jedes zweite Jahr hinterlegt) – auch schwarz-weiß gedruckt lesbar. Immer das ganze Depot, auch wenn im
+Rückzahlung Tinte; jedes zweite Jahr hinterlegt) – auch schwarz-weiß gedruckt lesbar. Läuft das Depot länger als 30 Jahre, folgt die Tabelle seit
+03.10.2026 dem Schaubild (Lösung D): danach nur die Jahre mit einer Rückzahlung, mehr als zwei Jahre dazwischen in einer
+schraffierten Zeile „2056 / bis 2085“ mit „je …“ bzw. „Ø …“; der frühere Satz „Nach 2055 folgen noch …“ entfällt. Immer das ganze Depot, auch wenn im
 Schaubild Anleihen ausgeblendet sind. Fremdwährungen: Sternchen am Namen, der EZB-Kurs einmal in den Hinweisen unten. Lange
 Depots laufen auf eine zweite Seite weiter. Dateiname `Bondarium-Musterdepot-JJJJ-MM-TT.pdf`. Der Satz „Bis zur letzten Fälligkeit … Kaufpreis …“ steht seit 03.10.2026 auch
 im PDF nicht mehr (Nutzerwunsch, wie auf der Seite).
