@@ -89,6 +89,57 @@
   .hb-bar.m { background: #A2561C; } .hb-bar.l { background: var(--down); }
   .hb-bar b { font-size: 13.5px; }
   .sb-f { font-size: 12.5px; color: var(--text); margin-top: 10px; line-height: 1.45; }
+  /* Duration zum Schieben (02.10.2026, Nutzerwunsch „Tool, bei dem man die modifizierte Duration mit Schieben eines Hebels
+     graphisch sehen kann“): eigene Karte nach „Der Hebel“, Rechnung und Schaubild in duration-hebel.js. Links Text und Regler
+     für die Anleihe, rechts Zahlen, Schaubild und der Regler fürs Zinsniveau genau unter der x-Achse (Breite setzt das Skript).
+     Am Handy: Text, Schaubild, Regler. Reglerknopf = Kupon-Punkt; Spurfüllung über --a/--b (Anteil 0–1) und --f (Farbe). */
+  .kap-hebel { grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr); grid-template-areas: "text bild" "regler bild" "merk merk"; grid-template-rows: auto 1fr auto; }
+  .kap-hebel > .k-text { grid-area: text; }
+  .kap-hebel > .k-bild { grid-area: bild; }
+  .kap-hebel > .dh-regler { grid-area: regler; align-self: start; }
+  .kap-hebel > .merk { grid-area: merk; }
+  .knr-regler svg { width: 26px; height: 26px; }
+  a.lbtn .n.n-punkt { width: 14px; height: 14px; margin-left: -2px; background: #39FF14; border: 2.5px solid #1A1A19; }
+  .dh-regler { display: grid; gap: 14px; background: #fff; border: 1px solid #E4E3DF; border-radius: 14px; padding: 16px 18px 14px; }
+  .rg-k { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .rg-k label { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .rg-k output { font-size: 15px; font-weight: 600; color: var(--green-text); font-variant-numeric: tabular-nums; }
+  .dh-info { display: flex; flex-wrap: wrap; gap: 4px 18px; padding-top: 12px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--text); }
+  .dh-info b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .kap-hebel input[type="range"] { --a: 0; --b: 0.5; --f: #157C00; --spur: rgba(26,26,25,0.12); -webkit-appearance: none; appearance: none; display: block; width: 100%; height: 30px; margin: 2px 0 0; background: transparent; cursor: pointer; touch-action: pan-y; }
+  .kap-hebel input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: linear-gradient(to right, var(--spur) calc(12px + (100% - 24px) * var(--a)), var(--f) calc(12px + (100% - 24px) * var(--a)), var(--f) calc(12px + (100% - 24px) * var(--b)), var(--spur) calc(12px + (100% - 24px) * var(--b))); }
+  .kap-hebel input[type="range"]::-moz-range-track { height: 6px; border-radius: 3px; background: linear-gradient(to right, var(--spur) calc(12px + (100% - 24px) * var(--a)), var(--f) calc(12px + (100% - 24px) * var(--a)), var(--f) calc(12px + (100% - 24px) * var(--b)), var(--spur) calc(12px + (100% - 24px) * var(--b))); }
+  .kap-hebel input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; box-sizing: border-box; width: 24px; height: 24px; margin-top: -9px; border-radius: 50%; background: #39FF14; border: 3px solid #1A1A19; box-shadow: 0 2px 6px rgba(26,26,25,0.22); }
+  .kap-hebel input[type="range"]::-moz-range-thumb { box-sizing: border-box; width: 24px; height: 24px; border-radius: 50%; background: #39FF14; border: 3px solid #1A1A19; box-shadow: 0 2px 6px rgba(26,26,25,0.22); }
+  .kap-hebel input[type="range"]:focus-visible { outline: none; }
+  .kap-hebel input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(207,116,48,0.55); }
+  .kap-hebel input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba(207,116,48,0.55); }
+  .dh-zahlen { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .dh-z { display: flex; flex-direction: column; background: #F6F5F1; border-radius: 12px; padding: 11px 12px 12px; }
+  .dh-z.dh-z1 { background: #DCFBD3; }
+  .dh-l { font-size: 12.5px; font-weight: 600; color: var(--text); }
+  .dh-z b { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; margin-top: 4px; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .dh-z b.ab { color: #A2561C; } .dh-z b.auf { color: var(--green-text); }
+  .dh-f { font-size: 12.5px; line-height: 1.4; color: var(--text); margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .dh-leg { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 14px 0 4px; font-size: 13px; color: var(--text); }
+  .dh-leg .lg::before { content: ""; display: inline-block; width: 22px; margin-right: 7px; vertical-align: 0.3em; border-top: 3px solid #157C00; }
+  .dh-leg .lg-d::before { border-top: 2px dashed #1A1A19; }
+  .dh-svg { display: block; width: 100%; height: auto; touch-action: pan-y; cursor: ew-resize; -webkit-user-select: none; user-select: none; }
+  .dh-svg .dh-tick, .dh-svg .dh-ecke { font-size: 12.5px; fill: #55544F; font-variant-numeric: tabular-nums; }
+  .dh-svg .dh-ecke, .dh-svg .dh-wert { paint-order: stroke; stroke: #fff; stroke-width: 4px; stroke-linejoin: round; }   /* weißer Rand: Werte bleiben über Linien lesbar */
+  .dh-svg .dh-heute { font-weight: 600; fill: #1A1A19; }
+  .dh-svg .dh-wert { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .dh-unter { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: baseline; gap: 8px; margin-top: 2px; font-size: 12.5px; color: var(--text); }
+  .dh-unter .dh-mitte { text-align: center; font-size: 14px; font-weight: 600; color: var(--ink); }
+  .dh-unter output { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  @media (max-width: 860px) {
+    .kap-hebel { grid-template-columns: minmax(0, 1fr); grid-template-areas: "text" "bild" "regler" "merk"; grid-template-rows: auto; }
+  }
+  @media (max-width: 600px) {
+    .dh-z { padding: 10px 10px 11px; } .dh-z b { font-size: 24px; }
+    .dh-regler { padding: 14px 14px 12px; }
+  }
+
   @media (max-width: 600px) {
     .vier { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .dk-r { font-size: 20px; } .ds { padding: 10px 6px; } .ds-v { font-size: 18px; } .ds-erg b { font-size: 19px; }
@@ -196,13 +247,14 @@
     <div class="b2-kopf">
       <div>
         <h1>Duration und Konvexität: den Hebel berechnen</h1>
-        <p class="sub">Die <a href="begriffe.html#duration">Duration</a> sagt dir vorab, um wie viel Prozent der Kurs einer Anleihe fällt, wenn das Zinsniveau um einen Prozentpunkt steigt. Hier rechnest du sie selbst – für eine Anleihe und für dein ganzes Depot. Sechs Karten, jede mit Schaubild. Lesezeit: etwa 6 Minuten.</p>
+        <p class="sub">Die <a href="begriffe.html#duration">Duration</a> sagt dir vorab, um wie viel Prozent der Kurs einer Anleihe fällt, wenn das Zinsniveau um einen Prozentpunkt steigt. Hier rechnest du sie selbst – für eine Anleihe und für dein ganzes Depot. Sechs Karten, jede mit Schaubild, dazu ein Schieberegler zum Ausprobieren. Lesezeit: etwa 6 Minuten.</p>
       </div>
       <div class="b2-spot"><img src="spot-duration.svg" alt="" width="232" height="160"></div>
     </div>
     <nav class="lands" aria-label="Zum Thema springen">
       <a class="lbtn" href="#was"><span class="n">1</span>Was die Duration misst</a>
       <a class="lbtn" href="#hebel"><span class="n">2</span>Der Hebel</a>
+      <a class="lbtn" href="#schieben"><span class="n n-punkt" aria-hidden="true"></span>Ausprobieren</a>
       <a class="lbtn" href="#rechnen"><span class="n">3</span>Selbst rechnen</a>
       <a class="lbtn" href="#konvexitaet"><span class="n">4</span>Konvexität</a>
       <a class="lbtn" href="#depot"><span class="n">5</span>Dein Depot</a>
@@ -227,6 +279,22 @@
       </div>
       <div class="k-bild"><p class="sb-k">Modifizierte Duration bei 3&nbsp;% Kupon</p><div class="vier" role="img" aria-label="Modifizierte Duration und Kursverlust je Prozentpunkt: 2 Jahre 1,9 und minus 1,9 Prozent, 5 Jahre 4,6 und minus 4,5 Prozent, 10 Jahre 8,5 und minus 8,1 Prozent, 30 Jahre 19,6 und minus 17,3 Prozent."><div class="dk"><span class="dk-k">2 Jahre</span><span class="dk-z">Restlaufzeit</span><span class="dk-r">1,9</span><span class="dk-w">−1,9&nbsp;% je Punkt</span></div><div class="dk"><span class="dk-k">5 Jahre</span><span class="dk-z">Restlaufzeit</span><span class="dk-r">4,6</span><span class="dk-w">−4,5&nbsp;% je Punkt</span></div><div class="dk"><span class="dk-k">10 Jahre</span><span class="dk-z">Restlaufzeit</span><span class="dk-r">8,5</span><span class="dk-w">−8,1&nbsp;% je Punkt</span></div><div class="dk"><span class="dk-k">30 Jahre</span><span class="dk-z">Restlaufzeit</span><span class="dk-r">19,6</span><span class="dk-w">−17,3&nbsp;% je Punkt</span></div></div><p class="formel">Kursänderung in&nbsp;% ≈ <b>−</b> mod. Duration <b>×</b> Punkte Zinsniveau</p><p class="sb-f">Rendite 3&nbsp;%, Kurs 100. Oben die modifizierte Duration, unten der genau gerechnete Kursverlust bei +1 Punkt – er ist etwas kleiner. Die Faustformel trifft bei kleinen Schritten fast genau, bei großen weicht sie ab – Karte 4.</p></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Modifizierte Duration = Prozent Kursverlust je Prozentpunkt Zinsniveau. Eine Zahl für das Zinsänderungsrisiko.</span></p>
+    </section>
+
+    <section class="kap kap-hebel" id="schieben" aria-labelledby="h-schieben">
+      <div class="k-text">
+        <span class="knr knr-regler" aria-hidden="true"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M3 13h20"/><circle cx="15.5" cy="13" r="4.5" fill="#fff"/></svg></span>
+        <h2 id="h-schieben">So wirkt der Hebel bei deiner Anleihe</h2>
+        <p>Stell Restlaufzeit, Kupon und Rendite ein. Dann schieb den Regler unter dem Schaubild: Er hebt oder senkt das allgemeine Zinsniveau – und du siehst sofort, was mit dem Kurs passiert.</p><p>Die gestrichelte <strong>Gerade der Duration</strong> ist die Faustformel: Je steiler sie fällt, desto größer die modifizierte Duration. Das farbige Dreieck ist der Hebel – so breit wie die Zinsänderung, so hoch wie die Kursänderung laut Gerade. Die grüne Kurve ist der <strong>echte Kurs</strong>.</p>
+      </div>
+      <form class="dh-regler" onsubmit="return false" aria-label="Anleihe einstellen">
+        <div><div class="rg-k"><label for="dh-jahre">Restlaufzeit</label><output id="dh-jahre-o" for="dh-jahre">10 Jahre</output></div><input type="range" id="dh-jahre" min="1" max="30" step="1" value="10"></div>
+        <div><div class="rg-k"><label for="dh-kupon">Kupon</label><output id="dh-kupon-o" for="dh-kupon">3,00&nbsp;% pro Jahr</output></div><input type="range" id="dh-kupon" min="0" max="8" step="0.25" value="3"></div>
+        <div><div class="rg-k"><label for="dh-rendite">Rendite</label><output id="dh-rendite-o" for="dh-rendite">3,00&nbsp;%</output></div><input type="range" id="dh-rendite" min="0" max="8" step="0.25" value="3"></div>
+        <p class="dh-info"><span>Kurs heute <b id="dh-kurs0">100,00</b></span><span>Duration in Jahren <b id="dh-mac">8,8</b></span></p>
+      </form>
+      <div class="k-bild"><p class="sb-k">Kursänderung, wenn sich das Zinsniveau ändert</p><div class="dh-zahlen"><p class="dh-z dh-z1"><span class="dh-l">Modifizierte Duration</span><b id="dh-md">8,5</b><span class="dh-f" id="dh-md-f">Kurs −8,5&nbsp;% je Prozentpunkt mehr Zinsniveau</span></p><p class="dh-z"><span class="dh-l" id="dh-erg-l">Kursänderung bei +1,00&nbsp;Pkt.</span><b id="dh-erg" class="ab">−8,1&nbsp;%</b><span class="dh-f" id="dh-erg-f">Kurs 91,89 statt 100,00 – aus 10.000&nbsp;€ werden 9.189&nbsp;€</span></p></div><p class="dh-leg" aria-hidden="true"><span class="lg">echter Kurs</span><span class="lg lg-d">Gerade der Duration</span></p><div class="dh-plot"><svg id="dh-svg" class="dh-svg" role="img" aria-labelledby="dh-svg-t" xmlns="http://www.w3.org/2000/svg"><title id="dh-svg-t">Schaubild: Kursänderung der Anleihe, wenn sich das Zinsniveau um minus 3 bis plus 3 Prozentpunkte ändert</title></svg></div><input type="range" id="dh-delta" min="-3" max="3" step="0.05" value="1"><div class="dh-unter"><span aria-hidden="true">← sinkt</span><span class="dh-mitte"><label for="dh-delta">Zinsniveau ändert sich um</label> <output id="dh-delta-o" for="dh-delta">+1,00&nbsp;Pkt.</output></span><span aria-hidden="true">steigt →</span></div><p class="sb-f" id="dh-satz">Die Gerade sagt −8,5&nbsp;%, der echte Kurs fällt nur um 8,1&nbsp;% – die Kurve liegt darüber. Das ist die Konvexität (Karte 4).</p><noscript><p class="sb-f">Der Schieberegler braucht JavaScript.</p></noscript><p class="sr-only" id="dh-live" aria-live="polite" aria-atomic="true"></p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Lange Restlaufzeit und kleiner Kupon machen die Gerade steil – der Kurs reagiert stark auf das Zinsniveau. Kurze Restlaufzeit und hoher Kupon halten sie flach.</span></p>
     </section>
 
     <section class="kap" id="rechnen" aria-labelledby="h-rechnen">
@@ -290,6 +358,7 @@
       <div class="quellen-body">
         <p><strong>Rechnung.</strong> Alle Werte für Anleihen mit 3&nbsp;% Kupon (jährlich), Rendite 3&nbsp;%, Kurs 100, glatte Restlaufzeit. Macaulay-Duration = Summe (Zeitpunkt × Barwert der Zahlung) ÷ Kurs; modifizierte Duration = Macaulay ÷ (1 + Rendite): 2 Jahre 1,97 / 1,91 · 5 Jahre 4,72 / 4,58 · 10 Jahre 8,79 / 8,53 · 30 Jahre 20,19 / 19,60. Effektive Duration (Karte 3) = (Kurs bei −1 Punkt − Kurs bei +1 Punkt) ÷ (2 × Kurs × 0,01): 10 Jahre 8,55. Kurse der 10-jährigen bei 2 / 4&nbsp;%: 108,98 / 91,89; der 30-jährigen bei 1 / 2 / 4 / 5&nbsp;%: 151,6 / 122,4 / 82,7 / 69,3; bei ±2 Punkten −30,7&nbsp;% / +51,6&nbsp;%. Die Kurve in Karte 4 ist der exakte Barwert von 0 bis 6&nbsp;% in Schritten von 0,25 Punkten, die Gerade die Tangente bei 3&nbsp;% mit Steigung −19,6 je Punkt.</p>
         <p><strong>Depot.</strong> Depot-Duration = Summe (Anteil am Kurswert × modifizierte Duration); Beispiel 0,4 × 1,9 + 0,4 × 4,6 + 0,2 × 8,5 = 4,3. Die Euro-Beträge sind Näherungen nach der Faustformel; nach oben (−1 Punkt) leicht mehr wegen der Konvexität.</p>
+        <p><strong>Schieberegler.</strong> Anleihe mit jährlichem Kupon und glatter Restlaufzeit von 1 bis 30 Jahren; Kurs = Barwert aller Zahlungen zur eingestellten Rendite, modifizierte Duration = Macaulay-Duration ÷ (1 + Rendite). Die Kurve zeigt die exakte Kursänderung, wenn sich die Rendite der Anleihe um −3 bis +3 Prozentpunkte verschiebt, die Gerade die Faustformel −modifizierte Duration × Zinsänderung. Werte über ±40&nbsp;% stehen am Rand des Schaubilds mit Pfeil. Ohne Stückzinsen, Kosten und Steuern.</p>
         <p><strong>Horizont-Regel.</strong> Immunisierung: Entspricht die Duration dem Anlagehorizont, gleichen sich Kursänderung und Wiederanlageeffekt einer einmaligen, kleinen Zinsänderung näherungsweise aus (Redington 1952). Bei mehreren oder großen Zinsänderungen gilt das nur ungefähr; die Bandbreiten in Karte 6 sind Faustregeln dieser Website.</p>
       </div>
     </details>
@@ -306,6 +375,7 @@
 <script src="site.js"></script>
 <script src="konto.js"></script>
 <script src="mein.js"></script>
+<script src="duration-hebel.js"></script>
 <script>
 // Rückfall, falls site.js nicht lädt (Netzfehler): Minimalform, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
 window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, minus: function (s) { return String(s).replace(/^-/, "\u2212"); }, zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\u2212") : "\u2013"; }, load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, hoverWrap: function (s) { return s; }, navInit: function () {} };
