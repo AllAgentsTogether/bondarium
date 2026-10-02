@@ -847,6 +847,150 @@
     #bnd-top10 .tp-staat .tp-lnk { background: rgba(255,255,255,0.6); }
     #bnd-top10 .tp-etf .tp-btn { flex: 1 1 100%; margin-left: 70px; }
   }
+  /* ============================================================================================================
+     Aus einem Guss 02.10.2026 (Nutzerwunsch „harmonisiere die Startseite … einheitliches grafisches Design, wie aus einem Guss“):
+     Die Blöcke aus acht Entwürfen (30.09.–02.10.2026) teilen jetzt dieselben Bausteine. Texte, Aufbau und Bilder bleiben; vereinheitlicht
+     sind Flächenfarben, Ecken, Rahmen, Schatten, Knöpfe, Abschnittsköpfe, Abstände, Kartentitel und die Konturfarbe der Motive.
+       · eine dunkle Fläche: Tinte #1A1A19 wie das Logo (vorher zusätzlich Dunkelgrün #1B2F23 bei ETF- und Langläufer-Karte)
+       · eine helle Grünfläche --flaeche-hell (vorher #EEF5E8, #EEF7E8, #E8FFE3)
+       · Neon nur für Hauptknöpfe und den Kupon-Punkt (Dachzeile, Nummern, Motive) – die Top-10-Karten haben Zweitknöpfe
+       · vier Ecken nach Rolle: Bühne 20 · Karte 16 · innen 12 · Knopf 10; ein Kartenrahmen, ein Hover, ein Schwebeschatten
+       · ein Abschnittskopf: Dachzeile mit Kupon-Punkt → Überschrift → Unterzeile → 24 px bis zum Inhalt
+       · Titel in Karten 21 px/600 (--fs-h3) wie Zitate und Lernpfad; Knöpfe und Links 600 (vorher teils 700/800)
+       · Kontur der Motive in Tinte wie Bildwelt 2.0 (vorher Zinsatlas in Grün)
+     Steht ganz am Ende und überschreibt die Blöcke darüber; Schriftgrößen weiter nur aus --fs-*.
+     ============================================================================================================ */
+  :root {
+    --flaeche-hell: #EEF7E8; --flaeche-dunkel: var(--ink);
+    --radius-buehne: 20px; --radius-karte: 16px; --radius-innen: 12px; --radius-knopf: 10px;
+    --schatten-karte: 0 1px 2px rgba(26,26,25,0.04);
+    --schatten-hover: 0 1px 2px rgba(26,26,25,0.04), 0 14px 30px -14px rgba(26,26,25,0.24);
+    --schatten-schwebend: 0 1px 2px rgba(26,26,25,0.08), 0 24px 48px -18px rgba(26,26,25,0.42);
+    --abstand-abschnitt: 80px; --abstand-kopf: 24px; --luecke: 16px; --innen: 24px;
+  }
+  @media (max-width: 600px) { :root { --radius-buehne: 16px; --abstand-abschnitt: 56px; --abstand-kopf: 16px; --luecke: 12px; --innen: 16px; } }
+
+  /* --- 1 · Rhythmus: gleicher Abstand zwischen allen Abschnitten; der Einstieg gehört zum ersten Bildschirm ------------- */
+  .sheet > section + section { margin-top: var(--abstand-abschnitt); }
+  .sheet > section#bnd-einstieg { margin-top: 32px; }
+  #bnd-top10 { margin-bottom: 0; }
+  footer.fuss { margin-top: var(--abstand-abschnitt); }
+
+  /* --- 2 · Ein Abschnittskopf: Dachzeile mit Kupon-Punkt, Überschrift, Unterzeile ----------------------------------- */
+  .kicker.dach, #bnd-zinsatlas .za-dach, #bnd-broker .bc-k { display: flex; align-items: center; gap: 9px; margin: 0 0 10px; font-size: var(--fs-label); font-weight: 600; line-height: 1.3; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); }
+  .kicker.dach::before, #bnd-zinsatlas .za-dach::before, #bnd-broker .bc-k::before { content: ""; flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: inset 0 0 0 1.5px var(--ink); }
+  #bnd-broker .bc-k { color: #fff; }
+  #bnd-broker .bc-k::before { box-shadow: none; }   /* auf Tinte wie im Logo: Neon ohne Ring */
+  .bt h2, .bsp-kopf h2, #bnd-zinsatlas h2, #bnd-broker h2 { margin: 0; font-size: var(--fs-h2); font-weight: 700; line-height: 1.15; letter-spacing: -0.025em; }
+  #bnd-einstieg h2 { letter-spacing: -0.025em; }
+  .bt .bsub, .bsp-kopf p:not(.kicker), #bnd-zinsatlas .za-sub, #bnd-broker .bc-sub { margin: 10px 0 0; font-size: var(--fs-text); line-height: 1.5; color: var(--text); }
+  #bnd-broker .bc-sub { color: rgba(255,255,255,0.78); }
+  .bt, .bsp-kopf { margin: 0 0 var(--abstand-kopf); }
+  #bnd-zinsatlas .za-sub { margin-bottom: var(--abstand-kopf); }
+  /* „Top-10-Listen: …“ war Zwischentitel aus der Zeit, als hier auch die Zinsen standen – jetzt Unterzeile wie in jedem Abschnitt */
+  .konkret .bt { margin-bottom: 0; }
+  .konkret .k-lab { display: block; margin: 10px 0 var(--abstand-kopf); font-size: var(--fs-text); font-weight: 600; line-height: 1.5; letter-spacing: 0; color: var(--ink); }
+  .konkret .k-lab small { font-size: inherit; font-weight: 400; color: var(--text); }
+
+  /* --- 3 · Bühnen (Suchband, Einstieg, Broker): Ecke 20, Tinte oder Hellgrün ----------------------------------------- */
+  .suchband { border-radius: var(--radius-buehne); box-shadow: var(--schatten-schwebend); }
+  #bnd-einstieg { border-radius: var(--radius-buehne); background: var(--flaeche-hell); }
+  #bnd-einstieg .be-bild img { border-bottom-left-radius: var(--radius-buehne); }
+  #bnd-einstieg .be-karte { border-radius: var(--radius-karte); }
+  #bnd-broker { border-radius: var(--radius-buehne); background: var(--flaeche-dunkel); padding: 40px 48px; }
+  #bnd-broker .bc-karte { border-radius: var(--radius-innen); box-shadow: 0 2px 4px rgba(0,0,0,0.25), 0 24px 44px -16px rgba(0,0,0,0.65); }   /* schwebt wie die Karte im Hero, statt harter Versatzschatten */
+
+  /* --- 4 · Ein Kartenrahmen, ein Hover ------------------------------------------------------------------------------ */
+  .box, .tueren.pfad, .vt, #bnd-top10 .tp-k, #bnd-zinsatlas .zf { border: 1px solid var(--rule); border-radius: var(--radius-karte); box-shadow: var(--schatten-karte); }
+  @media (min-width: 601px) { .interessant .table-scroll { border-radius: var(--radius-karte); box-shadow: var(--schatten-karte); padding-left: var(--innen); padding-right: var(--innen); } }
+  a.box:hover, #bnd-zinsatlas .zf:hover { border-color: var(--green-text); box-shadow: var(--schatten-hover); transform: translateY(-2px); }
+  #bnd-top10 .tp-etf, #bnd-zinsatlas .zf-lang { background: var(--flaeche-dunkel); border-color: var(--flaeche-dunkel); }
+  #bnd-zinsatlas .zf-lang:hover { border-color: var(--green); }
+  #bnd-top10 .tp-staat { background: #fff; border-color: var(--rule); }
+  .ppl, .vertiefen, #bnd-top10, #bnd-zinsatlas .zf-reihe { gap: var(--luecke); }
+  .vertiefen { margin-top: var(--luecke); }
+
+  /* --- 5 · Karteninhalt: gleiche Innenabstände, Titel 21 px/600 --------------------------------------------------------- */
+  .ppl a { padding: var(--innen) var(--innen) 0; }
+  .ppl .cta { margin: 20px calc(-1 * var(--innen)) 0; padding: 14px var(--innen); }
+  .tueren.pfad a { padding: var(--innen) 16px var(--innen) var(--innen); }
+  #bnd-top10 .tp-k { min-height: 0; padding: var(--innen); }
+  #bnd-top10 h4, #bnd-zinsatlas .zf-h, #bnd-broker .bc-kt { font-size: var(--fs-h3); font-weight: 600; line-height: 1.25; letter-spacing: -0.015em; }
+  #bnd-top10 h4 { margin-top: 20px; }
+  #bnd-zinsatlas .zf { padding: 8px 8px var(--innen); }
+  #bnd-zinsatlas .zf-bild { border-radius: var(--radius-innen); background: var(--flaeche-hell); }
+  #bnd-zinsatlas .zf-lang .zf-bild { background: rgba(255,255,255,0.07); }
+  #bnd-zinsatlas .zf-t { padding: 20px 16px 0; }
+  #bnd-zinsatlas .zf-d { margin-top: 8px; }
+  #bnd-zinsatlas .zf-go { padding: 20px 16px 0; }
+
+  /* --- 6 · Motive: Neon-Kreis als Bühne, Kontur in Tinte; „10“-Marke leise ---------------------------------------------- */
+  #bnd-top10 .tp-bild { width: 88px; height: 88px; }
+  #bnd-top10 .tp-bild svg { width: 56px; height: 56px; }
+  #bnd-top10 .tp-bild, #bnd-top10 .tp-unt .tp-bild { background: var(--green); color: var(--ink); }
+  #bnd-top10 .tp-staat .tp-bild svg { color: var(--ink); }
+  #bnd-top10 .tp-n { top: calc(var(--innen) + 24px); right: var(--innen); width: 40px; height: 40px; font-size: var(--fs-ui); }
+  #bnd-top10 .tp-n, #bnd-top10 .tp-unt .tp-n { background: var(--flaeche-hell); color: var(--green-text); }
+  #bnd-top10 .tp-etf .tp-n { background: rgba(255,255,255,0.1); color: var(--green); }
+  #bnd-zinsatlas .zf:not(.zf-lang) .zf-bild [stroke="#157C00"] { stroke: var(--ink); }
+  #bnd-zinsatlas .zf:not(.zf-lang) .zf-bild [fill="#157C00"] { fill: var(--ink); }
+
+  /* --- 7 · Knöpfe: ein Hauptknopf (Neon), ein Zweitknopf (Hellgrün), ein Textlink (Grün mit Pfeil) ------------------------ */
+  .suche .go, #bnd-einstieg .be-knopf, #bnd-broker .bc-go, #bnd-top10 .tp-btn { min-height: 48px; border-radius: var(--radius-knopf); font-size: var(--fs-ui); font-weight: 600; line-height: 1.2; }
+  #bnd-einstieg .be-knopf, #bnd-broker .bc-go, #bnd-top10 .tp-btn { display: inline-flex; align-items: center; gap: 12px; padding: 12px 18px 12px 20px; }
+  #bnd-broker .bc-go { justify-content: flex-start; min-width: 0; }
+  #bnd-einstieg .be-knopf svg, #bnd-broker .bc-go svg, #bnd-top10 .tp-pf, #bnd-zinsatlas .zf-go svg, .ppl .cta svg { width: 18px; height: 18px; }
+  #bnd-top10 .tp-btn, #bnd-top10 .tp-unt .tp-btn { background: var(--flaeche-hell); color: var(--ink); }
+  #bnd-top10 .tp-btn:hover, #bnd-top10 .tp-unt .tp-btn:hover { background: #DCFBD3; }
+  #bnd-top10 .tp-etf .tp-btn { flex: 0 1 auto; background: rgba(255,255,255,0.12); color: #fff; }
+  #bnd-top10 .tp-etf .tp-btn:hover { background: rgba(255,255,255,0.2); }
+  #bnd-top10 .tp-etf .tp-btn .tp-pf { color: var(--green); }
+  #bnd-top10 .tp-go { padding-top: 24px; }
+  #bnd-top10 .tp-lnk, #bnd-zinsatlas .zf-go, #bnd-broker li a, .ppl .cta { font-weight: 600; }
+  #bnd-top10 .tp-lnk { flex: 0 1 auto; justify-content: flex-start; gap: 10px; border-bottom: 0; color: var(--green-text); }
+  #bnd-top10 .tp-lnk:hover { text-decoration: underline; text-underline-offset: 3px; }
+  #bnd-broker .bc-kk { font-weight: 600; letter-spacing: 0.08em; color: var(--green-text); }   /* Kartenkennung grün wie „Anlageziele“ und „Tiefer einsteigen“ */
+
+  /* --- 8 · Marken und Hero-Karte: dieselbe Hellgrün-Marke für „Staat“ ------------------------------------------------- */
+  .itab .art, .hk-art { background: var(--flaeche-hell); }
+  .hero-karte { box-shadow: var(--schatten-schwebend); }
+
+  @media (prefers-reduced-motion: reduce) { a.box:hover, #bnd-zinsatlas .zf:hover { transform: none; } }
+
+  /* --- Tablet und Handy ---------------------------------------------------------------------------------------------- */
+  @media (max-width: 1000px) {
+    #bnd-top10 .tp-k { padding: 20px; }
+    #bnd-top10 .tp-bild { width: 76px; height: 76px; } #bnd-top10 .tp-bild svg { width: 48px; height: 48px; }
+    #bnd-top10 .tp-n { top: 38px; right: 20px; }
+    #bnd-top10 .tp-btn, #bnd-top10 .tp-lnk, #bnd-top10 .tp-etf .tp-btn { flex: 1 1 100%; }
+    #bnd-top10 .tp-btn { justify-content: space-between; }
+  }
+  @media (max-width: 860px) { #bnd-broker { padding: 36px; } }
+  @media (max-width: 700px) {
+    .sheet > section#bnd-einstieg { margin-top: 24px; }
+    #bnd-broker { padding: 28px 20px 32px; }
+    #bnd-top10 .tp-k { padding: 14px; }
+    #bnd-top10 .tp-bild { width: 56px; height: 56px; } #bnd-top10 .tp-bild svg { width: 36px; height: 36px; }
+    #bnd-top10 h4 { margin: 0; font-size: var(--fs-karte); }
+    #bnd-top10 .tp-go { padding-top: 12px; }
+    #bnd-top10 .tp-btn, #bnd-top10 .tp-lnk { min-height: 44px; padding: 10px 12px 10px 14px; justify-content: space-between; font-size: var(--fs-klein); }
+    #bnd-top10 .tp-btn { flex: 1 1 60%; } #bnd-top10 .tp-lnk { flex: 1 1 40%; } #bnd-top10 .tp-etf .tp-btn { flex: 1 1 100%; }
+    #bnd-top10 .tp-lnk, #bnd-top10 .tp-staat .tp-lnk { border: 1px solid var(--rule); border-radius: var(--radius-knopf); background: #fff; color: var(--ink); }
+    #bnd-top10 .tp-lnk:hover { text-decoration: none; border-color: var(--green-text); }
+  }
+  @media (max-width: 600px) {
+    .ppl .cta { margin: 14px calc(-1 * var(--innen)) 0; padding: 12px var(--innen); }
+    .tueren.pfad { border: 1px solid var(--rule); border-radius: var(--radius-karte); overflow: hidden; background: #fff; }   /* auch am Handy eine Karte wie die übrigen */
+    .tueren.pfad a, .tueren.pfad a:nth-child(n+3) { padding: 14px 12px 14px 16px; }
+    #bnd-broker .bc-go { width: 100%; justify-content: space-between; }   /* Hauptknopf am Handy über die ganze Breite wie im Einstieg */
+    #bnd-zinsatlas .zf { padding: 12px 14px 12px 8px; }
+    #bnd-zinsatlas .zf-bild, #bnd-zinsatlas .zf-lang .zf-bild { background: none; }
+    #bnd-zinsatlas .zf-t { padding: 6px 0 0; }
+    #bnd-zinsatlas .zf-h { font-size: var(--fs-karte); }
+    #bnd-zinsatlas .zf-d { margin-top: 4px; }
+    #bnd-zinsatlas .zf-go { padding: 6px 0 0; }
+  }
+  @media (max-width: 360px) { #bnd-broker { padding: 22px 16px 28px; } }
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Anleihen verstehen und finden", "headline": "Anleihen verstehen und finden", "description": "Anleihen verstehen und finden: Wissen in kurzen Schritten, Renditen seit 1970, die meistgehandelten Anleihen und eine Suche über rund 33.000 Anleihen.", "inLanguage": "de", "isAccessibleForFree": true, "dateModified": "2026-10-02", "publisher": {"@type": "Organization", "name": "Bondarium", "url": "https://www.bondarium.de/"}, "mainEntityOfPage": "https://www.bondarium.de/"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Bondarium","alternateName":"bondarium.de","url":"https://www.bondarium.de/","description":"Anleihen in Perspektive: Staats- und Unternehmensanleihen weltweit, Langläufer, die meistgehandelten Anleihen je Land und Restlaufzeit und eine Suche über alle Anleihen an deutschen Börsen.","inLanguage":"de"}</script>
@@ -979,7 +1123,7 @@
       </section>
 
       <section class="weg-b" id="akademie" aria-labelledby="h-akademie">   <!-- seit 28.09.2026 (Nutzerwunsch) unter „Was willst du erreichen?“ mit Überschrift „Unsere Akademie“; vorher direkt unter dem Hero -->
-        <div class="bt"><h2 id="h-akademie">Dein Weg zur ersten Anleihe: verstehen, auswählen, kaufen</h2><p class="bsub">Ein Weg statt vieler Einzelseiten.</p></div>   <!-- seit 29.09.2026 (UX-Review Nr. 10) als Lernpfad; darunter „Vertiefen“ (vorher eigener Abschnitt „Lerne alles über Anleihen“, Nr. 11) -->
+        <div class="bt"><p class="kicker dach">Akademie</p><h2 id="h-akademie">Dein Weg zur ersten Anleihe: verstehen, auswählen, kaufen</h2><p class="bsub">Ein Weg statt vieler Einzelseiten.</p></div>   <!-- seit 29.09.2026 (UX-Review Nr. 10) als Lernpfad; darunter „Vertiefen“ (vorher eigener Abschnitt „Lerne alles über Anleihen“, Nr. 11) -->
         <div class="tueren pfad">
           <a href="wissen.html#grundlagen" style="--c:#39FF14;--ci:#1A1A19;--ct:#157C00;--tint:#DFFFD9"><span class="txt"><span class="kopf"><span class="nr" aria-hidden="true">1</span><span class="verb">Grundlagen</span></span><span class="sub"><b>Von Grund auf&nbsp;erklärt.</b></span><span class="mehr">Was ist eine Anleihe, was Rendite, was Risiko?</span></span><svg class="ill" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 14C20 10.5 13 10 7 11V34C13 33 20 33.5 24 37Z" fill="#DCFBD3"/><path d="M24 14C28 10.5 35 10 41 11V34C35 33 28 33.5 24 37Z" fill="#fff"/><path d="M29 19.5L36 18.5M29 24.5L36 23.5M29 29.5L33.5 29"/><circle cx="24" cy="5.5" r="3.5" fill="#39FF14"/></svg></a>
           <a href="wissen.html#auswaehlen" style="--c:#39FF14;--ci:#1A1A19;--ct:#157C00;--tint:#DFFFD9"><span class="txt"><span class="kopf"><span class="nr" aria-hidden="true">2</span><span class="verb">Auswählen</span></span><span class="sub"><b>Welche Anleihe passt zu&nbsp;dir?</b></span><span class="mehr">Ziel, Laufzeit, Staat oder Unternehmen.</span></span><svg class="ill" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="24" cy="39" rx="11" ry="3" fill="#DCFBD3" stroke="none"/><path d="M24 39V27C24 21 14 19.5 13 12M24 27C24 21 34 19.5 35 12"/><circle cx="13" cy="8.5" r="4" fill="#fff"/><circle cx="35" cy="8.5" r="4.5" fill="#39FF14"/></svg></a>
