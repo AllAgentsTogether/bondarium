@@ -148,7 +148,9 @@ die Prüfung über alle Paare, sieben bis zehn liegen enger beieinander (Zahlen,
 ist ganz leicht hinterlegt, damit man sieht, wo ein neues Jahr anfängt. Läuft das Depot länger als 30 Jahre, folgen nur noch die Jahre mit einer Rückzahlung als eigene
 Spalte; die Jahre dazwischen fasst je eine schmale, schraffierte Spalte zusammen – „je 570“, wenn die Zinsen in diesen Jahren
 gleich sind, sonst „Ø …“, nie eine Summe –, mit Achsenbruch und der Beschriftung „2056 / bis 2085“. Lücken von ein oder zwei
-Jahren bleiben einzelne Jahre. Alles auf derselben Skala, die späten Rückzahlungen sind also direkt mit den frühen
+Jahren bleiben einzelne Jahre. Ist eine Jahresspalte schmaler als „2026“ (Bildbreite etwa 860 bis 1.100 px), steht die
+volle Jahreszahl nur in der ersten Spalte, an jedem Jahrzehnt und nach einem Sprung, dazwischen kurz „’27“ (seit 03.10.2026,
+Nutzerwunsch). Alles auf derselben Skala, die späten Rückzahlungen sind also direkt mit den frühen
 vergleichbar. Seit 02.10.2026 (Nutzerentscheid für Lösung D, `tmp/Bondarium-Langlaeufer-Schaubild-2.pdf`); davor kurz ein graues
 Ausblick-Feld rechts (Lösung A, vom Nutzer verworfen: „Würg“), davor eine gestrichelte Spalte mit einem Satz unter dem Bild. Ein Schaubild der nächsten zwölf Monate
 gab es am 01.10.2026 kurz; es ist auf Nutzerwunsch entfernt. Gerechnet wird wie im Steckbrief:
@@ -192,11 +194,12 @@ wie bei der Merkliste – links Anzahl und Kursstand, rechts „Musterdepot teil
 `teilen(nurSpeichern, art)`, eigene Statuszeile `#kd-teilen-status`). `musterPdf()` baut das PDF im Browser, es geht nicht
 über den Server und enthält nichts Persönliches. Inhalt wie der Reiter: Tabelle (Anleihe mit ISIN · Registername, Kurs,
 Kupon, Fälligkeit mit Restlaufzeit, Nennwert in der Währung der Anleihe mit Euro-Betrag darunter, Kurswert mit
-Kursgewinn/-verlust, Zinsen pro Jahr) und Summe, der Satz zu Zinsen und Rückzahlung, „Zahlungen pro Jahr“ und die
+Kursgewinn/-verlust, Zinsen pro Jahr) und Summe, „Zahlungen pro Jahr“ und die
 Zinstermine des nächsten Kalenderjahrs. Statt des farbigen Schaubilds steht eine Jahrestabelle mit Balken (Zinsen grün,
 Rückzahlung Tinte; jedes zweite Jahr hinterlegt) – auch schwarz-weiß gedruckt lesbar. Immer das ganze Depot, auch wenn im
 Schaubild Anleihen ausgeblendet sind. Fremdwährungen: Sternchen am Namen, der EZB-Kurs einmal in den Hinweisen unten. Lange
-Depots laufen auf eine zweite Seite weiter. Dateiname `Bondarium-Musterdepot-JJJJ-MM-TT.pdf`.
+Depots laufen auf eine zweite Seite weiter. Dateiname `Bondarium-Musterdepot-JJJJ-MM-TT.pdf`. Der Satz „Bis zur letzten Fälligkeit … Kaufpreis …“ steht seit 03.10.2026 auch
+im PDF nicht mehr (Nutzerwunsch, wie auf der Seite).
 
 Euro-Zeichen mitten im Text: macOS-Vorschau (PDFKit) kennt für die Standardschrift Helvetica keine Breite des „€“ und
 zeichnet es breiter, der folgende Text liefe hinein. `tx()` setzt deshalb jedes Stück einzeln und lässt hinter „€“ ein

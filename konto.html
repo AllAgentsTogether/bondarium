@@ -1361,6 +1361,9 @@ MC.navInit();
       da.push({ x0: cx - b / 2, x1: cx + b / 2, y, h }); return y;
     }; };
     const platzZ = platz(), platzR = platz(), platzS = platz();
+    // Jahreszahlen an der Achse: Ist die Spalte schmaler als „2026“ (Bildbreite etwa 860 bis 1.100 px), steht die volle Zahl nur in
+    // der ersten Spalte, an jedem Jahrzehnt und nach einem Sprung, dazwischen kurz „’27“ (Nutzerwunsch 03.10.2026)
+    const knapp = bw < breite("2026") + 4, voll = i => i === 0 || +sp[i].k % 10 === 0 || sp[i - 1].von != null || +sp[i - 1].k !== +sp[i].k - 1;
     // gestapelte Segmente einer Spalte, von unten nach oben, mit 2 px Abstand; liefert die Oberkante
     function stapel(teile, wert, cx, b, y0, hoehe, max, was) {
       let y = y0, svg = "";
@@ -1400,7 +1403,7 @@ MC.navInit();
       if (x.von != null) {   // zweizeilig „2056 / bis 2085“, Achsenbruch am linken Rand auf jeder Grundlinie
         s += text(cx, yS + 19, "kd-a", String(x.von)) + text(cx, yS + 34, "kd-b", x.bis > x.von ? `bis ${x.bis}` : "");
         [yZ, yR, yS].forEach(y => { const bx = xs[i].x0 + 3; s += `<rect x="${(bx - 5).toFixed(1)}" y="${y - 8}" width="10" height="14" fill="#fff"/><path d="M${(bx - 5).toFixed(1)} ${y + 5} l4 -10 m3 10 l4 -10" stroke="#1A1A19" stroke-width="1.4" fill="none" stroke-linecap="round"/>`; });
-      } else s += text(cx, yS + 19, "kd-a", x.k);
+      } else s += text(cx, yS + 19, "kd-a", knapp && !voll(i) ? "’" + x.k.slice(2) : x.k);
     });
     el.innerHTML = s + "</svg>";
   }
@@ -1768,8 +1771,8 @@ MC.navInit();
     return { blob: P.blob("Merkliste – Bondarium"), name: `Bondarium-Merkliste-${jetzt.getFullYear()}-${zwei(jetzt.getMonth() + 1)}-${zwei(jetzt.getDate())}.pdf` };
   }
   // ---------- Musterdepot teilen (seit 02.10.2026, Nutzerentscheid): PDF wie bei der Merkliste ----------
-  // Entsteht auf dem Gerät, geht nicht über unseren Server, enthält nichts Persönliches. Inhalt wie der Reiter: Tabelle mit Summe, der Satz
-  // zu Zinsen und Rückzahlung, „Zahlungen pro Jahr“ (statt des farbigen Schaubilds eine Jahrestabelle mit Balken – auch schwarz-weiß
+  // Entsteht auf dem Gerät, geht nicht über unseren Server, enthält nichts Persönliches. Inhalt wie der Reiter: Tabelle mit Summe,
+  // „Zahlungen pro Jahr“ (statt des farbigen Schaubilds eine Jahrestabelle mit Balken – auch schwarz-weiß
   // lesbar) und die kommenden Zinstermine. Immer das ganze Depot, auch wenn im Schaubild Anleihen ausgeblendet sind.
   function musterPdf() {
     const P = MC.pdf(), B = P.B, H = P.H, R = 40, jetzt = new Date(), LINK = "https://www.bondarium.de/";
@@ -1848,7 +1851,7 @@ MC.navInit();
       if (y + 31 > UNTEN) seite(false);
     });
     // Summenzeile wie in der Tabelle
-    const S = depotSummen(pos), mitD = pos.filter(p => p.diff != null), sK = S.kw, sD = mitD.reduce((a, p) => a + p.diff, 0);
+    const S = depotSummen(pos);
     platz(40);
     P.linie(R, y, B - R, y, INK, 0.8);
     P.text(R, y + 14, "Summe", { gr: 9, fett: true }); P.text(R, y + 25, `${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}${fremd.length ? ", in Euro" : ""}`, klein());
@@ -1864,14 +1867,8 @@ MC.navInit();
     const merk = new Set(AUS); AUS.clear();   // das ganze Depot, nicht nur die Auswahl im Schaubild
     const z = zahlungen(); merk.forEach(i => AUS.add(i));
     if (z.length) {
-      // Satz wie über dem Schaubild
-      const zi = z.filter(x => x.art === "Zinsen").reduce((a, x) => a + x.betrag, 0), ru = z.filter(x => x.art === "Rückzahlung").reduce((a, x) => a + x.betrag, 0);
-      const satz = `Bis zur letzten Fälligkeit am ${MC.datum(z[z.length - 1].tag)}: ${eur(zi)} Zinsen und ${eur(ru, fremdIn(pos) ? 2 : 0)} Rückzahlung, zusammen ${eur(zi + ru)}.` +
-        (S.mitKurs ? ` Der Kaufpreis beträgt heute ${eur(S.preis)} (Kurswert ${eur(sK)} plus ${eur(S.sz)} Stückzinsen), ohne Gebühren${mitD.length ? `; die Rückzahlung zum Nennwert liegt ${eur(Math.abs(sD))} ${sD < 0 ? "unter" : "über"} dem Kurswert` : ""}.` : "");
-      const zeilen = P.umbrechen(satz, B - 2 * R, 9.5);
-      platz(zeilen.length * 13);
-      zeilen.forEach(l => { tx(R, y, l, { gr: 9.5, farbe: INK }); y += 13; });
-      y += 18;
+      // Der Satz „Bis zur letzten Fälligkeit … Kaufpreis …“ steht seit 03.10.2026 auch hier nicht mehr (Nutzerwunsch, wie über dem Schaubild)
+      y += 8;
       // Zahlungen pro Jahr: Jahrestabelle mit Balken (Zinsen grün, Rückzahlung Tinte), jedes zweite Jahr hinterlegt wie im Schaubild
       const j0 = jetzt.getFullYear(), j1 = Math.min(+z[z.length - 1].tag.slice(0, 4), j0 + JAHRE_MAX - 1), jahr = [];
       for (let j = j0; j <= j1; j++) jahr.push({ j, zins: 0, rueck: 0 });
