@@ -1,9 +1,12 @@
 <?php
 /**
- * E-Mail 30 Tage vor jeder Fälligkeit (seit 02.10.2026, Nutzerentscheid nach PDF-Mockup; Dokumentation: docs/KONTO.md).
+ * E-Mail vor jeder Fälligkeit (seit 02.10.2026, Nutzerentscheid nach PDF-Mockup; Dokumentation: docs/KONTO.md).
  * Wer in „Mein Bondarium“ den Schalter „E-Mail vor jeder Fälligkeit“ einschaltet (konto.php, aktion=erinnern), bekommt eine
  * kurze E-Mail, wenn eine Anleihe aus einem seiner Musterdepots in höchstens ERINNERUNG_TAGE Tagen fällig wird – je
- * Anleihe und Fälligkeit einmal, mehrere in einer E-Mail. Nur Tatsachen (Anleihe, ISIN, Tag, Musterdepot, Nennwert), keine
+ * Anleihe und Fälligkeit einmal, mehrere in einer E-Mail. Seit 02.10.2026 abends (Nutzerwunsch: „20 Tage bevor sie fällig
+ * wird und dann nochmal zum Tag der Fälligkeit, damit man sein Konto überprüfen kann“) sind es 20 statt 30 Tage, und am
+ * Fälligkeitstag selbst kommt eine zweite E-Mail. Welche schon verschickt ist, steht in der Tabelle erinnert: die erste
+ * unter der Fälligkeit „JJJJ-MM-TT“, die zweite unter „JJJJ-MM-TT#tag“ (keine neue Spalte nötig; beide fallen am Tag danach heraus). Nur Tatsachen (Anleihe, ISIN, Tag, Musterdepot, Nennwert), keine
  * Vorschläge für andere Anleihen – sonst wäre es Werbung. Jede E-Mail trägt einen Link, der die Erinnerung mit einem Klick
  * ausschaltet (konto.html#erinnerung-aus=Nummer.Prüfsumme; geprüft in konto.php, aktion=erinnerung-aus).
  *
@@ -21,7 +24,7 @@ declare(strict_types=1);
 
 if (realpath($_SERVER['SCRIPT_FILENAME'] ?? '') === __FILE__) { http_response_code(404); exit; }
 
-const ERINNERUNG_TAGE    = 30;
+const ERINNERUNG_TAGE    = 20;
 const ERINNERUNG_STUNDE  = 7;
 const ERINNERUNG_MAX     = 300;   // E-Mails je Lauf – was nicht mehr passt, geht beim nächsten Lauf
 const ERINNERUNG_ABSENDER = 'info@bondarium.com';
@@ -131,13 +134,22 @@ function erinnerung_datum(string $iso): string
     return substr($iso, 8, 2) . '.' . substr($iso, 5, 2) . '.' . substr($iso, 0, 4);
 }
 
-/** Text einer Erinnerung. $posten: [[Name, ISIN, Fälligkeit, Tage, Depotname, Nennwert, Währung], …] */
-function erinnerung_text(array $posten, string $aus): array
+/**
+ * Text einer Erinnerung. $posten: [[Name, ISIN, Fälligkeit, Tage, Depotname, Nennwert, Währung], …]. $heute = true: die zweite
+ * E-Mail am Tag der Fälligkeit (alle Posten sind heute fällig).
+ */
+function erinnerung_text(array $posten, string $aus, bool $heute = false): array
 {
     usort($posten, fn($a, $b) => strcmp($a[2], $b[2]) ?: strcmp($a[4], $b[4]));
     $isins = array_unique(array_column($posten, 1));
     $tage = fn(int $t) => $t === 1 ? 'morgen' : "in $t Tagen";
-    if (count($isins) === 1) {
+    if ($heute) {
+        $depots = array_unique(array_column($posten, 4));
+        $eine = count($isins) === 1;
+        $betreff = $eine ? 'Bondarium: Heute wird eine Anleihe aus deinem Musterdepot fällig' : 'Bondarium: Heute werden ' . count($isins) . ' Anleihen aus deinen Musterdepots fällig';
+        $kopf = 'heute ' . ($eine ? 'wird eine Anleihe' : 'werden ' . count($isins) . ' Anleihen') . ' aus '
+            . (count($depots) === 1 ? 'deinem Musterdepot „' . $depots[0] . '“' : 'deinen Musterdepots') . ' fällig:';
+    } elseif (count($isins) === 1) {
         $p = $posten[0];
         $depots = array_unique(array_column($posten, 4));
         $betreff = 'Bondarium: Eine Anleihe aus deinem Musterdepot wird am ' . erinnerung_datum($p[2]) . ' fällig';
@@ -149,10 +161,11 @@ function erinnerung_text(array $posten, string $aus): array
     $bloecke = [];
     foreach ($posten as $p) {
         $w = $p[6] !== '' && $p[6] !== 'EUR' ? $p[6] : '€';
-        $bloecke[] = "  {$p[0]}\n  ISIN {$p[1]} · fällig am " . erinnerung_datum($p[2]) . (count($isins) > 1 ? ' (' . $tage($p[3]) . ')' : '') .
+        $bloecke[] = "  {$p[0]}\n  ISIN {$p[1]} · fällig am " . erinnerung_datum($p[2]) . (count($isins) > 1 && !$heute ? ' (' . $tage($p[3]) . ')' : '') .
             "\n  Musterdepot „{$p[4]}“ · Nennwert " . number_format((float)$p[5], 0, ',', '.') . " $w · Rückzahlung zum Nennwert (100 %)";
     }
     $text = $kopf . "\n\n" . implode("\n\n", $bloecke) . "\n\n" .
+        ($heute ? "Hast du die Anleihe auch in deinem echten Depot? Dann sieh in den nächsten Tagen auf deinem Konto nach, ob die Rückzahlung angekommen ist.\n\n" : '') .
         "Dein Musterdepot ansehen:\nhttps://www.bondarium.de/konto.html#depot\n\n" .
         "Du bekommst diese E-Mail, weil du in „Mein Bondarium“ die Erinnerung vor jeder Fälligkeit eingeschaltet hast. Ausschalten kannst du sie mit einem Klick:\n" .
         "https://www.bondarium.de/konto.html#$aus\n\n" .
@@ -183,7 +196,7 @@ function erinnerungen_senden(): array
     $db = erinnerung_db();
     if ($db === null) return [0, 0];
     $heute = date('Y-m-d');
-    $db->prepare('DELETE FROM erinnert WHERE faellig < ?')->execute([$heute]);
+    $db->prepare('DELETE FROM erinnert WHERE faellig < ?')->execute([$heute]);   // „JJJJ-MM-TT#tag“ (zweite E-Mail) fällt wie die erste am Tag nach der Fälligkeit heraus
     $s = $db->query('SELECT n.id, n.email, m.name, d.isin, d.nennwert FROM nutzer n JOIN musterdepots m ON m.nutzer = n.id JOIN depot d ON d.muster = m.id WHERE n.erinnern = 1 ORDER BY n.id, m.id, d.seit');
     $je = [];
     foreach ($s->fetchAll(PDO::FETCH_NUM) as [$id, $email, $depot, $isin, $nenn]) {
@@ -197,23 +210,28 @@ function erinnerungen_senden(): array
     $fehl = 0;
     foreach ($je as $id => $u) {
         if ($ok + $fehl >= ERINNERUNG_MAX) break;
-        $posten = [];
+        $vorab = [];   // in 1 bis ERINNERUNG_TAGE Tagen fällig, noch nicht gemeldet
+        $amTag = [];   // heute fällig, zweite E-Mail noch nicht verschickt
         foreach ($u['posten'] as [$depot, $isin, $nenn]) {
             $a = erinnerung_anleihe($isin);
             if ($a === null) continue;
             $tage = (int)$null->diff(new DateTimeImmutable($a[1]))->format('%r%a');
-            if ($tage < 1 || $tage > ERINNERUNG_TAGE) continue;
-            $schon->execute([$id, $isin, $a[1]]);
+            if ($tage < 0 || $tage > ERINNERUNG_TAGE) continue;
+            $marke = $tage === 0 ? $a[1] . '#tag' : $a[1];
+            $schon->execute([$id, $isin, $marke]);
             if ($schon->fetchColumn()) continue;
-            $posten[] = [$a[0], $isin, $a[1], $tage, $depot, $nenn, $a[2]];
+            $p = [$a[0], $isin, $a[1], $tage, $depot, $nenn, $a[2], $marke];
+            if ($tage === 0) $amTag[] = $p; else $vorab[] = $p;
         }
-        if (!$posten) continue;
-        [$betreff, $text] = erinnerung_text($posten, 'erinnerung-aus=' . erinnerung_token($db, $id));
-        if (erinnerung_mail($u['email'], $betreff, $text)) {
-            foreach ($posten as $p) $merke->execute([$id, $p[1], $p[2], time()]);
-            $ok++;
-        } else {
-            $fehl++;
+        foreach ([[$vorab, false], [$amTag, true]] as [$posten, $heuteFaellig]) {
+            if (!$posten) continue;
+            [$betreff, $text] = erinnerung_text($posten, 'erinnerung-aus=' . erinnerung_token($db, $id), $heuteFaellig);
+            if (erinnerung_mail($u['email'], $betreff, $text)) {
+                foreach ($posten as $p) $merke->execute([$id, $p[1], $p[7], time()]);
+                $ok++;
+            } else {
+                $fehl++;
+            }
         }
     }
     if ($fehl && !$ok) {

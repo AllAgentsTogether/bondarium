@@ -269,8 +269,7 @@
       <input type="search" id="q" name="q" placeholder="Name, Emittent, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search">
     </form>
 
-    <div id="filterbox"></div>
-    <p class="mb-suche-sp" id="such-sp" hidden></p>   <!-- „Suche speichern“ (Mein Bondarium, seit 02.10.2026 abends) – nur für Angemeldete -->   <!-- Grundfilter und Filterleiste: filter.js (MC.anleihenFilter), Stile filter.css – derselbe Filterstandard wie die Merkliste in konto.html -->
+    <div id="filterbox"></div>   <!-- Grundfilter und Filterleiste: filter.js (MC.anleihenFilter), Stile filter.css – derselbe Filterstandard wie die Merkliste in konto.html -->
 
     <p class="note status" id="status" aria-live="polite">Suchbegriff eingeben oder Filter wählen – <span data-kz="anleihen-kurs">rund 33.000</span> Anleihen mit aktuellem Kurs an deutschen Börsen.</p>
     <noscript><p class="note">Die Suche braucht JavaScript.</p></noscript>
@@ -557,28 +556,8 @@ function kopieren(b) {
 
 
 // ---------- Anzeige ----------
-// ---------- Mein Bondarium: „Suche speichern“ (seit 02.10.2026 abends) ----------
-// Angemeldet steht unter den Filtern der Knopf „Suche speichern“: Er legt die Auswahl – den Adresszusatz der Suche, sonst nichts – im
-// Konto ab (konto.js, Ablage „suche“). „Mein Bondarium“ zeigt die gespeicherten Suchen und wie viele Treffer dazugekommen sind.
-const suchDa = q => MC.konto ? Object.entries(MC.konto.abl("suche")).find(([, e]) => e[0] && e[0].q === q) : null;
-function suchName() {
-  const t = [];
-  if (S.q.trim()) t.push(`„${S.q.trim()}“`);
-  if (F.solide) t.push("Grundfilter");
-  for (const f of F.aktiv()) { const o = f.opts ? f.opts() : null; t.push([...F.sel[f.k]].map(v => { const x = o && o.find(y => y[0] === v); return x ? x[1] : f.kurz ? f.kurz(v) : v; }).join("/")); }
-  return t.join(" · ").slice(0, 80) || "Suche";
-}
-function suchSp() {
-  const el = document.getElementById("such-sp"), K = MC.konto, q = location.search.slice(1);
-  if (!el) return;
-  el.hidden = !K || !K.stand().angemeldet || !q;
-  if (el.hidden) return;
-  const da = suchDa(q);
-  el.innerHTML = `<button type="button" class="ablbtn klein" id="such-speichern" aria-pressed="${!!da}">${da ? "Suche gespeichert" : "Suche speichern"}</button><small>${da ? 'Sie steht in <a href="konto.html">Mein Bondarium</a>. Noch ein Klick nimmt sie wieder heraus.' : "Legt diese Auswahl in Mein Bondarium ab – dort siehst du, wenn Treffer dazukommen."}</small>`;
-}
 function zeige() {
   merkeURL();
-  suchSp();
   if (!IDX) return;
   const box = document.getElementById("treffer"), status = document.getElementById("status");
   const AUS = auswerten(), { hits, zahl, suche } = AUS;
@@ -711,17 +690,8 @@ function laden() {
     }
   });
 
-  // Mein Bondarium (seit 02.10.2026 abends): Knopf „Suche speichern“ und der Startfilter aus den Voreinstellungen – er gilt nur, wenn
-  // die Suche ohne Auswahl geöffnet wurde und noch nichts eingegeben ist
-  document.getElementById("such-sp").addEventListener("click", e => {
-    const b = e.target.closest("#such-speichern"); if (!b || !MC.konto) return;
-    const q = location.search.slice(1), da = suchDa(q);
-    b.disabled = true;
-    (da ? MC.konto.ablage("suche", da[0], null) : MC.konto.ablage("suche", "s" + Date.now().toString(36), { n: suchName(), q })).then(suchSp, a => {
-      b.disabled = false;
-      const t = document.querySelector("#such-sp small"); if (t) t.textContent = a && a.status === "voll" ? `Es sind schon ${a.max || 10} Suchen gespeichert – lösch erst eine in Mein Bondarium.` : "Das Speichern hat nicht geklappt.";
-    });
-  });
+  // Mein Bondarium (seit 02.10.2026 abends): der Startfilter aus den Voreinstellungen – er gilt nur, wenn die Suche ohne Auswahl
+  // geöffnet wurde und noch nichts eingegeben ist. („Suche speichern“ ist auf Nutzerwunsch am selben Abend wieder entfernt.)
   if (MC.konto) MC.konto.bereit().then(st => {
     if (!st.angemeldet) return;
     const sf = MC.konto.wert("einstellung", "startfilter");
@@ -730,7 +700,7 @@ function laden() {
       F.solide = ps.get("solide") === "1";
       for (const f of FILTER) (ps.get(f.k) || "").split(",").map(v => v.trim()).filter(Boolean).forEach(v => F.sel[f.k].add(f.k === "w" || f.k === "land" ? v.toUpperCase() : v));
       laden(); zeige();
-    } else suchSp();
+    }
   });
 
   // Daten erst bei Bedarf (seit 30.09.2026): Suchbegriff oder Filter in der Adresse → sofort; sonst beim ersten Fokus, Tippen oder

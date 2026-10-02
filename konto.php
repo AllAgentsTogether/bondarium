@@ -25,7 +25,7 @@
  *                  muster-neu (name) legt ein Musterdepot an, muster-name (muster, name) benennt es um, muster-weg
  *                  (muster) löscht es samt Anleihen – das letzte bleibt; muster-uebernehmen (name, liste
  *                  „ISIN~Nennwert,…“) legt ein geteiltes Musterdepot als neues an (Knopf im PDF, konto.html#muster=…)
- *                  erinnern (an = 1 | 0): E-Mail 30 Tage vor jeder Fälligkeit ein- oder ausschalten (seit 02.10.2026;
+ *                  erinnern (an = 1 | 0): E-Mail 20 Tage vor und am Tag jeder Fälligkeit ein- oder ausschalten (seit 02.10.2026;
  *                  verschickt werden die E-Mails von erinnerung.php, angestoßen von aufruf.php)
  *   Ohne Anmeldung aktion=erinnerung-aus (token „Nummer.Prüfsumme“ aus dem Link in der Erinnerungs-E-Mail,
  *                  konto.html#erinnerung-aus=…) schaltet die Erinnerung aus – ein Klick, ohne Passwort
@@ -38,8 +38,8 @@
  *                  Ausgabe aus newsletter/ausgabe.json an alle Abonnenten, die diese Kalenderwoche noch keine haben.
  *   Mein Bondarium (seit 02.10.2026 abends, Nutzerauftrag „Mockup komplett umsetzen“; docs/KONTO.md, Abschnitt „Mein Bondarium“):
  *                  ablage (art, schluessel, wert als JSON; wert leer = löschen): die persönliche Ablage – Notizen, Listen,
- *                  gespeicherte Suchen, gelesene Seiten, Lesezeichen, Begriffe, angeheftete Kennzahlen, Voreinstellungen,
- *                  gespeicherte Rechnungen, Meldungen, Checkliste, „Zuletzt angesehen“ (ABLAGE nennt Arten und Grenzen)
+ *                  gelesene Seiten, Lesezeichen, Begriffe, angeheftete Kennzahlen, Voreinstellungen, Meldungen, Checkliste,
+ *                  „Zuletzt angesehen“ (ABLAGE nennt Arten und Grenzen)
  *                  besuch: merkt den Beginn dieses Besuchs und liefert den des vorigen („Seit deinem letzten Besuch“)
  *                  geraete-ab: meldet alle anderen Geräte ab; export: alles zum Konto Gespeicherte als JSON
  *                  email-aendern (email, passwort) → E-Mail mit Link an die NEUE Adresse (24 Stunden);
@@ -120,16 +120,15 @@ const MELDUNG_TAGE        = 7;          // „Zinstermin oder Fälligkeit steht 
 const MELDUNG_MAILS       = 200;        // E-Mails je Aufruf von meldungen-senden
 // Persönliche Ablage (seit 02.10.2026): Art → [Höchstzahl der Einträge, Höchstlänge des Werts in Bytes (JSON)].
 // Der Schlüssel ist je Art eine ISIN, ein Seitenname, eine kurze Kennung – Muster siehe ablage_schluessel().
+// Die Arten „suche“ und „rechnung“ gab es nur am 02.10.2026 (auf Nutzerwunsch am selben Abend entfernt); aufraeumen() löscht ihre Reste.
 const ABLAGE = [
     'notiz'       => [200, 600],    // Schlüssel ISIN: private Notiz zur gemerkten Anleihe
     'liste'       => [12, 3400],    // eigene Liste der Merkliste: {n: Name, i: [ISIN, …]}
-    'suche'       => [10, 900],     // gespeicherte Suche: {n: Name, q: Adresszusatz der Anleihen-Suche, t: Treffer, z: Zeitpunkt}
     'gelesen'     => [120, 8],      // Schlüssel Seitenname: „Als gelesen markieren“
     'lesezeichen' => [40, 400],     // Schlüssel Seite oder Seite#Abschnitt: {t: Titel, a: Abschnitt}
     'begriff'     => [80, 160],     // Schlüssel Kennung im Glossar: Titel des Begriffs
     'kennzahl'    => [12, 8],       // Schlüssel Kennzahl für „Mein Zins-Blick“
     'einstellung' => [12, 300],     // Voreinstellungen: Ordergebühr, Anlagebetrag, Freistellungsauftrag, Startfilter, Zuletzt angesehen an/aus (EINSTELLUNGEN)
-    'rechnung'    => [20, 900],     // gespeicherte Rechnung aus dem Rechner: {a: Rechner, n: Titel, e: Eingaben, r: Ergebnis, z: Zeitpunkt}
     'meldung'     => [20, 500],     // Meldung: {i: ISIN oder „*“, b: Bedingung, w: Wert, m: per E-Mail, an: eingeschaltet, a/aw: ausgelöst am/mit, bis: …}
     'check'       => [20, 8],       // Schlüssel Schritt der Checkliste „Deine erste Anleihe“
     'angesehen'   => [8, 200],      // „Zuletzt angesehen“ – nur wenn in den Voreinstellungen eingeschaltet; der älteste Eintrag fällt heraus
@@ -758,6 +757,7 @@ function aufraeumen(): void
     $db->prepare('DELETE FROM zaehler WHERE zeit < ?')->execute([$jetzt - 86400]);
     $db->prepare('DELETE FROM nutzer WHERE zuletzt < ?')->execute([$jetzt - RUHE_TAGE * 86400]);
     $db->prepare('DELETE FROM newsletter_log WHERE zeit < ?')->execute([$jetzt - 25 * 31 * 86400]);
+    $db->exec("DELETE FROM ablage WHERE art IN ('suche', 'rechnung')");   // entfernte Arten (siehe ABLAGE)
     // Notizen zu Anleihen, die seit 30 Tagen nicht mehr auf der Merkliste stehen
     $db->prepare("DELETE FROM ablage WHERE art = 'notiz' AND zeit < ? AND NOT EXISTS (SELECT 1 FROM favoriten f WHERE f.nutzer = ablage.nutzer AND f.isin = ablage.schluessel)")
        ->execute([$jetzt - 30 * 86400]);
@@ -1040,7 +1040,7 @@ function meldung_kennung(int $id): string
  *       trägt danach „a“ (Tag) und „aw“ (Wert) und wird erst wieder scharf, wenn die Bedingung nicht mehr gilt.
  *   termin   Zinstermin oder Fälligkeit einer gemerkten Anleihe in höchstens MELDUNG_TAGE Tagen; „bis“ merkt den spätesten
  *       schon gemeldeten Tag, damit jeder Termin nur einmal kommt.
- *   treffer, kurslos   prüft die Seite beim Besuch (der Server kennt die Suche nicht) – hier übergangen.
+ *   kurslos   prüft die Seite beim Besuch – hier übergangen.
  * Eine E-Mail je Konto mit allen neu ausgelösten Meldungen, die „per E-Mail“ (m) gewählt haben; die anderen stehen nur im
  * Bereich. Nur Tatsachen, keine Vorschläge. Jede E-Mail trägt einen Link, der alle Meldungen auf „nur im Bereich“ stellt.
  */
@@ -1529,7 +1529,7 @@ try {
             antwort(200, 'ok', konto_stand($n['id'], $n['email']));
 
         case 'erinnern':
-            // E-Mail 30 Tage vor jeder Fälligkeit (seit 02.10.2026, Nutzerentscheid): an = 1 einschalten, 0 ausschalten
+            // E-Mail 20 Tage vor und am Tag jeder Fälligkeit (seit 02.10.2026, Nutzerentscheid): an = 1 einschalten, 0 ausschalten
             $n = angemeldet();
             db()->prepare('UPDATE nutzer SET erinnern = ? WHERE id = ?')->execute([($_POST['an'] ?? '') === '1' ? 1 : 0, $n['id']]);
             antwort(200, 'ok', konto_stand($n['id'], $n['email']));
@@ -1599,8 +1599,8 @@ try {
                 $s = $db->prepare('SELECT 1 FROM ablage WHERE nutzer = ? AND art = ? AND schluessel = ?');
                 $s->execute([$n['id'], $art, $k]);
                 if ($s->fetchColumn()) {
-                    // Meldungen, Listen, Suchen und Rechnungen behalten ihren Platz in der Reihenfolge; alles andere rückt nach vorn
-                    $zeit = in_array($art, ['meldung', 'liste', 'suche', 'rechnung', 'notiz'], true) ? '' : ', zeit = ' . time();
+                    // Meldungen, Listen und Notizen behalten ihren Platz in der Reihenfolge; alles andere rückt nach vorn
+                    $zeit = in_array($art, ['meldung', 'liste', 'notiz'], true) ? '' : ', zeit = ' . time();
                     $db->prepare("UPDATE ablage SET wert = ?$zeit WHERE nutzer = ? AND art = ? AND schluessel = ?")->execute([$json, $n['id'], $art, $k]);
                 } else {
                     $s = $db->prepare('SELECT COUNT(*) FROM ablage WHERE nutzer = ? AND art = ?');

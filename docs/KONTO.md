@@ -76,8 +76,8 @@ unter dem Kurswert, „Zinsen pro Jahr“, „Rückzahlung zum Nennwert (100 %)�
 Kurs und Kurswert (Nutzerwunsch 01.10.2026: „in der Anleihe muss auch der aktuelle Kurs stehen. Bei der Rückzahlung
 muss die Differenz zwischen Kaufkurs und 100 % Rückzahlung erkenntlich sein“): Als Kaufkurs gilt der Schlusskurs von
 heute – das Depot rechnet, als wäre heute der Kauftag; ein eigener Kaufkurs wird nicht gespeichert. Kurswert =
-Nennwert × Kurs, ohne Stückzinsen und Gebühren. Der Unterschied zur Rückzahlung zu 100 % (Kursgewinn grün, Kursverlust
-orange) steht unter dem Kurswert, in der Summenzeile und an jedem Rückzahlungsbalken. Den Satz über dem Schaubild („Bis zur
+Nennwert × Kurs, ohne Stückzinsen und Gebühren. Der Unterschied zur Rückzahlung zu 100 % (mehr: grün, weniger: orange) steht
+als „bis Fälligkeit +/−“ unter dem Kurswert (bis 02.10.2026 abends „Kursgewinn“/„Kursverlust“ – verwirrte den Nutzer), in der Summenzeile und an jedem Rückzahlungsbalken. Den Satz über dem Schaubild („Bis zur
 letzten Fälligkeit … zusammen …; der Kurswert … Kursgewinn …“) gibt es seit 02.10.2026 nicht mehr (Nutzerwunsch: „das hier
 löschen“); im PDF des Musterdepots steht er weiter.
 
@@ -222,14 +222,16 @@ Bei fünf Depots sagt der Kasten, dass erst eins gelöscht werden muss. Dateinam
 
 ## E-Mail vor jeder Fälligkeit
 
-Seit 02.10.2026 (Nutzerentscheid nach PDF-Mockup; Antworten: fest 30 Tage vorher, Nennwert in der E-Mail). Im Reiter
-„Mein Depot“ steht unter der Tabelle der Schalter „E-Mail vor jeder Fälligkeit“ – einer für alle Musterdepots, anfangs aus
+Seit 02.10.2026 (Nutzerentscheid nach PDF-Mockup; Antworten: fest 30 Tage vorher, Nennwert in der E-Mail). Seit 02.10.2026
+abends (Nutzerwunsch): **20 Tage vorher und noch einmal am Tag der Fälligkeit** („damit man sein Konto überprüfen kann“) – die
+zweite E-Mail steht in `erinnert` unter der Fälligkeit „JJJJ-MM-TT#tag“. In der Ansicht „Rechnen und planen“ (früher Reiter
+„Mein Depot“) steht unter der Tabelle der Schalter „E-Mail vor jeder Fälligkeit“ – einer für alle Musterdepots, anfangs aus
 (`aktion=erinnern`, Feld `erinnern` in `nutzer`, Fassung 5). Daneben die nächste Fälligkeit und wann die E-Mail dazu käme.
 `konto.html#erinnerung` öffnet den Reiter beim Schalter.
 
 Versand: `erinnerung.php` (nur eingebunden, per `.htaccess` gesperrt). `aufruf.php` ruft bei jedem gezählten Aufruf
 `erinnerung_faellig()`; der erste ab 7 Uhr (Berlin) verschickt nach der Antwort an den Browser – wie der Besucherbericht. Je
-Nutzer mit eingeschalteter Erinnerung: alle Anleihen seiner Musterdepots, die in 1 bis 30 Tagen fällig werden und für diese
+Nutzer mit eingeschalteter Erinnerung: alle Anleihen seiner Musterdepots, die in 1 bis 20 Tagen fällig werden (erste E-Mail) oder heute fällig sind (zweite) und für diese
 Fälligkeit noch keine Erinnerung hatten (Tabelle `erinnert`), in einer E-Mail; danach in `erinnert` eingetragen, nach der
 Fälligkeit gelöscht. Fälligkeit und Name kommen aus `anleihen/<teil>.json` (Name wie auf der Website: Land bzw. Emittent ohne
 Rechtsform, Kupon, Jahr). Inhalt nur Tatsachen – Anleihe, ISIN, Tag, Musterdepot, Nennwert, Rückzahlung zum Nennwert –, keine
@@ -343,47 +345,52 @@ Meldungen nennen Tatsachen aus den Daten, „Passend zu deiner Merkliste“ zeig
 
 | Ansicht | Inhalt |
 |---|---|
-| Start (`konto.html`) | „Seit deinem letzten Besuch“ (ausgelöste Meldungen, mehr Treffer gespeicherter Suchen, Termine der nächsten 14 Tage, neue Seiten), Weiterlernen, Meine Merkliste (größte Veränderung seit dem Merken), Mein Zins-Blick, Gespeicherte Suchen, Nächste Termine (.ics), „Zuletzt angesehen“ (nur wenn eingeschaltet) |
-| Merkliste (`#merkliste`) | Pillen Alle / Anleihen / ETFs / eigene Listen; Vergleichen (bis vier, mit Kursverlauf), ISINs einfügen, Filter (filter.js), Teilen/PDF/CSV; Tabelle: Ankreuzfeld, Name mit Etiketten und Notiz, Rendite, Kurs mit Vortag, Kupon, Fälligkeit, „Seit dem Merken“, nächster Zinstermin, „+“ (Musterdepot), „…“ (Notiz, Liste, Meldung, Rechner, Kalender, Entfernen); darunter die gemerkten ETFs |
-| Lernen (`#lernen`) | Lernstand je Menügruppe (Grundlagen, Auswählen, Kaufen, Für Fortgeschrittene – aus dem Menü der Seite gelesen), „Passend zu deiner Merkliste“, Lesezeichen, gemerkte Begriffe |
-| Rechnen und planen (`#planen`, auch `#depot`, `#erinnerung`) | „Mein Depot“ (Musterdepots, unverändert), darunter gespeicherte Rechnungen und Voreinstellungen (Ordergebühr, Anlagebetrag, Freistellungsauftrag, Startfilter) |
+| Start (`konto.html`) | „Seit deinem letzten Besuch“ (ausgelöste Meldungen, Termine der nächsten 14 Tage, neue Seiten), Meine Merkliste (größte Veränderung seit dem Merken), Mein Zins-Blick, Nächste Termine (.ics), „Zuletzt angesehen“ (nur wenn eingeschaltet) |
+| Merkliste (`#merkliste`) | Pillen Alle / Anleihen / ETFs / eigene Listen; Vergleichen (bis vier, mit Kursverlauf), ISINs einfügen, Filter (filter.js), Teilen/PDF/CSV; Tabelle: Ankreuzfeld, Name mit Notiz, Rendite, Kurs mit Vortag, Kupon, Fälligkeit, „Seit dem Merken“, nächster Zinstermin, „+“ (Musterdepot), „…“ (Notiz, Liste, Meldung, Rechner, Kalender, Entfernen); darunter die gemerkten ETFs |
+| Rechnen und planen (`#planen`, auch `#depot`, `#erinnerung`) | „Mein Depot“ (Musterdepots), darunter die Voreinstellungen (Ordergebühr, Anlagebetrag, Freistellungsauftrag, Startfilter) |
 | Meldungen und Konto (`#meldungen`) | Meldungen, Wochenbrief-Schalter, Mitnehmen (PDF, CSV, .ics), Konto: E-Mail ändern, Passwort ändern, angemeldete Geräte, „Zuletzt angesehen“, Daten herunterladen, Konto löschen |
+| Lernen (`#lernen`) | Lernstand je Menügruppe (Grundlagen, Auswählen, Kaufen, Für Fortgeschrittene – aus dem Menü der Seite gelesen), „Passend zu deiner Merkliste“, Lesezeichen, gemerkte Begriffe |
 
 **Ablage** (`konto.php`, `aktion=ablage`; `MC.konto.ablage(art, schluessel, wert)`): eine Tabelle für alles Abgelegte. Arten:
-`notiz` (je ISIN), `liste` (`{n, i: [ISIN…]}`), `suche` (`{n, q: Adresszusatz der Suche, t: gemerkte Trefferzahl, z}`), `gelesen`
+`notiz` (je ISIN), `liste` (`{n, i: [ISIN…]}`), `gelesen`
 (Seitenname), `lesezeichen` (Seite oder Seite#Abschnitt), `begriff`, `kennzahl`, `einstellung` (nur `gebuehr`, `betrag`,
-`freistellung`, `startfilter`, `zuletzt`), `rechnung`, `meldung`, `check` (Checkliste „Deine erste Anleihe“), `angesehen` (nur wenn
+`freistellung`, `startfilter`, `zuletzt`), `meldung`, `check` (Checkliste „Deine erste Anleihe“), `angesehen` (nur wenn
 `einstellung.zuletzt = 1`; höchstens acht, der älteste fällt heraus). Der Server prüft Art, Schlüssel und Länge und säubert den Wert;
 die Seite schreibt jeden Wert nur über `MC.esc` ins Dokument.
 
 **Bewusst nicht gespeichert:** die Kirchensteuer (im Mockup eine Voreinstellung) – sie verriete die Religionszugehörigkeit (Art. 9
-DSGVO). Weder als Voreinstellung noch in einer gespeicherten Rechnung.
+DSGVO).
 
 **Meldungen.** Regeln je Anleihe (`rendite-ueber`, `rendite-unter`, `kurs-ueber`, `kurs-unter` mit Schwelle) oder für alle gemerkten
-(`termin`: Zinstermin oder Fälligkeit in höchstens 7 Tagen; `kurslos`: kein Kurs oder Datenbefund) oder für die gespeicherten Suchen
-(`treffer`). Die Seite zeigt den Stand beim Besuch. E-Mails verschickt `aktion=meldungen-senden` (Workflow-Schritt „Meldungen prüfen
+(`termin`: Zinstermin oder Fälligkeit in höchstens 7 Tagen; `kurslos`: kein Kurs oder Datenbefund). Die Seite zeigt den Stand beim Besuch. E-Mails verschickt `aktion=meldungen-senden` (Workflow-Schritt „Meldungen prüfen
 und verschicken“ im täglichen Abruf-Lauf, Kopf `X-Trigger-Key`): geprüft wird gegen `newsletter/anleihen.json`, je Konto höchstens
 eine E-Mail mit den neu ausgelösten Meldungen, die „E-Mail“ gewählt haben. Eine Schwellen-Meldung trägt danach `a` (Tag) und `aw`
 (Wert) und kommt erst wieder, wenn die Bedingung zwischendurch nicht galt; `termin` merkt in `bis` den spätesten gemeldeten Tag.
-`treffer` und `kurslos` gibt es nur im Bereich (der Server kennt die Suche nicht). Link in jeder E-Mail:
+`kurslos` gibt es nur im Bereich. Link in jeder E-Mail:
 `konto.html#meldungen-aus=<Nummer>.<Prüfsumme>` stellt alle Meldungen auf „nur im Bereich“ (`aktion=meldungen-aus`).
-
-**Gespeicherte Suchen.** Die Anleihen-Suche speichert ihren Adresszusatz. `bereich.js` zählt die Treffer mit denselben Filtern
-(`filter.js`) aus demselben Suchindex und vergleicht mit der gemerkten Zahl („n mehr als am …“); „Zur Suche“ merkt den neuen Stand.
 
 **Weitere Aktionen:** `besuch` (Beginn des Besuchs; liefert den des vorigen, neue Seiten aus `newsletter/seiten.json` und die
 nächsten Zinstermine der Merkliste), `geraete-ab`, `export`, `email-aendern` (Passwort nötig; Link an die neue Adresse, 24 Stunden) und
 `email-bestaetigen` (`konto.html#email=<Kennwort>`; meldet andere Geräte ab, Hinweis an die alte Adresse).
 
 **Seiten außerhalb von konto.html:** Akademie- und Kaufen-Seiten (Leiste am Ende, `mein.js`), Glossar (Stern), Zinsen-Seiten
-(„In meinen Zins-Blick“ – Kennungen in `mein.js` und `bereich.js` gleich halten), Rechner („Rechnung speichern“, `?rg=<Kennung>`),
-Anleihen-Suche („Suche speichern“, Startfilter), Steckbrief (Ordergebühr und Anlagebetrag im Rechenbeispiel, „Zuletzt angesehen“),
+(„In meinen Zins-Blick“ – Kennungen in `mein.js` und `bereich.js` gleich halten), Rechner (Voreinstellungen füllen die Felder),
+Anleihen-Suche (Startfilter), Steckbrief (Ordergebühr und Anlagebetrag im Rechenbeispiel, „Zuletzt angesehen“),
 Anleihen-ETFs und Top-10-Tabellen (Merken). Besucher ohne Konto lösen dabei keine Anfrage an den Server aus.
 
 **Abweichungen vom Mockup:** Akademie-Gruppen heißen wie im heutigen Menü (nicht Verstehen/Entscheiden/Kaufen/Vertiefen); statt des
 „Monatsüberblicks“ steht der Wochenbrief (Nutzerentscheid 02.10.2026: wöchentlich); die „Pläne“ sind die Musterdepots in ihrer
 heutigen Form (ohne Kennzahlen-Kacheln und Zwölf-Monats-Kalender – beides hatte der Nutzer am 01./02.10.2026 abgewählt);
 „Zuletzt angesehen“ ist anfangs aus; die Filterleiste der Merkliste bleibt (Nutzerwunsch 02.10.2026).
+
+**Nachbesserungen am 02.10.2026 abends (Nutzerwunsch nach dem ersten Ansehen) – nicht wieder einbauen:** auf Start die Karten
+„Weiterlernen“ und „Gespeicherte Suchen“ entfernt (damit auch „Suche speichern“ in der Anleihen-Suche und die Meldung „Neue
+Treffer“; Art `suche` gelöscht); in der Merkliste die Etiketten („fällig in …“, „Zinsen halbjährlich“ …) entfernt – sie dienen nur
+noch „Passend zu deiner Merkliste“; Reiter „Lernen“ ganz rechts; „Gespeicherte Rechnungen“ samt „Rechnung speichern“ entfernt (Art
+`rechnung` gelöscht); in „Mein Depot“ der Einleitungstext entfernt, unter dem Kurswert steht „bis Fälligkeit +/−“ statt
+„Kursgewinn/Kursverlust“ (las sich wie ein schon erzielter Gewinn), die Balken im Schaubild wachsen mit der Spaltenbreite (bis 240 px),
+die Liste heißt „Alle kommenden Zinstermine“ und nennt alle Termine bis zur letzten Fälligkeit (im PDF die nächsten 24), und die
+Erinnerung kommt 20 Tage vor der Fälligkeit und noch einmal am Fälligkeitstag.
 
 ## Lokal testen
 

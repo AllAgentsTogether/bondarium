@@ -31,7 +31,7 @@
  * mit art=erinnerung stattdessen eine Beispiel-Erinnerung vor einer Fälligkeit (erinnerung.php).
  *
  * Erinnerungen (seit 02.10.2026): Der erste gezählte Aufruf ab ERINNERUNG_STUNDE Uhr stößt auch den täglichen Versand der
- * E-Mails „30 Tage vor jeder Fälligkeit“ an (erinnerung.php, Daten in konto-daten/) – ebenfalls erst nach der Antwort.
+ * E-Mails „20 Tage vor und am Tag jeder Fälligkeit“ an (erinnerung.php, Daten in konto-daten/) – ebenfalls erst nach der Antwort.
  *
  * Lokal testen (PHP-eigener Server): php -S 127.0.0.1:8090 – dann gilt der lokale Ursprung, und der Bericht landet
  * als PDF und E-Mail-Text in statistik-daten/ statt im Versand. Bericht von Hand: php aufruf.php bericht [JJJJ-MM-TT]

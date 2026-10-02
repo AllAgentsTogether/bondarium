@@ -450,7 +450,7 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 
 /* ---------- Mein Bondarium auf den Inhaltsseiten (seit 02.10.2026 abends; konto.js zeichnet die Knöpfe, mein.js setzt sie ein) ----------
    .ablbtn: Umschalt-Knopf für einen Eintrag der persönlichen Ablage („Als gelesen markieren“ / „Gelesen“, Lesezeichen, Begriff merken,
-   Kennzahl anheften, Suche oder Rechnung speichern). .mb-seite: Leiste am Ende einer Akademie-Seite. */
+   Kennzahl anheften). .mb-seite: Leiste am Ende einer Akademie-Seite. */
 .ablbtn { font: inherit; font-size: 14px; font-weight: 600; line-height: 1.2; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.25); border-radius: 999px; padding: 8px 14px; display: inline-flex; align-items: center; gap: 7px; cursor: pointer; white-space: nowrap; }
 .ablbtn:hover { border-color: var(--ink); }
 .ablbtn:focus-visible { outline: 2px solid var(--line, #1A1A19); outline-offset: 2px; }
@@ -469,10 +469,6 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 /* Lesezeichen an einer Zwischenüberschrift, Stern am Glossar-Begriff, Stecknadel auf einer Zinsen-Seite – nur für Angemeldete */
 .mb-h { margin-left: 10px; vertical-align: 3px; }
 .mb-pin { margin: 0 0 18px; }
-.mb-rech { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 12px 0 0; }
-.mb-rech small { font-size: 13px; color: var(--text); }
-.mb-suche-sp { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
-.mb-suche-sp small { font-size: 13px; color: var(--text); }
 
 .det-kpi { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 18px; margin: 0; }
 .det-kpi div { min-width: 0; }

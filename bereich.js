@@ -1,12 +1,14 @@
 /* bereich.js – „Mein Bondarium“ in fünf Ansichten (konto.html, seit 02.10.2026 abends; Nutzerauftrag: Mockup vom 01.10.2026 komplett
    umsetzen – 16 Funktionen). Das Seitenskript von konto.html bleibt zuständig für Anmeldung, Merklisten-Tabelle, Filter, Musterdepots
    und PDF; dieses Skript baut darauf auf und zeichnet alles Neue:
-     Start                Seit deinem letzten Besuch · Weiterlernen · Meine Merkliste · Mein Zins-Blick · Gespeicherte Suchen · Nächste
-                          Termine · Zuletzt angesehen (nur wenn eingeschaltet)
-     Merkliste            eigene Listen, Etiketten, Notiz, Menü je Anleihe („…“), Vergleichen, ISINs einfügen, CSV, ETFs
-     Lernen               Lernstand zum Abhaken, Passend zu deiner Merkliste, Lesezeichen, gemerkte Begriffe
-     Rechnen und planen   unter den Musterdepots: gespeicherte Rechnungen und Voreinstellungen
+     Start                Seit deinem letzten Besuch · Meine Merkliste · Mein Zins-Blick · Nächste Termine · Zuletzt angesehen (nur wenn
+                          eingeschaltet)
+     Merkliste            eigene Listen, Notiz, Menü je Anleihe („…“), Vergleichen, ISINs einfügen, CSV, ETFs
+     Rechnen und planen   unter den Musterdepots: Voreinstellungen
      Meldungen und Konto  Meldungen (Regeln je Anleihe oder für alle gemerkten), Mitnehmen (PDF, CSV, Kalenderdatei), Konto
+     Lernen               Lernstand zum Abhaken, Passend zu deiner Merkliste, Lesezeichen, gemerkte Begriffe
+   Am 02.10.2026 abends auf Nutzerwunsch wieder entfernt: die Karten „Weiterlernen“ und „Gespeicherte Suchen“ auf Start (damit auch
+   „Suche speichern“ und die Meldung „Neue Treffer“), die Etiketten in der Merkliste und „Gespeicherte Rechnungen“ – nicht neu einbauen.
    Gespeichert wird nur, was der Nutzer selbst ablegt – in der Ablage des Kontos (konto.php, aktion=ablage; konto.js: MC.konto.ablage).
    Nichts davon ist eine Empfehlung: Etiketten und Meldungen nennen Tatsachen aus den Daten, „Passend zu deiner Merkliste“ zeigt
    Erklärseiten, keine Anleihen. Stile: bereich.css. Beschreibung: docs/KONTO.md, Abschnitt „Mein Bondarium“.
@@ -152,10 +154,11 @@
     let OFFEN = "";          // ISIN, deren Menü („…“) offen ist
     const klasse = o => (VGL.has(o.isin) ? "gew" : "") + (OFFEN === o.isin ? " offen" : "");
     const zeileKopf = o => `<td class="mb-cb"><input type="checkbox" data-vgl="${esc(o.isin)}"${VGL.has(o.isin) ? " checked" : ""}${!o.cur ? " disabled" : ""} aria-label="${esc(o.name)} vergleichen" title="Zum Vergleichen ankreuzen (bis zu vier)"></td>`;
+    // Unter dem Namen steht nur die Notiz. Die Etiketten („fällig in …“, „Zinsen halbjährlich“ …) sind seit 02.10.2026 abends auf
+    // Nutzerwunsch aus der Merkliste entfernt; etiketten() dient nur noch „Passend zu deiner Merkliste“ in der Ansicht Lernen.
     function zeileUnter(o) {
-      const e = etiketten(o), n = wert("notiz", o.isin);
-      return (e.length ? `<span class="mb-chips">${e.map(x => `<span class="mb-chip${x[2] ? " " + x[2] : ""}">${esc(x[1])}</span>`).join("")}</span>` : "") +
-        (typeof n === "string" && n ? `<span class="mb-notiz">${esc(n)}</span>` : "");
+      const n = wert("notiz", o.isin);
+      return typeof n === "string" && n ? `<span class="mb-notiz">${esc(n)}</span>` : "";
     }
     const delta = o => typeof o.rseit === "number" && typeof o.rendite === "number" ? o.rendite - o.rseit : null;
     function zeileSeit(o) {
@@ -312,58 +315,6 @@
       });
     }
 
-    // ---------- Gespeicherte Suchen: Treffer zählen wie die Anleihen-Suche (dieselben Filter aus filter.js, derselbe Suchindex) ----------
-    const norm = s => String(s).normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase();
-    const woerter = s => norm(s).replace(/[^\p{L}\p{N},.]+/gu, " ").trim();
-    const TREFFER = {};   // Adresszusatz → Zahl (für diesen Seitenaufruf)
-    function trefferZahl(q, D) {
-      if (q in TREFFER) return TREFFER[q];
-      const F = X.filter(); if (!F || !D) return null;
-      const p = new URLSearchParams(q), toks = woerter(p.get("q") || "").split(" ").filter(Boolean).map(t => t.length >= 4 ? t : " " + t), solide = p.get("solide") === "1";
-      const wahl = F.FILTER.map(f => { const v = (p.get(f.k) || "").split(",").map(x => x.trim()).filter(Boolean).map(x => f.k === "w" || f.k === "land" ? x.toUpperCase() : x); return v.length ? new Set(v) : null; });
-      const ART = ["Staat", "Öffentlich", "Unternehmen"], rb = y => y == null ? null : y <= 0.999999 ? "a" : y <= 1.999999 ? "b" : y <= 2.999999 ? "c" : y <= 3.999999 ? "d" : "e";
-      let n = 0;
-      D.idx.forEach(r => {
-        if (solide && !F.solideRegel(r)) return;
-        for (let i = 0; i < wahl.length; i++) {
-          if (!wahl[i]) continue;
-          const f = F.FILTER[i], k = f.k === "rendite" ? rb(X.anleihe(r[0], 0, D).rendite) : f.key(r);
-          if (k == null || !(Array.isArray(k) ? k.some(v => wahl[i].has(v)) : wahl[i].has(k))) return;
-        }
-        if (toks.length) {
-          const ku = typeof r[4] === "number" ? `${r[4].toFixed(2)} ${r[4].toFixed(3)} ${r[4]}` : r[4] === "var" ? "variabel floater" : "", d = r[5] ? `${r[5].slice(8, 10)}.${r[5].slice(5, 7)}.${r[5].slice(0, 4)}` : "unbefristet";
-          const h = " " + woerter([r[1], r[0], r[3], ku, ku.replace(/\./g, ","), d, ART[r[2]], D.emi[r[9]] || "", r[12] || ""].join(" ")) + " ";
-          if (!toks.every(t => h.includes(t))) return;
-        }
-        n++;
-      });
-      return (TREFFER[q] = n);
-    }
-    const suchen = () => Object.entries(abl("suche")).map(([id, e]) => ({ id, w: e[0] || {}, zeit: e[1] })).filter(s => typeof s.w.q === "string");
-    // Stand je Suche: { n: Treffer jetzt oder null, mehr: Zuwachs seit dem gemerkten Stand }; ohne gemerkten Stand wird er jetzt gesetzt
-    function suchStand(s, D) {
-      const n = trefferZahl(s.w.q, D);
-      if (n != null && typeof s.w.t !== "number") { s.w.t = n; s.w.z = Math.floor(Date.now() / 1000); K.ablage("suche", s.id, s.w).catch(() => {}); }
-      return { n, mehr: n != null && typeof s.w.t === "number" ? n - s.w.t : 0 };
-    }
-    function suchKlick(e) {
-      const x = e.target.closest("[data-suche-weg]"); if (x) { lege("suche", x.dataset.sucheWeg, null).catch(() => {}); return true; }
-      const a = e.target.closest("a[data-suche]"); if (!a) return false;
-      // Beim Öffnen gilt der Stand als gesehen: Trefferzahl und Zeitpunkt merken (die Seite wechselt gleich – nicht warten)
-      const s = suchen().find(v => v.id === a.dataset.suche), n = s ? TREFFER[s.w.q] : null;
-      if (s && typeof n === "number" && n !== s.w.t) K.ablage("suche", s.id, Object.assign({}, s.w, { t: n, z: Math.floor(Date.now() / 1000) })).catch(() => {});
-      return false;
-    }
-    function suchListe(D, kurz) {
-      const ls = suchen();
-      if (!ls.length) return '<p class="mb-leer">Noch keine gespeicherte Suche. In der <a href="anleihen-suche.html">Anleihen-Suche</a> stellst du Filter ein und klickst auf „Suche speichern“ – hier steht dann, wie viele Treffer dazugekommen sind.</p>';
-      return `<ul class="mb-suchen">${ls.map(s => {
-        const st = suchStand(s, D);
-        return `<li><div><b>${esc(s.w.n || "Suche")}</b><span>${st.n == null ? "Treffer werden gezählt …" : `${fmt(st.n)} Treffer` + (st.mehr > 0 ? ` · <em>${st.mehr} mehr</em> als am ${esc(tagDe(s.w.z || s.zeit))}` : st.mehr < 0 ? ` · ${-st.mehr} weniger als am ${esc(tagDe(s.w.z || s.zeit))}` : "")}</span></div>` +
-          `<span class="mb-r"><a class="mb-link" data-suche="${esc(s.id)}" href="anleihen-suche.html?${esc(s.w.q)}">Zur Suche</a>${kurz ? "" : `<button type="button" class="mb-x" data-suche-weg="${esc(s.id)}" aria-label="Suche „${esc(s.w.n || "")}“ löschen" title="Gespeicherte Suche löschen">×</button>`}</span></li>`;
-      }).join("")}</ul>`;
-    }
-
     // ---------- Mein Zins-Blick: angeheftete Kennzahlen (Knopf auf den Zinsen-Seiten, mein.js – dieselben Kennungen) ----------
     const pct = v => fmt(v, 2) + " %", KZ = {
       bund10: { t: "Bundesanleihe 10 Jahre", s: "renditen.html", f: "renditen.json", w: d => { const l = d.countries.de.latest; return [pct(l.yield), "Stand " + MC.datum(l.date)]; } },
@@ -404,7 +355,7 @@
     }
 
     // ---------- Meldungen ----------
-    const MART = Object.assign({ termin: "Zinstermin oder Fälligkeit steht an", treffer: "Neue Treffer", kurslos: "Seit 14 Tagen kein Kurs mehr oder Daten fraglich" }, SCHWELLE);
+    const MART = Object.assign({ termin: "Zinstermin oder Fälligkeit steht an", kurslos: "Seit 14 Tagen kein Kurs mehr oder Daten fraglich" }, SCHWELLE);
     const meldungen = () => Object.entries(abl("meldung")).map(([id, e]) => ({ id, w: e[0] || {} })).filter(m => MART[m.w.b]);
     // Stand einer Meldung: { wer, was, stand (HTML), aktiv (jetzt ausgelöst) }
     function meldungStand(m, D) {
@@ -421,10 +372,6 @@
         return { wer: "Alle gemerkten Anleihen", was: MART.termin, aktiv: an && !!nah,
           stand: !an ? aus : `${nah ? `<em>In ${tageBis(t.tag)} ${tageBis(t.tag) === 1 ? "Tag" : "Tagen"}</em>` : "7 Tage vorher"} · ${t ? `nächster: ${esc(titel(t.o))}, ${esc(MC.datum(t.tag))}` : "derzeit kein Termin bekannt"}` };
       }
-      if (w.b === "treffer") {
-        const mehr = suchen().map(s => suchStand(s, D)).reduce((a, s) => a + Math.max(0, s.mehr), 0);
-        return { wer: "Meine gespeicherten Suchen", was: MART.treffer, aktiv: an && mehr > 0, stand: !an ? aus : !suchen().length ? "Aktiv · noch keine gespeicherte Suche" : mehr > 0 ? `<em>${mehr} neue</em> seit dem letzten Ansehen` : "Aktiv · derzeit keine" };
-      }
       const ohne = X.liste().filter(o => o.cur && (o.kurs == null || o.befund) && !(o.faellig && o.faellig <= HEUTE));
       return { wer: "Alle gemerkten Anleihen", was: MART.kurslos, aktiv: an && ohne.length > 0, stand: !an ? aus : ohne.length ? `<em>${ohne.length} ${ohne.length === 1 ? "Anleihe" : "Anleihen"}</em> · ${esc(ohne.slice(0, 3).map(titel).join(", "))}${ohne.length > 3 ? " …" : ""}` : "Aktiv · derzeit keine" };
     }
@@ -437,7 +384,7 @@
         : '<p class="mb-leer">Noch keine Meldung. Leg unten eine an – zum Beispiel „Rendite steigt über 4,00 %“ für eine gemerkte Anleihe oder „Zinstermin steht an“ für alle.</p>';
       box.innerHTML = `<div class="mb-kh"><h2 class="mb-h2">Meldungen</h2><p>geprüft an jedem Börsentag nach dem Datenlauf</p></div>${liste}` +
         `<form class="mb-neu-a" id="mb-m-form"><p class="mb-zk">Neue Meldung</p><div class="mb-felder">` +
-        `<label for="mb-m-i">Anleihe<select id="mb-m-i"><option value="*">Alle gemerkten Anleihen</option><option value="s">Meine gespeicherten Suchen</option>${ls.map(o => `<option value="${esc(o.isin)}">${esc(titel(o))}</option>`).join("")}</select></label>` +
+        `<label for="mb-m-i">Anleihe<select id="mb-m-i"><option value="*">Alle gemerkten Anleihen</option>${ls.map(o => `<option value="${esc(o.isin)}">${esc(titel(o))}</option>`).join("")}</select></label>` +
         `<label for="mb-m-b">Wenn<select id="mb-m-b"></select></label>` +
         `<label for="mb-m-w">Wert<input type="text" id="mb-m-w" inputmode="decimal" autocomplete="off" placeholder="z. B. 4,25"></label>` +
         `<label for="mb-m-m">Nachricht<select id="mb-m-m"><option value="1">E-Mail</option><option value="0">nur im Bereich</option></select></label></div>` +
@@ -447,10 +394,10 @@
     }
     function meldungFormular() {
       const i = $("mb-m-i"), b = $("mb-m-b"); if (!i || !b) return;
-      const arten = i.value === "*" ? ["termin", "kurslos"] : i.value === "s" ? ["treffer"] : Object.keys(SCHWELLE), alt = b.value;
+      const arten = i.value === "*" ? ["termin", "kurslos"] : Object.keys(SCHWELLE), alt = b.value;
       b.innerHTML = arten.map(k => `<option value="${k}">${esc(MART[k])}${k === "termin" ? " (7 Tage vorher)" : ""}</option>`).join("");
       if (arten.indexOf(alt) >= 0) b.value = alt;
-      const schwelle = !!SCHWELLE[b.value], nurBereich = b.value === "treffer" || b.value === "kurslos";
+      const schwelle = !!SCHWELLE[b.value], nurBereich = b.value === "kurslos";
       $("mb-m-w").disabled = !schwelle; $("mb-m-w").placeholder = schwelle ? (b.value.indexOf("kurs") === 0 ? "z. B. 98,50" : "z. B. 4,25") : "–"; if (!schwelle) $("mb-m-w").value = "";
       $("mb-m-m").disabled = nurBereich; if (nurBereich) $("mb-m-m").value = "0";
     }
@@ -460,7 +407,7 @@
       if (SCHWELLE[b] && isNaN(w)) { st.className = "kf-status fehler"; st.textContent = "Bitte einen Wert als Zahl eintragen, zum Beispiel 4,25."; return; }
       if (!SCHWELLE[b] && meldungen().some(m => m.w.b === b)) { st.className = "kf-status fehler"; st.textContent = "Diese Meldung gibt es schon."; return; }
       st.className = "kf-status"; st.textContent = "Einen Moment …";
-      const neu = SCHWELLE[b] ? { i, b, w, m: per, an: 1 } : { i: i === "s" ? "s" : "*", b, m: b === "termin" ? per : 0, an: 1 };
+      const neu = SCHWELLE[b] ? { i, b, w, m: per, an: 1 } : { i: "*", b, m: b === "termin" ? per : 0, an: 1 };
       K.ablage("meldung", "m" + neuId(), neu).catch(a => { const s = $("mb-m-status"); if (s) { s.className = "kf-status fehler"; s.textContent = fehlerText(a); } });
     }
     function meldungKlick(e) {
@@ -474,37 +421,31 @@
     function seitBesuch(D) {
       const st = K.stand(), seit = st.besuch ? isoVon(st.besuch) : "", zeilen = [];
       meldungenAktiv(D).forEach(m => { const s = meldungStand(m, D); zeilen.push([true, `<b>Meldung: ${esc(s.wer)}</b> – ${esc(s.was)}. ${s.stand.replace(/<\/?em>/g, "")}`, '<button type="button" data-zu="meldungen">Meldungen</button>']); });
-      suchen().forEach(s => { const x = suchStand(s, D); if (x.mehr > 0) zeilen.push([false, `<b>${x.mehr} ${x.mehr === 1 ? "Treffer" : "Treffer"} mehr</b> für deine Suche „${esc(s.w.n || "Suche")}“.`, `<a data-suche="${esc(s.id)}" href="anleihen-suche.html?${esc(s.w.q)}">Zur Suche</a>`]); });
       termine(40).filter(t => tageBis(t.tag) <= 14).slice(0, 3).forEach(t => { const n = tageBis(t.tag);
         zeilen.push([false, `<b>${t.art === "Fälligkeit" ? "Fälligkeit" : "Zinstermin"} ${n <= 0 ? "heute" : n === 1 ? "morgen" : `in ${n} Tagen`}:</b> ${esc(titel(t.o))} ${t.art === "Fälligkeit" ? "wird" : "zahlt"} am ${esc(MC.tag(t.tag))} ${t.art === "Fälligkeit" ? "zurückgezahlt" : t.art === "Zinstermin" ? "Zinsen" : "Zinsen und den Nennwert"}.`, '<button type="button" data-zu="merkliste">Merkliste</button>']); });
       const ab = seit || (() => { const d = new Date(HEUTE + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 14); return d.toISOString().slice(0, 10); })();
       Object.entries(st.neueSeiten || {}).filter(([f, tag]) => tag >= ab && SEITEN_TITEL[f.replace(/\.html$/, "")] && !gelesen(f.replace(/\.html$/, ""))).slice(0, 2)
         .forEach(([f]) => zeilen.push([false, `<b>Neu auf Bondarium:</b> ${esc(SEITEN_TITEL[f.replace(/\.html$/, "")])}`, `<a href="${esc(f)}">Lesen</a>`]));
       const kopf = st.besuch ? `Seit deinem letzten Besuch <small>am ${esc(tagDe(st.besuch))}</small>` : "Willkommen in deinem Bereich";
-      if (!zeilen.length) zeilen.push([false, st.besuch ? "Nichts Neues – keine Meldung, kein Termin in den nächsten 14 Tagen, keine neuen Treffer." : "Hier steht künftig, was sich seit deinem letzten Besuch getan hat: ausgelöste Meldungen, neue Treffer deiner gespeicherten Suchen, anstehende Zinstermine und neue Seiten.", ""]);
+      if (!zeilen.length) zeilen.push([false, st.besuch ? "Nichts Neues – keine Meldung und kein Termin in den nächsten 14 Tagen." : "Hier steht künftig, was sich seit deinem letzten Besuch getan hat: ausgelöste Meldungen, anstehende Zinstermine und neue Seiten.", ""]);
       return `<section class="mb-neu" aria-labelledby="mb-h-neu"><h2 class="mb-h2" id="mb-h-neu">${kopf}</h2><ul>${zeilen.map(z => `<li><span class="mb-punkt${z[0] ? " alarm" : ""}"></span><span>${z[1]}</span>${z[2]}</li>`).join("")}</ul></section>`;
     }
     function zeichneStart() {
       const el = $("a-start"); if (!el) return;
-      const D = X.daten(), st = K.stand(), ls = X.liste(), nE = etfListe().length, n = ALLE_SEITEN.filter(p => gelesen(p[0])).length, nx = naechste();
-      const lern = `<section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Weiterlernen</h2><p>${n} von ${ALLE_SEITEN.length} Seiten</p></div>` +
-        `<ul class="mb-jahre">${GRUPPEN.map(g => { const k = g.seiten.filter(p => gelesen(p[0])).length; return `<li><span>${esc(g.name)}</span>${balken(k, g.seiten.length)}<b>${k}/${g.seiten.length}</b></li>`; }).join("")}</ul>` +
-        (nx ? `<div class="mb-next"><span>Weiter mit</span><b>${esc(nx[1])}</b></div>` : '<div class="mb-next"><span>Geschafft</span><b>Du hast alle Seiten abgehakt.</b></div>') +
-        `<p class="mb-fuss"><button type="button" class="kto-textbtn" data-zu="lernen">Mein Lernstand</button>${nx ? `<a class="mb-go" href="${esc(nx[0])}.html">Weiterlesen</a>` : ""}</p></section>`;
+      const D = X.daten(), st = K.stand(), ls = X.liste(), nE = etfListe().length;
       const mitDelta = ls.filter(o => delta(o) != null).sort((a, b) => Math.abs(delta(b)) - Math.abs(delta(a))), top = (mitDelta.length ? mitDelta : ls.slice().sort((a, b) => b.seit - a.seit)).slice(0, 4);
       const merk = `<section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Meine Merkliste</h2><p>${ls.length} ${ls.length === 1 ? "Anleihe" : "Anleihen"}${nE ? ` · ${nE} ${nE === 1 ? "ETF" : "ETFs"}` : ""}</p></div>` +
         (top.length ? `<ul class="mb-mini">${top.map(o => { const d = delta(o); return `<li><div><a href="anleihe.html?isin=${encodeURIComponent(o.isin)}">${esc(titel(o))}</a><span>gemerkt ${esc(tagDe(o.seit))}</span></div><p><b>${o.rendite != null ? fmt(o.rendite, 2) + " %" : "–"}</b><span>${d != null ? `${Math.abs(d) < 0.005 ? "±0,00" : plus(d)} seit Merken` : o.kurs != null ? `Kurs ${fmt(o.kurs, 2)}` : ""}</span></p></li>`; }).join("")}</ul>`
           : st.favoriten.length ? '<p class="mb-leer">Kurse werden geladen …</p>' : '<p class="mb-leer">Noch nichts gemerkt. In der <a href="anleihen-suche.html">Anleihen-Suche</a> und auf jedem Steckbrief steht der Knopf „Merken“.</p>') +
         `<p class="mb-fuss"><span>${X.kstand() ? "Schlusskurse vom " + esc(MC.datum(X.kstand())) : ""}</span><button type="button" class="kto-textbtn" data-zu="merkliste">Zur Merkliste</button></p></section>`;
       const zins = `<section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Mein Zins-Blick</h2><p>angeheftete Kennzahlen</p></div><div id="mb-zins"></div><p class="mb-fuss"><span></span><a href="beobachten.html">Alle Zinsen</a></p></section>`;
-      const such = `<section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Gespeicherte Suchen</h2><p>aus der Anleihen-Suche</p></div>${suchListe(D, false)}<p class="mb-fuss"><span></span><a href="anleihen-suche.html">Zur Anleihen-Suche</a></p></section>`;
       const t = termine(4), term = `<section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Nächste Termine</h2><p>deiner Merkliste</p></div>` +
         (t.length ? `<ul class="mb-termine">${t.map(x => `<li><span class="mb-tag"><b>${+x.tag.slice(8, 10)}</b>${MONATE[+x.tag.slice(5, 7) - 1]} ${x.tag.slice(2, 4)}</span><div><b>${esc(titel(x.o))}</b>${esc(x.art)}${tageBis(x.tag) <= 30 ? ` · in ${tageBis(x.tag)} ${tageBis(x.tag) === 1 ? "Tag" : "Tagen"}` : ""}</div></li>`).join("")}</ul>`
           : `<p class="mb-leer">${ls.length ? "Für deine gemerkten Anleihen ist kein kommender Termin bekannt." : "Sobald du Anleihen gemerkt hast, stehen hier ihre nächsten Zinstermine und Fälligkeiten."}</p>`) +
         `<p class="mb-fuss"><span>Zinstermine laut Deutscher Börse</span>${t.length ? '<button type="button" class="kto-textbtn" data-ics="alle">In meinen Kalender (.ics)</button>' : ""}</p></section>`;
       const an = wert("einstellung", "zuletzt") === 1, ang = Object.entries(abl("angesehen")).sort((a, b) => b[1][1] - a[1][1]);
       const zuletzt = an && ang.length ? `<div class="mb-zuletzt"><p class="mb-zk">Zuletzt angesehen</p><p class="mb-chips-a">${ang.map(([k, e]) => `<a href="${/^[A-Z]{2}/.test(k) ? "anleihe.html?isin=" + encodeURIComponent(k) : esc(k) + ".html"}">${esc(typeof e[0] === "string" && e[0] ? e[0] : k)}</a>`).join("")}</p></div>` : "";
-      el.innerHTML = seitBesuch(D) + `<div class="mb-drei">${lern}${merk}${zins}</div><div class="mb-zwei">${such}${term}</div>${zuletzt}`;
+      el.innerHTML = seitBesuch(D) + `<div class="mb-drei">${merk}${zins}${term}</div>${zuletzt}`;
       zinsBlick($("mb-zins"));
     }
 
@@ -549,19 +490,13 @@
       el.innerHTML = kopf + stufen + `<div class="mb-zwei e"><section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Passend zu deiner Merkliste</h2><p>aus dem, was du gemerkt hast</p></div>${passend()}</section><div class="mb-sp">${lesez}${begr}</div></div>`;
     }
 
-    // ---------- Ansicht „Rechnen und planen“: gespeicherte Rechnungen und Voreinstellungen (unter den Musterdepots) ----------
-    const RECHNER = { rendite: "Rendite", stueckzinsen: "Stückzinsen", netto: "Netto nach Steuer", zinsniveau: "Zinsniveau" };
+    // ---------- Ansicht „Rechnen und planen“: Voreinstellungen (unter den Musterdepots) ----------
     // Die Kirchensteuer aus dem Mockup wird bewusst NICHT gespeichert: Sie verriete die Religionszugehörigkeit (besonders geschützte
     // Angabe, Art. 9 DSGVO). Im Rechner wählt man sie weiter je Rechnung; auch gespeicherte Rechnungen lassen das Feld aus.
     const STARTFILTER = [["", "kein Startfilter"], ["solide=1", "Grundfilter"], ["w=EUR", "nur Euro"], ["w=EUR&stk=a", "Euro · bis 1.000 €"], ["solide=1&w=EUR", "Grundfilter · nur Euro"]];
     function zeichnePlanen() {
       const el = $("mb-planen"); if (!el) return;
-      const rg = Object.entries(abl("rechnung")).sort((a, b) => b[1][1] - a[1][1]), e = k => wert("einstellung", k);
-      const rech = `<section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Gespeicherte Rechnungen</h2><p>aus dem Rechner</p></div>` +
-        (rg.length ? `<ul class="mb-lz">${rg.map(([k, x]) => { const w = x[0] || {};
-          return `<li><div><a href="rechner.html?rg=${encodeURIComponent(k)}#${esc(RECHNER[w.a] ? w.a : "rendite")}">${esc(w.n || RECHNER[w.a] || "Rechnung")}</a><span>${esc(w.r || "")}</span></div><span class="mb-r"><span class="mb-rg-d">${esc(tagDe(w.z || x[1]))}</span><button type="button" class="mb-x" data-rg-weg="${esc(k)}" aria-label="Rechnung löschen" title="Rechnung löschen">×</button></span></li>`; }).join("")}</ul>`
-          : '<p class="mb-leer">Noch keine gespeicherte Rechnung. Im <a href="rechner.html">Rechner</a> steht unter jedem Ergebnis „Rechnung speichern“ – hier steht sie dann mit Eingaben und Ergebnis, ein Klick öffnet sie wieder.</p>') +
-        `<p class="mb-fuss"><span></span><a href="rechner.html">Zum Rechner</a></p></section>`;
+      const e = k => wert("einstellung", k);
       const feld = (k, t, u, ph) => `<div><dt>${t}<small>${u}</small></dt><dd><span class="mb-eur"><input type="text" inputmode="decimal" autocomplete="off" data-ein="${k}" value="${typeof e(k) === "number" ? fmt(e(k), e(k) % 1 ? 2 : 0) : ""}" placeholder="${ph}" aria-label="${t}"><span>€</span></span></dd></div>`;
       const wahl = (k, t, u, opts) => `<div><dt>${t}<small>${u}</small></dt><dd><select data-ein="${k}" aria-label="${t}">${opts.map(o => `<option value="${esc(o[0])}"${String(e(k) == null ? "" : e(k)) === o[0] ? " selected" : ""}>${esc(o[1])}</option>`).join("")}</select></dd></div>`;
       const vor = `<section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Meine Voreinstellungen</h2><p>gelten auf der ganzen Seite</p></div><dl class="mb-vorein">` +
@@ -569,7 +504,7 @@
         feld("freistellung", "Freistellungsauftrag, noch frei", "Rechner „Netto nach Steuer“", "1.000") +
         wahl("startfilter", "Startfilter der Anleihen-Suche", "gilt, wenn du die Suche ohne Auswahl öffnest", STARTFILTER) +
         `</dl><p class="kf-status" id="mb-ein-status" role="status" aria-live="polite"></p></section>`;
-      el.innerHTML = `<div class="mb-zwei e" style="margin-top:34px">${rech}${vor}</div>`;
+      el.innerHTML = `<div style="margin-top:34px;max-width:640px">${vor}</div>`;
     }
     function einstellungChange(e) {
       const f = e.target.closest("[data-ein]"); if (!f) return;
@@ -676,19 +611,17 @@
       else if (ANSICHT === "meldungen") { zeichneMeldungen(); zeichneKonto(); }
     }
     function zeige(a) { ANSICHT = a; const d = $("depot"); if (d) d.dataset.ansicht = a; alles(); }
-    // Gespeicherte Suchen und Meldungen brauchen den Suchindex – auch wenn die Merkliste leer ist
-    function datenFuerSuchen() { if (!X.daten() && (suchen().length || meldungen().length) && K.stand().angemeldet) X.neuLaden(); }
+    // Meldungen brauchen den Suchindex – auch wenn die Merkliste leer ist
+    function datenFuerSuchen() { if (!X.daten() && meldungen().length && K.stand().angemeldet) X.neuLaden(); }
 
     // ---------- Ereignisse ----------
     const depot = $("depot");
     depot.addEventListener("click", e => {
       const zu = e.target.closest("[data-zu]"); if (zu && depot.contains(zu)) { X.reiterWahl(zu.dataset.zu, true); window.scrollTo({ top: Math.max(0, depot.getBoundingClientRect().top + window.scrollY - 90) }); return; }
-      if (suchKlick(e)) return;
       if (e.target.closest("[data-ics]")) { kalender(X.liste()); return; }
       const g = e.target.closest("[data-gelesen]"); if (g) { g.disabled = true; lege("gelesen", g.dataset.gelesen, gelesen(g.dataset.gelesen) ? null : 1).catch(() => { g.disabled = false; }); return; }
       const lz = e.target.closest("[data-lz-weg]"); if (lz) { lege("lesezeichen", lz.dataset.lzWeg, null).catch(() => {}); return; }
       const bg = e.target.closest("[data-bg-weg]"); if (bg) { lege("begriff", bg.dataset.bgWeg, null).catch(() => {}); return; }
-      const rg = e.target.closest("[data-rg-weg]"); if (rg) { lege("rechnung", rg.dataset.rgWeg, null).catch(() => {}); return; }
       const ew = e.target.closest("[data-etf-weg]"); if (ew) { ew.disabled = true; K.entfernen(ew.dataset.etfWeg).catch(() => {}); return; }
       if (e.target.closest("#mb-vgl-btn")) { if (VGL.size < 2) X.hinweis("Kreuz in der Tabelle mindestens zwei Anleihen an – dann stehen sie hier nebeneinander."); else $("mb-vgl").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
       if (e.target.closest("#mb-vgl-leer")) { VGL.clear(); X.zeichneListe(); return; }
