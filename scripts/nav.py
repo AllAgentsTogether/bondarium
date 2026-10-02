@@ -101,17 +101,18 @@ KAUFEN = ("Kaufen", "kaufen.html", [
 ])
 # „Zinsen“: Marktdaten, täglich aktuell. Kopf = Übersicht beobachten.html (Dateiname bleibt, damit alle Links gelten).
 # „Renditen“ steht vor Staats- und Unternehmensanleihen, damit die Einträge nicht wie die Listen im Menü „Anleihen“ klingen.
-# Seit 02.10.2026 mit zwei grünen Chips (Nutzerwunsch wie bei Kaufen): Staatsanleihen – dazu die Langläufer, die alle Staatsanleihen
-# sind (darum stehen sie jetzt dort statt am Ende) – und Unternehmensanleihen.
+# Seit 02.10.2026 mit grünen Chips (Nutzerwunsch wie bei Kaufen): Staatsanleihen, Unternehmensanleihen und – eigener Chip, weil sie
+# Kursverläufe einzelner Anleihen zeigen statt Renditen (Nutzer: „Langläufer passt nicht ganz in der Zuordnung“) – Lange Laufzeiten.
 ZINSEN = ("Zinsen", "beobachten.html", [
     "Staatsanleihen",
     ("Renditen von Staatsanleihen seit 1970", "renditen.html"),
     ("Zinskurve seit 1972", "zinskurve.html"),
     ("Realzins seit 1970", "realzins.html"),
-    ("Langläufer", "langlaeufer.html"),
     "Unternehmensanleihen",
     ("Renditen von Unternehmensanleihen seit 1984", "unternehmensanleihen.html"),
     ("Risikoaufschläge seit 1984", "risikoaufschlaege.html"),
+    "Lange Laufzeiten",
+    ("Langläufer", "langlaeufer.html"),
 ])
 # Die Aufklapper neben der Akademie, in dieser Reihenfolge; Rubrik-Schlüssel je Menü; Zusatzseiten, die zu einem Menü zählen
 MENUS = [ANLEIHEN, KAUFEN, ZINSEN]
