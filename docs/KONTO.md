@@ -204,12 +204,11 @@ angelegt wird es erst beim ersten Hinzufügen) und für ältere Seiten noch `dep
 Depot, Namen ohne Steuerzeichen, höchstens `NAME_MAX` = 40 Zeichen; leerer Name beim Anlegen → „Musterdepot N“.
 
 Seite: Über dem Formular eine Leiste mit allen Depots als Pillen (das offene dunkel, die Zahl nennt die Anleihen),
-„+ Neues Musterdepot“ (fragt nur nach dem Namen, inline), rechts „Vergleichen“, „Umbenennen“ (inline an der Pille) und
-„Löschen“ (fragt einmal nach). Welches Depot offen ist (`AKTIV`), gilt nur für den Seitenaufruf – beim Öffnen das erste;
-gespeichert wird es nirgends. Formular, Tabelle, Schaubild, „+“ der Merkliste und PDF beziehen sich auf das offene Depot.
-„Vergleichen“ zeigt statt des Depots eine Tabelle aller Depots: Anleihen, Nennwert, Kurswert mit Kursgewinn/-verlust, Zinsen
-pro Jahr, Zinsen bis zur Fälligkeit und von wann bis wann zurückgezahlt wird (alles in Euro, gerechnet mit `position()` und
-`zahlungen()` wie im Depot). Ein Klick auf den Namen öffnet das Depot. Der Reiter „Mein Depot“ zählt alle Anleihen aller Depots.
+„+ Neues Musterdepot“ (fragt nur nach dem Namen, inline), rechts „Umbenennen“ (inline an der Pille) und „Löschen“ (fragt
+einmal nach). Welches Depot offen ist (`AKTIV`), gilt nur für den Seitenaufruf – beim Öffnen das erste; gespeichert wird es
+nirgends. Formular, Tabelle, Schaubild, „+“ der Merkliste und PDF beziehen sich auf das offene Depot. Der Reiter „Mein Depot“
+zählt alle Anleihen aller Depots. Einen Knopf „Vergleichen“ mit einer Tabelle aller Depots gab es am 02.10.2026 kurz; der
+Nutzer hat ihn entfernen lassen („die Funktion beim Depot braucht man nicht“).
 
 PDF: Dachzeile „Musterdepot“, darunter der Name (lange Namen kleiner, bis 15 pt); rechts daneben der grüne Knopf
 „In meine Musterdepots übernehmen“ → `konto.html#muster=ISIN~Nennwert,…&n=Name`. Die Seite zeigt dann den Kasten

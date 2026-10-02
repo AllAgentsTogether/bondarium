@@ -194,11 +194,10 @@
   .kd-dw:hover { border-color: var(--ink); }
   .kd-dw:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   .kd-dw i { font-style: normal; font-size: 12.5px; font-weight: 700; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: #F0EFEA; color: var(--ink); display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; flex: none; }
-  .kd-dw[aria-current="true"], .kd-dw[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .kd-dw[aria-current="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
   .kd-dw[aria-current="true"] i { background: var(--green); color: var(--ink); }
   .kd-dw.neu { color: var(--green-text); border-style: dashed; border-color: var(--green-text); padding: 8px 15px; background: none; }
   .kd-dw.neu:hover { background: var(--green-tint); }
-  .kd-dw.vgl { padding: 8px 15px; font-size: 14px; }
   .kd-dw-akt { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; font-size: 14px; }
   .kd-dw-akt .kto-textbtn { font-size: 14px; }
   .kd-dw-akt .kto-weg { font: inherit; font-size: 14px; font-weight: 600; color: #fff; background: var(--down); border: 0; border-radius: 999px; padding: 8px 15px; cursor: pointer; }
@@ -208,11 +207,6 @@
   .kd-dw-form .kto-textbtn { font-size: 14px; margin-right: 10px; }
   .kd-wahl-status { margin: 8px 0 0; }
   .kd-wahl-status:empty { display: none; }
-  .kd-vgl[hidden], #kd-inhalt[hidden] { display: none; }
-  .kd-vgl h2.kd-h3 { margin-top: 26px; }
-  .kd-vt tbody th button { font: inherit; font-size: 16px; font-weight: 600; color: var(--ink); background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
-  .kd-vt tbody th button:hover { color: var(--green-text); text-decoration: underline; }
-  .kd-vt td.leise { color: var(--text); }
   @media (max-width: 600px) { .kd-dw-form input { width: 150px; } .kd-wahlleiste { justify-content: flex-start; } }
   /* „E-Mail vor jeder Fälligkeit“ (seit 02.10.2026): eine ruhige Zeile mit Schalter unter der Tabelle */
   .kd-erinnern { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 4px 14px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); padding: 12px 16px; margin: 18px 0 0; max-width: 900px; }
@@ -577,18 +571,8 @@
       </div>
       </div>
       <section class="kd" id="mein-depot" role="tabpanel" aria-labelledby="r-depot" hidden>
-        <div class="kd-wahlleiste" id="kd-wahl"></div>   <!-- Musterdepots als Pillen, „+ Neues Musterdepot“, Vergleichen, Umbenennen, Löschen (seit 02.10.2026) -->
+        <div class="kd-wahlleiste" id="kd-wahl"></div>   <!-- Musterdepots als Pillen, „+ Neues Musterdepot“, Umbenennen, Löschen (seit 02.10.2026) -->
         <p class="kf-status kd-wahl-status" id="kd-wahl-status" role="status" aria-live="polite"></p>
-        <section class="kd-vgl" id="kd-vgl" aria-labelledby="h-vgl" hidden>
-          <h2 class="kd-h3" id="h-vgl">Deine Musterdepots im Vergleich</h2>
-          <p class="kd-zsum">Alle Beträge in Euro, vor Steuern und Kosten. Ein Klick auf den Namen öffnet das Musterdepot.</p>
-          <div class="table-scroll"><table class="kd-t kd-vt">
-            <caption class="sr-only">Deine Musterdepots im Vergleich</caption>
-            <thead><tr><th scope="col">Musterdepot</th><th scope="col" class="num">Anleihen</th><th scope="col" class="num">Nennwert</th><th scope="col" class="num" title="Nennwert mal Schlusskurs, in Euro – ohne Stückzinsen und Gebühren. Darunter der Kursgewinn oder Kursverlust bis zur Rückzahlung zu 100 %.">Kurswert</th><th scope="col" class="num">Zinsen pro Jahr</th><th scope="col" class="num">Zinsen bis zur Fälligkeit</th><th scope="col" class="num">Rückzahlungen</th></tr></thead>
-            <tbody id="kd-vgl-zeilen"></tbody>
-          </table></div>
-          <details class="kd-fx" id="kd-vgl-fx" hidden><summary>* Fremdwährungen werden zur Vereinfachung in Euro umgerechnet</summary><p id="kd-vgl-fx-t"></p></details>
-        </section>
         <div id="kd-inhalt">
         <p class="kd-intro">Leg dir bis zu fünf Musterdepots an – zum Beispiel eins für Sicherheit und eins für mehr Rendite. In jedes passen zehn Anleihen von deiner Merkliste, jeweils mit einem Nennwert. Darunter siehst du, wann Zinsen und Rückzahlungen fällig wären. Hier wird nichts gekauft.</p>
         <form class="kd-neu" id="f-depot" action="konto.php" method="post">
@@ -660,7 +644,7 @@
           <p><strong>Rendite.</strong> Rendite bis zur Fälligkeit in % pro Jahr, von uns aus Kurs, Kupon und Fälligkeit berechnet – nach denselben Regeln wie in der <a href="anleihen-suche.html">Anleihen-Suche</a>, wo unter „Datenquellen und Methodik“ alle Einzelheiten stehen.</p>
           <p><strong>Stammdaten.</strong> Kupon, Fälligkeit, Art, Währung, Volumen und Stückelung aus dem Register der europäischen Wertpapieraufsicht ESMA (FIRDS). Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage, beide in der Währung der Anleihe.</p>
           <p><strong>Steckbrief.</strong> Ein Klick auf Name oder ISIN öffnet den Steckbrief der Anleihe mit Kursverlauf, Handel und Rechenbeispiel.</p>
-          <p><strong>Mein Depot.</strong> Bis zu fünf Musterdepots mit gedachten Beträgen, kein Bestand; der Vergleich rechnet für jedes Depot nach denselben Regeln. Kurswert = Nennwert × Schlusskurs, ohne Stückzinsen und Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Zinsen je Termin = Nennwert × Kupon ÷ Zahl der Zinstermine im Jahr; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Der Unterschied zwischen Rückzahlung und Kurswert ist der Kursgewinn oder Kursverlust bis zur Fälligkeit. Das Schaubild reicht von heute bis zur letzten Fälligkeit, höchstens 30 Jahre, jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung zum Nennwert, ganz unten beides zusammen; in jedes Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Zusammenfassung, Schaubild und die Liste der Zinstermine zeigen dann nur die Auswahl. Die Liste nennt die Zinstermine des nächsten Kalenderjahrs von Januar bis Dezember als Beispiel für ein Jahr, ohne Rückzahlungen; alle Jahre bis zur letzten Fälligkeit zeigt das Schaubild. Die Zinstermine stammen aus der Liste der Deutschen Börse „Alle handelbaren Instrumente“ (letzter und nächster Zinstermin je Anleihe); nennt sie für eine Anleihe keine, sind sie geschätzt – die Anleihe steht dann im Hinweis unter den Zinsterminen, die Regel im Steckbrief unter „Datenquellen und Methodik“. Maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
+          <p><strong>Mein Depot.</strong> Bis zu fünf Musterdepots mit gedachten Beträgen, kein Bestand. Kurswert = Nennwert × Schlusskurs, ohne Stückzinsen und Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Zinsen je Termin = Nennwert × Kupon ÷ Zahl der Zinstermine im Jahr; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Der Unterschied zwischen Rückzahlung und Kurswert ist der Kursgewinn oder Kursverlust bis zur Fälligkeit. Das Schaubild reicht von heute bis zur letzten Fälligkeit, höchstens 30 Jahre, jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung zum Nennwert, ganz unten beides zusammen; in jedes Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Zusammenfassung, Schaubild und die Liste der Zinstermine zeigen dann nur die Auswahl. Die Liste nennt die Zinstermine des nächsten Kalenderjahrs von Januar bis Dezember als Beispiel für ein Jahr, ohne Rückzahlungen; alle Jahre bis zur letzten Fälligkeit zeigt das Schaubild. Die Zinstermine stammen aus der Liste der Deutschen Börse „Alle handelbaren Instrumente“ (letzter und nächster Zinstermin je Anleihe); nennt sie für eine Anleihe keine, sind sie geschätzt – die Anleihe steht dann im Hinweis unter den Zinsterminen, die Regel im Steckbrief unter „Datenquellen und Methodik“. Maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
           <p><strong>Fremdwährungen.</strong> Anleihen in anderer Währung trägst du mit dem Nennwert in dieser Währung ein. Kurswert, Zinsen und Rückzahlung rechnen wir zur Vereinfachung in Euro um; die Anleihe trägt in der Tabelle ein Sternchen (*). Umgerechnet wird mit dem jeweils neuesten Euro-Referenzkurs der Europäischen Zentralbank (sie veröffentlicht ihn an jedem Arbeitstag gegen 16 Uhr; das Datum steht im aufklappbaren Hinweis unter der Tabelle) – und dieser Kurs ist für die ganze Laufzeit als fest angenommen. Tatsächlich schwankt der Wechselkurs: Wie viel Euro eine Zahlung am Ende wert ist, steht erst am Zahltag fest (Wechselkursrisiko). Für Währungen ohne EZB-Referenzkurs gibt es keine Umrechnung – solche Anleihen fehlen im Schaubild.</p>
           <p id="datastand"></p>
         </div>
@@ -992,7 +976,7 @@ MC.navInit();
     $("r-merk-n").textContent = fav.length || ""; $("r-depot-n").textContent = alle.length || "";
     if (!fav.length) { LISTE = []; mfDaten(null); MF_N = null; $("liste").hidden = true; $("teilen-box").hidden = true; statusText(); }
     else if (!LISTE.length) $("status").textContent = "Kurse werden geladen …";
-    if (!fav.length && !alle.length) { POS = []; DDATA = null; $("quellen").hidden = true; zeichneDepot(); zeichneVergleich(); return; }
+    if (!fav.length && !alle.length) { POS = []; DDATA = null; $("quellen").hidden = true; zeichneDepot(); return; }
     const isins = fav.map(f => f[0]).concat(alle.map(d => d[0]));
     Promise.all([ladeDaten(), ladeFx()]).then(([D]) => ladeStamm(isins.filter(i => !D.idx.has(i)).concat(alle.map(d => d[0]))).then(() => D)).then(D => {   // Depot: Stammdaten immer – dort stehen die Zinstermine
       if (nr !== lauf) return;
@@ -1003,7 +987,6 @@ MC.navInit();
       if (fav.length) { $("liste").hidden = false; $("teilen-box").hidden = false; zeichne(); }
       statusText();
       zeichneDepot();
-      zeichneVergleich();
       $("datastand").textContent = `Daten-Stand: Kurse vom ${MC.datum(D.kstand)} (Deutsche Börse, Bundesbank) · Stammdaten vom ${MC.datum(D.stand)} (ESMA-Register)`;
       $("quellen").hidden = false;
     }).catch(err => {
@@ -1116,7 +1099,7 @@ MC.navInit();
     GETEILT_M = null;   // vor der Antwort leeren: Die Antwort zeichnet die Seite neu
     K.musterUebernehmen(g.name, g.liste).then(a => {
       st.textContent = ""; $("geteilt-m").hidden = true;
-      AKTIV = a.muster; VGL = false; EDIT = ""; AUS.clear(); reiterWahl("depot"); zeigeDepot(K.stand());
+      AKTIV = a.muster; EDIT = ""; AUS.clear(); reiterWahl("depot"); zeigeDepot(K.stand());
       hinweis(`„${MC.esc(g.name)}“ ist jetzt eines deiner Musterdepots – mit ${a.neu === 1 ? "1 Anleihe" : a.neu + " Anleihen"}.`);
     }, a => {
       GETEILT_M = g; $("geteilt-m-ja").disabled = false;
@@ -1373,11 +1356,11 @@ MC.navInit();
 
   // ---------- Mehrere Musterdepots (seit 02.10.2026, Nutzerentscheid nach PDF-Mockup) ----------
   // Bis zu MAX_MUSTER Depots mit eigenem Namen (konto.php, Tabelle musterdepots). Oben eine Leiste mit allen Depots als Pillen –
-  // das offene dunkel, die Zahl nennt die Anleihen –, „+ Neues Musterdepot“, „Vergleichen“, „Umbenennen“ und „Löschen“ (fragt
+  // das offene dunkel, die Zahl nennt die Anleihen –, „+ Neues Musterdepot“, „Umbenennen“ und „Löschen“ (fragt
   // einmal nach; das letzte Depot bleibt). Welches Depot offen ist, gilt nur für diesen Seitenaufruf (AKTIV, nirgends gespeichert);
   // beim Öffnen ist es das erste. Formular, Tabelle, „+“ der Merkliste und PDF beziehen sich auf das offene Depot.
   const MAX_MUSTER = 5;
-  let DEPOTS = [], AKTIV = null, VGL = false, EDIT = "", DDATA = null;   // EDIT: "" | "neu" | "name" | "weg"
+  let DEPOTS = [], AKTIV = null, EDIT = "", DDATA = null;   // EDIT: "" | "neu" | "name" | "weg"
   const aktName = () => { const d = DEPOTS.find(x => x[0] === AKTIV); return d ? d[1] : "Musterdepot"; };
   const DW_TEXT = { mustervoll: `Du hast schon ${MAX_MUSTER} Musterdepots – lösch erst eins, dann ist Platz für ein neues.`, name: "Bitte gib dem Musterdepot einen Namen.",
     letztes: "Das letzte Musterdepot bleibt – du kannst es umbenennen oder leeren.", muster: "Dieses Musterdepot gibt es nicht mehr. Die Seite zeigt jetzt den aktuellen Stand." };
@@ -1386,52 +1369,20 @@ MC.navInit();
     const viele = DEPOTS.length > 1, form = art => `<form class="kd-dw-form" id="kd-dw-form" data-art="${art}"><label class="sr-only" for="kd-dw-name">${art === "neu" ? "Name des neuen Musterdepots" : "Neuer Name für das Musterdepot"}</label>` +
       `<input id="kd-dw-name" type="text" maxlength="40" autocomplete="off" placeholder="Name, z. B. Für die Rente" value="${art === "name" ? MC.esc(aktName()) : ""}">` +
       `<button type="submit" class="go">${art === "neu" ? "Anlegen" : "Speichern"}</button><button type="button" class="kto-textbtn" data-dw="abbrechen">Abbrechen</button></form>`;
-    const pillen = DEPOTS.map(d => EDIT === "name" && !VGL && d[0] === AKTIV ? form("name")
-      : `<button type="button" class="kd-dw" data-muster="${d[0]}"${!VGL && d[0] === AKTIV ? ' aria-current="true"' : ""} title="${MC.esc(d[1])}"><span>${MC.esc(d[1])}</span><i>${d[2].length}</i></button>`).join("");
+    const pillen = DEPOTS.map(d => EDIT === "name" && d[0] === AKTIV ? form("name")
+      : `<button type="button" class="kd-dw" data-muster="${d[0]}"${d[0] === AKTIV ? ' aria-current="true"' : ""} title="${MC.esc(d[1])}"><span>${MC.esc(d[1])}</span><i>${d[2].length}</i></button>`).join("");
     const neu = EDIT === "neu" ? form("neu") : DEPOTS.length < MAX_MUSTER ? '<button type="button" class="kd-dw neu" data-dw="neu">+ Neues Musterdepot</button>' : "";
     const akt = EDIT === "weg" ? `<button type="button" class="kto-weg" data-dw="weg-ja">„${MC.esc(aktName())}“ löschen</button><button type="button" class="kto-textbtn" data-dw="abbrechen">Abbrechen</button>`
-      : (viele ? `<button type="button" class="kd-dw vgl" data-dw="vgl" aria-pressed="${VGL}">Vergleichen</button>` : "") +
-        (VGL ? "" : '<button type="button" class="kto-textbtn" data-dw="name">Umbenennen</button>' + (viele ? '<button type="button" class="kto-textbtn" data-dw="weg">Löschen</button>' : ""));
+      : '<button type="button" class="kto-textbtn" data-dw="name">Umbenennen</button>' + (viele ? '<button type="button" class="kto-textbtn" data-dw="weg">Löschen</button>' : "");
     $("kd-wahl").innerHTML = `<div class="kd-depots" role="group" aria-label="Deine Musterdepots">${pillen}${neu}</div><div class="kd-dw-akt">${akt}</div>`;
-    $("kd-vgl").hidden = !VGL; $("kd-inhalt").hidden = VGL;
     const f = $("kd-dw-name"); if (f) { f.focus(); if (EDIT === "name") f.select(); }
   }
-  // Vergleich: je Depot Anleihen, Nennwert, Kurswert mit Kursgewinn/-verlust, Zinsen pro Jahr, Zinsen bis zur Fälligkeit und
-  // von wann bis wann zurückgezahlt wird – alles in Euro (gerechnet wie im Depot selbst)
-  function zeichneVergleich() {
-    if (!VGL) return;
-    const D = DDATA, merkPos = POS, merkAus = new Set(AUS);
-    AUS.clear();
-    let fremdAlle = [];
-    const zeilen = DEPOTS.map(d => {
-      const ps = D ? d[2].map(x => position(x[0], x[1], D)) : [];
-      POS = ps; const z = ps.length ? zahlungen() : [];
-      const sum = (l, f) => l.reduce((a, x) => a + (f(x) || 0), 0), mitK = ps.filter(p => p.kauf != null), mitD = ps.filter(p => p.diff != null);
-      const rueck = z.filter(x => x.art === "Rückzahlung"), fremd = ps.filter(p => p.fremd);
-      fremdAlle = fremdAlle.concat(fremd);
-      const nenn = sum(ps, p => p.nennEur), diff = sum(mitD, p => p.diff);
-      return `<tr><th scope="row"><button type="button" data-muster="${d[0]}">${MC.esc(d[1])}</button>${fremd.length ? '<span class="kd-stern" title="Enthält Fremdwährungen – zur Vereinfachung in Euro umgerechnet">*</span>' : ""}</th>` +
-        `<td class="num">${d[2].length}</td>` +
-        `<td class="num">${ps.length ? eur(nenn, fremd.length ? 2 : 0) : "–"}</td>` +
-        `<td class="num">${mitK.length ? eur(sum(mitK, p => p.kauf)) + (mitD.length ? diffKlein(diff, diff < 0 ? "Kursverlust " : "Kursgewinn ") : "") : "–"}</td>` +
-        `<td class="num">${ps.length ? eur(sum(ps, p => p.zins)) : "–"}</td>` +
-        `<td class="num">${z.length ? eur(sum(z.filter(x => x.art === "Zinsen"), x => x.betrag)) : "–"}</td>` +
-        `<td class="num${rueck.length ? "" : " leise"}">${rueck.length ? `${rueck[0].tag.slice(0, 4)}${rueck[rueck.length - 1].tag.slice(0, 4) !== rueck[0].tag.slice(0, 4) ? " bis " + rueck[rueck.length - 1].tag.slice(0, 4) : ""}<small>letzte am ${MC.datum(rueck[rueck.length - 1].tag)}</small>` : d[2].length ? "–" : "leer"}</td></tr>`;
-    });
-    POS = merkPos; merkAus.forEach(i => AUS.add(i));
-    $("kd-vgl-zeilen").innerHTML = zeilen.join("");
-    const kurse = [...new Set(fremdAlle.map(p => p.o.cur))].sort().filter(c => FX && FX.kurse[c]).map(c => `1 € = ${fmtFx(FX.kurse[c])} ${MC.esc(c)}`).join(", ");
-    $("kd-vgl-fx").hidden = !fremdAlle.length;
-    if (fremdAlle.length && FX) $("kd-vgl-fx-t").innerHTML = `In Euro umgerechnet mit dem Euro-Referenzkurs der EZB vom ${MC.datum(FX.stand)}: ${kurse}. Dieser Wechselkurs ist hier als <b>fest</b> angenommen; tatsächlich schwankt er (<b>Wechselkursrisiko</b>).`;
-    if (MC.wischPruefen) MC.wischPruefen();
-  }
-  function oeffne(id) { AKTIV = id; VGL = false; EDIT = ""; AUS.clear(); wahlStatus(""); zeigeDepot(K.stand()); }
+  function oeffne(id) { AKTIV = id; EDIT = ""; AUS.clear(); wahlStatus(""); zeigeDepot(K.stand()); }
   const dwFehler = a => { if (a && a.status === "anmelden") return; wahlStatus(DW_TEXT[a && a.status] || TEXT[a && a.status] || TEXT.fehler, true); };
   $("kd-wahl").addEventListener("click", e => {
     const m = e.target.closest("[data-muster]"); if (m) { oeffne(+m.dataset.muster); return; }
     const b = e.target.closest("[data-dw]"); if (!b) return;
     const w = b.dataset.dw;
-    if (w === "vgl") { VGL = !VGL; EDIT = ""; wahlStatus(""); zeichneWahl(); zeichneVergleich(); return; }
     if (w === "weg-ja") {
       const name = aktName(); b.disabled = true;
       K.musterWeg(AKTIV).then(() => { EDIT = ""; AKTIV = null; zeigeDepot(K.stand()); wahlStatus(`„${name}“ ist gelöscht.`); }, a => { EDIT = ""; zeichneWahl(); dwFehler(a); });
@@ -1445,13 +1396,12 @@ MC.navInit();
     if (f.dataset.art === "name" && !name) { wahlStatus(DW_TEXT.name, true); return; }
     knopf.disabled = true;
     (f.dataset.art === "neu" ? K.musterNeu(name) : K.musterName(AKTIV, name)).then(a => {
-      EDIT = ""; if (a.muster) AKTIV = a.muster; VGL = false; AUS.clear();
+      EDIT = ""; if (a.muster) AKTIV = a.muster; AUS.clear();
       zeigeDepot(K.stand());
       wahlStatus(f.dataset.art === "neu" ? `„${aktName()}“ ist angelegt – füg jetzt Anleihen hinzu.` : "");
     }, a => { knopf.disabled = false; dwFehler(a); });
   });
   $("kd-wahl").addEventListener("keydown", e => { if (e.key === "Escape" && EDIT) { EDIT = ""; zeichneWahl(); } });
-  $("kd-vgl").addEventListener("click", e => { const m = e.target.closest("[data-muster]"); if (m) oeffne(+m.dataset.muster); });
 
   // ---------- E-Mail vor jeder Fälligkeit (seit 02.10.2026, Nutzerentscheid nach PDF-Mockup) ----------
   // Ein Schalter für alle Musterdepots (konto.php, aktion=erinnern), anfangs aus. Verschickt werden die E-Mails von erinnerung.php –
