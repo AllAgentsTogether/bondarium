@@ -75,8 +75,7 @@ Kurs und Kurswert (Nutzerwunsch 01.10.2026: „in der Anleihe muss auch der aktu
 muss die Differenz zwischen Kaufkurs und 100 % Rückzahlung erkenntlich sein“): Als Kaufkurs gilt der Schlusskurs von
 heute – das Depot rechnet, als wäre heute der Kauftag; ein eigener Kaufkurs wird nicht gespeichert. Kurswert =
 Nennwert × Kurs, ohne Stückzinsen und Gebühren. Der Unterschied zur Rückzahlung zu 100 % (Kursgewinn grün, Kursverlust
-orange) steht unter dem Kurswert, in der Summenzeile, im Satz über den Schaubildern, an jedem Rückzahlungsbalken und
-in der Liste „Alle Zahlungstermine“.
+orange) steht unter dem Kurswert, in der Summenzeile, im Satz über den Schaubildern und an jedem Rückzahlungsbalken.
 
 Ins Depot kommen nur Anleihen mit festem Kupon oder ohne Kupon (Nutzerentscheid); alles andere steht
 ausgegraut mit Grund in der Auswahl (`grund()` in `konto.html`).
@@ -96,7 +95,7 @@ EZB-Referenzkurs (auch die alten Euro-Vorgänger wie DEM) und der Fall, dass `we
 für …“ – die Anleihe bleibt aus dem Schaubild. Zinstermine (seit 02.10.2026): Zahlungen je
 Jahr und Zinstage aus den Stammdaten `anleihen/<teil>.json`, Feld 15 (`scripts/update_zinstermine.py`, Instrumentenliste der
 Deutschen Börse) – die Seite lädt dafür die Teildatei jeder Depot-Anleihe; ohne Angabe der Börse geschätzt, die Anleihe
-steht dann im Hinweis unter den Zahlungsterminen.
+steht dann im Hinweis unter den Zinsterminen.
 
 Immer der neueste Kurs (seit 01.10.2026, Nutzerwunsch: „die EZB-Kurse sollen auch immer aktuell sein“): Der Datenlauf um
 10 Uhr holt den Kurs des Vortags – die EZB veröffentlicht erst gegen 16 Uhr. Deshalb lädt die Seite `wechselkurse.php`:
@@ -125,7 +124,9 @@ Unter der Tabelle die Zahlungen (Fassung vom 01.10.2026 abends, Nutzerwunsch: �
 die Rückzahlungen von unterschiedlichen Anleihen müssen farblich unterschiedlich sein. Die nächsten 12 Monate sind
 uninteressant … 10 Jahre und danach gestrichelt mit dem Hinweis, die nächsten Jahre werden nicht angezeigt. Ganz unten
 muss die Summe aus Zinsen und Rückzahlung stehen“): ein Satz mit den Summen, ein Schaubild „Zahlungen je Jahr“ und der
-Aufklapper „Alle Zahlungstermine“. Das Schaubild (`jahresbild()`) reicht von heute bis zur
+Aufklapper „Zinstermine in den nächsten zwölf Monaten“ (seit 02.10.2026, Nutzerwunsch: „nicht alle Zahlungstermine, sondern
+nur exemplarisch für das nächste Jahr … nur Zinsen und keine Rückzahlungen“ – vorher alle Zahlungen bis zur letzten Fälligkeit;
+jetzt die Zinstermine der nächsten zwölf Monate mit Summe, ohne Rückzahlungen). Das Schaubild (`jahresbild()`) reicht von heute bis zur
 letzten Fälligkeit, höchstens 30 Jahre (`JAHRE_MAX`; Nutzerwunsch vom selben Abend: „das muss dynamisch sein … bis 30
 Jahre. So bleibt nicht alles weiß auf der rechten Seite“ – davor erst zehn, dann fest zwanzig Jahre). Bei vielen Jahren
 werden die Spalten schmal; die Zahlen über den Balken weichen dann nach oben aus, statt sich zu überdecken. Es
