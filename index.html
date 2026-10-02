@@ -838,6 +838,52 @@
     #bnd-einstieg .be-karte { padding: 16px 12px; }
     #bnd-einstieg h2 { font-size: var(--fs-h3); }
   }
+  /* Top-10-Listen als drei Themenportale (02.10.2026, Entwurf 01): Staat hellgrün, Unternehmen weiß, ETFs dunkelgrün.
+     Schriftgrößen aus dem Raster oben (--fs-*). Ersetzt die Kacheln .k5/.kc (Regeln dafür oben bleiben ungenutzt stehen). */
+  #bnd-top10 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin: 0 0 40px; }
+  #bnd-top10 .tp-k { position: relative; display: flex; flex-direction: column; min-height: 300px; padding: 26px 26px 22px; border: 1px solid rgba(26,26,25,0.12); border-radius: 18px; background: #fff; color: var(--ink); }
+  #bnd-top10 .tp-staat { background: #EEF7E8; border-color: rgba(21,124,0,0.16); }
+  #bnd-top10 .tp-etf { background: #1B2F23; border-color: #1B2F23; color: #fff; }
+  #bnd-top10 .tp-n { position: absolute; top: 34px; right: 22px; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--green); color: var(--ink); font-size: var(--fs-karte); font-weight: 700; font-variant-numeric: tabular-nums; }
+  #bnd-top10 .tp-unt .tp-n { background: #EEF7E8; color: var(--green-text); }
+  #bnd-top10 .tp-etf .tp-n { background: rgba(255,255,255,0.1); color: var(--green); }
+  #bnd-top10 .tp-bild { display: grid; place-items: center; width: 104px; height: 104px; border-radius: 50%; background: var(--green); color: #1A1A19; }
+  #bnd-top10 .tp-bild svg { width: 66px; height: 66px; }
+  #bnd-top10 .tp-staat .tp-bild svg { color: #157C00; }
+  #bnd-top10 .tp-unt .tp-bild { background: #EEF7E8; }
+  #bnd-top10 h4 { margin: 26px 0 0; font-size: var(--fs-zahl); font-weight: 700; line-height: 1.25; letter-spacing: -0.015em; color: inherit; }
+  #bnd-top10 .tp-go { display: flex; align-items: center; gap: 16px; margin-top: auto; padding-top: 26px; }
+  #bnd-top10 .tp-pf { width: 18px; height: 18px; flex: none; }
+  #bnd-top10 .tp-btn { display: inline-flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; padding: 12px 16px; border-radius: 9px; background: var(--green); color: var(--ink); font-size: var(--fs-ui); font-weight: 700; text-decoration: none; white-space: nowrap; transition: background 0.15s ease; }
+  #bnd-top10 .tp-btn:hover { background: var(--green-hover); }
+  #bnd-top10 .tp-unt .tp-btn { background: #EEF7E8; }
+  #bnd-top10 .tp-unt .tp-btn:hover { background: #DCFBD3; }
+  #bnd-top10 .tp-etf .tp-btn { flex: 1 1 auto; }
+  #bnd-top10 .tp-lnk { flex: 1 1 auto; display: inline-flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; border-bottom: 1px solid rgba(26,26,25,0.18); color: var(--ink); font-size: var(--fs-ui); font-weight: 700; text-decoration: none; }
+  #bnd-top10 .tp-lnk:hover { color: var(--green-text); border-bottom-color: var(--green-text); }
+  #bnd-top10 a:focus-visible { outline: 2px solid var(--line); outline-offset: 3px; }
+  #bnd-top10 .tp-etf a:focus-visible { outline-color: var(--green); }
+  @media (max-width: 1000px) {
+    #bnd-top10 { gap: 14px; }
+    #bnd-top10 .tp-k { padding: 22px 18px 18px; min-height: 270px; }
+    #bnd-top10 .tp-bild { width: 84px; height: 84px; } #bnd-top10 .tp-bild svg { width: 54px; height: 54px; }
+    #bnd-top10 .tp-n { top: 26px; right: 16px; width: 40px; height: 40px; }
+    #bnd-top10 .tp-go { flex-wrap: wrap; gap: 8px 14px; }
+    #bnd-top10 .tp-btn, #bnd-top10 .tp-lnk { flex: 1 1 100%; }
+  }
+  /* Handy (Entwurf Seite 4): Karten untereinander, Bild links neben dem Titel, zwei Knöpfe nebeneinander, ohne „10“-Marke */
+  @media (max-width: 700px) {
+    #bnd-top10 { grid-template-columns: minmax(0, 1fr); gap: 12px; margin-bottom: 32px; }
+    #bnd-top10 .tp-k { display: grid; grid-template-columns: 56px minmax(0, 1fr); align-items: center; column-gap: 14px; min-height: 0; padding: 14px 14px 14px; border-radius: 14px; }
+    #bnd-top10 .tp-n { display: none; }
+    #bnd-top10 .tp-bild { width: 56px; height: 56px; } #bnd-top10 .tp-bild svg { width: 36px; height: 36px; }
+    #bnd-top10 h4 { margin: 0; font-size: var(--fs-karte); }
+    #bnd-top10 .tp-go { grid-column: 1 / -1; flex-wrap: nowrap; gap: 10px; padding-top: 12px; }
+    #bnd-top10 .tp-btn { flex: 1 1 60%; min-height: 44px; padding: 10px 12px; font-size: var(--fs-klein); }
+    #bnd-top10 .tp-lnk { flex: 1 1 40%; min-height: 44px; padding: 10px 12px; border: 1px solid rgba(26,26,25,0.16); border-radius: 9px; background: #fff; font-size: var(--fs-klein); }
+    #bnd-top10 .tp-staat .tp-lnk { background: rgba(255,255,255,0.6); }
+    #bnd-top10 .tp-etf .tp-btn { flex: 1 1 100%; margin-left: 70px; }
+  }
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Anleihen verstehen und finden", "headline": "Anleihen verstehen und finden", "description": "Anleihen verstehen und finden: Wissen in kurzen Schritten, Renditen seit 1970, die meistgehandelten Anleihen und eine Suche über rund 33.000 Anleihen.", "inLanguage": "de", "isAccessibleForFree": true, "dateModified": "2026-10-02", "publisher": {"@type": "Organization", "name": "Bondarium", "url": "https://www.bondarium.de/"}, "mainEntityOfPage": "https://www.bondarium.de/"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Bondarium","alternateName":"bondarium.de","url":"https://www.bondarium.de/","description":"Anleihen in Perspektive: Staats- und Unternehmensanleihen weltweit, Langläufer, die meistgehandelten Anleihen je Land und Restlaufzeit und eine Suche über alle Anleihen an deutschen Börsen.","inLanguage":"de"}</script>
@@ -1024,12 +1070,27 @@
       <section class="konkret" aria-labelledby="h-konkret">
         <div class="bt"><p class="kicker dach">Märkte und Top-10-Listen</p><h2 id="h-konkret">Was der Markt derzeit zahlt</h2></div>
         <h3 class="k-lab">Top-10-Listen: <small>die meistgehandelten Anleihen und ETFs</small></h3>
-        <div class="kgrid k5">
-          <a class="kc box" href="staatsanleihen-laufzeit.html"><span class="kt"><span class="kicker">Staatsanleihen</span><b>nach Laufzeit</b><span class="kz"><span data-kz="spanne-sl">3,0–5,0&nbsp;%</span><small>Renditespanne · 5 Laufzeiten</small></span></span><svg class="kimg" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16L21 7L38 16Z" fill="#DCFBD3"/><path d="M6 19.5H36M9 23V32M16 23V32M23 23V32M30 23V29M4 36H29"/><circle cx="36" cy="36" r="10.5" fill="#fff" stroke="none"/><circle cx="36" cy="36" r="8.5" fill="#39FF14"/><path d="M36 31.5V36L39 37.75" stroke-width="1.75"/></svg></a>
-          <a class="kc box" href="unternehmensanleihen-laufzeit.html"><span class="kt"><span class="kicker">Unternehmens&shy;anleihen</span><b>nach Laufzeit</b><span class="kz"><span data-kz="spanne-ul">3,5–6,5&nbsp;%</span><small>Renditespanne · 5 Laufzeiten</small></span></span><svg class="kimg" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="5" width="18" height="31" rx="2" fill="#DCFBD3"/><path d="M26 15H33V27M13 11.5H15.5M18.5 11.5H21M13 17.5H15.5M18.5 17.5H21M13 23.5H15.5M18.5 23.5H21M15 36V30H19V36M4 36H25"/><circle cx="36" cy="36" r="10.5" fill="#fff" stroke="none"/><circle cx="36" cy="36" r="8.5" fill="#39FF14"/><path d="M36 31.5V36L39 37.75" stroke-width="1.75"/></svg></a>
-          <a class="kc box" href="anleihen-laender.html"><span class="kt"><span class="kicker">Staatsanleihen</span><b>nach Ländern</b><span class="kz"><span data-kz="spanne-sland">3,4–6,7&nbsp;%</span><small>Renditespanne · 20 Länder</small></span></span><svg class="kimg" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16L21 7L38 16Z" fill="#DCFBD3"/><path d="M6 19.5H36M9 23V32M16 23V32M23 23V32M30 23V29M4 36H29"/><circle cx="36" cy="36" r="10.5" fill="#fff" stroke="none"/><circle cx="36" cy="36" r="8.5" fill="#39FF14"/><g stroke-width="1.75"><circle cx="36" cy="36" r="4.5"/><ellipse cx="36" cy="36" rx="2" ry="4.5"/><path d="M31.5 36H40.5"/></g></svg></a>
-          <a class="kc box" href="unternehmensanleihen-laender.html"><span class="kt"><span class="kicker">Unternehmens&shy;anleihen</span><b>nach Ländern</b><span class="kz"><span data-kz="spanne-uland">3,8–6,4&nbsp;%</span><small>Renditespanne · 6 Länder</small></span></span><svg class="kimg" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="5" width="18" height="31" rx="2" fill="#DCFBD3"/><path d="M26 15H33V27M13 11.5H15.5M18.5 11.5H21M13 17.5H15.5M18.5 17.5H21M13 23.5H15.5M18.5 23.5H21M15 36V30H19V36M4 36H25"/><circle cx="36" cy="36" r="10.5" fill="#fff" stroke="none"/><circle cx="36" cy="36" r="8.5" fill="#39FF14"/><g stroke-width="1.75"><circle cx="36" cy="36" r="4.5"/><ellipse cx="36" cy="36" rx="2" ry="4.5"/><path d="M31.5 36H40.5"/></g></svg></a>
-          <a class="kc box" href="anleihen-etf.html"><span class="kt"><span class="kicker">Anleihen-ETFs</span><b>nach Kategorie</b><span class="kz"><span data-kz="etf-anzahl">908</span><small>ETFs · 7 Kategorien</small></span></span><svg class="kimg" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="6" width="8" height="15" rx="2" fill="#fff"/><rect x="19" y="3.5" width="8" height="17.5" rx="2" fill="#fff"/><rect x="29" y="7.5" width="8" height="13.5" rx="2" fill="#fff"/><path d="M5 21H41L37.5 29H8.5Z" fill="#DCFBD3"/><path d="M8.5 29L11 37H27"/><circle cx="36" cy="36" r="10.5" fill="#fff" stroke="none"/><circle cx="36" cy="36" r="8.5" fill="#39FF14"/><path d="M32.5 32.5h2.5v2.5h-2.5zM37 32.5h2.5v2.5H37zM32.5 37h2.5v2.5h-2.5zM37 37h2.5v2.5H37z" fill="#1A1A19" stroke="none"/></svg></a>
+        <!-- Top-10-Listen als drei Themenportale (02.10.2026, Entwurf 01 des Nutzers aus bondarium-top10-drei-designentwuerfe.pdf):
+             ersetzt die fünf Kacheln mit Renditespanne – bewusst ohne Marktkennzahlen, fünf Links zu den fünf Listen-Seiten -->
+        <div class="tp" id="bnd-top10">
+          <div class="tp-k tp-staat">
+            <span class="tp-n" aria-hidden="true">10</span>
+            <span class="tp-bild"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18L24 9L41 18Z"/><path d="M9 21.5H39M13 25V35M20 25V35M28 25V35M35 25V35M7 39H41"/></svg></span>
+            <h4>Staatsanleihen</h4>
+            <div class="tp-go"><a class="tp-btn" href="staatsanleihen-laufzeit.html" aria-label="Top-10-Listen Staatsanleihen ansehen">Listen ansehen<svg class="tp-pf" viewBox="0 0 20 20" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10H17M12 5L17 10L12 15"/></svg></a><a class="tp-lnk" href="anleihen-laender.html" aria-label="Staatsanleihen nach Ländern">Länder<svg class="tp-pf" viewBox="0 0 20 20" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10H17M12 5L17 10L12 15"/></svg></a></div>
+          </div>
+          <div class="tp-k tp-unt">
+            <span class="tp-n" aria-hidden="true">10</span>
+            <span class="tp-bild"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="11" y="7" width="16" height="32" rx="2" fill="#fff"/><path d="M27 19H35V39M16 13H17.5M21 13H22.5M16 19H17.5M21 19H22.5M16 25H17.5M21 25H22.5M30.5 25H31.5M30.5 31H31.5M17 39V33H21V39M6 40H40"/></svg></span>
+            <h4>Unternehmens&shy;anleihen</h4>
+            <div class="tp-go"><a class="tp-btn" href="unternehmensanleihen-laufzeit.html" aria-label="Top-10-Listen Unternehmensanleihen ansehen">Listen ansehen<svg class="tp-pf" viewBox="0 0 20 20" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10H17M12 5L17 10L12 15"/></svg></a><a class="tp-lnk" href="unternehmensanleihen-laender.html" aria-label="Unternehmensanleihen nach Ländern">Länder<svg class="tp-pf" viewBox="0 0 20 20" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10H17M12 5L17 10L12 15"/></svg></a></div>
+          </div>
+          <div class="tp-k tp-etf">
+            <span class="tp-n" aria-hidden="true">10</span>
+            <span class="tp-bild"><svg viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="6" width="20" height="26" rx="3" fill="#fff"/><rect x="13" y="10" width="20" height="26" rx="3" fill="#fff"/><rect x="17" y="14" width="21" height="28" rx="3" fill="#fff"/><path d="M22 21H33M22 26H33M22 31H33"/><circle cx="27.5" cy="37" r="1" fill="currentColor"/></svg></span>
+            <h4>Anleihen-ETFs</h4>
+            <div class="tp-go"><a class="tp-btn" href="anleihen-etf.html" aria-label="Anleihen-ETFs: Kategorien ansehen">Kategorien ansehen<svg class="tp-pf" viewBox="0 0 20 20" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10H17M12 5L17 10L12 15"/></svg></a></div>
+          </div>
         </div>
       </section>
 
