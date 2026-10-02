@@ -28,13 +28,23 @@
  *                  verschickt werden die E-Mails von erinnerung.php, angestoßen von aufruf.php)
  *   Ohne Anmeldung aktion=erinnerung-aus (token „Nummer.Prüfsumme“ aus dem Link in der Erinnerungs-E-Mail,
  *                  konto.html#erinnerung-aus=…) schaltet die Erinnerung aus – ein Klick, ohne Passwort
+ *   Newsletter     (seit 02.10.2026, docs/NEWSLETTER.md) wöchentlicher „Wochenbrief“, nur für Konten, nur mit Einwilligung:
+ *                  registrieren mit newsletter=1 (Häkchen im Formular, nicht vorab gesetzt) → das Bestätigen der
+ *                  Registrierung bestätigt auch den Newsletter; aktion=newsletter (angemeldet, wert=1|0) schaltet ihn
+ *                  an oder aus; aktion=newsletter-ab (Kennung aus dem Abmelde-Link, ohne Anmeldung) und ein POST auf
+ *                  konto.php?nl=<Kennung> (List-Unsubscribe der E-Mail-Programme) bestellen ihn ab;
+ *                  aktion=newsletter-senden (Kopf X-Trigger-Key, ruft der Workflow nach dem Datenlauf) verschickt die
+ *                  Ausgabe aus newsletter/ausgabe.json an alle Abonnenten, die diese Kalenderwoche noch keine haben.
  *   Links          führen auf konto.html#bestaetigen=… bzw. #passwort=… – der Teil hinter „#“ erscheint in keinem
  *                  Server-Log; aktion=link-pruefen sagt der Seite, ob der Link noch gilt und zu welcher Adresse er gehört.
  *
  * Gespeichert wird in einer SQLite-Datei im Ordner konto-daten/ (per .htaccess gesperrt, Dateiname zufällig):
- *   nutzer     E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet, Erinnerung per E-Mail an/aus
+ *   nutzer     E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet, Erinnerung per E-Mail an/aus; Newsletter ja/nein,
+ *              seit wann, Kalenderwoche der zuletzt erhaltenen Ausgabe
  *   erinnert   verschickte Erinnerungen: Nutzer, ISIN, Fälligkeit, Zeitpunkt – damit keine doppelt kommt; nach der
  *              Fälligkeit gelöscht (erinnerung.php)
+ *   newsletter_log  An- und Abmeldungen des Newsletters als Zeitpunkt und Art – ohne Bezug zum Konto, nur zum Zählen
+ *              für den täglichen Bericht (25 Monate)
  *   favoriten  ISIN und Zeitpunkt je Nutzer
  *   musterdepots  Musterdepots je Nutzer: Nummer, Name (vom Nutzer, höchstens NAME_MAX Zeichen), angelegt am
  *   depot      Anleihen der Musterdepots: Nummer des Musterdepots, ISIN, gedachter Nennwert (ganze Zahl in der Währung
@@ -86,6 +96,10 @@ const NENNWERT_MAX       = 100000000;   // gedachter Nennwert je Anleihe, in der
 const PW_MIN             = 10;
 const PW_MAX             = 200;
 const COOKIE             = LOKAL ? 'bondarium-sitzung' : '__Host-bondarium-sitzung';
+const NL_ORDNER          = __DIR__ . '/newsletter';   // ausgabe.json und anleihen.json aus dem Datenlauf (scripts/newsletter.py)
+const NL_JE_AUFRUF       = 40;    // E-Mails je Aufruf von newsletter-senden; der Workflow ruft so oft, bis nichts mehr offen ist
+const NL_MERK_MAX        = 8;     // so viele gemerkte Anleihen zeigt eine Ausgabe (zuletzt gemerkte zuerst)
+const NL_FRISCH_TAGE     = 2;     // ältere Ausgaben werden nicht mehr verschickt
 const COOKIE_MARKE       = 'bondarium-angemeldet';   // für konto.js lesbar: nur „1“ – damit fragt die Seite nur Angemeldete ab
 // Obergrenzen für verschickte E-Mails: [Schlüssel, Zeitraum in Sekunden, Höchstzahl]
 const GRENZEN = [
@@ -317,6 +331,18 @@ function db(): PDO
             $db->exec('PRAGMA user_version = 5');
             $db->exec('COMMIT');
         }
+        if ($fassung < 6) {
+            // Fassung 6 (02.10.2026): Newsletter – Einwilligung je Konto (und je offener Registrierung), Kalenderwoche der
+            // zuletzt erhaltenen Ausgabe, An-/Abmeldungen ohne Kontobezug zum Zählen
+            $db->exec('BEGIN IMMEDIATE');
+            $db->exec('ALTER TABLE nutzer ADD COLUMN newsletter INTEGER NOT NULL DEFAULT 0');
+            $db->exec('ALTER TABLE nutzer ADD COLUMN newsletter_seit INTEGER');
+            $db->exec("ALTER TABLE nutzer ADD COLUMN newsletter_kw TEXT NOT NULL DEFAULT ''");
+            $db->exec('ALTER TABLE links ADD COLUMN newsletter INTEGER NOT NULL DEFAULT 0');
+            $db->exec('CREATE TABLE IF NOT EXISTS newsletter_log (zeit INTEGER NOT NULL, art TEXT NOT NULL)');
+            $db->exec('PRAGMA user_version = 6');
+            $db->exec('COMMIT');
+        }
     } catch (Throwable $e) {
         error_log('konto.php: Datenbank nicht nutzbar – ' . $e->getMessage());
         antwort(503, 'speicher');
@@ -538,9 +564,11 @@ function name_lesen(string $roh, string $ersatz): string
 function konto_stand(int $id, string $email): array
 {
     $m = musterdepots($id);
-    $s = db()->prepare('SELECT erinnern FROM nutzer WHERE id = ?');
+    $s = db()->prepare('SELECT erinnern, newsletter FROM nutzer WHERE id = ?');
     $s->execute([$id]);
-    return ['angemeldet' => true, 'email' => $email, 'favoriten' => favoriten($id), 'depots' => $m, 'depot' => $m[0][2], 'erinnern' => (int)$s->fetchColumn() === 1];
+    $z = $s->fetch(PDO::FETCH_NUM) ?: [0, 0];
+    return ['angemeldet' => true, 'email' => $email, 'favoriten' => favoriten($id), 'depots' => $m, 'depot' => $m[0][2], 'erinnern' => (int)$z[0] === 1,
+        'newsletter' => (int)$z[1] === 1];
 }
 
 function merke(int $id, string $isin): bool
@@ -582,6 +610,7 @@ function aufraeumen(): void
     $db->prepare('DELETE FROM sitzungen WHERE ablauf < ?')->execute([$jetzt]);
     $db->prepare('DELETE FROM zaehler WHERE zeit < ?')->execute([$jetzt - 86400]);
     $db->prepare('DELETE FROM nutzer WHERE zuletzt < ?')->execute([$jetzt - RUHE_TAGE * 86400]);
+    $db->prepare('DELETE FROM newsletter_log WHERE zeit < ?')->execute([$jetzt - 25 * 31 * 86400]);
 }
 
 /** Gültigen Link lesen (ohne ihn zu verbrauchen) oder Antwort „link“. */
@@ -592,7 +621,7 @@ function link_lesen(string $art): array
         antwort(410, 'link');
     }
     $hash = hash('sha256', $t);
-    $s = db()->prepare('SELECT hash, email, isin, pw, art FROM links WHERE hash = ? AND ablauf > ?' . ($art !== '' ? ' AND art = ?' : ''));
+    $s = db()->prepare('SELECT hash, email, isin, pw, art, newsletter FROM links WHERE hash = ? AND ablauf > ?' . ($art !== '' ? ' AND art = ?' : ''));
     $s->execute($art !== '' ? [$hash, time(), $art] : [$hash, time()]);
     $l = $s->fetch(PDO::FETCH_ASSOC);
     if (!$l) {
@@ -617,9 +646,222 @@ function mail_senden(string $an, string $betreff, string $text): bool
     return mail($an, '=?UTF-8?B?' . base64_encode($betreff) . '?=', chunk_split(base64_encode($text)), $kopf, '-f ' . ABSENDER);
 }
 
+// ---------- Newsletter (seit 02.10.2026, docs/NEWSLETTER.md) ----------
+
+/** Kennung für den Abmelde-Link: Kontonummer und ein Hashwert über Nummer und Adresse mit dem Schlüssel der Datenbank. */
+function nl_kennung(int $id, string $email): string
+{
+    return $id . '.' . schluessel_hash('nl|' . $id . '|' . $email);
+}
+
+/** Newsletter an- oder abschalten; zählt die Änderung (ohne Kontobezug). Gibt true zurück, wenn sich etwas geändert hat. */
+function nl_setzen(int $id, bool $an): bool
+{
+    $db = db();
+    $s = $db->prepare('UPDATE nutzer SET newsletter = ?, newsletter_seit = ? WHERE id = ? AND newsletter <> ?');
+    $s->execute([$an ? 1 : 0, $an ? time() : null, $id, $an ? 1 : 0]);
+    if ($s->rowCount() === 0) {
+        return false;
+    }
+    $db->prepare('INSERT INTO newsletter_log (zeit, art) VALUES (?, ?)')->execute([time(), $an ? 'an' : 'ab']);
+    return true;
+}
+
+/** Abbestellen über die Kennung des Abmelde-Links (ohne Anmeldung). false: Kennung passt zu keinem Konto. */
+function nl_abbestellen(string $kennung): bool
+{
+    if (!preg_match('/^(\d{1,12})\.([0-9a-f]{32})$/', $kennung, $m)) {
+        return false;
+    }
+    $s = db()->prepare('SELECT email FROM nutzer WHERE id = ?');
+    $s->execute([(int)$m[1]]);
+    $email = $s->fetchColumn();
+    if (!is_string($email) || !hash_equals(nl_kennung((int)$m[1], $email), $kennung)) {
+        return false;
+    }
+    nl_setzen((int)$m[1], false);
+    return true;
+}
+
+function nl_zahl(float $v, int $st = 2): string
+{
+    return number_format($v, $st, ',', '.');
+}
+
+function nl_datum(string $iso): string
+{
+    return substr($iso, 8, 2) . '.' . substr($iso, 5, 2) . '.' . substr($iso, 0, 4);
+}
+
+/** Platzhalter {{NAME}} in einer Vorlage ersetzen. */
+function nl_fuellen(string $vorlage, array $werte): string
+{
+    $paare = [];
+    foreach ($werte as $k => $v) {
+        $paare['{{' . $k . '}}'] = (string)$v;
+    }
+    return strtr($vorlage, $paare);
+}
+
+/**
+ * Abschnitt „Deine Merkliste“ für eine Ausgabe: [Text, HTML]. $isins: Merkliste, zuletzt Gemerktes zuerst.
+ * $anleihen: newsletter/anleihen.json – ISIN → [Name, Kupon-Text, Fälligkeit, Kurs, Rendite|null, Veränderung zur Vorwoche|null,
+ * nächster Zinstermin|null]. Die Vorlagen (Zeile, Rahmen, leer) stehen in der Ausgabe ($a['merk']).
+ */
+function nl_merkliste(array $a, array $anleihen, array $isins): array
+{
+    $v = $a['merk'];
+    $text = '';
+    $html = '';
+    $n = 0;
+    $mehr = 0;
+    foreach ($isins as $isin) {
+        $b = $anleihen[$isin] ?? null;
+        if (!is_array($b) || count($b) < 7) {
+            continue;   // ohne aktuellen Kurs steht die Anleihe nicht in der Ausgabe
+        }
+        if ($n >= NL_MERK_MAX) {
+            $mehr++;
+            continue;
+        }
+        $n++;
+        $diff = is_numeric($b[5]) ? (float)$b[5] : null;
+        $vz = $diff === null ? '' : ((abs($diff) < 0.005 ? '±' : ($diff > 0 ? '+' : '−')) . nl_zahl(abs($diff)) . ' zur Vorwoche');
+        $zt = is_string($b[6]) && $b[6] !== '' ? 'nächster Zinstermin ' . nl_datum($b[6]) : '';
+        $w = [
+            'NAME' => $b[0], 'KUPON' => $b[1], 'JAHR' => $b[2] !== '' ? substr((string)$b[2], 0, 4) : 'unbefristet',
+            'FAELLIG' => $b[2] !== '' ? nl_datum((string)$b[2]) : 'unbefristet',
+            'KURS' => nl_zahl((float)$b[3]), 'RENDITE' => is_numeric($b[4]) ? nl_zahl((float)$b[4]) . ' %' : '–',
+            'DIFF' => $vz, 'DIFF_FARBE' => $diff !== null && $diff < -0.005 ? $v['farbe_minus'] : $v['farbe_plus'],
+            'ZT' => $zt, 'ZUSATZ' => implode(' · ', array_filter([$vz, $zt], fn($x) => $x !== '')),
+            'LINK' => SEITE . '/anleihe.html?isin=' . $isin,
+        ];
+        $text .= nl_fuellen($v['text_zeile'], $w);
+        $html .= nl_fuellen($v['html_zeile'], array_map(fn($x) => htmlspecialchars((string)$x, ENT_QUOTES, 'UTF-8'), $w));
+    }
+    if ($n === 0) {
+        return [$v['text_leer'], $v['html_leer']];
+    }
+    $weitere = $mehr > 0 ? 'und ' . $mehr . ($mehr === 1 ? ' weitere Anleihe' : ' weitere Anleihen') . ' auf deiner Merkliste' : '';
+    return [
+        nl_fuellen($v['text_rahmen'], ['ZEILEN' => $text, 'WEITERE' => $weitere === '' ? '' : $weitere . "\n"]),
+        nl_fuellen($v['html_rahmen'], ['ZEILEN' => $html, 'WEITERE' => $weitere]),
+    ];
+}
+
+/** Eine Ausgabe an eine Adresse schicken: Text- und HTML-Fassung, Abmelde-Link im Text und im Kopf der E-Mail. */
+function nl_mail(array $a, string $an, string $kennung, array $merk, int $nr): bool
+{
+    $ab = SEITE . '/konto.html#nl-ab=' . $kennung;
+    $text = nl_fuellen((string)$a['text'], ['MERKLISTE' => $merk[0], 'ABMELDEN' => $ab]);
+    $html = nl_fuellen((string)$a['html'], ['MERKLISTE' => $merk[1], 'ABMELDEN' => htmlspecialchars($ab, ENT_QUOTES, 'UTF-8')]);
+    $betreff = (string)$a['betreff'];
+    if (LOKAL) {
+        // lokal kein Versand: Text und HTML je E-Mail als Datei, zum Ansehen
+        return file_put_contents(DATEN . "/lokal-newsletter-$nr.txt", "An: $an\nBetreff: $betreff\nAbmelden: $ab\n\n$text") !== false
+            && file_put_contents(DATEN . "/lokal-newsletter-$nr.html", $html) !== false;
+    }
+    $grenze = 'nl-' . bin2hex(random_bytes(12));
+    $kopf = implode("\r\n", [
+        'From: Bondarium <' . ABSENDER . '>',
+        'MIME-Version: 1.0',
+        'Content-Type: multipart/alternative; boundary="' . $grenze . '"',
+        'List-Unsubscribe: <' . SEITE . '/konto.php?nl=' . $kennung . '>',
+        'List-Unsubscribe-Post: List-Unsubscribe=One-Click',
+        'Precedence: bulk',
+    ]);
+    $koerper = "--$grenze\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n" . chunk_split(base64_encode($text))
+        . "--$grenze\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n" . chunk_split(base64_encode($html))
+        . "--$grenze--\r\n";
+    return mail($an, '=?UTF-8?B?' . base64_encode($betreff) . '?=', $koerper, $kopf, '-f ' . ABSENDER);
+}
+
+/** JSON-Datei aus dem Ordner newsletter/ lesen (vom Datenlauf geschrieben); null, wenn sie fehlt oder unlesbar ist. */
+function nl_datei(string $name): ?array
+{
+    $roh = @file_get_contents(NL_ORDNER . '/' . $name);
+    $d = is_string($roh) ? json_decode($roh, true) : null;
+    return is_array($d) ? $d : null;
+}
+
+/**
+ * Ausgabe verschicken (aktion=newsletter-senden, nur mit dem Schlüssel des Auslösers). Jeder Abonnent bekommt je
+ * Kalenderwoche höchstens eine Ausgabe; je Aufruf gehen höchstens NL_JE_AUFRUF E-Mails raus. Verschickt wird nur,
+ * wenn der Datenlauf die Ausgabe freigibt (versand = true: Versandtag und Daten vollständig) und sie frisch ist.
+ * an=betreiber schickt stattdessen eine Probe mit Muster-Merkliste an die Betreiber-Adresse.
+ */
+function nl_senden(): array
+{
+    $cfg = is_file(__DIR__ . '/trigger/refresh-config.php') ? require __DIR__ . '/trigger/refresh-config.php' : [];
+    $soll = LOKAL ? 'lokal' : trim((string)($cfg['secret'] ?? ''));
+    if ($soll === '' || !hash_equals($soll, trim((string)($_SERVER['HTTP_X_TRIGGER_KEY'] ?? '')))) {
+        antwort(403, 'zugang');
+    }
+    $a = nl_datei('ausgabe.json');
+    if ($a === null || !isset($a['kw'], $a['erstellt'], $a['betreff'], $a['text'], $a['html'], $a['merk'])) {
+        return ['gesendet' => 0, 'offen' => 0, 'grund' => 'keine Ausgabe'];
+    }
+    $anleihen = nl_datei('anleihen.json') ?? [];
+    $db = db();
+    if ((string)($_POST['an'] ?? '') === 'betreiber') {
+        $ok = nl_mail($a, ABSENDER, '0.' . str_repeat('0', 32), nl_merkliste($a, $anleihen, (array)($a['muster'] ?? [])), 0);
+        return ['gesendet' => $ok ? 1 : 0, 'offen' => 0, 'kw' => $a['kw'], 'grund' => 'Probe an den Betreiber'];
+    }
+    $alter = (strtotime(date('Y-m-d')) - (int)strtotime((string)$a['erstellt'])) / 86400;
+    if (empty($a['versand']) || $alter > NL_FRISCH_TAGE) {
+        $grund = $alter > NL_FRISCH_TAGE ? 'Ausgabe veraltet' : (string)($a['grund'] ?? 'kein Versand');
+        // Fällt der Versand am Versandtag wegen fehlender Daten aus: einmal je Woche den Betreiber benachrichtigen
+        if (!empty($a['warnen']) && $alter <= NL_FRISCH_TAGE) {
+            $s = $db->query("SELECT v FROM meta WHERE k = 'newsletter_warnung'")->fetchColumn();
+            if ($s !== (string)$a['kw']) {
+                $db->prepare("INSERT OR REPLACE INTO meta (k, v) VALUES ('newsletter_warnung', ?)")->execute([(string)$a['kw']]);
+                mail_senden(ABSENDER, 'Bondarium: Wochenbrief nicht verschickt', 'der Wochenbrief ' . $a['kw'] . " wurde nicht verschickt.\n\nGrund: " . $grund);
+            }
+        }
+        return ['gesendet' => 0, 'offen' => 0, 'kw' => $a['kw'], 'grund' => $grund];
+    }
+    $kw = (string)$a['kw'];
+    $s = $db->prepare('SELECT id, email FROM nutzer WHERE newsletter = 1 AND newsletter_kw <> ? ORDER BY id LIMIT ' . NL_JE_AUFRUF);
+    $s->execute([$kw]);
+    $fav = $db->prepare('SELECT isin FROM favoriten WHERE nutzer = ? ORDER BY seit DESC, isin');
+    $merke = $db->prepare('UPDATE nutzer SET newsletter_kw = ? WHERE id = ?');
+    $gesendet = 0;
+    $fehler = 0;
+    foreach ($s->fetchAll(PDO::FETCH_ASSOC) as $n) {
+        $fav->execute([(int)$n['id']]);
+        $merk = nl_merkliste($a, $anleihen, $fav->fetchAll(PDO::FETCH_COLUMN));
+        if (nl_mail($a, (string)$n['email'], nl_kennung((int)$n['id'], (string)$n['email']), $merk, (int)$n['id'])) {
+            $merke->execute([$kw, (int)$n['id']]);   // erst nach dem Versand – ein Abbruch verschickt beim nächsten Aufruf nichts doppelt
+            $gesendet++;
+        } else {
+            $fehler++;
+        }
+    }
+    $s = $db->prepare('SELECT COUNT(*) FROM nutzer WHERE newsletter = 1 AND newsletter_kw <> ?');
+    $s->execute([$kw]);
+    $offen = (int)$s->fetchColumn();
+    $s = $db->prepare('SELECT COUNT(*) FROM nutzer WHERE newsletter_kw = ?');
+    $s->execute([$kw]);
+    $db->prepare("INSERT OR REPLACE INTO meta (k, v) VALUES ('newsletter_letzte', ?)")
+       ->execute([json_encode(['kw' => $kw, 'zeit' => time(), 'empfaenger' => (int)$s->fetchColumn()])]);
+    return ['gesendet' => $gesendet, 'offen' => $fehler > 0 && $gesendet === 0 ? 0 : $offen, 'fehler' => $fehler, 'kw' => $kw];
+}
+
 // ---------- Anfrage prüfen ----------
 $methode = $_SERVER['REQUEST_METHOD'] ?? '';
 $aktion  = (string)($methode === 'POST' ? ($_POST['aktion'] ?? '') : ($_GET['aktion'] ?? ''));
+
+// Abmelden aus dem E-Mail-Programm (RFC 8058): POST auf konto.php?nl=<Kennung> – ohne unseren Kopf, ohne Cookie.
+// Die Kennung ist der Nachweis; sie steht nur in der E-Mail des Abonnenten.
+if ($methode === 'POST' && isset($_GET['nl'])) {
+    try {
+        nl_abbestellen((string)$_GET['nl']);
+    } catch (Throwable $e) {
+        error_log('konto.php: ' . $e->getMessage());
+        antwort(500, 'fehler');
+    }
+    antwort(200, 'ok');   // auch bei unbekannter Kennung: nichts verraten
+}
 
 if ($methode === 'GET') {
     if ($aktion !== 'status') {
@@ -669,12 +911,14 @@ try {
                     . 'Du wolltest dich gar nicht registrieren? Dann hat jemand deine Adresse eingegeben. Du musst nichts tun; an deinem Konto ändert sich nichts.');
             } else {
                 $t = kennwort();
-                $db->prepare("INSERT INTO links (hash, email, isin, ablauf, art, pw) VALUES (?, ?, ?, ?, 'neu', ?)")
-                   ->execute([hash('sha256', $t), $mail, $isin, time() + BESTAETIGEN_STUNDEN * 3600, $pwHash]);
+                $nl = (string)($_POST['newsletter'] ?? '') === '1' ? 1 : 0;   // Häkchen im Formular – gilt erst mit dem Bestätigen
+                $db->prepare("INSERT INTO links (hash, email, isin, ablauf, art, pw, newsletter) VALUES (?, ?, ?, ?, 'neu', ?, ?)")
+                   ->execute([hash('sha256', $t), $mail, $isin, time() + BESTAETIGEN_STUNDEN * 3600, $pwHash, $nl]);
                 // Kennwort hinter „#“: Dieser Teil der Adresse wird nicht an den Server geschickt und steht in keinem Log
                 $ok = mail_senden($mail, 'Bestätige deine E-Mail-Adresse für Bondarium', "bitte bestätige deine E-Mail-Adresse, damit dein Konto bei Bondarium entsteht:\n\n"
                     . ursprung() . '/konto.html#bestaetigen=' . $t . "\n\n"
                     . 'Der Link gilt ' . BESTAETIGEN_STUNDEN . " Stunden. Auf der Seite gibst du dein Passwort noch einmal ein.\n\n"
+                    . ($nl ? "Du hast den Wochenbrief angekreuzt: Mit dem Bestätigen bestellst du auch ihn – einmal pro Woche per E-Mail. Abbestellen kannst du ihn jederzeit – über den Link in jeder Ausgabe oder in „Mein Bondarium“.\n\n" : '')
                     . "Du hast dich nicht registriert? Dann hat jemand deine Adresse eingegeben. Du musst nichts tun:\n"
                     . 'Ohne den Link und das Passwort entsteht kein Konto, und die Angaben werden nach Ablauf gelöscht.');
                 if (!$ok) {
@@ -713,6 +957,9 @@ try {
             $jetzt = time();
             $db->prepare('INSERT INTO nutzer (email, erstellt, zuletzt, pw) VALUES (?, ?, ?, ?)')->execute([$l['email'], $jetzt, $jetzt, $l['pw']]);
             $id = (int)$db->lastInsertId();
+            if ((int)$l['newsletter'] === 1) {
+                nl_setzen($id, true);   // Einwilligung aus dem Formular, bestätigt durch den Link in der E-Mail
+            }
             sitzung_starten($id);
             $aus = stand($id, $l['email'], ist_isin($l['isin']) ? $l['isin'] : null);
             $db->exec('COMMIT');
@@ -1005,6 +1252,25 @@ try {
             $n = nutzer();
             antwort(200, 'ok', $n !== null && $n['id'] === $id ? konto_stand($n['id'], $n['email']) : ['angemeldet' => $n !== null]);
 
+        case 'newsletter':
+            $n = angemeldet();
+            $wert = (string)($_POST['wert'] ?? '');
+            if ($wert !== '1' && $wert !== '0') {
+                antwort(400, 'aktion');
+            }
+            nl_setzen($n['id'], $wert === '1');
+            antwort(200, 'ok', konto_stand($n['id'], $n['email']));
+
+        case 'newsletter-ab':
+            // Abmelde-Link der Ausgabe (konto.html#nl-ab=…): ohne Anmeldung, die Kennung ist der Nachweis
+            if (!nl_abbestellen((string)($_POST['token'] ?? ''))) {
+                antwort(410, 'link');
+            }
+            antwort(200, 'ok');
+
+        case 'newsletter-senden':
+            antwort(200, 'ok', nl_senden());
+
         case 'abmelden':
             $t = $_COOKIE[COOKIE] ?? '';
             if (ist_kennwort($t)) {
@@ -1026,6 +1292,7 @@ try {
                     antwort(403, 'zugang');
                 }
             }
+            nl_setzen($n['id'], false);   // zählt als Abmeldung vom Newsletter, falls bestellt
             $db->exec('BEGIN IMMEDIATE');
             $db->prepare('DELETE FROM favoriten WHERE nutzer = ?')->execute([$n['id']]);
             $db->prepare('DELETE FROM depot WHERE muster IN (SELECT id FROM musterdepots WHERE nutzer = ?)')->execute([$n['id']]);

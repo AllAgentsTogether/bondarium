@@ -1,0 +1,23 @@
+name: Wochenbrief – Probe an den Betreiber
+
+# Schickt die aktuelle Ausgabe des Wochenbriefs einmal an info@bondarium.com – mit Muster-Merkliste, unabhängig vom
+# Versandtag (seit 02.10.2026, docs/NEWSLETTER.md). Der Versand läuft über den Webserver bei STRATO (konto.php,
+# aktion=newsletter-senden, an=betreiber), genau wie die echte Ausgabe – so lassen sich Aussehen und Zustellung prüfen.
+# Abonnenten bekommen dabei nichts. Schlüssel: derselbe wie für den 10-Uhr-Auslöser (TRIGGER_KEY).
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  probe:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Probe anfordern
+        env:
+          TRIGGER_KEY: ${{ secrets.TRIGGER_KEY }}
+        run: |
+          KEY=$(printf '%s' "$TRIGGER_KEY" | tr -d '\r\n')
+          code=$(curl -s -o antwort.json -w "%{http_code}" --max-time 90 -H "X-Requested-With: bondarium-konto" -H "X-Trigger-Key: $KEY" --data "aktion=newsletter-senden&an=betreiber" https://www.bondarium.de/konto.php || echo 000)
+          echo "HTTP $code: $(cat antwort.json 2>/dev/null)"
+          [ "$code" = "200" ]

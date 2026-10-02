@@ -57,6 +57,11 @@
   .kf input:focus-visible { outline: 0; border-color: var(--green-text); box-shadow: 0 0 0 3px var(--green-tint-2); }
   .kf-falle { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }   /* Honigtopf gegen Bots – für Menschen unsichtbar */
   .kf-hinweis { font-size: 14px; line-height: 1.55; color: var(--text); margin: 0; }
+  /* Wochenbrief (seit 02.10.2026): Häkchen im Registrierungsformular – nicht vorab gesetzt */
+  .kf .kf-nl { margin: 0; }
+  .kf .kf-nl label { display: flex; align-items: flex-start; gap: 10px; margin: 0; font-size: 14px; font-weight: 500; line-height: 1.5; color: var(--ink); cursor: pointer; }
+  .kf .kf-nl input { flex: none; width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--accent-text); cursor: pointer; }
+  .kf .kf-nl small { display: block; font-size: 13px; color: var(--text); }
   .kf .go { justify-self: start; border: 0; cursor: pointer; font-family: inherit; }
   .kf .go[disabled] { opacity: 0.6; cursor: default; }
   .kf-status { font-size: 15px; font-weight: 600; margin: 0; }
@@ -484,6 +489,7 @@
           <div><label for="reg-email">E-Mail-Adresse</label><input id="reg-email" name="email" type="email" autocomplete="username" inputmode="email" maxlength="254" required></div>
           <div><label for="reg-pw">Passwort <span>(mindestens 10 Zeichen)</span></label><div class="kto-pw"><input id="reg-pw" name="passwort" type="password" autocomplete="new-password" maxlength="200" minlength="10" required><button type="button" class="kto-auge" aria-pressed="false" aria-controls="reg-pw">anzeigen</button></div></div>
           <p class="kf-falle" aria-hidden="true"><label for="reg-web">Website</label><input id="reg-web" name="website" type="text" tabindex="-1" autocomplete="off"></p>
+          <p class="kf-nl"><label for="reg-nl"><input id="reg-nl" name="newsletter" type="checkbox" value="1"><span>Ja, schickt mir den Wochenbrief per E-Mail.<small>Einmal pro Woche: Zinsen, meistgehandelte Anleihen und deine Merkliste. Jederzeit mit einem Klick abbestellbar.</small></span></label></p>
           <button type="submit" class="go">Konto anlegen</button>
           <p class="kf-status" role="status" aria-live="polite"></p>
           <p class="kf-hinweis">Du bekommst eine E-Mail mit einem Link. Erst wenn du ihn anklickst und dein Passwort noch einmal eingibst, entsteht dein Konto. Was wir speichern, steht in der <a href="rechtliches.html#konto">Datenschutzerklärung</a>.</p>
@@ -660,6 +666,12 @@
         </div>
       </details>
       <div class="kto-konto" id="konto">
+        <details id="d-nl">
+          <summary>Wochenbrief per E-Mail</summary>
+          <p id="nl-text"></p>
+          <p><button type="button" class="kto-leise" id="nl-knopf"></button></p>
+          <p class="kf-status" id="nl-status" role="status" aria-live="polite"></p>
+        </details>
         <details id="d-pw">
           <summary>Passwort ändern</summary>
           <form class="kf" id="f-aendern" action="konto.php" method="post">
@@ -781,8 +793,8 @@ MC.navInit();
 
   formular("f-anmelden", f => K.anmelden(f.email.value.trim(), f.passwort.value, VOR),
     (a, f) => { leere(f); hinweis("Du bist angemeldet." + imDepot(a.gemerkt)); if (DEP_VOR) WAHL = VOR; VOR = ""; ohneZusatz(); if (WAHL) reiterWahl("depot"); });
-  formular("f-registrieren", f => K.registrieren(f.email.value.trim(), f.passwort.value, VOR, f.website.value),
-    (a, f) => { const an = f.email.value.trim(); leere(f); VOR = ""; ohneZusatz();   // die vorgemerkte Anleihe reist mit dem Link in der E-Mail
+  formular("f-registrieren", f => K.registrieren(f.email.value.trim(), f.passwort.value, VOR, f.website.value, f.newsletter.checked),
+    (a, f) => { const an = f.email.value.trim(); leere(f); f.newsletter.checked = false; VOR = ""; ohneZusatz();   // die vorgemerkte Anleihe reist mit dem Link in der E-Mail
       gesendet(`<b>Schau in dein Postfach.</b> Wir haben eine E-Mail an <b>${MC.esc(an)}</b> geschickt. Klick auf den Link darin und gib dein Passwort noch einmal ein – dann ist dein Konto fertig. Der Link gilt ${a.stunden || 24} Stunden.`, "registrieren"); },
     { zuviel: ZUVIEL_MAIL });
   formular("f-vergessen", f => K.vergessen(f.email.value.trim(), f.website.value),
@@ -968,6 +980,11 @@ MC.navInit();
     const dep = DEPOTS.find(d => d[0] === AKTIV)[2], alle = [].concat(...DEPOTS.map(d => d[2]));
     zeichneWahl();
     $("wer").textContent = stand.email; $("ae-email").value = $("lo-email").value = stand.email;
+    // Wochenbrief (seit 02.10.2026): Stand und Schalter unter der Merkliste
+    $("nl-text").textContent = stand.newsletter
+      ? "Du bekommst den Wochenbrief: einmal pro Woche Zinsen, meistgehandelte Anleihen und deine Merkliste. Abbestellen kannst du ihn hier oder über den Link in jeder Ausgabe."
+      : "Einmal pro Woche per E-Mail: Zinsen, meistgehandelte Anleihen und was sich bei deiner Merkliste getan hat. Jederzeit mit einem Klick abbestellbar.";
+    $("nl-knopf").textContent = stand.newsletter ? "Wochenbrief abbestellen" : "Wochenbrief bestellen"; $("nl-knopf").dataset.an = stand.newsletter ? "1" : "";
     if (["bestaetigen", "neu", "gesendet"].includes(MODUS)) modus("anmelden");
     zeigeTeil("depot");
     $("leer").hidden = fav.length > 0;
@@ -1899,6 +1916,26 @@ MC.navInit();
     });
     return true;
   }
+  // Wochenbrief: Schalter in den Einstellungen und Abmelde-Link einer Ausgabe (konto.html#nl-ab=<Kennung> – der Teil hinter „#“
+  // steht in keinem Server-Log; abbestellt wird ohne Anmeldung, die Kennung aus der E-Mail ist der Nachweis)
+  $("nl-knopf").addEventListener("click", e => {
+    const b = e.currentTarget, an = !b.dataset.an; b.disabled = true; $("nl-status").textContent = "";
+    K.newsletter(an).then(() => { $("nl-status").textContent = an ? "Bestellt – die nächste Ausgabe kommt am Freitag." : "Abbestellt – du bekommst keine weiteren Ausgaben."; },
+      a => { $("nl-status").textContent = a && a.status === "anmelden" ? "Bitte melde dich neu an." : TEXT.fehler; }).then(() => { b.disabled = false; });
+  });
+  function nlAusLink() {
+    const m = /^#nl-ab=(\d{1,12}\.[0-9a-f]{32})$/.exec(location.hash);
+    if (!m) return;
+    ohneZusatz();
+    K.newsletterAb(m[1]).then(a => {
+      hinweis(a.ok ? "<b>Der Wochenbrief ist abbestellt.</b> Du bekommst keine weiteren Ausgaben. Dein Konto und deine Merkliste bleiben, wie sie sind."
+        : a.status === "link" ? "Dieser Abmelde-Link ist ungültig, oder das Konto gibt es nicht mehr. Bekommst du den Wochenbrief weiter, bestell ihn in „Mein Bondarium“ ab oder schreib an info@bondarium.com."
+        : "Das Abbestellen hat gerade nicht geklappt. Bitte versuch es später noch einmal oder schreib an info@bondarium.com.", !a.ok && a.status !== "link");
+      if (a.ok) $("nl-status").textContent = "";
+    });
+  }
+  window.addEventListener("hashchange", nlAusLink);
+  nlAusLink();
   window.addEventListener("hashchange", ausLink);   // Link in einem Tab geöffnet, in dem die Seite schon steht: kein Neuladen, nur „#…“ ändert sich
   window.addEventListener("hashchange", () => { if (listeAusLink()) zeigeGeteilt(K.stand()); if (musterAusLink()) zeigeGeteiltM(K.stand()); });
   listeAusLink(); musterAusLink();

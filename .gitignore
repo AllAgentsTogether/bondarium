@@ -8,5 +8,9 @@ refresh-config.php
 .env*
 .claude/
 konto-daten/
+# Wochenbrief: Ausgabe und Daten je Anleihe entstehen in jedem Datenlauf neu (scripts/newsletter.py); nur seiten.json wird committet
+newsletter/ausgabe.json
+newsletter/anleihen.json
+newsletter/vorschau.*
 statistik-daten/
 wechselkurs-daten/

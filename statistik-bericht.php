@@ -288,8 +288,25 @@ function bericht_pdf(array $d, string $wortPfad = BERICHT_WORTMARKE): string {
         elseif ($t2) $P->text($x + 12, $ky + 68, $t2, ['gr' => 7.5, 'farbe' => B_GRAU]);
     }
 
+    // ---- Wochenbrief (seit 02.10.2026): Abonnenten neben den Besucherzahlen – ein Band unter den Kacheln; alles darunter rückt nach.
+    //      Fehlt die Angabe (Konto-Datenbank nicht lesbar oder noch ohne Newsletter), entfällt das Band. ----
+    $nl = $d['newsletter'] ?? null; $versatz = 0;
+    if (is_array($nl)) {
+        $by = $ky + $kh + 10; $versatz = 34;
+        $P->rechteck($R, $by, $W, 24, B_FLAECHE, 6);
+        $bx = $R + 12; $bx += $P->text($bx, $by + 15.5, 'WOCHENBRIEF', ['gr' => 6.5, 'fett' => true, 'farbe' => B_GRAU]) + 12;
+        $bx += $P->text($bx, $by + 15.8, b_zahl($nl['abonnenten']) . ($nl['abonnenten'] === 1 ? ' Abonnent' : ' Abonnenten'), ['gr' => 10, 'fett' => true]) + 8;
+        $teile = [];
+        if ($nl['an'] || $nl['ab']) $teile[] = $wann . ' ' . ($nl['an'] ? '+' . b_zahl($nl['an']) : '') . ($nl['an'] && $nl['ab'] ? ' / ' : '') . ($nl['ab'] ? '−' . b_zahl($nl['ab']) : '');
+        else $teile[] = $wann . ' unverändert';
+        $teile[] = b_zahl($nl['konten']) . ($nl['konten'] === 1 ? ' Konto' : ' Konten');
+        if ($nl['letzte']) $teile[] = 'letzte Ausgabe KW ' . (int)substr((string)$nl['letzte']['kw'], -2) . ' an ' . b_zahl((int)$nl['letzte']['empfaenger']) . ' Empfänger';
+        else $teile[] = 'noch keine Ausgabe verschickt';
+        $P->text($bx, $by + 15.5, implode('  ·  ', $teile), ['gr' => 8, 'farbe' => B_GRAU]);
+    }
+
     // ---- Verlauf: Besucher der letzten 30 Tage (Balken) und 7-Tage-Durchschnitt (Linie) ----
-    $y = 240;
+    $y = 240 + $versatz;
     $P->text($R, $y, 'Besucher der letzten 30 Tage', ['gr' => 11, 'fett' => true]);
     $lx = $B - $R; $lx -= $P->text($lx, $y, 'Durchschnitt der letzten 7 Tage', ['gr' => 7, 'farbe' => B_GRAU, 'rechts' => true]) + 4;
     $P->linie($lx - 14, $y - 2.5, $lx, $y - 2.5, B_DUNKEL, 1.4); $lx -= 26;
@@ -299,7 +316,7 @@ function bericht_pdf(array $d, string $wortPfad = BERICHT_WORTMARKE): string {
     $max = max([1, ...array_map(fn($t) => $v[$t]['b'] ?? 0, $tage)]);
     $schritt = 1; foreach ([1, 2, 5, 10, 20, 25, 50, 100, 200, 250, 500, 1000, 2000, 2500, 5000, 10000, 20000, 50000] as $s) { $schritt = $s; if ($max / $s <= 4) break; }
     $oben = ceil($max * 1.08 / $schritt) * $schritt;
-    $cx = $R + 30; $cw = $B - $R - $cx; $c0 = $y + 18; $ch = 104; $cu = $c0 + $ch;
+    $cx = $R + 30; $cw = $B - $R - $cx; $c0 = $y + 18; $ch = 104 - $versatz; $cu = $c0 + $ch;   // mit dem Wochenbrief-Band ist das Schaubild um dessen Höhe niedriger – alles darunter bleibt, wo es war
     for ($g = 0; $g <= $oben; $g += $schritt) {
         $gy = $cu - $g / $oben * $ch;
         $P->linie($cx, $gy, $B - $R, $gy, $g ? B_LINIE : B_GRAU, $g ? 0.4 : 0.6);
@@ -468,7 +485,36 @@ function bericht_daten(PDO $db, string $tag): array
         'monat' => $summe(date('Y-m-01', $ts)), 'jahr' => $summe(date('Y-01-01', $ts)),
         'seiten' => $seiten, 'seiten_anzahl' => count($alle), 'herkunft' => $herkunft, 'geraete' => $geraete,
         'bots' => (int)($s->fetchColumn() ?: 0),
+        'newsletter' => bericht_newsletter($tag),
     ];
+}
+
+/**
+ * Wochenbrief (seit 02.10.2026): Abonnenten und Konten aus der Datenbank des Benutzerbereichs (konto-daten/, nur gelesen) –
+ * Stand jetzt, dazu An- und Abmeldungen am Berichtstag und die zuletzt verschickte Ausgabe. null, wenn nicht lesbar.
+ */
+function bericht_newsletter(string $tag): ?array
+{
+    $dateien = glob(__DIR__ . '/konto-daten/konto-*.sqlite') ?: [];
+    if (!$dateien) return null;
+    sort($dateien);
+    try {
+        $k = new PDO('sqlite:' . $dateien[0], null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_TIMEOUT => 3]);
+        if ((int)$k->query('PRAGMA user_version')->fetchColumn() < 6) return null;   // konto.php hat die Newsletter-Felder (Fassung 6) noch nicht angelegt
+        $von = strtotime($tag . ' 00:00:00');
+        $zahl = $k->prepare('SELECT COUNT(*) FROM newsletter_log WHERE art = ? AND zeit >= ? AND zeit < ?');
+        $ereignisse = function (string $art) use ($zahl, $von): int { $zahl->execute([$art, $von, $von + 86400]); return (int)$zahl->fetchColumn(); };
+        $letzte = json_decode((string)$k->query("SELECT v FROM meta WHERE k = 'newsletter_letzte'")->fetchColumn(), true);
+        return [
+            'abonnenten' => (int)$k->query('SELECT COUNT(*) FROM nutzer WHERE newsletter = 1')->fetchColumn(),
+            'konten' => (int)$k->query('SELECT COUNT(*) FROM nutzer')->fetchColumn(),
+            'an' => $ereignisse('an'), 'ab' => $ereignisse('ab'),
+            'letzte' => is_array($letzte) && isset($letzte['kw'], $letzte['empfaenger']) ? $letzte : null,
+        ];
+    } catch (Throwable $e) {
+        error_log('statistik-bericht.php: Newsletter-Zahlen nicht lesbar – ' . $e->getMessage());
+        return null;
+    }
 }
 
 // ---------- Versand ----------
@@ -496,6 +542,9 @@ function bericht_senden(PDO $db, string $tag, bool $test = false): bool
         'Besucher: ' . b_zahl($h['b']) . ($delta !== '–' ? " ($delta zum Vortag)" : '') . "\n" .
         'Seitenaufrufe: ' . b_zahl($h['a']) . "\n" .
         ($top ? 'Meistbesuchte Seite: ' . $top[1] . ' (' . b_zahl($top[2]) . ' Aufrufe)' . "\n" : '') .
+        (is_array($d['newsletter']) ? 'Newsletter-Abonnenten: ' . b_zahl($d['newsletter']['abonnenten'])
+            . ($d['newsletter']['an'] || $d['newsletter']['ab'] ? ' (' . ($d['newsletter']['an'] ? '+' . $d['newsletter']['an'] : '') . ($d['newsletter']['an'] && $d['newsletter']['ab'] ? ', ' : '') . ($d['newsletter']['ab'] ? '−' . $d['newsletter']['ab'] : '') . ')' : '')
+            . ' bei ' . b_zahl($d['newsletter']['konten']) . ($d['newsletter']['konten'] === 1 ? ' Konto' : ' Konten') . "\n" : '') .
         "\nDer ausführliche Bericht hängt als PDF an.\n\n– automatisch erstellt von " . SEITE . "\n";
     $datei = 'Bondarium-Besucherbericht-' . $tag . '.pdf';
 

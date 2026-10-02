@@ -23,6 +23,9 @@ RewriteRule ^statistik-daten(/|$) - [F,L]
 RewriteRule ^statistik-bericht\.php$ - [F,L]
 # ---- E-Mail vor der Fälligkeit (seit 02.10.2026): erinnerung.php wird nur von aufruf.php eingebunden ----
 RewriteRule ^erinnerung\.php$ - [F,L]
+# ---- Wochenbrief (seit 02.10.2026): newsletter/ enthält die Ausgabe und die Daten je Anleihe aus dem Datenlauf – nur
+#      konto.php liest sie vom Datenträger, ausgeliefert wird der Ordner nie. ----
+RewriteRule ^newsletter(/|$) - [F,L]
 # ---- HTTPS erzwingen ----
 # Beide Bedingungen (UND-verknüpft) verhindern eine Redirect-Schleife, wenn
 # Strato TLS vor dem Apache terminiert: dann ist %{HTTPS} zwar "off", aber

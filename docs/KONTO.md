@@ -312,6 +312,13 @@ E-Mail nur an, wenn STRATO sie für die Domain signiert (DKIM) oder ein SPF-Eint
 E-Mail nicht an: bei STRATO im Kundenbereich unter Domains → DNS den SPF-Eintrag einschalten (STRATO-Standard,
 `v=spf1 redirect=smtp.rzone.de`), für `bondarium.com`. Ohne ankommende E-Mail kann sich niemand registrieren.
 
+## Wochenbrief (seit 02.10.2026)
+
+Der wöchentliche Newsletter hängt am Konto: Häkchen im Registrierungsformular (nicht vorab gesetzt), Schalter „Wochenbrief per
+E-Mail“ unter der Merkliste, Abmelde-Link `konto.html#nl-ab=…`. `konto.php` kennt dafür die Aktionen `newsletter`,
+`newsletter-ab` und `newsletter-senden` und die Datenbank-Fassung 6 (Felder `newsletter`, `newsletter_seit`, `newsletter_kw` an
+`nutzer`, `newsletter` an `links`, Tabelle `newsletter_log`). Alles Weitere: `docs/NEWSLETTER.md`.
+
 ## Filter der Merkliste (seit 02.10.2026)
 
 Über der Tabelle der Merkliste stehen der Grundfilter-Schalter und dieselbe Filterleiste wie in der Anleihen-Suche (Art, Land,

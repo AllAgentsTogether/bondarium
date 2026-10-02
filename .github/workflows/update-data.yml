@@ -285,6 +285,15 @@ jobs:
         continue-on-error: true
         run: python scripts/suchindex.py
 
+      # Wochenbrief (seit 02.10.2026, docs/NEWSLETTER.md): Ausgabe und Daten je Anleihe aus den Dateien des Datenlaufs –
+      # vollautomatisch, ohne Handarbeit. Läuft in JEDEM Lauf (auch Push-Deploys): Der Upload löscht Dateien, die im Bau
+      # fehlen – die Ausgabe muss also immer mitgebaut werden. Freigegeben zum Versand ist sie nur freitags und nur mit
+      # vollständigen, frischen Daten (Feld „versand“); verschickt wird ganz unten, nur im Abruf-Lauf. newsletter/seiten.json
+      # (Gedächtnis für „Neue Seiten“) wird im Abruf-Lauf mit committet.
+      - name: Wochenbrief bauen
+        continue-on-error: true
+        run: python3 scripts/newsletter.py
+
       # ----- Versionierung: nur im Abruf-Lauf (nicht bei Push/'schnell') -----
       - name: Änderungen committen (Versionierung auf GitHub)
         if: env.VOLL == '1'
@@ -292,7 +301,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add renditen.json unternehmen.json langlaeufer.json anleihen-index.json anleihen-kurse.json kurse-auswahl.json zinskurve.json realzins.json risikoaufschlaege.json top10-*.json suchindex.json ezb.json wechselkurse.json kurse kurse/jahre.json anleihen zinstermine bonitaet etf-*.json etf
+          git add renditen.json unternehmen.json langlaeufer.json anleihen-index.json anleihen-kurse.json kurse-auswahl.json zinskurve.json realzins.json risikoaufschlaege.json top10-*.json suchindex.json ezb.json wechselkurse.json kurse kurse/jahre.json anleihen newsletter/seiten.json zinstermine bonitaet etf-*.json etf
           if ! git diff --cached --quiet; then
             git commit -m "Daten aktualisiert"
             # Vor dem Push mit dem Remote abgleichen (falls inzwischen gepusht wurde);
@@ -343,6 +352,8 @@ jobs:
           python3 scripts/security_txt.py _site   # /.well-known/security.txt (Adresse für Sicherheitsmeldungen, RFC 9116)
           cp -r kurse _site/kurse   # Kursverlauf: kurse/<Jahr>/<teil>.json und kurse/bund/<ISIN>.json
           cp -r anleihen _site/anleihen   # Stammdaten je ISIN für den Steckbrief anleihe.html (256 Teildateien)
+          # Wochenbrief (seit 02.10.2026): Ausgabe und Daten je Anleihe für konto.php – per .htaccess nie abrufbar
+          if [ -f newsletter/ausgabe.json ]; then mkdir -p _site/newsletter && cp newsletter/ausgabe.json newsletter/anleihen.json _site/newsletter/; fi
           ls -la _site
 
       # ----- Daten in die Seiten einbetten: die JSONs landen kompakt als
@@ -581,6 +592,29 @@ jobs:
           code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://www.bondarium.de/aufruf.php" || echo "000")
           echo "aufruf.php -> HTTP $code"
           if [ "$code" != "204" ]; then echo "::error::aufruf.php antwortet nicht mit 204 – die Besucherzählung ist gestört"; exit 1; fi
+
+      # Wochenbrief (seit 02.10.2026): Ordner gesperrt? Dann die Ausgabe verschicken – konto.php sendet nur, wenn die Ausgabe
+      # freigegeben ist (freitags, Daten vollständig), jedem Abonnenten höchstens einmal je Kalenderwoche und höchstens 40
+      # E-Mails je Aufruf; deshalb wird wiederholt, bis nichts mehr offen ist. An allen anderen Tagen antwortet der Server
+      # nur mit „kein Versandtag“. Die Antwort nennt Zahlen, keine Adressen.
+      - name: Wochenbrief verschicken (nur am Versandtag)
+        if: env.VOLL == '1'
+        continue-on-error: true
+        env:
+          TRIGGER_KEY: ${{ secrets.TRIGGER_KEY }}
+        run: |
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://www.bondarium.de/newsletter/ausgabe.json" || echo "000")
+          echo "newsletter/ausgabe.json -> HTTP $code"
+          if [ "$code" = "200" ]; then echo "::error::/newsletter/ ist öffentlich abrufbar – kein Versand"; exit 1; fi
+          KEY=$(printf '%s' "$TRIGGER_KEY" | tr -d '\r\n')
+          for i in $(seq 1 25); do
+            code=$(curl -s -o antwort.json -w "%{http_code}" --max-time 180 -H "X-Requested-With: bondarium-konto" -H "X-Trigger-Key: $KEY" --data "aktion=newsletter-senden" https://www.bondarium.de/konto.php || echo 000)
+            echo "HTTP $code: $(cat antwort.json 2>/dev/null)"
+            [ "$code" = "200" ] || { echo "::warning::Wochenbrief: Versand-Aufruf fehlgeschlagen (HTTP $code)"; exit 1; }
+            offen=$(python3 -c 'import json; print(int(json.load(open("antwort.json")).get("offen") or 0))' 2>/dev/null || echo 0)
+            [ "$offen" -gt 0 ] || break
+            sleep 20
+          done
 
       # ----- Automatische Alarm-Prüfung: schlägt fehl (= E-Mail von GitHub), wenn
       #       Daten veraltet sind. Nur im Abruf-Lauf (1×/Tag), nicht bei

@@ -42,7 +42,7 @@
   MC = window.MC = MC || {};
 
   var API = "konto.php", SEITE = "konto.html";
-  var st = { angemeldet: false, email: "", favoriten: [], depots: [], erinnern: false }, menge = {}, hoerer = [], abfrage = null;
+  var st = { angemeldet: false, email: "", favoriten: [], depots: [], erinnern: false, newsletter: false }, menge = {}, hoerer = [], abfrage = null;
 
   function markiert() { return /(?:^|;\s*)bondarium-angemeldet=1(?:;|$)/.test(document.cookie); }
   function esc(s) { return MC.esc ? MC.esc(s) : String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
@@ -50,7 +50,7 @@
   function uebernimm(j) {
     var an = !!(j && j.angemeldet);
     st = { angemeldet: an, email: (an && j.email) || "", favoriten: (an && j.favoriten) || [],
-      depots: (an && j.depots) || (an && j.depot ? [[0, "Musterdepot 1", j.depot]] : []), erinnern: !!(an && j.erinnern) };
+      depots: (an && j.depots) || (an && j.depot ? [[0, "Musterdepot 1", j.depot]] : []), erinnern: !!(an && j.erinnern), newsletter: !!(an && j.newsletter) };
     menge = {};
     st.favoriten.forEach(function (f) { menge[f[0]] = true; });
     knoepfe();
@@ -176,7 +176,23 @@
         throw j;
       });
     },
-    registrieren: function (email, passwort, isin, falle) { return sende("POST", { aktion: "registrieren", email: email, passwort: passwort, isin: isin || "", website: falle || "" }); },
+    // newsletter: Häkchen „Wochenbrief“ im Formular – gilt erst, wenn der Link in der E-Mail bestätigt ist
+    registrieren: function (email, passwort, isin, falle, newsletter) { return sende("POST", { aktion: "registrieren", email: email, passwort: passwort, isin: isin || "", website: falle || "", newsletter: newsletter ? "1" : "0" }); },
+    // Wochenbrief an- oder abbestellen (angemeldet); newsletterAb: Abmelde-Link einer Ausgabe, ohne Anmeldung
+    newsletter: function (an) {
+      return sende("POST", { aktion: "newsletter", wert: an ? "1" : "0" }).then(function (j) {
+        if (j.ok) { uebernimm(j); return j; }
+        if (j.status === "anmelden") uebernimm(null);
+        throw j;
+      });
+    },
+    newsletterAb: function (kennung) {
+      return sende("POST", { aktion: "newsletter-ab", token: kennung }).then(function (j) {
+        // wer gerade angemeldet ist, sieht danach den neuen Stand
+        if (j.ok && markiert()) abfrage = sende("GET", { aktion: "status" }).then(function (s) { return s.ok ? uebernimm(s) : st; });
+        return j;
+      });
+    },
     bestaetigen: function (kennwort, passwort) { return sende("POST", { aktion: "bestaetigen", token: kennwort, passwort: passwort }).then(an); },
     anmelden: function (email, passwort, isin) { return sende("POST", { aktion: "anmelden", email: email, passwort: passwort, isin: isin || "" }).then(an); },
     vergessen: function (email, falle) { return sende("POST", { aktion: "vergessen", email: email, website: falle || "" }); },
