@@ -38,7 +38,7 @@
  *                  Ausgabe aus newsletter/ausgabe.json an alle Abonnenten, die diese Kalenderwoche noch keine haben.
  *   Mein Bondarium (seit 02.10.2026 abends, Nutzerauftrag „Mockup komplett umsetzen“; docs/KONTO.md, Abschnitt „Mein Bondarium“):
  *                  ablage (art, schluessel, wert als JSON; wert leer = löschen): die persönliche Ablage – Notizen, Listen,
- *                  gelesene Seiten, Lesezeichen, Begriffe, angeheftete Kennzahlen, Voreinstellungen, Meldungen, Checkliste,
+ *                  gelesene Seiten, Lesezeichen, Begriffe, angeheftete Kennzahlen, Einstellung „Zuletzt angesehen“, Meldungen, Checkliste,
  *                  „Zuletzt angesehen“ (ABLAGE nennt Arten und Grenzen)
  *                  besuch: merkt den Beginn dieses Besuchs und liefert den des vorigen („Seit deinem letzten Besuch“)
  *                  geraete-ab: meldet alle anderen Geräte ab; export: alles zum Konto Gespeicherte als JSON
@@ -128,13 +128,14 @@ const ABLAGE = [
     'lesezeichen' => [40, 400],     // Schlüssel Seite oder Seite#Abschnitt: {t: Titel, a: Abschnitt}
     'begriff'     => [80, 160],     // Schlüssel Kennung im Glossar: Titel des Begriffs
     'kennzahl'    => [12, 8],       // Schlüssel Kennzahl für „Mein Zins-Blick“
-    'einstellung' => [12, 300],     // Voreinstellungen: Ordergebühr, Anlagebetrag, Freistellungsauftrag, Startfilter, Zuletzt angesehen an/aus (EINSTELLUNGEN)
+    'einstellung' => [12, 300],     // Einstellungen: nur noch „Zuletzt angesehen“ an/aus (EINSTELLUNGEN)
     'meldung'     => [20, 500],     // Meldung: {i: ISIN oder „*“, b: Bedingung, w: Wert, m: per E-Mail, an: eingeschaltet, a/aw: ausgelöst am/mit, bis: …}
     'check'       => [20, 8],       // Schlüssel Schritt der Checkliste „Deine erste Anleihe“
-    'angesehen'   => [8, 200],      // „Zuletzt angesehen“ – nur wenn in den Voreinstellungen eingeschaltet; der älteste Eintrag fällt heraus
+    'angesehen'   => [8, 200],      // „Zuletzt angesehen“ – nur wenn unter „Konto“ eingeschaltet; der älteste Eintrag fällt heraus
 ];
-// Erlaubte Voreinstellungen. Die Kirchensteuer gehört bewusst nicht dazu: Sie verriete die Religionszugehörigkeit (Art. 9 DSGVO).
-const EINSTELLUNGEN = ['gebuehr', 'betrag', 'freistellung', 'startfilter', 'zuletzt'];
+// Erlaubte Einstellungen. Die Voreinstellungen Ordergebühr, Anlagebetrag, Freistellungsauftrag und Startfilter gab es nur am 02.10.2026
+// (auf Nutzerwunsch entfernt); aufraeumen() löscht ihre Reste. Die Kirchensteuer wurde nie gespeichert (Art. 9 DSGVO).
+const EINSTELLUNGEN = ['zuletzt'];
 const COOKIE_MARKE       = 'bondarium-angemeldet';   // für konto.js lesbar: nur „1“ – damit fragt die Seite nur Angemeldete ab
 // Obergrenzen für verschickte E-Mails: [Schlüssel, Zeitraum in Sekunden, Höchstzahl]
 const GRENZEN = [
@@ -758,6 +759,7 @@ function aufraeumen(): void
     $db->prepare('DELETE FROM nutzer WHERE zuletzt < ?')->execute([$jetzt - RUHE_TAGE * 86400]);
     $db->prepare('DELETE FROM newsletter_log WHERE zeit < ?')->execute([$jetzt - 25 * 31 * 86400]);
     $db->exec("DELETE FROM ablage WHERE art IN ('suche', 'rechnung')");   // entfernte Arten (siehe ABLAGE)
+    $db->exec("DELETE FROM ablage WHERE art = 'einstellung' AND schluessel <> 'zuletzt'");   // entfernte Voreinstellungen (siehe EINSTELLUNGEN)
     // Notizen zu Anleihen, die seit 30 Tagen nicht mehr auf der Merkliste stehen
     $db->prepare("DELETE FROM ablage WHERE art = 'notiz' AND zeit < ? AND NOT EXISTS (SELECT 1 FROM favoriten f WHERE f.nutzer = ablage.nutzer AND f.isin = ablage.schluessel)")
        ->execute([$jetzt - 30 * 86400]);

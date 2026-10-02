@@ -690,19 +690,6 @@ function laden() {
     }
   });
 
-  // Mein Bondarium (seit 02.10.2026 abends): der Startfilter aus den Voreinstellungen – er gilt nur, wenn die Suche ohne Auswahl
-  // geöffnet wurde und noch nichts eingegeben ist. („Suche speichern“ ist auf Nutzerwunsch am selben Abend wieder entfernt.)
-  if (MC.konto) MC.konto.bereit().then(st => {
-    if (!st.angemeldet) return;
-    const sf = MC.konto.wert("einstellung", "startfilter");
-    if (typeof sf === "string" && sf && !location.search && !S.q && !F.gesetzt()) {
-      const ps = new URLSearchParams(sf);
-      F.solide = ps.get("solide") === "1";
-      for (const f of FILTER) (ps.get(f.k) || "").split(",").map(v => v.trim()).filter(Boolean).forEach(v => F.sel[f.k].add(f.k === "w" || f.k === "land" ? v.toUpperCase() : v));
-      laden(); zeige();
-    }
-  });
-
   // Daten erst bei Bedarf (seit 30.09.2026): Suchbegriff oder Filter in der Adresse → sofort; sonst beim ersten Fokus, Tippen oder
   // Filterklick, spätestens im Leerlauf nach dem Anzeigen (nicht bei „Datensparen“ oder langsamer Verbindung)
   const p0 = new URLSearchParams(location.search);

@@ -39,7 +39,7 @@
      beiAenderung(fn)         fn(stand) nach jeder Änderung des Stands
 
    Mein Bondarium (seit 02.10.2026 abends, docs/KONTO.md): die persönliche Ablage – Notizen, Listen, gespeicherte Suchen,
-   gelesene Seiten, Lesezeichen, Begriffe, Kennzahlen, Voreinstellungen, Rechnungen, Meldungen, Checkliste.
+   gelesene Seiten, Lesezeichen, Begriffe, Kennzahlen, Einstellung „Zuletzt angesehen“, Meldungen, Checkliste.
      stand().ablage           { art: { schluessel: [wert, zeit] } } – nur, was der Nutzer selbst abgelegt hat
      abl(art)                 die Einträge einer Art ({} wenn keine); wert(art, schluessel) → Wert oder undefined
      ablage(art, schluessel, wert)   Eintrag setzen (wert null/undefined = löschen) → Promise mit dem Stand; abgelehnt mit { status }

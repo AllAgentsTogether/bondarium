@@ -10,7 +10,6 @@
      Glossar (begriffe.html): angemeldet ein Stern an jedem Begriff („Gemerkte Begriffe“).
      Zinsen-Seiten: angemeldet die Knöpfe „In meinen Zins-Blick“ für die Kennzahlen der Seite (KENNZAHL – dieselben Kennungen wie in
        bereich.js, das die Werte zeigt).
-     Rechner (rechner.html): angemeldet füllen die Voreinstellungen (Anlagebetrag, Freistellungsauftrag) die Felder.
      Deine erste Anleihe: angemeldet liegt der Stand der Checkliste im Konto – auf jedem Gerät derselbe.
      „Zuletzt angesehen“: nur wenn der Nutzer es in „Meldungen und Konto“ eingeschaltet hat, merkt die Seite ihren Aufruf (höchstens
        einmal je Stunde und Seite). MC.mein.angesehen(schluessel, titel) ruft auch der Steckbrief (anleihe.html).
@@ -59,18 +58,6 @@
   }
   MC.mein = { angesehen: angesehen };
 
-  // ---------- Rechner: Voreinstellungen ----------
-  // Üblicher Anlagebetrag und noch freier Freistellungsauftrag füllen die Felder – nur wenn die Seite ohne Vorgaben geöffnet wurde.
-  // („Rechnung speichern“ gab es am 02.10.2026 einen Abend lang; auf Nutzerwunsch wieder entfernt. Die Kirchensteuer wird nie gespeichert.)
-  function rechner() {
-    if (location.search) return;
-    var setze = function (id, wert) { var e = document.getElementById(id); if (!e) return; e.value = wert; e.dispatchEvent(new Event("input", { bubbles: true })); e.dispatchEvent(new Event("change", { bubbles: true })); };
-    var zahl = function (n) { return n.toLocaleString("de-DE", { maximumFractionDigits: 2 }); };
-    var b = K.wert("einstellung", "betrag"), f = K.wert("einstellung", "freistellung");
-    if (typeof b === "number" && b > 0) { setze("r3-betrag", zahl(b)); setze("r1-nenn", zahl(b)); setze("r2-nenn", zahl(b)); }
-    if (typeof f === "number" && f >= 0) setze("r3-fsa", zahl(f));
-  }
-
   // ---------- Deine erste Anleihe: Checkliste im Konto ----------
   // Die Seite merkt den Stand im Browser (localStorage). Angemeldet gilt zusätzlich das Konto: Was dort abgehakt ist, wird hier abgehakt;
   // was hier schon abgehakt war, wandert ins Konto; jede Änderung geht an beide.
@@ -109,7 +96,6 @@
         dt.insertAdjacentHTML("beforeend", " " + K.ablKnopf("begriff", e.id, dt.textContent.replace(/\s+/g, " ").trim().slice(0, 70), ["Begriff merken", "Gemerkt – entfernen"], "nur mb-h"));
       });
     }
-    if (seite === "rechner") rechner();
     if (seite === "erste-anleihe") checkliste();
     if (KENNZAHL[seite] && !document.getElementById("mb-pin")) {
       var p = document.createElement("p");

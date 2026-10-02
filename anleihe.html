@@ -833,16 +833,6 @@ function zeige(r, k, meta) {
     };
     rechne();
     ["nenn", "gebuehr"].forEach(id => document.getElementById(id).addEventListener("input", rechne));
-    // Voreinstellungen aus „Mein Bondarium“ (seit 02.10.2026 abends): Ordergebühr und üblicher Anlagebetrag – nur für Angemeldete, die
-    // sie gesetzt haben, und nur solange die Felder noch ihre Startwerte zeigen
-    if (MC.konto) MC.konto.bereit().then(st => {
-      if (!st.angemeldet) return;
-      const g = MC.konto.wert("einstellung", "gebuehr"), b = MC.konto.wert("einstellung", "betrag"), fn = document.getElementById("nenn"), fg = document.getElementById("gebuehr");
-      if (!fn || !fg) return;
-      if (typeof g === "number" && g >= 0 && fg.value === "0,00") fg.value = fmt(g, 2);
-      if (typeof b === "number" && b > 0 && fn.value === fmt(start, 0)) fn.value = fmt(typeof stk === "number" && stk >= 1 ? Math.max(stk, Math.ceil(b / stk) * stk) : b, 0);
-      rechne();
-    });
   }
 
   // --- Werkzeuge ---

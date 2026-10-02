@@ -4,11 +4,12 @@
      Start                Seit deinem letzten Besuch · Meine Merkliste · Mein Zins-Blick · Nächste Termine · Zuletzt angesehen (nur wenn
                           eingeschaltet)
      Merkliste            eigene Listen, Notiz, Menü je Anleihe („…“), Vergleichen, ISINs einfügen, CSV, ETFs
-     Rechnen und planen   unter den Musterdepots: Voreinstellungen
+     Rechnen und planen   nichts mehr – die Musterdepots zeichnet das Seitenskript von konto.html
      Meldungen und Konto  Meldungen (Regeln je Anleihe oder für alle gemerkten), Mitnehmen (PDF, CSV, Kalenderdatei), Konto
      Lernen               Lernstand zum Abhaken, Passend zu deiner Merkliste, Lesezeichen, gemerkte Begriffe
    Am 02.10.2026 abends auf Nutzerwunsch wieder entfernt: die Karten „Weiterlernen“ und „Gespeicherte Suchen“ auf Start (damit auch
-   „Suche speichern“ und die Meldung „Neue Treffer“), die Etiketten in der Merkliste und „Gespeicherte Rechnungen“ – nicht neu einbauen.
+   „Suche speichern“ und die Meldung „Neue Treffer“), die Etiketten in der Merkliste und „Gespeicherte Rechnungen“; ebenso „Meine Voreinstellungen“ (Ordergebühr, Anlagebetrag,
+   Freistellungsauftrag, Startfilter der Suche) – nicht neu einbauen.
    Gespeichert wird nur, was der Nutzer selbst ablegt – in der Ablage des Kontos (konto.php, aktion=ablage; konto.js: MC.konto.ablage).
    Nichts davon ist eine Empfehlung: Etiketten und Meldungen nennen Tatsachen aus den Daten, „Passend zu deiner Merkliste“ zeigt
    Erklärseiten, keine Anleihen. Stile: bereich.css. Beschreibung: docs/KONTO.md, Abschnitt „Mein Bondarium“.
@@ -490,31 +491,6 @@
       el.innerHTML = kopf + stufen + `<div class="mb-zwei e"><section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Passend zu deiner Merkliste</h2><p>aus dem, was du gemerkt hast</p></div>${passend()}</section><div class="mb-sp">${lesez}${begr}</div></div>`;
     }
 
-    // ---------- Ansicht „Rechnen und planen“: Voreinstellungen (unter den Musterdepots) ----------
-    // Die Kirchensteuer aus dem Mockup wird bewusst NICHT gespeichert: Sie verriete die Religionszugehörigkeit (besonders geschützte
-    // Angabe, Art. 9 DSGVO). Im Rechner wählt man sie weiter je Rechnung; auch gespeicherte Rechnungen lassen das Feld aus.
-    const STARTFILTER = [["", "kein Startfilter"], ["solide=1", "Grundfilter"], ["w=EUR", "nur Euro"], ["w=EUR&stk=a", "Euro · bis 1.000 €"], ["solide=1&w=EUR", "Grundfilter · nur Euro"]];
-    function zeichnePlanen() {
-      const el = $("mb-planen"); if (!el) return;
-      const e = k => wert("einstellung", k);
-      const feld = (k, t, u, ph) => `<div><dt>${t}<small>${u}</small></dt><dd><span class="mb-eur"><input type="text" inputmode="decimal" autocomplete="off" data-ein="${k}" value="${typeof e(k) === "number" ? fmt(e(k), e(k) % 1 ? 2 : 0) : ""}" placeholder="${ph}" aria-label="${t}"><span>€</span></span></dd></div>`;
-      const wahl = (k, t, u, opts) => `<div><dt>${t}<small>${u}</small></dt><dd><select data-ein="${k}" aria-label="${t}">${opts.map(o => `<option value="${esc(o[0])}"${String(e(k) == null ? "" : e(k)) === o[0] ? " selected" : ""}>${esc(o[1])}</option>`).join("")}</select></dd></div>`;
-      const vor = `<section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Meine Voreinstellungen</h2><p>gelten auf der ganzen Seite</p></div><dl class="mb-vorein">` +
-        feld("gebuehr", "Ordergebühr meines Brokers", "Rechenbeispiel im Steckbrief", "0,00") + feld("betrag", "Üblicher Anlagebetrag", "Rechner und Steckbrief", "5.000") +
-        feld("freistellung", "Freistellungsauftrag, noch frei", "Rechner „Netto nach Steuer“", "1.000") +
-        wahl("startfilter", "Startfilter der Anleihen-Suche", "gilt, wenn du die Suche ohne Auswahl öffnest", STARTFILTER) +
-        `</dl><p class="kf-status" id="mb-ein-status" role="status" aria-live="polite"></p></section>`;
-      el.innerHTML = `<div style="margin-top:34px;max-width:640px">${vor}</div>`;
-    }
-    function einstellungChange(e) {
-      const f = e.target.closest("[data-ein]"); if (!f) return;
-      const k = f.dataset.ein, st = $("mb-ein-status");
-      let w = f.tagName === "SELECT" ? f.value : f.value.trim() === "" ? "" : zahlDe(f.value);
-      if (typeof w === "number" && (isNaN(w) || w < 0 || w > 1e8)) { st.className = "kf-status fehler"; st.textContent = "Bitte einen Betrag als Zahl eintragen."; return; }
-      st.className = "kf-status"; st.textContent = "";
-      lege("einstellung", k, w === "" ? null : w).then(() => { const s = $("mb-ein-status"); if (s) s.textContent = "Gespeichert."; }, () => {});
-    }
-
     // ---------- Ansicht „Meldungen und Konto“: Konto-Zeilen (Markup in konto.html) ----------
     function zeichneKonto() {
       const st = K.stand(); if (!$("mb-k-email")) return;
@@ -607,7 +583,6 @@
       if (ANSICHT === "start") zeichneStart();
       else if (ANSICHT === "merkliste") X.zeichneListe();
       else if (ANSICHT === "lernen") zeichneLernen();
-      else if (ANSICHT === "planen") zeichnePlanen();
       else if (ANSICHT === "meldungen") { zeichneMeldungen(); zeichneKonto(); }
     }
     function zeige(a) { ANSICHT = a; const d = $("depot"); if (d) d.dataset.ansicht = a; alles(); }
@@ -641,8 +616,7 @@
       else if (e.target.id === "mb-m-form") meldungAnlegen(e);
     });
     depot.addEventListener("change", e => {
-      if (e.target.id === "mb-m-i" || e.target.id === "mb-m-b") { meldungFormular(); return; }
-      if (e.target.closest("#mb-planen")) einstellungChange(e);
+      if (e.target.id === "mb-m-i" || e.target.id === "mb-m-b") meldungFormular();
     });
     depot.addEventListener("keydown", e => { if (e.key === "Escape" && LEDIT && e.target.closest("#mb-listen")) { LEDIT = ""; zeichneListen(); } });
     $("zeilen").addEventListener("click", zeilenKlick);

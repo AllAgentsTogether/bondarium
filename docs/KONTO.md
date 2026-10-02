@@ -352,14 +352,14 @@ Meldungen nennen Tatsachen aus den Daten, „Passend zu deiner Merkliste“ zeig
 |---|---|
 | Start (`konto.html`) | „Seit deinem letzten Besuch“ (ausgelöste Meldungen, Termine der nächsten 14 Tage, neue Seiten), Meine Merkliste (größte Veränderung seit dem Merken), Mein Zins-Blick, Nächste Termine (.ics), „Zuletzt angesehen“ (nur wenn eingeschaltet) |
 | Merkliste (`#merkliste`) | Pillen Alle / Anleihen / ETFs / eigene Listen; Vergleichen (bis vier, mit Kursverlauf), ISINs einfügen, Filter (filter.js), Teilen/PDF/CSV; Tabelle: Ankreuzfeld, Name mit Notiz, Rendite, Kurs mit Vortag, Kupon, Fälligkeit, „Seit dem Merken“, nächster Zinstermin, „+“ (Musterdepot), „…“ (Notiz, Liste, Meldung, Rechner, Kalender, Entfernen); darunter die gemerkten ETFs |
-| Rechnen und planen (`#planen`, auch `#depot`, `#erinnerung`) | „Mein Depot“ (Musterdepots), darunter die Voreinstellungen (Ordergebühr, Anlagebetrag, Freistellungsauftrag, Startfilter) |
+| Rechnen und planen (`#planen`, auch `#depot`, `#erinnerung`) | „Mein Depot“ (Musterdepots); die Voreinstellungen darunter am 02.10.2026 auf Nutzerwunsch entfernt – nicht neu einbauen |
 | Meldungen und Konto (`#meldungen`) | Meldungen, Wochenbrief-Schalter, Mitnehmen (PDF, CSV, .ics), Konto: E-Mail ändern, Passwort ändern, angemeldete Geräte, „Zuletzt angesehen“, Daten herunterladen, Konto löschen |
 | Lernen (`#lernen`) | Lernstand je Menügruppe (Grundlagen, Auswählen, Kaufen, Für Fortgeschrittene – aus dem Menü der Seite gelesen), „Passend zu deiner Merkliste“, Lesezeichen, gemerkte Begriffe |
 
 **Ablage** (`konto.php`, `aktion=ablage`; `MC.konto.ablage(art, schluessel, wert)`): eine Tabelle für alles Abgelegte. Arten:
 `notiz` (je ISIN), `liste` (`{n, i: [ISIN…]}`), `gelesen`
-(Seitenname), `lesezeichen` (Seite oder Seite#Abschnitt), `begriff`, `kennzahl`, `einstellung` (nur `gebuehr`, `betrag`,
-`freistellung`, `startfilter`, `zuletzt`), `meldung`, `check` (Checkliste „Deine erste Anleihe“), `angesehen` (nur wenn
+(Seitenname), `lesezeichen` (Seite oder Seite#Abschnitt), `begriff`, `kennzahl`, `einstellung` (nur `zuletzt`; die Voreinstellungen
+`gebuehr`, `betrag`, `freistellung`, `startfilter` sind entfernt, `aufraeumen()` löscht ihre Reste), `meldung`, `check` (Checkliste „Deine erste Anleihe“), `angesehen` (nur wenn
 `einstellung.zuletzt = 1`; höchstens acht, der älteste fällt heraus). Der Server prüft Art, Schlüssel und Länge und säubert den Wert;
 die Seite schreibt jeden Wert nur über `MC.esc` ins Dokument.
 
@@ -379,8 +379,7 @@ nächsten Zinstermine der Merkliste), `geraete-ab`, `export`, `email-aendern` (P
 `email-bestaetigen` (`konto.html#email=<Kennwort>`; meldet andere Geräte ab, Hinweis an die alte Adresse).
 
 **Seiten außerhalb von konto.html:** Akademie- und Kaufen-Seiten (Leiste am Ende, `mein.js`), Glossar (Stern), Zinsen-Seiten
-(„In meinen Zins-Blick“ – Kennungen in `mein.js` und `bereich.js` gleich halten), Rechner (Voreinstellungen füllen die Felder),
-Anleihen-Suche (Startfilter), Steckbrief (Ordergebühr und Anlagebetrag im Rechenbeispiel, „Zuletzt angesehen“),
+(„In meinen Zins-Blick“ – Kennungen in `mein.js` und `bereich.js` gleich halten), Steckbrief („Zuletzt angesehen“),
 Anleihen-ETFs und Top-10-Tabellen (Merken). Besucher ohne Konto lösen dabei keine Anfrage an den Server aus.
 
 **Abweichungen vom Mockup:** Akademie-Gruppen heißen wie im heutigen Menü (nicht Verstehen/Entscheiden/Kaufen/Vertiefen); statt des
