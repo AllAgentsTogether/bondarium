@@ -607,86 +607,49 @@
   }
   @media (max-width: 360px) { #bnd-broker { padding: 22px 16px 28px; } #bnd-broker .bc-go { min-width: 0; width: 100%; } }
   /* ==========================================================================================
-     Zinsatlas 01.10.2026 (Entwurf 02 des Nutzers, tmp/bondarium-zinsatlas-entwurf-02.pdf): eigener Auftritt für die vier Zinsen-Seiten,
-     ersetzt die vier Karten mit Spanne und Mini-Kurve unter „Märkte und Top-10-Listen“. Vier Flächen mit eigenem Motiv – Jahr und Länder,
-     10 minus 2 Jahre, Länder mit Ratings, Fälligkeit 2120 –, jede Fläche ist ein einziger Link. Die Motive zeigen Umfang und Zeiträume der
-     Zielseite, keine Finanzkennzahlen (die stehen mit Datenstand auf den Zielseiten). Ohne Skript und ohne Bilddateien; mit #bnd-zinsatlas
-     gekapselt. Schriftgrößen aus dem Raster darunter; nur die drei Motivzahlen haben eigene Größen (--za-*).
+     Zinsatlas: Kopf (Dachzeile, Titel, Unterzeile); die vier Karten darunter seit 02.10.2026 als Themenfenster (.zf-*).
+     Vom 01.10. bis 02.10.2026 standen hier vier Flächen mit Jahreszahl, Ländern, Ratings und Zieljahr (Entwurf 02).
      ========================================================================================== */
-  #bnd-zinsatlas { --za-jahr: 46px; --za-kurve: 40px; --za-ziel: 58px; }
   #bnd-zinsatlas .za-dach { margin: 0 0 8px; font-size: var(--fs-label); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--green-text); }
   #bnd-zinsatlas h2 { margin: 0; font-size: var(--fs-h2); line-height: 1.15; letter-spacing: -0.015em; }
-  #bnd-zinsatlas .za-sub { margin: 6px 0 20px; font-size: var(--fs-text); color: var(--text); }
-  #bnd-zinsatlas .za-reihe { display: grid; gap: 18px; }
-  #bnd-zinsatlas .za-r1 { grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); }
-  #bnd-zinsatlas .za-r2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1.04fr); margin-top: 18px; }
-  #bnd-zinsatlas .za-k { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; align-content: start; gap: 0 26px; min-width: 0; padding: 22px 22px 20px 24px; border: 1px solid var(--rule); border-radius: 18px; background: #fff; color: var(--ink); text-decoration: none; transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease; }
-  #bnd-zinsatlas .za-k > span, #bnd-zinsatlas .za-t > span, #bnd-zinsatlas .za-m > span { display: block; }
-  #bnd-zinsatlas .za-nr { margin: 0 0 14px; font-size: var(--fs-label); font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: var(--green-text); }
-  #bnd-zinsatlas h3 { margin: 0; font-size: var(--fs-h3); font-weight: 700; line-height: 1.15; letter-spacing: -0.015em; color: inherit; }
-  #bnd-zinsatlas .za-d { margin-top: 8px; max-width: 34em; font-size: var(--fs-ui); line-height: 1.5; color: var(--text); }
-  #bnd-zinsatlas .za-go { display: flex !important; align-items: center; justify-content: space-between; gap: 16px; align-self: end; margin-top: 18px; font-size: var(--fs-ui); font-weight: 700; color: var(--green-text); }
-  #bnd-zinsatlas .za-pf { display: grid !important; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 50%; background: var(--green); color: var(--ink); transition: background 0.15s ease; }
-  #bnd-zinsatlas .za-pf svg { width: 18px; height: 18px; transition: transform 0.15s ease; }
-  #bnd-zinsatlas .za-chips { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
-  #bnd-zinsatlas .za-chips i { display: block; padding: 5px 9px; border: 1px solid var(--rule); border-radius: 7px; background: var(--bg); font-size: var(--fs-meta); font-style: normal; line-height: 1.3; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  #bnd-zinsatlas .za-k:hover { transform: translateY(-2px); border-color: var(--green-text); box-shadow: 0 1px 2px rgba(26,26,25,0.04), 0 14px 30px -12px rgba(26,26,25,0.22); }
-  #bnd-zinsatlas .za-k:hover .za-pf { background: var(--green-hover); }
-  #bnd-zinsatlas .za-k:hover .za-pf svg { transform: translateX(2px); }
-  #bnd-zinsatlas .za-k:focus-visible { outline: 3px solid var(--green-text); outline-offset: 3px; }
-  @media (prefers-reduced-motion: reduce) { #bnd-zinsatlas .za-k, #bnd-zinsatlas .za-pf svg { transition: none; } #bnd-zinsatlas .za-k:hover, #bnd-zinsatlas .za-k:hover .za-pf svg { transform: none; } }
-  /* 01 Renditehistorie: hellgrüne Auftaktfläche, rechts Startjahr und die acht Länder der Zielseite */
-  #bnd-zinsatlas .za-hist { grid-template-columns: minmax(0, 1fr) minmax(0, 1.06fr); grid-template-areas: "t m" "g m"; grid-template-rows: 1fr auto; background: #EBF8E6; border-color: rgba(21,124,0,0.16); }
-  #bnd-zinsatlas .za-hist .za-t { grid-area: t; }
-  #bnd-zinsatlas .za-hist .za-go { grid-area: g; }
-  #bnd-zinsatlas .za-hist .za-m { grid-area: m; padding-left: 24px; border-left: 1px solid rgba(26,26,25,0.14); }
-  #bnd-zinsatlas .za-hist h3 { max-width: 9em; }
-  #bnd-zinsatlas .za-jahr { display: flex !important; align-items: center; gap: 12px; font-size: var(--za-jahr); font-weight: 800; line-height: 1; letter-spacing: -0.02em; color: var(--green-text); }
-  #bnd-zinsatlas .za-jahr svg { flex: none; width: 30px; height: 30px; }
-  #bnd-zinsatlas .za-ml { margin: 8px 0 16px; font-size: var(--fs-meta); color: var(--text); }
-  #bnd-zinsatlas .za-hist .za-chips i { border-color: transparent; background: rgba(255,255,255,0.78); }
-  /* 02 Zinskurve: dunkler Gegenpol, Motiv „10 Jahre minus 2 Jahre“ */
-  #bnd-zinsatlas .za-kurve { background: var(--ink); border-color: var(--ink); color: #fff; }
-  #bnd-zinsatlas .za-kurve .za-nr { color: var(--green); }
-  #bnd-zinsatlas .za-kurve .za-frage { margin-top: 6px; font-size: var(--fs-karte); color: rgba(255,255,255,0.86); }
-  #bnd-zinsatlas .za-kurve .za-m { display: flex !important; align-items: flex-end; gap: 16px; margin-top: 14px; }
-  #bnd-zinsatlas .za-kurve .za-m small { display: block; margin-bottom: 4px; font-size: var(--fs-label); font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: rgba(255,255,255,0.72); }
-  #bnd-zinsatlas .za-kurve .za-m b { font-size: var(--za-kurve); font-weight: 800; line-height: 1; letter-spacing: -0.02em; color: var(--green); }
-  #bnd-zinsatlas .za-kurve .za-m em { margin-left: 8px; font-size: var(--fs-meta); font-style: normal; color: rgba(255,255,255,0.86); }
-  #bnd-zinsatlas .za-kurve .za-minus { flex: none; width: 22px; height: 2px; margin-bottom: 15px; background: rgba(255,255,255,0.6); }
-  #bnd-zinsatlas .za-kurve .za-d { margin-top: 14px; max-width: 15em; color: rgba(255,255,255,0.8); }
-  #bnd-zinsatlas .za-kurve .za-go { color: #fff; }
-  #bnd-zinsatlas .za-kurve:hover { border-color: var(--green); }
-  #bnd-zinsatlas .za-kurve:focus-visible { outline-color: var(--green-text); }
-  /* 03 Unternehmensanleihen: die sechs Reihen als vier Länder mit ihren Ratings */
-  #bnd-zinsatlas .za-unt .za-m { margin-top: 14px; }
-  /* 04 Langläufer: Zieljahr 2120 und die Fälligkeiten der sieben Anleihen auf einer Achse 2040–2120 */
-  #bnd-zinsatlas .za-lang { grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr); grid-template-areas: "t m" "g g"; grid-template-rows: 1fr auto; }
-  #bnd-zinsatlas .za-lang .za-t { grid-area: t; }
-  #bnd-zinsatlas .za-lang .za-go { grid-area: g; }
-  #bnd-zinsatlas .za-lang .za-m { grid-area: m; padding-left: 24px; border-left: 1px solid var(--rule); }
-  #bnd-zinsatlas .za-lang .za-ml { margin: 14px 0 6px; }
-  #bnd-zinsatlas .za-ziel { font-size: var(--za-ziel); font-weight: 800; line-height: 1; letter-spacing: -0.03em; color: var(--green-text); }
-  #bnd-zinsatlas .za-achse { position: relative; height: 10px; margin: 14px 5px 0; }
-  #bnd-zinsatlas .za-achse::before { content: ""; position: absolute; left: 0; right: 0; top: 4px; height: 1.5px; background: var(--green-text); opacity: 0.55; }
-  #bnd-zinsatlas .za-achse i { position: absolute; top: 0; width: 10px; height: 10px; margin-left: -5px; border: 1.5px solid var(--green-text); border-radius: 50%; background: var(--green); }
-  #bnd-zinsatlas .za-skala { display: flex !important; justify-content: space-between; margin-top: 6px; font-size: var(--fs-label); color: var(--text); }
-  @media (max-width: 860px) {   /* Tablet: die vier Flächen untereinander, jede behält ihren Aufbau */
-    #bnd-zinsatlas .za-reihe { grid-template-columns: minmax(0, 1fr); gap: 14px; }
-    #bnd-zinsatlas .za-r2 { margin-top: 14px; }
-    #bnd-zinsatlas .za-kurve .za-d { max-width: none; }
-  }
-  @media (max-width: 600px) {   /* Handy: eine Spalte, dieselbe Reihenfolge – Historie, Zinskurve, Unternehmensrenditen, Langläufer */
-    #bnd-zinsatlas { --za-kurve: 36px; --za-ziel: 44px; }
-    #bnd-zinsatlas .za-k { padding: 20px 18px 18px 20px; }
-    #bnd-zinsatlas .za-hist, #bnd-zinsatlas .za-lang { grid-template-columns: minmax(0, 1fr); grid-template-areas: "t" "m" "g"; grid-template-rows: auto; }
-    #bnd-zinsatlas .za-hist .za-m, #bnd-zinsatlas .za-lang .za-m { padding-left: 0; border-left: 0; margin-top: 16px; }
-    #bnd-zinsatlas .za-hist h3 { max-width: none; }
-    #bnd-zinsatlas .za-jahr, #bnd-zinsatlas .za-hist .za-ml, #bnd-zinsatlas .za-achse, #bnd-zinsatlas .za-skala { display: none !important; }
-    #bnd-zinsatlas .za-hist .za-chips { display: flex !important; flex-wrap: wrap; }
-    #bnd-zinsatlas .za-lang .za-m { display: flex !important; flex-direction: row-reverse; justify-content: flex-end; align-items: center; gap: 16px; }
-    #bnd-zinsatlas .za-lang .za-ml { margin: 0; max-width: 8em; line-height: 1.35; }
-    #bnd-zinsatlas .za-pf { width: 44px; height: 44px; }
+  #bnd-zinsatlas .za-sub { margin: 6px 0 28px; font-size: var(--fs-text); color: var(--text); }
+  /* Vier Themenfenster (02.10.2026, Entwurf 01 aus bondarium-zinsatlas-drei-designentwuerfe-ohne-zahlen.pdf): ersetzt die vier
+     Flächen mit Jahreszahl, Ländern, Ratings und Zieljahr. Je Thema ein Motiv ohne Marktkennzahlen, ein Satz, ein Link; die ganze
+     Karte ist der Link. Langläufer als dunkler Abschluss. Handy: Motiv links, Titel und Kurzsatz rechts. */
+  #bnd-zinsatlas .zf-reihe { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+  #bnd-zinsatlas .zf { display: flex; flex-direction: column; min-width: 0; padding: 10px 10px 20px; border: 1px solid rgba(26,26,25,0.12); border-radius: 18px; background: #fff; color: var(--ink); text-decoration: none; transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease; }
+  #bnd-zinsatlas .zf-bild { display: grid; place-items: center; height: 160px; border-radius: 12px; background: #EEF7E8; }
+  #bnd-zinsatlas .zf-bild svg { width: 100%; max-width: 240px; height: 146px; font-family: var(--sans); }
+  #bnd-zinsatlas .zf-t { display: block; padding: 22px 14px 0; }
+  #bnd-zinsatlas .zf-h { display: block; font-size: var(--fs-zahl); font-weight: 700; line-height: 1.2; letter-spacing: -0.015em; }
+  #bnd-zinsatlas .zf-d { display: block; margin-top: 12px; font-size: var(--fs-text); line-height: 1.55; color: var(--text); }
+  #bnd-zinsatlas .zf-dk { display: none; }
+  #bnd-zinsatlas .zf-go { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding: 22px 14px 0; font-size: var(--fs-ui); font-weight: 700; color: var(--green-text); }
+  #bnd-zinsatlas .zf-go svg { width: 22px; height: 22px; flex: none; transition: transform 0.15s ease; }
+  #bnd-zinsatlas .zf:hover { transform: translateY(-2px); border-color: var(--green-text); box-shadow: 0 1px 2px rgba(26,26,25,0.04), 0 14px 30px -18px rgba(26,26,25,0.35); }
+  #bnd-zinsatlas .zf:hover .zf-go svg { transform: translateX(3px); }
+  #bnd-zinsatlas .zf:focus-visible { outline: 3px solid var(--green-text); outline-offset: 3px; }
+  #bnd-zinsatlas .zf-lang { background: #1B2F23; border-color: #1B2F23; color: #fff; }
+  #bnd-zinsatlas .zf-lang .zf-bild { background: rgba(255,255,255,0.07); }
+  #bnd-zinsatlas .zf-lang .zf-d { color: rgba(255,255,255,0.78); }
+  #bnd-zinsatlas .zf-lang .zf-go { color: var(--green); }
+  #bnd-zinsatlas .zf-lang:hover { border-color: var(--green); }
+  #bnd-zinsatlas .zf-lang:focus-visible { outline-color: var(--green-text); }
+  @media (prefers-reduced-motion: reduce) { #bnd-zinsatlas .zf, #bnd-zinsatlas .zf-go svg { transition: none; } #bnd-zinsatlas .zf:hover { transform: none; } }
+  @media (max-width: 1000px) { #bnd-zinsatlas .zf-reihe { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; } }
+  @media (max-width: 600px) {
+    #bnd-zinsatlas .zf-reihe { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+    #bnd-zinsatlas .zf { display: grid; grid-template-columns: 96px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 14px; padding: 12px 14px 12px 8px; border-radius: 14px; }
+    #bnd-zinsatlas .zf-bild { grid-row: 1 / span 2; height: 96px; background: none; }
+    #bnd-zinsatlas .zf-lang .zf-bild { background: none; }
+    #bnd-zinsatlas .zf-bild svg { height: 96px; max-width: 96px; }
+    #bnd-zinsatlas .zf-t { padding: 6px 0 0; }
+    #bnd-zinsatlas .zf-h { font-size: var(--fs-karte); }
+    #bnd-zinsatlas .zf-d { margin-top: 4px; font-size: var(--fs-klein); }
+    #bnd-zinsatlas .zf-dl { display: none; }
+    #bnd-zinsatlas .zf-dk { display: inline; }
+    #bnd-zinsatlas .zf-go { justify-content: flex-end; padding: 6px 0 0; }
+    #bnd-zinsatlas .zf-gt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
   }
   /* ==========================================================================================
      Schriftgrößen-Raster 01.10.2026 (Nutzerwunsch „Schriftgrößen passen teilweise nicht – einheitliches Bild“):
@@ -1094,34 +1057,15 @@
         </div>
       </section>
 
-      <section id="bnd-zinsatlas" aria-labelledby="h-zatlas">   <!-- Zinsatlas 01.10.2026 (Entwurf 02 des Nutzers): vier Flächen zu den vier Zinsen-Seiten, je ein Link; ersetzt die Karten mit Spanne und Mini-Kurve -->
+      <section id="bnd-zinsatlas" aria-labelledby="h-zatlas">   <!-- Zinsatlas: seit 02.10.2026 vier Themenfenster (Entwurf 01 des Nutzers) – je Zinsen-Seite eine Karte mit Motiv, ohne Marktkennzahlen -->
         <p class="za-dach">Zinsatlas</p>
         <h2 id="h-zatlas">Zinsen in Bewegung</h2>
         <p class="za-sub">Vier Perspektiven auf den Anleihemarkt.</p>
-        <div class="za-reihe za-r1">
-          <a class="za-k za-hist" href="renditen.html">
-            <div class="za-t"><span class="za-nr">01 / Renditehistorie</span><h3>Staatsanleihen seit&nbsp;1970</h3><span class="za-d">10-jährige Staatsanleihen aus acht Ländern: aktuelle Renditen und ihre Geschichte.</span></div>
-            <span class="za-m"><span class="za-jahr" aria-hidden="true">1970<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M3 12h17M14.5 6.5L20 12l-5.5 5.5"/></svg></span><span class="za-ml" aria-hidden="true">bis heute · 10 Jahre Laufzeit</span><span class="za-chips"><i>USA</i><i>China</i><i>Deutschland</i><i>Indien</i><i>Japan</i><i>Großbritannien</i><i>Frankreich</i><i>Italien</i></span></span>
-            <span class="za-go">Renditehistorie ansehen<span class="za-pf" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></span>
-          </a>
-          <a class="za-k za-kurve" href="zinskurve.html">
-            <div class="za-t"><span class="za-nr">02 / Laufzeit</span><h3>Zinskurve</h3><span class="za-frage">Lang oder kurz?</span></div>
-            <span class="za-m"><span><small>Rendite</small><b>10</b><em>Jahre</em></span><span class="za-minus" aria-hidden="true"></span><span class="sr-only">minus</span><span><small>Rendite</small><b>2</b><em>Jahre</em></span></span>
-            <span class="za-d">Der Renditeabstand für Deutschland und die USA.</span>
-            <span class="za-go">Zinskurve ansehen<span class="za-pf" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></span>
-          </a>
-        </div>
-        <div class="za-reihe za-r2">
-          <a class="za-k za-unt" href="unternehmensanleihen.html">
-            <div class="za-t"><span class="za-nr">03 / Unternehmensrendite</span><h3>Renditen von Unternehmens&shy;anleihen</h3><span class="za-d">Sechs Renditereihen, vier Länder. Jeweils zehn Jahre Laufzeit.</span></div>
-            <span class="za-m"><span class="za-chips"><i>USA · AAA–A</i><i>Japan · AA / A</i><i>China · AAA</i><i>Australien · A / BBB</i></span></span>
-            <span class="za-go">Renditereihen ansehen<span class="za-pf" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></span>
-          </a>
-          <a class="za-k za-lang" href="langlaeufer.html">
-            <div class="za-t"><span class="za-nr">04 / Kurs &amp; Rendite</span><h3>Langläufer</h3><span class="za-d">Sieben Anleihen: Kursverläufe seit 2019 und Fälligkeiten bis 2120.</span></div>
-            <span class="za-m" aria-hidden="true"><span class="za-ml">Fälligkeiten bis</span><span class="za-ziel">2120</span><span class="za-achse"><i style="left:0"></i><i style="left:12.5%"></i><i style="left:25%"></i><i style="left:40%"></i><i style="left:100%"></i></span><span class="za-skala"><span>2040</span><span>2120</span></span></span>
-            <span class="za-go">Langläufer ansehen<span class="za-pf" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></span></span>
-          </a>
+        <div class="zf-reihe">
+          <a class="zf zf-staat" href="renditen.html"><span class="zf-bild"><svg viewBox="0 0 200 130" aria-hidden="true" focusable="false"><circle cx="100" cy="65" r="58" fill="#39FF14"/><ellipse cx="100" cy="72" rx="78" ry="24" fill="none" stroke="#157C00" stroke-width="1.6"/><rect x="82" y="10" width="56" height="88" rx="6" fill="#fff" stroke="#157C00" stroke-width="2.2"/><rect x="72" y="18" width="56" height="94" rx="6" fill="#fff" stroke="#157C00" stroke-width="2.4"/><g fill="none" stroke="#157C00" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M82 46L100 35L118 46Z"/><path d="M83 51H117M89 56V72M100 56V72M111 56V72M82 77H118M84 89H112"/></g><circle cx="22" cy="72" r="4" fill="#157C00"/><circle cx="174" cy="58" r="4.5" fill="#fff" stroke="#157C00" stroke-width="1.6"/></svg></span><span class="zf-t"><span class="zf-h">Staatsanleihen</span><span class="zf-d"><span class="zf-dl">Renditen im historischen Vergleich.</span><span class="zf-dk">Renditen im Wandel.</span></span></span><span class="zf-go"><span class="zf-gt">Historie ansehen</span><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10H17M12 5L17 10L12 15"/></svg></span></a>
+          <a class="zf zf-kurve" href="zinskurve.html"><span class="zf-bild"><svg viewBox="0 0 200 130" aria-hidden="true" focusable="false"><circle cx="100" cy="65" r="58" fill="#39FF14"/><rect x="52" y="22" width="96" height="24" rx="12" fill="#fff"/><text x="64" y="39" font-size="13" font-weight="700" fill="#157C00">kurz</text><g fill="none" stroke="#157C00" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M114 34H136M129 27L136 34L129 41"/><path d="M54 60H70M64 54L70 60L64 66"/></g><text x="80" y="82" font-size="13" font-weight="700" fill="#157C00">lang</text><path d="M60 88C60 108 76 116 96 116C120 116 132 102 132 86C132 72 126 64 118 62" fill="none" stroke="#157C00" stroke-width="7" stroke-linecap="round"/></svg></span><span class="zf-t"><span class="zf-h">Zinskurve</span><span class="zf-d"><span class="zf-dl">Was der Renditeabstand verrät.</span><span class="zf-dk">Der Renditeabstand.</span></span></span><span class="zf-go"><span class="zf-gt">Zinskurve ansehen</span><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10H17M12 5L17 10L12 15"/></svg></span></a>
+          <a class="zf zf-unt" href="unternehmensanleihen.html"><span class="zf-bild"><svg viewBox="0 0 200 130" aria-hidden="true" focusable="false"><circle cx="100" cy="65" r="58" fill="#39FF14"/><ellipse cx="100" cy="102" rx="70" ry="14" fill="none" stroke="#157C00" stroke-width="1.6"/><g stroke="#157C00" stroke-width="2.4" stroke-linejoin="round"><rect x="66" y="16" width="38" height="96" rx="3" fill="#fff"/><rect x="106" y="40" width="34" height="72" rx="3" fill="#fff"/></g><g fill="#157C00"><rect x="74" y="27" width="6" height="6"/><rect x="90" y="27" width="6" height="6"/><rect x="74" y="43" width="6" height="6"/><rect x="90" y="43" width="6" height="6"/><rect x="74" y="59" width="6" height="6"/><rect x="90" y="59" width="6" height="6"/><rect x="113" y="52" width="6" height="6"/><rect x="127" y="52" width="6" height="6"/><rect x="113" y="68" width="6" height="6"/><rect x="127" y="68" width="6" height="6"/><rect x="78" y="94" width="14" height="18"/></g><path d="M40 112H160" stroke="#157C00" stroke-width="2.4" stroke-linecap="round"/><circle cx="160" cy="98" r="4.5" fill="#157C00"/></svg></span><span class="zf-t"><span class="zf-h">Unternehmens&shy;anleihen</span><span class="zf-d"><span class="zf-dl">Renditen nach Bonität im Vergleich.</span><span class="zf-dk">Renditen nach Bonität.</span></span></span><span class="zf-go"><span class="zf-gt">Renditen ansehen</span><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10H17M12 5L17 10L12 15"/></svg></span></a>
+          <a class="zf zf-lang" href="langlaeufer.html"><span class="zf-bild"><svg viewBox="0 0 200 130" aria-hidden="true" focusable="false"><g fill="none" stroke="#39FF14" stroke-linecap="round"><ellipse cx="100" cy="62" rx="34" ry="54" stroke-width="2.4"/><ellipse cx="100" cy="62" rx="13" ry="54" stroke-width="2"/><path d="M100 8V116" stroke-width="2"/><path d="M38 66C52 50 66 50 80 66S110 84 124 62S152 38 166 50" stroke-width="7"/><path d="M60 122H140" stroke-width="2"/></g><circle cx="38" cy="66" r="4" fill="#39FF14"/><circle cx="168" cy="48" r="5" fill="#fff" stroke="#39FF14" stroke-width="1.6"/></svg></span><span class="zf-t"><span class="zf-h">Langläufer</span><span class="zf-d"><span class="zf-dl">Warum lange Anleihen stärker schwanken.</span><span class="zf-dk">Kurse in Bewegung.</span></span></span><span class="zf-go"><span class="zf-gt">Langläufer ansehen</span><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10H17M12 5L17 10L12 15"/></svg></span></a>
         </div>
       </section>
     </div>
