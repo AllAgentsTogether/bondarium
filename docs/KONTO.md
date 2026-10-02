@@ -75,7 +75,9 @@ Kurs und Kurswert (Nutzerwunsch 01.10.2026: „in der Anleihe muss auch der aktu
 muss die Differenz zwischen Kaufkurs und 100 % Rückzahlung erkenntlich sein“): Als Kaufkurs gilt der Schlusskurs von
 heute – das Depot rechnet, als wäre heute der Kauftag; ein eigener Kaufkurs wird nicht gespeichert. Kurswert =
 Nennwert × Kurs, ohne Stückzinsen und Gebühren. Der Unterschied zur Rückzahlung zu 100 % (Kursgewinn grün, Kursverlust
-orange) steht unter dem Kurswert, in der Summenzeile, im Satz über den Schaubildern und an jedem Rückzahlungsbalken.
+orange) steht unter dem Kurswert, in der Summenzeile und an jedem Rückzahlungsbalken. Den Satz über dem Schaubild („Bis zur
+letzten Fälligkeit … zusammen …; der Kurswert … Kursgewinn …“) gibt es seit 02.10.2026 nicht mehr (Nutzerwunsch: „das hier
+löschen“); im PDF des Musterdepots steht er weiter.
 
 Ins Depot kommen nur Anleihen mit festem Kupon oder ohne Kupon (Nutzerentscheid); alles andere steht
 ausgegraut mit Grund in der Auswahl (`grund()` in `konto.html`).
@@ -114,8 +116,8 @@ und der Spaltenabstand 1 px kleiner.
 
 Auswahl im Schaubild (seit 01.10.2026, Nutzerwunsch: „bei Zahlungen je Jahr soll die Farbkachel klickbar sein, so dass ich
 mir auch nur ein paar Werte aus dem Depot zusammenklicken kann“): Die Legende besteht aus Schaltern (`.kd-wahl`,
-`aria-pressed`). Ein Klick blendet eine Anleihe aus oder wieder ein; Satz („Auswahl: 3 von 10 Anleihen“), Schaubild
-(Zeitachse bis zur letzten Fälligkeit der Auswahl) und Einzel-Liste zeigen nur die Auswahl, die Tabelle darüber bleibt das
+`aria-pressed`). Ein Klick blendet eine Anleihe aus oder wieder ein; Schaubild (Zeitachse bis zur letzten Fälligkeit der Auswahl) und
+Einzel-Liste zeigen nur die Auswahl, die Tabelle darüber bleibt das
 ganze Depot. „Alle zeigen“ setzt zurück. Die Auswahl (`AUS`) gilt nur für diesen Seitenaufruf und wird nirgends gespeichert. Der Nennwert ist eine ganze Zahl von 1 bis 100 Mio.;
 liegt er unter der Stückelung oder ist er kein Vielfaches davon, steht ein Hinweis in der Zeile. Ins Depot passen höchstens zehn Anleihen (`MAX_DEPOT` in
 `konto.php`, `DEPOT_MAX` in `konto.html`); ist es voll, ist das Formular gesperrt.
@@ -123,7 +125,8 @@ liegt er unter der Stückelung oder ist er kein Vielfaches davon, steht ein Hinw
 Unter der Tabelle die Zahlungen (Fassung vom 01.10.2026 abends, Nutzerwunsch: „max 10 Anleihen ins Depot. Die Zinsen und
 die Rückzahlungen von unterschiedlichen Anleihen müssen farblich unterschiedlich sein. Die nächsten 12 Monate sind
 uninteressant … 10 Jahre und danach gestrichelt mit dem Hinweis, die nächsten Jahre werden nicht angezeigt. Ganz unten
-muss die Summe aus Zinsen und Rückzahlung stehen“): ein Satz mit den Summen, ein Schaubild „Zahlungen je Jahr“ und der
+muss die Summe aus Zinsen und Rückzahlung stehen“): ein Schaubild „Zahlungen je Jahr“ (der Satz mit den Summen darüber ist
+seit 02.10.2026 entfernt) und der
 Aufklapper „Zinstermine im Jahr JJJJ“ (seit 02.10.2026, Nutzerwunsch: „nicht alle Zahlungstermine, sondern nur exemplarisch
 für das nächste Jahr … nur Zinsen und keine Rückzahlungen … es soll ab Januar anfangen“ – vorher alle Zahlungen bis zur letzten
 Fälligkeit; jetzt die Zinstermine des nächsten Kalenderjahrs von Januar bis Dezember mit Summe, ohne Rückzahlungen). Das Schaubild (`jahresbild()`) reicht von heute bis zur
