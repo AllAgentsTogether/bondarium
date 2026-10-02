@@ -124,9 +124,9 @@ Unter der Tabelle die Zahlungen (Fassung vom 01.10.2026 abends, Nutzerwunsch: �
 die Rückzahlungen von unterschiedlichen Anleihen müssen farblich unterschiedlich sein. Die nächsten 12 Monate sind
 uninteressant … 10 Jahre und danach gestrichelt mit dem Hinweis, die nächsten Jahre werden nicht angezeigt. Ganz unten
 muss die Summe aus Zinsen und Rückzahlung stehen“): ein Satz mit den Summen, ein Schaubild „Zahlungen je Jahr“ und der
-Aufklapper „Zinstermine in den nächsten zwölf Monaten“ (seit 02.10.2026, Nutzerwunsch: „nicht alle Zahlungstermine, sondern
-nur exemplarisch für das nächste Jahr … nur Zinsen und keine Rückzahlungen“ – vorher alle Zahlungen bis zur letzten Fälligkeit;
-jetzt die Zinstermine der nächsten zwölf Monate mit Summe, ohne Rückzahlungen). Das Schaubild (`jahresbild()`) reicht von heute bis zur
+Aufklapper „Zinstermine im Jahr JJJJ“ (seit 02.10.2026, Nutzerwunsch: „nicht alle Zahlungstermine, sondern nur exemplarisch
+für das nächste Jahr … nur Zinsen und keine Rückzahlungen … es soll ab Januar anfangen“ – vorher alle Zahlungen bis zur letzten
+Fälligkeit; jetzt die Zinstermine des nächsten Kalenderjahrs von Januar bis Dezember mit Summe, ohne Rückzahlungen). Das Schaubild (`jahresbild()`) reicht von heute bis zur
 letzten Fälligkeit, höchstens 30 Jahre (`JAHRE_MAX`; Nutzerwunsch vom selben Abend: „das muss dynamisch sein … bis 30
 Jahre. So bleibt nicht alles weiß auf der rechten Seite“ – davor erst zehn, dann fest zwanzig Jahre). Bei vielen Jahren
 werden die Spalten schmal; die Zahlen über den Balken weichen dann nach oben aus, statt sich zu überdecken. Es
