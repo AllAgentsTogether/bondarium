@@ -88,22 +88,30 @@ ANLEIHEN = ("Anleihen", "anleihen.html", [
 ])
 # „Kaufen“ (seit 01.10.2026 eigener Hauptpunkt): alles, was man beim Kauf braucht – Anleitung, Broker, Handelsplätze,
 # Steuern und Kosten, Rechner (der Rechner stand vorher doppelt: unter Entscheiden und unter „Werkzeuge“).
+# Seit 02.10.2026 mit zwei grünen Chips wie in Akademie und Anleihen (Nutzerwunsch: „bei Kaufen und Zinsen steht nirgendwo der grüne
+# Kasten“): erst der Weg zum Kauf, dann was er kostet und bringt.
 KAUFEN = ("Kaufen", "kaufen.html", [
+    "Schritt für Schritt",
     ("Deine erste Anleihe", "erste-anleihe.html"),
     ("Broker im Vergleich", "broker-vergleich.html"),
     ("Handelsplätze", "handelsplaetze.html"),
+    "Kosten und Rendite",
     ("Steuern und Handelskosten", "steuern-handelskosten.html"),
     ("Rechner", "rechner.html"),
 ])
 # „Zinsen“: Marktdaten, täglich aktuell. Kopf = Übersicht beobachten.html (Dateiname bleibt, damit alle Links gelten).
 # „Renditen“ steht vor Staats- und Unternehmensanleihen, damit die Einträge nicht wie die Listen im Menü „Anleihen“ klingen.
+# Seit 02.10.2026 mit zwei grünen Chips (Nutzerwunsch wie bei Kaufen): Staatsanleihen – dazu die Langläufer, die alle Staatsanleihen
+# sind (darum stehen sie jetzt dort statt am Ende) – und Unternehmensanleihen.
 ZINSEN = ("Zinsen", "beobachten.html", [
+    "Staatsanleihen",
     ("Renditen von Staatsanleihen seit 1970", "renditen.html"),
     ("Zinskurve seit 1972", "zinskurve.html"),
     ("Realzins seit 1970", "realzins.html"),
+    ("Langläufer", "langlaeufer.html"),
+    "Unternehmensanleihen",
     ("Renditen von Unternehmensanleihen seit 1984", "unternehmensanleihen.html"),
     ("Risikoaufschläge seit 1984", "risikoaufschlaege.html"),
-    ("Langläufer", "langlaeufer.html"),
 ])
 # Die Aufklapper neben der Akademie, in dieser Reihenfolge; Rubrik-Schlüssel je Menü; Zusatzseiten, die zu einem Menü zählen
 MENUS = [ANLEIHEN, KAUFEN, ZINSEN]
