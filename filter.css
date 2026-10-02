@@ -1,0 +1,85 @@
+/* filter.css – Filterstandard für Anleihen-Listen (seit 02.10.2026): Grundfilter-Schalter und Filterleiste.
+   Gemeinsam für anleihen-suche.html und die Merkliste in konto.html; das Markup zeichnet filter.js (MC.anleihenFilter).
+   Bis 02.10.2026 standen diese Regeln im Stilblock der Anleihen-Suche. */
+.filter { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; max-width: 1000px; position: relative; }
+.fgrp { position: relative; }
+.fbtn { font: inherit; font-size: 13px; line-height: 1; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.18); border-radius: 999px; padding: 8px 12px 8px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.fbtn::after { content: ""; width: 7px; height: 4px; background: currentColor; clip-path: polygon(0 0, 100% 0, 50% 100%); opacity: 0.55; transition: transform .15s; }
+.fbtn:hover:not(:disabled), .fgrp.offen .fbtn { border-color: var(--green-text); color: var(--green-text); }
+.fgrp.offen .fbtn::after { transform: rotate(180deg); }
+.fbtn:disabled { opacity: 0.5; cursor: default; }
+.fbtn:focus-visible, .fclear:focus-visible, .freset:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+.fbtn.on { background: var(--green); border-color: var(--green); color: var(--ink); }
+.fgrp.offen .fbtn.on, .fbtn.on:hover:not(:disabled) { color: var(--ink); border-color: var(--accent-text); box-shadow: 0 0 0 3px rgba(21,124,0,0.22); }   /* seit 30.09.2026 Tinte statt Weiß auf Grün (vorher ~1,3:1) */
+.fbtn.on::after { opacity: 0.85; }
+.fval:empty { display: none; }
+.fval { font-weight: 600; max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
+.fval::before { content: "· "; font-weight: 400; opacity: 0.75; }
+.fclear { font: inherit; font-size: 13px; color: var(--line); background: none; border: 0; padding: 8px 4px; cursor: pointer; }
+.fclear:hover { text-decoration: underline; }
+/* Weitere Filter (UX 29.09.2026): die sechs wichtigsten Filter immer sichtbar, fünf seltener gebrauchte hinter einem Schalter –
+   gleiche Filter, gleiche Wirkung; aktive Filter aus der Adresse öffnen den Bereich von selbst */
+.filter:not(.alle) .fgrp.neben { display: none; }
+.fmehr { font: inherit; font-size: 13px; line-height: 1; color: var(--text); background: none; border: 1px dashed rgba(44,44,42,0.32); border-radius: 999px; padding: 8px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.fmehr::before { content: "+"; font-size: 15px; line-height: 0; font-weight: 600; }
+.filter.alle .fmehr::before { content: "−"; }
+.fmehr:hover:not(:disabled) { border-color: var(--green-text); color: var(--green-text); }
+.fmehr:disabled { opacity: 0.5; cursor: default; }
+.fmehr:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+.fmehr .fanz:empty, .filter.alle .fmehr .fanz { display: none; }   /* aufgeklappt ist kein Filter versteckt – die Zahl stünde sonst neben Filtern, die gar nicht gewählt sind (30.09.2026) */
+.fmehr .fanz { min-width: 18px; padding: 2px 5px; border-radius: 999px; background: var(--green); color: var(--ink); font-size: 12px; font-weight: 600; text-align: center; }
+.fpanel { position: absolute; top: calc(100% + 6px); left: 0; z-index: 40; min-width: 240px; width: max-content; max-width: 330px; background: #fff; border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 6px 24px rgba(44,44,42,0.13); padding: 6px 0 0; font-size: 14px; }
+.fpanel.rechts { left: auto; right: 0; }
+.fpanel fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.fopts { max-height: 300px; overflow-y: auto; overscroll-behavior: contain; }
+.fopt { display: flex; align-items: center; gap: 10px; padding: 7px 14px; cursor: pointer; line-height: 1.35; }
+.fopt:hover { background: rgba(44,44,42,0.04); }
+.fopt input { accent-color: var(--line); width: 15px; height: 15px; margin: 0; flex: none; cursor: pointer; }
+.fopt .ftxt { flex: 1; }
+.fopt[hidden] { display: none; }
+.fopt .fnum { color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+.fopt .ftxt small { display: block; font-size: 12px; line-height: 1.35; color: var(--muted); margin-top: 1px; }   /* Erläuterung je Option (Filter Kündigung, seit 27.09.2026) */
+.fhint a { color: var(--accent-text); }
+.fgrp[data-f="kue"] .fopts { max-height: 460px; }   /* sieben Optionen mit Erläuterung ohne inneres Scrollen */
+.fopt.leer { color: var(--muted); }
+.fopt.leer .ftxt { opacity: 0.6; }
+.fsuche { display: block; width: calc(100% - 24px); margin: 4px 12px 6px; font: inherit; font-size: 14px; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 6px; padding: 7px 10px; }
+.fsuche:focus-visible { outline: 2px solid var(--line); outline-offset: 1px; }
+.ffoot { border-top: 1px solid var(--rule); margin-top: 6px; padding: 8px 14px 10px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.fhint { font-size: 12px; line-height: 1.5; color: var(--muted); margin: 0; }
+.freset { font: inherit; font-size: 13px; color: var(--line); background: none; border: 0; padding: 0; cursor: pointer; }
+.freset:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .fgrp { position: static; }
+  .fpanel, .fpanel.rechts { left: 0; right: 0; max-width: none; width: auto; }
+}
+/* Tippflächen am Touch-Gerät ≥ 44 px */
+@media (pointer: coarse) {
+  .fbtn, .fmehr, .fclear, .freset { min-height: 44px; display: inline-flex; align-items: center; }
+  .fopt { min-height: 44px; }
+}
+.solide { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 14px; max-width: 1000px; }
+.sol-btn { font: inherit; font-size: 13px; line-height: 1.2; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.18); border-radius: 999px; padding: 7px 14px 7px 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 9px; }
+.sol-btn { text-align: left; }
+.sol-btn:hover { border-color: var(--green-text); }
+.fclear[hidden] { display: none; }   /* am Touch-Gerät überschrieb display: inline-flex das hidden-Attribut (Knopf stand ohne aktiven Filter da) */
+.sol-btn:focus-visible, .sol-mehr summary:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+.sol-sw { flex: none; position: relative; width: 30px; height: 18px; border-radius: 999px; background: #D9D8D3; transition: background .15s; }
+.sol-sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(26,26,25,0.3); transition: transform .15s; }
+.sol-btn[aria-pressed="true"] { border-color: var(--green-text); }
+.sol-btn[aria-pressed="true"] .sol-sw { background: var(--green-text); }
+.sol-btn[aria-pressed="true"] .sol-sw::after { transform: translateX(12px); }
+.sol-btn b { font-weight: 600; }
+.sol-btn small { font-size: 13px; color: var(--muted); }
+.sol-btn small::before { content: "· "; }
+.sol-mehr { font-size: 13px; }
+.sol-mehr summary { color: var(--line); cursor: pointer; list-style: none; padding: 4px 0; }
+.sol-mehr summary::-webkit-details-marker { display: none; }
+.sol-mehr summary:hover { text-decoration: underline; }
+.sol-mehr[open] { flex-basis: 100%; }
+.sol-regeln { margin: 6px 0 0; padding: 12px 16px 12px 34px; background: #fff; border: 1px solid rgba(44,44,42,0.12); border-radius: 12px; line-height: 1.5; max-width: 640px; }
+.sol-regeln li + li { margin-top: 3px; }
+.sol-regeln small { color: var(--muted); }
+.sol-fuss { margin: 8px 0 0; font-size: 12px; color: var(--muted); max-width: 640px; }
+@media (pointer: coarse) { .sol-btn, .sol-mehr summary { min-height: 44px; } .sol-mehr summary { display: inline-flex; align-items: center; } }
+@media (prefers-reduced-motion: reduce) { .sol-sw, .sol-sw::after { transition: none; } }

@@ -227,6 +227,17 @@ E-Mail nur an, wenn STRATO sie für die Domain signiert (DKIM) oder ein SPF-Eint
 E-Mail nicht an: bei STRATO im Kundenbereich unter Domains → DNS den SPF-Eintrag einschalten (STRATO-Standard,
 `v=spf1 redirect=smtp.rzone.de`), für `bondarium.com`. Ohne ankommende E-Mail kann sich niemand registrieren.
 
+## Filter der Merkliste (seit 02.10.2026)
+
+Über der Tabelle der Merkliste stehen der Grundfilter-Schalter und dieselbe Filterleiste wie in der Anleihen-Suche (Art, Land,
+Währung, Restlaufzeit, Rendite, Kupon, Bonität; hinter „Weitere Filter“: Zinsart, Kündigung, Volumen, Mindestanlage, Datenprüfung).
+Beide Seiten nutzen `filter.js` (`MC.anleihenFilter`) und `filter.css` – Filter, Stufen, Texte und die sechs Grundregeln stehen nur
+dort; wer einen Filter ändert, ändert ihn für Suche und Merkliste. `konto.html` baut je gemerkter Anleihe eine Zeile im Format des
+Suchindex (`mfZeile`: aus `suchindex.json`, sonst aus den Stammdaten `anleihen/<teil>.json`, dann ohne Rendite) und lässt
+`MF.auswerten` die Treffer und die Zahlen je Option bestimmen. Gefiltert wird nur die Tabelle; „Merkliste teilen“ und „Als PDF
+speichern“ nehmen die ganze Merkliste. Die Auswahl gilt für den Seitenaufruf und wird nicht gespeichert (keine Adresse, kein
+Browser-Speicher). Mit gesetztem Filter heißt die Statuszeile „3 von 13 Anleihen auf deiner Merkliste passen zur Auswahl“.
+
 ## Lokal testen
 
 Lokal braucht es PHP (`brew install php`). Der Python-Server der Vorschau führt kein PHP aus.

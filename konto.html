@@ -14,6 +14,7 @@
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
+<link rel="stylesheet" href="filter.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
  <style>
@@ -90,6 +91,10 @@
   .kto-teilen-status:empty { display: none; }
   .kto-teilen-status.fehler { color: var(--down); }
   .kto-status strong { color: var(--ink); font-weight: 600; }
+  /* Filter der Merkliste (seit 02.10.2026): derselbe Filterstandard wie die Anleihen-Suche – filter.css/filter.js */
+  #mf-box { margin-top: 6px; }
+  #mf-box[hidden] { display: none; }
+  .kto-t td.mf-leer { padding: 18px 12px; text-align: left; font-size: 14px; color: var(--text); white-space: normal; }
   .kto-t { width: 100%; min-width: 1180px; border-collapse: collapse; margin-top: 8px; font-size: 13.5px; }   /* Spalten wie die Anleihen-Suche; schmaler Bildschirm: querwischen */
   .kto-t th, .kto-t td { padding: 10px 9px 10px 0; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
   .kto-t thead th { font-size: 11px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; color: var(--text); border-bottom: 1px solid rgba(26,26,25,0.35); white-space: nowrap; }
@@ -466,6 +471,7 @@
         <button type="button" role="tab" id="r-depot" aria-controls="mein-depot" aria-selected="false" tabindex="-1">Mein Depot<i id="r-depot-n"></i></button>
       </div>
       <div id="p-merk" role="tabpanel" aria-labelledby="r-merk">
+      <div id="mf-box" hidden></div>   <!-- Grundfilter und Filterleiste wie in der Anleihen-Suche: filter.js (MC.anleihenFilter), Stile filter.css -->
       <div class="kto-leiste">
         <p class="kto-status" id="status" role="status" aria-live="polite"></p>
         <div class="kto-teilen" id="teilen-box" hidden>
@@ -596,6 +602,7 @@
 </div>
 
 <script src="site.js"></script>
+<script src="filter.js"></script>
 <script src="bond.js"></script>
 <script src="konto.js"></script>
 <script src="pdf.js"></script>
@@ -713,7 +720,7 @@ MC.navInit();
   let DATEN = null;   // { idx: Map ISIN → Zeile, emi, tage, kstand, boersen, stand }
   const STAMM = {};   // ISIN → Stammdaten-Zeile oder null (nicht gelistet)
   function ladeDaten() {
-    if (!DATEN) DATEN = MC.json("suchindex.json").then(d => ({ idx: new Map(d.rows.map(r => [r[0], r])), emi: d.emittenten || [], tage: d.tage || [], kstand: d.kstand || "", boersen: d.boersen || {}, stand: d.stand || "" }));
+    if (!DATEN) DATEN = MC.json("suchindex.json").then(d => ({ idx: new Map(d.rows.map(r => [r[0], r])), emi: d.emittenten || [], tage: d.tage || [], kstand: d.kstand || "", boersen: d.boersen || {}, stand: d.stand || "", ezb: d.ezb || "" }));
     DATEN.catch(() => { DATEN = null; });
     return DATEN;
   }
@@ -808,14 +815,49 @@ MC.navInit();
       return c * S.dir || b.seit - a.seit || a.isin.localeCompare(b.isin);
     });
   }
+  // ---------- Merkliste: Filter (seit 02.10.2026, Nutzerwunsch „gleicher Filterstandard wie die Suche“) ----------
+  // Grundfilter und Filterleiste kommen aus filter.js – dieselben Filter, Stufen und Regeln wie in anleihen-suche.html. Gefiltert wird
+  // nur die Tabelle; „Merkliste teilen“ und „Als PDF speichern“ nehmen weiter die ganze Merkliste. Die Auswahl gilt für diesen
+  // Seitenaufruf und wird nirgends gespeichert.
+  // Zeile im Format des Suchindex: aus suchindex.json, sonst aus den Stammdaten anleihen/<teil>.json (ohne Kurs), sonst null
+  function mfZeile(isin, D) {
+    const r = D.idx.get(isin); if (r) return r;
+    const s = STAMM[isin]; if (!s) return null;
+    const m = Array.isArray(s[12]) ? s[12] : [], pruef = s[13] && typeof s[13] === "object" && Object.keys(s[13]).length ? s[13] : 0;
+    const z = [isin, s[0], s[1], s[2], s[9] === 1 && typeof s[3] !== "number" ? "var" : s[3], s[4], s[5], s[6], s[7], null, s[9], s[10], s[11], ((m[0] && m[0][1]) || "-") + String(m[1] || "").slice(0, 4), pruef];
+    if (s[15] === 1 || s[15] === 3) z[22] = s[15];   // Bonität laut EZB (Feld 16 der Stammdaten)
+    return z;
+  }
+  let MF_KEYS = [], MF_SOL = [], MF_DA = false, MF_EZB = "", MF_N = null;   // MF_N: Zahl der sichtbaren Anleihen, null = ungefiltert
+  const MF = MC.anleihenFilter ? MC.anleihenFilter({ box: $("mf-box"), praefix: "mf-", art: () => ART_NAME, ezb: () => MF_EZB, kstand: () => KSTAND,
+    rendite: r => { const o = LISTE.find(x => x.isin === r[0]); return o && typeof o.rendite === "number" ? o.rendite : null; },
+    bereit: () => MF_DA, onChange: () => { zeichne(); statusText(); } }) : null;
+  $("zeilen").addEventListener("click", e => { if (e.target.closest("#mf-alle") && MF) { MF.zuruecksetzen(); zeichne(); statusText(); } });
+  // Nach dem Laden: Schlüssel je Anleihe der Merkliste (Reihenfolge wie LISTE); Anleihen ohne Daten passen zu keinem gesetzten Filter
+  function mfDaten(D) {
+    if (!MF) return;
+    MF_EZB = D ? D.ezb : "";
+    const rows = D ? LISTE.map(o => mfZeile(o.isin, D)) : [];
+    MF_KEYS = rows.map(r => r ? MF.keys(r) : MF.FILTER.map(() => null)); MF_SOL = rows.map(r => !!r && MF.solideRegel(r));
+    MF_DA = !!D && rows.length > 0;
+    if (MF_DA) MF.daten(MF_KEYS); else MF.zuruecksetzen();
+    $("mf-box").hidden = !MF_DA;
+  }
   function zeichne() {
-    $("zeilen").innerHTML = sortiert().map(zeile).join("");
+    let liste = sortiert(); MF_N = null;
+    if (MF && MF_DA && MF_KEYS.length === LISTE.length) {
+      const a = MF.auswerten(MF_KEYS, MF_SOL), sicht = new Set(a.hits.map(i => LISTE[i].isin));
+      MF.zeigen(a.zahl);
+      if (MF.gesetzt()) { liste = liste.filter(o => sicht.has(o.isin)); MF_N = liste.length; }
+    }
+    $("zeilen").innerHTML = liste.length || MF_N == null ? liste.map(zeile).join("")
+      : '<tr><td class="mf-leer" colspan="13">Keine Anleihe deiner Merkliste passt zu dieser Auswahl. <button type="button" class="kto-textbtn" id="mf-alle">Alle Filter zurücksetzen</button></td></tr>';
     document.querySelectorAll(".kto-t thead th[data-col]").forEach(th => { if (th.dataset.col === S.col) th.setAttribute("aria-sort", S.dir > 0 ? "ascending" : "descending"); else th.removeAttribute("aria-sort"); });
     if (MC.wischPruefen) MC.wischPruefen();
   }
   function statusText() {
     const n = LISTE.length;
-    $("status").innerHTML = (n ? `<strong>${n} ${n === 1 ? "Anleihe" : "Anleihen"}</strong> auf deiner Merkliste${KSTAND ? ` · Kurse vom ${MC.esc(MC.datum(KSTAND))}` : ""}.${!ZULETZT && !NOTIZ ? " Mit <strong>+</strong> fügst du eine Anleihe deinem Depot hinzu." : ""}` : "") +
+    $("status").innerHTML = (n ? `<strong>${MF_N != null ? `${MF_N} von ${n} Anleihen` : `${n} ${n === 1 ? "Anleihe" : "Anleihen"}`}</strong> auf deiner Merkliste${MF_N != null ? " passen zur Auswahl" : ""}${KSTAND ? ` · Kurse vom ${MC.esc(MC.datum(KSTAND))}` : ""}.${!ZULETZT && !NOTIZ ? " Mit <strong>+</strong> fügst du eine Anleihe deinem Depot hinzu." : ""}` : "") +
       (ZULETZT ? ` ${MC.esc(ZULETZT)} entfernt – <button type="button" class="kto-textbtn" id="zurueck">rückgängig</button>.` : "") + (NOTIZ ? ` ${NOTIZ}` : "");
   }
   let lauf = 0;
@@ -827,13 +869,14 @@ MC.navInit();
     $("leer").hidden = fav.length > 0;
     $("teilen-status").textContent = "";
     $("r-merk-n").textContent = fav.length || ""; $("r-depot-n").textContent = dep.length || "";
-    if (!fav.length) { LISTE = []; $("liste").hidden = true; $("teilen-box").hidden = true; statusText(); }
+    if (!fav.length) { LISTE = []; mfDaten(null); MF_N = null; $("liste").hidden = true; $("teilen-box").hidden = true; statusText(); }
     else if (!LISTE.length) $("status").textContent = "Kurse werden geladen …";
     if (!fav.length && !dep.length) { POS = []; $("quellen").hidden = true; zeichneDepot(); return; }
     const isins = fav.map(f => f[0]).concat(dep.map(d => d[0]));
     Promise.all([ladeDaten(), ladeFx()]).then(([D]) => ladeStamm(isins.filter(i => !D.idx.has(i)).concat(dep.map(d => d[0]))).then(() => D)).then(D => {   // Depot: Stammdaten immer – dort stehen die Zinstermine
       if (nr !== lauf) return;
       LISTE = fav.map(f => anleihe(f[0], f[1], D)); KSTAND = D.kstand;
+      mfDaten(fav.length ? D : null);
       POS = dep.map(d => position(d[0], d[1], D)); POS.forEach((p, i) => { p.farbe = FARBEN[i % FARBEN.length]; });   // vor zeichne(): der Depot-Knopf der Merkliste braucht den Depot-Inhalt
       if (fav.length) { $("liste").hidden = false; $("teilen-box").hidden = false; zeichne(); }
       statusText();
@@ -845,7 +888,7 @@ MC.navInit();
       console.warn("Konto: Anleihedaten nicht geladen:", err);
       // ohne Kursdaten wenigstens die Listen zeigen (ISIN mit Link zum Steckbrief)
       const ohne = isin => ({ isin, name: isin, reg: "", rendite: null, kurs: null, kupon: null, faellig: "", cur: "", hinweis: "Kursdaten gerade nicht erreichbar" });
-      LISTE = fav.map(f => Object.assign(ohne(f[0]), { seit: f[1] }));
+      LISTE = fav.map(f => Object.assign(ohne(f[0]), { seit: f[1] })); mfDaten(null);
       POS = dep.map(d => ({ isin: d[0], nenn: d[1], o: ohne(d[0]), rechnet: false, zins: null, warum: "Kursdaten gerade nicht erreichbar" }));
       if (fav.length) { $("liste").hidden = false; $("teilen-box").hidden = false; zeichne(); }
       $("quellen").hidden = true; statusText();
@@ -854,7 +897,7 @@ MC.navInit();
   }
   function zeige(stand) {
     if (stand.angemeldet) zeigeDepot(stand);
-    else { lauf++; LISTE = []; ZULETZT = ""; if (!["bestaetigen", "neu"].includes(MODUS)) modus("anmelden"); zeigeTeil("anmelden"); }
+    else { lauf++; LISTE = []; mfDaten(null); MF_N = null; ZULETZT = ""; if (!["bestaetigen", "neu"].includes(MODUS)) modus("anmelden"); zeigeTeil("anmelden"); }
     zeigeGeteilt(stand);
   }
 

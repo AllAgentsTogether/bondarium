@@ -28,6 +28,7 @@
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
+<link rel="stylesheet" href="filter.css">
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -90,64 +91,11 @@
   .kpis td .fraglich sup { font-size: 10px; line-height: 0; margin-left: 1px; }
   .kpis th .pruef { display: inline-block; font-size: 11px; line-height: 1.2; color: var(--orange-text); border: 1px solid var(--orange); border-radius: 3px; padding: 0 4px; margin-left: 6px; vertical-align: 1px; white-space: nowrap; cursor: help; }   /* Datenprüfung: Widerspruch im Register (seit 27.09.2026) */
   /* Filterleiste: Pillen wie die Knöpfe der Länder-/Laufzeit-Seiten, darunter je ein Auswahlfeld */
-  .filter { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; max-width: 1000px; position: relative; }
-  .fgrp { position: relative; }
-  .fbtn { font: inherit; font-size: 13px; line-height: 1; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.18); border-radius: 999px; padding: 8px 12px 8px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-  .fbtn::after { content: ""; width: 7px; height: 4px; background: currentColor; clip-path: polygon(0 0, 100% 0, 50% 100%); opacity: 0.55; transition: transform .15s; }
-  .fbtn:hover:not(:disabled), .fgrp.offen .fbtn { border-color: var(--green-text); color: var(--green-text); }
-  .fgrp.offen .fbtn::after { transform: rotate(180deg); }
-  .fbtn:disabled { opacity: 0.5; cursor: default; }
-  .fbtn:focus-visible, .fclear:focus-visible, .freset:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
-  .fbtn.on { background: var(--green); border-color: var(--green); color: var(--ink); }
-  .fgrp.offen .fbtn.on, .fbtn.on:hover:not(:disabled) { color: var(--ink); border-color: var(--accent-text); box-shadow: 0 0 0 3px rgba(21,124,0,0.22); }   /* seit 30.09.2026 Tinte statt Weiß auf Grün (vorher ~1,3:1) */
-  .fbtn.on::after { opacity: 0.85; }
-  .fval:empty { display: none; }
-  .fval { font-weight: 600; max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
-  .fval::before { content: "· "; font-weight: 400; opacity: 0.75; }
-  .fclear { font: inherit; font-size: 13px; color: var(--line); background: none; border: 0; padding: 8px 4px; cursor: pointer; }
-  .fclear:hover { text-decoration: underline; }
-  /* Weitere Filter (UX 29.09.2026): die sechs wichtigsten Filter immer sichtbar, fünf seltener gebrauchte hinter einem Schalter –
-     gleiche Filter, gleiche Wirkung; aktive Filter aus der Adresse öffnen den Bereich von selbst */
-  .filter:not(.alle) .fgrp.neben { display: none; }
-  .fmehr { font: inherit; font-size: 13px; line-height: 1; color: var(--text); background: none; border: 1px dashed rgba(44,44,42,0.32); border-radius: 999px; padding: 8px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
-  .fmehr::before { content: "+"; font-size: 15px; line-height: 0; font-weight: 600; }
-  .filter.alle .fmehr::before { content: "−"; }
-  .fmehr:hover:not(:disabled) { border-color: var(--green-text); color: var(--green-text); }
-  .fmehr:disabled { opacity: 0.5; cursor: default; }
-  .fmehr:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
-  .fmehr .fanz:empty, .filter.alle .fmehr .fanz { display: none; }   /* aufgeklappt ist kein Filter versteckt – die Zahl stünde sonst neben Filtern, die gar nicht gewählt sind (30.09.2026) */
-  .fmehr .fanz { min-width: 18px; padding: 2px 5px; border-radius: 999px; background: var(--green); color: var(--ink); font-size: 12px; font-weight: 600; text-align: center; }
-  .fpanel { position: absolute; top: calc(100% + 6px); left: 0; z-index: 40; min-width: 240px; width: max-content; max-width: 330px; background: #fff; border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 6px 24px rgba(44,44,42,0.13); padding: 6px 0 0; font-size: 14px; }
-  .fpanel.rechts { left: auto; right: 0; }
-  .fpanel fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
-  .fopts { max-height: 300px; overflow-y: auto; overscroll-behavior: contain; }
-  .fopt { display: flex; align-items: center; gap: 10px; padding: 7px 14px; cursor: pointer; line-height: 1.35; }
-  .fopt:hover { background: rgba(44,44,42,0.04); }
-  .fopt input { accent-color: var(--line); width: 15px; height: 15px; margin: 0; flex: none; cursor: pointer; }
-  .fopt .ftxt { flex: 1; }
-  .fopt[hidden] { display: none; }
-  .fopt .fnum { color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
-  .fopt .ftxt small { display: block; font-size: 12px; line-height: 1.35; color: var(--muted); margin-top: 1px; }   /* Erläuterung je Option (Filter Kündigung, seit 27.09.2026) */
-  .fhint a { color: var(--accent-text); }
-  #fp-kue .fopts { max-height: 460px; }   /* sieben Optionen mit Erläuterung ohne inneres Scrollen */
   .det-kpi dd.warn { color: var(--orange-text); }   /* Kündigung ab festem Termin oder ewig */
-  .fopt.leer { color: var(--muted); }
-  .fopt.leer .ftxt { opacity: 0.6; }
-  .fsuche { display: block; width: calc(100% - 24px); margin: 4px 12px 6px; font: inherit; font-size: 14px; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 6px; padding: 7px 10px; }
-  .fsuche:focus-visible { outline: 2px solid var(--line); outline-offset: 1px; }
-  .ffoot { border-top: 1px solid var(--rule); margin-top: 6px; padding: 8px 14px 10px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
-  .fhint { font-size: 12px; line-height: 1.5; color: var(--muted); margin: 0; }
-  .freset { font: inherit; font-size: 13px; color: var(--line); background: none; border: 0; padding: 0; cursor: pointer; }
-  .freset:hover { text-decoration: underline; }
   .kpis td.num[title] { cursor: help; }
-  @media (max-width: 600px) {
-    .fgrp { position: static; }
-    .fpanel, .fpanel.rechts { left: 0; right: 0; max-width: none; width: auto; }
-  }
   /* Tippflächen am Touch-Gerät ≥ 44 px (Filter-Pillen, Beispiele, Schalter; Sortierknöpfe regelt base.css) */
   @media (pointer: coarse) {
-    .fbtn, .fmehr, .fclear, .bsp-l a, .freset, .status-unten a { min-height: 44px; display: inline-flex; align-items: center; }
-    .fopt { min-height: 44px; }
+    .bsp-l a, .status-unten a { min-height: 44px; display: inline-flex; align-items: center; }
   }
   @media (prefers-reduced-motion: no-preference) {  html { scroll-behavior: smooth; } }
   @media (hover: hover) { .kpis tbody tr.zeile:hover > * { background: rgba(57,255,20,0.07); } }   /* nur mit Maus – am Handy blieb die Zeile nach dem Tipp grün (28.09.2026) */
@@ -210,31 +158,6 @@
     .kpis tr.zdet .det { position: static; width: auto; max-width: none; margin: 0; border-radius: 0 0 12px 12px; border-top: 0; box-shadow: var(--shadow); }
   }
   /* Grundfilter (bis 01.10.2026 abends „Solide Auswahl“; Nutzerwunsch): ein Schalter über den Filtern, sechs Grundregeln für Privatanleger als Vorfilter */
-  .solide { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 14px; max-width: 1000px; }
-  .sol-btn { font: inherit; font-size: 13px; line-height: 1.2; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.18); border-radius: 999px; padding: 7px 14px 7px 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 9px; }
-  .sol-btn { text-align: left; }
-  .sol-btn:hover { border-color: var(--green-text); }
-  .fclear[hidden] { display: none; }   /* am Touch-Gerät überschrieb display: inline-flex das hidden-Attribut (Knopf stand ohne aktiven Filter da) */
-  .sol-btn:focus-visible, .sol-mehr summary:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
-  .sol-sw { flex: none; position: relative; width: 30px; height: 18px; border-radius: 999px; background: #D9D8D3; transition: background .15s; }
-  .sol-sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(26,26,25,0.3); transition: transform .15s; }
-  .sol-btn[aria-pressed="true"] { border-color: var(--green-text); }
-  .sol-btn[aria-pressed="true"] .sol-sw { background: var(--green-text); }
-  .sol-btn[aria-pressed="true"] .sol-sw::after { transform: translateX(12px); }
-  .sol-btn b { font-weight: 600; }
-  .sol-btn small { font-size: 13px; color: var(--muted); }
-  .sol-btn small::before { content: "· "; }
-  .sol-mehr { font-size: 13px; }
-  .sol-mehr summary { color: var(--line); cursor: pointer; list-style: none; padding: 4px 0; }
-  .sol-mehr summary::-webkit-details-marker { display: none; }
-  .sol-mehr summary:hover { text-decoration: underline; }
-  .sol-mehr[open] { flex-basis: 100%; }
-  .sol-regeln { margin: 6px 0 0; padding: 12px 16px 12px 34px; background: #fff; border: 1px solid rgba(44,44,42,0.12); border-radius: 12px; line-height: 1.5; max-width: 640px; }
-  .sol-regeln li + li { margin-top: 3px; }
-  .sol-regeln small { color: var(--muted); }
-  .sol-fuss { margin: 8px 0 0; font-size: 12px; color: var(--muted); max-width: 640px; }
-  @media (pointer: coarse) { .sol-btn, .sol-mehr summary { min-height: 44px; } .sol-mehr summary { display: inline-flex; align-items: center; } }
-  @media (prefers-reduced-motion: reduce) { .sol-sw, .sol-sw::after { transition: none; } }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Anleihen-Suche","description":"Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen: Suche nach Name, ISIN oder WKN, Filter nach Land, Währung, Laufzeit, Rendite.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-09-27","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihen-suche.html","isBasedOn":{"@type":"Dataset","name":"Financial Instruments Reference Data System (FIRDS)","creator":{"@type":"Organization","name":"European Securities and Markets Authority (ESMA)"},"url":"https://registers.esma.europa.eu/publication/searchRegister?core=esma_registers_firds"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.bondarium.de/anleihen.html"},{"@type":"ListItem","position":3,"name":"Anleihen-Suche","item":"https://www.bondarium.de/anleihen-suche.html"}]}</script>
@@ -341,36 +264,7 @@
       <input type="search" id="q" name="q" placeholder="Name, Emittent, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search">
     </form>
 
-    <div class="solide" id="solide-z">
-      <button type="button" class="sol-btn" id="solide" aria-pressed="false"><span class="sol-sw" aria-hidden="true"></span><span><b>Grundfilter</b> <small>6 Grundregeln für Privatanleger</small></span></button>
-      <details class="sol-mehr"><summary>Was heißt das?</summary>
-        <ol class="sol-regeln">
-          <li><b>Restlaufzeit mindestens 8 Monate</b> <small>– sonst fressen die Kaufkosten den Ertrag</small></li>
-          <li><b>Kündigung: keine, Make-Whole oder kurz vor Fälligkeit</b> <small>– die Anleihe läuft so lange wie versprochen</small></li>
-          <li><b>Volumen ab 100 Mio.</b> <small>– meist reger Handel, Verkauf vor Fälligkeit eher möglich</small></li>
-          <li><b>Mindestanlage bis 10.000</b> <small>– in der Währung der Anleihe</small></li>
-          <li><b>Währung Euro oder US-Dollar</b></li>
-          <li><b>Datenprüfung ohne Befund</b> <small>– Kupon und Fälligkeit stimmen mit dem Register überein</small></li>
-        </ol>
-        <p class="sol-fuss">Grundregeln, keine Empfehlung: Bonität des Emittenten und Anleihebedingungen prüfst du selbst. Alle übrigen Filter wirken zusätzlich.</p>
-      </details>
-    </div>
-    <div class="filter" id="filter" role="group" aria-label="Filter">
-      <div class="fgrp" data-f="art"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-art"><span class="flab">Art</span><span class="fval"></span></button><div class="fpanel" id="fp-art" hidden></div></div>
-      <div class="fgrp" data-f="land"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-land"><span class="flab">Land</span><span class="fval"></span></button><div class="fpanel" id="fp-land" hidden></div></div>
-      <div class="fgrp" data-f="w"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-w"><span class="flab">Währung</span><span class="fval"></span></button><div class="fpanel" id="fp-w" hidden></div></div>
-      <div class="fgrp" data-f="rest"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-rest"><span class="flab">Restlaufzeit</span><span class="fval"></span></button><div class="fpanel" id="fp-rest" hidden></div></div>
-      <div class="fgrp" data-f="rendite"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-rendite"><span class="flab">Rendite</span><span class="fval"></span></button><div class="fpanel" id="fp-rendite" hidden></div></div>
-      <div class="fgrp" data-f="kupon"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-kupon"><span class="flab">Kupon</span><span class="fval"></span></button><div class="fpanel" id="fp-kupon" hidden></div></div>
-      <div class="fgrp" data-f="bon"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-bon"><span class="flab">Bonität</span><span class="fval"></span></button><div class="fpanel" id="fp-bon" hidden></div></div>
-      <div class="fgrp neben" data-f="zins"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-zins"><span class="flab">Zinsart</span><span class="fval"></span></button><div class="fpanel" id="fp-zins" hidden></div></div>
-      <div class="fgrp neben" data-f="kue"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-kue"><span class="flab">Kündigung</span><span class="fval"></span></button><div class="fpanel" id="fp-kue" hidden></div></div>
-      <div class="fgrp neben" data-f="vol"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-vol"><span class="flab">Volumen</span><span class="fval"></span></button><div class="fpanel" id="fp-vol" hidden></div></div>
-      <div class="fgrp neben" data-f="stk"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-stk"><span class="flab">Mindestanlage</span><span class="fval"></span></button><div class="fpanel" id="fp-stk" hidden></div></div>
-      <div class="fgrp neben" data-f="pruef"><button type="button" class="fbtn" aria-expanded="false" aria-controls="fp-pruef"><span class="flab">Datenprüfung</span><span class="fval"></span></button><div class="fpanel" id="fp-pruef" hidden></div></div>
-      <button type="button" class="fmehr" id="fmehr" aria-expanded="false"><span class="fmehr-t">Weitere Filter</span><span class="fanz"></span></button>
-      <button type="button" class="fclear" id="fclear" hidden>Alle Filter zurücksetzen</button>
-    </div>
+    <div id="filterbox"></div>   <!-- Grundfilter und Filterleiste: filter.js (MC.anleihenFilter), Stile filter.css – derselbe Filterstandard wie die Merkliste in konto.html -->
 
     <p class="note status" id="status" aria-live="polite">Suchbegriff eingeben oder Filter wählen – <span data-kz="anleihen-kurs">rund 33.000</span> Anleihen mit aktuellem Kurs an deutschen Börsen.</p>
     <noscript><p class="note">Die Suche braucht JavaScript.</p></noscript>
@@ -441,6 +335,7 @@
 </div>
 
 <script src="site.js"></script>
+<script src="filter.js"></script>
 <script src="konto.js"></script>
 <script>
 // Rückfall, falls site.js nicht lädt (Netzfehler): Minimalform, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
@@ -454,14 +349,13 @@ const T = {
   hits: n => n === 1 ? "<strong>1 Treffer</strong>" : `<strong>${n} Treffer</strong>`,
   unten: (n, max) => n > max ? `Das waren die ersten ${max} von ${n.toLocaleString("de-DE")} Treffern – mit Suchbegriff oder Filtern eingrenzen.` : `${n.toLocaleString("de-DE")} Treffer.`,
   hoch: "↑ Zur Suche und den Filtern",
-  mehr: "Weitere Filter", weniger: "Weniger Filter",
   capped: max => ` – die ersten ${max} werden angezeigt. Mit Suchbegriff oder Filtern eingrenzen.`,
   none: "Keine Anleihe gefunden. Tipp: weniger Wörter oder Filter lockern.",
   error: "Die Anleihe-Daten sind gerade nicht erreichbar. Bitte später erneut versuchen.",
   errorKurse: "Die Kurse sind gerade nicht erreichbar – ohne aktuellen Kurs zeigt die Suche keine Anleihe. Bitte später erneut versuchen.",
   eyebrow: (n, d) => `Anleihen-Suche · ${n} Anleihen mit Kurs an deutschen Börsen · Stand: ${d}`,
   stand: (d, k) => `Daten-Stand: ${d} (ESMA-Register)` + (k ? ` · Kurse: ${k} (Deutsche Börse, Bundesbank)` : ""),
-  clear: "Auswahl löschen", landSuche: "Land suchen …", intl: "International (supranational)",
+  intl: "International (supranational)",
   real: "Realrendite (inflationsindexierte Bundesanleihe)",
   kursTitle: (d, b, u) => `Schlusskurs ${d}, ${b}` + (u ? `, Umsatz ${u}` : ", ohne Umsatz"),
   fraglichT: a => `Kurs ohne Umsatz (Taxe): Die Rendite liegt ${a} Prozentpunkte über Bund – bei unter einem Jahr Restlaufzeit wahrscheinlich zu hoch: Meist ist die Taxe veraltet und der Briefkurs höher, sonst zweifelt der Markt an der Rückzahlung. Beim Broker prüfen.`,
@@ -486,15 +380,6 @@ const T = {
     kopie: "ISIN kopieren", kopiert: "kopiert ✓",
   },
   zins: ["fest", "variabel", "Nullkupon"],
-  hint: {
-    rendite: d => `Rendite bis Fälligkeit aus dem Schlusskurs vom ${d} (Börse Frankfurt, Bundeswertpapiere: Bundesbank). Ohne Rendite: variabel oder später variabel verzinste, Stufenzins-, Wandel-, Tilgungs-, unbefristete und inflationsindexierte Anleihen (inflationsindexierte Bundeswertpapiere: Realrendite, mit * gekennzeichnet) sowie Kurse ohne Umsatz mit unplausibler Rendite. Grau mit Fragezeichen: Rendite aus einer Taxe ohne Umsatz, die bei unter einem Jahr Restlaufzeit zu weit über Bund liegt (Staat 2, Öffentlich 1,5, Unternehmen 3 Prozentpunkte) – meist ist die Taxe veraltet.`,
-    stk: "Stückelung in der Währung der Anleihe.",
-    pruef: "Jede Anleihe wird gegen den Kurznamen im ESMA-Register (Kupon und Fälligkeit nach ISO 18774) und gegen ihren Namen geprüft. Weicht etwas ab, bleiben die Registerwerte stehen, der Widerspruch steht daneben („Daten?“) und es gibt keine Rendite – die Quelle wird nicht verändert.",
-    vol: "Ausgegebener Nennbetrag in der Währung der Anleihe – 100 Mio. Yen sind also weniger als 100 Mio. Euro. Unter 100 Mio. stellt die Börse oft nur kleine Stückzahlen; wer vor der Fälligkeit verkaufen will, braucht Geduld oder nimmt Abschläge in Kauf. Ein Anhaltspunkt für die Handelbarkeit, keine Garantie.",
-    land: "Sitz des Konzerns laut LEI-Register.",
-    bon: d => `Von uns aus der Liste der notenbankfähigen Sicherheiten der EZB vom ${d} abgelesen: Der Bewertungsabschlag der EZB zeigt, ob eine Anleihe zu den Bonitätsstufen 1 und 2 (AAA bis A−) oder zur Stufe 3 (BBB+ bis BBB−) gehört. Kein Rating, keine Empfehlung. „Keine Angabe“ heißt nur: Die Anleihe steht nicht auf der Liste. <a href="bonitaet.html">Bonität und Ratings erklärt →</a>`,
-    kue: 'Abgeleitet aus dem Namen – „2024(27/34)“ heißt kündbar ab 2027 – und dem ESMA-Register. Verbindlich sind die Anleihebedingungen. <a href="kuendbare-anleihen.html">Kündigungsarten erklärt →</a>',
-  },
 };
 function L(k) { return T[k] != null ? T[k] : k; }
 
@@ -509,7 +394,7 @@ function L(k) { return T[k] != null ? T[k] : k; }
 const MAX = 200;
 const AKTUELL_TAGE = 14;   // Kurs höchstens so alt (Kalendertage vor dem Stand) – ältere Anleihen stehen nicht in der Suche (Nutzerregel 26.09.2026: nur, was täglich aktuell gehalten werden kann)
 let IDX = null, HAY = null, KEYS = null, SOL = null, EMI = [], ART = ["Staat", "Öffentlich", "Unternehmen"], KURSE = {}, KTAGE = [], KSTAND = "", BOERSEN = {}, EZB = "";   // EZB: Stand der EZB-Liste (Filter Bonität)
-const S = { q: "", col: "rest", dir: -1, f: {}, offen: new Set(), solide: false };   // Standard seit 29.09.2026: längste Restlaufzeit zuerst
+const S = { q: "", col: "rest", dir: -1, offen: new Set() };   // Standard seit 29.09.2026: längste Restlaufzeit zuerst
 
 // ---------- Formatierung ----------
 const fmt = (v, dec = 0) => MC.zahl(v, dec);   // gemeinsames Zahlenformat (site.js)
@@ -530,9 +415,7 @@ const landName = c => c === "INT" ? L("intl") : ((NAMEN.land && (() => { try { r
 const wName = c => { try { const n = NAMEN.w && NAMEN.w.of(c); return n && n !== c ? `${c} · ${n}` : c; } catch (e) { return c; } };
 
 // ---------- Filter ----------
-// Jeder Filter ordnet einer Anleihe einen Schlüssel zu (oder null = nicht einstufbar; Kündigung: auch zwei).
-// Innerhalb eines Filters gilt „oder“, zwischen den Filtern „und“.
-const bucket = (x, grenzen) => { for (const [g, k] of grenzen) if (x <= g) return k; return null; };
+// Filterleiste, Grundfilter und ihre Regeln: filter.js (MC.anleihenFilter) – gemeinsam mit der Merkliste in konto.html.
 // Kündigung je Anleihe (Regel in site.js); ohne site.js null = nicht einstufbar
 const kueVon = r => MC.kuendigung ? MC.kuendigung(r[1], typeof r[13] === "string" && r[13] ? r[13][0] : "-", r[5], typeof r[13] === "string" ? r[13].slice(1) : "") : null;
 // Angezeigter Name: Emittent in lesbarer Schreibweise ohne Rechtsform (die volle Form steht in der Kurzansicht), sonst der
@@ -540,49 +423,9 @@ const kueVon = r => MC.kuendigung ? MC.kuendigung(r[1], typeof r[13] === "string
 const RF_ENDE = /[\s,]+(AG|SE|KGaA|GmbH|N\.V\.|B\.V\.|S\.A\.|S\.p\.A\.|S\.r\.l\.|PLC|p\.l\.c\.|Inc\.|Ltd\.?|Limited|LLC|Corp\.|Corporation|SA|NV|BV|AB|ASA|A\/S|Oyj|Aktiengesellschaft|Designated Activity Company)$/;
 // Staatsanleihen zeigen wie der Steckbrief das Land (GLEIF nennt die Schuldenagentur, z. B. „Direction Generale du Tresor“)
 const anzeigeName = r => r[2] === 0 && r[11] && r[11] !== "INT" ? landName(r[11]) : EMI[r[9]] ? EMI[r[9]].replace(RF_ENDE, "").replace(RF_ENDE, "") || EMI[r[9]] : r[1];
-// Schlüssel sind meist ein Wert, beim Filter Kündigung auch ein Array (trifft, wenn einer der Werte gewählt ist)
-const trifft = (sel, v) => Array.isArray(v) ? v.some(x => sel.has(x)) : sel.has(v);
-const zaehle = (m, v) => { if (Array.isArray(v)) { for (const x of v) m.set(x, (m.get(x) || 0) + 1); } else m.set(v, (m.get(v) || 0) + 1); };
-const FILTER = [
-  { k: "art", opts: () => ART.map((t, i) => [String(i), t]), key: r => String(r[2]) },
-  { k: "land", liste: true, key: r => r[11] || null, name: landName },
-  { k: "w", liste: true, key: r => r[3] || null, name: wName, kurz: c => c },
-  { k: "kupon", opts: () => [["a", "bis 1\u00a0%"], ["b", "über 1 bis 3\u00a0%"], ["c", "über 3 bis 4\u00a0%"], ["g", "über 4 bis 5\u00a0%"], ["d", "über 5 bis 7\u00a0%"], ["e", "über 7\u00a0%"], ["v", "variabel"]],
-    key: r => r[4] === "var" ? "v" : typeof r[4] === "number" ? bucket(r[4], [[1, "a"], [3, "b"], [4, "c"], [5, "g"], [7, "d"], [Infinity, "e"]]) : null },
-  // Bonität laut EZB (seit 02.10.2026, scripts/update_bonitaet.py): Feld 22 des Suchindex – 1 = Bonitätsstufen 1 und 2, 3 = Stufe 3,
-  // fehlt = nicht auf der EZB-Liste. Ohne Suchindex (Rückfall auf die Einzeldateien) gibt es die Angabe nicht.
-  { k: "bon", opts: () => [["a", "AAA bis A−", "Bonitätsstufen 1 und 2 der EZB"], ["b", "BBB+ bis BBB−", "Bonitätsstufe 3 der EZB"],
-      ["k", "keine Angabe", "nicht auf der EZB-Liste – sagt nichts über die Bonität"]],
-    key: r => !EZB ? null : r[22] === 1 ? "a" : r[22] === 3 ? "b" : r[22] == null ? "k" : null, hintHtml: () => L("hint").bon(EZB ? fmtDate(EZB) : "–") },
-  { k: "zins", opts: () => L("zins").map((t, i) => [String(i), t]), key: r => r[10] == null ? null : String(r[10]) },
-  { k: "rest", opts: () => [["a", "bis 1 Jahr"], ["b", "1 bis 3 Jahre"], ["c", "3 bis 7 Jahre"], ["d", "7 bis 30 Jahre"], ["e", "über 30 Jahre"], ["u", "unbefristet"]],
-    key: r => r[5] ? bucket(Math.max(0, jahre(r[5])), [[1, "a"], [3, "b"], [7, "c"], [30, "d"], [Infinity, "e"]]) : "u" },
-  // Kündigung (seit 27.09.2026, erklärt auf kuendbare-anleihen.html): Art des Kündigungsrechts des Emittenten, dazu „a“ =
-  // Kündigungsrecht des Anlegers (Put). Eine Anleihe kann zwei Schlüssel haben (z. B. Make-Whole und Put) – daher Array.
-  { k: "kue", opts: () => [["n", "nicht kündbar", "feste Laufzeit"], ["m", "Make-Whole", "zum Barwert – meist ohne Nachteil"],
-      ["p", "kurz vor Fälligkeit", "höchstens ein Jahr früher – meist ohne Nachteil"], ["t", "ab festem Termin", "zu 100\u00a0%, Jahre vor Fälligkeit – beachten"],
-      ["e", "unbefristet, mit Kündigungstermin", "läuft weiter, wenn nicht gekündigt"], ["u", "Termin unklar", "laut Register oder Fix-to-Float – Bedingungen prüfen"],
-      ["a", "du kannst kündigen (Put)", "ein Vorteil für dich"]],
-    kurz: v => ({ n: "nein", m: "Make-Whole", p: "kurz vor Ende", t: "fester Termin", e: "unbefristet", u: "unklar", a: "Put" })[v] || v,
-    key: r => { const o = kueVon(r); return o ? (o.put ? [o.k, "a"] : o.k) : null; }, hintHtml: () => L("hint").kue },
-  { k: "rendite", opts: () => [["a", "unter 1\u00a0%"], ["b", "1 bis unter 2\u00a0%"], ["c", "2 bis unter 3\u00a0%"], ["d", "3 bis unter 4\u00a0%"], ["e", "4\u00a0% und mehr"]],
-    key: r => { const y = rendite(r); return y != null ? bucket(y, [[0.999999, "a"], [1.999999, "b"], [2.999999, "c"], [3.999999, "d"], [Infinity, "e"]]) : null; },   // wie angezeigt (Anzeige-Schutz)
-    hint: () => L("hint").rendite(KSTAND ? fmtDate(KSTAND) : "–") },
-  // Volumen (seit 27.09.2026): ausgegebener Nennbetrag in der Währung der Anleihe – Näherung für die Handelbarkeit;
-  // eine Grenze genügt: unter 100 Mio. ist an deutschen Börsen selten ein belastbarer Markt, darüber ändert sich bis 1 Mrd. wenig
-  { k: "vol", opts: () => [["a", "unter 100 Mio.", "kleine Emission – Verkauf vor Fälligkeit kann dauern"], ["b", "100 Mio. und mehr", "meist reger Handel"]],
-    kurz: v => ({ a: "unter 100 Mio.", b: "ab 100 Mio." })[v] || v,
-    key: r => typeof r[6] === "number" ? (r[6] < 1e8 ? "a" : "b") : null, hint: () => L("hint").vol },
-  // Datenprüfung (seit 27.09.2026): Feld pruef aus dem Indexskript – Widersprüche Kurzname/Name gegen Register
-  { k: "pruef", opts: () => [["a", "ohne Befund"], ["b", "Widerspruch im Register", "Kupon oder Fälligkeit laut Kurzname oder Name anders"]],
-    kurz: v => ({ a: "ohne Befund", b: "Widerspruch" })[v] || v,
-    key: r => befund(r) ? "b" : "a", hint: () => L("hint").pruef },
-  { k: "stk", opts: () => [["a", "bis 1.000"], ["b", "über 1.000 bis unter 100.000"], ["c", "100.000 und mehr"]],
-    key: r => typeof r[7] === "number" ? (r[7] <= 1000 ? "a" : r[7] < 100000 ? "b" : "c") : null, hint: () => L("hint").stk },
-];
-FILTER.forEach((f, i) => { f.i = i; S.f[f.k] = new Set(); f.label = document.querySelector(`.fgrp[data-f="${f.k}"] .flab`).textContent; });
-FILTER.find(f => f.k === "land").hint = () => L("hint").land;
-const aktiv = () => FILTER.filter(f => S.f[f.k].size);
+const F = MC.anleihenFilter({ box: document.getElementById("filterbox"), art: () => ART, ezb: () => EZB, kstand: () => KSTAND,
+  rendite: r => rendite(r), befund: r => befund(r), bereit: () => !!IDX, laden: () => laden(), onChange: () => zeige() });
+const FILTER = F.FILTER;
 
 // ---------- Suche ----------
 function suchtext(r) {
@@ -591,26 +434,13 @@ function suchtext(r) {
   const d = r[5] ? `${r[5].slice(8, 10)}.${r[5].slice(5, 7)}.${r[5].slice(0, 4)}` : "unbefristet";
   return " " + woerter([r[1], r[0], r[3], k, k.replace(/\./g, ","), d, ART[r[2]], EMI[r[9]] || "", r[12] || ""].join(" ")) + " ";
 }
-// Ein Durchlauf: Treffer (alle Filter erfüllt) und Zählungen je Filteroption – gezählt wird
-// jeweils mit allen ÜBRIGEN Filtern, damit die Zahl zeigt, was diese Auswahl ergäbe.
+// Treffer und Zählungen je Filteroption (F.auswerten, filter.js); der Suchbegriff ist der Vorfilter.
 function auswerten() {
   // Wörter ab 4 Zeichen: irgendwo enthalten (auch in der ISIN, z. B. WKN „110248“);
   // kürzere nur am Wortanfang – sonst träfe „VW“ jede ISIN mit „VW“.
   const toks = woerter(S.q).split(" ").filter(Boolean).map(t => t.length >= 4 ? t : " " + t);
-  const akt = aktiv().map(f => [f.i, S.f[f.k]]);
-  const zahl = FILTER.map(() => new Map()), hits = [];
-  for (let i = 0; i < IDX.length; i++) {
-    if (S.solide && !SOL[i]) continue;
-    if (toks.length) { const h = HAY[i]; if (!toks.every(t => h.includes(t))) continue; }
-    const ks = KEYS[i];
-    let fehl = -1, n = 0;
-    for (const [fi, sel] of akt) if (!trifft(sel, ks[fi])) { fehl = fi; if (++n > 1) break; }
-    if (n > 1) continue;
-    if (n === 1) { zaehle(zahl[fehl], ks[fehl]); continue; }
-    for (let fi = 0; fi < FILTER.length; fi++) zaehle(zahl[fi], ks[fi]);
-    hits.push(IDX[i]);
-  }
-  return { hits, zahl, suche: toks.length > 0 };
+  const a = F.auswerten(KEYS, SOL, toks.length ? i => { const h = HAY[i]; return toks.every(t => h.includes(t)); } : null);
+  return { hits: a.hits.map(i => IDX[i]), zahl: a.zahl, suche: toks.length > 0 };
 }
 // Anzeige-Schutz (27.09.2026): Kurs ohne Umsatz (Taxe des Spezialisten) mit unplausibler Rendite → keine Rendite (gleiche Regel im Steckbrief)
 const unsicher = r => { const k = KURSE[r[0]]; if (!k || k[4] || k[3] === "B" || typeof k[1] !== "number") return false;
@@ -619,14 +449,6 @@ const unsicher = r => { const k = KURSE[r[0]]; if (!k || k[4] || k[3] === "B" ||
 // Datenprüfung (27.09.2026): r[14] = Befunde des Indexskripts ({} = keiner) – bei Befund keine Rendite, Kennzeichen „Daten?“
 const pruefVon = r => r[14] && typeof r[14] === "object" ? r[14] : {};
 const befund = r => Object.keys(pruefVon(r)).length > 0;
-// Grundfilter (bis 01.10.2026 abends „Solide Auswahl“; Nutzerwunsch): sechs Grundregeln als Vorfilter vor allen übrigen Filtern – Restlaufzeit ab 8 Monaten,
-// Kündigung keine/Make-Whole/kurz vor Fälligkeit, Volumen ab 100 Mio., Stückelung bis 10.000 (Währung der Anleihe), Euro oder
-// US-Dollar, Datenprüfung ohne Befund. Eigener Schalter statt gesetzter Filter: 8 Monate und 10.000 sind keine Filterstufen.
-const solide = r => {
-  if (!r[5] || jahre(r[5]) < 8 / 12) return false;
-  const k = kueVon(r); if (!k || "nmp".indexOf(k.k) < 0) return false;
-  return typeof r[6] === "number" && r[6] >= 1e8 && typeof r[7] === "number" && r[7] <= 10000 && (r[3] === "EUR" || r[3] === "USD") && !befund(r);
-};
 const widerspruch = r => { const p = pruefVon(r); return [p.kuponFisn != null ? `Kupon laut Kurzname ${fmtCoupon(p.kuponFisn)}` : "", p.zinsName ? "Name: variabel (FLR), Register: Nullkupon" : "", p.kuponHoch ? "Kupon unplausibel hoch" : "",
   p.faelligFisn ? `Fälligkeit laut Kurzname ${fmtDate(p.faelligFisn)}` : "", p.faelligName ? `Fälligkeit laut Name ${p.faelligName}${!r[5] ? " – vermutlich fällig, nicht zurückgezahlt" : ""}` : ""].filter(Boolean).join("; "); };
 const rendite = r => { const k = KURSE[r[0]]; return k && typeof k[1] === "number" && !unsicher(r) && !befund(r) ? k[1] : null; };
@@ -727,62 +549,6 @@ function kopieren(b) {
   else fertig(alterWeg());
 }
 
-// ---------- Filterleiste ----------
-function panelBauen(f) {
-  const p = document.getElementById("fp-" + f.k);
-  let opts;
-  if (f.liste) {   // Land/Währung: alle vorkommenden Werte, häufigste zuerst
-    const n = new Map();
-    for (const ks of KEYS) { const v = ks[f.i]; if (v != null) n.set(v, (n.get(v) || 0) + 1); }
-    opts = [...n.keys()].sort((a, b) => n.get(b) - n.get(a) || f.name(a).localeCompare(f.name(b), "de")).map(v => [v, f.name(v)]);
-  } else opts = f.opts();
-  f.namen = new Map(opts.map(o => [o[0], o[1]]));
-  p.innerHTML =
-    (f.k === "land" ? `<input type="search" class="fsuche" placeholder="${L("landSuche")}" aria-label="${L("landSuche")}">` : "") +
-    `<fieldset><legend class="sr-only">${MC.esc(f.label)}</legend><div class="fopts">` +
-    opts.map(([v, t, d]) => `<label class="fopt" data-v="${MC.esc(v)}" data-n="${MC.esc(norm(t))}"><input type="checkbox" value="${MC.esc(v)}"><span class="ftxt">${MC.esc(t)}${d ? `<small>${MC.esc(d)}</small>` : ""}</span><span class="fnum"></span></label>`).join("") +
-    `</div></fieldset>` +
-    `<div class="ffoot">${f.hint ? `<p class="fhint">${MC.esc(f.hint())}</p>` : f.hintHtml ? `<p class="fhint">${f.hintHtml()}</p>` : ""}<button type="button" class="freset">${L("clear")}</button></div>`;
-}
-function filterZeigen(zahl) {
-  for (const f of FILTER) {
-    const g = document.querySelector(`.fgrp[data-f="${f.k}"]`), sel = S.f[f.k], m = zahl[f.i];
-    for (const o of g.querySelectorAll(".fopt")) {
-      const v = o.dataset.v, n = m.get(v) || 0, box = o.firstElementChild;
-      box.checked = sel.has(v);
-      o.querySelector(".fnum").textContent = n.toLocaleString("de-DE");
-      o.classList.toggle("leer", n === 0 && !sel.has(v));
-    }
-    const b = g.querySelector(".fbtn"), val = g.querySelector(".fval");
-    b.classList.toggle("on", sel.size > 0);
-    val.textContent = sel.size === 1 ? ((f.kurz || (v => f.namen.get(v) || v))([...sel][0])) : sel.size > 1 ? `${sel.size}` : "";
-  }
-  document.getElementById("fclear").hidden = !aktiv().length && !S.solide;
-  // Schalter „Weitere Filter“: Zahl der aktiven Filter im ausgeblendeten Teil
-  const nNeben = FILTER.filter(f => S.f[f.k].size && document.querySelector(`.fgrp[data-f="${f.k}"]`).classList.contains("neben")).length;
-  document.querySelector("#fmehr .fanz").textContent = nNeben ? String(nNeben) : "";
-}
-function mehrFilter(auf) {
-  const leiste = document.getElementById("filter"), b = document.getElementById("fmehr");
-  leiste.classList.toggle("alle", auf);
-  b.setAttribute("aria-expanded", String(auf));
-  b.querySelector(".fmehr-t").textContent = L(auf ? "weniger" : "mehr");
-  if (!auf && offen && document.querySelector(`.fgrp[data-f="${offen}"]`).classList.contains("neben")) panel(offen, false);
-}
-let offen = null;
-function panel(f, auf) {
-  const g = document.querySelector(`.fgrp[data-f="${f}"]`); if (!g) return;
-  const b = g.querySelector(".fbtn"), p = g.querySelector(".fpanel");
-  if (auf && offen && offen !== f) panel(offen, false);
-  p.hidden = !auf; b.setAttribute("aria-expanded", String(auf)); g.classList.toggle("offen", auf);
-  offen = auf ? f : (offen === f ? null : offen);
-  if (auf) {
-    p.classList.remove("rechts");
-    const r = p.getBoundingClientRect();
-    if (r.right > document.documentElement.clientWidth - 8 && window.innerWidth > 600) p.classList.add("rechts");
-    const s = p.querySelector(".fsuche"); if (s) s.focus();
-  }
-}
 
 // ---------- Anzeige ----------
 function zeige() {
@@ -790,8 +556,8 @@ function zeige() {
   if (!IDX) return;
   const box = document.getElementById("treffer"), status = document.getElementById("status");
   const AUS = auswerten(), { hits, zahl, suche } = AUS;
-  filterZeigen(zahl);
-  const aus = suche || aktiv().length > 0 || S.solide;
+  F.zeigen(zahl);
+  const aus = suche || F.gesetzt();
   document.getElementById("bsp").hidden = aus;
   const unten = document.getElementById("status2");
   if (!aus) { box.hidden = true; unten.hidden = true; status.innerHTML = L("ready")(IDX.length.toLocaleString("de-DE")); return; }
@@ -814,8 +580,8 @@ function zeige() {
 function merkeURL() {
   const p = new URLSearchParams();
   if (S.q.trim()) p.set("q", S.q.trim());
-  if (S.solide) p.set("solide", "1");
-  for (const f of FILTER) if (S.f[f.k].size) p.set(f.k, [...S.f[f.k]].join(","));
+  if (F.solide) p.set("solide", "1");
+  for (const f of FILTER) if (F.sel[f.k].size) p.set(f.k, [...F.sel[f.k]].join(","));
   const qs = p.toString().replace(/%2C/g, ",");
   const neu = location.pathname + (qs ? "?" + qs : "");
   if (neu !== location.pathname + location.search) history.replaceState(null, "", neu);
@@ -855,12 +621,10 @@ function laden() {
       for (const r of d.rows) KURSE[r[0]] = [r[15], r[16], r[17], r[18], r[19], null, r[20], r[21]];
       IDX = d.rows.filter(r => (!r[5] || r[5] > heute) && kDatum(KURSE[r[0]]) >= grenze);
       HAY = IDX.map(suchtext);
-      KEYS = IDX.map(r => FILTER.map(f => f.key(r)));
-      SOL = IDX.map(solide);
-      FILTER.forEach(panelBauen);
+      KEYS = IDX.map(F.keys);
+      SOL = IDX.map(F.solideRegel);
+      F.daten(KEYS);   // Auswahlfelder bauen; Filterwerte aus der Adresse, die es nicht (mehr) gibt, fallen weg
       st.classList.remove("laedt");
-      // Filterwerte aus der Adresse, die es nicht (mehr) gibt, verwerfen
-      for (const f of FILTER) for (const v of [...S.f[f.k]]) if (!f.namen.has(v)) S.f[f.k].delete(v);
       document.getElementById("datastand").textContent = L("stand")(fmtDate(d.stand), KSTAND ? fmtDate(KSTAND) : "");
       zeige();
     })
@@ -872,8 +636,8 @@ function laden() {
 (function () {
   const p = new URLSearchParams(location.search);
   S.q = p.get("q") || "";
-  S.solide = p.get("solide") === "1";
-  for (const f of FILTER) (p.get(f.k) || "").split(",").map(v => v.trim()).filter(Boolean).forEach(v => S.f[f.k].add(f.k === "w" || f.k === "land" ? v.toUpperCase() : v));
+  F.solide = p.get("solide") === "1";
+  for (const f of FILTER) (p.get(f.k) || "").split(",").map(v => v.trim()).filter(Boolean).forEach(v => F.sel[f.k].add(f.k === "w" || f.k === "land" ? v.toUpperCase() : v));
   const input = document.getElementById("q");
   input.value = S.q;
   let t = 0;
@@ -886,37 +650,8 @@ function laden() {
   const kopfHoehe = () => { if (kopf) document.documentElement.style.setProperty("--kopf", kopf.offsetHeight + "px"); };
   kopfHoehe(); window.addEventListener("resize", kopfHoehe);
 
-  const leiste = document.getElementById("filter"), sol = document.getElementById("solide");
-  sol.setAttribute("aria-pressed", String(S.solide));
-  sol.addEventListener("click", () => { S.solide = !S.solide; sol.setAttribute("aria-pressed", String(S.solide)); laden(); zeige(); });
-  // Weitere Filter von Anfang an zeigen, wenn einer davon aus der Adresse aktiv ist
-  if (FILTER.some(f => S.f[f.k].size && document.querySelector(`.fgrp[data-f="${f.k}"]`).classList.contains("neben"))) mehrFilter(true);
-  leiste.addEventListener("click", e => {
-    if (e.target.closest("#fmehr")) { laden(); mehrFilter(!leiste.classList.contains("alle")); return; }
-    const b = e.target.closest(".fbtn");
-    // Vor dem Laden: Daten holen, dann das gewünschte Auswahlfeld öffnen (Knöpfe sind nicht mehr gesperrt, seit 30.09.2026)
-    if (b && !IDX) { const f = b.parentElement.dataset.f; laden().then(() => { if (IDX) panel(f, true); }); return; }
-    if (b) { const f = b.parentElement.dataset.f; panel(f, b.getAttribute("aria-expanded") !== "true"); return; }
-    const r = e.target.closest(".freset");
-    if (r) { S.f[r.closest(".fgrp").dataset.f].clear(); zeige(); return; }
-    if (e.target.closest("#fclear")) { FILTER.forEach(f => S.f[f.k].clear()); S.solide = false; sol.setAttribute("aria-pressed", "false"); if (offen) panel(offen, false); zeige(); }
-  });
-  leiste.addEventListener("change", e => {
-    const c = e.target.closest(".fopt input"); if (!c) return;
-    const sel = S.f[c.closest(".fgrp").dataset.f];
-    if (c.checked) sel.add(c.value); else sel.delete(c.value);
-    zeige();
-  });
-  leiste.addEventListener("input", e => {
-    const s = e.target.closest(".fsuche"); if (!s) return;
-    const q = norm(s.value.trim());
-    for (const o of s.parentElement.querySelectorAll(".fopt")) o.hidden = q !== "" && !o.dataset.n.includes(q) && !o.dataset.v.toLowerCase().includes(q);
-  });
-  document.addEventListener("click", e => { if (offen && !e.target.closest(".fgrp")) panel(offen, false); });
-  document.addEventListener("keydown", e => {
-    if (e.key !== "Escape" || !offen) return;
-    const f = offen; panel(f, false); document.querySelector(`.fgrp[data-f="${f}"] .fbtn`).focus();
-  });
+  // Weitere Filter von Anfang an zeigen, wenn einer davon aus der Adresse aktiv ist (Bedienung der Leiste: filter.js)
+  if (F.nebenAktiv()) F.mehr(true);
 
   document.getElementById("status2").addEventListener("click", e => {
     if (!e.target.closest(".hoch")) return;
