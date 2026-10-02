@@ -16,7 +16,8 @@
  *   Vergessen      aktion=vergessen (E-Mail) → E-Mail mit Link (30 Minuten, einmal); aktion=passwort-neu (Kennwort des
  *                  Links, neues Passwort) setzt es, meldet alle Geräte ab und das aktuelle an.
  *   Angemeldet     aktion=status | merken | entfernen | uebernehmen | depot | muster-neu | muster-name | muster-weg |
- *                  muster-uebernehmen | abmelden | passwort-aendern | loeschen
+ *                  muster-uebernehmen | abmelden | passwort-aendern | loeschen | ablage | besuch | geraete-ab | export |
+ *                  email-aendern
  *                  uebernehmen (isins, durch Komma getrennt): setzt eine geteilte Merkliste auf die eigene – der Link im
  *                  PDF-Auszug führt auf konto.html#liste=…, die Seite fragt nach, erst der Klick ruft diese Aktion
  *                  depot (isin, nennwert, muster): legt die Anleihe mit diesem Nennwert in das Musterdepot „muster“
@@ -35,6 +36,17 @@
  *                  konto.php?nl=<Kennung> (List-Unsubscribe der E-Mail-Programme) bestellen ihn ab;
  *                  aktion=newsletter-senden (Kopf X-Trigger-Key, ruft der Workflow nach dem Datenlauf) verschickt die
  *                  Ausgabe aus newsletter/ausgabe.json an alle Abonnenten, die diese Kalenderwoche noch keine haben.
+ *   Mein Bondarium (seit 02.10.2026 abends, Nutzerauftrag „Mockup komplett umsetzen“; docs/KONTO.md, Abschnitt „Mein Bondarium“):
+ *                  ablage (art, schluessel, wert als JSON; wert leer = löschen): die persönliche Ablage – Notizen, Listen,
+ *                  gespeicherte Suchen, gelesene Seiten, Lesezeichen, Begriffe, angeheftete Kennzahlen, Voreinstellungen,
+ *                  gespeicherte Rechnungen, Meldungen, Checkliste, „Zuletzt angesehen“ (ABLAGE nennt Arten und Grenzen)
+ *                  besuch: merkt den Beginn dieses Besuchs und liefert den des vorigen („Seit deinem letzten Besuch“)
+ *                  geraete-ab: meldet alle anderen Geräte ab; export: alles zum Konto Gespeicherte als JSON
+ *                  email-aendern (email, passwort) → E-Mail mit Link an die NEUE Adresse (24 Stunden);
+ *                  email-bestaetigen (Kennwort des Links, ohne Anmeldung) stellt das Konto um und meldet andere Geräte ab
+ *                  meldungen-senden (Kopf X-Trigger-Key, ruft der Workflow nach dem Datenlauf): prüft die Meldungen aller
+ *                  Konten gegen newsletter/anleihen.json und verschickt die ausgelösten als eine E-Mail je Konto;
+ *                  meldungen-aus (Kennung aus dem Link der E-Mail, ohne Anmeldung): keine Meldungen mehr per E-Mail
  *   Links          führen auf konto.html#bestaetigen=… bzw. #passwort=… – der Teil hinter „#“ erscheint in keinem
  *                  Server-Log; aktion=link-pruefen sagt der Seite, ob der Link noch gilt und zu welcher Adresse er gehört.
  *
@@ -45,13 +57,15 @@
  *              Fälligkeit gelöscht (erinnerung.php)
  *   newsletter_log  An- und Abmeldungen des Newsletters als Zeitpunkt und Art – ohne Bezug zum Konto, nur zum Zählen
  *              für den täglichen Bericht (25 Monate)
- *   favoriten  ISIN und Zeitpunkt je Nutzer
+ *   favoriten  ISIN und Zeitpunkt je Nutzer, seit Fassung 7 dazu die Rendite am Tag des Merkens (aus dem Datenlauf)
+ *   ablage     persönliche Ablage je Nutzer: Art, Schlüssel, Wert (JSON), Zeitpunkt – nur, was der Nutzer selbst ablegt
  *   musterdepots  Musterdepots je Nutzer: Nummer, Name (vom Nutzer, höchstens NAME_MAX Zeichen), angelegt am
  *   depot      Anleihen der Musterdepots: Nummer des Musterdepots, ISIN, gedachter Nennwert (ganze Zahl in der Währung
  *              der Anleihe) und Zeitpunkt
  *   links      offene Registrierungen und Links zum Zurücksetzen: Hashwert des Link-Kennworts, Adresse, Ablauf, bei
  *              Registrierungen der Hashwert des Passworts und die vorgemerkte ISIN – nach Ablauf gelöscht (aufraeumen)
- *   sitzungen  Anmeldungen (nur der Hashwert des Cookies, Ablauf)
+ *   sitzungen  Anmeldungen (nur der Hashwert des Cookies, Ablauf; seit Fassung 7 eine Gerätebezeichnung wie „Mac (Safari)“
+ *              aus der Browser-Kennung, angemeldet am, zuletzt genutzt)
  *   zaehler    Schutz vor Missbrauch: verschlüsselte Hashwerte von Adresse und IP-Adresse für verschickte E-Mails und
  *              falsche Passwörter, gezählt werden 24 Stunden, danach gelöscht (aufraeumen)
  *   meta       zufälliger Schlüssel für diese Hashwerte, Zeitpunkt des letzten Aufräumens, ein Vergleichs-Hashwert
@@ -71,7 +85,8 @@
  *         falsch) · zuviel · versand · link (abgelaufen oder benutzt) · anmelden (nicht angemeldet) · isin · voll ·
  *         nennwert (keine ganze Zahl von 0 bis NENNWERT_MAX) · muster (kein eigenes Musterdepot) · name (leer) ·
  *         mustervoll (schon MAX_MUSTER Musterdepots) · letztes (das letzte Musterdepot bleibt) · speicher (Datenbank nicht
- *         nutzbar) · fehler
+ *         nutzbar) · art (unbekannte Art der Ablage) · wert (kein gültiger Wert oder zu lang) · voll (Ablage dieser Art
+ *         voll) · gleich (neue E-Mail-Adresse ist die alte) · fehler
  * Ändert sich hier etwas an den verarbeiteten Daten, muss die Datenschutzerklärung (rechtliches.html) mit – und der
  * Betreiber vorher gefragt werden.
  *
@@ -100,6 +115,27 @@ const NL_ORDNER          = __DIR__ . '/newsletter';   // ausgabe.json und anleih
 const NL_JE_AUFRUF       = 40;    // E-Mails je Aufruf von newsletter-senden; der Workflow ruft so oft, bis nichts mehr offen ist
 const NL_MERK_MAX        = 8;     // so viele gemerkte Anleihen zeigt eine Ausgabe (zuletzt gemerkte zuerst)
 const NL_FRISCH_TAGE     = 2;     // ältere Ausgaben werden nicht mehr verschickt
+const BESUCH_PAUSE        = 3 * 3600;   // nach so vielen Sekunden ohne Aufruf beginnt ein neuer Besuch
+const MELDUNG_TAGE        = 7;          // „Zinstermin oder Fälligkeit steht an“: so viele Tage vorher
+const MELDUNG_MAILS       = 200;        // E-Mails je Aufruf von meldungen-senden
+// Persönliche Ablage (seit 02.10.2026): Art → [Höchstzahl der Einträge, Höchstlänge des Werts in Bytes (JSON)].
+// Der Schlüssel ist je Art eine ISIN, ein Seitenname, eine kurze Kennung – Muster siehe ablage_schluessel().
+const ABLAGE = [
+    'notiz'       => [200, 600],    // Schlüssel ISIN: private Notiz zur gemerkten Anleihe
+    'liste'       => [12, 3400],    // eigene Liste der Merkliste: {n: Name, i: [ISIN, …]}
+    'suche'       => [10, 900],     // gespeicherte Suche: {n: Name, q: Adresszusatz der Anleihen-Suche, t: Treffer, z: Zeitpunkt}
+    'gelesen'     => [120, 8],      // Schlüssel Seitenname: „Als gelesen markieren“
+    'lesezeichen' => [40, 400],     // Schlüssel Seite oder Seite#Abschnitt: {t: Titel, a: Abschnitt}
+    'begriff'     => [80, 160],     // Schlüssel Kennung im Glossar: Titel des Begriffs
+    'kennzahl'    => [12, 8],       // Schlüssel Kennzahl für „Mein Zins-Blick“
+    'einstellung' => [12, 300],     // Voreinstellungen: Ordergebühr, Anlagebetrag, Freistellungsauftrag, Startfilter, Zuletzt angesehen an/aus (EINSTELLUNGEN)
+    'rechnung'    => [20, 900],     // gespeicherte Rechnung aus dem Rechner: {a: Rechner, n: Titel, e: Eingaben, r: Ergebnis, z: Zeitpunkt}
+    'meldung'     => [20, 500],     // Meldung: {i: ISIN oder „*“, b: Bedingung, w: Wert, m: per E-Mail, an: eingeschaltet, a/aw: ausgelöst am/mit, bis: …}
+    'check'       => [20, 8],       // Schlüssel Schritt der Checkliste „Deine erste Anleihe“
+    'angesehen'   => [8, 200],      // „Zuletzt angesehen“ – nur wenn in den Voreinstellungen eingeschaltet; der älteste Eintrag fällt heraus
+];
+// Erlaubte Voreinstellungen. Die Kirchensteuer gehört bewusst nicht dazu: Sie verriete die Religionszugehörigkeit (Art. 9 DSGVO).
+const EINSTELLUNGEN = ['gebuehr', 'betrag', 'freistellung', 'startfilter', 'zuletzt'];
 const COOKIE_MARKE       = 'bondarium-angemeldet';   // für konto.js lesbar: nur „1“ – damit fragt die Seite nur Angemeldete ab
 // Obergrenzen für verschickte E-Mails: [Schlüssel, Zeitraum in Sekunden, Höchstzahl]
 const GRENZEN = [
@@ -343,6 +379,21 @@ function db(): PDO
             $db->exec('PRAGMA user_version = 6');
             $db->exec('COMMIT');
         }
+        if ($fassung < 7) {
+            // Fassung 7 (02.10.2026 abends): „Mein Bondarium“ – persönliche Ablage, Rendite am Tag des Merkens, Beginn des
+            // laufenden und des vorigen Besuchs, Gerätebezeichnung je Anmeldung, Links zum Ändern der E-Mail-Adresse
+            $db->exec('BEGIN IMMEDIATE');
+            $db->exec('CREATE TABLE IF NOT EXISTS ablage (nutzer INTEGER NOT NULL REFERENCES nutzer(id) ON DELETE CASCADE, art TEXT NOT NULL, schluessel TEXT NOT NULL, wert TEXT NOT NULL, zeit INTEGER NOT NULL, PRIMARY KEY (nutzer, art, schluessel))');
+            $db->exec('ALTER TABLE favoriten ADD COLUMN rendite REAL');
+            $db->exec('ALTER TABLE nutzer ADD COLUMN besuch INTEGER NOT NULL DEFAULT 0');
+            $db->exec('ALTER TABLE nutzer ADD COLUMN besuch_vor INTEGER NOT NULL DEFAULT 0');
+            $db->exec("ALTER TABLE sitzungen ADD COLUMN geraet TEXT NOT NULL DEFAULT ''");
+            $db->exec('ALTER TABLE sitzungen ADD COLUMN erstellt INTEGER NOT NULL DEFAULT 0');
+            $db->exec('ALTER TABLE sitzungen ADD COLUMN zuletzt INTEGER NOT NULL DEFAULT 0');
+            $db->exec('ALTER TABLE links ADD COLUMN nutzer INTEGER');
+            $db->exec('PRAGMA user_version = 7');
+            $db->exec('COMMIT');
+        }
     } catch (Throwable $e) {
         error_log('konto.php: Datenbank nicht nutzbar – ' . $e->getMessage());
         antwort(503, 'speicher');
@@ -421,6 +472,21 @@ function cookies_loeschen(): void
     cookies_setzen('', 1);
 }
 
+/** Gerätebezeichnung für die Liste „Angemeldete Geräte“: nur Geräteart und Browser, z. B. „Mac (Safari)“ – nicht die ganze Kennung. */
+function geraet(): string
+{
+    $ua = (string)($_SERVER['HTTP_USER_AGENT'] ?? '');
+    $g = 'Gerät';
+    foreach (['iPhone' => 'iPhone', 'iPad' => 'iPad', 'Android' => 'Android', 'Macintosh' => 'Mac', 'Windows' => 'Windows', 'CrOS' => 'Chromebook', 'Linux' => 'Linux'] as $muster => $name) {
+        if (strpos($ua, $muster) !== false) { $g = $name; break; }
+    }
+    $b = '';
+    foreach (['Edg' => 'Edge', 'OPR' => 'Opera', 'Firefox' => 'Firefox', 'FxiOS' => 'Firefox', 'CriOS' => 'Chrome', 'Chrome' => 'Chrome', 'Safari' => 'Safari'] as $muster => $name) {
+        if (strpos($ua, $muster) !== false) { $b = $name; break; }
+    }
+    return $b === '' ? $g : "$g ($b)";
+}
+
 /** Neue Anmeldung für das Konto: frisches Cookie, eine ältere Anmeldung dieses Browsers endet. */
 function sitzung_starten(int $id): void
 {
@@ -431,7 +497,8 @@ function sitzung_starten(int $id): void
     }
     $t = kennwort();
     $ablauf = time() + SITZUNG_TAGE * 86400;
-    $db->prepare('INSERT INTO sitzungen (hash, nutzer, ablauf) VALUES (?, ?, ?)')->execute([hash('sha256', $t), $id, $ablauf]);
+    $db->prepare('INSERT INTO sitzungen (hash, nutzer, ablauf, geraet, erstellt, zuletzt) VALUES (?, ?, ?, ?, ?, ?)')
+       ->execute([hash('sha256', $t), $id, $ablauf, geraet(), time(), time()]);
     $db->prepare('UPDATE nutzer SET zuletzt = ? WHERE id = ?')->execute([time(), $id]);
     cookies_setzen($t, $ablauf);
 }
@@ -449,7 +516,7 @@ function nutzer(): ?array
     $db = db();
     $jetzt = time();
     $hash = hash('sha256', $t);
-    $s = $db->prepare('SELECT s.nutzer AS id, s.ablauf, n.email, n.zuletzt, n.pw FROM sitzungen s JOIN nutzer n ON n.id = s.nutzer WHERE s.hash = ? AND s.ablauf > ?');
+    $s = $db->prepare('SELECT s.nutzer AS id, s.ablauf, s.zuletzt AS szuletzt, n.email, n.zuletzt, n.pw FROM sitzungen s JOIN nutzer n ON n.id = s.nutzer WHERE s.hash = ? AND s.ablauf > ?');
     $s->execute([$hash, $jetzt]);
     $z = $s->fetch(PDO::FETCH_ASSOC);
     if (!$z) {
@@ -464,6 +531,9 @@ function nutzer(): ?array
     if ($jetzt - (int)$z['zuletzt'] > 86400) {
         $db->prepare('UPDATE nutzer SET zuletzt = ? WHERE id = ?')->execute([$jetzt, $z['id']]);
     }
+    if ($jetzt - (int)$z['szuletzt'] > 86400) {
+        $db->prepare('UPDATE sitzungen SET zuletzt = ? WHERE hash = ?')->execute([$jetzt, $hash]);   // „zuletzt genutzt“ je Gerät, höchstens einmal am Tag
+    }
     return ['id' => (int)$z['id'], 'email' => (string)$z['email'], 'pw' => $z['pw'] === null ? null : (string)$z['pw']];
 }
 
@@ -476,14 +546,91 @@ function angemeldet(): array
     return $n;
 }
 
-/** Merkliste, zuletzt Gemerktes zuerst: [[ISIN, Zeitpunkt], …] */
+/** Merkliste, zuletzt Gemerktes zuerst: [[ISIN, Zeitpunkt, Rendite am Tag des Merkens oder null], …] */
 function favoriten(int $id): array
 {
-    $s = db()->prepare('SELECT isin, seit FROM favoriten WHERE nutzer = ? ORDER BY seit DESC, isin');
+    $s = db()->prepare('SELECT isin, seit, rendite FROM favoriten WHERE nutzer = ? ORDER BY seit DESC, isin');
     $s->execute([$id]);
     $aus = [];
     foreach ($s->fetchAll(PDO::FETCH_NUM) as $z) {
-        $aus[] = [(string)$z[0], (int)$z[1]];
+        $aus[] = [(string)$z[0], (int)$z[1], $z[2] === null ? null : (float)$z[2]];
+    }
+    return $aus;
+}
+
+/**
+ * Zeile einer Anleihe aus dem letzten Datenlauf (newsletter/anleihen.json: ISIN → [Name, Kupon-Text, Fälligkeit, Kurs,
+ * Rendite|null, Veränderung zur Vorwoche|null, nächster Zinstermin|null]) oder null. Die Datei ist groß; gesucht wird die
+ * eine Zeile im Text, ohne alles zu entpacken.
+ */
+function zeile_heute(string $isin): ?array
+{
+    static $roh = null;
+    if ($roh === null) {
+        $roh = @file_get_contents(NL_ORDNER . '/anleihen.json');
+        $roh = is_string($roh) ? $roh : '';
+    }
+    $p = $roh === '' ? false : strpos($roh, '"' . $isin . '":');
+    if ($p === false) {
+        return null;
+    }
+    $a = strpos($roh, '[', $p);
+    $e = $a === false ? false : strpos($roh, '],', $a);
+    if ($e === false && $a !== false) {
+        $e = strpos($roh, ']}', $a);   // letzte Zeile der Datei
+    }
+    $z = $e === false ? null : json_decode(substr($roh, $a, $e - $a + 1), true);
+    return is_array($z) && count($z) >= 7 ? $z : null;
+}
+
+/** Rendite am Tag des Merkens (aus dem letzten Datenlauf) oder null */
+function rendite_heute(string $isin): ?float
+{
+    $z = zeile_heute($isin);
+    return $z !== null && is_numeric($z[4]) ? (float)$z[4] : null;
+}
+
+/** Persönliche Ablage: Art → { Schlüssel: [Wert, Zeitpunkt] } (leere Arten fehlen) */
+function ablage(int $id, ?string $art = null): array
+{
+    $s = db()->prepare('SELECT art, schluessel, wert, zeit FROM ablage WHERE nutzer = ?' . ($art !== null ? ' AND art = ?' : '') . ' ORDER BY zeit, schluessel');
+    $s->execute($art !== null ? [$id, $art] : [$id]);
+    $aus = [];
+    foreach ($s->fetchAll(PDO::FETCH_NUM) as $z) {
+        $aus[(string)$z[0]][(string)$z[1]] = [json_decode((string)$z[2], true), (int)$z[3]];
+    }
+    return $art !== null ? ($aus[$art] ?? []) : $aus;
+}
+
+/** Schlüssel der Ablage prüfen: je Art eine ISIN, ein Seitenname (mit Abschnitt) oder eine kurze Kennung */
+function ablage_schluessel(string $art, string $k): bool
+{
+    switch ($art) {
+        case 'notiz':
+            return ist_isin($k);
+        case 'gelesen':
+            return preg_match('/^[a-z0-9-]{1,60}$/', $k) === 1;
+        case 'lesezeichen':
+            return preg_match('/^[a-z0-9-]{1,60}(#[A-Za-z0-9_-]{1,60})?$/', $k) === 1;
+        case 'angesehen':
+            return ist_isin($k) || preg_match('/^[a-z0-9-]{1,60}$/', $k) === 1;
+        case 'einstellung':
+            return in_array($k, EINSTELLUNGEN, true);
+        default:
+            return preg_match('/^[a-z0-9-]{1,40}$/', $k) === 1;
+    }
+}
+
+/** Angemeldete Geräte: [[Bezeichnung, zuletzt genutzt, dieses Gerät?], …], zuletzt genutzte zuerst */
+function geraete(int $id): array
+{
+    $t = $_COOKIE[COOKIE] ?? '';
+    $hier = ist_kennwort($t) ? hash('sha256', $t) : '';
+    $s = db()->prepare('SELECT hash, geraet, zuletzt, erstellt FROM sitzungen WHERE nutzer = ? AND ablauf > ? ORDER BY zuletzt DESC, erstellt DESC');
+    $s->execute([$id, time()]);
+    $aus = [];
+    foreach ($s->fetchAll(PDO::FETCH_NUM) as $z) {
+        $aus[] = [(string)$z[1] !== '' ? (string)$z[1] : 'Gerät', max((int)$z[2], (int)$z[3]), hash_equals((string)$z[0], $hier)];
     }
     return $aus;
 }
@@ -564,11 +711,11 @@ function name_lesen(string $roh, string $ersatz): string
 function konto_stand(int $id, string $email): array
 {
     $m = musterdepots($id);
-    $s = db()->prepare('SELECT erinnern, newsletter FROM nutzer WHERE id = ?');
+    $s = db()->prepare('SELECT erinnern, newsletter, besuch_vor FROM nutzer WHERE id = ?');
     $s->execute([$id]);
-    $z = $s->fetch(PDO::FETCH_NUM) ?: [0, 0];
+    $z = $s->fetch(PDO::FETCH_NUM) ?: [0, 0, 0];
     return ['angemeldet' => true, 'email' => $email, 'favoriten' => favoriten($id), 'depots' => $m, 'depot' => $m[0][2], 'erinnern' => (int)$z[0] === 1,
-        'newsletter' => (int)$z[1] === 1];
+        'newsletter' => (int)$z[1] === 1, 'ablage' => (object)ablage($id), 'besuch' => (int)$z[2], 'geraete' => geraete($id)];
 }
 
 function merke(int $id, string $isin): bool
@@ -581,7 +728,7 @@ function merke(int $id, string $isin): bool
         $s->execute([$id, $isin]);
         return (bool)$s->fetchColumn();
     }
-    $db->prepare('INSERT OR IGNORE INTO favoriten (nutzer, isin, seit) VALUES (?, ?, ?)')->execute([$id, $isin, time()]);
+    $db->prepare('INSERT OR IGNORE INTO favoriten (nutzer, isin, seit, rendite) VALUES (?, ?, ?, ?)')->execute([$id, $isin, time(), rendite_heute($isin)]);
     return true;
 }
 
@@ -611,6 +758,9 @@ function aufraeumen(): void
     $db->prepare('DELETE FROM zaehler WHERE zeit < ?')->execute([$jetzt - 86400]);
     $db->prepare('DELETE FROM nutzer WHERE zuletzt < ?')->execute([$jetzt - RUHE_TAGE * 86400]);
     $db->prepare('DELETE FROM newsletter_log WHERE zeit < ?')->execute([$jetzt - 25 * 31 * 86400]);
+    // Notizen zu Anleihen, die seit 30 Tagen nicht mehr auf der Merkliste stehen
+    $db->prepare("DELETE FROM ablage WHERE art = 'notiz' AND zeit < ? AND NOT EXISTS (SELECT 1 FROM favoriten f WHERE f.nutzer = ablage.nutzer AND f.isin = ablage.schluessel)")
+       ->execute([$jetzt - 30 * 86400]);
 }
 
 /** Gültigen Link lesen (ohne ihn zu verbrauchen) oder Antwort „link“. */
@@ -621,7 +771,7 @@ function link_lesen(string $art): array
         antwort(410, 'link');
     }
     $hash = hash('sha256', $t);
-    $s = db()->prepare('SELECT hash, email, isin, pw, art, newsletter FROM links WHERE hash = ? AND ablauf > ?' . ($art !== '' ? ' AND art = ?' : ''));
+    $s = db()->prepare('SELECT hash, email, isin, pw, art, newsletter, nutzer FROM links WHERE hash = ? AND ablauf > ?' . ($art !== '' ? ' AND art = ?' : ''));
     $s->execute($art !== '' ? [$hash, time(), $art] : [$hash, time()]);
     $l = $s->fetch(PDO::FETCH_ASSOC);
     if (!$l) {
@@ -644,6 +794,16 @@ function mail_senden(string $an, string $betreff, string $text): bool
         'Auto-Submitted: auto-generated',
     ]);
     return mail($an, '=?UTF-8?B?' . base64_encode($betreff) . '?=', chunk_split(base64_encode($text)), $kopf, '-f ' . ABSENDER);
+}
+
+/** Aufrufe des Workflows (Wochenbrief, Meldungen): nur mit dem Schlüssel des Auslösers im Kopf X-Trigger-Key, sonst Antwort „zugang“. */
+function ausloeser_pruefen(): void
+{
+    $cfg = is_file(__DIR__ . '/trigger/refresh-config.php') ? require __DIR__ . '/trigger/refresh-config.php' : [];
+    $soll = LOKAL ? 'lokal' : trim((string)($cfg['secret'] ?? ''));
+    if ($soll === '' || !hash_equals($soll, trim((string)($_SERVER['HTTP_X_TRIGGER_KEY'] ?? '')))) {
+        antwort(403, 'zugang');
+    }
 }
 
 // ---------- Newsletter (seit 02.10.2026, docs/NEWSLETTER.md) ----------
@@ -792,11 +952,7 @@ function nl_datei(string $name): ?array
  */
 function nl_senden(): array
 {
-    $cfg = is_file(__DIR__ . '/trigger/refresh-config.php') ? require __DIR__ . '/trigger/refresh-config.php' : [];
-    $soll = LOKAL ? 'lokal' : trim((string)($cfg['secret'] ?? ''));
-    if ($soll === '' || !hash_equals($soll, trim((string)($_SERVER['HTTP_X_TRIGGER_KEY'] ?? '')))) {
-        antwort(403, 'zugang');
-    }
+    ausloeser_pruefen();
     $a = nl_datei('ausgabe.json');
     if ($a === null || !isset($a['kw'], $a['erstellt'], $a['betreff'], $a['text'], $a['html'], $a['merk'])) {
         return ['gesendet' => 0, 'offen' => 0, 'grund' => 'keine Ausgabe'];
@@ -845,6 +1001,145 @@ function nl_senden(): array
     $db->prepare("INSERT OR REPLACE INTO meta (k, v) VALUES ('newsletter_letzte', ?)")
        ->execute([json_encode(['kw' => $kw, 'zeit' => time(), 'empfaenger' => (int)$s->fetchColumn()])]);
     return ['gesendet' => $gesendet, 'offen' => $fehler > 0 && $gesendet === 0 ? 0 : $offen, 'fehler' => $fehler, 'kw' => $kw];
+}
+
+// ---------- Mein Bondarium: Ablage und Meldungen (seit 02.10.2026 abends) ----------
+
+/** Wert für die Ablage säubern: Steuerzeichen aus Texten entfernen, höchstens vier Ebenen tief, nur einfache Werte */
+function ablage_sauber($w, int $tiefe = 0)
+{
+    if (is_string($w)) {
+        return trim((string)preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $w));
+    }
+    if (is_int($w) || is_float($w) || is_bool($w)) {
+        return $w;
+    }
+    if (is_array($w) && $tiefe < 4) {
+        $aus = [];
+        foreach ($w as $k => $v) {
+            if (count($aus) >= 250) {
+                break;
+            }
+            $aus[is_int($k) ? $k : ablage_sauber((string)$k)] = ablage_sauber($v, $tiefe + 1);
+        }
+        return $aus;
+    }
+    return '';
+}
+
+function meldung_kennung(int $id): string
+{
+    return $id . '.' . schluessel_hash('meldungen-aus:' . $id);
+}
+
+/**
+ * Meldungen prüfen und verschicken (aktion=meldungen-senden, nur mit dem Schlüssel des Auslösers; der Workflow ruft nach
+ * dem täglichen Datenlauf). Geprüft wird gegen newsletter/anleihen.json – ISIN → [Name, Kupon-Text, Fälligkeit, Kurs,
+ * Rendite|null, …, nächster Zinstermin|null]. Regeln je Meldung (Ablage, Art „meldung“):
+ *   rendite-ueber | rendite-unter | kurs-ueber | kurs-unter   Schwelle w zur Anleihe i. Ausgelöst wird einmal: Die Meldung
+ *       trägt danach „a“ (Tag) und „aw“ (Wert) und wird erst wieder scharf, wenn die Bedingung nicht mehr gilt.
+ *   termin   Zinstermin oder Fälligkeit einer gemerkten Anleihe in höchstens MELDUNG_TAGE Tagen; „bis“ merkt den spätesten
+ *       schon gemeldeten Tag, damit jeder Termin nur einmal kommt.
+ *   treffer, kurslos   prüft die Seite beim Besuch (der Server kennt die Suche nicht) – hier übergangen.
+ * Eine E-Mail je Konto mit allen neu ausgelösten Meldungen, die „per E-Mail“ (m) gewählt haben; die anderen stehen nur im
+ * Bereich. Nur Tatsachen, keine Vorschläge. Jede E-Mail trägt einen Link, der alle Meldungen auf „nur im Bereich“ stellt.
+ */
+function meldungen_senden(): array
+{
+    ausloeser_pruefen();
+    $anl = nl_datei('anleihen.json');
+    if ($anl === null) {
+        return ['gesendet' => 0, 'ausgeloest' => 0, 'grund' => 'keine Daten'];
+    }
+    $db = db();
+    $heute = date('Y-m-d');
+    $bis = date('Y-m-d', time() + MELDUNG_TAGE * 86400);
+    $s = $db->query("SELECT a.nutzer, a.schluessel, a.wert, n.email FROM ablage a JOIN nutzer n ON n.id = a.nutzer WHERE a.art = 'meldung' ORDER BY a.nutzer, a.zeit");
+    $je = [];
+    foreach ($s->fetchAll(PDO::FETCH_ASSOC) as $z) {
+        $je[(int)$z['nutzer']]['email'] = (string)$z['email'];
+        $je[(int)$z['nutzer']]['regeln'][(string)$z['schluessel']] = json_decode((string)$z['wert'], true);
+    }
+    $fav = $db->prepare('SELECT isin FROM favoriten WHERE nutzer = ?');
+    $sichern = $db->prepare("UPDATE ablage SET wert = ? WHERE nutzer = ? AND art = 'meldung' AND schluessel = ?");
+    $titel = fn(array $a): string => trim($a[0] . ' ' . $a[1] . ($a[2] !== '' ? ' ' . substr((string)$a[2], 0, 4) : ''));
+    $gesendet = 0;
+    $ausgeloest = 0;
+    $fehler = 0;
+    foreach ($je as $id => $k) {
+        $zeilen = [];
+        foreach ($k['regeln'] as $schl => $w) {
+            if (!is_array($w) || empty($w['an'])) {
+                continue;
+            }
+            $b = (string)($w['b'] ?? '');
+            $vorher = $w;
+            if (in_array($b, ['rendite-ueber', 'rendite-unter', 'kurs-ueber', 'kurs-unter'], true)) {
+                $a = $anl[(string)($w['i'] ?? '')] ?? null;
+                if (!is_array($a) || count($a) < 7 || !is_numeric($w['w'] ?? null)) {
+                    continue;
+                }
+                $rend = strpos($b, 'rendite') === 0;
+                $v = $rend ? $a[4] : $a[3];
+                if (!is_numeric($v)) {
+                    continue;
+                }
+                $ueber = substr($b, -5) === 'ueber';
+                $erfuellt = $ueber ? (float)$v > (float)$w['w'] : (float)$v < (float)$w['w'];
+                if ($erfuellt && empty($w['a'])) {
+                    $w['a'] = $heute;
+                    $w['aw'] = round((float)$v, 2);
+                    $ausgeloest++;
+                    if (!empty($w['m'])) {
+                        $zeilen[] = $titel($a) . ': ' . ($rend ? 'Rendite ' . nl_zahl((float)$v) . ' %' : 'Kurs ' . nl_zahl((float)$v))
+                            . ' – ' . ($ueber ? 'über' : 'unter') . ' deiner Schwelle von ' . nl_zahl((float)$w['w']) . ($rend ? ' %' : '') . ".\n  " . SEITE . '/anleihe.html?isin=' . $w['i'];
+                    }
+                } elseif (!$erfuellt && !empty($w['a'])) {
+                    unset($w['a'], $w['aw']);
+                }
+            } elseif ($b === 'termin') {
+                $fav->execute([$id]);
+                $neu = [];
+                foreach ($fav->fetchAll(PDO::FETCH_COLUMN) as $isin) {
+                    $a = $anl[$isin] ?? null;
+                    if (!is_array($a) || count($a) < 7) {
+                        continue;
+                    }
+                    foreach ([[6, 'zahlt Zinsen'], [2, 'wird fällig']] as [$feld, $was]) {
+                        $d = $a[$feld];
+                        if (is_string($d) && $d > $heute && $d <= $bis && $d > (string)($w['bis'] ?? '')) {
+                            $neu[] = [$d, $titel($a) . ' ' . $was . ' am ' . nl_datum($d) . '.'];
+                        }
+                    }
+                }
+                if ($neu) {
+                    sort($neu);
+                    $w['bis'] = $neu[count($neu) - 1][0];
+                    $w['a'] = $heute;
+                    $w['aw'] = $neu[0][1];
+                    $ausgeloest++;
+                    if (!empty($w['m'])) {
+                        foreach ($neu as $x) {
+                            $zeilen[] = $x[1];
+                        }
+                    }
+                }
+            }
+            if ($w !== $vorher) {
+                $sichern->execute([json_encode($w, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $id, $schl]);
+            }
+        }
+        if ($zeilen && $gesendet < MELDUNG_MAILS) {
+            $n = count($zeilen);
+            $ok = mail_senden($k['email'], $n === 1 ? 'Bondarium: eine Meldung aus deinem Bereich' : "Bondarium: $n Meldungen aus deinem Bereich",
+                "du hast in „Mein Bondarium“ Meldungen eingerichtet. Nach den Schlusskursen vom letzten Börsentag gilt:\n\n- " . implode("\n- ", $zeilen)
+                . "\n\nAlle Meldungen ansehen oder ändern:\n" . SEITE . "/konto.html#meldungen\n\n"
+                . "Keine E-Mails mehr zu Meldungen (sie stehen dann nur noch in deinem Bereich) – ein Klick:\n" . SEITE . '/konto.html#meldungen-aus=' . meldung_kennung($id) . "\n\n"
+                . 'Das sind Tatsachen aus den Kursdaten, keine Empfehlung zum Kauf oder Verkauf. Keine Anlageberatung.');
+            $ok ? $gesendet++ : $fehler++;
+        }
+    }
+    return ['gesendet' => $gesendet, 'ausgeloest' => $ausgeloest, 'konten' => count($je), 'fehler' => $fehler];
 }
 
 // ---------- Anfrage prüfen ----------
@@ -1085,6 +1380,9 @@ try {
                 }
             } else {
                 db()->prepare('DELETE FROM favoriten WHERE nutzer = ? AND isin = ?')->execute([$n['id'], $isin]);
+                db()->prepare("UPDATE ablage SET zeit = ? WHERE nutzer = ? AND art = 'notiz' AND schluessel = ?")->execute([time(), $n['id'], $isin]);
+                // Die Notiz zur Anleihe bleibt noch 30 Tage in der Ablage (aufraeumen) – „Rückgängig“ in der Merkliste bringt sie
+                // so unverändert zurück. Aus eigenen Listen nimmt die Seite die Anleihe selbst heraus.
             }
             antwort(200, 'ok', konto_stand($n['id'], $n['email']));
 
@@ -1112,7 +1410,7 @@ try {
             $neu = 0;
             $uebrig = 0;
             $jetzt = time();
-            $ein = $db->prepare('INSERT OR IGNORE INTO favoriten (nutzer, isin, seit) VALUES (?, ?, ?)');
+            $ein = $db->prepare('INSERT OR IGNORE INTO favoriten (nutzer, isin, seit, rendite) VALUES (?, ?, ?, ?)');
             foreach (array_keys($isins) as $i) {
                 if (isset($da[$i])) {
                     continue;
@@ -1121,7 +1419,7 @@ try {
                     $uebrig++;
                     continue;
                 }
-                $ein->execute([$n['id'], $i, $jetzt]);
+                $ein->execute([$n['id'], $i, $jetzt, rendite_heute($i)]);
                 $neu++;
             }
             $db->exec('COMMIT');
@@ -1271,6 +1569,190 @@ try {
         case 'newsletter-senden':
             antwort(200, 'ok', nl_senden());
 
+        case 'ablage':
+            // Persönliche Ablage (seit 02.10.2026 abends): einen Eintrag setzen oder – mit leerem Wert – löschen. Antwort: alle
+            // Einträge dieser Art, die Seite übernimmt sie in ihren Stand.
+            $n = angemeldet();
+            $art = (string)($_POST['art'] ?? '');
+            $k = (string)($_POST['schluessel'] ?? '');
+            if (!isset(ABLAGE[$art])) {
+                antwort(422, 'art');
+            }
+            if (!ablage_schluessel($art, $k)) {
+                antwort(422, 'wert');
+            }
+            [$max, $lang] = ABLAGE[$art];
+            $roh = (string)($_POST['wert'] ?? '');
+            $db = db();
+            if ($roh === '') {
+                $db->prepare('DELETE FROM ablage WHERE nutzer = ? AND art = ? AND schluessel = ?')->execute([$n['id'], $art, $k]);
+            } else {
+                $w = strlen($roh) <= 4 * $lang ? json_decode($roh, true) : null;
+                if ($w === null) {
+                    antwort(422, 'wert', ['max' => $lang]);
+                }
+                $json = json_encode(ablage_sauber($w), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                if (!is_string($json) || strlen($json) > $lang) {
+                    antwort(422, 'wert', ['max' => $lang]);
+                }
+                $db->exec('BEGIN IMMEDIATE');
+                $s = $db->prepare('SELECT 1 FROM ablage WHERE nutzer = ? AND art = ? AND schluessel = ?');
+                $s->execute([$n['id'], $art, $k]);
+                if ($s->fetchColumn()) {
+                    // Meldungen, Listen, Suchen und Rechnungen behalten ihren Platz in der Reihenfolge; alles andere rückt nach vorn
+                    $zeit = in_array($art, ['meldung', 'liste', 'suche', 'rechnung', 'notiz'], true) ? '' : ', zeit = ' . time();
+                    $db->prepare("UPDATE ablage SET wert = ?$zeit WHERE nutzer = ? AND art = ? AND schluessel = ?")->execute([$json, $n['id'], $art, $k]);
+                } else {
+                    $s = $db->prepare('SELECT COUNT(*) FROM ablage WHERE nutzer = ? AND art = ?');
+                    $s->execute([$n['id'], $art]);
+                    if ((int)$s->fetchColumn() >= $max) {
+                        if ($art !== 'angesehen') {
+                            $db->exec('COMMIT');
+                            antwort(409, 'voll', ['max' => $max]);
+                        }
+                        // „Zuletzt angesehen“: der älteste Eintrag macht Platz
+                        $db->prepare("DELETE FROM ablage WHERE nutzer = ? AND art = 'angesehen' AND schluessel = (SELECT schluessel FROM ablage WHERE nutzer = ? AND art = 'angesehen' ORDER BY zeit, schluessel LIMIT 1)")
+                           ->execute([$n['id'], $n['id']]);
+                    }
+                    $db->prepare('INSERT INTO ablage (nutzer, art, schluessel, wert, zeit) VALUES (?, ?, ?, ?, ?)')->execute([$n['id'], $art, $k, $json, time()]);
+                }
+                $db->exec('COMMIT');
+            }
+            antwort(200, 'ok', ['art' => $art, 'eintraege' => (object)ablage($n['id'], $art)]);
+
+        case 'besuch':
+            // „Seit deinem letzten Besuch“: konto.html ruft das einmal je Seitenaufruf. Nach BESUCH_PAUSE ohne Aufruf beginnt ein
+            // neuer Besuch – der Beginn des vorigen bleibt als besuch_vor stehen. Dazu die Seiten, die neu auf der Website sind
+            // (newsletter/seiten.json aus dem Datenlauf: Datei → erster Tag).
+            $n = angemeldet();
+            $db = db();
+            $jetzt = time();
+            $db->prepare('UPDATE nutzer SET besuch_vor = besuch, besuch = ? WHERE id = ? AND besuch < ?')->execute([$jetzt, $n['id'], $jetzt - BESUCH_PAUSE]);
+            $neu = [];
+            foreach ((array)((nl_datei('seiten.json') ?? [])['seiten'] ?? []) as $datei => $tag) {
+                if (is_string($tag) && $tag !== '') {
+                    $neu[(string)$datei] = $tag;
+                }
+            }
+            // Nächster Zinstermin je gemerkter Anleihe (aus dem Datenlauf) – die Merkliste zeigt ihn, ohne je Anleihe eine Datei zu laden
+            $st = konto_stand($n['id'], $n['email']);
+            $termine = [];
+            foreach ($st['favoriten'] as $f) {
+                $z = zeile_heute($f[0]);
+                if ($z !== null && is_string($z[6]) && $z[6] !== '') {
+                    $termine[$f[0]] = $z[6];
+                }
+            }
+            antwort(200, 'ok', $st + ['neue_seiten' => (object)$neu, 'termine' => (object)$termine]);
+
+        case 'geraete-ab':
+            $n = angemeldet();
+            db()->prepare('DELETE FROM sitzungen WHERE nutzer = ? AND hash <> ?')->execute([$n['id'], hash('sha256', (string)$_COOKIE[COOKIE])]);
+            antwort(200, 'ok', konto_stand($n['id'], $n['email']));
+
+        case 'export':
+            // „Meine Daten herunterladen“: alles, was zu diesem Konto gespeichert ist – ohne Passwort-Hashwert und Cookies
+            $n = angemeldet();
+            $s = db()->prepare('SELECT erstellt, zuletzt, newsletter_seit FROM nutzer WHERE id = ?');
+            $s->execute([$n['id']]);
+            $z = $s->fetch(PDO::FETCH_NUM) ?: [0, 0, null];
+            $st = konto_stand($n['id'], $n['email']);
+            unset($st['angemeldet'], $st['depot']);
+            antwort(200, 'ok', ['daten' => ['erstellt_am' => date('c'), 'konto_angelegt' => date('c', (int)$z[0]), 'zuletzt_angemeldet' => date('c', (int)$z[1]),
+                'wochenbrief_seit' => $z[2] === null ? null : date('c', (int)$z[2])] + $st]);
+
+        case 'email-aendern':
+            // Neue E-Mail-Adresse: Passwort zur Bestätigung, dann ein Link an die NEUE Adresse – erst der Klick stellt um
+            $n = angemeldet();
+            $neu = email_lesen();
+            $db = db();
+            $schl = login_schluessel($n['email']);
+            if (gebremst(LOGIN_GRENZEN, $schl)) {
+                antwort(429, 'zuviel');
+            }
+            if (!pw_stimmt((string)($_POST['passwort'] ?? ''), $n['pw'])) {
+                zaehle($schl);
+                antwort(403, 'zugang');
+            }
+            if ($neu === $n['email']) {
+                antwort(422, 'gleich');
+            }
+            aufraeumen();
+            versand_zaehlen($neu);
+            $s = $db->prepare('SELECT 1 FROM nutzer WHERE email = ?');
+            $s->execute([$neu]);
+            if ($s->fetchColumn()) {
+                // Die Seite antwortet gleich – ob es zu der Adresse schon ein Konto gibt, erfährt nur ihr Inhaber
+                $ok = mail_senden($neu, 'Dein Konto bei Bondarium', "jemand wollte die E-Mail-Adresse seines Kontos bei Bondarium auf diese Adresse ändern. Für diese Adresse gibt es aber schon ein Konto – es ändert sich nichts.\n\n"
+                    . 'Das warst du selbst? Dann melde dich mit dieser Adresse an oder lösche eines der beiden Konten: ' . ursprung() . '/konto.html');
+            } else {
+                $t = kennwort();
+                $db->prepare("DELETE FROM links WHERE art = 'email' AND nutzer = ?")->execute([$n['id']]);
+                $db->prepare("INSERT INTO links (hash, email, ablauf, art, nutzer) VALUES (?, ?, ?, 'email', ?)")
+                   ->execute([hash('sha256', $t), $neu, time() + BESTAETIGEN_STUNDEN * 3600, $n['id']]);
+                $ok = mail_senden($neu, 'Bestätige deine neue E-Mail-Adresse für Bondarium', "mit diesem Link wird diese Adresse die E-Mail-Adresse deines Kontos bei Bondarium:\n\n"
+                    . ursprung() . '/konto.html#email=' . $t . "\n\n"
+                    . 'Der Link gilt ' . BESTAETIGEN_STUNDEN . " Stunden. Bis dahin bleibt die bisherige Adresse gültig.\n\n"
+                    . 'Du hast das nicht angefordert? Dann musst du nichts tun – ohne den Klick ändert sich nichts.');
+                if (!$ok) {
+                    $db->prepare('DELETE FROM links WHERE hash = ?')->execute([hash('sha256', $t)]);
+                }
+            }
+            if (!$ok) {
+                antwort(500, 'versand');
+            }
+            antwort(200, 'ok', ['stunden' => BESTAETIGEN_STUNDEN]);
+
+        case 'email-bestaetigen':
+            // Link aus der E-Mail an die neue Adresse (konto.html#email=…): stellt das Konto um. Ohne Anmeldung – der Link ist
+            // der Nachweis, angefordert wurde er angemeldet und mit Passwort. Andere Geräte werden abgemeldet.
+            $l = link_lesen('email');
+            $db = db();
+            $db->exec('BEGIN IMMEDIATE');
+            $db->prepare('DELETE FROM links WHERE hash = ?')->execute([$l['hash']]);
+            $s = $db->prepare('SELECT email FROM nutzer WHERE id = ?');
+            $s->execute([(int)$l['nutzer']]);
+            $alt = $s->fetchColumn();
+            $s = $db->prepare('SELECT 1 FROM nutzer WHERE email = ?');
+            $s->execute([$l['email']]);
+            if (!is_string($alt) || $s->fetchColumn()) {
+                $db->exec('COMMIT');
+                antwort(410, 'link');   // Konto gelöscht oder die Adresse inzwischen vergeben
+            }
+            $id = (int)$l['nutzer'];
+            $db->prepare('UPDATE nutzer SET email = ? WHERE id = ?')->execute([$l['email'], $id]);
+            $db->prepare('DELETE FROM links WHERE email = ?')->execute([$alt]);
+            $hier = $_COOKIE[COOKIE] ?? '';
+            $db->prepare('DELETE FROM sitzungen WHERE nutzer = ? AND hash <> ?')->execute([$id, ist_kennwort($hier) ? hash('sha256', $hier) : '']);
+            $db->exec('COMMIT');
+            $teile = explode('@', (string)$l['email']);
+            mail_senden($alt, 'Die E-Mail-Adresse deines Kontos bei Bondarium wurde geändert', 'die E-Mail-Adresse deines Kontos bei Bondarium wurde soeben geändert – auf ' . substr($teile[0], 0, 2) . '…@' . ($teile[1] ?? '')
+                . ". Anmelden kannst du dich ab jetzt nur noch mit der neuen Adresse; alle anderen Geräte sind abgemeldet.\n\n"
+                . 'Das warst nicht du? Dann antworte bitte sofort auf diese E-Mail.');
+            $n = nutzer();
+            antwort(200, 'ok', $n !== null && $n['id'] === $id ? konto_stand($id, (string)$l['email']) : ['angemeldet' => $n !== null, 'neu' => (string)$l['email']]);
+
+        case 'meldungen-senden':
+            antwort(200, 'ok', meldungen_senden());
+
+        case 'meldungen-aus':
+            // Link aus einer Meldungs-E-Mail: alle Meldungen des Kontos auf „nur im Bereich“ – ein Klick, ohne Anmeldung
+            if (!preg_match('/^(\d{1,10})\.([0-9a-f]{32})$/', (string)($_POST['token'] ?? ''), $t) || !hash_equals(meldung_kennung((int)$t[1]), $t[0])) {
+                antwort(410, 'link');
+            }
+            $db = db();
+            $s = $db->prepare("SELECT schluessel, wert FROM ablage WHERE nutzer = ? AND art = 'meldung'");
+            $s->execute([(int)$t[1]]);
+            $sichern = $db->prepare("UPDATE ablage SET wert = ? WHERE nutzer = ? AND art = 'meldung' AND schluessel = ?");
+            foreach ($s->fetchAll(PDO::FETCH_NUM) as $z) {
+                $w = json_decode((string)$z[1], true);
+                if (is_array($w) && !empty($w['m'])) {
+                    $w['m'] = 0;
+                    $sichern->execute([json_encode($w, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), (int)$t[1], (string)$z[0]]);
+                }
+            }
+            antwort(200, 'ok');
+
         case 'abmelden':
             $t = $_COOKIE[COOKIE] ?? '';
             if (ist_kennwort($t)) {
@@ -1298,8 +1780,9 @@ try {
             $db->prepare('DELETE FROM depot WHERE muster IN (SELECT id FROM musterdepots WHERE nutzer = ?)')->execute([$n['id']]);
             $db->prepare('DELETE FROM musterdepots WHERE nutzer = ?')->execute([$n['id']]);
             $db->prepare('DELETE FROM erinnert WHERE nutzer = ?')->execute([$n['id']]);
+            $db->prepare('DELETE FROM ablage WHERE nutzer = ?')->execute([$n['id']]);
             $db->prepare('DELETE FROM sitzungen WHERE nutzer = ?')->execute([$n['id']]);
-            $db->prepare('DELETE FROM links WHERE email = ?')->execute([$n['email']]);
+            $db->prepare('DELETE FROM links WHERE email = ? OR nutzer = ?')->execute([$n['email'], $n['id']]);
             $db->prepare('DELETE FROM nutzer WHERE id = ?')->execute([$n['id']]);
             $db->exec('COMMIT');
             cookies_loeschen();

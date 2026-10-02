@@ -11,12 +11,14 @@ ist ein Planspiel, kein Wertpapierdepot: keine echten Bestände, keine Kaufpreis
 
 | Datei | Aufgabe |
 | --- | --- |
-| `konto.html` | Seite „Mein Bondarium“: Anmelden, Registrieren, Passwort vergessen – oder die Reiter „Merkliste“ und „Mein Depot“. Für alle gleich, `noindex`. Lädt `bond.js` für die Zinstermine. |
+| `konto.html` | Seite „Mein Bondarium“: Anmelden, Registrieren, Passwort vergessen – oder, angemeldet, fünf Ansichten: Start, Merkliste, Lernen, Rechnen und planen (darin „Mein Depot“), Meldungen und Konto (seit 02.10.2026 abends; vorher zwei Reiter „Merkliste“ und „Mein Depot“). Für alle gleich, `noindex`. |
 | `konto.js` | Spricht mit `konto.php` (`MC.konto`, darunter `depot(isin, nennwert)`), zeichnet den Merken-Knopf („Merken“ / „Gemerkt“). Geladen auf `konto.html`, `anleihe.html`, `anleihen-suche.html`. |
 | `konto.php` | Schnittstelle auf dem Server (PHP bei STRATO), Antwort immer JSON. |
 | `konto-daten/` | Entsteht nur auf dem Server: SQLite-Datei mit zufälligem Namen. Nicht im Repository, nicht im Bau. |
 | `pdf.js` | Kleiner PDF-Schreiber im Browser (`MC.pdf`: Helvetica, WinAnsi, Linien, Flächen, SVG-Pfade fürs Logo, Links; A4 hoch oder quer) für den Depot-Auszug. Nur auf `konto.html`. |
-| `base.css` | `.merkbtn` (Merken-Knopf). |
+| `base.css` | `.merkbtn` (Merken-Knopf, `.nur` = nur der Stern), `.ablbtn` und `.mb-seite` (Knöpfe der Ablage auf den Inhaltsseiten). |
+| `bereich.js`, `bereich.css` | Die fünf Ansichten von „Mein Bondarium“ (nur `konto.html`) – siehe „Mein Bondarium: fünf Ansichten“. |
+| `mein.js` | „Mein Bondarium“ auf den Inhaltsseiten: Leiste „Als gelesen markieren“/„Lesezeichen“, Abschnitts-Lesezeichen, Stern im Glossar, „In meinen Zins-Blick“, „Rechnung speichern“, Checkliste im Konto, „Zuletzt angesehen“. |
 | `scripts/nav.py` | Menüpunkt „Mein Bondarium“ (`LINKS`). |
 | `rechtliches.html#konto` | Abschnitt der Datenschutzerklärung. |
 
@@ -266,11 +268,12 @@ SQLite-Datei `konto-daten/konto-<zufällig>.sqlite` (Fassung 5):
 | --- | --- | --- |
 | `nutzer` | E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet, Erinnerung per E-Mail an/aus (seit Fassung 5) | „Konto löschen“ sofort; nach zwei Jahren ohne Anmeldung |
 | `erinnert` | verschickte Erinnerungen (seit Fassung 5): Nutzer, ISIN, Fälligkeit, Zeitpunkt | nach der Fälligkeit, mit dem Konto |
-| `favoriten` | ISIN und Zeitpunkt je Nutzer, höchstens 200 | „Entfernen“, mit dem Konto |
+| `favoriten` | ISIN (Anleihe oder ETF) und Zeitpunkt je Nutzer, höchstens 200; seit Fassung 7 die Rendite am Tag des Merkens (aus `newsletter/anleihen.json`) | „Entfernen“, mit dem Konto |
+| `ablage` | persönliche Ablage (seit Fassung 7): Nutzer, Art, Schlüssel, Wert (JSON), Zeitpunkt – nur, was der Nutzer selbst ablegt; Arten und Grenzen in `ABLAGE` (konto.php) | einzeln durch den Nutzer; Notiz 30 Tage nach dem Entfernen der Anleihe; mit dem Konto |
 | `musterdepots` | Musterdepots (seit 02.10.2026, Fassung 4): Nummer, Nutzer, Name (höchstens 40 Zeichen), angelegt am; höchstens 5 je Nutzer | „Löschen“, mit dem Konto |
 | `depot` | Anleihen der Musterdepots (seit 01.10.2026, Fassung 3; seit Fassung 4 je Musterdepot statt je Nutzer): Nummer des Musterdepots, ISIN, gedachter Nennwert (ganze Zahl) und Zeitpunkt, höchstens 10 je Depot | „Entfernen“, mit dem Musterdepot, mit dem Konto |
 | `links` | offene Registrierungen (Adresse, Hashwert des Passworts, vorgemerkte ISIN) und Links „Passwort vergessen“; jeweils Hashwert des Link-Kennworts und Ablauf | beim Einlösen; sonst nach Ablauf |
-| `sitzungen` | Hashwert des Cookies, Ablauf | Abmelden, Passwortwechsel; nach Ablauf |
+| `sitzungen` | Hashwert des Cookies, Ablauf; seit Fassung 7 Gerätebezeichnung („Mac (Safari)“ – nur Geräteart und Browser), angemeldet am, zuletzt genutzt | Abmelden, „Andere Geräte abmelden“, Passwort- oder Adresswechsel; nach Ablauf |
 | `zaehler` | verschlüsselte Hashwerte von Adresse und IP-Adresse: verschickte E-Mails, falsche Passwörter | nach 24 Stunden |
 | `meta` | Schlüssel für diese Hashwerte, Zeitpunkt des letzten Aufräumens, Vergleichs-Hashwert | – |
 
@@ -331,6 +334,56 @@ Suchindex (`mfZeile`: aus `suchindex.json`, sonst aus den Stammdaten `anleihen/<
 `MF.auswerten` die Treffer und die Zahlen je Option bestimmen. Gefiltert wird nur die Tabelle; „Merkliste teilen“ und „Als PDF
 speichern“ nehmen die ganze Merkliste. Die Auswahl gilt für den Seitenaufruf und wird nicht gespeichert (keine Adresse, kein
 Browser-Speicher). Mit gesetztem Filter heißt die Statuszeile „3 von 13 Anleihen auf deiner Merkliste passen zur Auswahl“.
+
+## Mein Bondarium: fünf Ansichten (seit 02.10.2026 abends)
+
+Nutzerauftrag vom 02.10.2026: das Mockup „Mein Bondarium“ vom 01.10.2026 (`tmp/Bondarium-Mein-Bondarium-Mockup.pdf`, 16 Funktionen)
+komplett umsetzen. Grundsatz: Der Bereich speichert nur, was der Nutzer selbst ablegt; nichts ist eine Empfehlung (Etiketten und
+Meldungen nennen Tatsachen aus den Daten, „Passend zu deiner Merkliste“ zeigt Erklärseiten, keine Anleihen); kein stilles Mitschreiben.
+
+| Ansicht | Inhalt |
+|---|---|
+| Start (`konto.html`) | „Seit deinem letzten Besuch“ (ausgelöste Meldungen, mehr Treffer gespeicherter Suchen, Termine der nächsten 14 Tage, neue Seiten), Weiterlernen, Meine Merkliste (größte Veränderung seit dem Merken), Mein Zins-Blick, Gespeicherte Suchen, Nächste Termine (.ics), „Zuletzt angesehen“ (nur wenn eingeschaltet) |
+| Merkliste (`#merkliste`) | Pillen Alle / Anleihen / ETFs / eigene Listen; Vergleichen (bis vier, mit Kursverlauf), ISINs einfügen, Filter (filter.js), Teilen/PDF/CSV; Tabelle: Ankreuzfeld, Name mit Etiketten und Notiz, Rendite, Kurs mit Vortag, Kupon, Fälligkeit, „Seit dem Merken“, nächster Zinstermin, „+“ (Musterdepot), „…“ (Notiz, Liste, Meldung, Rechner, Kalender, Entfernen); darunter die gemerkten ETFs |
+| Lernen (`#lernen`) | Lernstand je Menügruppe (Grundlagen, Auswählen, Kaufen, Für Fortgeschrittene – aus dem Menü der Seite gelesen), „Passend zu deiner Merkliste“, Lesezeichen, gemerkte Begriffe |
+| Rechnen und planen (`#planen`, auch `#depot`, `#erinnerung`) | „Mein Depot“ (Musterdepots, unverändert), darunter gespeicherte Rechnungen und Voreinstellungen (Ordergebühr, Anlagebetrag, Freistellungsauftrag, Startfilter) |
+| Meldungen und Konto (`#meldungen`) | Meldungen, Wochenbrief-Schalter, Mitnehmen (PDF, CSV, .ics), Konto: E-Mail ändern, Passwort ändern, angemeldete Geräte, „Zuletzt angesehen“, Daten herunterladen, Konto löschen |
+
+**Ablage** (`konto.php`, `aktion=ablage`; `MC.konto.ablage(art, schluessel, wert)`): eine Tabelle für alles Abgelegte. Arten:
+`notiz` (je ISIN), `liste` (`{n, i: [ISIN…]}`), `suche` (`{n, q: Adresszusatz der Suche, t: gemerkte Trefferzahl, z}`), `gelesen`
+(Seitenname), `lesezeichen` (Seite oder Seite#Abschnitt), `begriff`, `kennzahl`, `einstellung` (nur `gebuehr`, `betrag`,
+`freistellung`, `startfilter`, `zuletzt`), `rechnung`, `meldung`, `check` (Checkliste „Deine erste Anleihe“), `angesehen` (nur wenn
+`einstellung.zuletzt = 1`; höchstens acht, der älteste fällt heraus). Der Server prüft Art, Schlüssel und Länge und säubert den Wert;
+die Seite schreibt jeden Wert nur über `MC.esc` ins Dokument.
+
+**Bewusst nicht gespeichert:** die Kirchensteuer (im Mockup eine Voreinstellung) – sie verriete die Religionszugehörigkeit (Art. 9
+DSGVO). Weder als Voreinstellung noch in einer gespeicherten Rechnung.
+
+**Meldungen.** Regeln je Anleihe (`rendite-ueber`, `rendite-unter`, `kurs-ueber`, `kurs-unter` mit Schwelle) oder für alle gemerkten
+(`termin`: Zinstermin oder Fälligkeit in höchstens 7 Tagen; `kurslos`: kein Kurs oder Datenbefund) oder für die gespeicherten Suchen
+(`treffer`). Die Seite zeigt den Stand beim Besuch. E-Mails verschickt `aktion=meldungen-senden` (Workflow-Schritt „Meldungen prüfen
+und verschicken“ im täglichen Abruf-Lauf, Kopf `X-Trigger-Key`): geprüft wird gegen `newsletter/anleihen.json`, je Konto höchstens
+eine E-Mail mit den neu ausgelösten Meldungen, die „E-Mail“ gewählt haben. Eine Schwellen-Meldung trägt danach `a` (Tag) und `aw`
+(Wert) und kommt erst wieder, wenn die Bedingung zwischendurch nicht galt; `termin` merkt in `bis` den spätesten gemeldeten Tag.
+`treffer` und `kurslos` gibt es nur im Bereich (der Server kennt die Suche nicht). Link in jeder E-Mail:
+`konto.html#meldungen-aus=<Nummer>.<Prüfsumme>` stellt alle Meldungen auf „nur im Bereich“ (`aktion=meldungen-aus`).
+
+**Gespeicherte Suchen.** Die Anleihen-Suche speichert ihren Adresszusatz. `bereich.js` zählt die Treffer mit denselben Filtern
+(`filter.js`) aus demselben Suchindex und vergleicht mit der gemerkten Zahl („n mehr als am …“); „Zur Suche“ merkt den neuen Stand.
+
+**Weitere Aktionen:** `besuch` (Beginn des Besuchs; liefert den des vorigen, neue Seiten aus `newsletter/seiten.json` und die
+nächsten Zinstermine der Merkliste), `geraete-ab`, `export`, `email-aendern` (Passwort nötig; Link an die neue Adresse, 24 Stunden) und
+`email-bestaetigen` (`konto.html#email=<Kennwort>`; meldet andere Geräte ab, Hinweis an die alte Adresse).
+
+**Seiten außerhalb von konto.html:** Akademie- und Kaufen-Seiten (Leiste am Ende, `mein.js`), Glossar (Stern), Zinsen-Seiten
+(„In meinen Zins-Blick“ – Kennungen in `mein.js` und `bereich.js` gleich halten), Rechner („Rechnung speichern“, `?rg=<Kennung>`),
+Anleihen-Suche („Suche speichern“, Startfilter), Steckbrief (Ordergebühr und Anlagebetrag im Rechenbeispiel, „Zuletzt angesehen“),
+Anleihen-ETFs und Top-10-Tabellen (Merken). Besucher ohne Konto lösen dabei keine Anfrage an den Server aus.
+
+**Abweichungen vom Mockup:** Akademie-Gruppen heißen wie im heutigen Menü (nicht Verstehen/Entscheiden/Kaufen/Vertiefen); statt des
+„Monatsüberblicks“ steht der Wochenbrief (Nutzerentscheid 02.10.2026: wöchentlich); die „Pläne“ sind die Musterdepots in ihrer
+heutigen Form (ohne Kennzahlen-Kacheln und Zwölf-Monats-Kalender – beides hatte der Nutzer am 01./02.10.2026 abgewählt);
+„Zuletzt angesehen“ ist anfangs aus; die Filterleiste der Merkliste bleibt (Nutzerwunsch 02.10.2026).
 
 ## Lokal testen
 

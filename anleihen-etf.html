@@ -431,6 +431,7 @@
 </div>
 
 <script src="site.js"></script>
+<script src="konto.js"></script>
 <script src="chart.js"></script>
 <script>
 // Rückfall, falls site.js nicht lädt (Netzfehler): Minimalform, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
@@ -484,7 +485,7 @@ function rowHtml(r) {
   const use = r.ausschuettend ? "ja<small>ausschüttend</small>" : "nein<small>thesaurierend</small>";
   const fokus = r.aktiv ? "aktiv gemanagt, ohne Index" : r.index ? `Index: ${r.index}` : "";
   return `<tr><td class="num rk">${r.rank}</td>` +
-    `<th scope="row"><button type="button" class="zbtn" aria-expanded="${S_OFFEN.has(r.isin)}" aria-controls="det-${MC.esc(r.isin)}">${MC.esc(r.name)}</button>${r.klasse || ""}<small>${MC.esc(fokus)}</small><span class="isin">${MC.esc(r.isin)}</span>${hedgeTag(r)}</th>` +
+    `<th scope="row"><button type="button" class="zbtn" aria-expanded="${S_OFFEN.has(r.isin)}" aria-controls="det-${MC.esc(r.isin)}">${MC.esc(r.name)}</button>${r.klasse || ""}<small>${MC.esc(fokus)}</small><span class="isin">${MC.esc(r.isin)}</span>${hedgeTag(r)}${MC.konto ? " " + MC.konto.knopf(r.isin) : ""}</th>` +
     `<td class="num" data-l="Kurs">${kursZelle(r)}</td>` +
     `<td class="num" data-l="Kosten p. a.">${typeof r.kosten === "number" ? `${fmt(r.kosten, 2)} %` : "–"}</td>` +
     `<td class="num" data-l="Laufzeit">${lzText(r)}</td>` +

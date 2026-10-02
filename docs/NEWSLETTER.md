@@ -15,7 +15,7 @@ Besucherbericht.
 |---|---|
 | `scripts/newsletter.py` | baut in jedem Lauf die Ausgabe: `newsletter/ausgabe.json` (Text, HTML, Freigabe), `newsletter/anleihen.json` (Zahlen je Anleihe), `newsletter/seiten.json` (Gedächtnis für „Neue Seiten“, wird committet) |
 | `konto.php` | Einwilligung je Konto, Abbestellen, Versand (`aktion=newsletter-senden`) |
-| `konto.html`, `konto.js` | Häkchen im Registrierungsformular, Schalter „Wochenbrief per E-Mail“ unter der Merkliste, Abmelde-Link `konto.html#nl-ab=<Kennung>` |
+| `konto.html`, `konto.js` | Häkchen im Registrierungsformular, Schalter „Wochenbrief per E-Mail“ in der Ansicht „Meldungen und Konto“ (bis 02.10.2026 abends unter der Merkliste), Abmelde-Link `konto.html#nl-ab=<Kennung>` |
 | `statistik-bericht.php` | Band „Wochenbrief“ im täglichen Bericht: Abonnenten, An-/Abmeldungen, Konten, letzte Ausgabe |
 | `.github/workflows/update-data.yml` | Schritte „Wochenbrief bauen“ und „Wochenbrief verschicken (nur am Versandtag)“ |
 | `.github/workflows/newsletter-probe.yml` | von Hand auslösbar: schickt die aktuelle Ausgabe mit Muster-Merkliste an info@bondarium.com |

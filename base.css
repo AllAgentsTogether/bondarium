@@ -444,6 +444,36 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 .merkbtn[aria-pressed="true"] svg path { fill: currentColor; }
 .merkbtn:disabled { opacity: 0.6; cursor: default; }
 .merkbtn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+/* nur der Stern (Top-10-Tabellen, seit 02.10.2026 abends) – der Text bleibt für Screenreader */
+.merkbtn.nur { padding: 3px; margin-left: 6px; vertical-align: -4px; }
+.merkbtn.nur span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+
+/* ---------- Mein Bondarium auf den Inhaltsseiten (seit 02.10.2026 abends; konto.js zeichnet die Knöpfe, mein.js setzt sie ein) ----------
+   .ablbtn: Umschalt-Knopf für einen Eintrag der persönlichen Ablage („Als gelesen markieren“ / „Gelesen“, Lesezeichen, Begriff merken,
+   Kennzahl anheften, Suche oder Rechnung speichern). .mb-seite: Leiste am Ende einer Akademie-Seite. */
+.ablbtn { font: inherit; font-size: 14px; font-weight: 600; line-height: 1.2; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.25); border-radius: 999px; padding: 8px 14px; display: inline-flex; align-items: center; gap: 7px; cursor: pointer; white-space: nowrap; }
+.ablbtn:hover { border-color: var(--ink); }
+.ablbtn:focus-visible { outline: 2px solid var(--line, #1A1A19); outline-offset: 2px; }
+.ablbtn[aria-pressed="true"] { background: #1A1A19; border-color: #1A1A19; color: #fff; }
+.ablbtn[aria-pressed="true"] svg { color: #39FF14; }
+.ablbtn[disabled] { opacity: 0.6; cursor: default; }
+.ablbtn.klein { font-size: 12.5px; padding: 4px 10px; gap: 5px; font-weight: 600; }
+.ablbtn.nur svg { margin: 0; }
+.ablbtn.nur { padding: 5px; width: 28px; height: 28px; justify-content: center; }
+.ablbtn.nur span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+/* Leiste am Ende eines Artikels: „Als gelesen markieren“ und „Lesezeichen“ */
+.mb-seite { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 30px 0 0; padding: 14px 18px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); max-width: 760px; }
+.mb-seite p { margin: 0; font-size: 14px; line-height: 1.45; color: var(--text); flex: 1 1 220px; min-width: 0; }
+.mb-seite p b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); }
+.mb-seite p a { color: var(--green-text); }
+/* Lesezeichen an einer Zwischenüberschrift, Stern am Glossar-Begriff, Stecknadel auf einer Zinsen-Seite – nur für Angemeldete */
+.mb-h { margin-left: 10px; vertical-align: 3px; }
+.mb-pin { margin: 0 0 18px; }
+.mb-rech { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 12px 0 0; }
+.mb-rech small { font-size: 13px; color: var(--text); }
+.mb-suche-sp { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.mb-suche-sp small { font-size: 13px; color: var(--text); }
+
 .det-kpi { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 18px; margin: 0; }
 .det-kpi div { min-width: 0; }
 .det-kpi dt { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-bottom: 2px; }

@@ -52,7 +52,7 @@
       '<td class="num"' + (r.datum !== stand ? ' title="Kurs vom ' + fmtDate(r.datum) + '"' : '') + '>' + fmt(r.kurs, 2) + '</td>' +
       '<td class="num">' + MC.bond.fmtCoupon(r.kupon) + ' %</td>' +
       '<td class="num">' + fmtDate(r.faellig) + '</td><td class="num">' + RL(r.years) + '</td>' +
-      '<td class="isin"><a href="anleihe.html?isin=' + MC.esc(r.isin) + '" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">' + MC.esc(r.isin) + '</a></td>' +
+      '<td class="isin"><a href="anleihe.html?isin=' + MC.esc(r.isin) + '" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">' + MC.esc(r.isin) + '</a>' + (MC.konto ? MC.konto.knopf(r.isin, "nur") : "") + '</td>' +   // Merken-Stern (seit 02.10.2026 abends, „Mein Bondarium“)
       '<td class="txt">' + MC.esc(r.cur) + '</td>' +
       '<td class="num">' + (typeof r.vol === "number" ? MC.bond.fmtVol(r.vol) : "–") + '</td>' +
       '<td class="num">' + (typeof r.stk === "number" ? MC.bond.fmtStk(r.stk) : "–") + '</td></tr>';

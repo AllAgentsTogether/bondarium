@@ -354,6 +354,8 @@ jobs:
           cp -r anleihen _site/anleihen   # Stammdaten je ISIN für den Steckbrief anleihe.html (256 Teildateien)
           # Wochenbrief (seit 02.10.2026): Ausgabe und Daten je Anleihe für konto.php – per .htaccess nie abrufbar
           if [ -f newsletter/ausgabe.json ]; then mkdir -p _site/newsletter && cp newsletter/ausgabe.json newsletter/anleihen.json _site/newsletter/; fi
+          # seiten.json (Datei → erster Tag, von newsletter.py fortgeführt): „Neu auf Bondarium“ in „Mein Bondarium“ (konto.php, aktion=besuch)
+          if [ -f newsletter/seiten.json ]; then mkdir -p _site/newsletter && cp newsletter/seiten.json _site/newsletter/; fi
           ls -la _site
 
       # ----- Daten in die Seiten einbetten: die JSONs landen kompakt als
@@ -615,6 +617,21 @@ jobs:
             [ "$offen" -gt 0 ] || break
             sleep 20
           done
+
+      # Meldungen aus „Mein Bondarium“ (seit 02.10.2026 abends): konto.php prüft nach dem Datenlauf die Meldungen aller Konten
+      # gegen newsletter/anleihen.json (Rendite, Kurs, nächster Zinstermin, Fälligkeit) und schickt je Konto höchstens eine
+      # E-Mail mit den neu ausgelösten – nur für Meldungen, bei denen der Nutzer „E-Mail“ gewählt hat. Eine ausgelöste Meldung
+      # kommt erst wieder, wenn ihre Bedingung zwischendurch nicht mehr galt. Die Antwort nennt Zahlen, keine Adressen.
+      - name: Meldungen prüfen und verschicken
+        if: env.VOLL == '1'
+        continue-on-error: true
+        env:
+          TRIGGER_KEY: ${{ secrets.TRIGGER_KEY }}
+        run: |
+          KEY=$(printf '%s' "$TRIGGER_KEY" | tr -d '\r\n')
+          code=$(curl -s -o antwort.json -w "%{http_code}" --max-time 180 -H "X-Requested-With: bondarium-konto" -H "X-Trigger-Key: $KEY" --data "aktion=meldungen-senden" https://www.bondarium.de/konto.php || echo "000")
+          echo "HTTP $code: $(cat antwort.json 2>/dev/null)"
+          [ "$code" = "200" ] || { echo "::warning::Meldungen: Aufruf fehlgeschlagen (HTTP $code)"; exit 1; }
 
       # ----- Automatische Alarm-Prüfung: schlägt fehl (= E-Mail von GitHub), wenn
       #       Daten veraltet sind. Nur im Abruf-Lauf (1×/Tag), nicht bei

@@ -36,13 +36,25 @@
      passwortAendern(alt, neu)               angemeldet das Passwort ändern → Promise { ok, status }
      abmelden(), loeschen(passwort)          Promise { ok, status }
      Bei ok nach bestaetigen, anmelden und passwortNeu ist man angemeldet (der Stand ist übernommen).
-     beiAenderung(fn)         fn(stand) nach jeder Änderung des Stands */
+     beiAenderung(fn)         fn(stand) nach jeder Änderung des Stands
+
+   Mein Bondarium (seit 02.10.2026 abends, docs/KONTO.md): die persönliche Ablage – Notizen, Listen, gespeicherte Suchen,
+   gelesene Seiten, Lesezeichen, Begriffe, Kennzahlen, Voreinstellungen, Rechnungen, Meldungen, Checkliste.
+     stand().ablage           { art: { schluessel: [wert, zeit] } } – nur, was der Nutzer selbst abgelegt hat
+     abl(art)                 die Einträge einer Art ({} wenn keine); wert(art, schluessel) → Wert oder undefined
+     ablage(art, schluessel, wert)   Eintrag setzen (wert null/undefined = löschen) → Promise mit dem Stand; abgelehnt mit { status }
+     ablKnopf(art, schluessel, wert, texte[, klasse])   HTML eines Umschalt-Knopfs (z. B. „Als gelesen markieren“ / „Gelesen“);
+                              texte = [aus, an]. Klick und Zustand übernimmt dieses Skript; wer nicht angemeldet ist, landet auf konto.html
+     besuch()                 Beginn des Besuchs merken → Stand mit besuch (Beginn des vorigen) und neueSeiten
+     geraeteAb()              alle anderen Geräte abmelden → Stand;  exportieren() → Promise { ok, daten }
+     emailAendern(neu, passwort) → { ok, status, stunden };  emailBestaetigen(kennwort) → { ok, status, … }
+     meldungenAus(kennung)    Link aus einer Meldungs-E-Mail: keine Meldungen mehr per E-Mail → { ok, status } */
 (function (MC) {
   "use strict";
   MC = window.MC = MC || {};
 
   var API = "konto.php", SEITE = "konto.html";
-  var st = { angemeldet: false, email: "", favoriten: [], depots: [], erinnern: false, newsletter: false }, menge = {}, hoerer = [], abfrage = null;
+  var st = { angemeldet: false, email: "", favoriten: [], depots: [], erinnern: false, newsletter: false, ablage: {}, besuch: 0, geraete: [], neueSeiten: {}, termine: {} }, menge = {}, hoerer = [], abfrage = null;
 
   function markiert() { return /(?:^|;\s*)bondarium-angemeldet=1(?:;|$)/.test(document.cookie); }
   function esc(s) { return MC.esc ? MC.esc(s) : String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
@@ -50,10 +62,12 @@
   function uebernimm(j) {
     var an = !!(j && j.angemeldet);
     st = { angemeldet: an, email: (an && j.email) || "", favoriten: (an && j.favoriten) || [],
-      depots: (an && j.depots) || (an && j.depot ? [[0, "Musterdepot 1", j.depot]] : []), erinnern: !!(an && j.erinnern), newsletter: !!(an && j.newsletter) };
+      depots: (an && j.depots) || (an && j.depot ? [[0, "Musterdepot 1", j.depot]] : []), erinnern: !!(an && j.erinnern), newsletter: !!(an && j.newsletter),
+      ablage: (an && j.ablage && typeof j.ablage === "object" && !Array.isArray(j.ablage) && j.ablage) || {}, besuch: (an && j.besuch) || 0, geraete: (an && j.geraete) || [],
+      neueSeiten: (an && (j.neue_seiten || st.neueSeiten)) || {}, termine: (an && (j.termine || st.termine)) || {} };
     menge = {};
     st.favoriten.forEach(function (f) { menge[f[0]] = true; });
-    knoepfe();
+    knoepfe(); ablKnoepfe();
     hoerer.forEach(function (fn) { try { fn(st); } catch (e) { console.warn(e); } });
     return st;
   }
@@ -141,6 +155,70 @@
     if (b) klick(b);
   });
 
+  // ---------- Persönliche Ablage (seit 02.10.2026 abends) ----------
+  function abl(art) { var a = st.ablage[art]; return a && typeof a === "object" && !Array.isArray(a) ? a : {}; }
+  function ablWert(art, k) { var e = abl(art)[k]; return e ? e[0] : undefined; }
+  function ablage(art, k, wert) {
+    return sende("POST", { aktion: "ablage", art: art, schluessel: k, wert: wert == null ? "" : JSON.stringify(wert) }).then(function (j) {
+      if (j.ok) {
+        st.ablage[art] = j.eintraege && !Array.isArray(j.eintraege) ? j.eintraege : {};
+        ablKnoepfe();
+        hoerer.forEach(function (fn) { try { fn(st, art); } catch (e) { console.warn(e); } });
+        return st;
+      }
+      if (j.status === "anmelden") uebernimm(null);
+      throw j;
+    });
+  }
+  // Umschalt-Knopf für einen Eintrag der Ablage: data-abl = Art, data-key = Schlüssel, data-wert = Wert (JSON), data-t = „aus|an“
+  var ABL_BILD = {
+    gelesen: '<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    lesezeichen: '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false"><path d="M7 4h10v16l-5-4-5 4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+    kennzahl: '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false"><path d="M9 4h6l-1 6 3 3H7l3-3zM12 13v7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
+  ABL_BILD.begriff = STERN_ABL();
+  function STERN_ABL() { return '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false"><path d="M12 3.2l2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 17.1 6.6 20l1.1-6.1-4.5-4.3 6.1-.8z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>'; }
+  function ablZeichne(b) {
+    var art = b.getAttribute("data-abl"), an = abl(art)[b.getAttribute("data-key")] !== undefined, t = (b.getAttribute("data-t") || "|").split("|");
+    b.setAttribute("aria-pressed", an ? "true" : "false");
+    b.innerHTML = (ABL_BILD[art] || "") + "<span>" + esc(an ? t[1] : t[0]) + "</span>";
+  }
+  function ablKnoepfe() { Array.prototype.forEach.call(document.querySelectorAll("button[data-abl]"), ablZeichne); }
+  function ablKnopf(art, k, wert, texte, klasse) {
+    var an = abl(art)[k] !== undefined;
+    return '<button type="button" class="ablbtn' + (klasse ? " " + esc(klasse) : "") + '" data-abl="' + esc(art) + '" data-key="' + esc(k) + '" data-wert="' + esc(JSON.stringify(wert == null ? 1 : wert)) +
+      '" data-t="' + esc(texte[0] + "|" + texte[1]) + '" aria-pressed="' + an + '">' + (ABL_BILD[art] || "") + "<span>" + esc(an ? texte[1] : texte[0]) + "</span></button>";
+  }
+  function ablKlick(b) {
+    var art = b.getAttribute("data-abl"), k = b.getAttribute("data-key"), wert;
+    if (b.disabled) return;
+    b.disabled = true;
+    bereit().then(function () {
+      if (!st.angemeldet) { location.href = SEITE; return; }
+      var an = abl(art)[k] !== undefined;
+      try { wert = JSON.parse(b.getAttribute("data-wert") || "1"); } catch (e) { wert = 1; }
+      return ablage(art, k, an ? null : wert).then(function () {
+        melde(an ? "Entfernt" : "In Mein Bondarium gespeichert");
+      }, function (j) {
+        if (j && j.status === "anmelden") { location.href = SEITE; return; }
+        var text = j && j.status === "voll" ? "Kein Platz mehr (" + (j.max || "") + ")" : "Hat nicht geklappt";
+        b.querySelector("span").textContent = text; melde(text);
+        setTimeout(function () { ablZeichne(b); }, 3000);
+      });
+    }).then(function () { b.disabled = false; });
+  }
+  document.addEventListener("click", function (e) {
+    var b = e.target && e.target.closest ? e.target.closest("button[data-abl]") : null;
+    if (b) ablKlick(b);
+  });
+  function standAktion(felder) {
+    return sende("POST", felder).then(function (j) {
+      if (j.ok) return uebernimm(j);
+      if (j.status === "anmelden") uebernimm(null);
+      throw j;
+    });
+  }
+
   // Antwort nach einer Anmeldung bzw. Abmeldung übernehmen: Der Stand gilt sofort, ohne neue Abfrage
   function an(j) { if (j.ok) abfrage = Promise.resolve(uebernimm(j)); return j; }
   function ab(j) { if (j.ok) abfrage = Promise.resolve(uebernimm(null)); return j; }
@@ -201,7 +279,21 @@
     passwortAendern: function (alt, neu) { return sende("POST", { aktion: "passwort-aendern", alt: alt, passwort: neu }); },
     abmelden: function () { return sende("POST", { aktion: "abmelden" }).then(ab); },
     loeschen: function (passwort) { return sende("POST", { aktion: "loeschen", passwort: passwort || "" }).then(ab); },
-    beiAenderung: function (fn) { hoerer.push(fn); }
+    beiAenderung: function (fn) { hoerer.push(fn); },
+    abl: abl, wert: ablWert, ablage: ablage, ablKnopf: ablKnopf,
+    besuch: function () { return standAktion({ aktion: "besuch" }); },
+    geraeteAb: function () { return standAktion({ aktion: "geraete-ab" }); },
+    exportieren: function () { return sende("POST", { aktion: "export" }); },
+    emailAendern: function (neu, passwort) { return sende("POST", { aktion: "email-aendern", email: neu, passwort: passwort }); },
+    emailBestaetigen: function (kennwort) {
+      return sende("POST", { aktion: "email-bestaetigen", token: kennwort }).then(function (j) { if (j.ok && j.email) abfrage = Promise.resolve(uebernimm(j)); return j; });
+    },
+    meldungenAus: function (kennung) {
+      return sende("POST", { aktion: "meldungen-aus", token: kennung }).then(function (j) {
+        if (j.ok && markiert()) abfrage = sende("GET", { aktion: "status" }).then(function (s) { return s.ok ? uebernimm(s) : st; });
+        return j;
+      });
+    }
   };
 
   // Stand holen (nur mit Merker, siehe oben) – danach zeigen schon gezeichnete Knöpfe den richtigen Zustand
