@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       art:
-        description: "bericht = Besucherbericht, erinnerung = Beispiel-Erinnerung vor einer Fälligkeit"
+        description: "bericht = Besucherbericht, erinnerung = beide Beispiel-Erinnerungen (20 Tage vor und am Tag der Fälligkeit)"
         type: choice
         options: [bericht, erinnerung]
         default: bericht

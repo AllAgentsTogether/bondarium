@@ -241,17 +241,19 @@ function erinnerungen_senden(): array
     return [$ok, $fehl];
 }
 
-/** Beispiel-Erinnerung an $an (Testmail): eine Anleihe aus den Stammdaten, Nennwert erfunden, Link ohne Wirkung */
+/**
+ * Beispiel-Erinnerungen an $an (Testmail): beide E-Mails – die erste (ERINNERUNG_TAGE Tage vorher) und die zweite (am Tag der
+ * Fälligkeit). Eine Anleihe aus den Stammdaten; Musterdepot, Nennwert und Fälligkeitstag sind erfunden, der Link ist ohne Wirkung.
+ */
 function erinnerung_testmail(string $an): bool
 {
-    $posten = [];
-    foreach ([['DE000BU22072', 'Sicherheit (Beispiel)', 10000]] as [$isin, $depot, $nenn]) {
-        $a = erinnerung_anleihe($isin);
-        if ($a === null) continue;
-        $tage = max(1, (int)(new DateTimeImmutable(date('Y-m-d')))->diff(new DateTimeImmutable($a[1]))->format('%r%a'));
-        $posten[] = [$a[0], $isin, $a[1], $tage, $depot, $nenn, $a[2]];
+    $a = erinnerung_anleihe('DE000BU22072');
+    if ($a === null) return false;
+    $ok = true;
+    foreach ([[ERINNERUNG_TAGE, false, 'die erste Erinnerung, ' . ERINNERUNG_TAGE . ' Tage vor einer Fälligkeit'], [0, true, 'die zweite Erinnerung, am Tag der Fälligkeit']] as [$tage, $heute, $was]) {
+        $posten = [[$a[0], 'DE000BU22072', date('Y-m-d', time() + $tage * 86400), $tage, 'Sicherheit (Beispiel)', 10000, $a[2]]];
+        [$betreff, $text] = erinnerung_text($posten, 'erinnerung', $heute);
+        $ok = erinnerung_mail($an, '[Test] ' . $betreff, $text . "\n\n(Test-E-Mail: So sieht $was aus. Musterdepot, Nennwert und Fälligkeitstag sind erfunden.)") && $ok;
     }
-    if (!$posten) return false;
-    [$betreff, $text] = erinnerung_text($posten, 'erinnerung');
-    return erinnerung_mail($an, '[Test] ' . $betreff, $text . "\n\n(Test-E-Mail: So sieht die Erinnerung vor einer Fälligkeit aus. Musterdepot und Nennwert sind erfunden, „in … Tagen“ zählt bis zur echten Fälligkeit.)");
+    return $ok;
 }
