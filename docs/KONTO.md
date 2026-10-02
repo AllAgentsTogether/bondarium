@@ -308,8 +308,8 @@ setzt eines.
 schon ein Konto“, neues Passwort setzen (bzw. „kein Konto zu dieser Adresse“), Passwort geändert. Für beide Domains
 gilt DMARC `p=reject`. Seit 02.10.2026 hat `bondarium.com` (die Absender-Domain) den SPF-Eintrag
 `v=spf1 redirect=_spf.strato.com` (STRATO-Standard; Kundenbereich → Domains → Domainverwaltung → Zahnrad → DNS →
-TXT- und CNAME-Records); DKIM-Schlüssel von STRATO liegen unter `strato-dkim-0002` und `-0003`. Für `bondarium.de` war der
-SPF-Eintrag am 02.10.2026 noch nicht sichtbar – von dort wird nichts verschickt. Ohne ankommende E-Mail kann sich niemand
+TXT- und CNAME-Records); DKIM-Schlüssel von STRATO liegen unter `strato-dkim-0002` und `-0003`. `bondarium.de` hat seit
+02.10.2026 denselben Eintrag (neben `google-site-verification`, der bleiben muss) – von dort verschickt Bondarium nichts. Ohne ankommende E-Mail kann sich niemand
 registrieren.
 
 ## Wochenbrief (seit 02.10.2026)
