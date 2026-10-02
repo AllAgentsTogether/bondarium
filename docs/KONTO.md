@@ -152,7 +152,7 @@ zum Wischen) und deshalb erst, wenn der Reiter offen ist. `konto.html#depot` öf
 Über der Tabelle stehen „Merkliste teilen“ und „Als PDF speichern“. „Merkliste teilen“ öffnet das Teilen-Menü des Geräts (Web
 Share API mit Datei – Handy, Tablet, Safari); wo der Browser keine Dateien teilen kann, wird das PDF heruntergeladen.
 Nutzerentscheid: nichts Persönliches im PDF (kein Name, keine E-Mail-Adresse), und das PDF geht nicht über den Server.
-Dateiname `Bondarium-Merkliste-JJJJ-MM-TT.pdf`. Das Musterdepot steht nicht im PDF.
+Dateiname `Bondarium-Merkliste-JJJJ-MM-TT.pdf`. Das Musterdepot hat sein eigenes PDF (siehe unten).
 
 **Geteilte Merkliste übernehmen** (seit 01.10.2026, Nutzerwunsch: „im geteilten Dokument soll stehen: in meine
 Merkliste übernehmen … eine andere Person soll diese Merkliste in ihre Merkliste bei Bondarium übernehmen können“).
@@ -174,6 +174,35 @@ je zwei übereinander: Name über ISIN · Registername, Fälligkeit über Restla
 (Nutzerwunsch; kurz vorher war der Auszug quer mit elf Spalten). Unten Erklärungen, „Keine Anlageberatung“ und
 die Seitenzahl. Eine Fassung im Design der Startseite (Kacheln, Karte, eingebettete Manrope) war kurz live und ist auf
 Wunsch des Nutzers wieder entfernt (Commit 684be7e).
+
+## Musterdepot teilen (PDF)
+
+Seit 02.10.2026 (Nutzerentscheid nach PDF-Mockup): Im Reiter „Mein Depot“ steht zwischen Formular und Tabelle dieselbe Leiste
+wie bei der Merkliste – links Anzahl und Kursstand, rechts „Musterdepot teilen“ und „Als PDF speichern“ (gemeinsame Funktion
+`teilen(nurSpeichern, art)`, eigene Statuszeile `#kd-teilen-status`). `musterPdf()` baut das PDF im Browser, es geht nicht
+über den Server und enthält nichts Persönliches. Inhalt wie der Reiter: Tabelle (Anleihe mit ISIN · Registername, Kurs,
+Kupon, Fälligkeit mit Restlaufzeit, Nennwert in der Währung der Anleihe mit Euro-Betrag darunter, Kurswert mit
+Kursgewinn/-verlust, Zinsen pro Jahr) und Summe, der Satz zu Zinsen und Rückzahlung, „Zahlungen pro Jahr“ und die
+Zinstermine des nächsten Kalenderjahrs. Statt des farbigen Schaubilds steht eine Jahrestabelle mit Balken (Zinsen grün,
+Rückzahlung Tinte; jedes zweite Jahr hinterlegt) – auch schwarz-weiß gedruckt lesbar. Immer das ganze Depot, auch wenn im
+Schaubild Anleihen ausgeblendet sind. Fremdwährungen: Sternchen am Namen, der EZB-Kurs einmal in den Hinweisen unten. Lange
+Depots laufen auf eine zweite Seite weiter. Dateiname `Bondarium-Musterdepot-JJJJ-MM-TT.pdf`.
+
+Euro-Zeichen mitten im Text: macOS-Vorschau (PDFKit) kennt für die Standardschrift Helvetica keine Breite des „€“ und
+zeichnet es breiter, der folgende Text liefe hinein. `tx()` setzt deshalb jedes Stück einzeln und lässt hinter „€“ ein
+Viertel Geviert Luft. Rechtsbündige Beträge sind nicht betroffen.
+
+## Zum Depot hinzufügen im Steckbrief
+
+Seit 02.10.2026 (Nutzerentscheid nach PDF-Mockup): In `anleihe.html` steht neben „Merken“ der Knopf „Zum Depot hinzufügen“
+(Form wie `.merkbtn`, Funktion `depotFeld()`). Er öffnet ein kleines Feld mit dem Nennwert – vorgeschlagen ist der Betrag aus
+dem Rechenbeispiel, liegt die Anleihe schon im Depot, ihr Nennwert. Gespeichert wird über `MC.konto.depot(isin, nennwert)`
+wie in Mein Depot; die Merkliste bleibt unverändert. Danach zeigt der Knopf „Im Depot“, darunter „Liegt mit … in deinem
+Musterdepot · Mein Depot öffnen“; ein neuer Klick ändert den Nennwert oder nimmt die Anleihe heraus. Dieselbe Regel wie
+`grund()` in `konto.html`: ohne Fälligkeit, nach der Fälligkeit, mit variablem Zins oder ohne Kupon ist der Knopf gesperrt und
+nennt den Grund; bei Fremdwährungen prüft das Feld beim Öffnen, ob es einen EZB-Kurs gibt. Ist das Depot voll, sagt das Feld
+es. Nicht angemeldet führt der Knopf auf `konto.html?merken=<ISIN>&depot=1`: Nach dem Anmelden steht die Anleihe auf der
+Merkliste, „Mein Depot“ ist offen und die Anleihe im Formular ausgewählt (hinzugefügt wird erst mit dem Klick).
 
 ## Was gespeichert wird
 

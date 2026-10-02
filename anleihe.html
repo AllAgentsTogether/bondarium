@@ -164,6 +164,39 @@
     .abs { margin-top: 24px; padding-top: 20px; }
     .kv { min-height: calc((100vw - 32px) * 0.66 + 40px); }
   }
+  /* „Zum Depot hinzufügen“ neben „Merken“ (seit 02.10.2026, Nutzerentscheid): Knopf in der Form des Merken-Knopfs (.merkbtn,
+     base.css), darunter ein kleines Feld mit Nennwert. Liegt die Anleihe im Musterdepot, zeigt der Knopf „Im Depot“ und die Zeile
+     .dep-info darunter, mit wie viel. */
+  .idz { position: relative; }
+  .depbtn svg { color: var(--green-text); }
+  .depbtn[aria-pressed="true"] svg { color: var(--ink); }
+  .depbtn[aria-expanded="true"] { border-color: var(--ink); }
+  .dep-info { flex-basis: 100%; font-size: 13.5px; color: var(--text); margin-top: -2px; }
+  .dep-info:empty { display: none; }
+  .dep-info a { color: var(--green-text); }
+  .dep-pop { position: absolute; top: calc(100% + 8px); z-index: 30; width: 340px; background: #fff; border: 1px solid rgba(26,26,25,0.18); border-radius: 14px; box-shadow: 0 2px 4px rgba(26,26,25,0.06), 0 18px 40px -12px rgba(26,26,25,0.28); padding: 14px 16px; color: var(--ink); font-size: 14px; }
+  .dep-pop[hidden] { display: none; }
+  .dep-pop::before { content: ""; position: absolute; top: -7px; left: var(--pfeil, 26px); width: 12px; height: 12px; background: #fff; border-left: 1px solid rgba(26,26,25,0.18); border-top: 1px solid rgba(26,26,25,0.18); transform: rotate(45deg); }
+  .dep-pop-t { font-size: 15.5px; font-weight: 700; margin: 0 0 10px; }
+  .dep-pop label { display: block; font-size: 13px; font-weight: 600; margin: 0 0 4px; }
+  .dep-pop select, .dep-eur input { width: 100%; font: inherit; font-size: 15px; color: var(--ink); background: #fff; border: 1.5px solid rgba(26,26,25,0.55); border-radius: 10px; padding: 8px 11px; }
+  .dep-pop select { appearance: none; -webkit-appearance: none; margin-bottom: 10px; padding-right: 32px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1.5 1.5L6 6l4.5-4.5' fill='none' stroke='%231A1A19' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right 12px center / 11px no-repeat; }
+  .dep-pop select:focus-visible, .dep-eur input:focus-visible { outline: 0; border-color: var(--green-text); box-shadow: 0 0 0 3px var(--green-tint-2); }
+  .dep-pop-z { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: end; }
+  .dep-eur { position: relative; display: block; }
+  .dep-eur input { padding-right: 46px; text-align: right; font-variant-numeric: tabular-nums; }
+  .dep-eur > span { position: absolute; right: 11px; top: 50%; transform: translateY(-50%); color: var(--text); font-size: 13px; }
+  .dep-pop .go { border: 0; cursor: pointer; font-family: inherit; padding: 10px 16px; box-shadow: none; }
+  .dep-pop .go[disabled] { opacity: 0.55; cursor: default; }
+  .dep-pop-h { font-size: 12.5px; line-height: 1.45; color: var(--text); margin: 9px 0 0; }
+  .dep-pop-h:empty { display: none; }
+  .dep-pop-h.fehler { color: var(--down); }
+  .dep-pop-f { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 10px 0 0; font-size: 13.5px; }
+  .dep-pop-f[hidden] { display: none; }
+  .dep-pop-f button { font: inherit; color: var(--text); background: none; border: 0; padding: 0; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .dep-pop-f button:hover { color: var(--down); }
+  .dep-pop-f a { color: var(--green-text); }
+  @media (max-width: 600px) { .dep-pop { left: 0 !important; right: 0; width: auto; } }
   @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Anleihe – Steckbrief","description":"Steckbrief einer Anleihe: Kurs und Rendite vom letzten Börsentag, Kursverlauf, Handel, Zinsformel, Rang, Kündigung und Stückelung.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-02","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihe.html"}</script>
@@ -466,6 +499,87 @@ function kurzName(emittent, art, land) {
   return e;
 }
 
+// ---------- Zum Musterdepot hinzufügen (seit 02.10.2026, Nutzerentscheid) ----------
+// Knopf neben „Merken“ (Form wie .merkbtn): öffnet ein kleines Feld mit dem Nennwert – vorgeschlagen ist der Betrag aus dem
+// Rechenbeispiel, liegt die Anleihe schon im Depot, ihr Nennwert. Gespeichert wird über konto.js (MC.konto.depot) wie in Mein Depot;
+// die Merkliste bleibt unverändert. Nicht angemeldet: konto.html?merken=<ISIN>&depot=1 – nach dem Anmelden steht die Anleihe auf der
+// Merkliste und ist in „Mein Depot“ zum Hinzufügen ausgewählt. a = { ccy, stk, warum } (warum: Grund, warum es nicht geht, sonst "").
+const DEP_NENN_MAX = 100000000;   // wie NENNWERT_MAX in konto.php
+function depotFeld(a) {
+  const K = MC.konto, idz = document.getElementById("idz"), vor = idz.querySelector(".merkbtn") || document.getElementById("kopie");
+  const W = a.ccy && a.ccy !== "EUR" ? a.ccy : "€", stk = typeof a.stk === "number" && a.stk > 0 ? a.stk : null;
+  const PLUS = '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>';
+  const HAKEN = '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "merkbtn depbtn"; b.id = "depbtn";
+  b.setAttribute("aria-haspopup", "dialog"); b.setAttribute("aria-expanded", "false"); b.setAttribute("aria-controls", "dep-pop");
+  vor.after(b);
+  const info = document.createElement("span"); info.className = "dep-info"; info.id = "dep-info"; idz.appendChild(info);
+  const pop = document.createElement("div");
+  pop.className = "dep-pop"; pop.id = "dep-pop"; pop.hidden = true; pop.setAttribute("role", "dialog"); pop.setAttribute("aria-labelledby", "dep-pop-t");
+  pop.innerHTML = `<p class="dep-pop-t" id="dep-pop-t">Zum Musterdepot hinzufügen</p>` +
+    `<form class="dep-pop-z" id="dep-form" novalidate><div><label for="dep-nenn">Nennwert</label><span class="dep-eur"><input id="dep-nenn" type="text" inputmode="numeric" autocomplete="off" maxlength="11"><span>${MC.esc(W)}</span></span></div>` +
+    `<button type="submit" class="go" id="dep-ok">Hinzufügen</button></form>` +
+    `<p class="dep-pop-h" id="dep-h" role="status" aria-live="polite"></p>` +
+    `<p class="dep-pop-f" id="dep-f" hidden><button type="button" id="dep-weg">Aus dem Depot entfernen</button><a href="konto.html#depot">Mein Depot öffnen</a></p>`;
+  idz.appendChild(pop);
+  const $ = id => document.getElementById(id), feld = $("dep-nenn"), ok = $("dep-ok"), h = $("dep-h");
+  const nennVon = () => { const d = (K.stand().depot || []).find(x => x[0] === ISIN); return d ? d[1] : 0; };
+  const lies = t => { const n = parseInt(String(t).replace(/[.\s€]/g, "").replace(/,\d*$/, ""), 10); return n >= 1 && n <= DEP_NENN_MAX ? n : NaN; };
+  const stkText = stk ? `Stückelung ${fmtStk(stk)} ${W}.` : "";
+  let fx = W === "€";   // Fremdwährung: erst nach dem Blick in die EZB-Kurse
+  function zeichne() {
+    const n = nennVon(), drin = n > 0;
+    b.disabled = !!a.warum;
+    b.setAttribute("aria-pressed", String(drin));
+    b.innerHTML = (drin ? HAKEN : PLUS) + `<span>${drin ? "Im Depot" : "Zum Depot hinzufügen"}</span>`;
+    b.title = a.warum ? `Lässt sich dem Musterdepot nicht hinzufügen: ${a.warum}` : drin ? "Nennwert ändern oder aus dem Musterdepot entfernen" : "Zu deinem Musterdepot hinzufügen";
+    info.innerHTML = drin ? `Liegt mit ${MC.zahl(n, 0)} ${MC.esc(W)} in deinem Musterdepot · <a href="konto.html#depot">Mein Depot öffnen</a>` : "";
+  }
+  function hinweis(text, fehler) { h.className = "dep-pop-h" + (fehler ? " fehler" : ""); h.textContent = text; }
+  function zu(fokus) { pop.hidden = true; b.setAttribute("aria-expanded", "false"); if (fokus) b.focus(); }
+  function auf() {
+    const n = nennVon(), rb = lies(($("nenn") || {}).value || "");
+    $("dep-pop-t").textContent = n ? "Nennwert im Musterdepot" : "Zum Musterdepot hinzufügen";
+    ok.textContent = n ? "Speichern" : "Hinzufügen"; ok.disabled = false;
+    $("dep-f").hidden = !n;
+    feld.value = MC.zahl(n || (rb > 0 ? rb : stk && stk >= 1000 ? Math.ceil(stk) : stk >= 1 && Number.isInteger(stk) ? Math.ceil(5000 / stk) * stk : 5000), 0);
+    hinweis(n ? stkText : `Vorschlag: der Betrag aus dem Rechenbeispiel. ${stkText}`.trim());
+    pop.hidden = false; b.setAttribute("aria-expanded", "true");
+    pop.style.left = b.offsetLeft + "px";
+    pop.style.setProperty("--pfeil", Math.max(14, b.offsetLeft - pop.offsetLeft + 18) + "px");
+    feld.focus(); feld.select();
+    if (!fx) MC.json("wechselkurse.json").then(d => {
+      fx = !!(d && d.kurse && d.kurse[a.ccy] > 0);
+      if (!fx) { hinweis(`Für ${a.ccy} gibt es keinen Euro-Referenzkurs der EZB – die Anleihe lässt sich dem Musterdepot nicht hinzufügen.`, true); ok.disabled = true; }
+    }, () => { fx = true; });   // ohne Kursdatei entscheidet Mein Depot (die Anleihe steht dort mit Grund)
+  }
+  const fehler = j => j && j.status === "voll" ? `Dein Musterdepot ist voll (${j.max || 10} Anleihen). Entferne in Mein Depot erst eine Anleihe.`
+    : j && j.status === "netz" ? "Keine Verbindung zum Server. Bitte prüfe deine Internetverbindung." : "Das hat nicht geklappt. Bitte versuch es noch einmal.";
+  function sende(n) {
+    ok.disabled = true; hinweis("Einen Moment …");
+    K.depot(ISIN, n).then(() => { zu(true); zeichne(); }, j => {
+      ok.disabled = false;
+      if (j && j.status === "anmelden") { location.href = `konto.html?merken=${encodeURIComponent(ISIN)}&depot=1`; return; }
+      hinweis(fehler(j), true);
+    });
+  }
+  b.addEventListener("click", () => {
+    if (!pop.hidden) { zu(); return; }
+    K.bereit().then(st => { if (!st.angemeldet) location.href = `konto.html?merken=${encodeURIComponent(ISIN)}&depot=1`; else auf(); });
+  });
+  $("dep-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const n = lies(feld.value);
+    if (!(n > 0)) { hinweis(`Bitte trag einen ganzen Betrag von 1 bis ${MC.zahl(DEP_NENN_MAX, 0)} ein.`, true); feld.focus(); return; }
+    sende(n);
+  });
+  $("dep-weg").addEventListener("click", () => sende(0));
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !pop.hidden) zu(true); });
+  document.addEventListener("click", e => { if (!pop.hidden && !pop.contains(e.target) && !b.contains(e.target)) zu(); });
+  zeichne(); K.beiAenderung(zeichne); K.bereit().then(zeichne);
+}
+
 // ---------- Aufbau ----------
 function zeige(r, k, meta) {
   const [name, art, ccy, kupon, faellig, vol, stk, , emittent, zinsart, land, , mehr, pruefRaw, zt, bon] = r;
@@ -532,6 +646,10 @@ function zeige(r, k, meta) {
   // Kopfzeile: nur Kennung und Kopierknopf – Kursdatum und Quelle stehen seit 30.09.2026 nur noch in der Kachel „Kurs“ (vorher doppelt).
   // Dazu der Merken-Knopf (konto.js, seit 30.09.2026): legt die Anleihe ins Depot des angemeldeten Nutzers (konto.html).
   document.getElementById("idz").innerHTML = `<span class="isin">ISIN <b>${MC.esc(ISIN)}</b>${wkn ? ` · WKN <b>${wkn}</b>` : ""}</span><button type="button" class="kopie" id="kopie" data-isin="${MC.esc(ISIN)}">ISIN kopieren</button>${MC.konto ? MC.konto.knopf(ISIN) : ""}<span class="kopie-hinweis" id="kopie-hinweis"></span>`;
+  // Seit 02.10.2026: „Zum Depot hinzufügen“ neben „Merken“ – dieselbe Regel wie in Mein Depot (konto.html, grund()): nur mit Fälligkeit
+  // in der Zukunft und festem Kupon oder Nullkupon; Fremdwährungen nur mit EZB-Wechselkurs (wird beim Öffnen geprüft)
+  if (MC.konto) depotFeld({ ccy, stk, warum: !faellig ? "unbefristet" : abgelaufen ? "Fälligkeit erreicht" : zinsart === 1 ? "variabler Zins"
+    : zinsart === 0 && typeof kupon !== "number" ? "Kupon unbekannt" : "" });
 
   // --- Datenhinweis: nur Tatsachen und Rechenregeln ---
   const wKupon = [pruef.kuponFisn != null ? `Kurzname im Register: ${fmtCoupon(pruef.kuponFisn)}` : "", pruef.zinsName ? "Name: variabel (FLR)" : "", pruef.kuponHoch ? "Registerwert über den Plausibilitätsgrenzen (vermutlich Faktor 10 oder 1000)" : ""].filter(Boolean);

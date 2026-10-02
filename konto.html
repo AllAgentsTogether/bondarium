@@ -181,6 +181,9 @@
   .kd-neu .go { border: 0; cursor: pointer; font-family: inherit; padding: 13px 20px; white-space: nowrap; }
   .kd-neu .kf-status { grid-column: 1 / -1; }
   .kd-t { width: 100%; border-collapse: collapse; margin-top: 18px; font-size: 14.5px; }
+  .kd-teilleiste { margin-top: 22px; }
+  .kd-teilleiste[hidden] { display: none; }
+  .kd-teilleiste ~ .table-scroll .kd-t { margin-top: 8px; }
   .kd-t th, .kd-t td { padding: 11px 14px 11px 0; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: middle; }
   .kd-t thead th { font-size: 11px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; color: var(--text); border-bottom: 1px solid rgba(26,26,25,0.35); white-space: nowrap; }
   .kd-t .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -517,6 +520,14 @@
           <button type="submit" class="go">Zum Depot hinzufügen</button>
           <p class="kf-status" id="kd-status" role="status" aria-live="polite"></p>
         </form>
+        <div class="kto-leiste kd-teilleiste" id="kd-teilen-box" hidden>   <!-- „Musterdepot teilen“ (seit 02.10.2026): PDF wie bei der Merkliste -->
+          <p class="kto-status" id="kd-anzahl"></p>
+          <div class="kto-teilen">
+            <button type="button" class="kto-leise kto-teilen-btn" id="kd-teilen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12"/><path d="M7.5 7.5 12 3l4.5 4.5"/><path d="M5 11.5V19a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7.5"/></svg>Musterdepot teilen</button>
+            <button type="button" class="kto-textbtn" id="kd-als-pdf">Als PDF speichern</button>
+          </div>
+        </div>
+        <p class="kto-teilen-status" id="kd-teilen-status" role="status" aria-live="polite"></p>
         <div class="table-scroll" id="kd-liste" hidden>
           <table class="kd-t">
             <caption class="sr-only">Dein Musterdepot</caption>
@@ -627,6 +638,10 @@ MC.navInit();
   const ISIN_RE = /^[A-Z]{2}[A-Z0-9]{9}\d$/;
   const par = new URLSearchParams(location.search);
   let VOR = (par.get("merken") || "").trim().toUpperCase(); if (!ISIN_RE.test(VOR)) VOR = "";
+  // „&depot=1“ (seit 02.10.2026) kommt vom Knopf „Zum Depot hinzufügen“ im Steckbrief: Nach dem Anmelden öffnet sich „Mein Depot“, und die
+  // Anleihe ist im Formular schon ausgewählt (WAHL) – hinzugefügt wird sie erst mit dem Klick
+  const DEP_VOR = !!VOR && par.get("depot") === "1";
+  let WAHL = "";
   const TEXT = {
     email: "Bitte prüfe deine E-Mail-Adresse.",
     passwort: "Das Passwort braucht mindestens 10 Zeichen und darf nicht zu einfach sein (kein sehr häufiges Passwort, nicht nur ein paar wiederholte Zeichen, nicht deine E-Mail-Adresse).",
@@ -657,7 +672,7 @@ MC.navInit();
     MODUS = m;
     if (fokus && ziel && ziel.elements) { const f = Array.from(ziel.elements).find(e => e.tagName === "INPUT" && !e.readOnly && e.tabIndex >= 0 && !e.value); if (f) f.focus(); }
   }
-  if (VOR) $("vormerk").innerHTML = `Nach dem Anmelden steht die Anleihe <b>${MC.esc(VOR)}</b> auf deiner Merkliste.`;
+  if (VOR) $("vormerk").innerHTML = `Nach dem Anmelden steht die Anleihe <b>${MC.esc(VOR)}</b> auf deiner Merkliste${DEP_VOR ? " und ist in „Mein Depot“ zum Hinzufügen ausgewählt" : ""}.`;
   $("anmelden").addEventListener("click", e => { const b = e.target.closest("[data-zu]"); if (b) { hinweis(""); modus(b.dataset.zu, true); } });
   $("nochmal").addEventListener("click", () => modus(ZURUECK, true));
   // Passwort anzeigen / verbergen
@@ -687,7 +702,7 @@ MC.navInit();
   function gesendet(html, von) { $("gesendet-text").innerHTML = html; ZURUECK = von; hinweis(""); modus("gesendet"); }
 
   formular("f-anmelden", f => K.anmelden(f.email.value.trim(), f.passwort.value, VOR),
-    (a, f) => { leere(f); hinweis("Du bist angemeldet." + imDepot(a.gemerkt)); VOR = ""; ohneZusatz(); });
+    (a, f) => { leere(f); hinweis("Du bist angemeldet." + imDepot(a.gemerkt)); if (DEP_VOR) WAHL = VOR; VOR = ""; ohneZusatz(); if (WAHL) reiterWahl("depot"); });
   formular("f-registrieren", f => K.registrieren(f.email.value.trim(), f.passwort.value, VOR, f.website.value),
     (a, f) => { const an = f.email.value.trim(); leere(f); VOR = ""; ohneZusatz();   // die vorgemerkte Anleihe reist mit dem Link in der E-Mail
       gesendet(`<b>Schau in dein Postfach.</b> Wir haben eine E-Mail an <b>${MC.esc(an)}</b> geschickt. Klick auf den Link darin und gib dein Passwort noch einmal ein – dann ist dein Konto fertig. Der Link gilt ${a.stunden || 24} Stunden.`, "registrieren"); },
@@ -1040,16 +1055,17 @@ MC.navInit();
       `<td><button type="button" class="kto-x" data-raus="${MC.esc(p.isin)}" aria-label="${MC.esc(o.name)} aus dem Depot entfernen" title="Aus dem Depot entfernen">×<span> Entfernen</span></button></td></tr>`;
   }
   function zeichneDepot() {
-    const drin = new Set(POS.map(p => p.isin)), sel = $("kd-isin"), wahl = sel.value;
+    const drin = new Set(POS.map(p => p.isin)), sel = $("kd-isin"), wahl = sel.value || WAHL;
     const frei = LISTE.filter(o => !drin.has(o.isin)).sort((a, b) => a.name.localeCompare(b.name, "de") || (a.faellig || "").localeCompare(b.faellig || ""));
     sel.innerHTML = `<option value="">${frei.length ? "Anleihe wählen …" : LISTE.length ? "Alle Anleihen deiner Merkliste liegen im Depot" : "Deine Merkliste ist noch leer"}</option>` +
       frei.map(o => { const g = grund(o); return `<option value="${MC.esc(o.isin)}"${g ? " disabled" : ""} data-stk="${typeof o.stk === "number" ? o.stk : ""}" data-cur="${MC.esc(o.cur || "")}">${MC.esc(o.name)} · ${fmtCoupon(o.kupon)}${o.faellig ? " · " + o.faellig.slice(0, 4) : ""}${o.cur && o.cur !== "EUR" ? " · " + MC.esc(o.cur) : ""}${g ? " – " + MC.esc(g) : ""}</option>`; }).join("");
-    if (wahl && Array.from(sel.options).some(x => x.value === wahl && !x.disabled)) sel.value = wahl;
+    if (wahl && Array.from(sel.options).some(x => x.value === wahl && !x.disabled)) { sel.value = wahl; if (wahl === WAHL) { WAHL = ""; sel.dispatchEvent(new Event("change")); } }
     nennWaehrung();
     const voll = POS.length >= DEPOT_MAX; $("f-depot").classList.toggle("voll", voll);
     if (voll) depotStatus(`Dein Depot ist voll: ${DEPOT_MAX} Anleihen. Entferne eine, um eine andere hinzuzufügen.`); else if (/^Dein Depot ist voll/.test($("kd-status").textContent)) depotStatus("");
     const pos = POS.slice().sort((a, b) => (a.o.faellig || "9999").localeCompare(b.o.faellig || "9999") || a.isin.localeCompare(b.isin));
-    $("kd-liste").hidden = !pos.length; $("kd-leer").hidden = pos.length > 0;
+    $("kd-liste").hidden = !pos.length; $("kd-leer").hidden = pos.length > 0; $("kd-teilen-box").hidden = !pos.length;
+    $("kd-anzahl").innerHTML = pos.length ? `<strong>${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}</strong> in deinem Musterdepot${KSTAND ? ` · Kurse vom ${MC.esc(MC.datum(KSTAND))}` : ""}.` : "";
     $("kd-zeilen").innerHTML = pos.map(depotZeile).join("");
     const zins = pos.reduce((x, p) => x + (p.zins || 0), 0), mitKurs = pos.filter(p => p.kauf != null), kauf = mitKurs.reduce((x, p) => x + p.kauf, 0), mitDiff = pos.filter(p => p.diff != null);
     const mitNenn = pos.filter(p => p.nennEur != null);   // Summen in Euro; fremde Währungen zum festen Kurs
@@ -1277,6 +1293,20 @@ MC.navInit();
   // Schlichte Gestaltung (Helvetica, grünes Band) mit dem Logo der Website; die Tabelle hat dieselben Angaben wie die
   // Anleihen-Suche (Nutzerwunsch). A4 hochkant: je zwei Angaben stehen übereinander (Nutzerwunsch, vorher quer mit elf Spalten).
   const INK = [0.102, 0.102, 0.098], GRAU = [0.333, 0.329, 0.31], GRUEN = [0.224, 1, 0.078], LINIE = [0.86, 0.86, 0.84];
+  // Logo wie in der Kopfzeile der Website: Bildzeichen „Orbit“ (SVG-Maß 100 × 100) und Wortmarke „bondarium“ (Pfad aus der Seite) –
+  // für die PDFs von Merkliste und Musterdepot
+  function pdfLogo(P, x, yo) {
+    const wort = document.querySelector(".topbar .brand-w path"), punkt = document.querySelector(".topbar .brand-w .brand-i"), m = 28 / 100;
+    P.rechteck(x, yo, 28, 28, INK, 24 * m);
+    P.svg("M29 20V78", x, yo, m, "#FBFAF7", { strich: 12 });
+    P.rechteck(x + 33 * m, yo + 42 * m, 38 * m, 38 * m, null, 19 * m, "#FBFAF7", 12 * m);   // Ring des „b“
+    P.kreis(x + 65.4 * m, yo + 47.6 * m, 11.5 * m, INK);   // Aussparung um den Punkt
+    P.kreis(x + 65.4 * m, yo + 47.6 * m, 7.5 * m, GRUEN);
+    if (!wort) { P.text(x + 37, yo + 21, "bondarium", { gr: 21, fett: true, farbe: INK }); return; }
+    const s = 19.5 / 780, wx = x + 37, wy = yo + 14 - 19.5 / 2 - 330 * s;   // viewBox 0 330 5362 780, mittig zum Bildzeichen
+    P.svg(wort.getAttribute("d"), wx, wy, s, INK);
+    if (punkt) P.kreis(wx + +punkt.getAttribute("cx") * s, wy + +punkt.getAttribute("cy") * s, +punkt.getAttribute("r") * s, "#157C00");
+  }
   function depotPdf() {
     const P = MC.pdf(), B = P.B, H = P.H, R = 40, liste = sortiert(), n = liste.length, jetzt = new Date();
     const datum = `${zwei(jetzt.getDate())}.${zwei(jetzt.getMonth() + 1)}.${jetzt.getFullYear()}`, uhr = `${zwei(jetzt.getHours())}:${zwei(jetzt.getMinutes())}`;
@@ -1298,25 +1328,11 @@ MC.navInit();
     noten.push("Keine Anlageberatung: Dieser Auszug ist eine Merkliste und keine Empfehlung zum Kauf oder Verkauf. Alle Angaben ohne Gewähr.");
     const fuss = [].concat(...noten.map(t => P.umbrechen(t, B - 2 * R, 7)));
     const KNOPF = 24, UNTEN = H - 34 - fuss.length * 9 - 14 - KNOPF - 20;   // Platz für den Knopf über den Hinweisen
-    // Logo wie in der Kopfzeile der Website: Bildzeichen „Orbit“ (SVG-Maß 100 × 100) und Wortmarke „bondarium“ (Pfad aus der Seite)
-    const wort = document.querySelector(".topbar .brand-w path"), punkt = document.querySelector(".topbar .brand-w .brand-i");
-    function logo(x, yo) {
-      const m = 28 / 100;
-      P.rechteck(x, yo, 28, 28, INK, 24 * m);
-      P.svg("M29 20V78", x, yo, m, "#FBFAF7", { strich: 12 });
-      P.rechteck(x + 33 * m, yo + 42 * m, 38 * m, 38 * m, null, 19 * m, "#FBFAF7", 12 * m);   // Ring des „b“
-      P.kreis(x + 65.4 * m, yo + 47.6 * m, 11.5 * m, INK);   // Aussparung um den Punkt
-      P.kreis(x + 65.4 * m, yo + 47.6 * m, 7.5 * m, GRUEN);
-      if (!wort) { P.text(x + 37, yo + 21, "bondarium", { gr: 21, fett: true, farbe: INK }); return; }
-      const s = 19.5 / 780, wx = x + 37, wy = yo + 14 - 19.5 / 2 - 330 * s;   // viewBox 0 330 5362 780, mittig zum Bildzeichen
-      P.svg(wort.getAttribute("d"), wx, wy, s, INK);
-      if (punkt) P.kreis(wx + +punkt.getAttribute("cx") * s, wy + +punkt.getAttribute("cy") * s, +punkt.getAttribute("r") * s, "#157C00");
-    }
     let y = 0;
     function kopf() {
       const nr = P.seite();
       P.rechteck(0, 0, B, 56, GRUEN);   // grünes Band wie die Kopfzeile der Website
-      logo(R, 14);
+      pdfLogo(P, R, 14);
       P.text(B - R, 35, "www.bondarium.de", { gr: 9, farbe: INK, rechts: true });
       P.link(B - R - P.weite("www.bondarium.de", 9), 24, P.weite("www.bondarium.de", 9), 14, LINK);
       y = 94;
@@ -1368,31 +1384,195 @@ MC.navInit();
     P.link(R, ky, kb, KNOPF, `${LINK}konto.html#liste=${liste.map(o => o.isin).join(",")}`);
     return { blob: P.blob("Merkliste – Bondarium"), name: `Bondarium-Merkliste-${jetzt.getFullYear()}-${zwei(jetzt.getMonth() + 1)}-${zwei(jetzt.getDate())}.pdf` };
   }
-  function teilenStatus(text, fehler) { const el = $("teilen-status"); el.className = "kto-teilen-status" + (fehler ? " fehler" : ""); el.textContent = text; }
-  function speichere(d, stattTeilen) {
+  // ---------- Musterdepot teilen (seit 02.10.2026, Nutzerentscheid): PDF wie bei der Merkliste ----------
+  // Entsteht auf dem Gerät, geht nicht über unseren Server, enthält nichts Persönliches. Inhalt wie der Reiter: Tabelle mit Summe, der Satz
+  // zu Zinsen und Rückzahlung, „Zahlungen pro Jahr“ (statt des farbigen Schaubilds eine Jahrestabelle mit Balken – auch schwarz-weiß
+  // lesbar) und die Zinstermine des nächsten Kalenderjahrs. Immer das ganze Depot, auch wenn im Schaubild Anleihen ausgeblendet sind.
+  function musterPdf() {
+    const P = MC.pdf(), B = P.B, H = P.H, R = 40, jetzt = new Date(), LINK = "https://www.bondarium.de/";
+    const datum = `${zwei(jetzt.getDate())}.${zwei(jetzt.getMonth() + 1)}.${jetzt.getFullYear()}`, uhr = `${zwei(jetzt.getHours())}:${zwei(jetzt.getMinutes())}`;
+    const titel = "Musterdepot";
+    const pos = POS.slice().sort((a, b) => (a.o.faellig || "9999").localeCompare(b.o.faellig || "9999") || a.isin.localeCompare(b.isin));
+    const fremd = pos.filter(p => p.fremd), GRUEN_T = "#157C00", ORANGE_T = "#A2561C", HELL = [0.957, 0.953, 0.937];
+    // „€“ mitten im Text: macOS-Vorschau (PDFKit) kennt für die Standardschrift Helvetica keine Breite des Euro-Zeichens und zeichnet es
+    // breiter – der folgende Text liefe hinein. Deshalb jedes Stück an seine Stelle setzen und hinter „€“ ein Viertel Geviert Luft lassen.
+    const tx = (x, yy, s, o) => { let cx = x; const gr = (o && o.gr) || 10; s.split("€").forEach((t, i, a) => { if (t) cx += P.text(cx, yy, t, o); if (i < a.length - 1) cx += P.text(cx, yy, "€", o) + gr * 0.25; }); };
+    const SP = [];
+    [["Anleihe", 177, 0, "ISIN · Registername"], ["Kurs", 44, 1, "in %"], ["Kupon", 44, 1], ["Fälligkeit", 60, 1, "Restlaufzeit"], ["Nennwert", 62, 1],
+      ["Kurswert", 72, 1, "Kursgewinn/-verlust"], ["Zinsen", 56, 1, "pro Jahr"]]
+      .reduce((x, [t, b, r, t2]) => { SP.push({ t, t2, x, b, r: !!r }); return x + b; }, R);
+    const rx = i => SP[i].x + SP[i].b - (i === SP.length - 1 ? 0 : 6), NAME = 170;
+    const noten = [];
+    if (fremd.length && FX) noten.push(`* Fremdwährung: zur Vereinfachung mit dem Euro-Referenzkurs der EZB vom ${MC.datum(FX.stand)} in Euro umgerechnet (${[...new Set(fremd.map(p => p.o.cur))].sort().map(c => `1 € = ${fmtFx(FX.kurse[c])} ${c}`).join(", ")}) und für die ganze Laufzeit als fest angenommen – tatsächlich schwankt er (Wechselkursrisiko).`);
+    noten.push("Musterdepot: gedachte Nennwerte, kein Bestand und kein Kauf. Kurs: Schlusskurs in % des Nennwerts. Kurswert = Nennwert × Kurs, ohne Stückzinsen und Gebühren; darunter der Kursgewinn oder Kursverlust bis zur Rückzahlung zum Nennwert (100 %). " +
+      "Zinsen und Rückzahlung vor Steuern und Kosten; Zinstermine laut Deutscher Börse, wo sie fehlen geschätzt; eine vorzeitige Kündigung ist nicht berücksichtigt. Maßgeblich sind die Anleihebedingungen.");
+    noten.push("Keine Anlageberatung: Dieser Auszug ist ein Planspiel und keine Empfehlung zum Kauf oder Verkauf. Alle Angaben ohne Gewähr.");
+    const fuss = [].concat(...noten.map(t => P.umbrechen(t, B - 2 * R, 7)));
+    const UNTEN = H - 34 - fuss.length * 9 - 20;
+    let y = 0;
+    function seite(erste) {
+      P.seite();
+      P.rechteck(0, 0, B, 56, GRUEN);   // grünes Band wie die Kopfzeile der Website
+      pdfLogo(P, R, 14);
+      P.text(B - R, 35, "www.bondarium.de", { gr: 9, farbe: INK, rechts: true });
+      P.link(B - R - P.weite("www.bondarium.de", 9), 24, P.weite("www.bondarium.de", 9), 14, LINK);
+      y = 94;
+      if (erste) {
+        P.text(R, y, titel, { gr: 24, fett: true, max: B - 2 * R - 230 }); y += 20;
+        P.text(R, y, `Erstellt am ${datum} um ${uhr} Uhr · ${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}${KSTAND ? ` · Kurse vom ${MC.datum(KSTAND)}` : ""}`, { gr: 9.5, farbe: GRAU });
+        y += 30;
+      } else { P.text(R, y, `${titel} – Fortsetzung`, { gr: 12, fett: true }); y += 26; }
+    }
+    const platz = h => { if (y + h > UNTEN) seite(false); };
+    const klein = o => Object.assign({ gr: 7, farbe: GRAU }, o || {});
+    const vz = d => (d > 0 ? "+" : d < 0 ? "−" : "") + fmt(Math.abs(d), 2) + " €";
+    const kurz = p => `${p.o.name} ${fmtCoupon(p.o.kupon)} ${(p.o.faellig || "").slice(0, 4)}`;
+    seite(true);
+    SP.forEach((s, i) => {
+      const x = s.r ? rx(i) : s.x;
+      P.text(x, y, s.t.toUpperCase(), { gr: 6.5, fett: true, farbe: GRAU, rechts: s.r });
+      if (s.t2) P.text(x, y + 8.5, s.t2, { gr: 6.5, farbe: GRAU, rechts: s.r });
+    });
+    y += 14; P.linie(R, y, B - R, y, INK, 0.8);
+    pos.forEach(p => {
+      const o = p.o, z1 = y + 14, z2 = y + 25;
+      const nw = P.text(R, z1, o.name, { gr: 9, fett: true, max: NAME - (p.fremd ? 6 : 0) });
+      if (p.fremd) P.text(R + nw + 1, z1, "*", { gr: 9, fett: true });
+      P.link(R, y + 4, Math.min(NAME, nw), 13, `${LINK}anleihe.html?isin=${encodeURIComponent(p.isin)}`);
+      P.text(R, z2, [p.isin, p.warum, o.reg].filter(Boolean).join(" · "), klein({ max: NAME }));
+      P.text(rx(1), z1, o.kurs != null ? fmt(o.kurs, 2) : "–", { gr: 8.5, rechts: true });
+      P.text(rx(2), z1, fmtCoupon(o.kupon), { gr: 8.5, rechts: true });
+      P.text(rx(3), z1, o.faellig ? MC.datum(o.faellig) : "–", { gr: 8.5, rechts: true });
+      if (o.faellig && jahre(o.faellig) > 0) P.text(rx(3), z2, MC.restlaufzeit(jahre(o.faellig)), klein({ rechts: true }));
+      P.text(rx(4), z1, `${fmt(p.nenn)} ${p.cur || "€"}`, { gr: 8.5, rechts: true });
+      if (p.fremd && p.nennEur != null) P.text(rx(4), z2, `= ${eur(p.nennEur)}`, klein({ rechts: true }));
+      P.text(rx(5), z1, p.kauf != null ? eur(p.kauf) : "–", { gr: 8.5, rechts: true });
+      if (p.diff != null) P.text(rx(5), z2, vz(p.diff), klein({ rechts: true, farbe: p.diff < 0 ? ORANGE_T : GRUEN_T }));
+      P.text(rx(6), z1, p.zins != null ? eur(p.zins) : "–", { gr: 8.5, rechts: true });
+      y += 31; P.linie(R, y, B - R, y, LINIE, 0.5);
+      if (y + 31 > UNTEN) seite(false);
+    });
+    // Summenzeile wie in der Tabelle
+    const mitN = pos.filter(p => p.nennEur != null), mitK = pos.filter(p => p.kauf != null), mitD = pos.filter(p => p.diff != null);
+    const sN = mitN.reduce((a, p) => a + p.nennEur, 0), sK = mitK.reduce((a, p) => a + p.kauf, 0), sD = mitD.reduce((a, p) => a + p.diff, 0), sZ = pos.reduce((a, p) => a + (p.zins || 0), 0);
+    platz(40);
+    P.linie(R, y, B - R, y, INK, 0.8);
+    P.text(R, y + 14, "Summe", { gr: 9, fett: true }); P.text(R, y + 25, `${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}${fremd.length ? ", in Euro" : ""}`, klein());
+    P.text(rx(4), y + 14, mitN.length ? eur(sN, fremdIn(mitN) ? 2 : 0) : "–", { gr: 8.5, fett: true, rechts: true });
+    P.text(rx(5), y + 14, mitK.length ? eur(sK) : "–", { gr: 8.5, fett: true, rechts: true });
+    if (mitD.length) P.text(rx(5), y + 25, vz(sD), klein({ rechts: true, farbe: sD < 0 ? ORANGE_T : GRUEN_T }));
+    P.text(rx(6), y + 14, eur(sZ), { gr: 8.5, fett: true, rechts: true });
+    y += 46;
+    const merk = new Set(AUS); AUS.clear();   // das ganze Depot, nicht nur die Auswahl im Schaubild
+    const z = zahlungen(); merk.forEach(i => AUS.add(i));
+    if (z.length) {
+      // Satz wie über dem Schaubild
+      const zi = z.filter(x => x.art === "Zinsen").reduce((a, x) => a + x.betrag, 0), ru = z.filter(x => x.art === "Rückzahlung").reduce((a, x) => a + x.betrag, 0);
+      const satz = `Bis zur letzten Fälligkeit am ${MC.datum(z[z.length - 1].tag)}: ${eur(zi)} Zinsen und ${eur(ru, fremdIn(pos) ? 2 : 0)} Rückzahlung, zusammen ${eur(zi + ru)}.` +
+        (mitD.length ? ` Der Kurswert beträgt heute ${eur(sK)}, ohne Stückzinsen und Gebühren; bis zur Fälligkeit ergibt sich ein ${sD < 0 ? "Kursverlust" : "Kursgewinn"} von ${eur(Math.abs(sD))}.` : "");
+      const zeilen = P.umbrechen(satz, B - 2 * R, 9.5);
+      platz(zeilen.length * 13);
+      zeilen.forEach(l => { tx(R, y, l, { gr: 9.5, farbe: INK }); y += 13; });
+      y += 18;
+      // Zahlungen pro Jahr: Jahrestabelle mit Balken (Zinsen grün, Rückzahlung Tinte), jedes zweite Jahr hinterlegt wie im Schaubild
+      const j0 = jetzt.getFullYear(), j1 = Math.min(+z[z.length - 1].tag.slice(0, 4), j0 + JAHRE_MAX - 1), jahr = [];
+      for (let j = j0; j <= j1; j++) jahr.push({ j, zins: 0, rueck: 0 });
+      const spaeter = { zins: 0, rueck: 0 };
+      z.forEach(x => { const r = jahr[+x.tag.slice(0, 4) - j0] || spaeter; r[x.art === "Zinsen" ? "zins" : "rueck"] += x.betrag; });
+      const max = Math.max(...jahr.map(r => r.zins + r.rueck), 1), BX = R + 44, BW = 200, cZ = R + 340, cR = R + 430, cS = B - R;
+      const jKopf = fort => {
+        P.text(R, y, fort ? "Zahlungen pro Jahr – Fortsetzung" : "Zahlungen pro Jahr", { gr: 13, fett: true });
+        P.text(B - R, y, `${j0}${j1 > j0 ? ` bis ${j1}` : ""} · bis zur letzten Fälligkeit`, klein({ rechts: true, gr: 8 })); y += 18;
+        P.text(R, y, "JAHR", { gr: 6.5, fett: true, farbe: GRAU });
+        P.rechteck(BX, y - 6, 7, 7, GRUEN_T, 1.5); P.text(BX + 10, y, "Zinsen", klein({ gr: 6.5 }));
+        P.rechteck(BX + 46, y - 6, 7, 7, INK, 1.5); P.text(BX + 56, y, "Rückzahlung zum Nennwert", klein({ gr: 6.5 }));
+        P.text(cZ, y, "ZINSEN", { gr: 6.5, fett: true, farbe: GRAU, rechts: true });
+        P.text(cR, y, "RÜCKZAHLUNG", { gr: 6.5, fett: true, farbe: GRAU, rechts: true });
+        P.text(cS, y, "ZUSAMMEN", { gr: 6.5, fett: true, farbe: GRAU, rechts: true });
+        y += 6; P.linie(R, y, B - R, y, INK, 0.8);
+      };
+      platz(18 + 24 + 16 * 3); jKopf(false);
+      jahr.forEach((r, i) => {
+        if (y + 16 > UNTEN) { seite(false); jKopf(true); }
+        if (i % 2) P.rechteck(R, y, B - 2 * R, 16, HELL);
+        const g = y + 11;
+        P.text(R, g, String(r.j), { gr: 8.5, fett: true });
+        const wz = r.zins / max * BW, wr = r.rueck / max * BW;
+        if (wz > 0) P.rechteck(BX, y + 4, Math.max(wz, 1), 8, GRUEN_T);
+        if (wr > 0) P.rechteck(BX + wz, y + 4, wr, 8, INK);
+        P.text(cZ, g, r.zins ? eur(r.zins) : "–", { gr: 8.5, rechts: true });
+        P.text(cR, g, r.rueck ? eur(r.rueck, fremdIn(pos) ? 2 : 0) : "–", { gr: 8.5, rechts: true });
+        P.text(cS, g, eur(r.zins + r.rueck), { gr: 8.5, fett: true, rechts: true });
+        y += 16;
+      });
+      P.linie(R, y, B - R, y, LINIE, 0.5);
+      if (spaeter.zins || spaeter.rueck) { y += 12; tx(R, y, `Nach ${j1} folgen noch ${eur(spaeter.zins)} Zinsen und ${eur(spaeter.rueck, fremdIn(pos) ? 2 : 0)} Rückzahlung.`, klein({ gr: 8 })); }
+      y += 30;
+      // Zinstermine des nächsten Kalenderjahrs – wie die Liste im Reiter
+      const bj = String(j0 + 1), zj = z.filter(x => x.art === "Zinsen" && x.tag.slice(0, 4) === bj);
+      if (zj.length) {
+        const tKopf = fort => {
+          P.text(R, y, `Zinstermine im Jahr ${bj}${fort ? " – Fortsetzung" : ""}`, { gr: 13, fett: true });
+          P.text(B - R, y, "ein Jahr als Beispiel – die Termine wiederholen sich bis zur Fälligkeit", klein({ rechts: true, gr: 8 })); y += 18;
+          P.text(R, y, "DATUM", { gr: 6.5, fett: true, farbe: GRAU }); P.text(R + 70, y, "ANLEIHE", { gr: 6.5, fett: true, farbe: GRAU });
+          P.text(B - R, y, "ZINSEN", { gr: 6.5, fett: true, farbe: GRAU, rechts: true });
+          y += 6; P.linie(R, y, B - R, y, INK, 0.8);
+        };
+        platz(18 + 24 + 16 * 3); tKopf(false);
+        zj.forEach(x => {
+          if (y + 16 > UNTEN) { seite(false); tKopf(true); }
+          P.text(R, y + 11, MC.datum(x.tag), { gr: 8.5 });
+          P.text(R + 70, y + 11, kurz(x.p) + (x.p.fremd ? "*" : ""), { gr: 8.5, max: 330 });
+          P.text(B - R, y + 11, eur(x.betrag), { gr: 8.5, rechts: true });
+          y += 16; P.linie(R, y, B - R, y, LINIE, 0.5);
+        });
+        if (zj.length > 1) { platz(18); P.text(R, y + 12, `Zinsen im Jahr ${bj}`, { gr: 8.5, fett: true }); P.text(B - R, y + 12, eur(zj.reduce((a, x) => a + x.betrag, 0)), { gr: 8.5, fett: true, rechts: true }); y += 18; }
+      }
+    }
+    for (let i = 0, gesamt = P.anzahl(); i < gesamt; i++) {
+      P.auf(i);
+      let fy = H - 34 - fuss.length * 9;
+      P.linie(R, fy - 12, B - R, fy - 12, LINIE, 0.5);
+      fuss.forEach(l => { tx(R, fy, l, { gr: 7, farbe: GRAU }); fy += 9; });
+      P.text(R, H - 22, "Bondarium – Anleihen verstehen und finden · www.bondarium.de", { gr: 7, farbe: GRAU });
+      P.text(B - R, H - 22, `Seite ${i + 1} von ${gesamt}`, { gr: 7, farbe: GRAU, rechts: true });
+    }
+    return { blob: P.blob(`${titel} – Bondarium`), name: `Bondarium-Musterdepot-${jetzt.getFullYear()}-${zwei(jetzt.getMonth() + 1)}-${zwei(jetzt.getDate())}.pdf` };
+  }
+
+  // Merkliste und Musterdepot: dasselbe Teilen, je mit eigener Statuszeile
+  const TEILEN = {
+    merkliste: { bau: depotPdf, status: "teilen-status", titel: "Merkliste – Bondarium", fertig: "Deine Merkliste ist geteilt." },
+    depot: { bau: musterPdf, status: "kd-teilen-status", titel: "Musterdepot – Bondarium", fertig: "Dein Musterdepot ist geteilt." },
+  };
+  function teilenStatus(text, fehler, id) { const el = $(id || "teilen-status"); el.className = "kto-teilen-status" + (fehler ? " fehler" : ""); el.textContent = text; }
+  function speichere(d, stattTeilen, id) {
     const url = URL.createObjectURL(d.blob), a = document.createElement("a");
     a.href = url; a.download = d.name; document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 60000);
     teilenStatus(stattTeilen ? `Dieser Browser kann nicht direkt teilen – das PDF „${d.name}“ ist heruntergeladen. Du kannst es jetzt per E-Mail oder Nachricht verschicken.`
-      : `Das PDF „${d.name}“ ist heruntergeladen.`);
+      : `Das PDF „${d.name}“ ist heruntergeladen.`, false, id);
   }
   // Teilen-Menü nur, wo der Browser Dateien teilen kann (Handy, Tablet, Safari); sonst Download. navigator.share muss direkt im
   // Klick aufgerufen werden – das PDF entsteht deshalb ohne Warten (pdf.js rechnet synchron).
-  function teilen(nurSpeichern) {
+  function teilen(nurSpeichern, art) {
+    const T = TEILEN[art || "merkliste"];
     let d;
-    try { d = depotPdf(); } catch (err) { console.warn("Merkliste-PDF:", err); teilenStatus("Das PDF ließ sich nicht erstellen. Bitte versuch es noch einmal.", true); return; }
+    try { d = T.bau(); } catch (err) { console.warn("PDF:", err); teilenStatus("Das PDF ließ sich nicht erstellen. Bitte versuch es noch einmal.", true, T.status); return; }
     let datei = null;
     try { datei = new File([d.blob], d.name, { type: "application/pdf" }); } catch (e) { datei = null; }
     if (!nurSpeichern && datei && navigator.canShare && navigator.canShare({ files: [datei] })) {
-      teilenStatus("");
-      navigator.share({ files: [datei], title: "Merkliste – Bondarium" })
-        .then(() => teilenStatus("Deine Merkliste ist geteilt."), err => { if (!err || err.name !== "AbortError") speichere(d, true); });
+      teilenStatus("", false, T.status);
+      navigator.share({ files: [datei], title: T.titel })
+        .then(() => teilenStatus(T.fertig, false, T.status), err => { if (!err || err.name !== "AbortError") speichere(d, true, T.status); });
       return;
     }
-    speichere(d, !nurSpeichern);
+    speichere(d, !nurSpeichern, T.status);
   }
   $("teilen").addEventListener("click", () => teilen(false));
   $("als-pdf").addEventListener("click", () => teilen(true));
+  $("kd-teilen").addEventListener("click", () => teilen(false, "depot"));
+  $("kd-als-pdf").addEventListener("click", () => teilen(true, "depot"));
 
   // Abmelden, Passwort ändern, Konto löschen
   $("abmelden").addEventListener("click", e => {
