@@ -236,13 +236,12 @@ Ausschalten mit einem Klick: Jede E-Mail trägt `konto.html#erinnerung-aus=<Numm
 `meta`, `erinnerung_token()` bzw. `schluessel_hash('erinnerung-aus:<Nummer>')`). Die Seite schickt sie ohne Anmeldung an
 `aktion=erinnerung-aus`, das nur ausschaltet, und sagt es oben im Kasten.
 
-Freigabe: Der Schalter ist bis zum SPF-Eintrag der Domain verborgen (`ERINNERUNG_FREI = false` in `konto.html`;
-Nutzerentscheid: erst SPF und Test-E-Mail, dann live). Der Versand auf dem Server läuft schon – ohne Schalter schaltet aber
-niemand die Erinnerung ein. Zum Freischalten die Konstante auf `true` setzen.
+Freigabe: Der Schalter war bis zum SPF-Eintrag der Absender-Domain verborgen (Nutzerentscheid: erst SPF und Test-E-Mail, dann
+live). Freigegeben am 02.10.2026: SPF für bondarium.com (`v=spf1 redirect=_spf.strato.com`) gesetzt, die Test-E-Mail kam an.
+`ERINNERUNG_FREI = false` in `konto.html` verbirgt ihn wieder.
 
 Testen: lokal `php aufruf.php erinnerung` (E-Mails in `konto-daten/lokal-mail.txt`); live der Workflow „Statistik – Testmail“
-mit Auswahl `erinnerung` – eine Beispiel-E-Mail an info@bondarium.com. Für die Zustellung an fremde Postfächer fehlt noch der
-SPF-Eintrag der Domain (siehe „E-Mail-Versand“).
+mit Auswahl `erinnerung` – eine Beispiel-E-Mail an info@bondarium.com.
 
 ## Zum Depot hinzufügen im Steckbrief
 
@@ -307,10 +306,11 @@ setzt eines.
 
 `mail()` von PHP, Absender `info@bondarium.com` – wie das Kontaktformular. Vier E-Mails: Adresse bestätigen, „es gibt
 schon ein Konto“, neues Passwort setzen (bzw. „kein Konto zu dieser Adresse“), Passwort geändert. Für beide Domains
-gilt DMARC `p=reject`; ein SPF-Eintrag fehlt (Stand 30.09.2026). Fremde Postfächer (Gmail, iCloud, GMX …) nehmen die
-E-Mail nur an, wenn STRATO sie für die Domain signiert (DKIM) oder ein SPF-Eintrag den Versand erlaubt. Kommt die
-E-Mail nicht an: bei STRATO im Kundenbereich unter Domains → DNS den SPF-Eintrag einschalten (STRATO-Standard,
-`v=spf1 redirect=smtp.rzone.de`), für `bondarium.com`. Ohne ankommende E-Mail kann sich niemand registrieren.
+gilt DMARC `p=reject`. Seit 02.10.2026 hat `bondarium.com` (die Absender-Domain) den SPF-Eintrag
+`v=spf1 redirect=_spf.strato.com` (STRATO-Standard; Kundenbereich → Domains → Domainverwaltung → Zahnrad → DNS →
+TXT- und CNAME-Records); DKIM-Schlüssel von STRATO liegen unter `strato-dkim-0002` und `-0003`. Für `bondarium.de` war der
+SPF-Eintrag am 02.10.2026 noch nicht sichtbar – von dort wird nichts verschickt. Ohne ankommende E-Mail kann sich niemand
+registrieren.
 
 ## Wochenbrief (seit 02.10.2026)
 

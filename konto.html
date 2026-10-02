@@ -1458,9 +1458,9 @@ MC.navInit();
   // 30 Tage vor jeder Fälligkeit, angestoßen vom ersten Seitenaufruf ab 7 Uhr. Daneben steht die nächste Fälligkeit und wann die
   // E-Mail dazu käme. konto.html#erinnerung öffnet „Mein Depot“ und zeigt den Schalter (Link aus der Test-E-Mail).
   const ERINNERUNG_TAGE = 30;
-  // Der Schalter erscheint erst, wenn die Domain einen SPF-Eintrag hat (Nutzerentscheid 02.10.2026: erst SPF und Test-E-Mail, dann
-  // live). Bis dahin ist nur der Versand auf dem Server bereit – ohne Schalter schaltet niemand die Erinnerung ein.
-  const ERINNERUNG_FREI = false;
+  // Der Schalter erschien erst, als die Absender-Domain einen SPF-Eintrag hatte (Nutzerentscheid 02.10.2026: erst SPF und Test-E-Mail,
+  // dann live) – freigegeben am 02.10.2026 (SPF für bondarium.com gesetzt, Test-E-Mail angekommen). false verbirgt ihn wieder.
+  const ERINNERUNG_FREI = true;
   let ER_SPRUNG = location.hash === "#erinnerung";
   function zeichneErinnerung() {
     const st = K.stand(), an = !!st.erinnern, box = $("erinnerung");
