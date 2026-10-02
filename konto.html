@@ -1307,6 +1307,15 @@ MC.navInit();
       `<td class="num" data-l="Zinsen pro Jahr">${p.zins != null ? eur(p.zins) : "–"}<small><span class="kd-m">nächster Zinstermin </span>${p.zt ? MC.datum(p.zt) : p.rechnet && !p.fest ? "kein Kupon" : "–"}</small></td>` +
       `<td><button type="button" class="kto-x" data-raus="${MC.esc(p.isin)}" aria-label="${MC.esc(o.name)} aus dem Depot entfernen" title="Aus dem Depot entfernen">×<span> Entfernen</span></button></td></tr>`;
   }
+  // Summenzeile für Tabelle und PDF. Gewicht ist der Kurswert (Nennwert × Kurs): Anteil je Anleihe (wird an p.anteil gesetzt), Rendite,
+  // Restlaufzeit und Duration gewichtet; laufende Verzinsung = Zinsen ÷ Kurswert. Anleihen ohne Kurs zählen in die Kennzahlen nicht mit.
+  function depotSummen(pos) {
+    const mk = pos.filter(p => p.kauf != null), kw = mk.reduce((x, p) => x + p.kauf, 0), mn = pos.filter(p => p.nennEur != null);
+    pos.forEach(p => { p.anteil = p.kauf != null && kw > 0 ? p.kauf / kw * 100 : null; });
+    const gew = feld => { const l = mk.filter(p => p[feld] != null), g = l.reduce((x, p) => x + p.kauf, 0); return g > 0 ? l.reduce((x, p) => x + p[feld] * p.kauf, 0) / g : null; };
+    return { mitKurs: mk.length, kw, preis: mk.reduce((x, p) => x + p.preis, 0), sz: mk.reduce((x, p) => x + (p.sz || 0), 0), mitNenn: mn.length, nenn: mn.reduce((x, p) => x + p.nennEur, 0), nennFremd: fremdIn(mn),
+      zins: pos.reduce((x, p) => x + (p.zins || 0), 0), rend: gew("rend"), rest: gew("rest"), dur: gew("dur"), lfd: kw > 0 ? mk.reduce((x, p) => x + (p.zins || 0), 0) / kw * 100 : null };
+  }
   function zeichneDepot() {
     const drin = new Set(POS.map(p => p.isin)), sel = $("kd-isin"), wahl = sel.value || WAHL;
     const frei = LISTE.filter(o => !drin.has(o.isin)).sort((a, b) => a.name.localeCompare(b.name, "de") || (a.faellig || "").localeCompare(b.faellig || ""));
@@ -1320,20 +1329,15 @@ MC.navInit();
     $("kd-liste").hidden = !pos.length; $("kd-leer").hidden = pos.length > 0; $("kd-teilen-box").hidden = !pos.length;
     $("kd-anzahl").innerHTML = pos.length ? `<strong>${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}</strong> in „${MC.esc(aktName())}“${KSTAND ? ` · Kurse vom ${MC.esc(MC.datum(KSTAND))}` : ""}.` : "";
     const kn = aktName(); $("f-depot").querySelector("button[type=submit]").textContent = kn.length <= 20 ? `Zu „${kn}“ hinzufügen` : "Zum Depot hinzufügen";
-    // Anteil und gewichtete Kennzahlen: Gewicht ist der Kurswert (Nennwert × Kurs) – Anleihen ohne Kurs zählen nicht mit
-    const mitKurs = pos.filter(p => p.kauf != null), kw = mitKurs.reduce((x, p) => x + p.kauf, 0);
-    pos.forEach(p => { p.anteil = p.kauf != null && kw > 0 ? p.kauf / kw * 100 : null; });
+    const S = depotSummen(pos);   // setzt auch den Anteil je Anleihe
     $("kd-zeilen").innerHTML = pos.map(depotZeile).join("");
-    const zins = pos.reduce((x, p) => x + (p.zins || 0), 0), mitNenn = pos.filter(p => p.nennEur != null);   // Summen in Euro; fremde Währungen zum festen Kurs
-    const gew = feld => { const l = mitKurs.filter(p => p[feld] != null), g = l.reduce((x, p) => x + p.kauf, 0); return g > 0 ? l.reduce((x, p) => x + p[feld] * p.kauf, 0) / g : null; };
-    const gRend = gew("rend"), gRest = gew("rest"), gDur = gew("dur"), zinsMitKurs = mitKurs.reduce((x, p) => x + (p.zins || 0), 0);
     $("kd-summe").innerHTML = pos.length ? `<tr><th scope="row">Summe<small>${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}${pos.length > 1 ? " · Kennzahlen nach Kurswert gewichtet" : ""}</small></th><td></td>` +
-      `<td class="num" data-l="Nennwert">${mitNenn.length ? eur(mitNenn.reduce((x, p) => x + p.nennEur, 0), fremdIn(mitNenn) ? 2 : 0) : "–"}</td>` +
-      `<td class="num" data-l="Kaufpreis">${mitKurs.length ? eur(mitKurs.reduce((x, p) => x + p.preis, 0)) : "–"}</td>` +
-      `<td class="num" data-l="Anteil">${mitKurs.length ? "100 %" : "–"}</td>` +
-      `<td class="num" data-l="Rendite">${gRend != null ? fmt(gRend, 2) + " %" : "–"}<small><span class="kd-m">lfd. Verzinsung </span>${kw > 0 ? fmt(zinsMitKurs / kw * 100, 2) + " %" : "–"}</small></td>` +
-      `<td class="num" data-l="Restlaufzeit">${gRest != null ? MC.esc(MC.restlaufzeit(gRest)) : "–"}<small><span class="kd-m">Duration </span>${gDur != null ? fmt(gDur, 1) : "–"}</small></td>` +
-      `<td class="num" data-l="Zinsen pro Jahr">${eur(zins)}</td><td></td></tr>` : "";
+      `<td class="num" data-l="Nennwert">${S.mitNenn ? eur(S.nenn, S.nennFremd ? 2 : 0) : "–"}</td>` +
+      `<td class="num" data-l="Kaufpreis">${S.mitKurs ? eur(S.preis) : "–"}</td>` +
+      `<td class="num" data-l="Anteil">${S.mitKurs ? "100 %" : "–"}</td>` +
+      `<td class="num" data-l="Rendite">${S.rend != null ? fmt(S.rend, 2) + " %" : "–"}<small><span class="kd-m">lfd. Verzinsung </span>${S.lfd != null ? fmt(S.lfd, 2) + " %" : "–"}</small></td>` +
+      `<td class="num" data-l="Restlaufzeit">${S.rest != null ? MC.esc(MC.restlaufzeit(S.rest)) : "–"}<small><span class="kd-m">Duration </span>${S.dur != null ? fmt(S.dur, 1) : "–"}</small></td>` +
+      `<td class="num" data-l="Zinsen pro Jahr">${eur(S.zins)}</td><td></td></tr>` : "";
     fxHinweis();
     if (MC.wischPruefen) MC.wischPruefen();
     zeichneZahlungen();
@@ -1795,18 +1799,20 @@ MC.navInit();
     // Dateiname mit dem Namen des Depots, nur Buchstaben, Ziffern und Bindestriche
     const slug = name.replace(/[äÄ]/g, "ae").replace(/[öÖ]/g, "oe").replace(/[üÜ]/g, "ue").replace(/ß/g, "ss").normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 30);
     const pos = POS.slice().sort((a, b) => (a.o.faellig || "9999").localeCompare(b.o.faellig || "9999") || a.isin.localeCompare(b.isin));
-    const fremd = pos.filter(p => p.fremd), GRUEN_T = "#157C00", ORANGE_T = "#A2561C", HELL = [0.957, 0.953, 0.937];
+    const fremd = pos.filter(p => p.fremd), GRUEN_T = "#157C00", HELL = [0.957, 0.953, 0.937];
     // „€“ mitten im Text: macOS-Vorschau (PDFKit) kennt für die Standardschrift Helvetica keine Breite des Euro-Zeichens und zeichnet es
     // breiter – der folgende Text liefe hinein. Deshalb jedes Stück an seine Stelle setzen und hinter „€“ ein Viertel Geviert Luft lassen.
     const tx = (x, yy, s, o) => { let cx = x; const gr = (o && o.gr) || 10; s.split("€").forEach((t, i, a) => { if (t) cx += P.text(cx, yy, t, o); if (i < a.length - 1) cx += P.text(cx, yy, "€", o) + gr * 0.25; }); };
     const SP = [];
-    [["Anleihe", 177, 0, "ISIN · Registername"], ["Kurs", 44, 1, "in %"], ["Kupon", 44, 1], ["Fälligkeit", 60, 1, "Restlaufzeit"], ["Nennwert", 62, 1],
-      ["Kurswert", 72, 1, "bis Fälligkeit +/−"], ["Zinsen", 56, 1, "pro Jahr"]]
+    // Spalten wie die Tabelle auf der Seite (Konzept B, seit 02.10.2026 abends): je Spalte zwei Angaben übereinander
+    [["Anleihe", 140, 0, "ISIN · Art · Währung"], ["Kupon", 52, 1, "Fälligkeit"], ["Nennwert", 62, 1], ["Kaufpreis", 66, 1, "Kurs"], ["Anteil", 38, 1],
+      ["Rendite", 48, 1, "lfd. Verz."], ["Restlaufzeit", 52, 1, "Duration"], ["Zinsen pro Jahr", 57, 1, "nächster Termin"]]
       .reduce((x, [t, b, r, t2]) => { SP.push({ t, t2, x, b, r: !!r }); return x + b; }, R);
-    const rx = i => SP[i].x + SP[i].b - (i === SP.length - 1 ? 0 : 6), NAME = 170;
+    const rx = i => SP[i].x + SP[i].b - (i === SP.length - 1 ? 0 : 6), NAME = 134;
     const noten = [];
     if (fremd.length && FX) noten.push(`* Fremdwährung: zur Vereinfachung mit dem Euro-Referenzkurs der EZB vom ${MC.datum(FX.stand)} in Euro umgerechnet (${[...new Set(fremd.map(p => p.o.cur))].sort().map(c => `1 € = ${fmtFx(FX.kurse[c])} ${c}`).join(", ")}) und für die ganze Laufzeit als fest angenommen – tatsächlich schwankt er (Wechselkursrisiko).`);
-    noten.push("Musterdepot: gedachte Nennwerte, kein Bestand und kein Kauf. Kurs: Schlusskurs in % des Nennwerts. Kurswert = Nennwert × Kurs, ohne Stückzinsen und Gebühren; darunter, wie viel mehr oder weniger als dieser Kurswert die Rückzahlung zum Nennwert (100 %) bringt. " +
+    noten.push("Musterdepot: gedachte Nennwerte, kein Bestand und kein Kauf. Kurs: Schlusskurs in % des Nennwerts. Kaufpreis = Nennwert × Kurs plus Stückzinsen zum Valutatag, ohne Gebühren. Anteil: Kurswert der Anleihe am Kurswert des Depots. " +
+      "Rendite: bis zur Fälligkeit, pro Jahr; laufende Verzinsung = Kupon ÷ Kurs. Duration: modifizierte Duration – um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Punkt steigt. Summe nach Kurswert gewichtet. " +
       "Zinsen und Rückzahlung vor Steuern und Kosten; Zinstermine laut Deutscher Börse, wo sie fehlen geschätzt; eine vorzeitige Kündigung ist nicht berücksichtigt. Maßgeblich sind die Anleihebedingungen.");
     noten.push("Keine Anlageberatung: Dieser Auszug ist ein Planspiel und keine Empfehlung zum Kauf oder Verkauf. Alle Angaben ohne Gewähr.");
     const fuss = [].concat(...noten.map(t => P.umbrechen(t, B - 2 * R, 7)));
@@ -1832,7 +1838,6 @@ MC.navInit();
     }
     const platz = h => { if (y + h > UNTEN) seite(false); };
     const klein = o => Object.assign({ gr: 7, farbe: GRAU }, o || {});
-    const vz = d => (d > 0 ? "+" : d < 0 ? "−" : "") + fmt(Math.abs(d), 2) + " €";
     const kurz = p => `${p.o.name} ${fmtCoupon(p.o.kupon)} ${(p.o.faellig || "").slice(0, 4)}`;
     seite(true);
     SP.forEach((s, i) => {
@@ -1846,29 +1851,36 @@ MC.navInit();
       const nw = P.text(R, z1, o.name, { gr: 9, fett: true, max: NAME - (p.fremd ? 6 : 0) });
       if (p.fremd) P.text(R + nw + 1, z1, "*", { gr: 9, fett: true });
       P.link(R, y + 4, Math.min(NAME, nw), 13, `${LINK}anleihe.html?isin=${encodeURIComponent(p.isin)}`);
-      P.text(R, z2, [p.isin, p.warum, o.reg].filter(Boolean).join(" · "), klein({ max: NAME }));
-      P.text(rx(1), z1, o.kurs != null ? fmt(o.kurs, 2) : "–", { gr: 8.5, rechts: true });
-      P.text(rx(2), z1, fmtCoupon(o.kupon), { gr: 8.5, rechts: true });
-      P.text(rx(3), z1, o.faellig ? MC.datum(o.faellig) : "–", { gr: 8.5, rechts: true });
-      if (o.faellig && jahre(o.faellig) > 0) P.text(rx(3), z2, MC.restlaufzeit(jahre(o.faellig)), klein({ rechts: true }));
-      P.text(rx(4), z1, `${fmt(p.nenn)} ${p.cur || "€"}`, { gr: 8.5, rechts: true });
-      if (p.fremd && p.nennEur != null) P.text(rx(4), z2, `= ${eur(p.nennEur)}`, klein({ rechts: true }));
-      P.text(rx(5), z1, p.kauf != null ? eur(p.kauf) : "–", { gr: 8.5, rechts: true });
-      if (p.diff != null) P.text(rx(5), z2, vz(p.diff), klein({ rechts: true, farbe: p.diff < 0 ? ORANGE_T : GRUEN_T }));
-      P.text(rx(6), z1, p.zins != null ? eur(p.zins) : "–", { gr: 8.5, rechts: true });
+      P.text(R, z2, [p.isin, p.warum, ART_NAME[o.art] || "", o.cur || ""].filter(Boolean).join(" · "), klein({ max: NAME }));
+      P.text(rx(1), z1, fmtCoupon(o.kupon), { gr: 8.5, rechts: true });
+      P.text(rx(1), z2, o.faellig ? MC.datum(o.faellig) : "unbefristet", klein({ rechts: true }));
+      P.text(rx(2), z1, `${fmt(p.nenn)} ${p.cur || "€"}`, { gr: 8.5, rechts: true });
+      if (p.fremd && p.nennEur != null) P.text(rx(2), z2, `= ${eur(p.nennEur)}`, klein({ rechts: true }));
+      P.text(rx(3), z1, p.preis != null ? eur(p.preis) : "–", { gr: 8.5, fett: true, rechts: true });
+      P.text(rx(3), z2, o.kurs != null ? fmt(o.kurs, 2) : "–", klein({ rechts: true }));
+      P.text(rx(4), z1, p.anteil != null ? `${fmt(p.anteil, 1)} %` : "–", { gr: 8.5, rechts: true });
+      P.text(rx(5), z1, p.rend != null ? `${fmt(p.rend, 2)} %` : "–", { gr: 8.5, fett: true, rechts: true });
+      P.text(rx(5), z2, p.lfd != null ? `${fmt(p.lfd, 2)} %` : "–", klein({ rechts: true }));
+      P.text(rx(6), z1, p.rest != null ? (p.rest > 0 ? MC.restlaufzeit(p.rest) : "fällig") : "–", { gr: 8.5, rechts: true });
+      P.text(rx(6), z2, p.dur != null ? fmt(p.dur, 1) : "–", klein({ rechts: true }));
+      P.text(rx(7), z1, p.zins != null ? eur(p.zins) : "–", { gr: 8.5, rechts: true });
+      P.text(rx(7), z2, p.zt ? MC.datum(p.zt) : p.rechnet && !p.fest ? "kein Kupon" : "–", klein({ rechts: true }));
       y += 31; P.linie(R, y, B - R, y, LINIE, 0.5);
       if (y + 31 > UNTEN) seite(false);
     });
     // Summenzeile wie in der Tabelle
-    const mitN = pos.filter(p => p.nennEur != null), mitK = pos.filter(p => p.kauf != null), mitD = pos.filter(p => p.diff != null);
-    const sN = mitN.reduce((a, p) => a + p.nennEur, 0), sK = mitK.reduce((a, p) => a + p.kauf, 0), sD = mitD.reduce((a, p) => a + p.diff, 0), sZ = pos.reduce((a, p) => a + (p.zins || 0), 0);
+    const S = depotSummen(pos), mitD = pos.filter(p => p.diff != null), sK = S.kw, sD = mitD.reduce((a, p) => a + p.diff, 0);
     platz(40);
     P.linie(R, y, B - R, y, INK, 0.8);
     P.text(R, y + 14, "Summe", { gr: 9, fett: true }); P.text(R, y + 25, `${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}${fremd.length ? ", in Euro" : ""}`, klein());
-    P.text(rx(4), y + 14, mitN.length ? eur(sN, fremdIn(mitN) ? 2 : 0) : "–", { gr: 8.5, fett: true, rechts: true });
-    P.text(rx(5), y + 14, mitK.length ? eur(sK) : "–", { gr: 8.5, fett: true, rechts: true });
-    if (mitD.length) P.text(rx(5), y + 25, vz(sD), klein({ rechts: true, farbe: sD < 0 ? ORANGE_T : GRUEN_T }));
-    P.text(rx(6), y + 14, eur(sZ), { gr: 8.5, fett: true, rechts: true });
+    P.text(rx(2), y + 14, S.mitNenn ? eur(S.nenn, S.nennFremd ? 2 : 0) : "–", { gr: 8.5, fett: true, rechts: true });
+    P.text(rx(3), y + 14, S.mitKurs ? eur(S.preis) : "–", { gr: 8.5, fett: true, rechts: true });
+    P.text(rx(4), y + 14, S.mitKurs ? "100 %" : "–", { gr: 8.5, fett: true, rechts: true });
+    P.text(rx(5), y + 14, S.rend != null ? `${fmt(S.rend, 2)} %` : "–", { gr: 8.5, fett: true, rechts: true });
+    P.text(rx(5), y + 25, S.lfd != null ? `${fmt(S.lfd, 2)} %` : "–", klein({ rechts: true }));
+    P.text(rx(6), y + 14, S.rest != null ? MC.restlaufzeit(S.rest) : "–", { gr: 8.5, fett: true, rechts: true });
+    P.text(rx(6), y + 25, S.dur != null ? fmt(S.dur, 1) : "–", klein({ rechts: true }));
+    P.text(rx(7), y + 14, eur(S.zins), { gr: 8.5, fett: true, rechts: true });
     y += 46;
     const merk = new Set(AUS); AUS.clear();   // das ganze Depot, nicht nur die Auswahl im Schaubild
     const z = zahlungen(); merk.forEach(i => AUS.add(i));
@@ -1876,7 +1888,7 @@ MC.navInit();
       // Satz wie über dem Schaubild
       const zi = z.filter(x => x.art === "Zinsen").reduce((a, x) => a + x.betrag, 0), ru = z.filter(x => x.art === "Rückzahlung").reduce((a, x) => a + x.betrag, 0);
       const satz = `Bis zur letzten Fälligkeit am ${MC.datum(z[z.length - 1].tag)}: ${eur(zi)} Zinsen und ${eur(ru, fremdIn(pos) ? 2 : 0)} Rückzahlung, zusammen ${eur(zi + ru)}.` +
-        (mitD.length ? ` Der Kurswert beträgt heute ${eur(sK)}, ohne Stückzinsen und Gebühren; die Rückzahlung zum Nennwert liegt ${eur(Math.abs(sD))} ${sD < 0 ? "darunter" : "darüber"}.` : "");
+        (S.mitKurs ? ` Der Kaufpreis beträgt heute ${eur(S.preis)} (Kurswert ${eur(sK)} plus ${eur(S.sz)} Stückzinsen), ohne Gebühren${mitD.length ? `; die Rückzahlung zum Nennwert liegt ${eur(Math.abs(sD))} ${sD < 0 ? "unter" : "über"} dem Kurswert` : ""}.` : "");
       const zeilen = P.umbrechen(satz, B - 2 * R, 9.5);
       platz(zeilen.length * 13);
       zeilen.forEach(l => { tx(R, y, l, { gr: 9.5, farbe: INK }); y += 13; });

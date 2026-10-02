@@ -403,8 +403,8 @@ Verzinsung, Restlaufzeit / Duration, Zinsen pro Jahr / nächster Zinstermin – 
 Beschriftung (`.kd-m`). Kaufpreis = Kurswert + Stückzinsen zum Valutatag (heute + 2 Börsentage, `VALUTA`; `MC.bond.accrued`); Anteil =
 Kurswert ÷ Summe der Kurswerte; Rendite aus dem Suchindex; laufende Verzinsung = Kupon ÷ Kurs; Duration = modifizierte Duration
 (`MC.bond.duration`); Summenzeile nach Kurswert gewichtet. „Kurswert“ mit „bis Fälligkeit +/−“ ist aus der Tabelle entfallen (im
-Schaubild steht der Unterschied weiter an den Rückzahlungsbalken). Das PDF des Musterdepots hat noch die alten Spalten – der Nutzer
-hat die Frage dazu nicht beantwortet.
+Schaubild steht der Unterschied weiter an den Rückzahlungsbalken). Das PDF des Musterdepots hat dieselben Spalten (Nutzer: „ja“);
+Tabelle und PDF nehmen die Summenzeile aus `depotSummen()`.
 
 ## Lokal testen
 
