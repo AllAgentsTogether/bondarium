@@ -178,10 +178,10 @@
         <a href="beobachten.html" class="nav-group-btn current" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
         <div class="nav-group-menu">
           <a href="beobachten.html" class="nav-ov">Übersicht</a>
-          <a href="renditen.html">Renditen Staatsanleihen seit 1970</a>
+          <a href="renditen.html">Renditen von Staatsanleihen seit 1970</a>
           <a href="zinskurve.html">Zinskurve seit 1972</a>
           <a href="realzins.html">Realzins seit 1970</a>
-          <a href="unternehmensanleihen.html" class="current">Renditen Unternehmensanleihen seit 1984</a>
+          <a href="unternehmensanleihen.html" class="current">Renditen von Unternehmensanleihen seit 1984</a>
           <a href="risikoaufschlaege.html">Risikoaufschläge seit 1984</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
@@ -203,19 +203,19 @@
     </div>
 
     <p class="eyebrow" id="eyebrow-unternehmen">Unternehmensanleihen · 1984 – 2026 · Stand: 17.09.2026</p>
-    <h2 class="abschnitt" id="h-verlauf">Renditen nach Bonität und Land seit 1984</h2>
+    <h2 class="abschnitt" id="h-verlauf">Der Verlauf nach Bonität und Land</h2>
     <div class="legend linie" id="legend-unternehmen"></div>
 
     <div id="chart-unternehmen" class="chart-scroll"></div>
 
     <p class="note" id="note-unternehmen">Alle Reihen: 10 Jahre Laufzeit. Jahresdurchschnitte in der jeweiligen Landeswährung, ergänzt um den aktuellen Wert; die Fläche um jede Linie zeigt die Spanne des Jahres. Die Ratingskalen unterscheiden sich je Land – aussagekräftig ist vor allem der Vergleich jeder Reihe mit ihrer eigenen Geschichte.</p>
 
-    <h2 class="abschnitt" id="h-segmente">Sechs Segmente im Überblick</h2>
+    <h2 class="abschnitt" id="h-segmente">Sechs Renditereihen im Überblick</h2>
     <p class="tab-note">Hoch, Tief und Ø: Jahresdurchschnitte seit Beginn der jeweiligen Reihe (frühestens 1984), ohne das laufende Jahr; Japan: noch kein volles Jahr</p>
     <div class="table-scroll" id="ctable-wrap">
     <table aria-labelledby="h-segmente">
       <thead id="cthead">
-        <tr><th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Segment</button></th><th scope="col" data-col="current"><button type="button" class="sortbtn" data-col="current">Aktuelle Rendite</button></th><th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th><th scope="col" data-col="rating"><button type="button" class="sortbtn" data-col="rating">Bonität</button></th><th scope="col" data-col="mat"><button type="button" class="sortbtn" data-col="mat">Laufzeit</button></th><th scope="col" data-col="stand"><button type="button" class="sortbtn" data-col="stand">Stand</button></th><th scope="col" data-col="high"><button type="button" class="sortbtn" data-col="high">Hoch</button></th><th scope="col" data-col="low"><button type="button" class="sortbtn" data-col="low">Tief</button></th><th scope="col" data-col="avg"><button type="button" class="sortbtn" data-col="avg">Ø</button></th></tr>
+        <tr><th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Renditereihe</button></th><th scope="col" data-col="current"><button type="button" class="sortbtn" data-col="current">Aktuelle Rendite</button></th><th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th><th scope="col" data-col="rating"><button type="button" class="sortbtn" data-col="rating">Bonität</button></th><th scope="col" data-col="mat"><button type="button" class="sortbtn" data-col="mat">Laufzeit</button></th><th scope="col" data-col="stand"><button type="button" class="sortbtn" data-col="stand">Stand</button></th><th scope="col" data-col="high"><button type="button" class="sortbtn" data-col="high">Hoch</button></th><th scope="col" data-col="low"><button type="button" class="sortbtn" data-col="low">Tief</button></th><th scope="col" data-col="avg"><button type="button" class="sortbtn" data-col="avg">Ø</button></th></tr>
       </thead>
       <tbody id="ctable"><tr><td colspan="9" class="empty">Die Daten werden geladen …</td></tr></tbody>
     </table>
@@ -275,7 +275,7 @@ const T = {
   tipRange: "Spanne", asOf: "Stand:",
   corpEyebrow: "Unternehmensanleihen",
   thHigh2: "Hoch", thLow2: "Tief", thAvg2: "Ø",
-  thSegment: "Segment", thRating: "Bonität", thMaturity: "Laufzeit",
+  thSegment: "Renditereihe", thRating: "Bonität", thMaturity: "Laufzeit",
   ratingCn: "AAA (lokal)", mat10: "10 J.",
   sUsHqm: "USA · AAA–A · 10 J. (HQM)",
   sJpAa: "Japan · AA · 10 J.", sJpA: "Japan · A · 10 J.", sCnAaa: "China · AAA · 10 J.",

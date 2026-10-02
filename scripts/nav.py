@@ -98,10 +98,10 @@ KAUFEN = ("Kaufen", "kaufen.html", [
 # „Zinsen“: Marktdaten, täglich aktuell. Kopf = Übersicht beobachten.html (Dateiname bleibt, damit alle Links gelten).
 # „Renditen“ steht vor Staats- und Unternehmensanleihen, damit die Einträge nicht wie die Listen im Menü „Anleihen“ klingen.
 ZINSEN = ("Zinsen", "beobachten.html", [
-    ("Renditen Staatsanleihen seit 1970", "renditen.html"),
+    ("Renditen von Staatsanleihen seit 1970", "renditen.html"),
     ("Zinskurve seit 1972", "zinskurve.html"),
     ("Realzins seit 1970", "realzins.html"),
-    ("Renditen Unternehmensanleihen seit 1984", "unternehmensanleihen.html"),
+    ("Renditen von Unternehmensanleihen seit 1984", "unternehmensanleihen.html"),
     ("Risikoaufschläge seit 1984", "risikoaufschlaege.html"),
     ("Langläufer", "langlaeufer.html"),
 ])

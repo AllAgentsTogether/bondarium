@@ -243,10 +243,10 @@
         <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
         <div class="nav-group-menu">
           <a href="beobachten.html" class="nav-ov">Übersicht</a>
-          <a href="renditen.html">Renditen Staatsanleihen seit 1970</a>
+          <a href="renditen.html">Renditen von Staatsanleihen seit 1970</a>
           <a href="zinskurve.html">Zinskurve seit 1972</a>
           <a href="realzins.html">Realzins seit 1970</a>
-          <a href="unternehmensanleihen.html">Renditen Unternehmensanleihen seit 1984</a>
+          <a href="unternehmensanleihen.html">Renditen von Unternehmensanleihen seit 1984</a>
           <a href="risikoaufschlaege.html">Risikoaufschläge seit 1984</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
@@ -282,13 +282,13 @@
         <div class="gruppen" id="merkmale"></div>
       </section>
 
-      <aside class="seite" aria-label="Rechenbeispiel und Werkzeuge">
+      <aside class="seite" aria-label="Rechenbeispiel und weitere Schritte">
         <section class="karte re" id="rechnung" aria-labelledby="h-rechnung">
           <h2 id="h-rechnung">Rechenbeispiel</h2>
           <div id="rechnung-inhalt"></div>
         </section>
         <section class="karte" aria-labelledby="h-werkz">
-          <h2 id="h-werkz">Werkzeuge</h2>
+          <h2 id="h-werkz">Weiter mit dieser Anleihe</h2>
           <ul class="werkz" id="werkz"></ul>
         </section>
       </aside>
@@ -609,7 +609,7 @@ function zeige(r, k, meta) {
       meta.ezb ? kv(`Bonität laut EZB<a class="hilf bon-warum" href="#quellen" title="${bon == null ? "Steht nicht auf der EZB-Liste" : "Von uns aus der EZB-Liste abgelesen"} (Stand ${fmtDate(meta.ezb)}) – zur Erklärung" aria-label="Bonität laut EZB: Erklärung">?</a>`,
         bon === 1 ? "AAA bis A−" : bon === 3 ? "BBB+ bis BBB−" : bon === 0 ? "mindestens BBB−" : "keine Angabe", "") : "",
     ]),
-    grp("Handel und Stückelung", [
+    grp("Währung, Stückelung und Volumen", [
       kv(`Währung${ccy !== "EUR" ? hilf("fremdwaehrungsanleihe", "Fremdwährung") : ""}`, `${MC.esc(ccy)}${wName ? " · " + MC.esc(wName) : ""}`, ""),
       kv(`Stückelung${hilf("stueckelung", "Stückelung")}`, `${fmtStk(stk)} ${MC.esc(ccy)}`, typeof stk === "number" && stk < 1 ? "laut Register" : "kleinster handelbarer Nennwert"),
       kv(`Volumen${hilf("volumen", "Volumen")}`, `${fmtVol(vol)} ${MC.esc(ccy)}`, "ausgegebener Nennbetrag"),

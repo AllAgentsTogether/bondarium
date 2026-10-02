@@ -79,5 +79,6 @@ Die vier neuen Skripte laufen auch mit dem lokalen Python 3.9. Ansehen: `http://
 - **Rückfallwerte der Datenseiten**: Tabellen und Kacheln in `renditen.html`, `zinskurve.html` usw. tragen im HTML
   den Stand der letzten Handpflege; aktuell werden sie erst im Browser. In `llms-full.txt` stehen die aktuellen
   Werte. Wer sie auch im HTML will, ergänzt `statische_tabellen.py` je Seite.
-- **Überschriften der Übersichtsseiten**: „Verstehen“, „Kaufen“, „Zinsen“, „Glossar“ sind als H1 kurz. Für
-  Suchmaschinen wäre „Anleihen verstehen“, „Anleihen kaufen“ besser – eine Textentscheidung.
+- **Überschriften der Übersichtsseiten**: seit 02.10.2026 mit Thema („Akademie: Anleihen verstehen“, „Anleihen finden: …“,
+  „Anleihen kaufen: …“, „Zinsen im Verlauf: …“, „Glossar: Anleihen-Begriffe von A bis Z“); im Menü bleiben die kurzen Namen.
+  Liste aller Überschriften mit Urteil: `tmp/ueberschriften/bewertung.py`.

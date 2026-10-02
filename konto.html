@@ -200,7 +200,7 @@
   .kd-t tfoot th, .kd-t tfoot td { font-weight: 700; border-bottom: 0; border-top: 1px solid rgba(26,26,25,0.35); padding-top: 12px; }
   .kd-t tfoot small { font-weight: 400; }
   .kd-t td:last-child, .kd-t th:last-child { padding-right: 0; text-align: right; width: 1%; }
-  .kd-h3 { font-size: 22px; font-weight: 700; letter-spacing: -0.015em; margin: 34px 0 6px; }
+  h2.kd-h3 { font-size: 22px; font-weight: 700; line-height: 1.25; letter-spacing: -0.015em; margin: 34px 0 6px; }   /* seit 02.10.2026 Ebene 2 (vorher h3), Aussehen unverändert */
   .kd-zsum { font-size: 16px; line-height: 1.6; color: var(--text); max-width: 760px; margin: 0; }
   .kd-zsum b { color: var(--ink); font-weight: 600; white-space: nowrap; }
   .kd-karte { --scroll-bg: #fff; background: #fff; border: 1px solid #E4E3DF; border-radius: 16px; box-shadow: var(--shadow); padding: 16px 20px 14px; margin: 16px 0 0; }
@@ -286,7 +286,7 @@
     .kd-t tfoot small, .kd-t tfoot td[data-l]::before { color: rgba(255,255,255,0.74); }
     .kd-t tfoot td[data-l="Nennwert"] { grid-column: auto; }
     .kd-karte { padding: 14px 14px 12px; }
-    .kd-h3 { font-size: 20px; }
+    h2.kd-h3 { font-size: 20px; }
     .kto-x { width: auto; height: auto; padding: 6px 12px; display: inline-flex; gap: 2px; }
     .kto-x span { display: inline; }
   }
@@ -367,10 +367,10 @@
         <a href="beobachten.html" class="nav-group-btn" aria-expanded="false"><span>Zinsen</span><span class="nav-caret" aria-hidden="true"></span></a>
         <div class="nav-group-menu">
           <a href="beobachten.html" class="nav-ov">Übersicht</a>
-          <a href="renditen.html">Renditen Staatsanleihen seit 1970</a>
+          <a href="renditen.html">Renditen von Staatsanleihen seit 1970</a>
           <a href="zinskurve.html">Zinskurve seit 1972</a>
           <a href="realzins.html">Realzins seit 1970</a>
-          <a href="unternehmensanleihen.html">Renditen Unternehmensanleihen seit 1984</a>
+          <a href="unternehmensanleihen.html">Renditen von Unternehmensanleihen seit 1984</a>
           <a href="risikoaufschlaege.html">Risikoaufschläge seit 1984</a>
           <a href="langlaeufer.html">Langläufer</a>
         </div>
@@ -528,7 +528,7 @@
         <details class="kd-fx" id="kd-fx" hidden><summary>* Fremdwährungen werden zur Vereinfachung in Euro umgerechnet</summary><p id="kd-fx-t"></p></details>
         <div class="kto-leer" id="kd-leer" hidden><p><b>Dein Depot ist noch leer.</b> Wähl oben eine Anleihe von deiner Merkliste, trag einen Nennwert ein – zum Beispiel 5.000 € – und füg sie hinzu.</p></div>
         <div id="kd-zahlungen" hidden>
-          <h3 class="kd-h3" id="h-zahl">Zahlungen</h3>
+          <h2 class="kd-h3" id="h-zahl">Zahlungen aus deinem Musterdepot</h2>
           <p class="kd-zsum" id="kd-zsum"></p>
           <figure class="kd-karte" aria-labelledby="kd-j-t">
             <figcaption><b id="kd-j-t">Zahlungen pro Jahr</b><span id="kd-j-u">bis zur letzten Fälligkeit</span></figcaption>
