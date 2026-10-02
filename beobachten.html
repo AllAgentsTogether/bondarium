@@ -135,7 +135,8 @@
   /* Bildwelt 2.0 (30.09.2026, Vorlage des Nutzers): Kartenbilder = Titel-Illustrationen der Zielseiten (<img class="hub-img">),
      Weiter-Karte als flache Hauch-Fläche ohne Bildfeld (auch Tablet und Handy) */
   .hub-card.next, .hub-card.next:hover { background: #DCFBD3; border-color: transparent; }
-  /* Zinsen-Motive (01.10.2026, vom Nutzer geliefert, 320 × 170): Bildfeld fast randlos, am Handy breiter */
+  /* Zinsen-Motive (02.10.2026): dieselben Dateien wie die Titel-Illustrationen der sechs Seiten (spot-*.svg, 160 × 110, ohne Schrift),
+     Quelle tmp/zinsen-icons/build.py; Bildfeld fast randlos, am Handy breiter */
   .hub-card:not(.next) .hub-img { padding: 8px 10px 4px; }
   @media (max-width: 600px) { :root { --spalte: 132px; } .hub-card:not(.next) .hub-img { height: 90px; padding: 4px 2px; } }
   .hub-card.next:hover { border-color: var(--green-text); }
@@ -238,32 +239,32 @@
 
   <div class="hub">
     <a class="hub-card" href="renditen.html">
-      <img class="hub-img" src="zinsen-staatsanleihen.svg?v=2" alt="" width="320" height="170">
+      <img class="hub-img" src="spot-renditen.svg?v=2" alt="" width="160" height="110">
       <h2>Renditen von Staats&shy;anleihen seit 1970</h2>
       <p class="desc">Acht Länder im Vergleich</p>
     </a>
     <a class="hub-card" href="zinskurve.html">
-      <img class="hub-img" src="zinsen-zinskurve.svg?v=2" alt="" width="320" height="170">
+      <img class="hub-img" src="spot-zinskurve.svg?v=2" alt="" width="160" height="110">
       <h2>Zinskurve seit 1972</h2>
       <p class="desc">Lohnt es sich, lange zu binden?</p>
     </a>
     <a class="hub-card" href="realzins.html">
-      <img class="hub-img" src="zinsen-realzins.svg?v=2" alt="" width="320" height="170">
+      <img class="hub-img" src="spot-realzins.svg?v=2" alt="" width="160" height="110">
       <h2>Realzins seit 1970</h2>
       <p class="desc">Was nach der Inflation übrig bleibt</p>
     </a>
     <a class="hub-card" href="unternehmensanleihen.html">
-      <img class="hub-img" src="zinsen-unternehmensanleihen.svg?v=2" alt="" width="320" height="170">
+      <img class="hub-img" src="spot-unternehmensanleihen.svg?v=2" alt="" width="160" height="110">
       <h2>Renditen von Unternehmens&shy;anleihen seit 1984</h2>
       <p class="desc">Sechs Segmente nach Bonität, je 10 Jahre</p>
     </a>
     <a class="hub-card" href="risikoaufschlaege.html">
-      <img class="hub-img" src="zinsen-risikoaufschlaege.svg?v=2" alt="" width="320" height="170">
+      <img class="hub-img" src="spot-risikoaufschlaege.svg?v=2" alt="" width="160" height="110">
       <h2>Risiko&shy;aufschläge seit 1984</h2>
       <p class="desc">Das Angstbarometer: Länder und Unternehmen</p>
     </a>
     <a class="hub-card" href="langlaeufer.html">
-      <img class="hub-img" src="zinsen-langlaeufer.svg?v=2" alt="" width="320" height="170">
+      <img class="hub-img" src="spot-langlaeufer.svg?v=2" alt="" width="160" height="110">
       <h2>Langläufer</h2>
       <p class="desc">Sieben Anleihen mit bis zu 100 Jahren Laufzeit</p>
     </a>
