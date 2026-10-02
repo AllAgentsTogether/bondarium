@@ -145,12 +145,12 @@ ein Segment, nennt es Anleihe und Betrag. Seit 01.10.2026 abends sind es die Far
 Farben an die Website an“): Tiefgrün, Tinte, Orange, danach Abstufungen aus denselben Familien. Das Orange (#DD803D) ist
 eine Spur heller als `--orange`, damit es sich bei Rot-Grün-Schwäche vom Tiefgrün abhebt; die ersten sechs Farben bestehen
 die Prüfung über alle Paare, sieben bis zehn liegen enger beieinander (Zahlen, Legende und Liste helfen). Jedes zweite Jahr
-ist ganz leicht hinterlegt, damit man sieht, wo ein neues Jahr anfängt. Läuft das Depot länger als 30 Jahre, endet jede Grundlinie mit einem Achsenbruch (//), und rechts steht das
-Ausblick-Feld (seit 02.10.2026, Nutzerentscheid für Lösung A aus `tmp/Bondarium-Langlaeufer-Schaubild.pdf`; vorher gestrichelte
-Spalte und ein Satz unter dem Bild): Zeitraum danach, Zinsen zusammen mit Ø pro Jahr, die späteren Fälligkeiten (bis drei mit
-Kursgewinn/-verlust, bis sieben kurz, sonst „und N weitere“) und Zinsen und Rückzahlung zusammen – keine Balken. Ist der Platz
-für das Bild schmaler als 860 px (Handy, Tablet; das Bild wird dort zum Wischen breiter), steht dasselbe als Karte unter dem
-Bild (`#kd-rest`). Ein Schaubild der nächsten zwölf Monate
+ist ganz leicht hinterlegt, damit man sieht, wo ein neues Jahr anfängt. Läuft das Depot länger als 30 Jahre, folgen nur noch die Jahre mit einer Rückzahlung als eigene
+Spalte; die Jahre dazwischen fasst je eine schmale, schraffierte Spalte zusammen – „je 570“, wenn die Zinsen in diesen Jahren
+gleich sind, sonst „Ø …“, nie eine Summe –, mit Achsenbruch und der Beschriftung „2056 / bis 2085“. Lücken von ein oder zwei
+Jahren bleiben einzelne Jahre. Alles auf derselben Skala, die späten Rückzahlungen sind also direkt mit den frühen
+vergleichbar. Seit 02.10.2026 (Nutzerentscheid für Lösung D, `tmp/Bondarium-Langlaeufer-Schaubild-2.pdf`); davor kurz ein graues
+Ausblick-Feld rechts (Lösung A, vom Nutzer verworfen: „Würg“), davor eine gestrichelte Spalte mit einem Satz unter dem Bild. Ein Schaubild der nächsten zwölf Monate
 gab es am 01.10.2026 kurz; es ist auf Nutzerwunsch entfernt. Gerechnet wird wie im Steckbrief:
 Zinstermine an den Zinstagen laut Deutscher Börse, sonst geschätzt vom Fälligkeitstag rückwärts (`MC.bond.couponDates`);
 Zinsen je Termin = Nennwert × Kupon ÷ Termine im Jahr; Rückzahlung zum Nennwert; vor Steuern und Kosten, ohne
