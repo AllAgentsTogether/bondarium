@@ -397,6 +397,15 @@ noch „Passend zu deiner Merkliste“; Reiter „Lernen“ ganz rechts; „Gesp
 die Liste heißt „Alle kommenden Zinstermine“ und nennt alle Termine bis zur letzten Fälligkeit (im PDF die nächsten 24), und die
 Erinnerung kommt 20 Tage vor der Fälligkeit und noch einmal am Fälligkeitstag.
 
+**Tabelle „Mein Depot“ nach Konzept B (02.10.2026 abends, Nutzerentscheid nach `tmp/Bondarium-Musterdepot-Konzepte.pdf`):** Spalten
+Anleihe (ISIN · Art · Währung), Kupon / Fälligkeit, Nennwert (Eingabefeld), Kaufpreis / Kurs, Anteil (mit Balken), Rendite / laufende
+Verzinsung, Restlaufzeit / Duration, Zinsen pro Jahr / nächster Zinstermin – je Zelle zwei Angaben übereinander, am Handy mit
+Beschriftung (`.kd-m`). Kaufpreis = Kurswert + Stückzinsen zum Valutatag (heute + 2 Börsentage, `VALUTA`; `MC.bond.accrued`); Anteil =
+Kurswert ÷ Summe der Kurswerte; Rendite aus dem Suchindex; laufende Verzinsung = Kupon ÷ Kurs; Duration = modifizierte Duration
+(`MC.bond.duration`); Summenzeile nach Kurswert gewichtet. „Kurswert“ mit „bis Fälligkeit +/−“ ist aus der Tabelle entfallen (im
+Schaubild steht der Unterschied weiter an den Rückzahlungsbalken). Das PDF des Musterdepots hat noch die alten Spalten – der Nutzer
+hat die Frage dazu nicht beantwortet.
+
 ## Lokal testen
 
 Lokal braucht es PHP (`brew install php`). Der Python-Server der Vorschau führt kein PHP aus.
