@@ -288,8 +288,11 @@
       setz("r2-nenn", $("r1-nenn") ? $("r1-nenn").value : ""); setz("r2-kupon", isNaN(kup) ? "" : z2(kup));
       setz("r2-letzter", iso(R1.prev)); setz("r2-valuta", iso(v)); var f2 = $("r2-freq"); if (f2 && fs) f2.value = fs.value;
       var n2 = $("r2-nenn"); if (EINH1 !== "€") { EINH2 = EINH1; if (n2 && n2.nextElementSibling) n2.nextElementSibling.textContent = EINH1; }
-      if (EINH1 === "€") setz("r3-betrag", Math.round(R1.kauf).toLocaleString("de-DE"));   // Netto rechnet in Euro – Fremdwährung nicht als Euro übernehmen setz("r3-rendite", z2(rend)); setz("r3-jahre", R1.jahre.toLocaleString("de-DE", { maximumFractionDigits: 1 }));
-      setz("r4-kupon", isNaN(kup) ? "" : z2(kup)); setz("r4-jahre", R1.jahre.toLocaleString("de-DE", { maximumFractionDigits: 1 })); setz("r4-rendite", z2(rend));
+      // Restlaufzeit mit 2 Stellen und mindestens 0,01 Jahren – sonst wird eine Laufzeit unter etwa 18 Tagen zu „0“ und Rechner 3/4 melden einen Fehler
+      var jt = Math.max(R1.jahre, 0.01).toLocaleString("de-DE", { maximumFractionDigits: 2 });
+      if (EINH1 === "€") setz("r3-betrag", Math.round(R1.kauf).toLocaleString("de-DE"));   // Netto rechnet in Euro – Fremdwährung nicht als Euro übernehmen
+      setz("r3-rendite", z2(rend)); setz("r3-jahre", jt);
+      setz("r4-kupon", isNaN(kup) ? "" : z2(kup)); setz("r4-jahre", jt); setz("r4-rendite", z2(rend));
     }
     bind(["r2-nenn", "r2-kupon", "r2-freq", "r2-letzter", "r2-valuta"], stueckzinsen);
     bind(["r3-betrag", "r3-rendite", "r3-jahre", "r3-kist", "r3-fsa"], netto);
