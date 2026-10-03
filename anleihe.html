@@ -55,7 +55,7 @@
   .hinw .ic { width: 28px; height: 28px; border-radius: 50%; background: #fff; border: 1px solid rgba(26,26,25,0.25); display: grid; place-items: center; font-weight: 700; font-size: 14px; color: var(--ink); }
   .hinw p + p { margin-top: 4px; }
   .hinw b { font-weight: 600; }
-  /* Raster: Inhalt links, Rechenbeispiel und Werkzeuge rechts (mitlaufend); am Handy eine Spalte in DOM-Reihenfolge */
+  /* Raster: Inhalt links, Werkzeuge rechts (mitlaufend; bis 03.10.2026 darüber das Rechenbeispiel); am Handy eine Spalte in DOM-Reihenfolge */
   .stb { display: grid; grid-template-columns: minmax(0, 1fr) 312px; column-gap: 30px; align-items: start; }
   .stb > * { grid-column: 1; min-width: 0; }
   .stb > .seite { grid-column: 2; grid-row: 1 / span 20; position: sticky; top: 112px; display: grid; gap: 14px; }
@@ -103,9 +103,6 @@
   .kv .kv-ver.plus, .kv .kv-ver.minus { color: var(--ink); }
   .kv-quelle { font-size: 12.5px; color: var(--text); line-height: 1.5; margin-top: 6px; }
   /* Handel */
-  .zplan { margin-top: 10px; font-size: 13.5px; }
-  .zplan > summary { cursor: pointer; font-weight: 600; color: var(--green-text); }
-  .zplan h3 { display: none; }   /* die Überschrift trägt schon der Aufklapper */
   .strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); }
   .strip > div { padding: 11px 14px; border-right: 1px solid var(--rule); min-width: 0; }
   .strip > div:last-child { border-right: 0; }
@@ -115,25 +112,8 @@
   .meta b { color: var(--ink); font-weight: 600; }
   /* rechte Spalte */
   .karte { background: #fff; border: 1px solid var(--rule); border-radius: 16px; box-shadow: var(--shadow); padding: 15px 16px 14px; }
-  .karte.re { border-top: 4px solid var(--rub, var(--up)); }
   .karte h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 8px; }
   .karte h3 { font-size: 15px; font-weight: 700; margin: 14px 0 4px; }
-  .eing { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 6px 8px; font-size: 14px; margin-bottom: 8px; }
-  .eing input { font: inherit; font-size: 15px; font-weight: 600; width: 100%; min-width: 0; padding: 6px 10px; border: 1px solid rgba(44,44,42,0.25); border-radius: 8px; color: var(--ink); background: #fff; text-align: right; font-variant-numeric: tabular-nums; }
-  .eing input:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
-  .eing input[aria-invalid="true"] { border-color: #B3261E; box-shadow: 0 0 0 1px #B3261E; }
-  .eing-fehler { font-size: 13px; color: #B3261E; font-weight: 600; margin: -2px 0 8px; }
-  .eing-fehler:empty { display: none; }
-  .rt { width: 100%; border-collapse: collapse; font-size: 14px; }
-  .rt td { padding: 6px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
-  .rt td:last-child { text-align: right; font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; padding-left: 8px; }
-  .rt small { display: block; font-size: 12px; color: var(--text); font-weight: 400; }
-  .rt tr.sum td { font-weight: 700; font-size: 15px; border-bottom: 2px solid var(--ink); }
-  .rt tr.zw td { padding-top: 12px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); border-bottom: 0; text-align: left; }
-  .rt tr.diff td { font-weight: 700; font-size: 15px; border-bottom: 0; }
-  .annahmen { font-size: 12.5px; color: var(--text); line-height: 1.5; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--rule); }
-  .aus { background: #F6F5F1; border-radius: 12px; padding: 11px 13px; font-size: 14px; line-height: 1.5; }
-  .aus b { font-weight: 600; }
   .werkz { list-style: none; display: grid; gap: 8px; margin: 0; padding: 0; }
   .werkz a, .werkz button { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 8px; font: inherit; font-size: 14.5px; font-weight: 600; color: var(--ink); text-decoration: none; text-align: left; border: 1px solid rgba(44,44,42,0.2); border-radius: 12px; padding: 9px 12px; background: #fff; cursor: pointer; }
   .werkz a:hover, .werkz button:hover { border-color: var(--ink); }
@@ -157,10 +137,9 @@
   }
   @media (max-width: 760px) {
     body.mit-leiste { padding-bottom: 96px; }
-    .leiste { display: grid; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; grid-template-columns: 1fr 1.3fr; gap: 8px; padding: 10px 14px calc(12px + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.97); border-top: 1px solid var(--rule); box-shadow: 0 -6px 20px rgba(26,26,25,0.08); }
+    .leiste { display: grid; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; grid-template-columns: 1fr; gap: 8px; padding: 10px 14px calc(12px + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.97); border-top: 1px solid var(--rule); box-shadow: 0 -6px 20px rgba(26,26,25,0.08); }
     .leiste[hidden] { display: none; }
     .leiste a, .leiste button { font: inherit; font-size: 15px; font-weight: 600; text-align: center; border-radius: 999px; padding: 11px 10px; text-decoration: none; color: var(--ink); border: 1px solid rgba(44,44,42,0.25); background: #fff; cursor: pointer; }
-    .leiste a { background: var(--green); border-color: var(--green); }
   }
   @media (max-width: 600px) {
     h1 { font-size: 26px; min-height: 2.3em; }
@@ -331,11 +310,7 @@
         <div class="gruppen" id="merkmale"></div>
       </section>
 
-      <aside class="seite" aria-label="Rechenbeispiel und weitere Schritte">
-        <section class="karte re" id="rechnung" aria-labelledby="h-rechnung">
-          <h2 id="h-rechnung">Rechenbeispiel</h2>
-          <div id="rechnung-inhalt"></div>
-        </section>
+      <aside class="seite" aria-label="Weitere Schritte">   <!-- bis 03.10.2026 stand hier zuerst das Rechenbeispiel (auf Nutzerwunsch entfernt) -->
         <section class="karte" aria-labelledby="h-werkz">
           <h2 id="h-werkz">Weiter mit dieser Anleihe</h2>
           <ul class="werkz" id="werkz"></ul>
@@ -374,7 +349,7 @@
         <p><strong>Kurse und Handel.</strong> Deutsche Börse, Nachhandelsdaten nach MiFIR Art. 13 (Börse Frankfurt, Tradegate; 15 Minuten verzögert, kostenlos veröffentlicht): jede Kursfeststellung mit Zeitpunkt, Kurs, Stückzahl und Handelsplatz. Daraus stammen Schlusskurs, Eröffnung, Hoch, Tief, die Zahl der Feststellungen und der Abschlüsse – alle vom Kursplatz (in der Regel Frankfurt); der Umsatz zählt Frankfurt und Tradegate zusammen, deshalb kann es Umsatz auf Tradegate geben, obwohl in Frankfurt kein Abschluss zustande kam. Ohne Abschluss ist der Kurs die Feststellung des Spezialisten (Taxe). Bundeswertpapiere: Kurs und Rendite der Deutschen Bundesbank; fehlt deren Kurs für einen Tag, steht dort der Börsenkurs (am Kurs ist die Quelle genannt). Täglich aktualisiert; der Kursverlauf wird seit dem 24.09.2026 gesammelt, für Bundeswertpapiere reicht er laut Bundesbank bis zur Ausgabe zurück.</p>
         <p><strong>Ältere Kurse von US-Staatsanleihen.</strong> Vor dem 24.09.2026 stammt der Kursverlauf der US-Treasuries vom U.S. Department of the Treasury (Bureau of the Fiscal Service, TreasuryDirect „FedInvest – Security Price Detail“): Preis zum Tagesende je 100 Dollar Nennwert, ohne Stückzinsen, bei TIPS ohne Inflationsfaktor; bis Ende 2023 ein Wert je Woche, danach täglich. Als Werk der US-Regierung frei nutzbar. Die Frankfurter Kurse lagen beim Vergleich am 25.09.2026 im Mittel rund 0,2 Prozentpunkte darunter (andere Uhrzeit und Preisermittlung) – daher kann der Verlauf am 24.09.2026 eine kleine Stufe zeigen.</p>
         <p><strong>Ältere Kurse niederländischer Staatsanleihen.</strong> Vor dem 24.09.2026 stammt der Kursverlauf der niederländischen Staatsanleihen (DSL) aus dem täglichen Fixing von MTS Netherlands, veröffentlicht von der niederländischen Schuldenagentur (Dutch State Treasury Agency, DSTA) unter der Lizenz CC0: Mittelkurs in % des Nennwerts, ohne Stückzinsen; bis Ende 2023 ein Wert je Woche, danach täglich. MTS übernimmt keine Gewähr für die Richtigkeit. Die Frankfurter Kurse lagen beim Vergleich vom 24. bis 30.09.2026 im Mittel rund 0,1 Prozentpunkte darunter – daher kann der Verlauf am 24.09.2026 eine kleine Stufe zeigen.</p>
-        <p><strong>Stammdaten.</strong> ESMA-Register FIRDS, gemeldet vom Handelsplatz (unverändert übernommen; weicht der Kurzname im Register – Kupon und Fälligkeit nach ISO 18774 – oder der Name vom Registerwert ab, steht der Widerspruch daneben, und es gibt weder Rendite noch Rechenbeispiel): Name, Währung, Kupon oder Zinsformel, Fälligkeit, ausgegebener Betrag, Stückelung, Rang (Seniorität), Besicherung oder Garantie und Rückzahlungsart (aus dem CFI-Code), erster Handelstag. Fehlt eine Angabe, steht „nicht gemeldet“. Emittent und Konzernsitz laut LEI-Register (GLEIF); Namen, die das Register nur in Großbuchstaben meldet, zeigen wir in üblicher Groß- und Kleinschreibung (die Originalschreibweise erscheint beim Überfahren des Namens). Die ESMA steht in keiner Verbindung zu dieser Seite. Der Titel über dem Registernamen ist aus Emittent (bei Staaten: Land), Kupon und Fälligkeit zusammengesetzt.</p>
+        <p><strong>Stammdaten.</strong> ESMA-Register FIRDS, gemeldet vom Handelsplatz (unverändert übernommen; weicht der Kurzname im Register – Kupon und Fälligkeit nach ISO 18774 – oder der Name vom Registerwert ab, steht der Widerspruch daneben, und es gibt keine Rendite): Name, Währung, Kupon oder Zinsformel, Fälligkeit, ausgegebener Betrag, Stückelung, Rang (Seniorität), Besicherung oder Garantie und Rückzahlungsart (aus dem CFI-Code), erster Handelstag. Fehlt eine Angabe, steht „nicht gemeldet“. Emittent und Konzernsitz laut LEI-Register (GLEIF); Namen, die das Register nur in Großbuchstaben meldet, zeigen wir in üblicher Groß- und Kleinschreibung (die Originalschreibweise erscheint beim Überfahren des Namens). Die ESMA steht in keiner Verbindung zu dieser Seite. Der Titel über dem Registernamen ist aus Emittent (bei Staaten: Land), Kupon und Fälligkeit zusammengesetzt.</p>
         <p id="q-zinstermine"><strong>Zinstermine.</strong> Das ESMA-Register nennt weder die Zinstermine noch die Zahl der Zinszahlungen im Jahr. Beides stammt aus der täglich veröffentlichten Liste der Deutschen Börse „Alle handelbaren Instrumente“ für die Börse Frankfurt: Sie nennt je Anleihe den letzten und den nächsten Zinstermin; daraus ergeben sich die Zinstage und ob jährlich, halbjährlich, vierteljährlich oder monatlich gezahlt wird. Dann steht „laut Deutscher Börse“ am Zinstermin. Fällt ein Zinstag auf ein Wochenende oder einen Feiertag, kommt das Geld am nächsten Bankarbeitstag. <strong>Geschätzt</strong> sind die Zinstermine, wenn die Liste für die Anleihe keine Termine nennt – etwa weil sie nicht in Frankfurt gehandelt wird oder der erste Zinstermin noch aussteht: Dann gilt der Jahrestag der Fälligkeit als Zinstermin; halbjährlich bei Anleihen in Dollar, Pfund und einigen weiteren Währungen mit einer ISIN aus dem Heimatmarkt der Währung, bei Dollar-Anleihen mit internationaler ISIN (außer von deutschen und österreichischen Emittenten), bei Staatsanleihen Italiens und Maltas und bei Euro-Unternehmensanleihen in der Bauart „Reg.S“; sonst jährlich. Bei geschätzten Terminen können Stückzinsen, Zahlungsplan und Rendite vom tatsächlichen Wert abweichen. Maßgeblich sind immer die Anleihebedingungen.</p>
         <p id="q-bonitaet"><strong>Bonität laut EZB.</strong> Kurz: „AAA bis A−“ ist die beste Gruppe, „BBB+ bis BBB−“ die untere Stufe guter Bonität, „keine Angabe“ sagt nichts über die Bonität. Im Einzelnen: Die Ratings der Agenturen sind lizenzpflichtig; wir zeigen sie nicht. Frei verfügbar ist die tägliche Liste der Europäischen Zentralbank mit den Wertpapieren, die Banken bei ihr als Sicherheit hinterlegen dürfen. Wer dort steht, erfüllt die Mindestanforderung der EZB an die Bonität: Bonitätsstufe 3, das entspricht BBB− (bei Moody’s Baa3). Die Liste nennt kein Rating, aber je Wertpapier einen Bewertungsabschlag – und der ist für die Bonitätsstufen 1 und 2 (AAA bis A−, bei Moody’s Aaa bis A3) niedriger als für Stufe 3 (BBB+ bis BBB−, bei Moody’s Baa1 bis Baa3). Aus Abschlag, Restlaufzeit und Kuponart lesen wir mit der Abschlagstabelle der EZB ab, zu welcher der beiden Gruppen die Anleihe gehört. Das ist eine Bearbeitung von uns, keine Angabe der EZB; genauer als diese zwei Gruppen geht es nicht. Liegen mehrere Ratings vor, zählt für die EZB das beste der von ihr anerkannten Agenturen. <strong>Keine Angabe</strong> heißt nur: Die Anleihe steht nicht auf der Liste – etwa weil sie außerhalb des Europäischen Wirtschaftsraums begeben wurde (US-Staatsanleihen), nachrangig ist oder auf eine andere Währung als Euro, Dollar, Pfund oder Yen lautet. Über die Bonität sagt das nichts. Die Stufe ist kein Rating und keine Empfehlung, und sie kann sich täglich ändern. Was Bonität bedeutet, erklärt die Seite <a href="bonitaet.html">Bonität und Ratings</a>. Quelle: Europäische Zentralbank, Liste der notenbankfähigen marktfähigen Sicherheiten; die EZB steht in keiner Verbindung zu dieser Seite.</p>
         <p><strong>Kündigungsrecht.</strong> Gelesen aus dem Namen – die Klammer „Ausgabejahr(erstes Kündigungsjahr/Fälligkeitsjahr)“, „Und.“ für unbefristet – und aus der Rückzahlungsart im ESMA-Register; der Name hat Vorrang, weil das Register die Rückzahlungsart oft ungenau meldet. Kündigungsjahr gleich Ausgabejahr: Make-Whole; ohne Jahr im Namen, aber laut Register kündbar: Termin nicht gemeldet. Kündigungsrecht des Anlegers (Put) laut Register. Verbindlich sind nur die Anleihebedingungen; die Arten erklärt die Seite <a href="kuendbare-anleihen.html">Kündbare Anleihen</a>.</p>
@@ -385,14 +360,13 @@
           Veränderung zum Vortag (gegen unseren gespeicherten Schlusskurs) ·
           Umsatz in Geld (Stück × Kurs je Abschluss) ·
           Risikoaufschlag zu Bund (Differenz zur Rendite der Bundesanleihe gleicher Restlaufzeit, zwischen den beiden nächsten Bundeswertpapieren linear interpoliert; nur Euro, ab zwei Wochen bis 30 Jahre) ·
-          Kursveränderung im gewählten Zeitraum und „inkl. Kupons“ (Kursveränderung plus Kupon × Tage ÷ 365 im Zeitraum, bezogen auf den Anfangskurs, ohne Wiederanlage, in der Währung der Anleihe) ·
-          Rechenbeispiel: Kurswert, Stückzinsen, Kaufpreis mit der eingetragenen Gebühr, Zinsen und Rückzahlung bis zur Fälligkeit (Zinstermine wie unter „Zinstermine“ beschrieben), „Zahlungen − Kaufpreis“ vor Steuern. Das Rechenbeispiel nimmt an: Order heute zum letzten Schlusskurs (am Wochenende und an Börsenfeiertagen am nächsten Handelstag), Valuta zwei Abwicklungstage später, keine vorzeitige Kündigung, alle Zahlungen an den genannten Terminen. Bei Neuemissionen im ersten Zinsjahr (erster Handelstag nach dem letzten rechnerischen Zinstermin, Ausgabejahr im Namen) laufen Stückzinsen und erste Zinszahlung vereinfacht ab dem ersten Handelstag; maßgeblich ist der Zinslaufbeginn laut Anleihebedingungen. Es ist keine Prognose.</p>
+          Kursveränderung im gewählten Zeitraum und „inkl. Kupons“ (Kursveränderung plus Kupon × Tage ÷ 365 im Zeitraum, bezogen auf den Anfangskurs, ohne Wiederanlage, in der Währung der Anleihe).</p>
         <p id="datastand">Daten-Stand: wird geladen</p>
       </div>
     </details>
   </main>
   <p class="sr-only" id="kopie-status" role="status" aria-live="polite"></p>
-  <div class="leiste" id="leiste" hidden><button type="button" id="leiste-kopie">ISIN kopieren</button><a href="#rechnung">Rechenbeispiel</a></div>
+  <div class="leiste" id="leiste" hidden><button type="button" id="leiste-kopie">ISIN kopieren</button></div>
   <footer class="fuss">
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html#grundlagen">Grundlagen</a><a href="wissen.html#auswaehlen">Auswählen</a><a href="wissen.html#fortgeschrittene">Für Fortgeschrittene</a><a href="begriffe.html">Glossar</a></nav>
     <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="anleihen-kupon.html">Anleihen nach Kupon</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
@@ -543,7 +517,7 @@ function kurzName(emittent, art, land) {
 
 // ---------- Zum Musterdepot hinzufügen (seit 02.10.2026, Nutzerentscheid) ----------
 // Knopf neben „Merken“ (Form wie .merkbtn): öffnet ein kleines Feld mit Musterdepot (nur wenn es mehrere gibt) und Nennwert –
-// vorgeschlagen ist der Betrag aus dem Rechenbeispiel, liegt die Anleihe im gewählten Depot schon, ihr Nennwert. Gespeichert wird
+// vorgeschlagen sind 5.000 (bzw. passend zur Stückelung), liegt die Anleihe im gewählten Depot schon, ihr Nennwert. Gespeichert wird
 // über konto.js (MC.konto.depot) wie in Mein Depot; die Merkliste bleibt unverändert. Nicht angemeldet: konto.html?merken=<ISIN>&depot=1 –
 // nach dem Anmelden steht die Anleihe auf der Merkliste und ist in „Mein Depot“ zum Hinzufügen ausgewählt.
 // a = { ccy, stk, warum } (warum: Grund, warum es nicht geht, sonst "").
@@ -588,14 +562,15 @@ function depotFeld(a) {
   }
   function hinweis(text, fehler) { h.className = "dep-pop-h" + (fehler ? " fehler" : ""); h.textContent = text; }
   function zu(fokus) { pop.hidden = true; b.setAttribute("aria-expanded", "false"); if (fokus) b.focus(); }
-  // Feld für das gewählte Depot füllen: liegt die Anleihe dort, ihr Nennwert; sonst der Vorschlag aus dem Rechenbeispiel
+  // Feld für das gewählte Depot füllen: liegt die Anleihe dort, ihr Nennwert; sonst ein Vorschlag (5.000, bei großer Stückelung
+  // die Stückelung, sonst das kleinste Vielfache der Stückelung ab 5.000) – bis 03.10.2026 der Betrag aus dem Rechenbeispiel
   function fuelle() {
-    const d = gewaehlt(), n = nennIn(d), rb = lies(($("nenn") || {}).value || "");
+    const d = gewaehlt(), n = nennIn(d);
     $("dep-pop-t").textContent = n ? "Nennwert im Musterdepot" : "Zum Musterdepot hinzufügen";
     ok.textContent = n ? "Speichern" : "Hinzufügen"; ok.disabled = !fx;
     $("dep-f").hidden = !n; $("dep-weg").textContent = depots().length > 1 ? "Aus diesem Musterdepot entfernen" : "Aus dem Musterdepot entfernen";
-    feld.value = MC.zahl(n || (rb > 0 ? rb : stk && stk >= 1000 ? Math.ceil(stk) : stk >= 1 && Number.isInteger(stk) ? Math.ceil(5000 / stk) * stk : 5000), 0);
-    if (fx) hinweis(n ? stkText : `Vorschlag: der Betrag aus dem Rechenbeispiel. ${stkText}`.trim());
+    feld.value = MC.zahl(n || (stk && stk >= 1000 ? Math.ceil(stk) : stk >= 1 && Number.isInteger(stk) ? Math.ceil(5000 / stk) * stk : 5000), 0);
+    if (fx) hinweis(n ? stkText : `Der Betrag ist ein Vorschlag. ${stkText}`.trim());
   }
   function auf() {
     const ds = depots(), drin = liegtIn();
@@ -679,7 +654,6 @@ function zeige(r, k, meta, kf) {
   // Zinstermine: zt = [Zahlungen je Jahr, "MM-TT", …] laut Börsenliste, [Zahlungen je Jahr] = geschätzt (scripts/update_zinstermine.py)
   const freq = Array.isArray(zt) && zt[0] > 0 ? zt[0] : 1, zinstage = Array.isArray(zt) && zt.length > 1 ? zt.slice(1) : null;
   const rhythmus = { 2: "halbjährlich", 4: "vierteljährlich", 12: "monatlich" }[freq] || "";
-  const ztQuelle = zinstage ? "Zinstermine laut Deutscher Börse" : "Zinstermine geschätzt";
   const wName = (() => { try { const n = NAMEN.w && NAMEN.w.of(ccy); return n && n !== ccy ? n : ""; } catch (e) { return ""; } })();
   const wkn = /^DE/.test(ISIN) ? ISIN.slice(5, 11) : "";
   const alter = datum && MC.boersentage ? MC.boersentage(datum, heute) : null;   // Börsentage seit dem Kursdatum (gemeinsame Regel, site.js)
@@ -730,11 +704,11 @@ function zeige(r, k, meta, kf) {
   const wFaellig = [pruef.faelligFisn ? `Kurzname im Register: ${fmtDate(pruef.faelligFisn)}` : "", pruef.faelligName ? `Name: ${pruef.faelligName}` : ""].filter(Boolean);
   const hinw = [];
   if (nachFaellig) hinw.push(abgelaufen
-    ? `<b>Fälligkeit ${fmtDate(faellig)}</b> – der Termin liegt in der Vergangenheit. Für diesen Fall berechnen wir keine Rendite und kein Rechenbeispiel.`
-    : `<b>Fälligkeit ${fmtDate(faellig)}, Restlaufzeit ${RL(jahre(faellig))}.</b> Bei einer Order am ${orderText} wäre die Valuta der ${fmtDate(isoOf(valuta))} – nach der Fälligkeit. Für diesen Fall berechnen wir keine Rendite und kein Rechenbeispiel.`);
-  if (befund) hinw.push(`<b>Registerangaben widersprüchlich:</b> ${MC.esc(wKupon.concat(wFaellig).join("; "))}. Wir zeigen die Registerwerte unverändert und berechnen daraus weder Rendite noch Rechenbeispiel; maßgeblich sind die Anleihebedingungen.`);
+    ? `<b>Fälligkeit ${fmtDate(faellig)}</b> – der Termin liegt in der Vergangenheit. Für diesen Fall berechnen wir keine Rendite.`
+    : `<b>Fälligkeit ${fmtDate(faellig)}, Restlaufzeit ${RL(jahre(faellig))}.</b> Bei einer Order am ${orderText} wäre die Valuta der ${fmtDate(isoOf(valuta))} – nach der Fälligkeit. Für diesen Fall berechnen wir keine Rendite.`);
+  if (befund) hinw.push(`<b>Registerangaben widersprüchlich:</b> ${MC.esc(wKupon.concat(wFaellig).join("; "))}. Wir zeigen die Registerwerte unverändert und berechnen daraus keine Rendite; maßgeblich sind die Anleihebedingungen.`);
   if (k && veraltet) hinw.push(`<b>Letzter Kurs vom ${fmtDate(datum)}</b> (${alter} Börsentage alt). Kurs und Rendite beziehen sich auf diesen Tag.`);
-  if (!k) hinw.push("<b>Kein aktueller Kurs.</b> In den Kursdaten der letzten Wochen gibt es für diese ISIN keine Kursfeststellung; Rendite und Rechenbeispiel entfallen.");
+  if (!k) hinw.push("<b>Kein aktueller Kurs.</b> In den Kursdaten der letzten Wochen gibt es für diese ISIN keine Kursfeststellung; die Rendite entfällt.");
   if (hinw.length) { document.getElementById("hinw-text").innerHTML = hinw.map(s => `<p>${s}</p>`).join(""); document.getElementById("hinw").hidden = false; }
 
   // --- Kopfzahlen: Kurs · Rendite · Kupon · Fälligkeit ---
@@ -805,8 +779,12 @@ function zeige(r, k, meta, kf) {
   if (festKupon && !stufen) {
     try {
       const ks = kommendeTermine(faellig, freq, heuteUTC, zinstage), n = ks.length ? isoOf(ks[0]) : "";
-      if (n) naechsterZeile = kv(`Nächster Zinstermin${hilf("zinstermin", "Zinstermin")}`, fmtDate(n), n === faellig ? "mit Rückzahlung" : `${fmt(kupon * 10 / freq * (ks.length === 1 ? letzterKupon(faellig, freq, zinstage) : 1), 2)} ${MC.esc(ccy)} je 1.000 ${MC.esc(ccy)}${zinstage ? "" : " · geschätzt"}`);
-      if (!nachFaellig && !inflIdx) { const sz = stueckzins(kupon, faellig, freq, valuta, zinstage); stueckZeile = kv(`Stückzinsen je 1.000${hilf("stueckzinsen", "Stückzinsen")}`, `${fmt(sz.anteil * 10, 2)} ${MC.esc(ccy)}`, `zum Valutatag ${fmtDate(isoOf(valuta))}`); }
+      // Neuemission im ersten Zinsjahr: Zinslauf vereinfacht ab dem ersten Handelstag, erste Zahlung anteilig (stueckzins; bis
+      // 03.10.2026 nur im Rechenbeispiel, das auf Nutzerwunsch entfallen ist)
+      const neu = m[1] ? { ab: new Date(m[1] + "T12:00:00Z"), jahr: ausgabeJahr(name) } : null;
+      const sz = !nachFaellig && !inflIdx ? stueckzins(kupon, faellig, freq, valuta, zinstage, neu) : null, erst = sz && sz.neu ? sz.erster : 1;
+      if (n) naechsterZeile = kv(`Nächster Zinstermin${hilf("zinstermin", "Zinstermin")}`, fmtDate(n), n === faellig ? "mit Rückzahlung" : `${fmt(kupon * 10 / freq * (ks.length === 1 ? letzterKupon(faellig, freq, zinstage) : 1) * erst, 2)} ${MC.esc(ccy)} je 1.000 ${MC.esc(ccy)}${erst < 1 ? " · anteilig, erste Zinsperiode" : ""}${zinstage ? "" : " · geschätzt"}`);
+      if (sz) stueckZeile = kv(`Stückzinsen je 1.000${hilf("stueckzinsen", "Stückzinsen")}`, `${fmt(sz.anteil * 10, 2)} ${MC.esc(ccy)}`, `zum Valutatag ${fmtDate(isoOf(valuta))}${sz.neu ? ` · Zinslauf ab ${fmtDate(isoOf(sz.letzter))} (erster Handelstag, vereinfacht)` : ""}`);
     } catch (e) { /* ohne die Zusatzzeilen */ }
   }
   const grp = (h, rows) => `<div class="gr"><h3>${h}</h3><dl>${rows.filter(Boolean).join("")}</dl></div>`;
@@ -868,102 +846,16 @@ function zeige(r, k, meta, kf) {
       `${bund ? " · Schlusskurs und Rendite: Deutsche Bundesbank" : ""}</p>`
     : '<p class="meta">In den Kursdaten der letzten Wochen gibt es keine Kursfeststellung.</p>';
 
-  // --- Rechenbeispiel (nur mit Kurs, festem oder Nullkupon, Fälligkeit, Valuta vor der Fälligkeit) ---
-  const box = document.getElementById("rechnung-inhalt");
-  const aus = s => `<p class="aus">${s}</p>`;
-  const rechenbar = kurs != null && (zinsart === 0 || zinsart === 2) && typeof (zinsart === 2 ? 0 : kupon) === "number" && faellig && !befund && !inflIdx && !nachFaellig && !stufen;
-  const zahlungsliste = () => {   // Restzahlungen je 1.000 bei Valuta nach der Fälligkeit (Randfall „fällig in wenigen Tagen“)
-    if (!faellig || abgelaufen || zinsart === 1) return "";
-    const ks = zinsart === 0 && kupon > 0 ? kommendeTermine(faellig, freq, heuteUTC, zinstage) : [], lk = ks.length ? letzterKupon(faellig, freq, zinstage) : 1;
-    // Seit 03.10.2026 auch ohne Rechenbeispiel (Konzept „Einheitliche Anleihen-Angaben“); bei mehr als 14 Terminen die ersten zehn, der Rest als Summe
-    const betrag = i => kupon / freq * (i === ks.length - 1 ? lk : 1) * 10, lang = ks.length > 14;
-    const zeilen = ks.slice(0, lang ? 10 : ks.length).map((d, i) => `<tr><td>${fmtDate(isoOf(d))} · Zinsen<small>${fmtCoupon(kupon)} ÷ ${freq}${i === ks.length - 1 && lk !== 1 ? ", anteilig (kurze letzte Zinsperiode)" : ""}, je 1.000 ${MC.esc(ccy)}</small></td><td>${fmt(kupon / freq * (i === ks.length - 1 ? lk : 1) * 10, 2)} ${MC.esc(ccy)}</td></tr>`)
-      .concat(lang ? [`<tr><td>… ${ks.length - 10} weitere Zinstermine bis ${fmtDate(isoOf(ks[ks.length - 1]))}<small>zusammen, je 1.000 ${MC.esc(ccy)}</small></td><td>${fmt(ks.slice(10).reduce((x, d, i) => x + betrag(i + 10), 0), 2)} ${MC.esc(ccy)}</td></tr>`] : [])
-      .concat([`<tr><td>${fmtDate(faellig)} · Rückzahlung<small>100 %, je 1.000 ${MC.esc(ccy)}</small></td><td>${fmt(1000, 2)} ${MC.esc(ccy)}</td></tr>`]);
-    return `<h3>Zahlungen bis zur Fälligkeit</h3><table class="rt"><tbody>${zeilen.join("")}</tbody></table><p class="annahmen">${ztQuelle}${rhythmus ? ` (${rhythmus})` : ""}; maßgeblich sind die Anleihebedingungen.</p>`;
-  };
-  if (!rechenbar) {
-    const grund = kurs == null ? "Kein aktueller Kurs."
-      : nachFaellig ? (abgelaufen ? `Fälligkeit ${fmtDate(faellig)} erreicht.` : `Valuta bei Order am ${orderText}: ${fmtDate(isoOf(valuta))}. Fälligkeit: ${fmtDate(faellig)}.`)
-      : befund ? "Kupon oder Fälligkeit sind im Register widersprüchlich gemeldet."
-      : inflIdx ? "Inflationsindexiert: Kaufpreis und Rückzahlung hängen am Indexverhältnis, das nicht in unseren Daten steht."
-      : zinsart === 1 ? "Variabler Kupon: künftige Zinszahlungen stehen noch nicht fest."
-      : stufen ? "Stufenzins laut Name: Die künftigen Kupons stehen nicht in unseren Daten."
-      : !faellig ? "Keine Fälligkeit im Register." : "Kupon nicht gemeldet.";
-    // Zahlungsplan auch ohne Rechenbeispiel (seit 03.10.2026), wenn die Zahlungen feststehen: fester oder Nullkupon, Fälligkeit, kein Befund
-    const plan = nachFaellig || (zinsart !== 1 && !stufen && !inflIdx && !befund && faellig && !abgelaufen && (zinsart === 2 || typeof kupon === "number"));
-    box.innerHTML = aus(`<b>Kein Rechenbeispiel.</b> ${grund}`) + (plan ? zahlungsliste() : "");
-  } else {
-    // Startwert: kleinstes Vielfaches der Stückelung, das mindestens 5.000 beträgt (bei 100.000er-Stückelung also 100.000)
-    const start = typeof stk === "number" && stk >= 1 ? Math.max(stk, Math.ceil(5000 / stk) * stk) : 5000;
-    box.innerHTML = `<div class="eing"><label for="nenn">Nennwert</label><input type="text" id="nenn" inputmode="numeric" value="${fmt(start, 0)}" autocomplete="off" aria-describedby="eing-fehler"><span>${MC.esc(ccy)}</span>` +
-      `<label for="gebuehr">Gebühr</label><input type="text" id="gebuehr" inputmode="decimal" value="0,00" autocomplete="off" aria-describedby="eing-fehler"><span>${MC.esc(ccy)}</span></div>` +
-      `<p class="eing-fehler" id="eing-fehler"></p>` +
-      `<table class="rt"><tbody id="kauf"></tbody></table><p class="annahmen" id="kauf-note"></p><p class="sr-only" id="kauf-live" role="status" aria-live="polite"></p>` +
-      `<details class="zplan"><summary>Alle Zahlungen je 1.000 ${MC.esc(ccy)}</summary>${zahlungsliste()}</details>`;   // Zahlungsplan zugeklappt (seit 03.10.2026)
-    const kp = zinsart === 2 ? 0 : kupon;
-    // Neuemission im ersten Zinsjahr: Zinslauf vereinfacht ab dem ersten Handelstag (stueckzins, seit 03.10.2026)
-    const neu = m[1] ? { ab: new Date(m[1] + "T12:00:00Z"), jahr: ausgabeJahr(name) } : null;
-    const fNenn = document.getElementById("nenn"), fGeb = document.getElementById("gebuehr"), fFehler = document.getElementById("eing-fehler");
-    markiereBeimFokus(fNenn); markiereBeimFokus(fGeb);
-    let ansage = 0;
-    const rechne = ansagen => {
-      // Nennwert: ganze Zahl von 1 bis 100 Mio., Tausenderpunkte im Dreierabstand; Gebühr mit Komma. Seit 03.10.2026 streng – vorher
-      // rechnete „200005.000“ (Eingabe vor dem vorbelegten Wert) still mit 200 Mio. (Nutzertest)
-      const nenn = liesBetrag(fNenn.value, { ganz: true, min: 1, max: DEP_NENN_MAX }), geb = liesBetrag(fGeb.value, { min: 0, max: 1e6 });
-      fNenn.setAttribute("aria-invalid", String(!(nenn > 0))); fGeb.setAttribute("aria-invalid", String(isNaN(geb)));
-      if (!(nenn > 0) || isNaN(geb)) {
-        fFehler.textContent = !(nenn > 0) ? `Bitte einen ganzen Nennwert von 1 bis ${MC.zahl(DEP_NENN_MAX, 0)} eintragen, z. B. 5.000 – Tausenderpunkte im Dreierabstand.`
-          : "Bitte die Gebühr als Betrag eintragen, z. B. 4,90.";
-        document.getElementById("kauf").innerHTML = ""; document.getElementById("kauf-note").innerHTML = "";
-        return;
-      }
-      fFehler.textContent = "";
-      const sz = kp > 0 ? stueckzins(kp, faellig, freq, valuta, zinstage, neu) : null;
-      const kurswert = nenn * kurs / 100, zinsen = sz ? nenn * sz.anteil / 100 : 0, preis = kurswert + zinsen + geb;
-      const ks = kp > 0 ? kommendeTermine(faellig, freq, valuta, zinstage) : [], lk = ks.length ? letzterKupon(faellig, freq, zinstage) : 1;
-      const jeKupon = nenn * kp / freq / 100, kurz1 = sz && sz.neu ? 1 - sz.erster : 0;   // Neuemission: erste Zahlung anteilig
-      const kupons = jeKupon * (ks.length ? ks.length - 1 + lk - kurz1 : 0), zahlungen = kupons + nenn;
-      const W = ` ${MC.esc(ccy)}`;
-      const zinsText = !ks.length ? "" : sz && sz.neu
-        ? `erste Zahlung ${fmt(jeKupon * ((ks.length > 1 ? 1 : lk) - kurz1), 2)}${W} am ${fmtDate(isoOf(ks[0]))} (anteilig, Zinslauf ab ${fmtDate(isoOf(sz.letzter))})${ks.length > 1 ? `, danach je ${fmt(jeKupon, 2)}${W} bis ${fmtDate(isoOf(ks[ks.length - 1]))}${lk !== 1 ? ", die letzte anteilig" : ""}` : ""}`
-        : `${lk !== 1 && ks.length > 1 ? `${ks.length - 1} × ${fmt(jeKupon, 2)}${W} + ${fmt(jeKupon * lk, 2)}${W} (kurze letzte Zinsperiode)` : `${ks.length} × ${fmt(jeKupon * (ks.length > 1 ? 1 : lk), 2)}${W}`}${ks.length > 1 ? `, ${fmtDate(isoOf(ks[0]))} bis ${fmtDate(isoOf(ks[ks.length - 1]))}` : `, ${fmtDate(isoOf(ks[0]))}`}`;
-      const zeilen = [
-        [`Kurswert<small>${fmt(nenn, 0)} × ${fmtKurs(kurs)} %</small>`, `${fmt(kurswert, 2)}${W}`],
-        [`Stückzinsen${hilf("stueckzinsen", "Stückzinsen")}<small>${sz ? `${fmtCoupon(kp)} × ${tage(sz.tage)} seit ${sz.neu ? `Zinslaufbeginn ${fmtDate(isoOf(sz.letzter))} (erster Handelstag, vereinfacht; ` : `dem Zinstermin ${fmtDate(isoOf(sz.letzter))} (${rhythmus ? rhythmus + ", " : ""}`}Periode ${tage(sz.periode)})` : "Nullkupon – keine"}</small>`, `${fmt(zinsen, 2)}${W}`],
-        [`Gebühr<small>wie eingetragen</small>`, `${fmt(geb, 2)}${W}`],
-      ].map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("") +
-        `<tr class="sum"><td>Kaufpreis<small>Valuta ${fmtDate(isoOf(valuta))}${hilf("valuta", "Valuta")}</small></td><td>${fmt(preis, 2)}${W}</td></tr>` +
-        (raten ? "" : `<tr class="zw"><td colspan="2">Zahlungen bis ${fmtDate(faellig)}</td></tr>` +
-          (ks.length ? `<tr><td>Zinsen<small>${zinsText}</small></td><td>${fmt(kupons, 2)}${W}</td></tr>` : "") +
-          `<tr><td>Rückzahlung<small>100 % am ${fmtDate(faellig)}</small></td><td>${fmt(nenn, 2)}${W}</td></tr>` +
-          `<tr class="diff"><td>Zahlungen − Kaufpreis<small>vor Steuern</small></td><td>${vz(zahlungen - preis)}${W}</td></tr>`);
-      document.getElementById("kauf").innerHTML = zeilen;
-      document.getElementById("kauf-note").innerHTML = [
-        `Annahmen: Order am ${orderText} zum Schlusskurs vom ${fmtDate(datum)}, Valuta zwei Abwicklungstage später${kp > 0 ? `; ${ztQuelle}${rhythmus ? ` (${rhythmus})` : ""}` : ""}; keine vorzeitige Kündigung.`,
-        sz && sz.neu ? "Neuemission: Stückzinsen und erste Zahlung vereinfacht ab dem ersten Handelstag; maßgeblich ist der Zinslaufbeginn laut Anleihebedingungen." : "",
-        raten ? "Tilgung in Raten laut Register: Der Zahlungsplan steht nicht in unseren Daten, deshalb ohne Zahlungen." : "",
-        rend != null ? `Rendite ${fmt(rend, 2)} % pro Jahr (wie oben angegeben, ohne Gebühr).` : "",
-        typeof stk === "number" && stk > 1 && nenn % stk ? `Der Nennwert ist kein Vielfaches der Stückelung (${fmtStk(stk)} ${MC.esc(ccy)}).` : "",
-        "Keine Prognose.",
-      ].filter(Boolean).join(" ");
-      // Ergebnis für Screenreader (seit 03.10.2026, Nutzertest): kurz nach der letzten Eingabe ansagen – wie im Rechner
-      if (ansagen) { clearTimeout(ansage); ansage = setTimeout(() => { document.getElementById("kauf-live").textContent = `Kaufpreis ${fmt(preis, 2)} ${ccy}${raten ? "" : `, Zahlungen minus Kaufpreis ${vz(zahlungen - preis)} ${ccy}`}.`; }, 700); }
-    };
-    rechne(false);
-    [fNenn, fGeb].forEach(f => f.addEventListener("input", () => rechne(true)));
-  }
-
   // --- Werkzeuge ---
-  // Seit 03.10.2026 auch die Zinstage laut Börse (sonst schätzt der Rechner die Termine anders als der Steckbrief) und beim Klick
-  // der Nennwert aus dem Rechenbeispiel; der Rechner füllt damit alle vier Rechner (Nutzertest: nur Rechner 1 wurde gefüllt)
+  // Seit 03.10.2026 auch die Zinstage laut Börse (sonst schätzt der Rechner die Termine anders als der Steckbrief); der Rechner füllt
+  // damit alle vier Rechner (Nutzertest: nur Rechner 1 wurde gefüllt)
   const rechnerUrl = kurs != null && zinsart === 0 && typeof kupon === "number" && faellig && !nachFaellig && !befund && !stufen
     ? `rechner.html?kurs=${encodeURIComponent(fmtKurs(kurs))}&kupon=${encodeURIComponent(fmt(kupon, 3))}&faellig=${fmtDate(faellig)}&freq=${freq}&w=${encodeURIComponent(ccy)}${zinstage ? `&zt=${zinstage.join(",")}` : ""}${rend != null ? `&rendite=${encodeURIComponent(fmt(rend, 2))}` : ""}&isin=${encodeURIComponent(ISIN)}&titel=${encodeURIComponent(MC.felder ? MC.felder.titel({ kurz: kurz || name, kupon, zinsart, faellig }) : seitentitel)}#rendite` : "";
   const suche = `anleihen-suche.html?art=${art}&w=${encodeURIComponent(ccy)}&zins=${zinsart}`;
   document.getElementById("werkz").innerHTML =
     `<li><button type="button" class="kopie-w" data-isin="${MC.esc(ISIN)}"><span>ISIN kopieren<small>${MC.esc(ISIN)}</small></span><span class="pf" aria-hidden="true">⧉</span></button></li>` +
     `<li><button type="button" class="link-w"><span>Link kopieren<small>zum Teilen, z. B. im Messenger</small></span><span class="pf" aria-hidden="true">⧉</span></button></li>` +
-    (rechnerUrl ? `<li><a href="${rechnerUrl}" id="zum-rechner"><span>Im Rechner öffnen<small>Kurs, Kupon, Fälligkeit und Nennwert übernommen</small></span><span class="pf" aria-hidden="true">→</span></a></li>` : "") +
+    (rechnerUrl ? `<li><a href="${rechnerUrl}" id="zum-rechner"><span>Im Rechner öffnen<small>Kurs, Kupon und Fälligkeit übernommen</small></span><span class="pf" aria-hidden="true">→</span></a></li>` : "") +
     `<li><a href="erste-anleihe.html"><span>So kaufst du diese Anleihe<small>Depot, Order mit Limit, Kosten im Broker-Vergleich</small></span><span class="pf" aria-hidden="true">→</span></a></li>` +
     `<li><a href="${suche}"><span>Anleihen mit gleichen Merkmalen<small>${MC.esc([T.art[art], ccy, T.zinsChip[zinsart]].join(" · "))}</small></span><span class="pf" aria-hidden="true">→</span></a></li>` +
     (MC.konto ? `<li><a href="konto.html"><span>Mein Bondarium<small>Merkliste und Musterdepots ansehen</small></span><span class="pf" aria-hidden="true">→</span></a></li>` : "");
@@ -1026,12 +918,6 @@ function zeige(r, k, meta, kf) {
   };
   document.querySelectorAll("#kopie, .kopie-w, #leiste-kopie").forEach(b => b.addEventListener("click", e => kopiere(e.currentTarget, false)));
   document.querySelectorAll(".link-w").forEach(b => b.addEventListener("click", e => kopiere(e.currentTarget, true)));
-  // „Im Rechner öffnen“: den Nennwert aus dem Rechenbeispiel mitnehmen (seit 03.10.2026)
-  const zumRechner = document.getElementById("zum-rechner");
-  if (zumRechner) zumRechner.addEventListener("click", () => {
-    const f = document.getElementById("nenn"), n = f ? liesBetrag(f.value, { ganz: true, min: 1, max: DEP_NENN_MAX }) : NaN;
-    if (n > 0) zumRechner.href = rechnerUrl.replace("#rendite", `&nenn=${n}#rendite`);
-  });
   const leiste = document.getElementById("leiste");
   if (leiste) { leiste.hidden = false; document.body.classList.add("mit-leiste"); }
 }
@@ -1043,7 +929,7 @@ function zeige(r, k, meta, kf) {
     nix(); document.getElementById("datastand").textContent = "Daten-Stand: –";
     document.getElementById("nix-text").innerHTML = ISIN
       ? `<b>„${MC.esc(ISIN)}“ ist keine gültige ISIN.</b> Eine ISIN hat zwölf Zeichen: zwei Buchstaben für das Land, neun Ziffern oder Buchstaben und eine Prüfziffer. Suche die Anleihe nach Name, ISIN oder WKN:`
-      : `<b>Welche Anleihe möchtest du ansehen?</b> Der Steckbrief zeigt Kurs, Rendite, Merkmale, Kursverlauf, Handel und ein Rechenbeispiel. Suche die Anleihe nach Name, ISIN oder WKN:`;
+      : `<b>Welche Anleihe möchtest du ansehen?</b> Der Steckbrief zeigt Kurs, Rendite, Merkmale, Kursverlauf und Handel. Suche die Anleihe nach Name, ISIN oder WKN:`;
     if (ISIN) document.getElementById("nix-q").value = ISIN;
     return;
   }

@@ -75,7 +75,7 @@ Volumen, Handelstage, Seit Hoch, Seit dem Merken, Nächster Zinstermin, Merken. 
 Kopf (Titel, Registername, Emittent, ISIN/WKN, Merkmal-Schilder) · Kennzahlen **Rendite · Kupon · Restlaufzeit · Kurs** · weitere
 Kennzahlen (laufende Verzinsung, Duration/mod. Duration, Risikoaufschlag, zum Vortag) · Merkmale in vier Gruppen (Zins: Kupon, Zinsart,
 Zinsrhythmus, Zinstermine, nächster Zinstermin, Stückzinsen je 1.000 · Laufzeit und Rückzahlung · Emittent und Sicherheit · Ausstattung)
-· Rechenbeispiel mit zugeklapptem Zahlungsplan je 1.000 (ohne Kurs: Zahlungsplan offen) · Kursverlauf · Handel mit Handelstagen.
+· Kursverlauf · Handel mit Handelstagen. Das Rechenbeispiel samt Zahlungsplan je 1.000 ist seit 03.10.2026 auf Nutzerwunsch entfallen.
 
 ## Nächster Zinstermin – eine Quelle
 

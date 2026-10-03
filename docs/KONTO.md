@@ -286,7 +286,7 @@ mit Auswahl `erinnerung` – eine Beispiel-E-Mail an info@bondarium.com.
 
 Seit 02.10.2026 (Nutzerentscheid nach PDF-Mockup): In `anleihe.html` steht neben „Merken“ der Knopf „Zum Depot hinzufügen“
 (Form wie `.merkbtn`, Funktion `depotFeld()`). Er öffnet ein kleines Feld mit Musterdepot (Auswahl nur bei mehreren Depots;
-vorgewählt das erste, in dem die Anleihe liegt) und Nennwert – vorgeschlagen ist der Betrag aus dem Rechenbeispiel, liegt die
+vorgewählt das erste, in dem die Anleihe liegt) und Nennwert – vorgeschlagen sind 5.000 bzw. ein Vielfaches der Stückelung (bis 03.10.2026 der Betrag aus dem Rechenbeispiel, das seitdem entfallen ist), liegt die
 Anleihe im gewählten Depot schon, ihr Nennwert. Gespeichert wird über `MC.konto.depot(isin, nennwert)`
 wie in Mein Depot; die Merkliste bleibt unverändert. Danach zeigt der Knopf „Im Depot“, darunter „Liegt mit … in ‚Name‘ · Mein Depot öffnen“
 (bei mehreren Depots alle mit Nennwert); ein neuer Klick ändert den Nennwert oder nimmt die Anleihe heraus. Dieselbe Regel wie
