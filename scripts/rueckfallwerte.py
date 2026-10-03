@@ -813,11 +813,14 @@ ANKER_ZINSKURVE = [
     'const ab = h[2] - h[1], st = stufe(ab);',
     'el.querySelector(".v").textContent = vz(ab);',
     'const s = el.querySelector(".s"); s.textContent = st[0]; s.className = "hk-s s " + st[1];',
-    'el.querySelector(".d").textContent = `10 Jahre ${fmt(h[2], 2)}\\u00A0% · 2 Jahre ${fmt(h[1], 2)}\\u00A0% · Stand ${deDatum(h[0])}`;',
+    'el.querySelector(".d").textContent = `10 Jahre ${fmt(h[2], 2)}\\u00A0% · 2 Jahre ${fmt(h[1], 2)}\\u00A0%${land === "DE" ? " (Nullkupon)" : ""} · Stand ${deDatum(h[0])}`;',
     'const reihen = ["DE", "US"].filter(l => d.monate && d.monate[l] && d.monate[l].length);',
-    'const staende = reihen.map(l => d.stand && d.stand[l]).filter(Boolean).sort();',
-    'document.getElementById("eyebrow-zk").textContent = `10 Jahre minus 2 Jahre · Monatsdurchschnitte · ${m0.slice(0, 4)} – ${m1.slice(0, 4)} · Stand: ${deDatum(st)}`;',
-    'if (el) { el.textContent = "Daten-Stand: " + deDatum(st); el.classList.toggle("stale", !!(MC.veraltet && MC.veraltet(st))); }',
+    'const staende = reihen.filter(l => d.stand && d.stand[l]).map(l => [l, d.stand[l]]);',
+    'const daten = staende.map(x => x[1]).sort();',
+    'const standText = daten[0] === daten[daten.length - 1] ? deDatum(daten[0]) : staende.map(x => LAND[x[0]].name + " " + deDatum(x[1])).join(", ");',
+    'document.getElementById("eyebrow-zk").textContent = `10 Jahre minus 2 Jahre · Monatsdurchschnitte · ${m0.slice(0, 4)} – ${m1.slice(0, 4)} · Stand: ${standText}`;',
+    'if (el) { el.textContent = "Daten-Stand: " + standText; el.classList.toggle("stale", !!(MC.veraltet && MC.veraltet(daten[0]))); }',
+    'const LAND = { DE: { name: "Deutschland", color: "#157C00" }, US: { name: "USA", color: "#1A1A19" } };',
     "reihe.forEach(m => { if (m[2] - m[1] < 0) { if (cur) { cur[1] = m[0]; cur[2]++; } else cur = [m[0], m[0], 1]; } else if (cur) { out.push(cur); cur = null; } });",
     'return out.filter(p => p[2] >= 3);',
     'if (de && de.length) setText("t-invers", fmt(Math.round(100 * de.filter(m => m[2] - m[1] < 0).length / de.length), 0));',
@@ -849,7 +852,8 @@ def zinskurve(site, s):
         s.text(sel + " .v", vz(ab, 2))
         s.text(sel + " .s", st)
         s.attr(sel + " .s", "class", "hk-s s " + st)
-        s.text(sel + " .d", f"10 Jahre {zahl(h[2], 2)}{NBSP}% · 2 Jahre {zahl(h[1], 2)}{NBSP}% · Stand {datum(h[0])}")
+        s.text(sel + " .d", f"10 Jahre {zahl(h[2], 2)}{NBSP}% · 2 Jahre {zahl(h[1], 2)}{NBSP}%" + (" (Nullkupon)" if land == "DE" else "")
+               + f" · Stand {datum(h[0])}")
 
     monate = d.get("monate") or {}
     reihen = [l for l in ("DE", "US") if monate.get(l)]
@@ -857,12 +861,16 @@ def zinskurve(site, s):
         raise ValueError("keine Monatswerte in zinskurve.json")
     alle = [m[0] for l in reihen for m in monate[l]]
     m0, m1 = min(alle), max(alle)
-    staende = sorted(x for x in ((d.get("stand") or {}).get(l) for l in reihen) if x)
+    # Stehen die Länder auf verschiedenen Tagen, nennt die Seite beide („Deutschland 30.09.2026, USA 29.09.2026“) – seit 03.10.2026
+    staende = [(l, (d.get("stand") or {}).get(l)) for l in reihen if (d.get("stand") or {}).get(l)]
     stand = None
     if staende:
-        stand = staende[-1]
-        s.text("#eyebrow-zk", f"10 Jahre minus 2 Jahre · Monatsdurchschnitte · {m0[:4]} – {m1[:4]} · Stand: {datum(stand)}")
-        daten_stand_veraltet(s, "Daten-Stand: " + datum(stand), stand)
+        daten = sorted(x for _, x in staende)
+        stand = daten[-1]
+        name = {"DE": "Deutschland", "US": "USA"}
+        stand_text = datum(daten[0]) if daten[0] == daten[-1] else ", ".join(f"{name[l]} {datum(x)}" for l, x in staende)
+        s.text("#eyebrow-zk", f"10 Jahre minus 2 Jahre · Monatsdurchschnitte · {m0[:4]} – {m1[:4]} · Stand: {stand_text}")
+        daten_stand_veraltet(s, "Daten-Stand: " + stand_text, daten[0])
 
     de, us = monate.get("DE"), monate.get("US")
     if de:
@@ -926,9 +934,11 @@ ANKER_REALZINS = [
     'const l = h.linker.find(x => x.faellig.startsWith("2033")) || h.linker[0];',
     'document.getElementById("h-be").innerHTML = `${fmt(l.breakeven, 1)}<small>% Inflation</small>`;',
     'setT("h-be-d", `pro Jahr bis ${l.faellig.slice(0, 4)} im Euroraum, abgeleitet aus der inflationsindexierten Bundesanleihe`);',
-    'setT("e-nom", fmt(l.nominal, 2)); setT("e-real", fmt(l.real, 2)); setT("e-be", fmt(l.breakeven, 2));',
-    'if (tb) tb.innerHTML = h.linker.map(x => `<tr><td>${x.faellig.slice(0, 4)}<small>${(k => k ? "Kupon " + MC.esc(k[1].replace(/\\s/, "\\u00A0")) : "")(x.name.match(/(\\d+,\\d+\\s%)/))}</small></td><td class="num">${fmt(x.real, 2)}\u00a0%</td>` +',
-    '`<td class="num">${x.nominal == null ? "–" : fmt(x.nominal, 2) + "\u00a0%"}</td><td class="num${x.breakeven == null ? "" : x.breakeven >= 0 ? " plus" : " minus"}">${x.breakeven == null ? "–" : fmt(x.breakeven, 2) + "\u00a0%"}</td></tr>`).join("");',
+    'const F = MC.felder, pct = v => F ? F.pct(v) : fmt(v, 2) + "\\u00A0%";',
+    'const k = x.name.match(/(\\d+),(\\d+)\\s%/), kupon = k ? +(k[1] + "." + k[2]) : null;',
+    'const titel = F ? F.titel({ kurz: "Deutschland", kupon, zinsart: 0, faellig: x.faellig }) : x.name;',
+    'return `<tr><th scope="row"><a class="name-link" href="anleihe.html?isin=${encodeURIComponent(x.isin)}">${MC.esc(titel)}</a><small>inflationsindexiert · fällig ${MC.datum(x.faellig)}</small></th><td class="num">${pct(x.real)}</td>` +',
+    '`<td class="num">${x.nominal == null ? "–" : pct(x.nominal)}</td><td class="num${x.breakeven == null ? "" : x.breakeven >= 0 ? " plus" : " minus"}">${x.breakeven == null ? "–" : pct(x.breakeven)}</td></tr>`;',
     'const J = (d.jahre || []).filter(j => j[2] != null);',
     'J.forEach(j => { const k = Math.floor(j[0] / 10) * 10; (dek[k] = dek[k] || []).push(j); });',
     'const r = dek[k], n = r.length, z = r.reduce((a, j) => a + j[1], 0) / n, i = r.reduce((a, j) => a + j[2], 0) / n, re = z - i;',
@@ -941,7 +951,7 @@ ANKER_REALZINS = [
     'let DATA = null, MODUS = "jahre", BREITE = 0;',
     'const P = jahre ? (d.jahre || []).map(j => ({ k: String(j[0]), z: j[1], i: j[2] }))',
     'setT("eyebrow-rz", `10-jährige Bundesanleihe und Verbraucherpreise · ${jahre ? "Jahreswerte" : "Monatsdurchschnitte"} · ${jahr(P[0].k)} – ${jahr(P[n - 1].k)}${stand ? ` · Stand: ${deDatum(stand)}` : ""}`);',
-    'const tagHinweis = jahre && hz && d.laufend && +lz.k === d.laufend.jahr ? ` Die Kachel „Bund 10 Jahre“ oben zeigt den Tageswert (${fmt(hz[1], 2)} % am ${deDatum(hz[0])}), das Schaubild den Jahresdurchschnitt (${lz.k} bisher ${fmt(lz.z, 2)} %).` : "";',
+    'const tagHinweis = jahre && hz && d.laufend && +lz.k === d.laufend.jahr ? ` Das Feld „Bund 10 Jahre“ oben zeigt den Tageswert (${fmt(hz[1], 2)} % am ${deDatum(hz[0])}), das Schaubild den Jahresdurchschnitt (${lz.k} bisher ${fmt(lz.z, 2)} %).` : "";',
     '? "Bund 10 Jahre: Jahresdurchschnitt der Rendite; Inflation: Jahresteuerung des Verbraucherpreisindex (bis 1991 früheres Bundesgebiet); das laufende Jahr bis zum letzten veröffentlichten Monat. Realzins = Differenz beider Werte in Prozentpunkten." + tagHinweis',
     'if (el) { el.textContent = "Daten-Stand: " + deDatum(stand) + (st.vpi ? ` · Preise ${monLang(st.vpi)}` : ""); el.classList.toggle("stale", !!(MC.veraltet && MC.veraltet(stand))); }',
     'MC.load("realzins.json").then(function (d) { DATA = d; kacheln(d); charts(d); })',
@@ -995,19 +1005,21 @@ def realzins(site, s):
         if l.get("breakeven") is not None:
             s.inner("#h-be", f"{zahl(l['breakeven'], 1)}<small>% Inflation</small>")
             s.text("#h-be-d", f"pro Jahr bis {l['faellig'][:4]} im Euroraum, abgeleitet aus der inflationsindexierten Bundesanleihe", muss=False)
-            s.text("#e-nom", zahl(l.get("nominal"), 2), muss=False)
-            s.text("#e-real", zahl(l.get("real"), 2), muss=False)
-            s.text("#e-be", zahl(l["breakeven"], 2), muss=False)
         if s.finde("#linker-tab tbody"):
             zeilen = []
-            for x in linker:
-                k = re.search(r"(\d+,\d+\s%)", x["name"])
-                kupon = "Kupon " + esc(re.sub(r"\s", NBSP, k.group(1), count=1)) if k else ""
+            def pct(v):   # wie MC.felder.pct
+                return zahl(v, 2) + NBSP + "%" if ist_zahl(v) else "–"
+            for x in linker:   # seit 03.10.2026 im Format der Anleihen-Tabellen: Titel als Link, darunter Art und Fälligkeit
+                k = re.search(r"(\d+),(\d+)\s%", x["name"])
+                kupon = float(k.group(1) + "." + k.group(2)) if k else None
+                kupon_t = zahl(kupon, 3 if round(kupon * 1000) % 10 else 2) + NBSP + "%" if kupon is not None else "–"
+                titel = f"Deutschland {kupon_t} {x['faellig'][:4]}"
                 be = x.get("breakeven")
-                zeilen.append(f'<tr><td>{x["faellig"][:4]}<small>{kupon}</small></td><td class="num">{zahl(x.get("real"), 2)}{NBSP}%</td>'
-                              f'<td class="num">{"–" if x.get("nominal") is None else zahl(x["nominal"], 2) + NBSP + "%"}</td>'
+                zeilen.append(f'<tr><th scope="row"><a class="name-link" href="anleihe.html?isin={esc(x["isin"])}">{esc(titel)}</a>'
+                              f'<small>inflationsindexiert · fällig {datum(x["faellig"])}</small></th><td class="num">{pct(x.get("real"))}</td>'
+                              f'<td class="num">{"–" if x.get("nominal") is None else pct(x["nominal"])}</td>'
                               f'<td class="num{"" if be is None else " plus" if be >= 0 else " minus"}">'
-                              f'{"–" if be is None else zahl(be, 2) + NBSP + "%"}</td></tr>')
+                              f'{"–" if be is None else pct(be)}</td></tr>')
             s.inner("#linker-tab tbody", "".join(zeilen))
 
     def n0(v):   # JavaScript rechnet „a + null“ als a + 0
@@ -1062,7 +1074,7 @@ def realzins(site, s):
     s.text("#eyebrow-rz", f"10-jährige Bundesanleihe und Verbraucherpreise · Jahreswerte · {int(P[0][0][:4])} – {int(P[-1][0][:4])}"
            + (f" · Stand: {datum(stand)}" if stand else ""))
     hz, lz, lauf = h.get("zins10"), P[-1], (d.get("laufend") or {}).get("jahr")
-    hinweis = (f" Die Kachel „Bund 10 Jahre“ oben zeigt den Tageswert ({zahl(hz[1], 2)} % am {datum(hz[0])}), "
+    hinweis = (f" Das Feld „Bund 10 Jahre“ oben zeigt den Tageswert ({zahl(hz[1], 2)} % am {datum(hz[0])}), "
                f"das Schaubild den Jahresdurchschnitt ({lz[0]} bisher {zahl(lz[1], 2)} %).") \
         if hz and d.get("laufend") and int(lz[0]) == lauf else ""
     s.text("#note-rz", REALZINS_HINWEIS + hinweis)
