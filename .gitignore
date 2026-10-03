@@ -14,3 +14,5 @@ newsletter/anleihen.json
 newsletter/vorschau.*
 statistik-daten/
 wechselkurs-daten/
+# Themen für die Anleihen-Suche: entstehen beim Deploy aus den Seiten (scripts/themen.py); lokal nur für die Vorschau
+/themen.json

@@ -387,6 +387,13 @@ jobs:
         continue-on-error: true
         run: python3 scripts/llms.py _site
 
+      # 4) Themen für die Anleihen-Suche (seit 03.10.2026): Lernseiten und Glossarbegriffe als kleine Liste (themen.json),
+      #    damit die Suche bei Wörtern wie „Duration“ oder „Stückzinsen“ passende Themen zeigt statt nur „Keine Anleihe
+      #    gefunden“. Braucht die fertige sitemap.xml aus Schritt 2. Scheitert er, zeigt die Suche einfach keine Themen.
+      - name: Themen für die Suche (themen.json)
+        continue-on-error: true
+        run: python3 scripts/themen.py _site
+
       - name: Daten in die HTML-Seiten einbetten
         run: python3 scripts/inline_data.py _site
 
