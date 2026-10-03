@@ -415,7 +415,8 @@ ganze Rest“):** Anleihe, Rendite, Kupon / lfd. Verzinsung, Restlaufzeit / Fäl
 Kurs, Anteil, Zinsen pro Jahr / nächster Zinstermin. Neu ist die Duration (Macaulay, `MC.bond.duration().macaulay`, angezeigt wie die
 Restlaufzeit mit `MC.restlaufzeit`, also „14 Tage“, „13,7 Jahre“); darunter die modifizierte Duration wie bisher (Macaulay ÷ (1 +
 Rendite)). Summenzeile: Rendite, lfd. Verzinsung, Restlaufzeit und beide Durationen nach Kurswert gewichtet, Kupon und Fälligkeit „–“
-bzw. leer. Das PDF hat die neue Reihenfolge noch nicht.
+bzw. leer. Das PDF hat seit 03.10.2026 dieselbe Reihenfolge (Nutzer: „ja, PDF auch umstellen“; neun Spalten auf A4 hoch, Name
+bis 122 pt, längere Namen enden mit „…“); die Fußnote erklärt beide Durationen.
 
 ## Lokal testen
 
