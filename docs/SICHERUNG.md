@@ -35,9 +35,11 @@ zufällige der dortigen Datenbank). Entschlüsselte Kopien auf dem Mac danach l�
 
 ## 2. Wächter (Erreichbarkeit)
 
-Workflow `erreichbarkeit.yml`, alle 15 Minuten: Startseite, Anleihen-Suche, Suchindex (nur Kopfzeilen), `aufruf.php` (204)
-und `konto.php?aktion=status` („ok“). Je Abruf bis zu drei Versuche im Abstand von 20 s; danach rot = E-Mail von GitHub.
-GitHub startet geplante Läufe zu Stoßzeiten manchmal einige Minuten später.
+Workflow `erreichbarkeit.yml`, alle 15 Minuten (Minute 7, 22, 37, 52 – nicht zur vollen Stunde): Startseite,
+Anleihen-Suche, Suchindex (nur Kopfzeilen), `aufruf.php` (204) und `konto.php?aktion=status` („ok“). Je Abruf bis zu
+drei Versuche im Abstand von 20 s; danach rot = E-Mail von GitHub.
+GitHub garantiert geplante Läufe nicht: Sie kommen oft einige Minuten später, und einen neuen Zeitplan übernimmt GitHub
+mitunter erst nach Stunden (am 03.10.2026: über drei Stunden kein Lauf mit „*/15“, darum neu eingetragen).
 
 ## 3. Alarme, die etwas bedeuten
 

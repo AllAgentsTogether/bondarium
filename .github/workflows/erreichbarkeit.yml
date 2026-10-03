@@ -4,12 +4,14 @@
 # rot – dann kommt eine E-Mail von GitHub, wie bei den Datenalarmen in update-data.yml. Kurze Aussetzer lösen so keinen
 # Alarm aus. Die Abrufe zählt die Besucherzählung nicht (kein JavaScript, Kennung „curl“).
 #
-# Hinweis: GitHub startet geplante Läufe zu Stoßzeiten manchmal mit einigen Minuten Verspätung; für einen Wächter reicht das.
+# Hinweis: GitHub garantiert geplante Läufe nicht – sie kommen oft einige Minuten zu spät, zur vollen Stunde werden sie am
+# ehesten verschoben oder ausgelassen. Darum die ungeraden Minuten. Den ersten Takt ("*/15", 03.10.2026) hatte GitHub auch
+# nach über drei Stunden nicht übernommen; ein neu eingetragener Zeitplan wird neu angemeldet.
 name: Erreichbarkeit (Wächter)
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "7,22,37,52 * * * *"   # alle 15 Minuten, nicht zur vollen Stunde
   workflow_dispatch:
 
 permissions: {}
