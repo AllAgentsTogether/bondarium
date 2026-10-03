@@ -5,7 +5,8 @@
  * Der Workflow „Sicherung“ (.github/workflows/sicherung.yml) ruft dieses Skript jede Nacht einmal je Datenbank auf:
  *   POST https://www.bondarium.de/trigger/sicherung.php   Feld db=konto | db=statistik   Kopf X-Trigger-Key: GEHEIM
  *
- * Ablauf: saubere Kopie der SQLite-Datei (VACUUM INTO, auch während Besucher schreiben) → gzip → Verschlüsselung mit dem
+ * Ablauf: saubere Kopie der SQLite-Datei (VACUUM INTO, auch während Besucher schreiben) → bereinigt (ohne Tages-Schlüssel,
+ * Prüfsummen und offene Links) → gzip → Verschlüsselung mit dem
  * öffentlichen Zertifikat sicherung-zertifikat.pem (S/MIME, AES-256) → Antwort. Den privaten Schlüssel zum Öffnen hat nur
  * der Betreiber; den Server verlässt also nie eine lesbare Datenbank – auch nicht, wenn jemand den Schlüssel im Kopf kennt.
  * Zwischendateien entstehen nur im gesperrten Datenordner und werden sofort gelöscht.
@@ -69,6 +70,23 @@ try {
         $ziel->close();
     }
     $quelle->close();
+    // Nur sichern, was die Datenschutzerklärung nennt (rechtliches.html#sicherung): Tages-Schlüssel und Besucher-Prüfsummen
+    // der Zählung, Missbrauchs-Prüfsummen und offene Links (Registrierungen mit Adresse und Passwort-Hash) bleiben draußen.
+    // VACUUM schreibt die Kopie danach neu, damit auch die gelöschten Zeilen nicht mehr in der Datei stehen.
+    $bereinigen = [
+        'statistik' => ['DELETE FROM heute', "DELETE FROM meta WHERE k IN ('salz', 'salz_tag')"],
+        'konto' => ['DELETE FROM zaehler', 'DELETE FROM links'],
+    ];
+    $kopie = new SQLite3($roh);
+    foreach ($bereinigen[$db] as $sql) {
+        if (!$kopie->exec($sql)) {
+            throw new RuntimeException('Bereinigen fehlgeschlagen');
+        }
+    }
+    if (!$kopie->exec('VACUUM')) {
+        throw new RuntimeException('Bereinigen fehlgeschlagen');
+    }
+    $kopie->close();
     $daten = file_get_contents($roh);
     @unlink($roh);
     if ($daten === false || strlen($daten) < 512) {
