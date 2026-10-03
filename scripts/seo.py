@@ -173,7 +173,10 @@ def datensatz(site, fname, url, beschreibung):
     d = lade_json(site, c["json"]) or {}
     knoten = {"@type": "Dataset", "@id": url + "#daten", "name": c["name"], "description": beschreibung, "url": url,
               "inLanguage": "de", "isAccessibleForFree": True, "temporalCoverage": c["von"] + "/..",
-              "variableMeasured": c["groessen"], "creator": {"@id": ORG_ID}, "publisher": {"@id": ORG_ID}}
+              "variableMeasured": c["groessen"], "creator": {"@id": ORG_ID}, "publisher": {"@id": ORG_ID},
+              # Search Console 03.10.2026: „Feld license fehlt“ – keine offene Lizenz (die Reihen stammen aus Drittquellen),
+              # sondern der Verweis auf die geltenden Bedingungen: Datenquellen, Urheberrecht, Angaben ohne Gewähr
+              "license": BASE + "rechtliches.html#haftung"}
     if c["laender"]:
         knoten["spatialCoverage"] = c["laender"]
     if re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(d.get("updated") or "")):
