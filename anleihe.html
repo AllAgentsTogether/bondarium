@@ -432,7 +432,7 @@ const RL = y => MC.restlaufzeit ? MC.restlaufzeit(y) : `${fmt(Math.max(0, y), 1)
 const fmtKurs = x => fmt(x, Math.abs(x * 100 - Math.round(x * 100)) > 1e-6 ? 3 : 2);   // Kurs mit dritter Stelle, wenn vorhanden (99,015)
 const tage = n => `${n} ${n === 1 ? "Tag" : "Tage"}`;
 const BER = '<span class="ber">berechnet</span>';
-const hilf = (anker, begriff) => `<a class="hilf" href="begriffe.html#${anker}" aria-label="${begriff} im Glossar">?</a>`;
+const hilf = (anker, begriff) => `<a class="hilf" href="begriffe.html#${anker}" aria-label="${begriff} im Glossar">i</a>`;
 const kv = (dt, dd, klein) => `<div><dt>${dt}</dt><dd>${dd}${klein ? `<small>${klein}</small>` : ""}</dd></div>`;
 // Vorzeichen-Zahl mit zwei Stellen; gerundet 0 → „0,00“ ohne Vorzeichen (nicht „−0,00“)
 const rund2 = x => Math.round(x * 100) / 100 || 0;
@@ -750,8 +750,8 @@ function zeige(r, k, meta) {
       kv("Garantie · Besicherung", garTxt ? MC.esc(garTxt) : "nicht gemeldet", garTxt ? "laut ESMA-Register" : ""),
       // Bonitätsstufe laut EZB (scripts/update_bonitaet.py): 1 = Stufen 1 und 2, 3 = Stufe 3, 0 = auf der Liste, Stufe offen; fehlt = nicht auf der Liste.
       // Nur wenn die Teildatei den Stand der EZB-Liste trägt (meta.ezb) – sonst stünde bei jeder Anleihe „keine Angabe“.
-      // Das Fragezeichen führt zur Erklärung unter „Datenquellen und Methodik“ (Nutzerwunsch 02.10.2026: keine Unterzeile).
-      meta.ezb ? kv(`Bonität laut EZB<a class="hilf bon-warum" href="#quellen" title="${bon == null ? "Steht nicht auf der EZB-Liste" : "Von uns aus der EZB-Liste abgelesen"} (Stand ${fmtDate(meta.ezb)}) – zur Erklärung" aria-label="Bonität laut EZB: Erklärung">?</a>`,
+      // Der i-Punkt führt zur Erklärung unter „Datenquellen und Methodik“ (Nutzerwunsch 02.10.2026: keine Unterzeile).
+      meta.ezb ? kv(`Bonität laut EZB<a class="hilf bon-warum" href="#quellen" title="${bon == null ? "Steht nicht auf der EZB-Liste" : "Von uns aus der EZB-Liste abgelesen"} (Stand ${fmtDate(meta.ezb)}) – zur Erklärung" aria-label="Bonität laut EZB: Erklärung">i</a>`,
         bon === 1 ? "AAA bis A−" : bon === 3 ? "BBB+ bis BBB−" : bon === 0 ? "mindestens BBB−" : "keine Angabe", "") : "",
     ]),
     grp("Währung, Stückelung und Volumen", [
@@ -869,7 +869,7 @@ function zeige(r, k, meta) {
     e.preventDefault(); document.getElementById("quellen").open = true;
     const z = document.getElementById("q-zinstermine"); if (z) z.scrollIntoView({ block: "center" });
   }));
-  // Fragezeichen an der Bonität laut EZB: ebenso zum Absatz „Bonität laut EZB“
+  // i-Punkt an der Bonität laut EZB: ebenso zum Absatz „Bonität laut EZB“
   document.querySelectorAll(".bon-warum").forEach(a => a.addEventListener("click", e => {
     e.preventDefault(); document.getElementById("quellen").open = true;
     const z = document.getElementById("q-bonitaet"); if (z) z.scrollIntoView({ block: "center" });
