@@ -320,6 +320,7 @@
     .kto-t tbody td[data-l]::before { content: attr(data-l); display: block; font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
     .kto-t tbody td[data-l] { font-size: 15px; font-weight: 600; text-align: left; }
     .kto-t tbody td small { font-weight: 400; }
+    .kto-t tbody td small[data-p]::before { content: attr(data-p) "\00a0"; }   /* Vorsatz der zweiten Zeile auf der Karte (seit 03.10.2026) */
     .kto-t tbody td:last-child { grid-column: 1 / -1; text-align: right; width: auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 10px; white-space: normal; }
     .kto-t tbody td[data-l="Seit dem Merken"] { grid-column: span 2; }
     .kto-dep, .kto-dep.drin { width: auto; height: auto; padding: 7px 12px; margin-right: 0; font-size: 13px; display: inline-flex; gap: 5px; }
@@ -580,13 +581,13 @@
           <caption class="sr-only">Deine gemerkten Anleihen</caption>
           <thead><tr>
             <th scope="col" class="mb-cb"><span class="sr-only">Vergleichen</span></th>
-            <th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Anleihe</button></th>
-            <th scope="col" data-col="rendite" class="num"><button type="button" class="sortbtn" data-col="rendite" title="Rendite bis Fälligkeit in % pro Jahr – von uns aus dem Schlusskurs berechnet (Bundeswertpapiere: Rendite der Deutschen Bundesbank)">Rendite</button></th>
-            <th scope="col" data-col="kurs" class="num"><button type="button" class="sortbtn" data-col="kurs" title="Schlusskurs in % des Nennwerts, darunter die Veränderung zum Vortag">Kurs</button><small>zum Vortag</small></th>
-            <th scope="col" data-col="kupon" class="num"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
-            <th scope="col" data-col="faellig" class="num"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th>
-            <th scope="col" data-col="delta" class="num"><button type="button" class="sortbtn" data-col="delta" title="Veränderung der Rendite seit dem Tag, an dem du die Anleihe gemerkt hast, in Prozentpunkten">Seit dem Merken</button></th>
-            <th scope="col" data-col="zt" class="num"><button type="button" class="sortbtn" data-col="zt" title="Nächster Zinstermin laut Deutscher Börse">Nächster Zinstermin</button></th>
+            <th scope="col" data-col="name" title="Kurzname: bei Staaten das Land, sonst der Emittent ohne Rechtsform"><button type="button" class="sortbtn" data-col="name">Anleihe</button><small>ISIN · Art · Währung</small></th>
+            <th scope="col" data-col="rendite" class="num" title="Rendite bis Fälligkeit in % pro Jahr – von uns aus dem Schlusskurs berechnet (Bundeswertpapiere: Rendite der Deutschen Bundesbank)"><button type="button" class="sortbtn" data-col="rendite">Rendite</button></th>
+            <th scope="col" data-col="kupon" class="num" title="Zinssatz pro Jahr auf den Nennwert"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
+            <th scope="col" data-col="faellig" class="num" title="Zeit von heute bis zur Fälligkeit, darunter der Fälligkeitstag"><button type="button" class="sortbtn" data-col="faellig">Restlaufzeit</button><small>Fälligkeit</small></th>
+            <th scope="col" data-col="kurs" class="num" title="Schlusskurs in % des Nennwerts, darunter die Veränderung zum Vortag in Prozentpunkten"><button type="button" class="sortbtn" data-col="kurs">Kurs</button><small>zum Vortag</small></th>
+            <th scope="col" data-col="delta" class="num" title="Veränderung der Rendite seit dem Tag, an dem du die Anleihe gemerkt hast, in Prozentpunkten"><button type="button" class="sortbtn" data-col="delta">Seit dem Merken</button><small>gemerkt am</small></th>
+            <th scope="col" data-col="zt" class="num" title="Laut Deutscher Börse; geschätzt, wo die Börse keinen Termin nennt"><button type="button" class="sortbtn" data-col="zt">Nächster Zinstermin</button></th>
             <th scope="col"><span class="sr-only">Zum Musterdepot hinzufügen, Notiz und mehr</span></th>
           </tr></thead>
           <tbody id="zeilen"></tbody>
@@ -762,6 +763,7 @@
 </div>
 
 <script src="site.js"></script>
+<script src="felder.js"></script>
 <script src="filter.js"></script>
 <script src="bond.js"></script>
 <script src="konto.js"></script>
@@ -902,8 +904,9 @@ MC.navInit();
       const pruef = r[14] && typeof r[14] === "object" && Object.keys(r[14]).length > 0, y = r[16], auf = typeof r[21] === "number" ? r[21] : null;
       const taxe = !r[19] && r[18] !== "B", t = r[5] ? jahre(r[5]) : 99;
       const unsicher = taxe && typeof y === "number" && (y < 0 || y > 15 || (auf != null && auf < -1) || (t < 0.25 && y > 8));
-      o.name = r[2] === 0 && r[11] && r[11] !== "INT" ? landName(r[11]) : D.emi[r[9]] ? D.emi[r[9]].replace(RF_ENDE, "").replace(RF_ENDE, "") || D.emi[r[9]] : r[1];
-      o.reg = o.name !== r[1] ? r[1] : "";
+      // Kurzname seit 03.10.2026 nach der gemeinsamen Regel (felder.js, MC.felder.kurzName – wie Suche, Ranglisten und Steckbrief)
+      o.name = MC.felder ? MC.felder.kurzName(D.emi[r[9]] || "", r[2], r[11], r[1]) : r[1];
+      o.reg = r[1]; o.land = r[11]; o.bon = r.length > 22 ? r[22] : undefined;
       o.kurs = typeof r[15] === "number" ? r[15] : null; o.datum = D.tage[r[17]] || ""; o.boerse = D.boersen[r[18]] || "";
       o.rendite = typeof y === "number" && !unsicher && !pruef ? y : null;
       o.real = o.rendite != null && r[18] === "B" && /inflation|infl\./i.test(r[1]);
@@ -912,7 +915,8 @@ MC.navInit();
       o.vortag = typeof r[20] === "number" ? r[20] : null; o.auf = auf; o.r = r;   // für „Kurs zum Vortag“, Vergleich und Etiketten (bereich.js)
     } else if (STAMM[isin]) {
       const s = STAMM[isin];
-      o.name = s[0] || isin; o.kupon = s[3]; o.faellig = s[4] || ""; o.cur = s[2] || ""; o.art = s[1]; o.vol = s[5]; o.stk = s[6]; o.zinsart = s[9];
+      o.name = MC.felder ? MC.felder.kurzName(s[8] || "", s[1], s[10], s[0]) || isin : s[0] || isin; o.reg = s[0] || "";
+      o.kupon = s[3]; o.faellig = s[4] || ""; o.cur = s[2] || ""; o.art = s[1]; o.vol = s[5]; o.stk = s[6]; o.zinsart = s[9]; o.land = s[10]; o.bon = s[15];
       o.befund = !!(s[13] && typeof s[13] === "object" && Object.keys(s[13]).length);
       o.hinweis = o.faellig && jahre(o.faellig) <= 0 ? "Fälligkeit erreicht" : "kein Kurs in den letzten 14 Tagen";
     } else o.hinweis = "nicht an einer deutschen Börse gelistet oder fällig";
@@ -929,19 +933,23 @@ MC.navInit();
   // ISIN, Art, Etiketten und Notiz, Rendite, Kurs mit Veränderung zum Vortag, Kupon, Fälligkeit mit Restlaufzeit, Veränderung der
   // Rendite seit dem Merken, nächster Zinstermin, „+“ (Musterdepot) und „…“ (Notiz, Liste, Meldung, Entfernen). Die Zusätze zeichnet
   // bereich.js (B). Währung, Volumen und Stückelung stehen im Menü „…“ und im Vergleich, alle Angaben weiter im PDF.
+  // Seit 03.10.2026 Standardreihenfolge (Konzept „Einheitliche Anleihen-Angaben“, felder.js): Anleihe (ISIN · Art · Währung) · Rendite · Kupon ·
+  // Restlaufzeit (Fälligkeit) · Kurs (zum Vortag) · Seit dem Merken · Nächster Zinstermin; Schreibweisen aus MC.felder.
   function zeile(o) {
-    const d = o.kurs != null && o.vortag != null ? o.kurs - o.vortag : null;
-    const kurs = o.kurs != null ? `${fmt(o.kurs, 2)}${o.datum && o.datum !== KSTAND ? `<small>${MC.esc(MC.tag(o.datum))}</small>` : d != null && Math.abs(d) >= 0.005 ? `<small class="${d < 0 ? "ab" : "auf"}">${d > 0 ? "+" : ""}${fmt(d, 2)}</small>` : ""}` : "–";
+    const F = MC.felder, d = o.kurs != null && o.vortag != null ? o.kurs - o.vortag : null;
+    const kurs = o.kurs != null ? `${F.kurs(o.kurs)}${o.datum && o.datum !== KSTAND ? `<small>vom ${MC.esc(MC.tag(o.datum))}</small>` : d != null ? `<small data-p="zum Vortag" class="${d < -0.004 ? "ab" : d > 0.004 ? "auf" : ""}">${F.pkt(d)}</small>` : ""}` : "–";
     const rend = o.rendite != null ? (o.fraglich != null
-      ? `<span class="fraglich" title="Kurs ohne Umsatz (Taxe): Die Rendite liegt ${fmt(o.fraglich, 1)} Prozentpunkte über Bund – bei unter einem Jahr Restlaufzeit wahrscheinlich zu hoch: Meist ist die Taxe veraltet und der Briefkurs höher, sonst zweifelt der Markt an der Rückzahlung. Beim Broker prüfen.">${fmt(o.rendite, 2)} %<sup>?</sup></span>`
-      : `<span${o.real ? ' title="Realrendite (inflationsindexiert)"' : ""}>${fmt(o.rendite, 2)} %${o.real ? "*" : ""}</span>`) : "–";
+      ? `<span class="fraglich" title="Kurs ohne Umsatz (Taxe): Die Rendite liegt ${fmt(o.fraglich, 1)} Prozentpunkte über Bund – bei unter einem Jahr Restlaufzeit wahrscheinlich zu hoch: Meist ist die Taxe veraltet und der Briefkurs höher, sonst zweifelt der Markt an der Rückzahlung. Beim Broker den Briefkurs prüfen.">${F.pct(o.rendite)}<sup>?</sup></span>`
+      : `<span${o.real ? ' title="Realrendite (inflationsindexiert)"' : ""}>${F.pct(o.rendite)}${o.real ? "*" : ""}</span>`) : "–";
     const pruef = o.befund ? ' <span class="kto-pruef" title="Widerspruch im ESMA-Register – Registerwerte unverändert gezeigt, keine Rendite">Daten?</span>' : "";
     const steck = `anleihe.html?isin=${encodeURIComponent(o.isin)}`;
-    const unter = [o.isin !== o.name ? o.isin : "", ART_NAME[o.art] || "", o.hinweis].filter(Boolean).map(MC.esc).join(" · ");
-    return `<tr class="${B ? B.klasse(o) : ""}">${B ? B.zeileKopf(o) : "<td></td>"}<th scope="row"><a href="${steck}">${MC.esc(o.name)}</a>${pruef}${o.reg ? `<small title="${MC.esc(o.reg)}">${MC.esc(o.reg)}</small>` : ""}${unter ? `<small>${unter}</small>` : ""}${B ? B.zeileUnter(o) : ""}</th>` +
-      `<td class="num" data-l="Rendite">${rend}</td><td class="num" data-l="Kurs"${o.kurs != null ? ` title="${MC.esc(`Schlusskurs vom ${MC.datum(o.datum)}${o.boerse ? ", " + o.boerse : ""}`)}"` : ""}>${kurs}</td>` +
-      `<td class="num" data-l="Kupon">${fmtCoupon(o.kupon)}</td>` +
-      `<td class="num" data-l="Fälligkeit">${o.faellig ? MC.datum(o.faellig) + `<small>${jahre(o.faellig) > 0 ? MC.esc(MC.restlaufzeit(jahre(o.faellig))) : "fällig"}</small>` : (o.cur ? "unbefristet" : "–")}</td>` +
+    const unter = [o.isin !== o.name ? o.isin : "", ART_NAME[o.art] || "", o.cur, o.hinweis].filter(Boolean).map(MC.esc).join(" · ");
+    const rest = o.faellig ? (jahre(o.faellig) > 0 ? MC.esc(F.restlaufzeit(o.faellig)) : "fällig") + `<small data-p="fällig">${MC.datum(o.faellig)}</small>` : (o.cur ? "unbefristet" : "–");
+    return `<tr class="${B ? B.klasse(o) : ""}">${B ? B.zeileKopf(o) : "<td></td>"}<th scope="row"><a href="${steck}"${o.reg ? ` title="${MC.esc("Registername: " + o.reg)}"` : ""}>${MC.esc(o.name)}</a>${pruef}${unter ? `<small>${unter}</small>` : ""}${B ? B.zeileUnter(o) : ""}</th>` +
+      `<td class="num" data-l="Rendite">${rend}</td>` +
+      `<td class="num" data-l="Kupon">${MC.esc(F.kupon({ kupon: o.kupon, zinsart: o.zinsart }))}</td>` +
+      `<td class="num" data-l="Restlaufzeit">${rest}</td>` +
+      `<td class="num" data-l="Kurs"${o.kurs != null ? ` title="${MC.esc(`Schlusskurs vom ${MC.datum(o.datum)}${o.boerse ? ", " + o.boerse : ""}`)}"` : ""}>${kurs}</td>` +
       `<td class="num" data-l="Seit dem Merken">${B ? B.zeileSeit(o) : ""}</td>` +
       `<td class="num" data-l="Nächster Zinstermin">${B ? B.zeileTermin(o) : "–"}</td>` +
       `<td>${depotKnopf(o)}${B ? B.zeileKnopf(o) : ""}</td></tr>` + (B ? B.zeileNach(o) : "");
@@ -968,7 +976,7 @@ MC.navInit();
     if (POS.length >= DEPOT_MAX) { NOTIZ = `„${MC.esc(aktName())}“ ist voll (${DEPOT_MAX} Anleihen) – entferne erst eine: <button type="button" class="kto-textbtn" id="zum-depot">Musterdepots öffnen</button>.`; statusText(); return; }
     const nenn = nennVorschlag(o);
     knopf.disabled = true;
-    NOTIZ = `<strong>${MC.esc(o.name)}</strong> liegt mit ${fmt(nenn)} ${o.cur && o.cur !== "EUR" ? MC.esc(o.cur) : "€"} Nennwert in „${MC.esc(aktName())}“ – <button type="button" class="kto-textbtn" id="zum-depot">Nennwert ändern</button>.`;
+    NOTIZ = `<strong>${MC.esc(o.name)}</strong> liegt mit ${fmt(nenn)} ${o.cur && o.cur !== "EUR" ? MC.esc(o.cur) : "EUR"} Nennwert in „${MC.esc(aktName())}“ – <button type="button" class="kto-textbtn" id="zum-depot">Nennwert ändern</button>.`;
     K.depot(o.isin, nenn, AKTIV).catch(a => {
       NOTIZ = ""; knopf.disabled = false;
       if (a && a.status !== "anmelden") { NOTIZ = MC.esc(DEPOT_TEXT[a.status] || TEXT[a.status] || TEXT.fehler); statusText(); }
@@ -1173,7 +1181,7 @@ MC.navInit();
     $("geteilt-m-nein").textContent = stand.angemeldet && voll ? "Schließen" : "Nicht übernehmen";
     const liste = D => { $("geteilt-m-liste").innerHTML = g.liste.map(([i, nenn]) => {
       const o = D ? anleihe(i, 0, D) : { name: i, kupon: null, faellig: "", cur: "" };
-      return `<li>${MC.esc(o.name)} <small>${o.name !== i ? `${fmtCoupon(o.kupon)}${o.faellig ? " · " + o.faellig.slice(0, 4) : ""} · ` : ""}${fmt(nenn)} ${o.cur && o.cur !== "EUR" ? MC.esc(o.cur) : "€"}</small></li>`;
+      return `<li>${MC.esc(o.name)} <small>${o.name !== i ? `${fmtCoupon(o.kupon)}${o.faellig ? " · " + o.faellig.slice(0, 4) : ""} · ` : ""}${fmt(nenn)} ${o.cur && o.cur !== "EUR" ? MC.esc(o.cur) : "EUR"}</small></li>`;
     }).join(""); };
     liste(null);
     ladeDaten().then(D => ladeStamm(g.liste.map(x => x[0]).filter(i => !D.idx.has(i))).then(() => D)).then(D => { if (GETEILT_M === g) liste(D); }, () => {});
@@ -1207,7 +1215,7 @@ MC.navInit();
   // für die ganze Laufzeit als fest angenommen. Das Sternchen steht nur einmal – am Namen der Anleihe in der Tabelle; darunter die Zeile
   // „* Fremdwährungen werden zur Vereinfachung in Euro umgerechnet“, die aufgeklappt Kurs, Stichtag und Wechselkursrisiko nennt
   // (Nutzerwunsch 01.10.2026: „das Sternchen soll nur einmal bei der Anleihe … zu sehen sein. Nicht überall!“).
-  const NENN_MAX = 100000000, eur = (v, dec = 2) => `${fmt(v, dec)} €`, plus = (v, dec = 2) => (v > 0 ? "+" : "") + fmt(v, dec);
+  const NENN_MAX = 100000000, eur = (v, dec = 2) => `${fmt(v, dec)} EUR`, plus = (v, dec = 2) => (v > 0 ? "+" : "") + fmt(v, dec);
   let FX = null;   // wechselkurse.json: { stand, kurse: { USD: 1.1355, … } }; null = nicht geladen
   // wechselkurse.php liefert den zuletzt veröffentlichten EZB-Stand (fragt selbst nach, höchstens alle 30 Minuten); antwortet es
   // nicht, gilt die Datei aus dem täglichen Datenlauf
@@ -1306,13 +1314,13 @@ MC.navInit();
   function depotZeile(p) {
     const o = p.o, steck = `anleihe.html?isin=${encodeURIComponent(p.isin)}`, stk = typeof o.stk === "number" ? o.stk : null;
     const warn = [p.warum ? p.warum + " – fehlt im Schaubild" : "", stk && p.nenn < stk ? `unter der Mindestanlage von ${fmtStk(stk)}` : stk >= 1 && Number.isInteger(stk) && p.nenn % stk ? `kein Vielfaches der Stückelung ${fmtStk(stk)}` : ""].filter(Boolean);
-    return `<tr><th scope="row">${p.rechnet && p.farbe ? `<i class="kd-f" style="background: ${p.farbe}"></i>` : ""}<a href="${steck}">${MC.esc(o.name)}</a>${p.fremd ? `<span class="kd-stern" title="Zur Vereinfachung in Euro umgerechnet – siehe Hinweis unter der Tabelle">*</span>` : ""}<small${o.reg ? ` title="${MC.esc(o.reg)}"` : ""}>${MC.esc([p.isin, ART_NAME[o.art] || "", o.cur ? waehrung(o.cur) : ""].filter(Boolean).join(" · "))}</small>${warn.map(w => `<small class="kd-warn">${MC.esc(w)}</small>`).join("")}</th>` +
-      `<td class="num" data-l="Rendite">${p.rend != null ? `<b>${fmt(p.rend, 2)} %</b>` : "–"}</td>` +
-      `<td class="num" data-l="Kupon">${fmtCoupon(o.kupon)}<small><span class="kd-m">lfd. Verzinsung </span>${p.lfd != null ? fmt(p.lfd, 2) + " %" : "–"}</small></td>` +
+    return `<tr><th scope="row">${p.rechnet && p.farbe ? `<i class="kd-f" style="background: ${p.farbe}"></i>` : ""}<a href="${steck}">${MC.esc(o.name)}</a>${p.fremd ? `<span class="kd-stern" title="Zur Vereinfachung in Euro umgerechnet – siehe Hinweis unter der Tabelle">*</span>` : ""}<small${o.reg ? ` title="${MC.esc("Registername: " + o.reg)}"` : ""}>${MC.esc([p.isin, ART_NAME[o.art] || "", o.cur || ""].filter(Boolean).join(" · "))}</small>${warn.map(w => `<small class="kd-warn">${MC.esc(w)}</small>`).join("")}</th>` +
+      `<td class="num" data-l="Rendite">${p.rend != null ? MC.felder.pct(p.rend) : "–"}</td>` +
+      `<td class="num" data-l="Kupon">${o.zinsart === 2 ? "Nullkupon" : fmtCoupon(o.kupon)}<small><span class="kd-m">lfd. Verzinsung </span>${p.lfd != null ? MC.felder.pct(p.lfd) : "–"}</small></td>` +
       `<td class="num" data-l="Restlaufzeit">${p.rest != null ? (p.rest > 0 ? MC.esc(MC.restlaufzeit(p.rest)) : "fällig") : "–"}<small><span class="kd-m">fällig </span>${o.faellig ? MC.datum(o.faellig) : "unbefristet"}</small></td>` +
       `<td class="num" data-l="Duration">${p.mac != null ? MC.esc(MC.restlaufzeit(p.mac)) : "–"}<small><span class="kd-m">mod. Duration </span>${p.dur != null ? fmt(p.dur, 1) : "–"}</small></td>` +
-      `<td class="num" data-l="Nennwert"><span class="kd-eur${p.cur ? " w3" : ""}"><input type="text" inputmode="numeric" autocomplete="off" maxlength="11" value="${fmt(p.nenn)}" data-nenn="${MC.esc(p.isin)}" aria-label="Nennwert ${MC.esc(o.name)}${p.cur ? " in " + MC.esc(p.cur) : ""}"><span>${p.cur ? MC.esc(p.cur) : "€"}</span></span>${p.fremd ? `<small>= ${eur(p.nennEur)}</small>` : ""}</td>` +
-      `<td class="num" data-l="Kaufpreis"${p.kauf != null ? ` title="${MC.esc(`Kurswert ${eur(p.kauf)}${p.sz != null ? ` + Stückzinsen ${eur(p.sz)} (Valuta ${MC.datum(VALUTA)})` : ""} · Schlusskurs vom ${MC.datum(o.datum)}${o.boerse ? ", " + o.boerse : ""}`)}"` : ""}>${p.preis != null ? `<b>${eur(p.preis)}</b>` : "–"}<small><span class="kd-m">Kurs </span>${o.kurs != null ? fmt(o.kurs, 2) + (o.datum && o.datum !== KSTAND ? ` · ${MC.esc(MC.tag(o.datum))}` : "") : "–"}</small></td>` +
+      `<td class="num" data-l="Nennwert"><span class="kd-eur${p.cur ? " w3" : ""}"><input type="text" inputmode="numeric" autocomplete="off" maxlength="11" value="${fmt(p.nenn)}" data-nenn="${MC.esc(p.isin)}" aria-label="Nennwert ${MC.esc(o.name)}${p.cur ? " in " + MC.esc(p.cur) : ""}"><span>${p.cur ? MC.esc(p.cur) : "EUR"}</span></span>${p.fremd ? `<small>= ${eur(p.nennEur)}</small>` : ""}</td>` +
+      `<td class="num" data-l="Kaufpreis"${p.kauf != null ? ` title="${MC.esc(`Kurswert ${eur(p.kauf)}${p.sz != null ? ` + Stückzinsen ${eur(p.sz)} (Valuta ${MC.datum(VALUTA)})` : ""} · Schlusskurs vom ${MC.datum(o.datum)}${o.boerse ? ", " + o.boerse : ""}`)}"` : ""}>${p.preis != null ? `<b>${eur(p.preis)}</b>` : "–"}<small><span class="kd-m">Kurs </span>${o.kurs != null ? MC.felder.kurs(o.kurs) + (o.datum && o.datum !== KSTAND ? ` · vom ${MC.esc(MC.tag(o.datum))}` : "") : "–"}</small></td>` +
       `<td class="num" data-l="Anteil">${p.anteil != null ? `<span class="kd-ant" aria-hidden="true"><i style="width: ${Math.min(100, p.anteil).toFixed(1)}%"></i></span>${fmt(p.anteil, 1)} %` : "–"}</td>` +
       `<td class="num" data-l="Zinsen pro Jahr">${p.zins != null ? eur(p.zins) : "–"}<small><span class="kd-m">nächster Zinstermin </span>${p.zt ? MC.datum(p.zt) : p.rechnet && !p.fest ? "kein Kupon" : "–"}</small></td>` +
       `<td><button type="button" class="kto-x" data-raus="${MC.esc(p.isin)}" aria-label="${MC.esc(o.name)} aus dem Musterdepot entfernen" title="Aus dem Musterdepot entfernen">×<span> Entfernen</span></button></td></tr>`;
@@ -1420,7 +1428,7 @@ MC.navInit();
       if (x.rueck) {
         const [svg, oben] = stapel(x.teile, t => t.rueck, cx, b, yR, 106, mr, "Rückzahlung"), d = Math.round(x.diff);
         const y = platzR(cx, oben - 4, Math.max(breite(kurz(x.rueck)), d ? breite(plus(d, 0)) : 0), d ? 28 : 13);
-        s += svg + (d ? text(cx, y, d < 0 ? "kd-m" : "kd-p", plus(d, 0) + `<title>Rückzahlung minus heutiger Kurswert: ${plus(d, 0)} €</title>`) : "") + text(cx, y - (d ? 15 : 0), "kd-w", kurz(x.rueck));
+        s += svg + (d ? text(cx, y, d < 0 ? "kd-m" : "kd-p", plus(d, 0) + `<title>Rückzahlung minus heutiger Kurswert: ${plus(d, 0)} EUR</title>`) : "") + text(cx, y - (d ? 15 : 0), "kd-w", kurz(x.rueck));
       } else s += leer(cx, yR);
       if (x.zins + x.rueck) {
         const [svg, oben] = stapel(x.teile, t => t.zins + t.rueck, cx, b, yS, hS - (eng ? 44 : 30), ms, "Zinsen und Rückzahlung");
@@ -1499,7 +1507,7 @@ MC.navInit();
   // Hinweis zum Sternchen: zugeklappt nur die Zeile „* Fremdwährungen werden zur Vereinfachung in Euro umgerechnet“; aufgeklappt
   // Kurs, Stichtag, „als fest angenommen“ und das Wechselkursrisiko
   function fxHinweis() {
-    const fremd = POS.filter(p => p.fremd), kurse = [...new Set(fremd.map(p => p.o.cur))].sort().map(c => `1 € = ${fmtFx(FX.kurse[c])} ${MC.esc(c)}`).join(", ");
+    const fremd = POS.filter(p => p.fremd), kurse = [...new Set(fremd.map(p => p.o.cur))].sort().map(c => `1 EUR = ${fmtFx(FX.kurse[c])} ${MC.esc(c)}`).join(", ");
     $("kd-fx").hidden = !fremd.length;
     if (!fremd.length) return;
     $("kd-fx-t").innerHTML = `In Euro umgerechnet mit dem Euro-Referenzkurs der EZB vom ${MC.datum(FX.stand)}: ${kurse}. Dieser Wechselkurs ist hier als <b>fest</b> angenommen – für den Kurswert, alle Zinsen und die Rückzahlung bis zur Fälligkeit. Tatsächlich schwankt er (<b>Wechselkursrisiko</b>): Steigt der Euro gegenüber der Währung der Anleihe, sind Zinsen und Rückzahlung in Euro weniger wert; fällt er, sind sie mehr wert.`;
@@ -1507,7 +1515,7 @@ MC.navInit();
   // Währung hinter dem Nennwert-Feld: die der gewählten Anleihe
   function nennWaehrung() {
     const cur = (($("kd-isin").selectedOptions[0] || {}).dataset || {}).cur || "", fremd = !!cur && cur !== "EUR";
-    $("kd-nenn-w").textContent = fremd ? cur : "€"; $("kd-nenn-box").classList.toggle("w3", fremd);
+    $("kd-nenn-w").textContent = fremd ? cur : "EUR"; $("kd-nenn-box").classList.toggle("w3", fremd);
     return fremd ? cur : "";
   }
   $("kd-leg").addEventListener("click", e => {
@@ -1733,11 +1741,11 @@ MC.navInit();
   function depotPdf() {
     const P = MC.pdf(), B = P.B, H = P.H, R = 40, liste = sortiert(), n = liste.length, jetzt = new Date();
     const datum = `${zwei(jetzt.getDate())}.${zwei(jetzt.getMonth() + 1)}.${jetzt.getFullYear()}`, uhr = `${zwei(jetzt.getHours())}:${zwei(jetzt.getMinutes())}`;
-    // Angaben wie die Anleihen-Suche, je Spalte oben und darunter (t2): x = linker Rand, b = Breite; Zahlen rechtsbündig (r),
-    // Text mit 8 pt Einzug nach einer Zahlenspalte. Unter dem Namen stehen ISIN und Registername.
-    const SP = [];
-    [["Anleihe", 176, 0, "ISIN · Registername"], ["Rendite", 46, 1], ["Kurs", 46, 1], ["Kupon", 48, 1], ["Fälligkeit", 64, 1, "Restlaufzeit"],
-      ["Art", 72, 0, "Währung"], ["Volumen", 63, 1, "Stückelung"]]
+    // Seit 03.10.2026 dieselben Spalten in derselben Reihenfolge wie die Tabelle (Konzept „Einheitliche Anleihen-Angaben“): je Spalte oben
+    // und darunter (t2); x = linker Rand, b = Breite; Zahlen rechtsbündig (r). Unter dem Namen stehen ISIN, Art und Währung.
+    const SP = [], F = MC.felder, pt = t => String(t).replace(/\u00a0/g, " ");   // im PDF normales Leerzeichen
+    [["Anleihe", 176, 0, "ISIN · Art · Währung"], ["Rendite", 46, 1], ["Kupon", 48, 1], ["Restlaufzeit", 62, 1, "Fälligkeit"], ["Kurs", 56, 1, "zum Vortag"],
+      ["Seit dem Merken", 62, 1, "gemerkt am"], ["Nächster Zinstermin", 65, 1]]
       .reduce((x, [t, b, r, t2]) => { SP.push({ t, t2, x, b, r: !!r }); return x + b; }, R);
     const rx = i => SP[i].x + SP[i].b - 6, lx = i => SP[i].x + (i && SP[i - 1].r ? 8 : 0), NAME = 168, LINK = "https://www.bondarium.de/";
     // Hinweise unten auf jeder Seite; ihre Höhe bestimmt, wie weit die Tabelle reicht
@@ -1745,9 +1753,9 @@ MC.navInit();
     if (liste.some(o => o.real)) noten.push("* Realrendite (inflationsindexierte Anleihe).");
     if (liste.some(o => o.fraglich != null)) noten.push("? Kurs ohne Umsatz, Rendite weit über Bund – die Taxe ist vermutlich veraltet.");
     if (liste.some(o => o.befund)) noten.push("Daten? Widerspruch im ESMA-Register – Registerwerte unverändert gezeigt, keine Rendite.");
-    noten.push("Kurs: Schlusskurs in % des Nennwerts (Börse Frankfurt, Tradegate; Bundeswertpapiere: Deutsche Bundesbank), ein älterer Kurs trägt sein Datum. " +
-      "Rendite: bis zur Fälligkeit, von Bondarium aus dem Kurs berechnet. Volumen: ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe (Mrd. = Milliarden). " +
-      "Stückelung: kleinster Nennwert, zugleich Mindestanlage, in der Währung der Anleihe. Einzelheiten zu jeder Anleihe: Klick auf den Namen.");
+    noten.push("Rendite: bis zur Fälligkeit, pro Jahr, von Bondarium aus dem Kurs berechnet. Kurs: Schlusskurs in % des Nennwerts (Börse Frankfurt, Tradegate; " +
+      "Bundeswertpapiere: Deutsche Bundesbank), darunter die Veränderung zum Vortag in Prozentpunkten (Pkt.); ein älterer Kurs trägt sein Datum. Seit dem Merken: " +
+      "Veränderung der Rendite in Prozentpunkten. Zinstermine laut Deutscher Börse, sonst geschätzt. Einzelheiten zu jeder Anleihe: Klick auf den Namen.");
     // Zweiter Knopf (Nutzerwunsch 03.10.2026): dieselben Anleihen als neues Musterdepot, über den Link des Musterdepot-PDFs. Nur, was
     // sich rechnen lässt (wie beim „+“ der Merkliste; ein fehlender Wechselkurs auf diesem Gerät zählt nicht), Nennwert wie beim „+“,
     // höchstens DEPOT_MAX in der Reihenfolge des Auszugs.
@@ -1782,17 +1790,22 @@ MC.navInit();
       const z1 = y + 14, z2 = y + 25, klein = { gr: 7, farbe: GRAU };
       P.text(R, z1, o.name, { gr: 9, fett: true, max: NAME });
       P.link(R, y + 4, Math.min(NAME, P.weite(o.name, 9, true)), 13, `${LINK}anleihe.html?isin=${encodeURIComponent(o.isin)}`);
-      P.text(R, z2, [o.isin !== o.name ? o.isin : "", o.hinweis, o.befund ? "Daten?" : "", o.reg].filter(Boolean).join(" · "), Object.assign({ max: NAME }, klein));   // ISIN zuerst – nie abgeschnitten
-      P.text(rx(1), z1, o.rendite != null ? `${fmt(o.rendite, 2)} %${o.real ? "*" : o.fraglich != null ? "?" : ""}` : "–", { gr: 8.5, rechts: true });
-      P.text(rx(2), z1, o.kurs != null ? fmt(o.kurs, 2) : "–", { gr: 8.5, rechts: true });
-      if (o.kurs != null && o.datum && o.datum !== KSTAND) P.text(rx(2), z2, `vom ${MC.tag(o.datum)}`, Object.assign({ rechts: true }, klein));
-      P.text(rx(3), z1, fmtCoupon(o.kupon), { gr: 8.5, rechts: true });
-      P.text(rx(4), z1, o.faellig ? MC.datum(o.faellig) : o.cur ? "unbefristet" : "–", { gr: 8.5, rechts: true });
-      if (o.faellig) P.text(rx(4), z2, jahre(o.faellig) > 0 ? MC.restlaufzeit(jahre(o.faellig)) : "fällig", Object.assign({ rechts: true }, klein));
-      P.text(lx(5), z1, ART_NAME[o.art] || "–", { gr: 8.5, max: SP[5].b - 14 });
-      P.text(lx(5), z2, o.cur || "–", klein);
-      P.text(rx(6), z1, fmtVol(o.vol), { gr: 8.5, rechts: true });
-      P.text(rx(6), z2, fmtStk(o.stk), Object.assign({ rechts: true }, klein));
+      P.text(R, z2, [o.isin !== o.name ? o.isin : "", ART_NAME[o.art] || "", o.cur, o.hinweis, o.befund ? "Daten?" : ""].filter(Boolean).join(" · "), Object.assign({ max: NAME }, klein));   // ISIN zuerst – nie abgeschnitten
+      P.text(rx(1), z1, o.rendite != null ? pt(F.pct(o.rendite)) + (o.real ? "*" : o.fraglich != null ? "?" : "") : "–", { gr: 8.5, rechts: true });
+      P.text(rx(2), z1, pt(F.kupon({ kupon: o.kupon, zinsart: o.zinsart })), { gr: 8.5, rechts: true });
+      P.text(rx(3), z1, o.faellig ? (jahre(o.faellig) > 0 ? pt(F.restlaufzeit(o.faellig)) : "fällig") : o.cur ? "unbefristet" : "–", { gr: 8.5, rechts: true });
+      if (o.faellig) P.text(rx(3), z2, MC.datum(o.faellig), Object.assign({ rechts: true }, klein));
+      const dv = o.kurs != null && o.vortag != null ? o.kurs - o.vortag : null;
+      P.text(rx(4), z1, o.kurs != null ? pt(F.kurs(o.kurs)) : "–", { gr: 8.5, rechts: true });
+      if (o.kurs != null && o.datum && o.datum !== KSTAND) P.text(rx(4), z2, `vom ${MC.tag(o.datum)}`, Object.assign({ rechts: true }, klein));
+      else if (dv != null) P.text(rx(4), z2, pt(F.pkt(dv)), Object.assign({ rechts: true }, klein));
+      const dm = B ? B.delta(o) : null;
+      P.text(rx(5), z1, dm != null ? pt(F.pkt(dm)) : "–", { gr: 8.5, rechts: true });
+      if (o.seit) P.text(rx(5), z2, new Date(o.seit * 1000).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }), Object.assign({ rechts: true }, klein));
+      const zt = B ? B.termin(o) : null;
+      P.text(rx(6), z1, zt ? MC.datum(zt) : "–", { gr: 8.5, rechts: true });
+      if (!zt && (o.zinsart === 2 || o.kupon === 0)) P.text(rx(6), z2, "kein Kupon", Object.assign({ rechts: true }, klein));
+      else if (zt && zt === o.faellig) P.text(rx(6), z2, "mit Rückzahlung", Object.assign({ rechts: true }, klein));
       y += 31; P.linie(R, y, B - R, y, LINIE, 0.5);
     });
     for (let i = 0, gesamt = P.anzahl(); i < gesamt; i++) {
@@ -1841,7 +1854,7 @@ MC.navInit();
       .reduce((x, [t, b, r, t2]) => { SP.push({ t, t2, x, b, r: !!r }); return x + b; }, R);
     const rx = i => SP[i].x + SP[i].b - (i === SP.length - 1 ? 0 : 6), NAME = 122;
     const noten = [];
-    if (fremd.length && FX) noten.push(`* Fremdwährung: zur Vereinfachung mit dem Euro-Referenzkurs der EZB vom ${MC.datum(FX.stand)} in Euro umgerechnet (${[...new Set(fremd.map(p => p.o.cur))].sort().map(c => `1 € = ${fmtFx(FX.kurse[c])} ${c}`).join(", ")}) und für die ganze Laufzeit als fest angenommen – tatsächlich schwankt er (Wechselkursrisiko).`);
+    if (fremd.length && FX) noten.push(`* Fremdwährung: zur Vereinfachung mit dem Euro-Referenzkurs der EZB vom ${MC.datum(FX.stand)} in Euro umgerechnet (${[...new Set(fremd.map(p => p.o.cur))].sort().map(c => `1 EUR = ${fmtFx(FX.kurse[c])} ${c}`).join(", ")}) und für die ganze Laufzeit als fest angenommen – tatsächlich schwankt er (Wechselkursrisiko).`);
     noten.push("Musterdepot: gedachte Nennwerte, kein Bestand und kein Kauf. Kurs: Schlusskurs in % des Nennwerts. Kaufpreis = Nennwert × Kurs plus Stückzinsen zum Valutatag, ohne Gebühren. Anteil: Kurswert der Anleihe am Kurswert des Depots. " +
       "Rendite: bis zur Fälligkeit, pro Jahr; laufende Verzinsung = Kupon ÷ Kurs. Duration: durchschnittliche Kapitalbindung in Jahren (Macaulay); mod. Duration = Duration ÷ (1 + Rendite) – um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Prozentpunkt steigt. Summe nach Kurswert gewichtet. " +
       "Zinsen und Rückzahlung vor Steuern und Kosten; Zinstermine laut Deutscher Börse, wo sie fehlen geschätzt; eine vorzeitige Kündigung ist nicht berücksichtigt. Maßgeblich sind die Anleihebedingungen.");
@@ -1890,7 +1903,7 @@ MC.navInit();
       P.text(rx(3), z2, o.faellig ? MC.datum(o.faellig) : "unbefristet", klein({ rechts: true }));
       P.text(rx(4), z1, p.mac != null ? MC.restlaufzeit(p.mac) : "–", { gr: 8.5, rechts: true });
       P.text(rx(4), z2, p.dur != null ? fmt(p.dur, 1) : "–", klein({ rechts: true }));
-      P.text(rx(5), z1, `${fmt(p.nenn)} ${p.cur || "€"}`, { gr: 8.5, rechts: true });
+      P.text(rx(5), z1, `${fmt(p.nenn)} ${p.cur || "EUR"}`, { gr: 8.5, rechts: true });
       if (p.fremd && p.nennEur != null) P.text(rx(5), z2, `= ${eur(p.nennEur)}`, klein({ rechts: true }));
       P.text(rx(6), z1, p.preis != null ? eur(p.preis) : "–", { gr: 8.5, fett: true, rechts: true });
       P.text(rx(6), z2, o.kurs != null ? fmt(o.kurs, 2) : "–", klein({ rechts: true }));

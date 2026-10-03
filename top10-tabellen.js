@@ -4,15 +4,17 @@
      Staatsanleihen/Unternehmensanleihen nach Laufzeit   → T10.laufzeit({ anleihen, daten, aktiv })
      Staatsanleihen/Unternehmensanleihen nach Ländern    → T10.laender({ daten, laender, … })
 
-   Laden NACH site.js und bond.js (Anleihen-Mathematik, MC.bond):
-     <script src="site.js"></script><script src="bond.js"></script><script src="top10-tabellen.js"></script>
+   Laden NACH site.js, felder.js (Standardtabelle, MC.felder) und bond.js (Anleihen-Mathematik, MC.bond):
+     <script src="site.js"></script><script src="felder.js"></script><script src="bond.js"></script><script src="top10-tabellen.js"></script>
    Die Seite ruft danach selbst MC.load("kurse-auswahl.json") und MC.load("top10-….json") auf und übergibt die Promises
    als daten: [kurse, top10] – so erkennt scripts/inline_data.py die Dateien am Aufruf und bettet sie beim Deploy ein
    (vorher hing das an einem HTML-Kommentar, der den Aufruf wörtlich wiederholte).
 
-   Tabelle (alle vier Seiten gleich, seit 30.09.2026): # · Emittent · Rendite · Kurs · Kupon · Fälligkeit · Restlaufzeit · ISIN
-   (Link zum Steckbrief) · Währung · Volumen · Stückelung. Am Handy steht die Fälligkeit zusätzlich unter dem Emittenten –
-   dort sieht man ohne Querwischen nur die ersten Spalten („Bundesrepublik Deutschland“ ×7 war nicht unterscheidbar).
+   Tabelle (alle Ranglisten gleich, seit 03.10.2026 Standardtabelle aus felder.js, Konzept „Einheitliche Anleihen-Angaben“):
+   # · Anleihe (darunter ISIN · Art · Währung) · Rendite · Kupon · Restlaufzeit (darunter Fälligkeit) · Kurs · Bonität · Stückelung · Volumen
+   · Handelstage (nur bei der automatischen Rangliste – danach ist gerankt, fett) · Merken. Am Handy Karten (base.css, .atab).
+   Kurzname und Bonität: aus der Zeile (kurz, bon – automatische Listen) bzw. anleihen-auswahl.json (Handauswahl der Seite).
+   Laden: daten = [kurse-auswahl.json, top10-….json, anleihen-auswahl.json] – alle per MC.load, damit inline_data.py sie einbettet.
 
    Zeilen (Handauswahl in der Seite oder automatische Liste aus scripts/update_top10.py):
      { isin, emittent?, art?, cur?, kupon, zins (Zahlungen je Jahr), zt? (Zinstage „MM-TT“ laut Börsenliste), faellig, kurs,
@@ -23,13 +25,14 @@
   "use strict";
   var ZAHL = ["keine", "eine", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn"];
   var ZAHL_GROSS = ["Keine", "Ein", "Zwei", "Drei", "Vier", "Fünf", "Sechs", "Sieben", "Acht", "Neun", "Zehn"];
-  var KURSE = {}, KTAGE = [], KSTAND = "";
+  var KURSE = {}, KTAGE = [], KSTAND = "", AUS = {}, TAGE = 0;   // AUS: anleihen-auswahl.json {ISIN: [kurz, art, waehrung, bon, registername]}
+  var ARTNR = { "Staat": 0, "Öffentlich": 1, "Unternehmen": 2 };
 
   function fmt(v, dec) { return MC.zahl(v, dec || 0); }
   function fmtDate(iso) { return MC.bond.fmtDate(iso); }
   function RL(y) { return MC.restlaufzeit ? MC.restlaufzeit(y) : fmt(y, 1) + " Jahre"; }
 
-  // ---------- Zeilen: Kurs, Datum, Rendite, Restlaufzeit ----------
+  // ---------- Zeilen: Kurs, Datum, Rendite – als Zeilenobjekte der Standardtabelle (felder.js) ----------
   function zeilen(liste, def) {
     def = def || {};
     return liste.map(function (r, i) {
@@ -38,53 +41,33 @@
       var yld = k ? (typeof k[1] === "number" ? k[1] : null)
         : "rendite" in r ? (typeof r.rendite === "number" ? r.rendite : null)
         : MC.bond.yieldFromPrice({ coupon: r.kupon, freq: r.zins, maturity: r.faellig, days: r.zt }, kurs, settle) * 100;
+      var a = AUS[r.isin] || [], artTxt = r.art || def.art;
+      var art = artTxt in ARTNR ? ARTNR[artTxt] : a[1];
       return {
-        rank: i + 1, isin: r.isin, emittent: r.emittent || def.emittent || "", art: r.art || def.art, cur: cur,
-        kupon: r.kupon, faellig: r.faellig, kurs: kurs, datum: datum, vol: r.vol, stk: r.stk, yld: yld,
-        years: MC.bond.yearsTo(r.faellig, settle)
+        platz: i + 1, isin: r.isin, kurz: r.kurz || a[0] || MC.felder.kurzName(r.emittent || def.emittent || "", art, null, r.isin), reg: a[4] || "",
+        art: art, ccy: cur, kupon: r.kupon, zinsart: r.kupon === 0 ? 2 : 0, faellig: r.faellig, kurs: kurs, kdatum: datum,
+        boerse: k ? k[3] : "", vortag: k ? k[6] : null, rend: yld, rendGrund: "keine Rendite in den Kursdaten",
+        bon: r.bon != null ? r.bon : a[3], vol: r.vol, stk: r.stk, ht: r.ht, um: r.um
       };
     });
   }
-  // Seit 03.10.2026 (Nutzertest): Der Name führt zum Steckbrief (vorher nur die ISIN ganz rechts, am Handy außerhalb des Bildes), Renditen
-  // in fremder Währung tragen das Kürzel direkt an der Zahl, Links und Merken-Knopf nennen die Anleihe im zugänglichen Namen
-  function zeileHtml(r, stand) {
-    var name = r.emittent + " " + MC.bond.fmtCoupon(r.kupon) + " % " + fmtDate(r.faellig), w = r.cur && r.cur !== "EUR" ? r.cur : "";
-    return '<tr><td class="num rk">' + r.rank + '</td>' +
-      '<th scope="row"><a class="name-link" href="anleihe.html?isin=' + MC.esc(r.isin) + '" aria-label="Steckbrief ' + MC.esc(name) + '">' + MC.esc(r.emittent) + '</a><small class="fa-mobil">fällig ' + fmtDate(r.faellig) + '</small></th>' +
-      '<td class="num"' + (r.yld == null ? ' title="Kurs ohne Umsatz – Rendite nicht aussagekräftig"' : '') + '>' + (r.yld == null ? "–" : fmt(r.yld, 2) + " %" + (w ? ' <small class="w-kz">' + MC.esc(w) + '</small>' : "")) + '</td>' +
-      '<td class="num"' + (r.datum !== stand ? ' title="Kurs vom ' + fmtDate(r.datum) + '"' : '') + '>' + fmt(r.kurs, 2) + '</td>' +
-      '<td class="num">' + MC.bond.fmtCoupon(r.kupon) + ' %</td>' +
-      '<td class="num">' + fmtDate(r.faellig) + '</td><td class="num">' + RL(r.years) + '</td>' +
-      '<td class="isin"><a href="anleihe.html?isin=' + MC.esc(r.isin) + '" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten" aria-label="ISIN ' + MC.esc(r.isin) + ', Steckbrief ' + MC.esc(name) + '">' + MC.esc(r.isin) + '</a>' + (MC.konto ? MC.konto.knopf(r.isin, "nur", name) : "") + '</td>' +   // Merken-Stern (seit 02.10.2026 abends, „Mein Bondarium“)
-      '<td class="txt">' + MC.esc(r.cur) + '</td>' +
-      '<td class="num">' + (typeof r.vol === "number" ? MC.bond.fmtVol(r.vol) : "–") + '</td>' +
-      '<td class="num">' + (typeof r.stk === "number" ? MC.bond.fmtStk(r.stk) : "–") + '</td></tr>';
+  // Tabelle zeichnen (Kopf und Zeilen neu): rows aus zeilen(), sort = { col, dir } (Spalten-Ids aus felder.js), leer = Text ohne Zeile,
+  // rang = Spalte, nach der gerankt ist (fett, solange nach Platz sortiert ist): Handelstage bei der automatischen Rangliste, sonst angegeben
+  function tabelle(table, rows, sort, leer, rang) {
+    var ids = ["platz", "anleihe", "rendite", "kupon", "restlaufzeit", "kurs", "bonitaet", "stueckelung", "volumen"];
+    var ht = rows.length > 0 && rows.every(function (r) { return typeof r.ht === "number"; });
+    if (ht) ids.push("handelstage");
+    if (MC.konto) ids.push("merken");
+    var html = MC.felder.tabelle(ids, rows, { sort: sort, sortieren: true, rang: rang || (ht ? "handelstage" : null), leer: leer || "",
+      ctx: { kstand: KSTAND || (rows[0] && rows[0].kdatum), tage: TAGE } });
+    table.classList.add("atab");
+    if (table.tHead) table.tHead.remove();
+    [].slice.call(table.tBodies).forEach(function (b) { b.remove(); });
+    table.insertAdjacentHTML("beforeend", html);
   }
-  // Tabelle zeichnen: rows (aus zeilen()), sort = { col, dir }; leer = Text, wenn keine Zeile
-  function tabelle(table, rows, sort, leer) {
-    var cmp = function (a, b) {
-      var x = a[sort.col], y = b[sort.col];
-      if (x == null || y == null) return x == null && y == null ? a.rank - b.rank : x == null ? 1 : -1;   // ohne Wert ans Ende
-      var c = typeof x === "string" ? x.localeCompare(y, "de", { numeric: true }) : x - y;
-      return (c || a.rank - b.rank) * sort.dir;
-    };
-    var stand = KSTAND || (rows[0] && rows[0].datum);
-    table.tBodies[0].innerHTML = rows.length ? rows.slice().sort(cmp).map(function (r) { return zeileHtml(r, stand); }).join("")
-      : '<tr><td class="leer" colspan="11">' + MC.esc(leer || "") + '</td></tr>';
-    table.tHead.querySelectorAll("th[data-col]").forEach(function (th) {
-      if (th.dataset.col === sort.col) th.setAttribute("aria-sort", sort.dir > 0 ? "ascending" : "descending");
-      else th.removeAttribute("aria-sort");
-    });
-  }
-  function sortierbar(table, sort, neu) {
-    table.tHead.addEventListener("click", function (e) {
-      var b = e.target.closest(".sortbtn");
-      if (!b) return;
-      if (sort.col === b.dataset.col) sort.dir = -sort.dir; else { sort.col = b.dataset.col; sort.dir = 1; }
-      neu();
-    });
-  }
+  function sortierbar(table, sort, neu) { MC.felder.sortierbar(table, sort, neu); }
   function kurseSetzen(d) { if (d) { KURSE = d.kurse || {}; KTAGE = d.tage || []; KSTAND = d.stand || ""; } }
+  function auswahlSetzen(d) { if (d && d.a) AUS = d.a; }
   function aktiv(d) { return !!(d && d.aktiv && d.gruppen && d.fenster); }
   // Kursdatum auch sichtbar über der ersten Tabelle (seit 03.10.2026, Nutzertest: stand nur im zugeklappten Methodik-Teil)
   function standZeile(iso) {
@@ -102,7 +85,8 @@
     daten = daten || [];
     return Promise.all([
       Promise.resolve(daten[0]).catch(function (e) { console.warn("Tageskurse nicht geladen, eingebettete Kurse bleiben:", e); return null; }),
-      Promise.resolve(daten[1]).catch(function (e) { console.warn("Top 10 nicht geladen, Handauswahl bleibt:", e); return null; })
+      Promise.resolve(daten[1]).catch(function (e) { console.warn("Top 10 nicht geladen, Handauswahl bleibt:", e); return null; }),
+      Promise.resolve(daten[2]).catch(function (e) { console.warn("anleihen-auswahl.json nicht geladen – Namen aus der Zeile:", e); return null; })
     ]);
   }
 
@@ -115,7 +99,7 @@
       var table = document.querySelector('table.kpis[data-gruppe="' + key + '"]');
       if (!table) return;
       var n = A.auto ? A.auto.fenster.tage : 0;
-      tabelle(table, zeilen(A.gruppen[key], { date: A.date }), SORT[key] || (SORT[key] = { col: "rank", dir: 1 }),
+      tabelle(table, zeilen(A.gruppen[key], { date: A.date }), SORT[key] || (SORT[key] = { col: "platz", dir: 1 }),
         "In den letzten " + n + " Börsentagen wurde keine Anleihe dieser Gruppe an der Börse Frankfurt oder bei Tradegate gehandelt.");
     };
     var alle = function () { Object.keys(A.gruppen).forEach(render); };
@@ -127,10 +111,10 @@
       });
     } catch (e) { console.warn("Render fehlgeschlagen:", e); }
     return laden(opt.daten).then(function (res) {
-      kurseSetzen(res[0]);
+      kurseSetzen(res[0]); auswahlSetzen(res[2]);
       var d = res[1];
       if (aktiv(d)) {   // automatische Rangliste: Gruppen ersetzen, Tabellenbeschriftungen anpassen
-        A.auto = d; A.date = d.stand || A.date;
+        A.auto = d; A.date = d.stand || A.date; TAGE = d.fenster.tage || 0;
         Object.keys(A.gruppen).forEach(function (g) {
           A.gruppen[g] = d.gruppen[g] || [];
           var cap = document.querySelector('table.kpis[data-gruppe="' + g + '"] caption');
@@ -151,7 +135,7 @@
   // auto: true (seit 30.09.2026) = Land ohne Handauswahl (rows: []): Seine Zeilen kommen schon vor „aktiv“ aus der automatischen
   // Liste, mit dem Hinweis opt.vorlaeufig(d); fehlt es dort oder lädt die Liste nicht, entfällt es wie ein Land ohne Anleihe.
   function laender(opt) {
-    var L = opt.laender, SORT = { col: "rank", dir: 1 }, AUTO = null, current = opt.standard;
+    var L = opt.laender, SORT = { col: "platz", dir: 1 }, AUTO = null, current = opt.standard;
     var map = document.getElementById("map"), lands = document.getElementById("lands"), tip = document.getElementById("maptip");
     var table = document.getElementById("kpis");
     var HANDY = window.matchMedia ? window.matchMedia("(max-width: 600px)") : { matches: false };
@@ -254,8 +238,9 @@
     } catch (e) { console.warn("Render fehlgeschlagen:", e); }
     var kartenLauf = karte();
     return laden(opt.daten).then(function (res) {
-      kurseSetzen(res[0]);
+      kurseSetzen(res[0]); auswahlSetzen(res[2]);
       var d = res[1];
+      if (d && d.fenster) TAGE = d.fenster.tage || 0;
       if (aktiv(d)) {
         AUTO = d;
         var ue = document.getElementById("uebergang"); if (ue) ue.hidden = true;   // Übergangshinweis gilt nur für die Handauswahl
@@ -281,5 +266,6 @@
     });
   }
 
-  window.T10 = { zeilen: zeilen, tabelle: tabelle, sortierbar: sortierbar, laufzeit: laufzeit, laender: laender, standZeile: standZeile };
+  window.T10 = { zeilen: zeilen, tabelle: tabelle, sortierbar: sortierbar, laufzeit: laufzeit, laender: laender, standZeile: standZeile,
+    kurseSetzen: kurseSetzen, auswahlSetzen: auswahlSetzen };
 })();

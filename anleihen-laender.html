@@ -64,11 +64,9 @@
   th, td { text-align: left; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
   thead th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
   td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
-  #kpi-head th:nth-child(2) { width: 18.5%; }   /* feste Breite: Spalten springen beim Länderwechsel nicht */
+  #kpis thead th:nth-child(2) { width: 18.5%; }   /* feste Breite: Spalten springen beim Länderwechsel nicht */
   .kpis th[scope=row] { font-weight: 400; white-space: nowrap; }
-  /* Fälligkeit unter dem Emittenten nur, solange die Tabelle quer scrollt (dort ist die Spalte „Fälligkeit“ außer Sicht) */
-  .kpis th[scope=row] .fa-mobil { display: none; font-size: 12px; color: var(--text); }
-  @media (max-width: 900px) { .table-scroll table { min-width: 720px; } .kpis th[scope=row] .fa-mobil { display: block; } }
+  @media (max-width: 900px) { .table-scroll table { min-width: 720px; } }
   /* H1 nur an den vorgesehenen Stellen trennen (vorher „meistge-handelten“) */
   h1 { hyphens: manual; -webkit-hyphens: manual; }
   @media (prefers-reduced-motion: reduce) {  .map .pick { transition: none; } }
@@ -214,23 +212,10 @@
     <div class="landhead">
       <h2 id="land-titel" aria-live="polite">Deutschland: die zehn meistgehandelten Staatsanleihen</h2>
       <div class="table-scroll">
-      <table class="kpis" id="kpis">
+      <table class="kpis atab" id="kpis">
         <caption class="sr-only">Die meistgehandelten Staatsanleihen des gewählten Landes</caption>
-        <thead id="kpi-head"><tr>
-          <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" aria-label="Rang" title="Rang nach Handelshäufigkeit">#</button></th>
-          <th scope="col" data-col="emittent"><button type="button" class="sortbtn" data-col="emittent">Emittent</button></th>
-          <th scope="col" data-col="yld"><button type="button" class="sortbtn" data-col="yld">Rendite</button></th>
-          <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs">Kurs</button></th>
-          <th scope="col" data-col="kupon"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
-          <th scope="col" data-col="faellig"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th>
-          <th scope="col" data-col="years"><button type="button" class="sortbtn" data-col="years">Restlaufzeit</button></th>
-          <th scope="col" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th>
-          <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th>
-          <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Umlaufender Betrag in der Währung der Anleihe">Volumen</button></th>
-          <th scope="col" data-col="stk"><button type="button" class="sortbtn" data-col="stk" title="Kleinster Nennwert (zugleich Mindestanlage) in der Währung der Anleihe">Stückelung</button></th>
-        </tr></thead>
-        <tbody id="kpis-body">
-        </tbody>
+        <thead><tr><th scope="col" data-col="platz" class="rk" aria-sort="ascending"><button type="button" class="sortbtn" data-col="platz">#</button></th><th scope="col" data-col="anleihe" class="" title="Kurzname: bei Staaten das Land, sonst der Emittent ohne Rechtsform. Ein Klick öffnet den Steckbrief."><button type="button" class="sortbtn" data-col="anleihe">Anleihe</button><small>ISIN · Art · Währung</small></th><th scope="col" data-col="rendite" class="num" title="Rendite bis Fälligkeit in % pro Jahr – von uns aus dem Schlusskurs berechnet (Bundeswertpapiere: Rendite der Deutschen Bundesbank)"><button type="button" class="sortbtn" data-col="rendite">Rendite</button></th><th scope="col" data-col="kupon" class="num" title="Zinssatz pro Jahr auf den Nennwert"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th><th scope="col" data-col="restlaufzeit" class="num" title="Zeit von heute bis zur Fälligkeit, darunter der Fälligkeitstag"><button type="button" class="sortbtn" data-col="restlaufzeit">Restlaufzeit</button><small>Fälligkeit</small></th><th scope="col" data-col="kurs" class="num" title="Schlusskurs in % des Nennwerts"><button type="button" class="sortbtn" data-col="kurs">Kurs</button></th><th scope="col" data-col="bonitaet" class="" title="Bonität laut EZB: Spanne der Notenskala, abgelesen aus der EZB-Liste notenbankfähiger Sicherheiten (keine Ratings der Agenturen). „–“: nicht auf der EZB-Liste."><button type="button" class="sortbtn" data-col="bonitaet">Bonität</button></th><th scope="col" data-col="stueckelung" class="num" title="Kleinster handelbarer Nennwert (zugleich Mindestanlage), in der Währung der Anleihe"><button type="button" class="sortbtn" data-col="stueckelung">Stückelung</button></th><th scope="col" data-col="volumen" class="num" title="Ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe"><button type="button" class="sortbtn" data-col="volumen">Volumen</button></th><th scope="col" data-col="merken" class="merkspalte"><span class="sr-only">Merken</span></th></tr></thead>
+        <tbody id="kpis-body"></tbody>
       </table>
       </div>
       <p class="note" id="land-note">Kurs in Prozent des Nennwerts, Rendite bis Fälligkeit; Volumen (umlaufender Betrag) und Stückelung (kleinster Nennwert, zugleich Mindestanlage) in der Währung der Anleihe. Klick auf einen Spaltentitel sortiert.</p>
@@ -269,6 +254,7 @@
 </div>
 
 <script src="site.js"></script>
+<script src="felder.js"></script>
 <script src="konto.js"></script>
 <script src="bond.js"></script>
 <script src="top10-tabellen.js"></script>
@@ -511,7 +497,7 @@ const ZAHL = ["keine", "eine", "zwei", "drei", "vier", "fünf", "sechs", "sieben
 if (window.T10 && window.MC && MC.bond) T10.laender({
   laender: LAENDER, standard: DEFAULT_LAND, titel: L("titleSuffix"), hinweis: L("noteCommon"),
   leer: n => `In den letzten ${n} Börsentagen wurde an der Börse Frankfurt und bei Tradegate keine Anleihe dieses Landes gehandelt, die die Auswahlregeln erfüllt.`,
-  daten: [MC.load("kurse-auswahl.json"), MC.load("top10-staatsanleihen-laender.json")],
+  daten: [MC.load("kurse-auswahl.json"), MC.load("top10-staatsanleihen-laender.json"), MC.load("anleihen-auswahl.json")],
   // Notiz unter der Tabelle der Länder ohne Handauswahl, solange die automatische Liste noch nicht „aktiv“ ist
   vorlaeufig: d => `Vorläufige Rangfolge aus dem Handel an der Börse Frankfurt und bei Tradegate seit ${d.fenster.von.split("-").reverse().join(".")} (${d.fenster.tage} Börsentage) – sie festigt sich, je mehr Börsentage erfasst sind.`,
   aktiv(d) {

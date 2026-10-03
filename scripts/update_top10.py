@@ -17,7 +17,8 @@ Schreibt (je Seite eine Datei, per inline_data.py in die Seite eingebettet):
   top10-staatsanleihen-laender.json,  top10-unternehmensanleihen-laender.json
   {updated, updatedAt, stand, fenster: {von, bis, tage, soll}, aktiv, min_tage, gruppen: {<anker/slug>: [Zeile …]}}
   aktiv = true, sobald mindestens MIN_TAGE Börsentage erfasst sind – erst dann ersetzen die Seiten ihre Handauswahl.
-  Zeile = {isin, emittent, art, cur, kupon, zins (Zinszahlungen/Jahr), faellig, kurs, datum, rendite|null,
+  Zeile = {isin, emittent, kurz (Kurzname wie auf der Website, seit 03.10.2026), bon? (Bonität laut EZB), art, cur, kupon,
+           zins (Zinszahlungen/Jahr), faellig, kurs, datum, rendite|null,
            vol, stk, ht (Handelstage im Fenster), um (Umsatz im Fenster, Anleihewährung)}
 
 Rangfolge („meistgehandelt“): Zahl der Börsentage mit Umsatz im Fenster der letzten FENSTER Börsentage
@@ -47,7 +48,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import log_err, now_iso, ohne_rendite, today_iso, write_atomic, zins_felder, zinstermine_laden  # noqa: E402
+from _common import bonitaet_stufen, log_err, now_iso, ohne_rendite, stamm_felder, today_iso, write_atomic, zins_felder, zinstermine_laden  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 INDEX, KURSE, VERLAUF = ROOT / "anleihen-index.json", ROOT / "anleihen-kurse.json", ROOT / "kurse"
@@ -128,6 +129,7 @@ def main() -> int:
         return 1
     emi, stand = idx.get("emittenten") or [], kd.get("stand")
     termine = zinstermine_laden()   # Zinstage laut Börsenliste (update_zinstermine.py)
+    stufen = bonitaet_stufen()      # Bonität laut EZB je ISIN (update_bonitaet.py) – Spalte „Bonität“ der Tabellen
     ktage, kurse = kd.get("tage") or [], kd["kurse"]
     d_stand = datetime.date.fromisoformat(stand)
     grenze = (d_stand - datetime.timedelta(days=AKTUELL_TAGE)).isoformat()
@@ -185,7 +187,7 @@ def main() -> int:
             em = STAATSNAME.get(r[11]) or emittent_wm(r[1], emi[r[9]] if r[9] < len(emi) else "")
         else:
             em = emittent_wm(r[1], emi[r[9]] if r[9] < len(emi) else "")
-        return {"isin": isin, "emittent": em, "art": art, "cur": cur, "kupon": r[4],
+        return {"isin": isin, "emittent": em, **stamm_felder(r, emi, stufen), "art": art, "cur": cur, "kupon": r[4],
                 **zins_felder(r, termine), "faellig": r[5], "kurs": k[0], "datum": datum,
                 "rendite": k[1] if isinstance(k[1], (int, float)) else None,
                 "vol": r[6], "stk": r[7], "ht": ht, "um": round(um)}

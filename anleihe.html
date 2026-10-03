@@ -103,7 +103,10 @@
   .kv .kv-ver.plus, .kv .kv-ver.minus { color: var(--ink); }
   .kv-quelle { font-size: 12.5px; color: var(--text); line-height: 1.5; margin-top: 6px; }
   /* Handel */
-  .strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); }
+  .zplan { margin-top: 10px; font-size: 13.5px; }
+  .zplan > summary { cursor: pointer; font-weight: 600; color: var(--green-text); }
+  .zplan h3 { display: none; }   /* die Überschrift trägt schon der Aufklapper */
+  .strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); }
   .strip > div { padding: 11px 14px; border-right: 1px solid var(--rule); min-width: 0; }
   .strip > div:last-child { border-right: 0; }
   .strip .k { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-bottom: 3px; }
@@ -165,7 +168,9 @@
     .gruppen { grid-template-columns: 1fr; }
     .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .strip > div:nth-child(2) { border-right: 0; }
-    .strip > div:nth-child(-n+2) { border-bottom: 1px solid var(--rule); }
+    .strip > div:nth-child(-n+4) { border-bottom: 1px solid var(--rule); }
+    .strip > div:nth-child(4) { border-right: 0; }
+    .strip > div:last-child { grid-column: 1 / -1; }
     .neben { flex-direction: column; gap: 3px; }
     .abs { margin-top: 24px; padding-top: 20px; }
     .kv { min-height: calc((100vw - 32px) * 0.66 + 40px); }
@@ -399,6 +404,7 @@
 </div>
 
 <script src="site.js"></script>
+<script src="felder.js"></script>
 <script src="bond.js"></script>
 <script src="chart.js"></script>
 <script src="konto.js"></script>
@@ -528,6 +534,7 @@ function lesbar(name) {
 // Lesbarer Titel: Emittent (bei Staaten das Land) ohne Rechtsform, Kupon, Fälligkeit
 const RECHTSFORM = /[\s,]+(AG|SE|KGaA|GmbH|mbH|S\.?A\.?|S\.?p\.?A\.?|N\.?V\.?|B\.?V\.?|plc|PLC|p\.l\.c\.|Inc\.?|Corp\.?|Corporation|Ltd\.?|Limited|LLC|LLP|L\.?P\.?|A\/S|AB|ASA|Oyj|S\.?A\.?S\.?|S\.?à r\.?l\.?|S\.r\.l\.|Co\.?|Pte\.?|Pty|Designated Activity Company|DAC|Aktiengesellschaft|Public Limited Company|Societa' per Azioni|Sociedad Anónima)\.?$/;
 function kurzName(emittent, art, land) {
+  if (MC.felder) return MC.felder.kurzName(emittent, art, land, "");   // gemeinsame Regel seit 03.10.2026 (felder.js; Ländernamen, Ausnahmen)
   if (art === 0 && land && land !== "INT") return landName(land);
   let e = lesbar(emittent);
   for (let i = 0; i < 3; i++) e = e.replace(RECHTSFORM, "").trim();
@@ -636,7 +643,7 @@ function depotFeld(a) {
 }
 
 // ---------- Aufbau ----------
-function zeige(r, k, meta) {
+function zeige(r, k, meta, kf) {
   const [name, art, ccy, kupon, faellig, vol, stk, , emittent, zinsart, land, , mehr, pruefRaw, zt, bon] = r;
   const m = Array.isArray(mehr) ? mehr : ["---", "", null], fl = m[2] || null;
   const rs = m[0][0], rz = m[0][1], gar = m[0][2];
@@ -707,7 +714,7 @@ function zeige(r, k, meta) {
   const kueChip = { n: kue.put ? "Kündigungsrecht des Anlegers (Put)" : "Ohne Kündigungsrecht", m: "Make-Whole-Kündigung", p: `Kündigungsrecht ${kueAb}`, t: `Kündigungsrecht ${kueAb}`, e: `Kündigungsrecht ${kueAb}`, u: "Kündbar laut Register" }[kue.k] || "";
   const chips = [T.artChip[art], ccy, stufen ? "Stufenzins" : T.zinsChip[zinsart], inflIdx ? "Inflationsindexiert" : "",
     rs === "U" || rs === "J" || gar === "O" || gar === "Q" || gar === "J" ? "Rang: nachrangig" : "", kueChip,
-    faellig ? (abgelaufen ? "Fälligkeit erreicht" : `Restlaufzeit ${RL(jahre(faellig))}`) : "Unbefristet"].filter(Boolean);
+    faellig ? (abgelaufen ? "Fälligkeit erreicht" : "") : "Unbefristet"].filter(Boolean);   // Restlaufzeit steht seit 03.10.2026 in den Kennzahlen
   document.getElementById("chips").innerHTML = chips.map(c => `<li>${MC.esc(c)}</li>`).join("");
   const wtag = datum ? T.wtag[new Date(datum + "T12:00:00Z").getUTCDay()] : "";
   // Kopfzeile: nur Kennung und Kopierknopf – Kursdatum und Quelle stehen seit 30.09.2026 nur noch in der Kachel „Kurs“ (vorher doppelt).
@@ -742,19 +749,19 @@ function zeige(r, k, meta) {
     const per = fl[1] && typeof fl[2] === "number" && fl[2] > 0 && fl[2] < 900 && T.einheit[fl[1]] && !(fl[1] === "D" && fl[2] < 28) ?   /* Tage-Angaben meinen meist die Laufzeit des Referenzzinses (€STR/SOFR), nicht den Anpassungsrhythmus */ `Zinsanpassung alle ${fl[2]} ${T.einheit[fl[1]][fl[2] === 1 ? 0 : 1]}` : "";
     zinsTxt = [refN ? refN + spr : "Referenzzins nicht gemeldet", per].filter(Boolean).join(" · ");
   }
-  const kuponWert = zinsart === 1 ? "variabel" : zinsart === 2 ? "0 %" : fmtCoupon(kupon);
-  const kuponU = zinsart === 1 ? (zinsTxt ? MC.esc(zinsTxt) : "Referenzzins nicht gemeldet") : zinsart === 2 ? "Nullkupon – keine laufenden Zinszahlungen"
+  const kuponWert = zinsart === 1 ? "variabel" : zinsart === 2 ? "Nullkupon" : fmtCoupon(kupon);
+  const kuponU = zinsart === 1 ? (zinsTxt ? MC.esc(zinsTxt) : "Referenzzins nicht gemeldet") : zinsart === 2 ? "keine laufenden Zinszahlungen"
     : stufen && typeof kupon === "number" ? "Stufenzins laut Name – heutiger Kupon laut Register, er ändert sich während der Laufzeit"
     : typeof kupon === "number" ? `fest · ${fmt(kupon * 10, 2)} ${MC.esc(ccy)} je 1.000 ${MC.esc(ccy)} pro Jahr${inflIdx ? ", auf den inflationsangepassten Nennwert" : ""}` : "";
-  const faelligU = faellig ? (abgelaufen ? "Termin erreicht" : `Restlaufzeit ${RL(jahre(faellig))}${raten ? " · Tilgung in Raten" : ""}`) : kue.jahr ? `Kündigungsrecht Emittent ${kueAb}` : "unbefristet laut Register";
+  const faelligU = faellig ? `fällig ${fmtDate(faellig)}${abgelaufen ? " · Termin erreicht" : raten ? " · Tilgung in Raten" : ""}` : kue.jahr ? `Kündigungsrecht Emittent ${kueAb}` : "keine Fälligkeit laut Register";
   const kachel = (kk, w, u, leise, ber) => `<div class="kachel"><div class="k">${kk}</div><div class="w${leise ? " leise" : ""}">${w}</div><div class="u">${ber ? BER + " " : ""}${u}</div></div>`;
+  // Seit 03.10.2026 in der Reihenfolge jeder Anleihen-Tabelle (Konzept „Einheitliche Anleihen-Angaben“): Rendite · Kupon · Restlaufzeit
+  // (darunter die Fälligkeit) · Kurs. Kurs mit dritter Stelle, wenn vorhanden – wie im Rechenbeispiel.
   document.getElementById("kacheln").innerHTML = [
-    // Kurs mit dritter Stelle, wenn vorhanden – wie im Rechenbeispiel (seit 03.10.2026; vorher oben „96,95 %“, unten „96,945 %“).
-    // „15 Min. verzögert“ entfällt: gezeigt wird der Schlusskurs des letzten Börsentags, kein laufender Kurs (Nutzertest 03.10.2026).
-    kachel("Kurs", kurs != null ? `${fmtKurs(kurs)} %` : "kein Kurs", k ? `${bund ? "Kurs der Bundesbank" : "Schlusskurs"} ${wtag} ${fmtDate(datum)}${alter ? ` · ${alter} ${alter === 1 ? "Börsentag" : "Börsentage"} alt` : ""}${bund ? "" : ` · ${MC.esc(T.boersen[k[3]] || "")}`}` : "keine Kursfeststellung", kurs == null),
     kachel(`Rendite${hilf("rendite", "Rendite")}`, rend != null ? `${fmt(rend, 2)} %` : "nicht berechnet", rendU, rend == null, rend != null && !bund),
-    kachel(zinsart === 1 ? "Kupon" : "Kupon", kuponWert, kuponU, false),
-    kachel("Fälligkeit", faellig ? fmtDate(faellig) : "keine", faelligU, !faellig),
+    kachel("Kupon", kuponWert, kuponU, false),
+    kachel("Restlaufzeit", faellig ? (abgelaufen ? "fällig" : RL(jahre(faellig))) : "unbefristet", faelligU, !faellig),
+    kachel("Kurs", kurs != null ? `${fmtKurs(kurs)} %` : "kein Kurs", k ? `${bund ? "Kurs der Bundesbank" : "Schlusskurs"} ${wtag} ${fmtDate(datum)}${alter ? ` · ${alter} ${alter === 1 ? "Börsentag" : "Börsentage"} alt` : ""}${bund ? "" : ` · ${MC.esc(T.boersen[k[3]] || "")}`}` : "keine Kursfeststellung", kurs == null),
   ].join("");
   // Nebenzeile: Vortag, laufende Verzinsung, Aufschlag zu Bund
   const vor = k && typeof k[6] === "number" ? k[6] : null, dif = vor != null && kurs != null ? kurs - vor : null;
@@ -768,10 +775,16 @@ function zeige(r, k, meta) {
   // der Währung bis zur Fälligkeit für die Rendite in Euro bedeutet: ((1 + r)^T × 0,9)^(1/T) − 1 – keine Prognose
   const restJ = faellig ? jahre(faellig) : null;
   const fxBsp = ccy !== "EUR" && rend != null && restJ > 0.25 ? (Math.pow(Math.pow(1 + rend / 100, restJ) * 0.9, 1 / restJ) - 1) * 100 : null;
+  // Duration und modifizierte Duration (seit 03.10.2026, wie in den Musterdepots): Zahlungen nach Barwert gewichtet, Valuta wie im Rechenbeispiel
+  let dur = null;
+  if (rend != null && faellig && !nachFaellig && !inflIdx && !stufen && ((zinsart === 0 && typeof kupon === "number") || zinsart === 2)) {
+    try { dur = MC.bond.duration(anleiheB(zinsart === 2 ? 0 : kupon, faellig, freq, zinstage), rend / 100, isoOf(valuta)); } catch (e) { dur = null; }
+  }
   document.getElementById("neben").innerHTML = [
-    dif != null ? `<span>Zum Vortag <b>${vz(dif)} Pkt.</b> (${vz(dif / vor * 100)} %, Vortag ${fmtKurs(vor)} %)</span>` : "",
     lfd != null ? `<span>Laufende Verzinsung <b>${fmt(lfd, 2)} %</b>${BER}</span>` : "",
+    dur ? `<span>Duration${hilf("duration", "Duration")} <b>${RL(dur.macaulay)}</b> · mod. Duration <b>${fmt(dur.modified, 1)}</b>${BER}</span>` : "",
     `<span>Risikoaufschlag zu Bund${hilf("spread", "Risikoaufschlag")} ${auf != null ? `<b>${vz(auf)} Pkt.</b>${BER}` : `<b>–</b> ${aufGrund}`}</span>`,
+    dif != null ? `<span>Zum Vortag <b>${vz(dif)} Pkt.</b> (${vz(dif / vor * 100)} %, Vortag ${fmtKurs(vor)} %)</span>` : "",
     fxBsp != null ? `<span>In Euro: Fällt ${MC.esc(ccy)} bis zur Fälligkeit um 10 % gegenüber dem Euro, bleiben rund <b>${fmt(fxBsp, 1)} %</b> pro Jahr (Beispiel)<a class="hilf" href="risiko.html#waehrung" aria-label="Währungsrisiko erklärt">i</a></span>` : "",
   ].filter(Boolean).join("");
 
@@ -785,19 +798,36 @@ function zeige(r, k, meta) {
   const termine = zinsart === 0 && typeof kupon === "number" && kupon > 0 && faellig && !abgelaufen
     ? (l => freq === 12 ? `monatlich am ${+l[0].slice(0, 2)}.` : l.length > 1 ? l.slice(0, -1).join(", ") + " und " + l[l.length - 1] : l[0] + " jährlich")(
       (zinstage || [...new Set(kommendeTermine(faellig, freq, new Date(new Date(faellig + "T12:00:00Z").getTime() - 366 * 86400000)).map(d => isoOf(d).slice(5, 10)))]).slice().sort().map(md => md.slice(3) + "." + md.slice(0, 2) + ".")) : "";
+  // Neue Zeilen seit 03.10.2026 (Konzept „Einheitliche Anleihen-Angaben“): Zinsrhythmus, nächster Zinstermin, Stückzinsen je 1.000 heute
+  const festKupon = zinsart === 0 && typeof kupon === "number" && kupon > 0 && faellig && !abgelaufen;
+  const rhythmusZeile = festKupon ? kv("Zinsrhythmus", rhythmus || "jährlich", zinstage ? "laut Deutscher Börse" : 'geschätzt · <a href="#quellen" class="zt-warum">Erklärung</a>') : "";
+  let naechsterZeile = "", stueckZeile = "";
+  if (festKupon && !stufen) {
+    try {
+      const ks = kommendeTermine(faellig, freq, heuteUTC, zinstage), n = ks.length ? isoOf(ks[0]) : "";
+      if (n) naechsterZeile = kv(`Nächster Zinstermin${hilf("zinstermin", "Zinstermin")}`, fmtDate(n), n === faellig ? "mit Rückzahlung" : `${fmt(kupon * 10 / freq * (ks.length === 1 ? letzterKupon(faellig, freq, zinstage) : 1), 2)} ${MC.esc(ccy)} je 1.000 ${MC.esc(ccy)}${zinstage ? "" : " · geschätzt"}`);
+      if (!nachFaellig && !inflIdx) { const sz = stueckzins(kupon, faellig, freq, valuta, zinstage); stueckZeile = kv(`Stückzinsen je 1.000${hilf("stueckzinsen", "Stückzinsen")}`, `${fmt(sz.anteil * 10, 2)} ${MC.esc(ccy)}`, `zum Valutatag ${fmtDate(isoOf(valuta))}`); }
+    } catch (e) { /* ohne die Zusatzzeilen */ }
+  }
   const grp = (h, rows) => `<div class="gr"><h3>${h}</h3><dl>${rows.filter(Boolean).join("")}</dl></div>`;
   document.getElementById("merk-quelle").textContent = `ESMA-Register (FIRDS), Stand ${fmtDate(meta.stand)}`;
   document.getElementById("merkmale").innerHTML = [
-    grp("Zins und Laufzeit", [
-      kv(`${zinsart === 1 ? "Zinsformel" : "Kupon"}${hilf(zinsart === 1 ? "floater" : "kupon", "Kupon")}`, zinsart === 1 ? (zinsTxt ? MC.esc(zinsTxt) : "nicht gemeldet") : fmtCoupon(zinsart === 2 ? 0 : kupon) + (stufen ? " (Stufenzins laut Name)" : zinsart === 0 ? " fest" : ""),
-        [zinsart === 2 ? "Nullkupon" : "", inflIdx && zinsart === 0 ? "auf den inflationsangepassten Nennwert" : ""].concat(wKupon.length ? [`laut Register · ${MC.esc(wKupon.join(" · "))}`] : []).filter(Boolean).join(" · ")),
+    grp("Zins", [
+      kv(`${zinsart === 1 ? "Zinsformel" : "Kupon"}${hilf(zinsart === 1 ? "floater" : "kupon", "Kupon")}`, zinsart === 1 ? (zinsTxt ? MC.esc(zinsTxt) : "nicht gemeldet") : (zinsart === 2 ? "Nullkupon" : fmtCoupon(kupon)) + (stufen ? " (Stufenzins laut Name)" : ""),
+        [inflIdx && zinsart === 0 ? "auf den inflationsangepassten Nennwert" : ""].concat(wKupon.length ? [`laut Register · ${MC.esc(wKupon.join(" · "))}`] : []).filter(Boolean).join(" · ")),
+      zinsart === 0 ? kv("Zinsart", stufen ? "Stufenzins" : "fest", "") : "",   // Nullkupon und variabel stehen schon als Wert in der Zeile darüber
+      rhythmusZeile,
       termine ? kv(`Zinstermin${freq > 1 ? "e" : ""}${hilf("zinstermin", "Zinstermin")}`, termine, zinstage ? "laut Deutscher Börse" : 'geschätzt · <a href="#quellen" class="zt-warum">Erklärung</a>') : "",
+      naechsterZeile, stueckZeile,
+    ]),
+    grp("Laufzeit und Rückzahlung", [
       kv(`Fälligkeit${hilf("faelligkeit", "Fälligkeit")}`, faellig ? fmtDate(faellig) : "keine",
-        [rueckTxt ? `Rückzahlungsart laut Register: ${MC.esc(rueckTxt)}` : ""].concat(wFaellig.length ? [`laut Register · ${MC.esc(wFaellig.join(" · "))}`] : []).filter(Boolean).join(" · ")),
+        [faellig ? (abgelaufen ? "Termin erreicht" : `Restlaufzeit ${RL(jahre(faellig))}`) : "unbefristet laut Register"].concat(wFaellig.length ? [`laut Register · ${MC.esc(wFaellig.join(" · "))}`] : []).filter(Boolean).join(" · ")),
+      kv("Rückzahlungsart", rueckTxt ? MC.esc(rueckTxt) : "nicht gemeldet", rueckTxt ? "laut ESMA-Register" : ""),
       kv(`Kündigungsrecht Emittent${hilf("kuendbar", "Kündigung")}`, MC.esc(kueWert), [kueKlein, kue.put && kue.k !== "n" ? "Kündigungsrecht des Anlegers (Put) laut Register" : ""].filter(Boolean).join(" · ")),
       kv("Erster Handelstag", m[1] ? fmtDate(m[1]) : "nicht gemeldet", m[1] ? "an einer deutschen Börse" : ""),
     ]),
-    grp("Emittent und Rang", [
+    grp("Emittent und Sicherheit", [
       kv(`Emittent${hilf("emittent", "Emittent")}`, MC.esc(emiL || "nicht gemeldet"), emittent ? "laut LEI-Register (GLEIF)" : ""),
       kv("Art · Land", MC.esc([T.art[art], land ? landName(land) : ""].filter(Boolean).join(" · ")), ""),
       kv(`Rang${hilf(rs === "U" || rs === "J" ? "nachranganleihe" : "senior", "Rang")}`, rangTxt ? MC.esc(rangTxt) : "nicht gemeldet", "laut ESMA-Register"),
@@ -808,9 +838,9 @@ function zeige(r, k, meta) {
       meta.ezb ? kv(`Bonität laut EZB<a class="hilf bon-warum" href="#quellen" title="${bon == null ? "Steht nicht auf der EZB-Liste" : "Von uns aus der EZB-Liste abgelesen"} (Stand ${fmtDate(meta.ezb)}) – zur Erklärung" aria-label="Bonität laut EZB: Erklärung">i</a>`,
         bon === 1 ? "AAA bis A− · beste Gruppe" : bon === 3 ? "BBB+ bis BBB− · untere Stufe guter Bonität" : bon === 0 ? "mindestens BBB−" : "keine Angabe", "") : "",
     ]),
-    grp("Währung, Stückelung und Volumen", [
+    grp("Ausstattung", [
       kv(`Währung${ccy !== "EUR" ? hilf("fremdwaehrungsanleihe", "Fremdwährung") : ""}`, `${MC.esc(ccy)}${wName ? " · " + MC.esc(wName) : ""}`, ""),
-      kv(`Stückelung${hilf("stueckelung", "Stückelung")}`, `${fmtStk(stk)} ${MC.esc(ccy)}`, typeof stk === "number" && stk < 1 ? "laut Register" : "kleinster handelbarer Nennwert"),
+      kv(`Stückelung (Mindestanlage)${hilf("stueckelung", "Stückelung")}`, `${fmtStk(stk)} ${MC.esc(ccy)}`, typeof stk === "number" && stk < 1 ? "laut Register" : "kleinster handelbarer Nennwert"),
       kv(`Volumen${hilf("volumen", "Volumen")}`, `${fmtVol(vol)} ${MC.esc(ccy)}`, "ausgegebener Nennbetrag"),
     ]),
   ].join("");
@@ -823,13 +853,16 @@ function zeige(r, k, meta) {
   const platz = bund ? "Frankfurt" : k && k[3] === "T" ? "Tradegate" : k && k[3] === "X" ? "Xetra" : "Frankfurt";
   const umsJe = voll ? [["Frankfurt", td[5]], ["Tradegate", td[6]]].filter(x => x[1] > 0).map(x => `${x[0]} ${fmt(x[1], 0)} ${MC.esc(ccy)}`) : [];
   const zelle = (kk, w) => `<div><div class="k">${kk}</div><div class="w">${w}</div></div>`;
+  // Handelstage mit Umsatz (seit 03.10.2026, dieselbe Zahl wie in den Top-10): Börsentage im gesammelten Kursverlauf des Jahres mit Umsatz
+  const uTage = kf && kf.u && kf.u[ISIN] ? Object.keys(kf.u[ISIN]).filter(t => kf.u[ISIN][t] > 0).length : 0, nTage = kf && kf.tage ? kf.tage.length : 0;
   document.getElementById("handel").innerHTML = k ? `<div class="strip">` +
       // Seit 03.10.2026: „Schluss · Taxe“, wenn am Kursplatz kein Abschluss zustande kam; Umsatz als Summe aller Plätze benannt
       // (Nutzertest: 263.193 EUR Umsatz standen unter „Börse Frankfurt“, obwohl er von Tradegate kam)
       zelle(voll && !(td[4] > 0) && !bund ? "Schluss · Taxe" : "Schluss", `${fmtKurs(kurs)} %`) +
       zelle("Eröffnung", voll ? `${fmtKurs(td[0])} %` : td ? `${fmtKurs(kurs)} %` : "–") +
       zelle("Hoch / Tief", voll ? `${fmtKurs(td[1])} / ${fmtKurs(td[2])}` : td ? `${fmtKurs(kurs)} / ${fmtKurs(kurs)}` : "–") +
-      zelle("Umsatz alle Plätze", k[4] ? `${fmt(k[4], 0)} ${MC.esc(ccy)}` : `0 ${MC.esc(ccy)}`) + `</div>` +
+      zelle("Umsatz alle Plätze", k[4] ? `${fmt(k[4], 0)} ${MC.esc(ccy)}` : `0 ${MC.esc(ccy)}`) +
+      zelle("Handelstage mit Umsatz", nTage ? `${uTage} von ${nTage}` : "–") + `</div>` +
     `<p class="meta">${td ? `<b>${fmt(voll ? td[3] : td[0], 0)}</b> ${(voll ? td[3] : td[0]) === 1 ? "Kursfeststellung" : "Kursfeststellungen"} in ${platz}, davon <b>${voll ? td[4] || 0 : 0}</b> mit Abschluss` : "Keine Tagesdaten zu Kursfeststellungen"}` +
       `${umsJe.length ? ` · Umsatz ${umsJe.join(", ")} (Stück × Kurs)` : k[4] ? " · Umsatz Stück × Kurs" : ""}` +
       `${bund ? " · Schlusskurs und Rendite: Deutsche Bundesbank" : ""}</p>`
@@ -842,7 +875,10 @@ function zeige(r, k, meta) {
   const zahlungsliste = () => {   // Restzahlungen je 1.000 bei Valuta nach der Fälligkeit (Randfall „fällig in wenigen Tagen“)
     if (!faellig || abgelaufen || zinsart === 1) return "";
     const ks = zinsart === 0 && kupon > 0 ? kommendeTermine(faellig, freq, heuteUTC, zinstage) : [], lk = ks.length ? letzterKupon(faellig, freq, zinstage) : 1;
-    const zeilen = ks.map((d, i) => `<tr><td>${fmtDate(isoOf(d))} · Zinsen<small>${fmtCoupon(kupon)} ÷ ${freq}${i === ks.length - 1 && lk !== 1 ? ", anteilig (kurze letzte Zinsperiode)" : ""}, je 1.000 ${MC.esc(ccy)}</small></td><td>${fmt(kupon / freq * (i === ks.length - 1 ? lk : 1) * 10, 2)} ${MC.esc(ccy)}</td></tr>`)
+    // Seit 03.10.2026 auch ohne Rechenbeispiel (Konzept „Einheitliche Anleihen-Angaben“); bei mehr als 14 Terminen die ersten zehn, der Rest als Summe
+    const betrag = i => kupon / freq * (i === ks.length - 1 ? lk : 1) * 10, lang = ks.length > 14;
+    const zeilen = ks.slice(0, lang ? 10 : ks.length).map((d, i) => `<tr><td>${fmtDate(isoOf(d))} · Zinsen<small>${fmtCoupon(kupon)} ÷ ${freq}${i === ks.length - 1 && lk !== 1 ? ", anteilig (kurze letzte Zinsperiode)" : ""}, je 1.000 ${MC.esc(ccy)}</small></td><td>${fmt(kupon / freq * (i === ks.length - 1 ? lk : 1) * 10, 2)} ${MC.esc(ccy)}</td></tr>`)
+      .concat(lang ? [`<tr><td>… ${ks.length - 10} weitere Zinstermine bis ${fmtDate(isoOf(ks[ks.length - 1]))}<small>zusammen, je 1.000 ${MC.esc(ccy)}</small></td><td>${fmt(ks.slice(10).reduce((x, d, i) => x + betrag(i + 10), 0), 2)} ${MC.esc(ccy)}</td></tr>`] : [])
       .concat([`<tr><td>${fmtDate(faellig)} · Rückzahlung<small>100 %, je 1.000 ${MC.esc(ccy)}</small></td><td>${fmt(1000, 2)} ${MC.esc(ccy)}</td></tr>`]);
     return `<h3>Zahlungen bis zur Fälligkeit</h3><table class="rt"><tbody>${zeilen.join("")}</tbody></table><p class="annahmen">${ztQuelle}${rhythmus ? ` (${rhythmus})` : ""}; maßgeblich sind die Anleihebedingungen.</p>`;
   };
@@ -854,14 +890,17 @@ function zeige(r, k, meta) {
       : zinsart === 1 ? "Variabler Kupon: künftige Zinszahlungen stehen noch nicht fest."
       : stufen ? "Stufenzins laut Name: Die künftigen Kupons stehen nicht in unseren Daten."
       : !faellig ? "Keine Fälligkeit im Register." : "Kupon nicht gemeldet.";
-    box.innerHTML = aus(`<b>Kein Rechenbeispiel.</b> ${grund}`) + (nachFaellig ? zahlungsliste() : "");
+    // Zahlungsplan auch ohne Rechenbeispiel (seit 03.10.2026), wenn die Zahlungen feststehen: fester oder Nullkupon, Fälligkeit, kein Befund
+    const plan = nachFaellig || (zinsart !== 1 && !stufen && !inflIdx && !befund && faellig && !abgelaufen && (zinsart === 2 || typeof kupon === "number"));
+    box.innerHTML = aus(`<b>Kein Rechenbeispiel.</b> ${grund}`) + (plan ? zahlungsliste() : "");
   } else {
     // Startwert: kleinstes Vielfaches der Stückelung, das mindestens 5.000 beträgt (bei 100.000er-Stückelung also 100.000)
     const start = typeof stk === "number" && stk >= 1 ? Math.max(stk, Math.ceil(5000 / stk) * stk) : 5000;
     box.innerHTML = `<div class="eing"><label for="nenn">Nennwert</label><input type="text" id="nenn" inputmode="numeric" value="${fmt(start, 0)}" autocomplete="off" aria-describedby="eing-fehler"><span>${MC.esc(ccy)}</span>` +
       `<label for="gebuehr">Gebühr</label><input type="text" id="gebuehr" inputmode="decimal" value="0,00" autocomplete="off" aria-describedby="eing-fehler"><span>${MC.esc(ccy)}</span></div>` +
       `<p class="eing-fehler" id="eing-fehler"></p>` +
-      `<table class="rt"><tbody id="kauf"></tbody></table><p class="annahmen" id="kauf-note"></p><p class="sr-only" id="kauf-live" role="status" aria-live="polite"></p>`;
+      `<table class="rt"><tbody id="kauf"></tbody></table><p class="annahmen" id="kauf-note"></p><p class="sr-only" id="kauf-live" role="status" aria-live="polite"></p>` +
+      `<details class="zplan"><summary>Alle Zahlungen je 1.000 ${MC.esc(ccy)}</summary>${zahlungsliste()}</details>`;   // Zahlungsplan zugeklappt (seit 03.10.2026)
     const kp = zinsart === 2 ? 0 : kupon;
     // Neuemission im ersten Zinsjahr: Zinslauf vereinfacht ab dem ersten Handelstag (stueckzins, seit 03.10.2026)
     const neu = m[1] ? { ab: new Date(m[1] + "T12:00:00Z"), jahr: ausgabeJahr(name) } : null;
@@ -919,7 +958,7 @@ function zeige(r, k, meta) {
   // Seit 03.10.2026 auch die Zinstage laut Börse (sonst schätzt der Rechner die Termine anders als der Steckbrief) und beim Klick
   // der Nennwert aus dem Rechenbeispiel; der Rechner füllt damit alle vier Rechner (Nutzertest: nur Rechner 1 wurde gefüllt)
   const rechnerUrl = kurs != null && zinsart === 0 && typeof kupon === "number" && faellig && !nachFaellig && !befund && !stufen
-    ? `rechner.html?kurs=${encodeURIComponent(fmtKurs(kurs))}&kupon=${encodeURIComponent(fmt(kupon, 3))}&faellig=${fmtDate(faellig)}&freq=${freq}&w=${encodeURIComponent(ccy)}${zinstage ? `&zt=${zinstage.join(",")}` : ""}${rend != null ? `&rendite=${encodeURIComponent(fmt(rend, 2))}` : ""}#rendite` : "";
+    ? `rechner.html?kurs=${encodeURIComponent(fmtKurs(kurs))}&kupon=${encodeURIComponent(fmt(kupon, 3))}&faellig=${fmtDate(faellig)}&freq=${freq}&w=${encodeURIComponent(ccy)}${zinstage ? `&zt=${zinstage.join(",")}` : ""}${rend != null ? `&rendite=${encodeURIComponent(fmt(rend, 2))}` : ""}&isin=${encodeURIComponent(ISIN)}&titel=${encodeURIComponent(MC.felder ? MC.felder.titel({ kurz: kurz || name, kupon, zinsart, faellig }) : seitentitel)}#rendite` : "";
   const suche = `anleihen-suche.html?art=${art}&w=${encodeURIComponent(ccy)}&zins=${zinsart}`;
   document.getElementById("werkz").innerHTML =
     `<li><button type="button" class="kopie-w" data-isin="${MC.esc(ISIN)}"><span>ISIN kopieren<small>${MC.esc(ISIN)}</small></span><span class="pf" aria-hidden="true">⧉</span></button></li>` +
@@ -1021,7 +1060,7 @@ function zeige(r, k, meta) {
       return;
     }
     const k = kf && kf.aktuell ? kf.aktuell[ISIN] || null : null;
-    zeige(r, k, ix);
+    zeige(r, k, ix, kf);
   }).catch(e => {
     console.warn("Steckbrief nicht geladen:", e);
     document.getElementById("inhalt").remove();

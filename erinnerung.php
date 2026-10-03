@@ -15,7 +15,10 @@
  *
  * Angestoßen wie der Besucherbericht: aufruf.php ruft erinnerung_faellig() bei jedem gezählten Aufruf; der erste Aufruf ab
  * ERINNERUNG_STUNDE Uhr (Berlin) verschickt nach der Antwort an den Browser (erinnerungen_senden()). Die Fälligkeit jeder
- * Anleihe kommt aus den Stammdaten anleihen/<teil>.json (wie der Steckbrief). Gelesen und geschrieben wird die Datenbank von
+ * Anleihe kommt aus den Stammdaten anleihen/<teil>.json (wie der Steckbrief). Der Name je Anleihe (seit 03.10.2026, Konzept
+ * „Einheitliche Anleihen-Angaben“) ist der Titel aus newsletter/anleihen.json („Deutschland 2,60 % 2033“, gebaut von
+ * scripts/newsletter.py – derselbe Kurzname wie auf der Website, im Wochenbrief und in den Meldungen); nur wenn die Anleihe dort
+ * fehlt (kein Kurs in den letzten 14 Tagen), eine Näherung aus den Stammdaten. Gelesen und geschrieben wird die Datenbank von
  * konto.php (konto-daten/), erst ab deren Fassung 5. Wird nur eingebunden; direkt aufgerufen antwortet die Datei mit 404
  * (zusätzlich per .htaccess gesperrt).
  *
@@ -32,13 +35,15 @@ const ERINNERUNG_STUNDE  = 7;
 const ERINNERUNG_MAX     = 300;   // E-Mails je Lauf – was nicht mehr passt, geht beim nächsten Lauf
 const ERINNERUNG_ABSENDER = 'info@bondarium.com';
 const ERINNERUNG_DATEN   = __DIR__ . '/konto-daten';
-// Ländernamen für Staatsanleihen, falls PHP ohne intl läuft (sonst Locale::getDisplayRegion)
+const ERINNERUNG_ANLEIHEN = __DIR__ . '/newsletter/anleihen.json';   // Kurzname und Kupon-Text je Anleihe aus dem Datenlauf (scripts/newsletter.py, Felder 0–2)
+// Ländernamen für Staatsanleihen im Rückfall (Anleihe fehlt in ERINNERUNG_ANLEIHEN) – wie im Feldkatalog (felder.js, „staaten“);
+// andere Länder über Locale::getDisplayRegion, wenn PHP mit intl läuft
 const ERINNERUNG_LAENDER = ['DE' => 'Deutschland', 'FR' => 'Frankreich', 'IT' => 'Italien', 'ES' => 'Spanien', 'AT' => 'Österreich',
     'NL' => 'Niederlande', 'BE' => 'Belgien', 'FI' => 'Finnland', 'IE' => 'Irland', 'PT' => 'Portugal', 'GR' => 'Griechenland',
     'LU' => 'Luxemburg', 'SK' => 'Slowakei', 'SI' => 'Slowenien', 'LT' => 'Litauen', 'LV' => 'Lettland', 'EE' => 'Estland',
     'HR' => 'Kroatien', 'CY' => 'Zypern', 'MT' => 'Malta', 'PL' => 'Polen', 'CZ' => 'Tschechien', 'HU' => 'Ungarn', 'RO' => 'Rumänien',
-    'BG' => 'Bulgarien', 'SE' => 'Schweden', 'DK' => 'Dänemark', 'NO' => 'Norwegen', 'CH' => 'Schweiz', 'GB' => 'Vereinigtes Königreich',
-    'US' => 'Vereinigte Staaten', 'CA' => 'Kanada', 'AU' => 'Australien', 'JP' => 'Japan', 'NZ' => 'Neuseeland', 'MX' => 'Mexiko',
+    'BG' => 'Bulgarien', 'SE' => 'Schweden', 'DK' => 'Dänemark', 'NO' => 'Norwegen', 'CH' => 'Schweiz', 'GB' => 'Großbritannien',
+    'US' => 'USA', 'CA' => 'Kanada', 'AU' => 'Australien', 'JP' => 'Japan', 'NZ' => 'Neuseeland', 'MX' => 'Mexiko',
     'BR' => 'Brasilien', 'TR' => 'Türkei', 'ZA' => 'Südafrika', 'IS' => 'Island', 'IL' => 'Israel', 'CL' => 'Chile', 'ID' => 'Indonesien'];
 
 /** Datenbank von konto.php – nur, wenn es sie schon gibt und sie mindestens Fassung 5 hat */
@@ -96,7 +101,37 @@ function erinnerung_teil(string $isin): string
     return sprintf('%02x', $h % 256);
 }
 
-/** Stammdaten einer Anleihe: [Name für die E-Mail, Fälligkeit JJJJ-MM-TT, Währung] oder null */
+/**
+ * Titel einer Anleihe aus newsletter/anleihen.json (aus den Feldern 0–2, „Deutschland 2,60 % 2033“) mit normalem Leerzeichen für die
+ * Textfassung, oder null, wenn die Anleihe oder die Datei fehlt. Die Datei ist groß; gesucht wird die eine Zeile im Text
+ * (wie zeile_heute() in konto.php).
+ */
+function erinnerung_titel(string $isin): ?string
+{
+    static $roh = null, $schon = [];
+    if (array_key_exists($isin, $schon)) return $schon[$isin];
+    if ($roh === null) {
+        $roh = @file_get_contents(ERINNERUNG_ANLEIHEN);
+        $roh = is_string($roh) ? $roh : '';
+    }
+    $z = null;
+    $p = $roh === '' ? false : strpos($roh, '"' . $isin . '":');
+    if ($p !== false) {
+        $a = strpos($roh, '[', $p);
+        $e = $a === false ? false : strpos($roh, '],', $a);
+        if ($e === false && $a !== false) $e = strpos($roh, ']}', $a);   // letzte Zeile der Datei
+        $z = $e === false ? null : json_decode(substr($roh, $a, $e - $a + 1), true);
+    }
+    // Titel wie nl_titel() in konto.php: Kurzname (Feld 0), Kupon-Text (Feld 1), Fälligkeitsjahr (Feld 2)
+    $t = is_array($z) && is_string($z[0] ?? null) && $z[0] !== '' ? str_replace("\u{00A0}", ' ', trim($z[0] . ' ' . ($z[1] ?? '')) . ' ' . (!empty($z[2]) ? substr((string)$z[2], 0, 4) : 'unbefristet')) : null;
+    return $schon[$isin] = $t;
+}
+
+/**
+ * Stammdaten einer Anleihe: [Name für die E-Mail (Näherung, siehe erinnerung_titel()), Fälligkeit JJJJ-MM-TT, Währung] oder null.
+ * Der Name folgt der Regel der Website (Kurzname, Kupon, Fälligkeitsjahr), nur einfacher: bei Staaten das Land, sonst der
+ * Emittent ohne Rechtsform; Kupon „variabel“ bzw. „Nullkupon“ als Wort.
+ */
 function erinnerung_anleihe(string $isin): ?array
 {
     static $teile = [];
@@ -115,21 +150,33 @@ function erinnerung_anleihe(string $isin): ?array
     // Name wie auf der Website: bei Staaten das Land, sonst der Emittent ohne Rechtsform, notfalls der Registername
     $kurz = '';
     if ($art === 0 && $land !== '' && $land !== 'INT') {
-        $kurz = class_exists('Locale') ? (string)\Locale::getDisplayRegion('-' . $land, 'de') : '';
-        if ($kurz === '' || $kurz === $land) $kurz = ERINNERUNG_LAENDER[$land] ?? '';
+        $kurz = ERINNERUNG_LAENDER[$land] ?? (class_exists('Locale') ? (string)\Locale::getDisplayRegion('-' . $land, 'de') : '');
+        if ($kurz === $land) $kurz = '';
     }
+    $rf = '/[\s,]+(AG|SE|KGaA|GmbH|mbH|S\.?A\.?|S\.?p\.?A\.?|N\.?V\.?|B\.?V\.?|plc|PLC|p\.l\.c\.|Inc\.?|Corp\.?|Corporation|Ltd\.?|Limited|LLC|A\/S|AB|ASA|Oyj|Aktiengesellschaft)\.?$/u';   // Rechtsform am Ende
     if ($kurz === '' && $emittent !== '') {
-        $kurz = trim((string)preg_replace('/[\s,]+(AG|SE|KGaA|GmbH|mbH|S\.?A\.?|S\.?p\.?A\.?|N\.?V\.?|B\.?V\.?|plc|PLC|p\.l\.c\.|Inc\.?|Corp\.?|Corporation|Ltd\.?|Limited|LLC|A\/S|AB|ASA|Oyj|Aktiengesellschaft)\.?$/u', '', $emittent));
+        $kurz = trim((string)preg_replace($rf, '', $emittent));
     }
     if ($kurz === '') $kurz = $name;
-    // Namen, die das Register nur in Großbuchstaben meldet, in üblicher Schreibung (wie lesbar() auf der Website, nur einfacher)
-    if (function_exists('mb_convert_case') && preg_match('/\p{Lu}{3}/u', $kurz) && mb_strtoupper($kurz, 'UTF-8') === $kurz) {
+    // Namen, die das Register nur in Großbuchstaben meldet, in üblicher Schreibung (wie lesbar() auf der Website, nur einfacher) –
+    // nicht den Ländernamen („USA“)
+    $istLand = $art === 0 && in_array($kurz, ERINNERUNG_LAENDER, true);
+    if (!$istLand && function_exists('mb_convert_case') && preg_match('/\p{Lu}{3}/u', $kurz) && mb_strtoupper($kurz, 'UTF-8') === $kurz) {
         $kurz = mb_convert_case(mb_strtolower($kurz, 'UTF-8'), MB_CASE_TITLE, 'UTF-8');
         $kurz = (string)preg_replace_callback('/(?<=\s)(De|Del|La|Le|Les|Of|And|Und|Der|Die|Das|Von|Für|Du|Des|Y|E)(?=\s)/u', fn($m) => mb_strtolower($m[1], 'UTF-8'), $kurz);
+        $kurz = trim((string)preg_replace($rf, '', $kurz));   // „… International LTD“ → erst jetzt als „Ltd“ erkennbar
     }
-    $k = $zinsart === 2 ? 0.0 : (is_numeric($kupon) ? (float)$kupon : null);
-    $kTxt = $k === null ? '' : ' ' . number_format($k, abs($k * 100 - round($k * 100)) > 1e-9 ? 3 : 2, ',', '.') . ' %';
-    return [$kurz . $kTxt . ' ' . substr($faellig, 0, 4), $faellig, $cur];
+    // Kupon wie kupon_text() in scripts/_common.py: „3,50 %“, „3,625 %“, „variabel“, „Nullkupon“ – nie „0,00 %“
+    if ($zinsart === 1 || $kupon === 'var') {
+        $kTxt = 'variabel';
+    } elseif ($zinsart === 2 || (is_numeric($kupon) && (float)$kupon == 0.0 && $zinsart !== 0)) {
+        $kTxt = 'Nullkupon';
+    } elseif (is_numeric($kupon)) {
+        $kTxt = number_format((float)$kupon, ((int)round((float)$kupon * 1000)) % 10 ? 3 : 2, ',', '.') . ' %';
+    } else {
+        $kTxt = '–';
+    }
+    return [$kurz . ' ' . $kTxt . ' ' . substr($faellig, 0, 4), $faellig, $cur];
 }
 
 function erinnerung_datum(string $iso): string
@@ -138,7 +185,7 @@ function erinnerung_datum(string $iso): string
 }
 
 /**
- * Text einer Erinnerung. $posten: [[Name, ISIN, Fälligkeit, Tage, Depotname, Nennwert, Währung], …] – Depotname leer = nur auf der
+ * Text einer Erinnerung. $posten: [[Titel, ISIN, Fälligkeit, Tage, Depotname, Nennwert, Währung], …] – Depotname leer = nur auf der
  * Merkliste (ohne Nennwert). $heute = true: die zweite E-Mail am Tag der Fälligkeit (alle Posten sind heute fällig).
  */
 function erinnerung_text(array $posten, string $aus, bool $heute = false): array
@@ -166,7 +213,8 @@ function erinnerung_text(array $posten, string $aus, bool $heute = false): array
     }
     $bloecke = [];
     foreach ($posten as $p) {
-        $w = $p[6] !== '' && $p[6] !== 'EUR' ? $p[6] : '€';
+        // je Anleihe: Titel · ISIN und Fälligkeit · Musterdepot mit Nennwert (immer mit Währungskürzel: „10.000 EUR“) oder Merkliste
+        $w = $p[6] !== '' ? $p[6] : 'EUR';
         $bloecke[] = "  {$p[0]}\n  ISIN {$p[1]} · fällig am " . erinnerung_datum($p[2]) . (count($isins) > 1 && !$heute ? ' (' . $tage($p[3]) . ')' : '') .
             ($p[4] !== '' ? "\n  Musterdepot „{$p[4]}“ · Nennwert " . number_format((float)$p[5], 0, ',', '.') . " $w · Rückzahlung zum Nennwert (100 %)"
                 : "\n  Merkliste · Rückzahlung zum Nennwert (100 %)");
@@ -235,7 +283,7 @@ function erinnerungen_senden(): array
             $marke = $tage === 0 ? $a[1] . '#tag' : $a[1];
             $schon->execute([$id, $isin, $marke]);
             if ($schon->fetchColumn()) continue;
-            $p = [$a[0], $isin, $a[1], $tage, $depot, $nenn, $a[2], $marke];
+            $p = [erinnerung_titel($isin) ?? $a[0], $isin, $a[1], $tage, $depot, $nenn, $a[2], $marke];   // Titel erst hier: nur für fällige Anleihen suchen
             if ($tage === 0) $amTag[] = $p; else $vorab[] = $p;
         }
         foreach ([[$vorab, false], [$amTag, true]] as [$posten, $heuteFaellig]) {
@@ -266,7 +314,7 @@ function erinnerung_testmail(string $an): bool
     if ($a === null) return false;
     $ok = true;
     foreach ([[ERINNERUNG_TAGE, false, 'die erste Erinnerung, ' . ERINNERUNG_TAGE . ' Tage vor einer Fälligkeit'], [0, true, 'die zweite Erinnerung, am Tag der Fälligkeit']] as [$tage, $heute, $was]) {
-        $posten = [[$a[0], 'DE000BU22072', date('Y-m-d', time() + $tage * 86400), $tage, 'Sicherheit (Beispiel)', 10000, $a[2]]];
+        $posten = [[erinnerung_titel('DE000BU22072') ?? $a[0], 'DE000BU22072', date('Y-m-d', time() + $tage * 86400), $tage, 'Sicherheit (Beispiel)', 10000, $a[2]]];
         [$betreff, $text] = erinnerung_text($posten, 'erinnerung', $heute);
         $ok = erinnerung_mail($an, '[Test] ' . $betreff, $text . "\n\n(Test-E-Mail: So sieht $was aus. Musterdepot, Nennwert und Fälligkeitstag sind erfunden.)") && $ok;
     }

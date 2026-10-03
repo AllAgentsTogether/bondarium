@@ -29,7 +29,9 @@
     const tagDe = t => new Date(t * 1000).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
     const isoVon = t => { const d = new Date(t * 1000); return `${d.getFullYear()}-${zwei(d.getMonth() + 1)}-${zwei(d.getDate())}`; };
     const tageBis = iso => Math.round((Date.parse(iso + "T12:00:00Z") - Date.parse(HEUTE + "T12:00:00Z")) / 86400000);
-    const titel = o => `${o.name} ${fmtCoupon(o.kupon)}${o.faellig ? " " + o.faellig.slice(0, 4) : ""}`;
+    // Titel wie überall (felder.js, seit 03.10.2026): Kurzname, Kupon („variabel“, „Nullkupon“), Fälligkeitsjahr
+    const titel = o => MC.felder ? MC.felder.titel({ kurz: o.name, kupon: o.kupon, zinsart: o.zinsart, faellig: o.faellig }) : `${o.name} ${fmtCoupon(o.kupon)}${o.faellig ? " " + o.faellig.slice(0, 4) : ""}`;
+    const F = MC.felder;
     const abl = art => K.abl(art), wert = (art, k) => K.wert(art, k);
     const neuId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
     const zahlDe = text => { const n = parseFloat(String(text).replace(/\s|%|€/g, "").replace(/\.(?=\d{3}(\D|$))/g, "").replace(",", ".")); return isFinite(n) ? n : NaN; };
@@ -165,14 +167,15 @@
     const delta = o => typeof o.rseit === "number" && typeof o.rendite === "number" ? o.rendite - o.rseit : null;
     function zeileSeit(o) {
       const d = delta(o);
-      return (d != null ? `<b class="mb-delta">Rendite ${Math.abs(d) < 0.005 ? "±0,00" : plus(d)}</b>` : "–") + `<small>gemerkt ${esc(tagDe(o.seit))}</small>`;
+      return (d != null ? `<b class="mb-delta">${F ? F.pkt(d) : plus(d)}</b>` : "–") + `<small data-p="gemerkt">${esc(tagDe(o.seit))}</small>`;
     }
     const termin = o => { const t = (K.stand().termine || {})[o.isin]; return typeof t === "string" && t > HEUTE ? t : (o.kupon === 0 && o.faellig > HEUTE ? "" : null); };   // "" = kein Kupon, null = unbekannt
     function zeileTermin(o) {
       const t = termin(o);
       if (t === "") return "–<small>kein Kupon</small>";
       if (!t) return "–";
-      return esc(MC.datum(t)) + (t === o.faellig ? "<small>mit Rückzahlung</small>" : "");
+      const g = ((K.stand().termine_geschaetzt || {})[o.isin]) ? "geschätzt" : "";
+      return esc(MC.datum(t)) + (t === o.faellig ? `<small>mit Rückzahlung${g ? " · " + g : ""}</small>` : g ? `<small>${g}</small>` : "");
     }
     const zeileKnopf = o => `<button type="button" class="mb-pkt" data-mehr="${esc(o.isin)}" aria-expanded="${OFFEN === o.isin}" aria-label="${esc(o.name)}: Notiz, Liste, Meldung und mehr" title="Notiz, Liste, Meldung und mehr">…</button>`;
     const SCHWELLE = { "rendite-ueber": "Rendite steigt über", "rendite-unter": "Rendite fällt unter", "kurs-ueber": "Kurs steigt über", "kurs-unter": "Kurs fällt unter" };
@@ -180,7 +183,7 @@
     function zeileNach(o) {
       if (OFFEN !== o.isin) return "";
       const m = meldungVon(o.isin), ls = listen(), in_ = ls.find(l => l.i.indexOf(o.isin) >= 0), n = wert("notiz", o.isin) || "";
-      const rech = typeof o.kurs === "number" && typeof o.kupon === "number" && o.faellig ? `rechner.html?kurs=${encodeURIComponent(fmt(o.kurs, 2))}&kupon=${encodeURIComponent(fmt(o.kupon, 3).replace(/0$/, ""))}&faellig=${encodeURIComponent(MC.datum(o.faellig))}#rendite` : "";
+      const rech = typeof o.kurs === "number" && typeof o.kupon === "number" && o.faellig ? `rechner.html?kurs=${encodeURIComponent(fmt(o.kurs, 2))}&kupon=${encodeURIComponent(fmt(o.kupon, 3).replace(/0$/, ""))}&faellig=${encodeURIComponent(MC.datum(o.faellig))}&w=${encodeURIComponent(o.cur || "EUR")}&isin=${encodeURIComponent(o.isin)}&titel=${encodeURIComponent(titel(o))}#rendite` : "";
       return `<tr class="mb-form-z"><td colspan="9"><div class="mb-form" data-panel="${esc(o.isin)}">` +
         `<div class="mb-form-k"><h3>${esc(titel(o))}: Notiz, Liste, Meldung</h3><p>Alles hier siehst nur du. Die Notiz kommt nicht in das PDF zum Teilen.</p></div>` +
         `<div class="mb-felder"><label class="breit" for="mb-p-notiz">Notiz<input type="text" id="mb-p-notiz" maxlength="200" autocomplete="off" value="${esc(n)}"></label>` +
@@ -193,7 +196,7 @@
         `<li><button type="button" data-p="depot">In ein Musterdepot legen</button></li>` +
         (termin(o) || o.faellig > HEUTE ? `<li><button type="button" data-p="ics">Termine in den Kalender</button></li>` : "") +
         `<li><button type="button" class="rot" data-p="weg">Von der Merkliste entfernen</button></li>` +
-        `<li><small>${esc(o.isin)}${o.cur ? " · " + esc(o.cur) : ""}${typeof o.stk === "number" ? " · Stückelung " + esc(o.stk.toLocaleString("de-DE", { maximumFractionDigits: 3 })) : ""}${typeof o.vol === "number" ? " · Volumen " + esc((o.vol / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 })) + " Mrd." : ""}</small></li></ul>` +
+        `<li><small>${esc([o.isin, o.cur, typeof o.stk === "number" && F ? "Stückelung " + F.stueckelung(o.stk, o.cur) : "", typeof o.vol === "number" && F ? "Volumen " + F.volumen(o.vol, o.cur) : "", F && F.bonitaet(o.bon) ? "Bonität laut EZB " + F.bonitaet(o.bon) : ""].filter(Boolean).join(" · "))}</small></li></ul>` +
         `<div class="mb-form-a"><button type="button" class="go" data-p="speichern">Speichern</button><button type="button" class="kto-textbtn" data-p="zu">Abbrechen</button><p class="kf-status" id="mb-p-status" role="status" aria-live="polite"></p></div>` +
         `</div></td></tr>`;
     }
@@ -238,11 +241,15 @@
     }
     function csv() {
       const z = v => { v = v == null ? "" : String(v); return /[";\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v; }, n = (v, d) => typeof v === "number" ? v.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d, useGrouping: false }) : "";
-      const kopf = ["Name", "ISIN", "Art", "Währung", "Kupon in %", "Fälligkeit", "Kurs", "Kurs vom", "Rendite in %", "Gemerkt am", "Rendite beim Merken in %", "Nächster Zinstermin"];
-      const ART = ["Staat", "Öffentlich", "Unternehmen"];
-      const zeilen = X.liste().map(o => [o.name, o.isin, ART[o.art] || "", o.cur, typeof o.kupon === "number" ? n(o.kupon, 3) : o.kupon === "var" ? "variabel" : "", o.faellig ? MC.datum(o.faellig) : "", n(o.kurs, 2), o.datum ? MC.datum(o.datum) : "",
-        n(o.rendite, 2), tagDe(o.seit), n(o.rseit, 2), termin(o) ? MC.datum(termin(o)) : ""]);
-      etfListe().forEach(f => { const r = ETF.get(f[0]), k = ETFK && ETFK.kurse ? ETFK.kurse[f[0]] : null; zeilen.push([r[1], r[0], "ETF", r[9] || "", "", "", k && typeof k[0] === "number" ? n(k[0], 2) : "", "", "", tagDe(f[1]), "", ""]); });
+      // Seit 03.10.2026 Spalten wie die Tabelle in Langform mit Einheit (Konzept „Einheitliche Anleihen-Angaben“, Kapitel 5.5)
+      const kopf = ["Anleihe", "ISIN", "Art", "Währung", "Rendite bis Fälligkeit in %", "Kupon in %", "Restlaufzeit in Jahren", "Fälligkeit", "Kurs in %", "Kurs vom",
+        "Veränderung zum Vortag in Pkt.", "Rendite seit dem Merken in Pkt.", "Gemerkt am", "Nächster Zinstermin", "ETF: Kurs je Anteil"];
+      const ART = ["Staat", "Öffentlich", "Unternehmen"], jahreBis = iso => (Date.parse(iso + "T12:00:00Z") - Date.parse(HEUTE + "T12:00:00Z")) / (365.25 * 864e5);
+      const zeilen = X.liste().map(o => [o.name, o.isin, ART[o.art] || "", o.cur, n(o.rendite, 2),
+        o.zinsart === 1 || o.kupon === "var" ? "variabel" : typeof o.kupon === "number" ? n(o.kupon, 3) : "", o.faellig ? n(Math.max(0, jahreBis(o.faellig)), 1) : "",
+        o.faellig ? MC.datum(o.faellig) : "", n(o.kurs, 2), o.datum ? MC.datum(o.datum) : "",
+        typeof o.kurs === "number" && typeof o.vortag === "number" ? n(o.kurs - o.vortag, 2) : "", delta(o) != null ? n(delta(o), 2) : "", tagDe(o.seit), termin(o) ? MC.datum(termin(o)) : "", ""]);
+      etfListe().forEach(f => { const r = ETF.get(f[0]), k = ETFK && ETFK.kurse ? ETFK.kurse[f[0]] : null; zeilen.push([r[1], r[0], "ETF", r[9] || "", "", "", "", "", "", "", "", "", tagDe(f[1]), "", k && typeof k[0] === "number" ? n(k[0], 2) : ""]); });
       lade(`Bondarium-Merkliste-${HEUTE}.csv`, "﻿" + [kopf].concat(zeilen).map(r => r.map(z).join(";")).join("\r\n") + "\r\n", "text/csv;charset=utf-8");
     }
     // Kalenderdatei (.ics): nächster Zinstermin und Fälligkeit je Anleihe als ganztägige Termine – entsteht im Browser
@@ -279,22 +286,47 @@
     // ---------- Merkliste: Vergleich (bis zu vier angekreuzte Anleihen nebeneinander, mit Kursverlauf über ein Jahr) ----------
     const VFARBEN = ["#157C00", "#1A1A19", "#DD803D", "#76756D"];
     let VLAUF = 0;
+    const VZT = {};   // ISIN → Zinstermine aus anleihen/<teil>.json (Feld 14: [Zahlungen je Jahr, "MM-TT", …]) für die Duration im Vergleich
     function zeichneVergleich() {
       const box = $("mb-vgl"); if (!box) return;
       const ls = X.liste().filter(o => VGL.has(o.isin));
       [...VGL].forEach(i => { if (!ls.some(o => o.isin === i)) VGL.delete(i); });
       box.hidden = ls.length < 2; if (ls.length < 2) { box.innerHTML = ""; return; }
+      const fehlt = ls.filter(o => !(o.isin in VZT));
+      if (fehlt.length) {   // einmal nachladen (MC.json hält jede Datei nur einmal), danach mit Duration zeichnen
+        fehlt.forEach(o => { VZT[o.isin] = null; });
+        Promise.all(fehlt.map(o => MC.json(`anleihen/${MC.teil(o.isin)}.json`).then(d => { const r = d && d.rows && d.rows[o.isin]; VZT[o.isin] = r && Array.isArray(r[14]) ? r[14] : null; }, () => {})))
+          .then(() => { if (!box.hidden) zeichneVergleich(); });
+      }
+      // Seit 03.10.2026 Angaben in der Reihenfolge der Gesamtliste und in Langform (Konzept „Einheitliche Anleihen-Angaben“, felder.js);
+      // laufende Verzinsung und Duration wie in den Musterdepots gerechnet (Zinstermine aus den Stammdaten, Valuta zwei Börsentage)
       const zeile = (name, f) => `<tr><th scope="row">${name}</th>${ls.map(o => `<td>${f(o)}</td>`).join("")}</tr>`;
-      const kue = o => { const k = kueVon(o); if (!k || !MC.kuendigungFeld) return "–"; const f = MC.kuendigungFeld(k, o.kurs); return esc(f.wert) + (f.klein ? `<small style="display:block;color:var(--text);font-size:12.5px">${f.klein}</small>` : ""); };
+      const klein = t => t ? `<small style="display:block;color:var(--text);font-size:12.5px">${t}</small>` : "";
+      const kue = o => { const k = kueVon(o); if (!k || !MC.kuendigungFeld) return "–"; const f = MC.kuendigungFeld(k, o.kurs); return esc(f.wert) + klein(f.klein); };
+      const valuta = (() => { const x = new Date(HEUTE + "T12:00:00Z"); let n = 2; while (n) { x.setUTCDate(x.getUTCDate() + 1); if (x.getUTCDay() % 6) n--; } return x.toISOString().slice(0, 10); })();
+      const kennz = o => {   // laufende Verzinsung, Duration (Macaulay), modifizierte Duration
+        const fest = o.zinsart === 0 && typeof o.kupon === "number", out = { lfd: fest && o.kurs > 0 && !/infl/i.test(o.reg || "") ? o.kupon / o.kurs * 100 : null, mac: null, dur: null };
+        const zt = VZT[o.isin];
+        if (zt !== undefined && o.rendite != null && o.faellig && o.faellig > valuta && (fest || o.zinsart === 2) && MC.bond) {
+          try { const d = MC.bond.duration({ coupon: fest ? o.kupon : 0, freq: Array.isArray(zt) && zt[0] > 0 ? zt[0] : 1, maturity: o.faellig, days: Array.isArray(zt) && zt.length > 1 ? zt.slice(1) : null }, o.rendite / 100, valuta); out.mac = d.macaulay; out.dur = d.modified; } catch (e) { /* ohne Duration */ }
+        }
+        return out;
+      };
+      const zinsenJahr = o => o.zinsart === 1 || o.kupon === "var" ? "variabel" : o.zinsart === 2 || o.kupon === 0 ? "keine (Nullkupon)" : typeof o.kupon === "number" ? F.betrag(o.kupon * 10, o.cur) : "–";
       box.innerHTML = `<div class="mb-kh"><h2 class="mb-h2">Vergleich</h2><p>${ls.length} gewählt · bis zu 4 möglich · <button type="button" class="kto-textbtn" id="mb-vgl-leer">Auswahl aufheben</button></p></div>` +
-        `<div class="mb-vgl-g"><div class="table-scroll"><table class="mb-vt"><thead><tr><td></td>${ls.map((o, i) => `<th scope="col"><i style="background:${VFARBEN[i]}"></i>${esc(titel(o))}</th>`).join("")}</tr></thead><tbody>` +
-        zeile("Rendite bis Fälligkeit", o => o.rendite != null ? fmt(o.rendite, 2) + " %" : "–") +
-        zeile("Aufschlag zur Bundesanleihe", o => typeof o.auf === "number" && o.rendite != null ? fmt(o.auf, 2) + "\u00a0Pkt." : "–") +
-        zeile("Kurs", o => o.kurs != null ? fmt(o.kurs, 2) : "–") + zeile("Kupon", o => fmtCoupon(o.kupon)) +
-        zeile("Fälligkeit", o => o.faellig ? esc(MC.datum(o.faellig)) : "unbefristet") + zeile("Kündbar", kue) +
-        zeile("Volumen", o => typeof o.vol === "number" ? esc((o.vol / 1e6).toLocaleString("de-DE", { maximumFractionDigits: 0 })) + " Mio. " + esc(o.cur) : "–") +
-        zeile("Stückelung", o => typeof o.stk === "number" ? esc(o.stk.toLocaleString("de-DE", { maximumFractionDigits: 3 })) + " " + esc(o.cur) : "–") +
-        zeile("Zinsen je 1.000 im Jahr", o => typeof o.kupon === "number" ? fmt(o.kupon * 10, 2) + " " + esc(o.cur) : "–") +
+        `<div class="mb-vgl-g"><div class="table-scroll"><table class="mb-vt"><thead><tr><td></td>${ls.map((o, i) => `<th scope="col"><i style="background:${VFARBEN[i]}"></i><a href="anleihe.html?isin=${encodeURIComponent(o.isin)}">${esc(titel(o))}</a>${klein(esc([o.isin, ["Staat", "Öffentlich", "Unternehmen"][o.art] || "", o.cur].filter(Boolean).join(" · ")))}</th>`).join("")}</tr></thead><tbody>` +
+        zeile("Rendite bis Fälligkeit", o => o.rendite != null ? F.pct(o.rendite) : "–") +
+        zeile("Kupon", o => esc(F.kupon({ kupon: o.kupon, zinsart: o.zinsart }))) +
+        zeile("Laufende Verzinsung", o => F.pct(kennz(o).lfd)) +
+        zeile("Restlaufzeit", o => o.faellig ? esc(F.restlaufzeit(o.faellig)) + klein("fällig " + esc(MC.datum(o.faellig))) : "unbefristet") +
+        zeile("Duration", o => { const k = kennz(o); return k.mac != null ? esc(F.restlaufzeit(k.mac)) + klein("mod. Duration " + fmt(k.dur, 1)) : "–"; }) +
+        zeile("Risikoaufschlag zu Bund", o => typeof o.auf === "number" && o.rendite != null ? F.pkt(o.auf) : "–") +
+        zeile("Kurs", o => o.kurs != null ? F.kurs(o.kurs) + klein(o.datum ? "vom " + esc(MC.datum(o.datum)) : "") : "–") +
+        zeile("Bonität laut EZB", o => esc(F.bonitaet(o.bon) || "keine Angabe")) +
+        zeile("Kündigungsrecht Emittent", kue) +
+        zeile("Stückelung (Mindestanlage)", o => F.stueckelung(o.stk, o.cur)) +
+        zeile("Volumen", o => F.volumen(o.vol, o.cur)) +
+        zeile("Zinsen pro Jahr je 1.000", zinsenJahr) +
         `</tbody></table></div><div><p class="mb-zk" style="margin-top:0">Kursverlauf, 1 Jahr</p><div id="mb-vgl-bild"><p class="mb-leer">Kurse werden geladen …</p></div></div></div>`;
       const nr = ++VLAUF, ab = (() => { const d = new Date(HEUTE + "T12:00:00Z"); d.setUTCFullYear(d.getUTCFullYear() - 1); return d.toISOString().slice(0, 10); })();
       Promise.all(ls.map(o => MC.verlauf(o.isin, true, { ab }).catch(() => ({ t: [], k: [] })))).then(v => {
@@ -327,7 +359,7 @@
       "aufschlag-it": { t: "Risikoaufschlag Italien", s: "risikoaufschlaege.html", f: "risikoaufschlaege.json", w: d => { const h = d.laender.heute.find(x => x.code === "IT"); return [fmt(h.aufschlag, 2) + "\u00a0Pkt.", "über Bund, 10 Jahre"]; } },
       "aufschlag-fr": { t: "Risikoaufschlag Frankreich", s: "risikoaufschlaege.html", f: "risikoaufschlaege.json", w: d => { const h = d.laender.heute.find(x => x.code === "FR"); return [fmt(h.aufschlag, 2) + "\u00a0Pkt.", "über Bund, 10 Jahre"]; } },
       "aufschlag-us": { t: "Aufschlag US-Unternehmen", s: "risikoaufschlaege.html", f: "risikoaufschlaege.json", w: d => [fmt(d.us.heute[1], 2) + "\u00a0Pkt.", "über US-Staatsanleihen"] },
-      bund2050: { t: "Bundesanleihe 2050", s: "langlaeufer.html", f: "langlaeufer.json", w: d => { const l = d.bonds.bund2050.latest; return [fmt(l.price, 2), `Kurs · Rendite ${pct(l.yield)}`]; } },
+      bund2050: { t: "Bundesanleihe 2050", s: "langlaeufer.html", f: "langlaeufer.json", w: d => { const l = d.bonds.bund2050.latest; return [F ? F.kurs(l.price) : fmt(l.price, 2), `Kurs · Rendite ${pct(l.yield)}`]; } },
     };
     let KZLAUF = 0;
     function zinsBlick(el) {
@@ -366,10 +398,10 @@
       const w = m.w, an = !!w.an, aus = an ? "" : "Ausgeschaltet";
       if (SCHWELLE[w.b]) {
         const o = X.liste().find(x => x.isin === w.i) || (D ? X.anleihe(w.i, 0, D) : null), rend = w.b.indexOf("rendite") === 0, v = o ? (rend ? o.rendite : o.kurs) : null;
-        const zahl = v != null ? (rend ? `Rendite ${fmt(v, 2)} %` : `Kurs ${fmt(v, 2)}`) : "kein aktueller Wert";
+        const zahl = v != null ? (rend ? `Rendite ${F.pct(v)}` : `Kurs ${F.kurs(v)}`) : "kein aktueller Wert";
         const erf = v != null && (/ueber$/.test(w.b) ? v > w.w : v < w.w);
-        return { wer: o && o.cur ? titel(o) : w.i, was: `${SCHWELLE[w.b]} ${fmt(w.w, 2)}${rend ? " %" : ""}`, aktiv: an && (erf || !!w.a),
-          stand: !an ? `${aus} · letzter Stand: ${zahl}` : w.a ? `<em>Ausgelöst am ${esc(MC.datum(w.a))}</em> · ${typeof w.aw === "number" ? (rend ? `Rendite ${fmt(w.aw, 2)} %` : `Kurs ${fmt(w.aw, 2)}`) : zahl}` : erf ? `<em>Bedingung erfüllt</em> · ${zahl}` : `Aktiv · ${zahl}` };
+        return { wer: o && o.cur ? titel(o) : w.i, was: `${SCHWELLE[w.b]} ${rend ? F.pct(w.w) : F.kurs(w.w)}`, aktiv: an && (erf || !!w.a),
+          stand: !an ? `${aus} · letzter Stand: ${zahl}` : w.a ? `<em>Ausgelöst am ${esc(MC.datum(w.a))}</em> · ${typeof w.aw === "number" ? (rend ? `Rendite ${F.pct(w.aw)}` : `Kurs ${F.kurs(w.aw)}`) : zahl}` : erf ? `<em>Bedingung erfüllt</em> · ${zahl}` : `Aktiv · ${zahl}` };
       }
       if (w.b === "termin") {
         const t = termine(9999, true).filter(x => x.art === "Zinstermin")[0], nah = t && tageBis(t.tag) <= 7;   // seit 03.10.2026 nur Zinstermine
@@ -447,7 +479,7 @@
       const D = X.daten(), st = K.stand(), ls = X.liste(), nE = etfListe().length;
       const mitDelta = ls.filter(o => delta(o) != null).sort((a, b) => Math.abs(delta(b)) - Math.abs(delta(a))), top = (mitDelta.length ? mitDelta : ls.slice().sort((a, b) => b.seit - a.seit)).slice(0, 4);
       const merk = `<section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Meine Merkliste</h2><p>${ls.length} ${ls.length === 1 ? "Anleihe" : "Anleihen"}${nE ? ` · ${nE} ${nE === 1 ? "ETF" : "ETFs"}` : ""}</p></div>` +
-        (top.length ? `<ul class="mb-mini">${top.map(o => { const d = delta(o); return `<li><div><a href="anleihe.html?isin=${encodeURIComponent(o.isin)}">${esc(titel(o))}</a><span>gemerkt ${esc(tagDe(o.seit))}</span></div><p><b>${o.rendite != null ? "Rendite\u00a0" + fmt(o.rendite, 2) + " %" : "–"}</b><span>${d != null ? `${Math.abs(d) < 0.005 ? "±0,00" : plus(d)} seit Merken` : o.kurs != null ? `Kurs ${fmt(o.kurs, 2)}` : ""}</span></p></li>`; }).join("")}</ul>`
+        (top.length ? `<ul class="mb-mini">${top.map(o => { const d = delta(o); return `<li><div><a href="anleihe.html?isin=${encodeURIComponent(o.isin)}">${esc(titel(o))}</a><span>gemerkt ${esc(tagDe(o.seit))}</span></div><p><b>${o.rendite != null ? "Rendite\u00a0" + F.pct(o.rendite) : "–"}</b><span>${d != null ? `${F.pkt(d)} seit dem Merken` : o.kurs != null ? `Kurs ${F.kurs(o.kurs)}` : ""}</span></p></li>`; }).join("")}</ul>`
           : st.favoriten.length ? '<p class="mb-leer">Kurse werden geladen …</p>' : '<p class="mb-leer">Noch nichts gemerkt. In der <a href="anleihen-suche.html">Anleihen-Suche</a> und auf jedem Steckbrief steht der Knopf „Merken“.</p>') +
         `<p class="mb-fuss"><span>${X.kstand() ? "Schlusskurse vom " + esc(MC.datum(X.kstand())) : ""}</span><button type="button" class="kto-textbtn" data-zu="merkliste">Zur Merkliste</button></p></section>`;
       const zins = `<section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Mein Zins-Blick</h2><p>angeheftete Kennzahlen</p></div><div id="mb-zins"></div><p class="mb-fuss"><span></span><a href="beobachten.html">Alle Zinsen</a></p></section>`;

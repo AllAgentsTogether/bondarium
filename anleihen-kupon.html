@@ -43,11 +43,9 @@
   .kpis thead th:nth-child(2) { width: 18.5%; }   /* feste Breite: Spalten springen nicht */
   .kpis th, .kpis td { padding: 9px 2px 9px 0; }   /* 11 Spalten: knapper Abstand, damit die Tabelle in 1000 px passt */
   .kpis th[scope=row] { font-weight: 400; white-space: nowrap; }
-  /* Fälligkeit unter dem Emittenten nur, solange die Tabelle quer scrollt (dort ist die Spalte „Fälligkeit“ außer Sicht) */
-  .kpis th[scope=row] .fa-mobil { display: none; font-size: 12px; color: var(--text); }
   h1 { hyphens: manual; -webkit-hyphens: manual; }
   @media (max-width: 600px) {  .lzsec { margin-top: 32px; padding-top: 20px; } }
-  @media (max-width: 900px) {  .table-scroll table { min-width: 720px; }  .kpis th[scope=row] .fa-mobil { display: block; } }
+  @media (max-width: 900px) {  .table-scroll table { min-width: 720px; } }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Anleihen nach Kupon: die 30 höchsten in drei Ranglisten","description":"Die 30 höchsten Kupons je Art: Staatsanleihen, öffentliche Emittenten und Unternehmen – von der EZB-Liste notenbankfähiger Sicherheiten, ab zwei Jahren.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-02","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihen-kupon.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.bondarium.de/anleihen.html"},{"@type":"ListItem","position":3,"name":"Anleihen nach Kupon","item":"https://www.bondarium.de/anleihen-kupon.html"}]}</script>
@@ -164,21 +162,9 @@
     <section class="lzsec" id="staat" aria-labelledby="h-staat">
       <h2 id="h-staat">Staatsanleihen: die 30 höchsten Kupons</h2>
       <div class="table-scroll">
-      <table class="kpis" data-gruppe="staat">
+      <table class="kpis atab" data-gruppe="staat">
         <caption class="sr-only">Die 30 Staatsanleihen mit dem höchsten Kupon: EZB-Liste oder G10-Land außerhalb Europas, Restlaufzeit mindestens zwei Jahre, Stückelung höchstens 10.000</caption>
-        <thead class="kpi-head"><tr>
-          <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" aria-label="Rang" title="Rang nach Kupon">#</button></th>
-          <th scope="col" data-col="emittent"><button type="button" class="sortbtn" data-col="emittent">Emittent</button></th>
-          <th scope="col" data-col="yld"><button type="button" class="sortbtn" data-col="yld" title="Rendite bis Fälligkeit in % pro Jahr – von uns aus dem Schlusskurs berechnet (Bundeswertpapiere: Rendite der Deutschen Bundesbank)">Rendite</button></th>
-          <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs" title="Schlusskurs in % des Nennwerts – Börse Frankfurt (Deutsche Börse), Bundeswertpapiere: Deutsche Bundesbank">Kurs</button></th>
-          <th scope="col" data-col="kupon"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
-          <th scope="col" data-col="faellig"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th>
-          <th scope="col" data-col="years"><button type="button" class="sortbtn" data-col="years">Restlaufzeit</button></th>
-          <th scope="col" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th>
-          <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th>
-          <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe (Mrd. = Milliarden)">Volumen</button></th>
-          <th scope="col" data-col="stk"><button type="button" class="sortbtn" data-col="stk" title="Kleinster Nennwert (zugleich Mindestanlage) in der Währung der Anleihe">Stückelung</button></th>
-        </tr></thead>
+        <thead><tr><th scope="col" data-col="platz" class="rk" aria-sort="ascending"><button type="button" class="sortbtn" data-col="platz">#</button></th><th scope="col" data-col="anleihe" class="" title="Kurzname: bei Staaten das Land, sonst der Emittent ohne Rechtsform. Ein Klick öffnet den Steckbrief."><button type="button" class="sortbtn" data-col="anleihe">Anleihe</button><small>ISIN · Art · Währung</small></th><th scope="col" data-col="rendite" class="num" title="Rendite bis Fälligkeit in % pro Jahr – von uns aus dem Schlusskurs berechnet (Bundeswertpapiere: Rendite der Deutschen Bundesbank)"><button type="button" class="sortbtn" data-col="rendite">Rendite</button></th><th scope="col" data-col="kupon" class="num" title="Zinssatz pro Jahr auf den Nennwert"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th><th scope="col" data-col="restlaufzeit" class="num" title="Zeit von heute bis zur Fälligkeit, darunter der Fälligkeitstag"><button type="button" class="sortbtn" data-col="restlaufzeit">Restlaufzeit</button><small>Fälligkeit</small></th><th scope="col" data-col="kurs" class="num" title="Schlusskurs in % des Nennwerts"><button type="button" class="sortbtn" data-col="kurs">Kurs</button></th><th scope="col" data-col="bonitaet" class="" title="Bonität laut EZB: Spanne der Notenskala, abgelesen aus der EZB-Liste notenbankfähiger Sicherheiten (keine Ratings der Agenturen). „–“: nicht auf der EZB-Liste."><button type="button" class="sortbtn" data-col="bonitaet">Bonität</button></th><th scope="col" data-col="stueckelung" class="num" title="Kleinster handelbarer Nennwert (zugleich Mindestanlage), in der Währung der Anleihe"><button type="button" class="sortbtn" data-col="stueckelung">Stückelung</button></th><th scope="col" data-col="volumen" class="num" title="Ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe"><button type="button" class="sortbtn" data-col="volumen">Volumen</button></th><th scope="col" data-col="merken" class="merkspalte"><span class="sr-only">Merken</span></th></tr></thead>
         <tbody id="kpis-staat"></tbody>
       </table>
       </div>
@@ -188,21 +174,9 @@
     <section class="lzsec" id="oeffentlich" aria-labelledby="h-oeffentlich">
       <h2 id="h-oeffentlich">Öffentliche Anleihen: die 30 höchsten Kupons</h2>
       <div class="table-scroll">
-      <table class="kpis" data-gruppe="oeffentlich">
+      <table class="kpis atab" data-gruppe="oeffentlich">
         <caption class="sr-only">Die 30 Anleihen öffentlicher Emittenten (Bundesländer, Regionen, Förderbanken, supranationale Institutionen) mit dem höchsten Kupon auf der EZB-Liste, Restlaufzeit mindestens zwei Jahre, Stückelung höchstens 10.000</caption>
-        <thead class="kpi-head"><tr>
-          <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" aria-label="Rang" title="Rang nach Kupon">#</button></th>
-          <th scope="col" data-col="emittent"><button type="button" class="sortbtn" data-col="emittent">Emittent</button></th>
-          <th scope="col" data-col="yld"><button type="button" class="sortbtn" data-col="yld" title="Rendite bis Fälligkeit in % pro Jahr – von uns aus dem Schlusskurs berechnet (Bundeswertpapiere: Rendite der Deutschen Bundesbank)">Rendite</button></th>
-          <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs" title="Schlusskurs in % des Nennwerts – Börse Frankfurt (Deutsche Börse), Bundeswertpapiere: Deutsche Bundesbank">Kurs</button></th>
-          <th scope="col" data-col="kupon"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
-          <th scope="col" data-col="faellig"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th>
-          <th scope="col" data-col="years"><button type="button" class="sortbtn" data-col="years">Restlaufzeit</button></th>
-          <th scope="col" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th>
-          <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th>
-          <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe (Mrd. = Milliarden)">Volumen</button></th>
-          <th scope="col" data-col="stk"><button type="button" class="sortbtn" data-col="stk" title="Kleinster Nennwert (zugleich Mindestanlage) in der Währung der Anleihe">Stückelung</button></th>
-        </tr></thead>
+        <thead><tr><th scope="col" data-col="platz" class="rk" aria-sort="ascending"><button type="button" class="sortbtn" data-col="platz">#</button></th><th scope="col" data-col="anleihe" class="" title="Kurzname: bei Staaten das Land, sonst der Emittent ohne Rechtsform. Ein Klick öffnet den Steckbrief."><button type="button" class="sortbtn" data-col="anleihe">Anleihe</button><small>ISIN · Art · Währung</small></th><th scope="col" data-col="rendite" class="num" title="Rendite bis Fälligkeit in % pro Jahr – von uns aus dem Schlusskurs berechnet (Bundeswertpapiere: Rendite der Deutschen Bundesbank)"><button type="button" class="sortbtn" data-col="rendite">Rendite</button></th><th scope="col" data-col="kupon" class="num" title="Zinssatz pro Jahr auf den Nennwert"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th><th scope="col" data-col="restlaufzeit" class="num" title="Zeit von heute bis zur Fälligkeit, darunter der Fälligkeitstag"><button type="button" class="sortbtn" data-col="restlaufzeit">Restlaufzeit</button><small>Fälligkeit</small></th><th scope="col" data-col="kurs" class="num" title="Schlusskurs in % des Nennwerts"><button type="button" class="sortbtn" data-col="kurs">Kurs</button></th><th scope="col" data-col="bonitaet" class="" title="Bonität laut EZB: Spanne der Notenskala, abgelesen aus der EZB-Liste notenbankfähiger Sicherheiten (keine Ratings der Agenturen). „–“: nicht auf der EZB-Liste."><button type="button" class="sortbtn" data-col="bonitaet">Bonität</button></th><th scope="col" data-col="stueckelung" class="num" title="Kleinster handelbarer Nennwert (zugleich Mindestanlage), in der Währung der Anleihe"><button type="button" class="sortbtn" data-col="stueckelung">Stückelung</button></th><th scope="col" data-col="volumen" class="num" title="Ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe"><button type="button" class="sortbtn" data-col="volumen">Volumen</button></th><th scope="col" data-col="merken" class="merkspalte"><span class="sr-only">Merken</span></th></tr></thead>
         <tbody id="kpis-oeffentlich"></tbody>
       </table>
       </div>
@@ -212,21 +186,9 @@
     <section class="lzsec" id="unternehmen" aria-labelledby="h-unternehmen">
       <h2 id="h-unternehmen">Unternehmensanleihen: die 30 höchsten Kupons</h2>
       <div class="table-scroll">
-      <table class="kpis" data-gruppe="unternehmen">
+      <table class="kpis atab" data-gruppe="unternehmen">
         <caption class="sr-only">Die 30 Unternehmensanleihen mit dem höchsten Kupon auf der EZB-Liste, Restlaufzeit mindestens zwei Jahre, Stückelung höchstens 10.000</caption>
-        <thead class="kpi-head"><tr>
-          <th scope="col" data-col="rank" aria-sort="ascending"><button type="button" class="sortbtn" data-col="rank" aria-label="Rang" title="Rang nach Kupon">#</button></th>
-          <th scope="col" data-col="emittent"><button type="button" class="sortbtn" data-col="emittent">Emittent</button></th>
-          <th scope="col" data-col="yld"><button type="button" class="sortbtn" data-col="yld" title="Rendite bis Fälligkeit in % pro Jahr – von uns aus dem Schlusskurs berechnet (Bundeswertpapiere: Rendite der Deutschen Bundesbank)">Rendite</button></th>
-          <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs" title="Schlusskurs in % des Nennwerts – Börse Frankfurt (Deutsche Börse), Bundeswertpapiere: Deutsche Bundesbank">Kurs</button></th>
-          <th scope="col" data-col="kupon"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
-          <th scope="col" data-col="faellig"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th>
-          <th scope="col" data-col="years"><button type="button" class="sortbtn" data-col="years">Restlaufzeit</button></th>
-          <th scope="col" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th>
-          <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th>
-          <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe (Mrd. = Milliarden)">Volumen</button></th>
-          <th scope="col" data-col="stk"><button type="button" class="sortbtn" data-col="stk" title="Kleinster Nennwert (zugleich Mindestanlage) in der Währung der Anleihe">Stückelung</button></th>
-        </tr></thead>
+        <thead><tr><th scope="col" data-col="platz" class="rk" aria-sort="ascending"><button type="button" class="sortbtn" data-col="platz">#</button></th><th scope="col" data-col="anleihe" class="" title="Kurzname: bei Staaten das Land, sonst der Emittent ohne Rechtsform. Ein Klick öffnet den Steckbrief."><button type="button" class="sortbtn" data-col="anleihe">Anleihe</button><small>ISIN · Art · Währung</small></th><th scope="col" data-col="rendite" class="num" title="Rendite bis Fälligkeit in % pro Jahr – von uns aus dem Schlusskurs berechnet (Bundeswertpapiere: Rendite der Deutschen Bundesbank)"><button type="button" class="sortbtn" data-col="rendite">Rendite</button></th><th scope="col" data-col="kupon" class="num" title="Zinssatz pro Jahr auf den Nennwert"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th><th scope="col" data-col="restlaufzeit" class="num" title="Zeit von heute bis zur Fälligkeit, darunter der Fälligkeitstag"><button type="button" class="sortbtn" data-col="restlaufzeit">Restlaufzeit</button><small>Fälligkeit</small></th><th scope="col" data-col="kurs" class="num" title="Schlusskurs in % des Nennwerts"><button type="button" class="sortbtn" data-col="kurs">Kurs</button></th><th scope="col" data-col="bonitaet" class="" title="Bonität laut EZB: Spanne der Notenskala, abgelesen aus der EZB-Liste notenbankfähiger Sicherheiten (keine Ratings der Agenturen). „–“: nicht auf der EZB-Liste."><button type="button" class="sortbtn" data-col="bonitaet">Bonität</button></th><th scope="col" data-col="stueckelung" class="num" title="Kleinster handelbarer Nennwert (zugleich Mindestanlage), in der Währung der Anleihe"><button type="button" class="sortbtn" data-col="stueckelung">Stückelung</button></th><th scope="col" data-col="volumen" class="num" title="Ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe"><button type="button" class="sortbtn" data-col="volumen">Volumen</button></th><th scope="col" data-col="merken" class="merkspalte"><span class="sr-only">Merken</span></th></tr></thead>
         <tbody id="kpis-unternehmen"></tbody>
       </table>
       </div>
@@ -265,6 +227,7 @@
 </div>
 
 <script src="site.js"></script>
+<script src="felder.js"></script>
 <script src="konto.js"></script>
 <script src="bond.js"></script>
 <script src="top10-tabellen.js"></script>
@@ -281,15 +244,16 @@ window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']
   var NAME = { staat: "Staatsanleihen", oeffentlich: "Anleihen öffentlicher Emittenten", unternehmen: "Unternehmensanleihen" }, ROWS = {}, SORT = {};
   var render = function (key) {
     var table = document.querySelector('table.kpis[data-gruppe="' + key + '"]');
-    if (table) T10.tabelle(table, ROWS[key] || [], SORT[key], "Heute erfüllt keine Anleihe die Regeln.");
+    if (table) T10.tabelle(table, ROWS[key] || [], SORT[key], "Heute erfüllt keine Anleihe die Regeln.", "kupon");   // gerankt nach Kupon: fett
   };
   Object.keys(NAME).forEach(function (key) {
-    SORT[key] = { col: "rank", dir: 1 };
+    SORT[key] = { col: "platz", dir: 1 };
     var table = document.querySelector('table.kpis[data-gruppe="' + key + '"]');
     if (table) T10.sortierbar(table, SORT[key], function () { render(key); });
   });
   MC.load("top10-anleihen-kupon.json").then(function (d) {
     if (T10.standZeile) T10.standZeile(d.stand);   // Kursdatum sichtbar über der ersten Tabelle (seit 03.10.2026)
+    if (T10.kurseSetzen) T10.kurseSetzen({ stand: d.stand });   // Kursstand der Liste: ältere Kurse zeigen „vom TT.MM.“
     Object.keys(NAME).forEach(function (key) {
       ROWS[key] = T10.zeilen((d.gruppen || {})[key] || [], { date: d.stand });
       render(key);

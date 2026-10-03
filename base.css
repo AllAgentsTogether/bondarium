@@ -648,6 +648,58 @@ th[aria-sort="descending"] .sortbtn::after { content: "↓"; opacity: 1; }
   .table-scroll:not(#treffer) .kpis tbody th[scope=row] { position: sticky; left: 0; z-index: 1; background: var(--bg, #FBFAF7); box-shadow: 6px 0 8px -8px rgba(26,26,25,0.35); }
 }
 
+/* Standard-Anleihentabelle (felder.js, seit 03.10.2026; Regeln in docs/ANLEIHEN-ANGABEN.md): <table class="kpis atab"> in .table-scroll.
+   Kernspalten Anleihe (darunter ISIN · Art · Währung) · Rendite · Kupon · Restlaufzeit (darunter Fälligkeit) · Kurs, dahinter Zusatzspalten.
+   Fett nur die Spalte, nach der sortiert bzw. gerankt ist. Bis 640 px Breite wird jede Zeile eine Karte mit Beschriftung (data-l). */
+table.kpis.atab { min-width: 0; width: 100%; }
+.atab thead th { white-space: nowrap; }
+.atab thead th small { display: block; font-size: 11.5px; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--muted); }
+.atab thead th.num { text-align: right; }
+.atab thead th.num .sortbtn { flex-direction: row-reverse; }
+.atab :is(th, td) + :is(th, td) { padding-left: 12px; }
+.atab td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.atab td small, .atab tbody th[scope=row] small { display: block; font-size: 12px; font-weight: 400; color: var(--muted); white-space: nowrap; }
+.atab tbody th[scope=row] { font-weight: 600; white-space: normal; min-width: 150px; }
+.atab tbody th[scope=row] a.name-link { color: var(--ink); text-decoration: underline; text-decoration-color: rgba(26,26,25,0.3); text-underline-offset: 2px; }
+.atab tbody th[scope=row] a.name-link:hover { text-decoration-color: var(--ink); }
+.atab .sortiert { font-weight: 600; color: var(--ink); }
+.atab .sortiert small { font-weight: 400; }
+.atab td.rk { color: var(--muted); width: 1%; }
+.atab td.merkspalte { width: 1%; text-align: center; padding-left: 4px; padding-right: 0; }
+.atab .fraglich { color: var(--muted); }
+.atab .fraglich sup { color: var(--orange-text); font-weight: 600; }
+.atab .pruef { display: inline-block; margin-left: 6px; font-size: 11.5px; font-weight: 600; color: var(--orange-text); border: 1px solid var(--orange); border-radius: 5px; padding: 0 4px; vertical-align: 1px; cursor: help; }
+.atab .plus { color: var(--up); }
+.atab .minus { color: var(--down); }
+@media (min-width: 641px) and (max-width: 1000px) {
+  .table-scroll table.kpis.atab { min-width: 720px; }
+}
+@media (max-width: 640px) {
+  .table-scroll:has(> table.atab) { overflow: visible; background: none; }
+  .table-scroll:has(> table.atab)::before { content: none !important; }
+  .table-scroll table.atab, table.atab { min-width: 0 !important; margin-top: 8px; }   /* Seiten setzen für den Querwisch-Modus min-width */
+  table.atab, table.atab > tbody { display: block; }
+  table.atab > thead { display: none; }
+  table.atab > tbody > tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 12px; position: relative; padding: 12px 14px 14px; margin: 0 0 10px; border: 1px solid var(--rule); border-radius: 14px; background: #fff; }
+  table.atab > tbody > tr:hover > :is(td, th) { background: none; }
+  table.atab > tbody > tr > :is(td, th) { display: block; padding: 0; border: 0; text-align: left; min-width: 0; white-space: normal; }
+  table.atab > tbody > tr > th[scope=row] { grid-column: 1 / -1; position: static !important; box-shadow: none !important; background: none !important; padding-right: 40px; font-size: 15px; }   /* !important: hebt die stehende Namensspalte des Querwisch-Modus auf (.table-scroll:not(#treffer) …) */
+  table.atab > tbody > tr > td.merkspalte { z-index: 2; background: none; }
+  table.atab > tbody > tr > td.merkspalte .merkbtn.nur { min-width: 40px; min-height: 40px; margin: 0; justify-content: center; }
+  table.atab > tbody > tr > td::before { content: attr(data-l); display: block; font-size: 11.5px; font-weight: 600; letter-spacing: 0.03em; color: var(--muted); margin-bottom: 1px; }
+  table.atab > tbody > tr > td.num { text-align: left; }
+  table.atab > tbody > tr > td.gross { font-size: 17px; font-weight: 600; color: var(--ink); }
+  table.atab > tbody > tr > td.gross small { font-size: 12px; font-weight: 400; }
+  table.atab td small[data-p]::before { content: attr(data-p) "\00a0"; }
+  table.atab > tbody > tr > td.merkspalte { position: absolute; top: 8px; right: 8px; width: auto; }
+  table.atab > tbody > tr > td.merkspalte::before, table.atab > tbody > tr > td.rk::before { content: none; }
+  table.atab > tbody > tr > td.rk { position: absolute; top: -9px; left: 12px; width: auto; background: var(--ink); color: #fff; font-size: 11.5px; font-weight: 600; border-radius: 6px; padding: 1px 7px; }
+  table.atab > tbody > tr > td.rk + th[scope=row] { padding-top: 4px; }
+  table.atab > tbody > tr > td.leer { grid-column: 1 / -1; }
+  table.atab > tbody > tr.det { display: block; padding: 0; border: 0; background: none; margin-top: -6px; }
+  table.atab > tbody > tr.det > td::before { content: none; }
+}
+
 /* Legende über Charts – Grundform. <div class="legend [linie]"> mit <span class="leg"> oder <button class="leg" aria-pressed>.
    „linie“: feine Linien oben und unten (renditen, zinskurve, unternehmensanleihen, langlaeufer).
    Was aria-pressed bedeutet (hervorheben oder ausblenden), gestaltet die Seite selbst. */

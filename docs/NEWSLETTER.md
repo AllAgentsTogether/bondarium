@@ -27,7 +27,7 @@ Besucherbericht.
 | Überschrift, Einleitung | Regel: Rendite des Bundeswertpapiers mit rund zehn Jahren Restlaufzeit gegen fünf Börsentage zuvor – ab 0,03 Prozentpunkten „gestiegen“/„gefallen“, sonst „kaum verändert“ |
 | Zinsen der Woche | `kurse/bund/` (Tagesrenditen der Bundesbank, rund 2 und rund 10 Jahre), `ezb.json`, `renditen.json` (USA 10 Jahre, nur Stand – Tageswerte der Vorwoche speichert der Datenlauf nicht) |
 | Meistgehandelt | `top10-staatsanleihen-laufzeit.json`, `top10-unternehmensanleihen-laufzeit.json`: je drei nach Umsatz |
-| Deine Merkliste | Merkliste des Kontos (höchstens 8, zuletzt Gemerktes zuerst): Kurs, Rendite, Veränderung zur Vorwoche, nächster Zinstermin aus `newsletter/anleihen.json`; leere Merkliste: Hinweis auf den Knopf „Merken“ |
+| Deine Merkliste | Merkliste des Kontos (höchstens 8, zuletzt Gemerktes zuerst): Titel, dann Rendite · Restlaufzeit (fällig …) · Kurs, Veränderung zur Vorwoche in Pkt. und nächster Zinstermin aus `newsletter/anleihen.json` (Schreibweisen wie auf der Website, siehe docs/ANLEIHEN-ANGABEN.md); leere Merkliste: Hinweis auf den Knopf „Merken“ |
 | Aus der Akademie | reihum durch das Akademie-Menü in `scripts/nav.py`, eine Seite je Kalenderwoche; Titel = `h1`, Text = `meta description` |
 | Neue Seiten | Seiten, die `newsletter/seiten.json` in den letzten sieben Tagen zum ersten Mal gesehen hat; ohne neue Seite entfällt der Abschnitt |
 
@@ -82,3 +82,15 @@ den Starter mit `from __future__ import annotations`.
   Wochenbrief im Spam landen (siehe docs/KONTO.md).
 - **USA im Wochenvergleich:** bräuchte Tageswerte im Datenlauf.
 - **Rechtstexte** (Einwilligung, Datenschutzabsatz) sind nicht juristisch geprüft.
+
+
+## Datensatz `newsletter/anleihen.json` (seit 03.10.2026)
+
+`{ISIN: [Name, Kupon-Text, Fälligkeit, Kurs, Rendite, Veränderung zur Vorwoche, nächster Zinstermin, Zinsart, geschätzt]}` – gebaut in
+`scripts/newsletter.py` (`anleihen_daten`), gelesen von `konto.php` (Meldungen, Wochenbrief-Merkliste, Termine in „Mein Bondarium“) und
+`erinnerung.php` (Titel der E-Mail vor Fälligkeit). Name = Kurzname nach der Regel der Website (`_common.kurz_name`), Kupon-Text
+„3,50 %“ · „variabel“ · „Nullkupon“; der nächste Zinstermin ist laut Deutscher Börse oder – Feld 8 = 1 – geschätzt (dieselbe Rechnung
+wie der Steckbrief). Titel („Deutschland 2,60 % 2033“) und Restlaufzeit werden beim Versand aus den Feldern 0–2 gebildet
+(`titel_aus` in newsletter.py, `nl_titel`/`nl_restlaufzeit` in konto.php) – gespeichert wären sie 1,5 MB zusätzlich. Neue Felder nur
+hinten anhängen: die PHP-Dateien lesen nach Stelle. `konto.php` liefert die geschätzten Termine an die Seite als `termine_geschaetzt`
+({ISIN: 1}) neben `termine`.

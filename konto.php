@@ -41,7 +41,8 @@
  *                  ablage (art, schluessel, wert als JSON; wert leer = löschen): die persönliche Ablage – Notizen, Listen,
  *                  gelesene Seiten, Lesezeichen, Begriffe, angeheftete Kennzahlen, Einstellung „Zuletzt angesehen“, Meldungen, Checkliste,
  *                  „Zuletzt angesehen“ (ABLAGE nennt Arten und Grenzen)
- *                  besuch: merkt den Beginn dieses Besuchs und liefert den des vorigen („Seit deinem letzten Besuch“)
+ *                  besuch: merkt den Beginn dieses Besuchs und liefert den des vorigen („Seit deinem letzten Besuch“), dazu je
+ *                  gemerkter Anleihe den nächsten Zinstermin (termine) und welche davon geschätzt sind (termine_geschaetzt)
  *                  geraete-ab: meldet alle anderen Geräte ab; export: alles zum Konto Gespeicherte als JSON
  *                  email-aendern (email, passwort) → E-Mail mit Link an die NEUE Adresse (24 Stunden);
  *                  email-bestaetigen (Kennwort des Links, ohne Anmeldung) stellt das Konto um und meldet andere Geräte ab
@@ -113,6 +114,7 @@ const PW_MIN             = 10;
 const PW_MAX             = 200;
 const COOKIE             = LOKAL ? 'bondarium-sitzung' : '__Host-bondarium-sitzung';
 const NL_ORDNER          = __DIR__ . '/newsletter';   // ausgabe.json und anleihen.json aus dem Datenlauf (scripts/newsletter.py)
+const NL_NBSP            = "\u{00A0}";   // geschütztes Leerzeichen vor „%“ und „Pkt.“ (wie die Website); Textfassungen setzen ein normales
 const NL_JE_AUFRUF       = 40;    // E-Mails je Aufruf von newsletter-senden; der Workflow ruft so oft, bis nichts mehr offen ist
 const NL_MERK_MAX        = 8;     // so viele gemerkte Anleihen zeigt eine Ausgabe (zuletzt gemerkte zuerst)
 const NL_FRISCH_TAGE     = 2;     // ältere Ausgaben werden nicht mehr verschickt
@@ -575,9 +577,10 @@ function favoriten(int $id): array
 }
 
 /**
- * Zeile einer Anleihe aus dem letzten Datenlauf (newsletter/anleihen.json: ISIN → [Name, Kupon-Text, Fälligkeit, Kurs,
- * Rendite|null, Veränderung zur Vorwoche|null, nächster Zinstermin|null]) oder null. Die Datei ist groß; gesucht wird die
- * eine Zeile im Text, ohne alles zu entpacken.
+ * Zeile einer Anleihe aus dem letzten Datenlauf (newsletter/anleihen.json: ISIN → [0 Name, 1 Kupon-Text, 2 Fälligkeit, 3 Kurs,
+ * 4 Rendite|null, 5 Veränderung zur Vorwoche|null, 6 nächster Zinstermin|null, 7 Zinsart, 8 Titel, 9 Restlaufzeit,
+ * 10 Zinstermin geschätzt 1|0] – Felder 7 bis 10 seit 03.10.2026, Beschreibung im Kopf von scripts/newsletter.py) oder null.
+ * Die Datei ist groß; gesucht wird die eine Zeile im Text, ohne alles zu entpacken.
  */
 function zeile_heute(string $isin): ?array
 {
@@ -861,14 +864,96 @@ function nl_abbestellen(string $kennung): bool
     return true;
 }
 
+/** Zahl mit Dezimalkomma, Tausenderpunkt und echtem Minus (wie zahl_de in scripts/_common.py) */
 function nl_zahl(float $v, int $st = 2): string
 {
-    return number_format($v, $st, ',', '.');
+    $s = number_format(abs($v), $st, ',', '.');
+    return ($v < 0 && round(abs($v), $st) > 0 ? '−' : '') . $s;
 }
 
 function nl_datum(string $iso): string
 {
     return substr($iso, 8, 2) . '.' . substr($iso, 5, 2) . '.' . substr($iso, 0, 4);
+}
+
+// Schreibweisen der Anleihen-Angaben in E-Mails – dieselben Regeln wie scripts/_common.py (pct_text, kurs_text, pkt_text) und
+// felder.js auf der Website (Konzept „Einheitliche Anleihen-Angaben“, docs/ANLEIHEN-ANGABEN.md). Mit geschütztem Leerzeichen;
+// Textfassungen gehen durch nl_text().
+
+/** „3,85 %“ (Rendite) */
+function nl_pct(float $v): string
+{
+    return nl_zahl($v) . NL_NBSP . '%';
+}
+
+/** „98,50 %“, „99,885 %“ (Kurs: zwei Stellen, drei nur wenn nötig) */
+function nl_kurs(float $v): string
+{
+    return nl_zahl($v, abs($v * 100 - round($v * 100)) > 1e-6 ? 3 : 2) . NL_NBSP . '%';
+}
+
+/** „+0,12 Pkt.“, „−0,26 Pkt.“, „0,00 Pkt.“ (Veränderung in Prozentpunkten, mit Vorzeichen) */
+function nl_pkt(float $v): string
+{
+    $r = round($v, 2);
+    return ($r > 0 ? '+' : '') . nl_zahl($r) . NL_NBSP . 'Pkt.';
+}
+
+/** Textfassung: normales statt geschütztes Leerzeichen */
+function nl_text(string $s): string
+{
+    return str_replace(NL_NBSP, ' ', $s);
+}
+
+/** Titel einer Zeile aus anleihen.json: Kurzname (Feld 0, in scripts/newsletter.py nach der Regel der Website), Kupon-Text (Feld 1),
+ *  Fälligkeitsjahr – „Deutschland 2,60 % 2033“ (wie titel_aus() in newsletter.py und MC.felder.titel) */
+function nl_titel(array $b): string
+{
+    return trim($b[0] . ' ' . $b[1]) . ' ' . ($b[2] !== '' ? substr((string)$b[2], 0, 4) : 'unbefristet');
+}
+
+/** Restlaufzeit ab heute wie MC.restlaufzeit und _common.restlaufzeit_text: unter einem Monat Tage, unter einem Jahr Monate, sonst Jahre */
+function nl_restlaufzeit(string $faellig): string
+{
+    if ($faellig === '') {
+        return 'unbefristet';
+    }
+    $j = (strtotime($faellig . ' 12:00:00 UTC') - strtotime(gmdate('Y-m-d') . ' 12:00:00 UTC')) / 86400 / 365.25;
+    $tage = (int)floor($j * 365.25 + 0.5);
+    if ($tage <= 0) return 'fällig';
+    if ($tage < 31) return $tage . ($tage === 1 ? ' Tag' : ' Tage');
+    $monate = (int)floor($tage / 30.44 + 0.5);
+    if ($monate < 12) return $monate . ($monate === 1 ? ' Monat' : ' Monate');
+    return nl_zahl($j, 1) . ' Jahre';
+}
+
+/**
+ * Zweite Zeile je Anleihe: Kernzahlen in der Reihenfolge der Website-Tabellen, nur vorhandene Angaben – „Rendite 3,85 % ·
+ * Restlaufzeit 4,2 Jahre (fällig 15.08.2033) · Kurs 98,50 %“. Gleiche Regel wie kern() in scripts/newsletter.py.
+ */
+function nl_kern(array $b): string
+{
+    $teile = is_numeric($b[4]) ? ['Rendite ' . nl_pct((float)$b[4])] : [];
+    $rlz = (string)$b[2] !== '' ? nl_restlaufzeit((string)$b[2]) : '';
+    $f = (string)$b[2] !== '' ? nl_datum((string)$b[2]) : '';
+    if ($rlz !== '') {
+        $teile[] = 'Restlaufzeit ' . $rlz . ($f !== '' ? ' (fällig ' . $f . ')' : '');
+    } elseif ($f !== '') {
+        $teile[] = 'fällig ' . $f;
+    }
+    if (is_numeric($b[3])) {
+        $teile[] = 'Kurs ' . nl_kurs((float)$b[3]);
+    }
+    return implode(' · ', $teile);
+}
+
+/** „Nächster Zinstermin 20.05.2027“ mit „(geschätzt)“ oder „(mit Rückzahlung)“ wie in der Spalte der Website; "" ohne Termin */
+function nl_zinstermin(array $b): string
+{
+    if (!is_string($b[6]) || $b[6] === '') {
+        return '';
+    }
+    return 'Nächster Zinstermin ' . nl_datum($b[6]) . (!empty($b[8]) ? ' (geschätzt)' : ($b[6] === (string)$b[2] ? ' (mit Rückzahlung)' : ''));
 }
 
 /** Platzhalter {{NAME}} in einer Vorlage ersetzen. */
@@ -883,8 +968,9 @@ function nl_fuellen(string $vorlage, array $werte): string
 
 /**
  * Abschnitt „Deine Merkliste“ für eine Ausgabe: [Text, HTML]. $isins: Merkliste, zuletzt Gemerktes zuerst.
- * $anleihen: newsletter/anleihen.json – ISIN → [Name, Kupon-Text, Fälligkeit, Kurs, Rendite|null, Veränderung zur Vorwoche|null,
- * nächster Zinstermin|null]. Die Vorlagen (Zeile, Rahmen, leer) stehen in der Ausgabe ($a['merk']).
+ * $anleihen: newsletter/anleihen.json (Felder siehe zeile_heute()). Die Vorlagen (Zeile, Rahmen, leer) und die Platzhalter je
+ * Anleihe stehen in der Ausgabe ($a['merk'], scripts/newsletter.py MERK; dort baut vorschau() dieselben Werte): erste Zeile der
+ * Titel, zweite die Kernzahlen (nl_kern), dritte – nur wenn es etwas gibt – Kurs zur Vorwoche und nächster Zinstermin.
  */
 function nl_merkliste(array $a, array $anleihen, array $isins): array
 {
@@ -903,18 +989,19 @@ function nl_merkliste(array $a, array $anleihen, array $isins): array
             continue;
         }
         $n++;
-        $diff = is_numeric($b[5]) ? (float)$b[5] : null;
-        $vz = $diff === null ? '' : ((abs($diff) < 0.005 ? '±' : ($diff > 0 ? '+' : '−')) . nl_zahl(abs($diff)) . ' zur Vorwoche');
-        $zt = is_string($b[6]) && $b[6] !== '' ? 'nächster Zinstermin ' . nl_datum($b[6]) : '';
+        $diff = is_numeric($b[5]) ? round((float)$b[5], 2) : null;   // Kurs zur Vorwoche, Prozentpunkte des Nennwerts
+        $pkt = $diff === null ? '' : nl_pkt($diff);
+        $zt = nl_zinstermin($b);
+        $zusatz = implode(' · ', array_filter([$pkt !== '' ? 'Kurs ' . $pkt . ' zur Vorwoche' : '', $zt], fn($x) => $x !== ''));
         $w = [
-            'NAME' => $b[0], 'KUPON' => $b[1], 'JAHR' => $b[2] !== '' ? substr((string)$b[2], 0, 4) : 'unbefristet',
-            'FAELLIG' => $b[2] !== '' ? nl_datum((string)$b[2]) : 'unbefristet',
-            'KURS' => nl_zahl((float)$b[3]), 'RENDITE' => is_numeric($b[4]) ? nl_zahl((float)$b[4]) . ' %' : '–',
-            'DIFF' => $vz, 'DIFF_FARBE' => $diff !== null && $diff < -0.005 ? $v['farbe_minus'] : $v['farbe_plus'],
-            'ZT' => $zt, 'ZUSATZ' => implode(' · ', array_filter([$vz, $zt], fn($x) => $x !== '')),
-            'LINK' => SEITE . '/anleihe.html?isin=' . $isin,
+            'TITEL' => nl_titel($b), 'LINK' => SEITE . '/anleihe.html?isin=' . $isin, 'KERN' => nl_kern($b),
+            'ZUSATZ' => $zusatz !== '' ? '  ' . $zusatz . "\n" : '',   // dritte Zeile der Textfassung samt Einzug, sonst nichts
+            'RENDITE' => is_numeric($b[4]) ? nl_pct((float)$b[4]) : '–', 'RESTLAUFZEIT' => nl_restlaufzeit((string)$b[2]),
+            'FAELLIG' => (string)$b[2] !== '' ? nl_datum((string)$b[2]) : '', 'KURS' => nl_kurs((float)$b[3]), 'DIFF' => $pkt,
+            'DIFF_FARBE' => $diff === null || $diff == 0 ? ($v['farbe_null'] ?? $v['farbe_plus']) : ($diff > 0 ? $v['farbe_plus'] : $v['farbe_minus']),
+            'ZT' => $zt,
         ];
-        $text .= nl_fuellen($v['text_zeile'], $w);
+        $text .= nl_text(nl_fuellen($v['text_zeile'], $w));
         $html .= nl_fuellen($v['html_zeile'], array_map(fn($x) => htmlspecialchars((string)$x, ENT_QUOTES, 'UTF-8'), $w));
     }
     if ($n === 0) {
@@ -1052,8 +1139,8 @@ function meldung_kennung(int $id): string
 
 /**
  * Meldungen prüfen und verschicken (aktion=meldungen-senden, nur mit dem Schlüssel des Auslösers; der Workflow ruft nach
- * dem täglichen Datenlauf). Geprüft wird gegen newsletter/anleihen.json – ISIN → [Name, Kupon-Text, Fälligkeit, Kurs,
- * Rendite|null, …, nächster Zinstermin|null]. Regeln je Meldung (Ablage, Art „meldung“):
+ * dem täglichen Datenlauf). Geprüft wird gegen newsletter/anleihen.json (Felder siehe zeile_heute(); der Name in der E-Mail ist
+ * der Titel aus Feld 8). Regeln je Meldung (Ablage, Art „meldung“):
  *   rendite-ueber | rendite-unter | kurs-ueber | kurs-unter   Schwelle w zur Anleihe i. Ausgelöst wird einmal: Die Meldung
  *       trägt danach „a“ (Tag) und „aw“ (Wert) und wird erst wieder scharf, wenn die Bedingung nicht mehr gilt.
  *   termin   Zinstermin einer gemerkten Anleihe in höchstens MELDUNG_TAGE Tagen; „bis“ merkt den spätesten schon gemeldeten
@@ -1081,7 +1168,8 @@ function meldungen_senden(): array
     }
     $fav = $db->prepare('SELECT isin FROM favoriten WHERE nutzer = ?');
     $sichern = $db->prepare("UPDATE ablage SET wert = ? WHERE nutzer = ? AND art = 'meldung' AND schluessel = ?");
-    $titel = fn(array $a): string => trim($a[0] . ' ' . $a[1] . ($a[2] !== '' ? ' ' . substr((string)$a[2], 0, 4) : ''));
+    // Titel aus anleihen.json („Deutschland 2,60 % 2033“, gebaut in scripts/newsletter.py) – derselbe Name wie im Wochenbrief und auf der Website
+    $titel = fn(array $a): string => nl_text(nl_titel($a));
     $gesendet = 0;
     $ausgeloest = 0;
     $fehler = 0;
@@ -1110,8 +1198,9 @@ function meldungen_senden(): array
                     $w['aw'] = round((float)$v, 2);
                     $ausgeloest++;
                     if (!empty($w['m'])) {
-                        $zeilen[] = $titel($a) . ': ' . ($rend ? 'Rendite ' . nl_zahl((float)$v) . ' %' : 'Kurs ' . nl_zahl((float)$v))
-                            . ' – ' . ($ueber ? 'über' : 'unter') . ' deiner Schwelle von ' . nl_zahl((float)$w['w']) . ($rend ? ' %' : '') . ".\n  " . SEITE . '/anleihe.html?isin=' . $w['i'];
+                        // „Deutschland 2,60 % 2033: Rendite 3,47 % – über deiner Schwelle von 3,40 %.“ – Kurs ebenso mit „%“
+                        $zeilen[] = $titel($a) . ': ' . nl_text($rend ? 'Rendite ' . nl_pct((float)$v) : 'Kurs ' . nl_kurs((float)$v))
+                            . ' – ' . ($ueber ? 'über' : 'unter') . ' deiner Schwelle von ' . nl_zahl((float)$w['w']) . ' %' . ".\n  " . SEITE . '/anleihe.html?isin=' . $w['i'];
                     }
                 } elseif (!$erfuellt && !empty($w['a'])) {
                     unset($w['a'], $w['aw']);
@@ -1124,8 +1213,10 @@ function meldungen_senden(): array
                     if (!is_array($a) || count($a) < 7) {
                         continue;
                     }
-                    $d = $a[6];   // nächster Zinstermin; am Fälligkeitstag meldet „Vor Fälligkeit“
-                    if (is_string($d) && $d !== (string)$a[2] && $d > $heute && $d <= $bis && $d > (string)($w['bis'] ?? '')) {
+                    // nächster Zinstermin; am Fälligkeitstag meldet „Vor Fälligkeit“. Seit 03.10.2026 stehen in Feld 6 auch geschätzte
+                    // Termine (Feld 10 = 1, für die Merkliste) – gemeldet werden wie bisher nur Termine laut Deutscher Börse (Tatsachen).
+                    $d = $a[6];
+                    if (is_string($d) && empty($a[8]) && $d !== (string)$a[2] && $d > $heute && $d <= $bis && $d > (string)($w['bis'] ?? '')) {
                         $neu[] = [$d, $titel($a) . ' zahlt Zinsen am ' . nl_datum($d) . '.'];
                     }
                 }
@@ -1651,16 +1742,22 @@ try {
                     $neu[(string)$datei] = $tag;
                 }
             }
-            // Nächster Zinstermin je gemerkter Anleihe (aus dem Datenlauf) – die Merkliste zeigt ihn, ohne je Anleihe eine Datei zu laden
+            // Nächster Zinstermin je gemerkter Anleihe (aus dem Datenlauf) – die Merkliste zeigt ihn, ohne je Anleihe eine Datei zu laden.
+            // termine: ISIN → JJJJ-MM-TT; seit 03.10.2026 auch geschätzte Termine (Börsenliste ohne Zinstage), die zusätzlich in
+            // termine_geschaetzt stehen (ISIN → 1, nur diese) – dieselbe Quelle wie Wochenbrief und Meldungen (scripts/newsletter.py).
             $st = konto_stand($n['id'], $n['email']);
             $termine = [];
+            $geschaetzt = [];
             foreach ($st['favoriten'] as $f) {
                 $z = zeile_heute($f[0]);
                 if ($z !== null && is_string($z[6]) && $z[6] !== '') {
                     $termine[$f[0]] = $z[6];
+                    if (!empty($z[8])) {
+                        $geschaetzt[$f[0]] = 1;
+                    }
                 }
             }
-            antwort(200, 'ok', $st + ['neue_seiten' => (object)$neu, 'termine' => (object)$termine]);
+            antwort(200, 'ok', $st + ['neue_seiten' => (object)$neu, 'termine' => (object)$termine, 'termine_geschaetzt' => (object)$geschaetzt]);
 
         case 'geraete-ab':
             $n = angemeldet();

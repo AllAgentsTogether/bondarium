@@ -33,51 +33,35 @@ INDEX, KURSE, OUT = ROOT / "anleihen-index.json", ROOT / "anleihen-kurse.json", 
 BONITAET = ROOT / "bonitaet" / "ezb-stufen.json"   # Bonitätsstufe laut EZB (scripts/update_bonitaet.py); fehlt die Datei: ohne Angabe
 AKTUELL_TAGE = 14   # wie anleihen-suche.html: Kurs höchstens so viele Kalendertage vor dem Kursstand
 
-# ---------- Emittent lesbar (gleiche Regel wie lesbar() in anleihe.html – bei Änderungen beide anpassen) ----------
-RF_SCHREIB = {"AG": "AG", "SE": "SE", "KG": "KG", "KGAA": "KGaA", "GMBH": "GmbH", "MBH": "mbH", "N.V.": "N.V.", "B.V.": "B.V.", "S.A.": "S.A.", "S.A": "S.A.",
-              "S.P.A.": "S.p.A.", "SPA": "S.p.A.", "S.A.S.": "S.A.S.", "S.À": "S.à", "R.L.": "r.l.", "S.R.L.": "S.r.l.", "SRL": "S.r.l.", "S.L.": "S.L.", "SARL": "S.à r.l.",
-              "INC.": "Inc.", "INC": "Inc.", "LTD.": "Ltd.", "LTD": "Ltd", "CORP.": "Corp.", "CORP": "Corp.", "CO.": "Co.", "CO": "Co.", "PTE.": "Pte.", "PTE": "Pte.", "PTY": "Pty",
-              "OYJ": "Oyj", "P.L.C.": "p.l.c.", "L.P.": "L.P.", "LLP": "LLP", "LLC": "LLC", "PLC": "PLC", "A/S": "A/S", "ASA": "ASA", "AB": "AB", "AS": "AS", "SA": "SA",
-              "NV": "NV", "BV": "BV", "SAS": "SAS", "C.V.": "C.V.", "S.A.B.": "S.A.B.", "KFW": "KfW", "ENBW": "EnBW", "E.ON": "E.ON", "AT&T": "AT&T"}
-RF_IMMER = {"KFW", "ENBW", "E.ON", "AT&T"}
-KLEINWORT = set("OF AND THE FOR DE DI DEL DELLA DES DU LA LE LES Y E ET EN IN FÜR UND DER DIE DAS DEN VON VAN ZU AM IM AUF PER DA DO DOS".split())
-KUERZEL = set("BASF BBVA AMRO BAWAG NIBC RATP SICAV SOFOM HSBC LBBW NRW USA UK US EU".split())
-WORT3 = set("OIL GAS NEW AIR SEA SUN BAY CAR ONE TWO TEN BIG RED OWL TOP WAY KEY AID ART BIO BOX CAP FIN LAB LAW MAX NET PAY PRO RIO SKY SOL TEA TEL WEB BAU".split())
-VOKAL = re.compile(r"[AEIOUYÄÖÜÉÈÀÁÍÓÚÂÊÎÔÛİ]")
-BUCHST = re.compile(r"([A-Za-zÀ-ÖØ-öø-ÿİŞĞÇ]+)")
-RAND = re.compile(r"^[,;()\"']+|[,;()\"']+$")
+# Emittent lesbar: gemeinsame Regel in _common.py (lesbar, wie MC.felder.lesbar in felder.js)
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _common import bonitaet_stufen, lesbar, stamm_felder  # noqa: E402
+
+AUSWAHL = ROOT / "anleihen-auswahl.json"   # Kurzname, Art, Währung, Bonität der Anleihen auf den übrigen Seiten (seit 03.10.2026)
+ISIN_RE = re.compile(r"\b([A-Z]{2}[A-Z0-9]{9}[0-9])\b")
 
 
-def lesbar_wort(w, erstes, nach_apostroph):
-    u = w.upper()
-    if len(w) == 1:
-        return w.lower() if nach_apostroph else w
-    if not erstes and u in KLEINWORT:
-        return w.lower()
-    if u in KUERZEL or not VOKAL.search(u):
-        return w
-    if len(w) <= 3 and u not in WORT3 and u not in KLEINWORT:
-        return w
-    return w[0] + w[1:].replace("İ", "i").lower()
-
-
-def lesbar(name):
-    s = str(name or "").strip()
-    if not s or re.search(r"[a-zß-ÿ]", s) or not re.search(r"[A-Z]", s):
-        return s   # schon gemischt geschrieben oder keine lateinische Schrift
-    out = []
-    for i, tok in enumerate(s.split()):
-        kern = RAND.sub("", tok)
-        vor = tok[:tok.index(kern)] if kern else tok
-        nach = tok[len(vor) + len(kern):] if kern else ""
-        k = kern.upper()
-        if k in RF_SCHREIB and (i > 0 or k in RF_IMMER):
-            out.append(vor + RF_SCHREIB[k] + nach)
-            continue
-        teile = BUCHST.split(tok)
-        out.append("".join(lesbar_wort(t, i == 0 and j == 1, (teile[j - 1] if j else "").endswith("'")) if j % 2 else t
-                           for j, t in enumerate(teile)))
-    return " ".join(out)
+def auswahl_schreiben(ix: dict) -> int:
+    """anleihen-auswahl.json: für jede ISIN, die in einer HTML-Seite steht (Ranglisten-Handauswahl, Startseite, Langläufer, Realzins …),
+    die Angaben, die jede Anleihen-Tabelle zum Namen braucht – {ISIN: [kurz, art, waehrung, bon|null, registername]}. Klein genug zum
+    Einbetten (scripts/inline_data.py kürzt je Seite auf deren ISINs). Die automatischen Ranglisten tragen dieselben Felder selbst."""
+    isins = set()
+    for html in ROOT.glob("*.html"):
+        if html.name not in ("anleihen-suche.html", "404.html"):
+            isins |= set(ISIN_RE.findall(html.read_text(encoding="utf-8")))
+    try:
+        rz = json.loads((ROOT / "realzins.json").read_text(encoding="utf-8"))
+        isins |= set(ISIN_RE.findall(json.dumps(rz)))
+    except (OSError, ValueError):
+        pass
+    emis, stufen, a = ix.get("emittenten") or [], bonitaet_stufen(), {}
+    for r in ix.get("rows") or []:
+        if r[0] in isins:
+            f = stamm_felder(r, emis, stufen)
+            a[r[0]] = [f["kurz"], r[2], r[3], f.get("bon"), r[1]]
+    AUSWAHL.write_text(json.dumps({"stand": ix.get("stand"), "felder": ["kurz", "art", "waehrung", "bon", "registername"], "a": dict(sorted(a.items()))},
+                                  ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    return len(a)
 
 
 def main():
@@ -123,9 +107,10 @@ def main():
         "emittenten": liste, "rows": rows,
     }
     OUT.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    n_auswahl = auswahl_schreiben(ix)
     print(f"suchindex.json: {len(rows)} Anleihen mit Kurs (von {out['anzahl']} im Register), {len(liste) - 1} Emittenten, "
           f"{OUT.stat().st_size / 1e6:.1f} MB (Kurse {kstand}, Stammdaten {out['stand']}); "
-          f"{sum(1 for r in rows if len(r) > 22)} mit Bonitätsstufe laut EZB ({out['ezb'] or 'keine Datei'})")
+          f"{sum(1 for r in rows if len(r) > 22)} mit Bonitätsstufe laut EZB ({out['ezb'] or 'keine Datei'}); anleihen-auswahl.json: {n_auswahl} Anleihen")
     return 0
 
 

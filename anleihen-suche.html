@@ -82,7 +82,19 @@
   .status-unten a { font-weight: 600; color: var(--green-text); text-decoration: none; white-space: nowrap; }
   .status-unten a:hover { text-decoration: underline; }
   /* Name öffnet die Kurzansicht (vier Kennzahlen, seit 25.09.2026 statt Link zur Börse); „Alle Details“ führt zum Steckbrief anleihe.html */
-  .kpis .zbtn { font: inherit; font-weight: 400; color: var(--ink); background: none; border: 0; padding: 0; text-align: left; cursor: pointer; line-height: 1.4; }
+  /* Seit 03.10.2026 Standardtabelle (felder.js): Name = Link zum Steckbrief, Kurzansicht über die Zeile oder den Pfeil am Zeilenende */
+  .kpis thead th small { display: block; font-size: 11.5px; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--text); }
+  .kpis thead th.num { text-align: right; }
+  .kpis thead th.num .sortbtn { flex-direction: row-reverse; }
+  .kpis tbody th[scope=row] { font-weight: 600; }
+  .kpis tbody th[scope=row] a.name-link { color: var(--ink); text-decoration: none; }
+  .kpis tbody th[scope=row] a.name-link:hover { color: var(--green-text); text-decoration: underline; text-underline-offset: 2px; }
+  .kpis tbody th[scope=row] > small, .kpis td small { display: block; font-size: 12px; font-weight: 400; color: var(--text); }
+  .kpis .sortiert { font-weight: 600; color: var(--ink); }
+  .kpis .sortiert small { font-weight: 400; }
+  .kpis td.aktion { white-space: nowrap; text-align: right; width: 1%; }
+  .kpis td.aktion .merkbtn.nur { margin-left: 0; }
+  .kpis .zbtn { font: inherit; font-size: 0; color: var(--ink); background: none; border: 0; padding: 4px 6px; cursor: pointer; line-height: 1; vertical-align: middle; }
   .kpis .zbtn::after { content: ""; display: inline-block; width: 6px; height: 6px; margin: 0 0 2px 7px; border-right: 1.5px solid var(--green-text); border-bottom: 1.5px solid var(--green-text); transform: rotate(45deg); transition: transform .15s; }
   .kpis .zbtn[aria-expanded="true"]::after { transform: rotate(-135deg); margin-bottom: -1px; }
   .kpis .zbtn:hover { color: var(--green-text); }
@@ -90,7 +102,6 @@
   .kpis tbody tr.zeile { cursor: pointer; }
   .kpis tbody tr.offen > * { background: rgba(57,255,20,0.10); border-bottom-color: transparent; }
   .kpis tr.zdet > td { padding: 0 0 10px; }
-  .kpis td small.alt { display: block; font-size: 12px; color: var(--text); }
   .kpis td .fraglich { color: var(--muted); border-bottom: 1px dotted currentColor; cursor: help; }   /* Rendite aus Taxe ohne Umsatz, wahrscheinlich zu hoch (seit 27.09.2026) */
   .kpis td .fraglich sup { font-size: 10px; line-height: 0; margin-left: 1px; }
   .kpis th .zs { display: inline-block; font-size: 12px; line-height: 1.3; color: var(--text); background: rgba(26,26,25,0.07); border-radius: 3px; padding: 0 5px; margin-left: 6px; vertical-align: 1px; white-space: nowrap; cursor: help; }   /* Zinsschein-Papier (seit 03.10.2026) */
@@ -131,33 +142,23 @@
     .kpis thead th, .kpis thead th[data-col="name"] { display: block; position: static; width: auto; max-width: none; padding: 0; border: 0; background: none; box-shadow: none; }
     .kpis thead th .sortbtn { padding: 7px 11px; border: 1px solid rgba(26,26,25,0.16); border-radius: 999px; background: #fff; font-size: 13px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--text); }
     .kpis thead th:not([aria-sort]) .sortbtn::after { display: none; }
-    .kpis thead th[data-col="art"], .kpis thead th[data-col="isin"], .kpis thead th[data-col="cur"], .kpis thead th[data-col="vol"], .kpis thead th[data-col="stk"] { display: none; }   /* am Handy nur die sechs sinnvollen Sortierungen */
+    .kpis thead th[data-col="vol"], .kpis thead th[data-col="stk"], .kpis thead th.aktion, .kpis thead th small { display: none; }   /* am Handy nur die sechs sinnvollen Sortierungen */
     .kpis thead th[aria-sort] .sortbtn { border-color: var(--green-text); background: var(--green-tint); color: var(--ink); }
     .kpis tbody { display: grid; gap: 10px; }
     .kpis tbody tr.zeile { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px 10px; padding: 12px 12px 13px; background: #fff; border: 1px solid rgba(26,26,25,0.10); border-radius: 12px; box-shadow: var(--shadow); }
     .kpis tbody tr.zeile > th, .kpis tbody tr.zeile > td, .kpis tbody th[scope="row"] { display: block; position: static; padding: 0; border: 0; background: none; box-shadow: none; max-width: none; white-space: normal; text-align: left; min-width: 0; overflow-wrap: anywhere; }
     .kpis tbody tr.zeile > th { grid-column: 1 / -1; font-size: 15px; font-weight: 600; line-height: 1.35; }
-    .kpis tbody tr.zeile > th .zbtn { font-weight: 600; }
     .kpis tbody tr.zeile > th .reg { font-weight: 400; }
-    .kpis tbody tr.zeile > td::before { display: block; font-size: 12px; font-weight: 500; letter-spacing: 0; color: var(--text); margin-bottom: 1px; }
-    /* Karte (UX 29.09.2026): oben groß Rendite · Kurs · Kupon, darunter kleiner die übrigen Angaben, durch eine Linie getrennt */
-    .kpis tbody tr.zeile > td { font-size: 13.5px; color: var(--ink); }
-    .kpis tbody tr.zeile > td:nth-child(n+5) { font-size: 13.5px !important; }
-    .kpis tbody tr.zeile > td:nth-child(-n+4) { font-size: 17px !important; font-weight: 600; }
-    .kpis tbody tr.zeile { column-gap: 0 !important; }
-    .kpis tbody tr.zeile > td { padding-right: 10px !important; }   /* Abstand in der Zelle statt Spaltenlücke – so läuft die Trennlinie durch */
-    .kpis tbody tr.zeile > td:nth-child(5), .kpis tbody tr.zeile > td:nth-child(6), .kpis tbody tr.zeile > td:nth-child(7) { border-top: 1px solid var(--rule); padding-top: 9px; }
-    .kpis tbody tr.zeile > td:nth-child(2)::before { content: "Rendite"; }
-    .kpis tbody tr.zeile > td:nth-child(3)::before { content: "Kurs"; }
-    .kpis tbody tr.zeile > td:nth-child(4)::before { content: "Kupon"; }
-    .kpis tbody tr.zeile > td:nth-child(5)::before { content: "Fälligkeit"; }
-    .kpis tbody tr.zeile > td:nth-child(6)::before { content: "Restlaufzeit"; }
-    .kpis tbody tr.zeile > td:nth-child(7)::before { content: "Art"; }
-    .kpis tbody tr.zeile > td:nth-child(8)::before { content: "ISIN"; }
-    .kpis tbody tr.zeile > td:nth-child(9)::before { content: "Währung"; }
-    .kpis tbody tr.zeile > td:nth-child(10)::before { content: "Volumen"; }
-    .kpis tbody tr.zeile > td:nth-child(11)::before { content: "Stückelung"; }
-    .kpis tbody tr.zeile > td.isin { grid-column: span 2; }
+    .kpis tbody tr.zeile > th { padding-right: 76px !important; }
+    .kpis tbody tr.zeile > td[data-l]::before { content: attr(data-l); display: block; font-size: 12px; font-weight: 500; letter-spacing: 0; color: var(--text); margin-bottom: 1px; }
+    /* Karte: oben groß Rendite · Kupon · Restlaufzeit, darunter kleiner Kurs, Bonität, Stückelung und Volumen, durch eine Linie getrennt */
+    .kpis tbody tr.zeile > td { font-size: 13.5px; color: var(--ink); padding-right: 10px !important; }
+    .kpis tbody tr.zeile > td.gross { font-size: 17px !important; font-weight: 600; }
+    .kpis tbody tr.zeile > td.gross small { font-size: 12px; font-weight: 400; }
+    .kpis tbody tr.zeile > td small[data-p]::before { content: attr(data-p) "\00a0"; }
+    .kpis tbody tr.zeile { column-gap: 0 !important; position: relative; }
+    .kpis tbody tr.zeile > td[data-l="Kurs"], .kpis tbody tr.zeile > td[data-l="Bonität"], .kpis tbody tr.zeile > td[data-l="Stückelung"] { border-top: 1px solid var(--rule); padding-top: 9px; }
+    .kpis tbody tr.zeile > td.aktion { position: absolute; top: 8px; right: 8px; width: auto; padding: 0 !important; }
     .kpis tbody tr.zeile.offen { border-color: var(--green-line); border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
     .kpis tbody tr.zeile.offen > * { background: none; }
     .kpis tbody tr.zdet { display: block; margin-top: -10px; }
@@ -287,17 +288,15 @@
     <table class="kpis" aria-describedby="status">
       <caption class="sr-only">Gefundene Anleihen</caption>
       <thead><tr>
-        <th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Anleihe</button></th>
-        <th scope="col" data-col="rendite"><button type="button" class="sortbtn" data-col="rendite" title="Rendite bis Fälligkeit in % pro Jahr – von uns aus dem Schlusskurs berechnet (Bundeswertpapiere: Rendite der Deutschen Bundesbank)">Rendite</button></th>
-        <th scope="col" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs" title="Schlusskurs in % des Nennwerts – Börse Frankfurt (Deutsche Börse), Bundeswertpapiere: Deutsche Bundesbank">Kurs</button></th>
-        <th scope="col" data-col="kupon"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
-        <th scope="col" data-col="faellig"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th>
-        <th scope="col" data-col="rest" aria-sort="descending"><button type="button" class="sortbtn" data-col="rest">Restlaufzeit</button></th>
-        <th scope="col" data-col="art"><button type="button" class="sortbtn" data-col="art" title="Staat: Zentralstaat · Öffentlich: Bundesländer, Regionen, Städte, Förderbanken, supranationale Institutionen · Unternehmen: alle übrigen einschließlich Banken">Art</button></th>
-        <th scope="col" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th>
-        <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th>
-        <th scope="col" data-col="vol"><button type="button" class="sortbtn" data-col="vol" title="Ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe (Mrd. = Milliarden)">Volumen</button></th>
-        <th scope="col" data-col="stk"><button type="button" class="sortbtn" data-col="stk" title="Kleinster Nennwert (zugleich Mindestanlage) in der Währung der Anleihe">Stückelung</button></th>
+        <th scope="col" data-col="name" title="Kurzname: bei Staaten das Land, sonst der Emittent ohne Rechtsform. Ein Klick öffnet den Steckbrief, ein Klick auf die Zeile die Kurzansicht."><button type="button" class="sortbtn" data-col="name">Anleihe</button><small>ISIN · Art · Währung</small></th>
+        <th scope="col" data-col="rendite" class="num" title="Rendite bis Fälligkeit in % pro Jahr – von uns aus dem Schlusskurs berechnet (Bundeswertpapiere: Rendite der Deutschen Bundesbank)"><button type="button" class="sortbtn" data-col="rendite">Rendite</button></th>
+        <th scope="col" data-col="kupon" class="num" title="Zinssatz pro Jahr auf den Nennwert"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
+        <th scope="col" data-col="rest" class="num" aria-sort="descending" title="Zeit von heute bis zur Fälligkeit, darunter der Fälligkeitstag"><button type="button" class="sortbtn" data-col="rest">Restlaufzeit</button><small>Fälligkeit</small></th>
+        <th scope="col" data-col="kurs" class="num" title="Schlusskurs in % des Nennwerts – Börse Frankfurt (Deutsche Börse), Bundeswertpapiere: Deutsche Bundesbank"><button type="button" class="sortbtn" data-col="kurs">Kurs</button></th>
+        <th scope="col" data-col="bon" title="Bonität laut EZB: Spanne der Notenskala, abgelesen aus der EZB-Liste notenbankfähiger Sicherheiten (keine Ratings der Agenturen). „–“: nicht auf der EZB-Liste."><button type="button" class="sortbtn" data-col="bon">Bonität</button></th>
+        <th scope="col" data-col="stk" class="num" title="Kleinster handelbarer Nennwert (zugleich Mindestanlage), in der Währung der Anleihe"><button type="button" class="sortbtn" data-col="stk">Stückelung</button></th>
+        <th scope="col" data-col="vol" class="num" title="Ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe"><button type="button" class="sortbtn" data-col="vol">Volumen</button></th>
+        <th scope="col" class="aktion"><span class="sr-only">Merken und Kurzansicht</span></th>
       </tr></thead>
       <tbody></tbody>
     </table>
@@ -330,7 +329,7 @@
         <p><strong>Kurs.</strong> Der Schlusskurs des letzten Börsentags in Prozent des Nennwerts, jeden Morgen übernommen. Für rund drei Viertel aller Anleihen stellt die Börse Frankfurt täglich einen Kurs fest – meist durch den Spezialisten, auch wenn an diesem Tag niemand gehandelt hat („ohne Umsatz“); gab es Abschlüsse, steht der Umsatz auf dem Steckbrief der Anleihe. Bundeswertpapiere zeigen den Kurs der Deutschen Bundesbank. Ohne Kurs in den letzten zwei Wochen erscheint eine Anleihe nicht in der Suche – das betrifft vor allem Anleihen mit 100.000er-Stückelung und Fremdwährungsanleihen, die an deutschen Börsen kaum gehandelt werden. Sobald die Börse wieder einen Kurs feststellt, ist die Anleihe am nächsten Morgen wieder dabei.</p>
         <p><strong>Rendite.</strong> Rendite bis Fälligkeit in % pro Jahr, aus Kurs, Kupon und Fälligkeit berechnet: jährliche Verzinsung, Zeit taggenau, Stückzinsen eingerechnet, Valuta zwei Börsentage nach dem Handelstag; Zinstermine laut der Liste „Alle handelbaren Instrumente“ der Deutschen Börse (Börse Frankfurt); nennt sie für eine Anleihe keine, sind sie geschätzt – die Regel steht im Steckbrief unter „Datenquellen und Methodik“. Bei Bundeswertpapieren gilt die Rendite der Bundesbank (die eigene Rechnung weicht davon um höchstens 0,005 Prozentpunkte ab), bei inflationsindexierten Bundesanleihen ist es die Realrendite. Keine Rendite gibt es, wo die Rechnung nicht passt: bei variablem oder später wechselndem Kupon („FLR“ im Namen), Stufenzins-, Wandel- und Tilgungsanleihen, unbefristeten und anderen inflationsindexierten Anleihen, unplausiblen Registerangaben und Restlaufzeiten unter zwei Wochen. Fast alle Kurse sind Taxen des Spezialisten ohne Umsatz; das ist bei normalen Anleihen unproblematisch. Liegt eine solche Rendite aber bei unter einem Jahr Restlaufzeit zu weit über Bund (Staaten mehr als 2, Länder und Förderbanken mehr als 1,5, Unternehmen mehr als 3 Prozentpunkte), steht sie grau mit Fragezeichen: So günstig verkauft niemand eine Anleihe, die bald zu 100 zurückgezahlt wird – die Taxe ist meist veraltet, der Briefkurs beim Broker höher. Kündbare Anleihen können vor der Fälligkeit zurückgezahlt werden – dann fällt die Rendite anders aus.</p>
         <p><strong>Was die Börse liefert und was wir rechnen.</strong> Von der Börse (Deutsche Börse, MiFIR-Nachhandelsdaten) kommen Kurs, Zeitpunkt, Stückzahl und Handelsplatz jeder Kursfeststellung – daraus stammen Schlusskurs, Eröffnung, Hoch, Tief, die Zahl der Feststellungen und der Abschlüsse. Aus dem ESMA-Register kommen Rang (erstrangig, nachrangig, tief nachrangig), Besicherung oder Garantie, die Rückzahlungsart (feste Fälligkeit, Kündigungsrechte, Tilgung in Raten, unbefristet), der erste Handelstag und bei variabel verzinsten Anleihen die Zinsformel (Referenzzins, Aufschlag, Zinsperiode) – so, wie der Handelsplatz sie gemeldet hat; fehlt eine Angabe, steht „nicht gemeldet“. Selbst aus diesen Daten gerechnet haben wir: die Rendite, die Restlaufzeit, die Veränderung zum Vortag (gegen unseren gespeicherten Schlusskurs), den Umsatz in Geld (Stück × Kurs je Abschluss) und – auf dem Steckbrief – den Risikoaufschlag zu Bund, die Differenz zur Rendite der Bundesanleihe mit gleicher Restlaufzeit, linear zwischen den beiden nächstliegenden Bundeswertpapieren der Bundesbank interpoliert; nur für Euro-Anleihen mit Rendite und Restlaufzeit bis 30 Jahre. Der Hinweis „kündbar ab …“ ist aus dem Namen gelesen (WM-Kurzbezeichnung „2024(27/33)“).</p>
-        <p><strong>Steckbrief und Kursverlauf.</strong> Ein Klick auf den Namen öffnet die Kurzansicht mit vier Kennzahlen – Kurs, Rendite, Kupon, Fälligkeit (die Veränderung zum Vortag steht als +/− hinter dem Kurs); „Alle Details“ führt zum Steckbrief der Anleihe (anleihe.html?isin=…) mit Merkmalen, Rechenbeispiel, Kursverlauf und Handel. Die Börse stellt ihre Tagesdateien nur einen Börsentag lang bereit; die Seite sammelt die Schlusskurse deshalb selbst – seit dem 24.09.2026, jeden Börsentag ein Wert. Für Bundeswertpapiere reicht der Verlauf der Bundesbank bis zur Ausgabe zurück (davor zwei Jahre täglich, älter ein Wert je Woche). Die Mindestanlage ist die Stückelung in der Währung der Anleihe.</p>
+        <p><strong>Steckbrief und Kursverlauf.</strong> Ein Klick auf den Namen führt zum Steckbrief der Anleihe (anleihe.html?isin=…) mit Merkmalen, Rechenbeispiel, Kursverlauf und Handel; ein Klick auf die Zeile oder den Pfeil am Ende öffnet die Kurzansicht mit Rendite, Kupon, Restlaufzeit und Kurs (die Veränderung zum Vortag in Prozentpunkten steht hinter dem Kurs). Die Börse stellt ihre Tagesdateien nur einen Börsentag lang bereit; die Seite sammelt die Schlusskurse deshalb selbst – seit dem 24.09.2026, jeden Börsentag ein Wert. Für Bundeswertpapiere reicht der Verlauf der Bundesbank bis zur Ausgabe zurück (davor zwei Jahre täglich, älter ein Wert je Woche). Die Stückelung ist der kleinste handelbare Nennwert und damit die Mindestanlage, in der Währung der Anleihe.</p>
         <p><strong>Grenzen.</strong> Das Volumen ist der ausgegebene Betrag, spätere Rückkäufe sind nicht abgezogen, und Aufstockungen erscheinen mitunter mit Verzögerung. Bei italienischen, britischen und irischen Staatsanleihen meldet das Register nicht die kleinste Stückelung (Italien etwa den Mindestschluss im Großhandel von 2 Mio. €); hier steht der kleinste Nennwert laut Emittent.</p>
         <p id="datastand">Daten-Stand: wird geladen</p>
       </div>
@@ -347,6 +346,7 @@
 </div>
 
 <script src="site.js"></script>
+<script src="felder.js"></script>
 <script src="filter.js"></script>
 <script src="konto.js"></script>
 <script>
@@ -378,7 +378,7 @@ const T = {
   pruefRendite: "Registerangaben widersprüchlich – keine Rendite", pruefUnklar: "unklar",
   det: {
     kurs: "Kurs", rendite: "Rendite bis Fälligkeit", umsatz: d => `Umsatz am ${d}`, kupon: "Kupon", faellig: "Fälligkeit",
-    stk: "Mindestanlage", vol: "Volumen", emi: "Emittent", keinKurs: "kein aktueller Kurs",
+    stk: "Stückelung", vol: "Volumen", emi: "Emittent", keinKurs: "kein aktueller Kurs",
     veraendT: (p, v) => `Veränderung zum Vortag (${p}\u00a0%, Vortag ${v}) – berechnet gegen unseren gespeicherten Schlusskurs`, keinVortag: "kein Vortageskurs",
     tag: "Kursspanne des Tags", eroeff: "Eröffnung", hoch: "Hoch", tief: "Tief", fest: n => `${n} ${n === 1 ? "Kursfeststellung" : "Kursfeststellungen"}`,
     alleGleich: "alle zum selben Kurs", abschl: n => `${n} ${n === 1 ? "Abschluss" : "Abschlüsse"}`,
@@ -437,7 +437,9 @@ const kueVon = r => MC.kuendigung ? MC.kuendigung(r[1], typeof r[13] === "string
 // Registername (FIRDS-Kurzname)
 const RF_ENDE = /[\s,]+(AG|SE|KGaA|GmbH|N\.V\.|B\.V\.|S\.A\.|S\.p\.A\.|S\.r\.l\.|PLC|p\.l\.c\.|Inc\.|Ltd\.?|Limited|LLC|Corp\.|Corporation|SA|NV|BV|AB|ASA|A\/S|Oyj|Aktiengesellschaft|Designated Activity Company)$/;
 // Staatsanleihen zeigen wie der Steckbrief das Land (GLEIF nennt die Schuldenagentur, z. B. „Direction Generale du Tresor“)
-const anzeigeName = r => r[2] === 0 && r[11] && r[11] !== "INT" ? landName(r[11]) : EMI[r[9]] ? EMI[r[9]].replace(RF_ENDE, "").replace(RF_ENDE, "") || EMI[r[9]] : r[1];
+// Seit 03.10.2026 die gemeinsame Regel (felder.js, MC.felder.kurzName): Ländernamen und Ausnahmen wie auf allen Seiten
+const anzeigeName = r => MC.felder ? MC.felder.kurzName(EMI[r[9]] || "", r[2], r[11], r[1]) || r[1]
+  : r[2] === 0 && r[11] && r[11] !== "INT" ? landName(r[11]) : EMI[r[9]] ? EMI[r[9]].replace(RF_ENDE, "").replace(RF_ENDE, "") || EMI[r[9]] : r[1];
 const F = MC.anleihenFilter({ box: document.getElementById("filterbox"), art: () => ART, ezb: () => EZB, kstand: () => KSTAND,
   rendite: r => rendite(r), befund: r => befund(r), bereit: () => !!IDX, laden: () => laden(), onChange: () => zeige() });
 const FILTER = F.FILTER;
@@ -485,6 +487,7 @@ const KEY = {
   faellig: r => r[5] || "9999", rest: r => r[5] || null,   // Restlaufzeit: unbefristet ohne Wert („–“) → immer ans Ende
   vol: r => typeof r[6] === "number" ? r[6] : null, stk: r => typeof r[7] === "number" ? r[7] : null,
   rendite, kurs: r => KURSE[r[0]] ? KURSE[r[0]][0] : null,
+  bon: r => r[22] === 1 ? 1 : r[22] === 0 ? 2 : r[22] === 3 ? 3 : null,   // Bonität laut EZB: beste Spanne zuerst, ohne Angabe ans Ende
 };
 // Übereinstimmung mit dem Suchbegriff (seit 30.09.2026 Standard bei einer Suche, solange niemand eine Spalte sortiert):
 // genaue ISIN/WKN vor Treffern am Anfang des Emittenten, im Emittenten, am Wortanfang im Registernamen; bei Gleichstand das größere Volumen
@@ -516,23 +519,31 @@ function sortiere(list) {
 const kDatum = k => KTAGE[k[2]] || "";
 const fmtUmsatz = (u, w) => `${fmt(u, 0)} ${w}`;
 const istReal = (r, k) => k && k[3] === "B" && /inflation|infl\./i.test(r[1]);
+// Seit 03.10.2026 Standardtabelle (Konzept „Einheitliche Anleihen-Angaben“, felder.js): Anleihe (Link zum Steckbrief, darunter ISIN · Art ·
+// Währung) · Rendite · Kupon · Restlaufzeit (Fälligkeit) · Kurs · Bonität · Stückelung · Volumen · Merken und Kurzansicht. Fett ist die
+// Spalte, nach der sortiert ist. Ein Klick auf die Zeile (außer Link und Knöpfe) öffnet weiter die Kurzansicht.
 function zeile(r) {
-  const k = KURSE[r[0]], rd = rendite(r), real = rd != null && istReal(r, k), offen = S.offen.has(r[0]);
-  const alt = k && kDatum(k) !== KSTAND ? `<small class="alt">${fmtDate(kDatum(k)).slice(0, 6)}</small>` : "";
-  const kurs = k ? `<span title="${MC.esc(L("kursTitle")(fmtDate(kDatum(k)), BOERSEN[k[3]] || "", k[4] ? fmtUmsatz(k[4], r[3]) : ""))}">${fmt(k[0], 2)}</span>${alt}` : "–";
+  const F = MC.felder, k = KURSE[r[0]], rd = rendite(r), real = rd != null && istReal(r, k), offen = S.offen.has(r[0]);
+  const fett = c => (S.col === c || (c === "rest" && S.col === "faellig") ? " sortiert" : "");
+  const alt = k && kDatum(k) !== KSTAND ? `<small>vom ${fmtDate(kDatum(k)).slice(0, 6)}</small>` : "";
+  const kurs = k ? `<span title="${MC.esc(L("kursTitle")(fmtDate(kDatum(k)), BOERSEN[k[3]] || "", k[4] ? fmtUmsatz(k[4], r[3]) : ""))}">${F.kurs(k[0])}</span>${alt}` : "–";
   const anz = anzeigeName(r);
-  // Seit 03.10.2026: Knopf und Link tragen Kupon und Fälligkeit im zugänglichen Namen (Nutzertest: elfmal „Deutschland“ hintereinander
+  // Seit 03.10.2026: Link und Knopf tragen Kupon und Fälligkeit im zugänglichen Namen (Nutzertest: elfmal „Deutschland“ hintereinander
   // im Screenreader); abgetrennte Zinsscheine und Kapitalteile ohne Zinsscheine sind gekennzeichnet (0 % Kupon zwischen Bundesanleihen)
   const lang = `${anz} ${typeof r[4] === "number" ? fmtCoupon(r[4]) + " " : ""}${r[5] ? "fällig " + fmtDate(r[5]) : L("perp")}`;
   const zs = /kupons? per|\bkupon\b.*\bper\b/i.test(r[1]) ? ["Zinsschein", "Abgetrennter Zinsschein: zahlt nur einen einzigen Betrag am genannten Tag, keine laufenden Zinsen"]
     : /o\.?\s?zinssch|ohne zinssch/i.test(r[1]) ? ["ohne Zinsscheine", "Kapitalteil ohne Zinsscheine: zahlt nur den Nennwert bei Fälligkeit, keine laufenden Zinsen"] : null;
-  return `<tr class="zeile${offen ? " offen" : ""}" data-isin="${MC.esc(r[0])}"><th scope="row"><button type="button" class="zbtn" aria-expanded="${offen}" aria-controls="det-${MC.esc(r[0])}" aria-label="${MC.esc(lang)}, Kurzansicht">${MC.esc(anz)}</button>${zs ? `<span class="zs" title="${zs[1]}">${zs[0]}</span>` : ""}${anz !== r[1] ? `<small class="reg">${MC.esc(r[1])}</small>` : ""}${befund(r) ? `<span class="pruef" title="${MC.esc(L("pruefT")(widerspruch(r)))}">${L("pruefBadge")}</span>` : ""}</th>` +
-    `<td class="num"${real ? ` title="${L("real")}"` : ""}>${rd != null ? (fraglich(r) ? `<span class="fraglich" title="${MC.esc(L("fraglichT")(fmt(k[7], 1)))}">${fmt(rd, 2)}\u00a0%<sup>?</sup></span>` : `${fmt(rd, 2)}\u00a0%${real ? "*" : ""}`) : "–"}</td>` +
-    `<td class="num">${kurs}</td>` +
-    `<td class="num">${fmtCoupon(r[4])}</td><td class="num">${!r[5] && pruefVon(r).faelligName ? L("pruefUnklar") : fmtDate(r[5])}</td>` +
-    `<td class="num">${r[5] ? RL(jahre(r[5])) : "–"}</td>` +
-    `<td class="txt art">${MC.esc(ART[r[2]])}</td><td class="isin"><a href="anleihe.html?isin=${encodeURIComponent(r[0])}" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten" aria-label="Steckbrief ${MC.esc(lang)} (ISIN ${MC.esc(r[0])})">${MC.esc(r[0])}</a></td><td class="txt">${MC.esc(r[3])}</td>` +
-    `<td class="num">${fmtVol(r[6], r[3])}</td><td class="num">${typeof r[7] === "number" ? `${fmtStk(r[7])} ${MC.esc(r[3])}` : "–"}</td></tr>` + (offen ? detailZeile(r) : "");   // Stückelung mit Währung (seit 03.10.2026)
+  const rest = r[5] ? `${MC.esc(RL(jahre(r[5])))}<small data-p="fällig">${fmtDate(r[5])}</small>` : !r[5] && pruefVon(r).faelligName ? L("pruefUnklar") : L("perp");
+  const bon = F.bonitaet(r[22]);
+  return `<tr class="zeile${offen ? " offen" : ""}" data-isin="${MC.esc(r[0])}"><th scope="row"${fett("name") ? ' class="sortiert"' : ""}><a class="name-link" href="anleihe.html?isin=${encodeURIComponent(r[0])}" title="${MC.esc("Registername: " + r[1])}" aria-label="Steckbrief ${MC.esc(lang)}">${MC.esc(anz)}</a>${zs ? `<span class="zs" title="${zs[1]}">${zs[0]}</span>` : ""}${befund(r) ? `<span class="pruef" title="${MC.esc(L("pruefT")(widerspruch(r)))}">Daten?</span>` : ""}<small>${MC.esc([r[0], ART[r[2]], r[3]].join(" · "))}</small></th>` +
+    `<td class="num gross${fett("rendite")}" data-l="Rendite"${real ? ` title="${L("real")}"` : ""}>${rd != null ? (fraglich(r) ? `<span class="fraglich" title="${MC.esc(L("fraglichT")(fmt(k[7], 1)))}">${F.pct(rd)}<sup>?</sup></span>` : `${F.pct(rd)}${real ? "*" : ""}`) : "–"}</td>` +
+    `<td class="num gross${fett("kupon")}" data-l="Kupon">${MC.esc(F.kupon({ kupon: r[4], zinsart: r[10] }))}</td>` +
+    `<td class="num gross${fett("rest")}" data-l="Restlaufzeit">${rest}</td>` +
+    `<td class="num${fett("kurs")}" data-l="Kurs">${kurs}</td>` +
+    `<td class="txt${fett("bon")}" data-l="Bonität">${bon ? MC.esc(bon) : '<span title="nicht auf der EZB-Liste">–</span>'}</td>` +
+    `<td class="num${fett("stk")}" data-l="Stückelung">${F.stueckelung(r[7], r[3])}</td>` +
+    `<td class="num${fett("vol")}" data-l="Volumen">${F.volumen(r[6], r[3])}</td>` +
+    `<td class="aktion">${MC.konto ? MC.konto.knopf(r[0], "nur") : ""}<button type="button" class="zbtn" aria-expanded="${offen}" aria-controls="det-${MC.esc(r[0])}" aria-label="${MC.esc(lang)}: Kurzansicht" title="Kurzansicht">▾</button></td></tr>` + (offen ? detailZeile(r) : "");
 }
 // Kurzansicht (seit 26.09.2026): vier Kennzahlen zum Einordnen – alles Weitere (Kursverlauf, Handel, Aufschlag zu Bund, Rang,
 // Rückzahlung, Zinsformel, Kaufrechnung) steht auf dem Steckbrief anleihe.html?isin=…
@@ -553,16 +564,17 @@ function detailZeile(r) {
   const dif = vor != null && k ? k[0] - vor : null;
   // Veränderung zum Vortag in Punkten, direkt hinter dem Kurs: grün (+), rot (−), grau (±0,00); Prozent und Vortag im Tooltip
   const vz = dif == null ? "" : dif > 0 ? "+" : dif < 0 ? "−" : "±";
-  const veraend = dif == null ? "" : ` <span class="kv-ver ${dif > 0 ? "plus" : dif < 0 ? "minus" : "null"}" title="${MC.esc(D.veraendT(`${vz}${fmt(Math.abs(dif / vor * 100), 2)}`, fmt(vor, 2)))}">${vz}${fmt(Math.abs(dif), 2)}</span>`;
+  const veraend = dif == null ? "" : ` <span class="kv-ver ${dif > 0 ? "plus" : dif < 0 ? "minus" : "null"}" title="${MC.esc(D.veraendT(`${vz}${fmt(Math.abs(dif / vor * 100), 2)}`, fmt(vor, 2)))}">${vz}${fmt(Math.abs(dif), 2)}\u00a0Pkt.</span>`;
+  // Seit 03.10.2026 in der Reihenfolge der Tabelle: Rendite · Kupon · Restlaufzeit (Fälligkeit) · Kurs, dazu die Kündigung
   const kpi = [
-    kv(D.kurs, k ? `${fmt(k[0], 2)}\u00a0%${veraend}` : "–", k ? `${MC.esc(BOERSEN[k[3]] || "")} · ${fmtDate(kDatum(k))}${k[4] ? "" : " · " + D.keinUmsatz}${dif == null ? " · " + D.keinVortag : ""}` : D.keinKurs),
     kv(D.renditeKurz, rd != null ? `${fmt(rd, 2)}\u00a0%${real ? "*" : fraglich(r) ? "<sup>?</sup>" : ""}` : D.keineRendite, hinweis),
-    kv(D.kupon, fmtCoupon(r[4]), [zinsart, pw.kuponFisn != null ? `Kurzname: ${fmtCoupon(pw.kuponFisn)} – widersprüchlich` : "", pw.zinsName ? "Name: variabel (FLR) – widersprüchlich" : "", pw.kuponHoch ? "unplausibel hoch" : ""].filter(Boolean).join(" · "), pw.kuponFisn != null || pw.zinsName || pw.kuponHoch ? "warn" : ""),
-    kv(D.faellig, fmtDate(r[5]), [r[5] ? D.rest(RL(jahre(r[5]))) : D.keinEnde, pw.faelligFisn ? `Kurzname: ${fmtDate(pw.faelligFisn)} – widersprüchlich` : "", pw.faelligName ? `Name: ${pw.faelligName}${!r[5] ? " – vermutlich fällig, nicht zurückgezahlt" : " – widersprüchlich"}` : ""].filter(Boolean).join(" · "), pw.faelligFisn || pw.faelligName ? "warn" : ""),
+    kv(D.kupon, MC.esc(MC.felder.kupon({ kupon: r[4], zinsart: r[10] })), [zinsart, pw.kuponFisn != null ? `Kurzname: ${fmtCoupon(pw.kuponFisn)} – widersprüchlich` : "", pw.zinsName ? "Name: variabel (FLR) – widersprüchlich" : "", pw.kuponHoch ? "unplausibel hoch" : ""].filter(Boolean).join(" · "), pw.kuponFisn != null || pw.zinsName || pw.kuponHoch ? "warn" : ""),
+    kv("Restlaufzeit", r[5] ? MC.esc(RL(jahre(r[5]))) : L("perp"), [r[5] ? "fällig " + fmtDate(r[5]) : D.keinEnde, pw.faelligFisn ? `Kurzname: ${fmtDate(pw.faelligFisn)} – widersprüchlich` : "", pw.faelligName ? `Name: ${pw.faelligName}${!r[5] ? " – vermutlich fällig, nicht zurückgezahlt" : " – widersprüchlich"}` : ""].filter(Boolean).join(" · "), pw.faelligFisn || pw.faelligName ? "warn" : ""),
+    kv(D.kurs, k ? `${MC.felder.kurs(k[0])}${veraend}` : "–", k ? `${MC.esc(BOERSEN[k[3]] || "")} · ${fmtDate(kDatum(k))}${k[4] ? "" : " · " + D.keinUmsatz}${dif == null ? " · " + D.keinVortag : ""}` : D.keinKurs),
     kueF ? kv(D.kue, kueF.wert, kueF.klein + (kueF.anker ? ` · <a href="kuendbare-anleihen.html#${kueF.anker}">${D.kueMehr}</a>` : ""), kueF.warn ? "warn" : "") : "",
   ].join("");
   const href = `anleihe.html?isin=${encodeURIComponent(r[0])}`;
-  return `<tr class="zdet" id="det-${MC.esc(r[0])}"><td colspan="11"><div class="det">` +
+  return `<tr class="zdet" id="det-${MC.esc(r[0])}"><td colspan="9"><div class="det">` +
     `<div class="det-kopf"><b>${MC.esc(EMI[r[9]] || r[1])}</b>${EMI[r[9]] ? `<span class="det-emi">${MC.esc(r[1])}</span>` : ""}` +
     `<span class="det-id">ISIN <b>${MC.esc(r[0])}</b>${wkn}<button type="button" class="kopie" data-isin="${MC.esc(r[0])}">${D.kopie}</button>${MC.konto ? MC.konto.knopf(r[0]) : ""}</span></div>` +
     `<dl class="det-kpi${kueF ? " fuenf" : ""}">${kpi}</dl>` +
@@ -678,7 +690,7 @@ function laden() {
   F.solide = p.get("solide") === "1";
   for (const f of FILTER) (p.get(f.k) || "").split(",").map(v => v.trim()).filter(Boolean).forEach(v => F.sel[f.k].add(f.k === "w" || f.k === "land" ? v.toUpperCase() : v));
   F.bereichLesen("rest", p.get("fv"), p.get("fb")); F.bereichLesen("rendite", p.get("rv"), p.get("rb"));
-  const so = /^(-?)(name|rendite|kurs|kupon|faellig|rest|art|isin|cur|vol|stk)$/.exec(p.get("sort") || "");
+  const so = /^(-?)(name|rendite|kurs|kupon|faellig|rest|art|isin|cur|vol|stk|bon)$/.exec(p.get("sort") || "");
   if (so) { S.col = so[2]; S.dir = so[1] ? -1 : 1; S.eigen = true; }
   const input = document.getElementById("q");
   input.value = S.q;
@@ -722,7 +734,7 @@ function laden() {
   box.querySelector("tbody").addEventListener("click", e => {
     const kb = e.target.closest(".kopie");
     if (kb) { kopieren(kb); return; }
-    if (e.target.closest(".zdet") || e.target.closest("a")) return;   // ISIN-Link führt direkt zum Steckbrief
+    if (e.target.closest(".zdet") || e.target.closest("a") || e.target.closest(".merkbtn")) return;   // Name führt zum Steckbrief, Merken merkt
     const tr = e.target.closest("tr.zeile"); if (!tr) return;
     if (!e.target.closest(".zbtn") && window.getSelection && String(window.getSelection()).length) return;   // Text markiert
     const isin = tr.dataset.isin, r = IDX.find(x => x[0] === isin), btn = tr.querySelector(".zbtn");

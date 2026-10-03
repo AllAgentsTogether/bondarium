@@ -377,3 +377,199 @@ def ausreisser(werte: list, schwelle: float = 0.08, renditen: list | None = None
                 if (rp - ra) * richtung > -0.05 and (rp - rb) * richtung > -0.05:
                     raus.add(i)
     return raus
+
+
+# ---------------------------------------------------------------- Anleihen-Angaben (seit 03.10.2026)
+# Feldkatalog, Kurzname und Schreibweisen – dieselben Regeln wie felder.js (MC.felder) auf der Website. Der Katalog selbst steht
+# einmal in felder.js zwischen /*KATALOG*/ und /*KATALOG-ENDE*/ (reines JSON); hier wird er gelesen, nicht kopiert.
+# Konzept „Einheitliche Anleihen-Angaben“, Regeln in docs/ANLEIHEN-ANGABEN.md.
+_KATALOG = None
+
+
+def felder_katalog() -> dict:
+    """Katalog aus felder.js: {felder, art, bonitaet, rechtsform, staaten}."""
+    global _KATALOG
+    if _KATALOG is None:
+        quelle = (Path(__file__).resolve().parent.parent / "felder.js").read_text(encoding="utf-8")
+        m = re.search(r"/\*KATALOG\*/(.*?)/\*KATALOG-ENDE\*/", quelle, re.S)
+        _KATALOG = json.loads(m.group(1))
+    return _KATALOG
+
+
+# Lesbare Schreibung der GLEIF-Versalien (gleiche Regel wie MC.felder.lesbar in felder.js)
+RF_SCHREIB = {"AG": "AG", "SE": "SE", "KG": "KG", "KGAA": "KGaA", "GMBH": "GmbH", "MBH": "mbH", "N.V.": "N.V.", "B.V.": "B.V.", "S.A.": "S.A.", "S.A": "S.A.",
+              "S.P.A.": "S.p.A.", "SPA": "S.p.A.", "S.A.S.": "S.A.S.", "S.À": "S.à", "R.L.": "r.l.", "S.R.L.": "S.r.l.", "SRL": "S.r.l.", "S.L.": "S.L.", "SARL": "S.à r.l.",
+              "INC.": "Inc.", "INC": "Inc.", "LTD.": "Ltd.", "LTD": "Ltd", "CORP.": "Corp.", "CORP": "Corp.", "CO.": "Co.", "CO": "Co.", "PTE.": "Pte.", "PTE": "Pte.", "PTY": "Pty",
+              "OYJ": "Oyj", "P.L.C.": "p.l.c.", "L.P.": "L.P.", "LLP": "LLP", "LLC": "LLC", "PLC": "PLC", "A/S": "A/S", "ASA": "ASA", "AB": "AB", "AS": "AS", "SA": "SA",
+              "NV": "NV", "BV": "BV", "SAS": "SAS", "C.V.": "C.V.", "S.A.B.": "S.A.B.", "KFW": "KfW", "ENBW": "EnBW", "E.ON": "E.ON", "AT&T": "AT&T"}
+RF_IMMER = {"KFW", "ENBW", "E.ON", "AT&T"}
+KLEINWORT = set("OF AND THE FOR DE DI DEL DELLA DES DU LA LE LES Y E ET EN IN FÜR UND DER DIE DAS DEN VON VAN ZU AM IM AUF PER DA DO DOS".split())
+KUERZEL = set("BASF BBVA AMRO BAWAG NIBC RATP SICAV SOFOM HSBC LBBW NRW USA UK US EU".split())
+WORT3 = set("OIL GAS NEW AIR SEA SUN BAY CAR ONE TWO TEN BIG RED OWL TOP WAY KEY AID ART BIO BOX CAP FIN LAB LAW MAX NET PAY PRO RIO SKY SOL TEA TEL WEB BAU".split())
+_VOKAL = re.compile(r"[AEIOUYÄÖÜÉÈÀÁÍÓÚÂÊÎÔÛİ]")
+_BUCHST = re.compile(r"([A-Za-zÀ-ÖØ-öø-ÿİŞĞÇ]+)")
+_RAND = re.compile(r"^[,;()\"']+|[,;()\"']+$")
+
+
+def _lesbar_wort(w, erstes, nach_apostroph):
+    u = w.upper()
+    if len(w) == 1:
+        return w.lower() if nach_apostroph else w
+    if not erstes and u in KLEINWORT:
+        return w.lower()
+    if u in KUERZEL or not _VOKAL.search(u):
+        return w
+    if len(w) <= 3 and u not in WORT3 and u not in KLEINWORT:
+        return w
+    return w[0] + w[1:].replace("İ", "i").lower()
+
+
+def lesbar(name):
+    s = str(name or "").strip()
+    if not s or re.search(r"[a-zß-ÿ]", s) or not re.search(r"[A-Z]", s):
+        return s   # schon gemischt geschrieben oder keine lateinische Schrift
+    out = []
+    for i, tok in enumerate(s.split()):
+        kern = _RAND.sub("", tok)
+        vor = tok[:tok.index(kern)] if kern else tok
+        nach = tok[len(vor) + len(kern):] if kern else ""
+        k = kern.upper()
+        if k in RF_SCHREIB and (i > 0 or k in RF_IMMER):
+            out.append(vor + RF_SCHREIB[k] + nach)
+            continue
+        teile = _BUCHST.split(tok)
+        out.append("".join(_lesbar_wort(t, i == 0 and j == 1, (teile[j - 1] if j else "").endswith("'")) if j % 2 else t
+                           for j, t in enumerate(teile)))
+    return " ".join(out)
+
+
+def kurz_name(emittent, art, land, reg=""):
+    """Kurzname einer Anleihe: Staat (art 0, Land ≠ INT) → Ländername laut Katalog; sonst Emittent in lesbarer Schreibung ohne
+    Rechtsform; ohne Emittent der Registername. Gleiche Regel wie MC.felder.kurzName."""
+    k = felder_katalog()
+    if art == 0 and land and land != "INT":
+        return k["staaten"].get(land) or land
+    e = lesbar(emittent)
+    if not e:
+        return str(reg or "")
+    if e in k.get("ausnahmen", {}):
+        return k["ausnahmen"][e]   # sperrige Registernamen großer Emittenten („Kreditanstalt für Wiederaufbau KfW“ → „KfW“)
+    rf = re.compile(k["rechtsform"])
+    for _ in range(3):
+        e = re.sub(r"[\s&,\-–]+$", "", rf.sub("", e).strip())   # „Fresenius SE & Co. KGaA“ → „Fresenius“
+    return e
+
+
+def zahl_de(v, d=0) -> str:
+    """Zahl mit Dezimalkomma, Tausenderpunkt und echtem Minus (wie MC.zahl)."""
+    if not isinstance(v, (int, float)) or isinstance(v, bool):
+        return "–"
+    s = f"{abs(v):,.{d}f}".replace(",", "#").replace(".", ",").replace("#", ".")
+    return ("−" if v < 0 and float(s.replace(".", "").replace(",", ".")) != 0 else "") + s
+
+
+NBSP = " "
+
+
+def pct_text(v) -> str:
+    return zahl_de(v, 2) + NBSP + "%" if isinstance(v, (int, float)) else "–"
+
+
+def kupon_text(kupon, zinsart=0) -> str:
+    """„3,50 %“, „3,625 %“, „variabel“, „Nullkupon“ (wie MC.felder.kupon)."""
+    if zinsart == 1 or kupon == "var":
+        return "variabel"
+    if zinsart == 2 or (kupon == 0 and zinsart != 0):
+        return "Nullkupon"
+    if not isinstance(kupon, (int, float)):
+        return "–"
+    return zahl_de(kupon, 3 if round(kupon * 1000) % 10 else 2) + NBSP + "%"
+
+
+def kurs_text(v) -> str:
+    if not isinstance(v, (int, float)):
+        return "–"
+    return zahl_de(v, 3 if abs(v * 100 - round(v * 100)) > 1e-6 else 2) + NBSP + "%"
+
+
+def pkt_text(v, d=2) -> str:
+    if not isinstance(v, (int, float)):
+        return "–"
+    r = round(v, d) or 0.0
+    return ("+" if r > 0 else "") + zahl_de(r, d) + NBSP + "Pkt."
+
+
+def datum_text(iso) -> str:
+    return f"{iso[8:10]}.{iso[5:7]}.{iso[0:4]}" if iso and len(iso) >= 10 else "–"
+
+
+def restlaufzeit_text(jahre) -> str:
+    """Wie MC.restlaufzeit: unter einem Monat Tage, unter einem Jahr Monate, sonst Jahre mit einer Stelle."""
+    if jahre is None:
+        return "unbefristet"
+    tage = int(jahre * 365.25 + 0.5)
+    if tage <= 0:
+        return "fällig"
+    if tage < 31:
+        return f"{tage} {'Tag' if tage == 1 else 'Tage'}"
+    monate = int(tage / 30.44 + 0.5)
+    if monate < 12:
+        return f"{monate} {'Monat' if monate == 1 else 'Monate'}"
+    return zahl_de(jahre, 1) + " Jahre"
+
+
+def _signifikant(x: float, n: int = 3) -> str:
+    """Höchstens n gültige Ziffern, ohne Endnullen, deutsch geschrieben (wie toLocaleString maximumSignificantDigits)."""
+    if x == 0:
+        return "0"
+    import math
+    stellen = max(0, n - 1 - int(math.floor(math.log10(abs(x)))))
+    s = zahl_de(round(x, stellen), stellen)
+    if "," in s:
+        s = s.rstrip("0").rstrip(",")
+    return s
+
+
+def volumen_text(v, w="") -> str:
+    """„1,25 Mrd. EUR“, „250 Mio. EUR“, unter 1 Mio. ganze Zahl (wie MC.felder.volumen)."""
+    if not isinstance(v, (int, float)) or v <= 0:
+        return "–"
+    t = zahl_de(v, 0) if v < 1e6 else (_signifikant(v / 1e9) + NBSP + "Mrd." if v >= 1e9 else _signifikant(v / 1e6) + NBSP + "Mio.")
+    return t + (NBSP + w if w else "")
+
+
+def stueckelung_text(v, w="") -> str:
+    if not isinstance(v, (int, float)):
+        return "–"
+    s = zahl_de(v, 3)
+    if "," in s:
+        s = s.rstrip("0").rstrip(",")
+    return s + (NBSP + w if w else "")
+
+
+def bonitaet_text(b) -> str:
+    return felder_katalog()["bonitaet"].get(str(b), "") if b is not None else ""
+
+
+def titel_text(kurz, kupon, zinsart, faellig) -> str:
+    """„Italien 3,50 % 2030“ (wie MC.felder.titel)."""
+    return f"{kurz} {kupon_text(kupon, zinsart)} {faellig[:4] if faellig else 'unbefristet'}"
+
+
+def bonitaet_stufen() -> dict:
+    """{ISIN: 1 | 3 | 0} aus bonitaet/ezb-stufen.json (scripts/update_bonitaet.py); fehlt die Datei: leer."""
+    try:
+        d = json.loads((Path(__file__).resolve().parent.parent / "bonitaet" / "ezb-stufen.json").read_text(encoding="utf-8"))
+        return d.get("stufen") or {}
+    except (OSError, ValueError):
+        return {}
+
+
+def stamm_felder(zeile: list, emittenten: list, stufen: dict) -> dict:
+    """Felder, die jede Anleihen-Tabelle zum Namen braucht – aus einer Zeile von anleihen-index.json:
+    kurz (Kurzname), bon (Bonität laut EZB, nur wenn auf der Liste). Für die Top-Listen (update_top10*.py) und anleihen-auswahl.json."""
+    e = emittenten[zeile[9]] if isinstance(zeile[9], int) and 0 <= zeile[9] < len(emittenten) else ""
+    out = {"kurz": kurz_name(e, zeile[2], zeile[11], zeile[1])}
+    if zeile[0] in stufen:
+        out["bon"] = stufen[zeile[0]]
+    return out

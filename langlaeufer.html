@@ -58,14 +58,15 @@
   .facts th[scope=row] small { display: block; color: var(--muted); font-weight: 400; font-size: 12px; margin-top: 2px; }
   /* .kpis Grundregeln und .sortbtn: base.css (seit 30.09.2026 keine Seiten-Kopien mehr) */
   .kpis { margin-top: 8px; }
-  #kpi-head th:first-child { width: 19%; }   /* feste Breite: Spalten springen beim Filtern nicht */
-  .kpis td.emi { white-space: normal; line-height: 1.4; min-width: 90px; }   /* Emittent darf umbrechen – so passt die Tabelle in 1000 px */
+  #kpis thead th:first-child { width: 26%; }   /* feste Breite: Spalten springen beim Filtern nicht */
+  .kpi-filter { margin: 4px 0 0; font-size: 13px; color: var(--text); }
+  .kpi-filter .hfilter { display: inline-block; margin: 0 0 0 6px; }
   .kpis td.empty { color: var(--muted); padding: 18px 0; }
   /* Tabellenkopf = Filter: Klick auf den Spaltentitel sortiert, die Währung hat zusätzlich ein Auswahlfeld im Kopf */
-  .kpis thead th .hfilter { display: block; margin-top: 6px; font: inherit; font-size: 12px; letter-spacing: 0; text-transform: none; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 6px; min-height: 24px; }
-  .kpis thead th .hfilter.on { border-color: var(--accent-text); color: var(--accent-text); }
+  .kpi-filter .hfilter, .kpis thead th .hfilter { display: inline-block; margin-top: 6px; font: inherit; font-size: 12px; letter-spacing: 0; text-transform: none; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 6px; min-height: 24px; }
+  .kpi-filter .hfilter.on, .kpis thead th .hfilter.on { border-color: var(--accent-text); color: var(--accent-text); }
   .kpis thead th .hfilter:focus-visible { outline: 2px solid var(--accent-text); outline-offset: 2px; }
-  @media (pointer: coarse) { .kpis thead th .hfilter { min-height: 44px; } }   /* Tippfläche ≥ 44 px (vorher 34 px) */
+  @media (pointer: coarse) { .kpi-filter .hfilter { min-height: 44px; } }   /* Tippfläche ≥ 44 px (vorher 34 px) */
   .kpis th, .kpis td { padding: 9px 6px 9px 0; }   /* zehn Spalten in 1000 px */
   .kpis th[scope=row] { white-space: nowrap; font-weight: 600; }
   .kpis td.num small { display: block; color: var(--muted); font-size: 12px; }
@@ -196,21 +197,10 @@
     <p class="note">Wochenschlusskurse ab Mitte 2019 in Prozent des Nennwerts, US-Papiere in Dollar. Beim Überfahren oder Antippen erscheinen Datum, Kurs und Rendite.</p>
 
     <h2 class="abschnitt" id="h-vergleich">Die sieben Langläufer im Vergleich</h2>
+    <p class="kpi-filter"><label>Währung <select class="hfilter" data-f="cur" aria-label="Nach Währung filtern"><option value="">Alle</option><option value="EUR">EUR</option><option value="USD">USD</option></select></label></p>
     <div class="table-scroll">
-    <table class="kpis" id="kpis" aria-labelledby="h-vergleich">
-      <caption class="sr-only">Kennzahlen der sieben Langläufer: Rendite, Kurs, Abstand zum Hoch, Restlaufzeit, Kupon, Fälligkeit, Emittent, ISIN und Währung</caption>
-      <thead id="kpi-head"><tr>
-        <th scope="col" data-col="label"><button type="button" class="sortbtn" data-col="label">Anleihe</button></th>
-        <th scope="col" data-col="yld"><button type="button" class="sortbtn" data-col="yld">Rendite</button></th>
-        <th scope="col" data-col="price"><button type="button" class="sortbtn" data-col="price">Kurs</button></th>
-        <th scope="col" data-col="sinceHigh"><button type="button" class="sortbtn" data-col="sinceHigh">Seit Hoch</button></th>
-        <th scope="col" data-col="years"><button type="button" class="sortbtn" data-col="years">Restlaufzeit</button></th>
-        <th scope="col" data-col="coupon"><button type="button" class="sortbtn" data-col="coupon">Kupon</button></th>
-        <th scope="col" data-col="maturity"><button type="button" class="sortbtn" data-col="maturity">Fälligkeit</button></th>
-        <th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Emittent</button></th>
-        <th scope="col" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th>
-        <th scope="col" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button><select class="hfilter" data-f="cur" aria-label="Nach Währung filtern"><option value="">Alle</option><option value="EUR">EUR</option><option value="USD">USD</option></select></th>
-      </tr></thead>
+    <table class="kpis atab" id="kpis" aria-labelledby="h-vergleich">
+      <caption class="sr-only">Kennzahlen der sieben Langläufer: Rendite, Kupon, Restlaufzeit, Kurs und Abstand zum Höchstkurs</caption>
       <tbody id="kpis-body">
       </tbody>
     </table>
@@ -273,6 +263,7 @@
 </div>
 
 <script src="site.js"></script>
+<script src="felder.js"></script>
 <script src="konto.js"></script>
 <script src="mein.js"></script>
 <script src="bond.js"></script>
@@ -536,12 +527,12 @@ const KPI_SORT = { col: null, dir: 1 };   // null = Reihenfolge wie im Chart
 function kpiRows() {
   const b = BUND, c = BUND2;
   const rows = [
-    { key: "bund", isin: b.isin, coupon: 0, maturity: b.maturity, price: b.latest.price, yld: b.latest.yield, years: yearsTo(b.maturity, b.latest.date), high: b.high, low: b.low },
-    { key: "bund2", isin: c.isin, coupon: c.coupon, maturity: c.maturity, price: c.latest.price, yld: c.latest.yield, years: yearsTo(c.maturity, c.latest.date), high: c.high, low: c.low }
+    { key: "bund", isin: b.isin, coupon: 0, maturity: b.maturity, price: b.latest.price, yld: b.latest.yield, years: yearsTo(b.maturity, b.latest.date), high: b.high, low: b.low, date: b.latest.date },
+    { key: "bund2", isin: c.isin, coupon: c.coupon, maturity: c.maturity, price: c.latest.price, yld: c.latest.yield, years: yearsTo(c.maturity, c.latest.date), high: c.high, low: c.low, date: c.latest.date }
   ];
   ["btp", "fr", "at", "us", "ms"].forEach(k => {
     const bd = COUPON_BONDS.find(x => x.key === k), st = bondStats(bd);
-    rows.push({ key: k, isin: bd.isin, coupon: bd.coupon, maturity: bd.maturity, price: bd.price, yld: st.yld * 100, years: st.years, high: bd.high, low: bd.low });
+    rows.push({ key: k, isin: bd.isin, coupon: bd.coupon, maturity: bd.maturity, price: bd.price, yld: st.yld * 100, years: st.years, high: bd.high, low: bd.low, date: bd.priceDate });
   });
   return rows.map(r => { Object.assign(r, KPI_META[r.key]); r.label = L(r.key); r.sinceHigh = (r.price / r.high.price - 1) * 100; return r; });
 }
@@ -550,29 +541,27 @@ function kpiMatch(r) {
   if (f.cur && r.cur !== f.cur) return false;
   return true;
 }
-function kpiCmp(a, b) {
-  const col = KPI_SORT.col, x = a[col], y = b[col];
-  const r = typeof x === "string" ? x.localeCompare(y, "de") : x - y;
-  return r * KPI_SORT.dir;
-}
+// Tabelle seit 03.10.2026 als Standardtabelle (felder.js, Konzept „Einheitliche Anleihen-Angaben“): Anleihe (ISIN · Art · Währung) · Rendite ·
+// Kupon · Restlaufzeit (Fälligkeit) · Kurs · Seit Hoch · Merken. Kurzname und Bonität aus anleihen-auswahl.json (scripts/suchindex.py);
+// der farbige Punkt vor dem Namen ist die Linienfarbe im Schaubild. Ohne Sortierung: Reihenfolge wie im Schaubild.
+let AUSWAHL = {};
+MC.load("anleihen-auswahl.json").then(d => { AUSWAHL = (d && d.a) || {}; if (document.querySelector("#kpis-body tr, #kpis tbody tr")) renderKpis(); }).catch(() => {});
 function renderKpis() {
   const all = kpiRows();
-  let rows = all.filter(kpiMatch);
-  if (KPI_SORT.col) rows = rows.slice().sort(kpiCmp);
-  // Erste Spalte: der Anleihename (Kupon und Fälligkeit) – vorher der Emittent, zweimal „Bundesrepublik Deutschland“ (seit 30.09.2026)
-  const html = rows.map(r =>
-    `<tr><th scope="row"><i class="tag" style="background:${COLORS[r.key]}"></i>${MC.esc(r.label)}</th><td class="num">${fmt(r.yld, 2)}\u00A0%</td>` +
-    `<td class="num">${fmt(r.price, 2)}</td>` +
-    `<td class="num">${fmt(r.sinceHigh, 0)}\u00A0%<small>Hoch ${fmt(r.high.price, 2)} (${fmtDate(r.high.date).slice(3)})</small></td>` +
-    `<td class="num">${fmt(r.years, 1)} ${L("years")}</td><td class="num">${fmtCoupon(r.coupon)}\u00A0%</td><td class="num">${fmtDate(r.maturity)}</td>` +
-    `<td class="emi" title="${MC.esc(r.art === "Staat" ? "Staatsanleihe" : "Unternehmensanleihe")}">${MC.esc(r.name)}</td>` +
-    `<td class="isin"><a href="anleihe.html?isin=${r.isin}" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">${r.isin}</a></td><td class="txt">${r.cur}</td></tr>`);
-  document.getElementById("kpis-body").innerHTML = html.join("") ||
-    `<tr><td class="empty" colspan="10">Keine Anleihe entspricht dem Filter.</td></tr>`;
-  for (const th of document.querySelectorAll("#kpi-head th[data-col]")) {
-    if (th.dataset.col === KPI_SORT.col) th.setAttribute("aria-sort", KPI_SORT.dir > 0 ? "ascending" : "descending");
-    else th.removeAttribute("aria-sort");
-  }
+  const stand = all.map(r => r.date).filter(Boolean).sort().pop() || "";
+  const rows = all.filter(kpiMatch).map((r, i) => {
+    const a = AUSWAHL[r.isin] || [], art = r.art === "Staat" ? 0 : 2;
+    return { platz: i + 1, key: r.key, isin: r.isin, kurz: a[0] || MC.felder.kurzName(r.name, art, null, r.name), reg: a[4] || "", art, ccy: r.cur,
+      kupon: r.coupon, zinsart: r.coupon === 0 ? 2 : 0, faellig: r.maturity, kurs: r.price, kdatum: r.date, rend: r.yld, bon: a[3],
+      seitHoch: r.sinceHigh, hochText: `Hoch ${MC.felder.kurs(r.high.price)} am ${fmtDate(r.high.date)}` };
+  });
+  const tab = document.getElementById("kpis");
+  const html = MC.felder.tabelle(["anleihe", "rendite", "kupon", "restlaufzeit", "kurs", "seitHoch"].concat(MC.konto ? ["merken"] : []), rows,
+    { sort: KPI_SORT, sortieren: true, leer: "Keine Anleihe entspricht dem Filter.",
+      ctx: { kstand: stand, nameVor: o => `<i class="tag" style="background:${COLORS[o.key]}"></i>` } });
+  if (tab.tHead) tab.tHead.remove();
+  [...tab.tBodies].forEach(b => b.remove());
+  tab.insertAdjacentHTML("beforeend", html);
   // Kursspannen im Steckbrief (unabhängig vom Filter)
   const ids = { bund: "b-spanne", bund2: "b2-spanne", btp: "t-spanne", fr: "fr-spanne", at: "at-spanne", us: "us-spanne", ms: "ms-spanne" };
   all.forEach(r => {
@@ -581,17 +570,11 @@ function renderKpis() {
   });
 }
 function initKpiFilter() {
-  const head = document.getElementById("kpi-head");
-  if (!head || head.__init) return;
-  head.__init = true;
-  head.addEventListener("click", e => {
-    const b = e.target.closest(".sortbtn");
-    if (!b) return;
-    const col = b.dataset.col;
-    if (KPI_SORT.col === col) KPI_SORT.dir = -KPI_SORT.dir; else { KPI_SORT.col = col; KPI_SORT.dir = 1; }
-    renderKpis();
-  });
-  head.addEventListener("change", e => {
+  const tab = document.getElementById("kpis"), filter = document.querySelector(".kpi-filter");
+  if (!tab || tab.__init) return;
+  tab.__init = true;
+  MC.felder.sortierbar(tab, KPI_SORT, renderKpis);
+  if (filter) filter.addEventListener("change", e => {
     const sel = e.target.closest(".hfilter");
     if (!sel) return;
     KPI_FILTER[sel.dataset.f] = sel.value;

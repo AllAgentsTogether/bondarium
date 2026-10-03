@@ -19,6 +19,12 @@ Fassung (innerHTML) – mit Sortieren, Aufklappen und den Handy-Karten. Die Quel
                                                              Seite ihre Handauswahl, die nur das Seitenskript kennt
   anleihen-kupon.html     <tbody id="kpis-staat">, <tbody id="kpis-oeffentlich">, <tbody id="kpis-unternehmen">
                                                            ← top10-anleihen-kupon.json, je Gruppe eine Tabelle (seit 01.10.2026)
+  staatsanleihen-laufzeit.html, unternehmensanleihen-laufzeit.html
+                          <table class="kpis" data-gruppe>  ← automatische Rangliste, solange sie nicht „aktiv“ ist die
+                                                             Handauswahl der Seite (ANLEIHEN im Seitenskript; seit 03.10.2026)
+
+Die Anleihen-Tabellen haben seit 03.10.2026 die Form der Standardtabelle (felder.js, MC.felder.tabelle; Regeln in
+docs/ANLEIHEN-ANGABEN.md): hier nachgebaut in std_tabelle() mit denselben Schreibweisen aus _common.py.
 
 Passt eine Seite oder Datei nicht zum Erwarteten, gibt es eine Warnung und die Seite bleibt, wie sie ist.
 """
@@ -391,67 +397,198 @@ def etfs(site):
     print(f"anleihen-etf.html: {anzahl} ETFs in {gefuellt} Tabellen fest im HTML")
 
 
-# ---------- Top 10 nach Ländern: Deutschland (Startansicht), vereinfachte Fassung von zeileHtml (top10-tabellen.js) ----------
-def restlaufzeit(jahre):
-    tage = round(jahre * 365.25)
-    if tage <= 0:
-        return "fällig"
-    if tage < 31:
-        return f"{tage} {'Tag' if tage == 1 else 'Tage'}"
-    monate = round(tage / 30.44)
-    if monate < 12:
-        return f"{monate} {'Monat' if monate == 1 else 'Monate'}"
-    return zahl(jahre, 1) + " Jahre"
+# ---------- Standardtabelle (seit 03.10.2026): gleiche Spalten, Reihenfolge und Schreibweisen wie MC.felder.tabelle (felder.js) ----------
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _common import (bonitaet_text, datum_text, felder_katalog, kupon_text, kurs_text, kurz_name, pct_text,  # noqa: E402
+                     restlaufzeit_text, stueckelung_text, titel_text, volumen_text)
+
+STD_REIHE = felder_katalog()["reihe"]   # Gesamtliste der Spalten – einmal im Katalog (felder.js)
+STD_NUM = {"rendite", "kupon", "lfd", "restlaufzeit", "duration", "aufschlag", "kurs", "stueckelung", "volumen", "handelstage", "seitHoch", "seitMerken", "zinstermin"}
+STD_GROSS = {"rendite", "kupon", "restlaufzeit"}
+STD_CLS = {"platz": "rk", "merken": "merkspalte"}
+ARTNR = {"Staat": 0, "Öffentlich": 1, "Unternehmen": 2}
 
 
-def laender_zeile(r, rang, stand):
-    try:
-        jahre = (datetime.date.fromisoformat(r["faellig"]) - datetime.date.fromisoformat(stand)).days / 365.25
-        rest = restlaufzeit(jahre)
-    except Exception:
-        rest = "–"
-    kupon = zahl(r["kupon"], 3 if round(r["kupon"] * 1000) % 10 else 2) if isinstance(r.get("kupon"), (int, float)) else "–"
-    rendite = zahl(r["rendite"], 2) + " %" if isinstance(r.get("rendite"), (int, float)) else "–"
-    vol = f"{r['vol'] / 1e9:.3g}".replace(".", ",") + " Mrd." if isinstance(r.get("vol"), (int, float)) else "–"
-    stk = zahl(r["stk"], 0 if float(r["stk"]).is_integer() else 3 if round(r["stk"] * 1000) % 10 else 2) if isinstance(r.get("stk"), (int, float)) else "–"
-    return (f'<tr><td class="num rk">{rang}</td><th scope="row">{esc(r.get("emittent") or "")}<small class="fa-mobil">fällig {datum(r.get("faellig"))}</small></th>'
-            f'<td class="num">{rendite}</td><td class="num">{zahl(r.get("kurs"), 2)}</td><td class="num">{kupon} %</td>'
-            f'<td class="num">{datum(r.get("faellig"))}</td><td class="num">{rest}</td>'
-            f'<td class="isin"><a href="anleihe.html?isin={esc(r["isin"])}" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">{esc(r["isin"])}</a></td>'
-            f'<td class="txt">{esc(r.get("cur") or "")}</td><td class="num">{vol}</td><td class="num">{stk}</td></tr>')
+def std_kopf(ids, sort=("platz", 1)):
+    F = felder_katalog()["felder"]
+    out = []
+    for i in [x for x in STD_REIHE if x in ids]:
+        f = F.get(i, {})
+        kopf, unter = ("" if i == "merken" else f.get("kurz", "")), f.get("unter", "")
+        cls = " ".join(x for x in ("num" if i in STD_NUM else "", STD_CLS.get(i, "")) if x)
+        aria = f' aria-sort="{"ascending" if sort[1] > 0 else "descending"}"' if sort[0] == i else ""
+        title = f' title="{esc(f["title"])}"' if f.get("title") and i != "merken" else ""
+        klein = f"<small>{esc(unter)}</small>" if unter else ""   # zweite Kopfzeile unter dem Sortierknopf
+        knopf = f'<button type="button" class="sortbtn" data-col="{i}">{esc(kopf)}</button>{klein}' if kopf else '<span class="sr-only">Merken</span>'
+        out.append(f'<th scope="col" data-col="{i}" class="{cls}"{aria}{title}>{knopf}</th>')
+    return "<thead><tr>" + "".join(out) + "</tr></thead>"
+
+
+def std_zeile(o, ids, ctx, fett):
+    ART = felder_katalog()["art"]
+    F = felder_katalog()["felder"]
+    heute = datetime.date.today()
+    zellen = []
+    for i in [x for x in STD_REIHE if x in ids]:
+        h, sub, p = "–", "", ""
+        if i == "platz":
+            h = str(o.get("platz") or "")
+        elif i == "anleihe":
+            titel = titel_text(o["kurz"], o.get("kupon"), o.get("zinsart", 0), o.get("faellig") or "")
+            reg = f'Registername: {o["reg"]}' if o.get("reg") else ""
+            h = (f'<a class="name-link" href="anleihe.html?isin={esc(o["isin"])}" title="{esc(reg)}" aria-label="Steckbrief {esc(titel)}">'
+                 f'{esc(o["kurz"])}</a>')
+            sub = esc(" · ".join(x for x in (o["isin"], ART[o["art"]] if isinstance(o.get("art"), int) else "", o.get("ccy") or "") if x))
+        elif i == "rendite":
+            h = pct_text(o["rend"]) if isinstance(o.get("rend"), (int, float)) else '<span title="keine Rendite in den Kursdaten">–</span>'
+        elif i == "kupon":
+            h = kupon_text(o.get("kupon"), o.get("zinsart", 0))
+        elif i == "restlaufzeit":
+            if o.get("faellig"):
+                h = restlaufzeit_text((datetime.date.fromisoformat(o["faellig"]) - heute).days / 365.25)
+                sub, p = datum_text(o["faellig"]), "fällig"
+            else:
+                h = "unbefristet"
+        elif i == "kurs":
+            boerse = {"F": "Börse Frankfurt", "T": "Tradegate", "X": "Xetra", "B": "Deutsche Bundesbank"}.get(o.get("boerse") or "", "")
+            t = f'Schlusskurs vom {datum_text(o["kdatum"])}' + (f", {boerse}" if boerse else "") if o.get("kdatum") else ""
+            h = f'<span title="{esc(t)}">{kurs_text(o.get("kurs"))}</span>'
+            if o.get("kdatum") and ctx.get("kstand") and o["kdatum"] != ctx["kstand"]:
+                sub = "vom " + datum_text(o["kdatum"])[:6]
+        elif i == "bonitaet":
+            b = bonitaet_text(o.get("bon"))
+            h = esc(b) if b else '<span title="nicht auf der EZB-Liste">–</span>'
+        elif i == "stueckelung":
+            h = stueckelung_text(o.get("stk"), o.get("ccy") or "")
+        elif i == "volumen":
+            h = volumen_text(o.get("vol"), o.get("ccy") or "")
+        elif i == "handelstage":
+            h = (f'<span title="Umsatz {esc(volumen_text(o.get("um"), o.get("ccy") or ""))}">{o["ht"]}' + (f' von {ctx["tage"]}' if ctx.get("tage") else "") + "</span>") if isinstance(o.get("ht"), int) else "–"
+        elif i == "merken":
+            h = ""
+        cls = " ".join(x for x in ("num" if i in STD_NUM else "", STD_CLS.get(i, ""), "gross" if i in STD_GROSS else "", "sortiert" if fett == i else "") if x)
+        klein = f'<small{f" data-p={chr(34)}{esc(p)}{chr(34)}" if p else ""}>{sub}</small>' if sub else ""
+        if i == "anleihe":
+            zellen.append(f'<th scope="row"{f" class={chr(34)}{cls}{chr(34)}" if cls else ""}>{h}{klein}</th>')
+        else:
+            kopf = "" if i == "merken" else F.get(i, {}).get("kurz", "")
+            zellen.append(f'<td{f" class={chr(34)}{cls}{chr(34)}" if cls else ""}{f" data-l={chr(34)}{esc(kopf)}{chr(34)}" if kopf else ""}>{h}{klein}</td>')
+    return f'<tr data-isin="{esc(o["isin"])}">' + "".join(zellen) + "</tr>"
+
+
+def std_objekt(r, platz, kurse, aus, default=None):
+    """Zeilenobjekt wie T10.zeilen (top10-tabellen.js): Kurs aus kurse-auswahl.json, sonst aus der Zeile; Name/Bonität aus der Zeile
+    (automatische Rangliste) oder anleihen-auswahl.json (Handauswahl)."""
+    default = default or {}
+    k = (kurse.get("kurse") or {}).get(r["isin"])
+    tage = kurse.get("tage") or []
+    a = (aus.get("a") or {}).get(r["isin"]) or [None, None, None, None, ""]
+    art_txt = r.get("art") or default.get("art")
+    art = ARTNR.get(art_txt, a[1])
+    kurs, kdatum = (k[0], tage[k[2]]) if k and isinstance(k[2], int) and k[2] < len(tage) else (r.get("kurs"), r.get("datum") or default.get("date"))
+    rend = (k[1] if isinstance(k[1], (int, float)) else None) if k else r.get("rendite")
+    return {"platz": platz, "isin": r["isin"], "kurz": r.get("kurz") or a[0] or kurz_name(r.get("emittent") or default.get("emittent") or "", art, None, r["isin"]),
+            "reg": a[4] or "", "art": art, "ccy": r.get("cur") or default.get("cur") or a[2] or "", "kupon": r.get("kupon"),
+            "zinsart": 2 if r.get("kupon") == 0 else 0, "faellig": r.get("faellig") or "", "kurs": kurs, "kdatum": kdatum,
+            "boerse": k[3] if k else "", "rend": rend, "bon": r.get("bon", a[3]), "vol": r.get("vol"), "stk": r.get("stk"),
+            "ht": r.get("ht"), "um": r.get("um")}
+
+
+def std_tabelle(zeilen, kstand, tage=0, rang=None):
+    """(thead, tbody-Inhalt) der Ranglisten-Tabelle – wie T10.tabelle: Handelstage nur, wenn jede Zeile sie hat."""
+    ids = ["platz", "anleihe", "rendite", "kupon", "restlaufzeit", "kurs", "bonitaet", "stueckelung", "volumen", "merken"]
+    if zeilen and all(isinstance(o.get("ht"), int) for o in zeilen):
+        ids.append("handelstage")
+        rang = rang or "handelstage"
+    ctx = {"kstand": kstand, "tage": tage}
+    return std_kopf(ids), "".join(std_zeile(o, ids, ctx, rang) for o in zeilen)
+
+
+def js_objekte(text):
+    """JS-Objektliteral der Handauswahl ({ isin: "…", kupon: 2, … }) → Python-Listen; Schlüssel ohne Anführungszeichen."""
+    return json.loads(re.sub(r'([{,]\s*)([A-Za-z_]\w*)\s*:', r'\1"\2":', text))
+
+
+def ersetze_tabelle(html_, auswahl_re, thead, tbody):
+    """In der Tabelle, deren Anfang auswahl_re trifft, Kopf und Rumpf ersetzen (Rumpf: erstes <tbody …>…</tbody>)."""
+    m = re.search(auswahl_re, html_)
+    if not m:
+        return html_, False
+    ende = html_.index("</table>", m.end())
+    block = html_[m.start():ende]
+    block2 = re.sub(r"<thead[^>]*>.*?</thead>", lambda _: thead.replace("<thead>", '<thead class="std-kopf">', 1), block, count=1, flags=re.S)
+    block2 = re.sub(r"(<tbody[^>]*>).*?(</tbody>)", lambda x: x.group(1) + tbody + x.group(2), block2, count=1, flags=re.S)
+    if 'class="kpis atab"' not in block2:
+        block2 = block2.replace('class="kpis"', 'class="kpis atab"', 1)
+    return html_[:m.start()] + block2 + html_[ende:], True
+
+
+def laufzeit(site, seite, datei):
+    """Laufzeit-Seiten: fünf Tabellen – automatische Rangliste, wenn „aktiv“, sonst die Handauswahl aus dem Seitenskript."""
+    pfad = os.path.join(site, seite)
+    html_ = open(pfad, encoding="utf-8").read()
+    D, kurse, aus = lade(site, datei), lade(site, "kurse-auswahl.json"), lade(site, "anleihen-auswahl.json")
+    aktiv = bool(D.get("aktiv") and D.get("gruppen") and D.get("fenster"))
+    if aktiv:
+        gruppen, tage, stand = D["gruppen"], D["fenster"].get("tage") or 0, D.get("stand")
+    else:
+        m = re.search(r"const ANLEIHEN = \{\s*date: \"([0-9-]+)\",\s*gruppen: (\{.*?\n  \})\n\};", html_, re.S)
+        if not m:
+            return warn(f"{seite}: Handauswahl ANLEIHEN nicht gefunden – nichts vorab geschrieben")
+        stand, gruppen, tage = m.group(1), js_objekte(re.sub(r",(\s*[\]}])", r"\1", m.group(2))), 0
+    n = 0
+    for key, reihe in gruppen.items():
+        objs = [std_objekt(r, i + 1, kurse, aus, {"date": stand}) for i, r in enumerate(reihe)]
+        thead, tbody = std_tabelle(objs, kurse.get("stand") or stand, tage)
+        html_, ok = ersetze_tabelle(html_, r'<table class="kpis(?: atab)?" data-gruppe="' + re.escape(key) + '">', thead, tbody)
+        n += len(objs) if ok else 0
+    with open(pfad, "w", encoding="utf-8") as f:
+        f.write(html_)
+    print(f"{seite}: {n} Anleihen in fünf Tabellen fest im HTML ({'automatische Rangliste' if aktiv else 'Handauswahl'})")
 
 
 def laender(site, seite, datei):
+    """Länder-Seiten: Startansicht Deutschland – automatische Rangliste, wenn „aktiv“, sonst die Handauswahl aus dem Seitenskript."""
     pfad = os.path.join(site, seite)
-    D = lade(site, datei)
-    if not (D.get("aktiv") and D.get("gruppen") and D.get("fenster")):
-        return print(f"{seite}: automatische Rangliste noch nicht aktiv – Handauswahl der Seite bleibt (nichts vorab geschrieben)")
-    reihe = D["gruppen"].get("deutschland") or []
     html_ = open(pfad, encoding="utf-8").read()
-    leer = re.compile(r'(<tbody id="kpis-body">)\s*(</tbody>)')
-    if not reihe or not leer.search(html_):
-        return warn(f"{seite}: leere Tabelle #kpis-body oder Gruppe „deutschland“ fehlt – nichts vorab geschrieben")
-    zeilen = "".join(laender_zeile(r, i + 1, D.get("stand")) for i, r in enumerate(reihe))
+    D, kurse, aus = lade(site, datei), lade(site, "kurse-auswahl.json"), lade(site, "anleihen-auswahl.json")
+    if D.get("aktiv") and D.get("gruppen") and D.get("fenster"):
+        reihe, tage, default = D["gruppen"].get("deutschland") or [], D["fenster"].get("tage") or 0, {"date": D.get("stand")}
+    else:
+        m = re.search(r"\n\s*deutschland: \{(.*?)rows: (\[.*?\])\s*\}", html_, re.S)
+        if not m:
+            return warn(f"{seite}: Handauswahl „deutschland“ nicht gefunden – nichts vorab geschrieben")
+        kopf = m.group(1)
+        default = {k: (re.search(k + r': "([^"]*)"', kopf) or [None, None])[1] for k in ("emittent", "art", "cur", "date")}
+        reihe, tage = js_objekte(re.sub(r",(\s*[\]}])", r"\1", m.group(2))), 0
+    objs = [std_objekt(r, i + 1, kurse, aus, default) for i, r in enumerate(reihe)]
+    if not objs:
+        return warn(f"{seite}: keine Zeilen für Deutschland – nichts vorab geschrieben")
+    thead, tbody = std_tabelle(objs, kurse.get("stand") or default.get("date"), tage)
+    html_, ok = ersetze_tabelle(html_, r'<table class="kpis(?: atab)?" id="kpis">', thead, tbody)
+    if not ok:
+        return warn(f"{seite}: Tabelle #kpis nicht gefunden – nichts vorab geschrieben")
     with open(pfad, "w", encoding="utf-8") as f:
-        f.write(leer.sub(lambda m: m.group(1) + zeilen + m.group(2), html_, count=1))
-    print(f"{seite}: {len(reihe)} Anleihen (Deutschland) fest im HTML")
+        f.write(html_)
+    print(f"{seite}: {len(objs)} Anleihen (Deutschland) fest im HTML")
 
 
 def kupon(site, seite="anleihen-kupon.html", datei="top10-anleihen-kupon.json"):
-    """Top 30 nach Kupon (seit 01.10.2026), drei Tabellen: dieselben Zeilen wie das Seitenskript, Spalten wie die Länder-Seiten."""
+    """Top 30 nach Kupon (seit 01.10.2026), drei Tabellen: dieselben Zeilen wie das Seitenskript, Kupon fett (danach ist gerankt)."""
     pfad = os.path.join(site, seite)
-    D = lade(site, datei)
+    D, kurse, aus = lade(site, datei), {}, {}
     html_ = open(pfad, encoding="utf-8").read()
     geschrieben = []
     for key in ("staat", "oeffentlich", "unternehmen"):
         reihe = (D.get("gruppen") or {}).get(key) or []
-        leer = re.compile(r'(<tbody id="kpis-' + key + r'">)\s*(</tbody>)')
-        if not reihe or not leer.search(html_):
-            warn(f"{seite}: leere Tabelle #kpis-{key} oder Gruppe „{key}“ fehlt – nichts vorab geschrieben")
+        if not reihe:
+            warn(f"{seite}: Gruppe „{key}“ fehlt – nichts vorab geschrieben")
             continue
-        zeilen = "".join(laender_zeile(r, i + 1, D.get("stand")) for i, r in enumerate(reihe))
-        html_ = leer.sub(lambda m: m.group(1) + zeilen + m.group(2), html_, count=1)
-        geschrieben.append(f"{len(reihe)} {key}")
+        objs = [std_objekt(r, i + 1, kurse, aus, {"date": D.get("stand")}) for i, r in enumerate(reihe)]
+        thead, tbody = std_tabelle(objs, D.get("stand"), 0, "kupon")
+        html_, ok = ersetze_tabelle(html_, r'<table class="kpis(?: atab)?" data-gruppe="' + key + '">', thead, tbody)
+        if ok:
+            geschrieben.append(f"{len(objs)} {key}")
     if geschrieben:
         with open(pfad, "w", encoding="utf-8") as f:
             f.write(html_)
@@ -463,6 +600,8 @@ def main():
     if not os.path.isdir(site):
         raise SystemExit(f"Ordner nicht gefunden: {site}")
     for name, schritt in (("Broker", lambda: broker(site)), ("ETFs", lambda: etfs(site)),
+                          ("Staatsanleihen nach Laufzeit", lambda: laufzeit(site, "staatsanleihen-laufzeit.html", "top10-staatsanleihen-laufzeit.json")),
+                          ("Unternehmensanleihen nach Laufzeit", lambda: laufzeit(site, "unternehmensanleihen-laufzeit.html", "top10-unternehmensanleihen-laufzeit.json")),
                           ("Staatsanleihen nach Ländern", lambda: laender(site, "anleihen-laender.html", "top10-staatsanleihen-laender.json")),
                           ("Unternehmensanleihen nach Ländern", lambda: laender(site, "unternehmensanleihen-laender.html", "top10-unternehmensanleihen-laender.json")),
                           ("Anleihen nach Kupon", lambda: kupon(site))):

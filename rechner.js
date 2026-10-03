@@ -263,7 +263,13 @@
     // Vorbelegung aus dem Steckbrief (anleihe.html, seit 29.09.2026): ?kurs=99,99&kupon=1,625&faellig=30.09.2026&freq=2&w=USD
     var q = new URLSearchParams(location.search);
     [["kurs", "r1-kurs"], ["kupon", "r1-kupon"], ["faellig", "r1-faellig"], ["nenn", "r1-nenn"]].forEach(function (x) { var w = q.get(x[0]), el = $(x[1]); if (w && el && /^[\d.,]{1,12}$/.test(w)) el.value = w; });
-    var fq = q.get("freq"), fs = $("r1-freq"); if (fs && (fq === "1" || fq === "2")) fs.value = fq;
+    var fq = q.get("freq"), fs = $("r1-freq"); if (fs && /^(1|2|4|12)$/.test(fq || "")) fs.value = fq;   // seit 03.10.2026 auch vierteljährlich und monatlich
+    // Welche Anleihe die Felder füllt (seit 03.10.2026): Titel und ISIN aus dem Steckbrief bzw. der Merkliste
+    var qi = q.get("isin"), qt = q.get("titel"), ab = $("r1-anleihe");
+    if (ab && qi && /^[A-Z]{2}[A-Z0-9]{9}\d$/.test(qi)) {
+      var a = document.createElement("a"); a.href = "anleihe.html?isin=" + encodeURIComponent(qi); a.textContent = qt && qt.length < 90 ? qt : qi;
+      ab.textContent = "Werte übernommen von "; ab.appendChild(a); ab.appendChild(document.createTextNode(" · ISIN " + qi)); ab.hidden = false;
+    }
     var zt = q.get("zt"), fa = q.get("faellig");
     if (zt && fa && /^\d{2}-\d{2}(,\d{2}-\d{2}){0,11}$/.test(zt)) ZT = { faellig: fa, freq: +(fq || 1), days: zt.split(",") };
     var wq = q.get("w"), nn = $("r1-nenn"); if (wq && /^[A-Z]{3}$/.test(wq) && wq !== "EUR") { EINH1 = wq; if (nn && nn.nextElementSibling) nn.nextElementSibling.textContent = wq; }

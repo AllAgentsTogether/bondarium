@@ -14,6 +14,9 @@ Warnt (Deploy läuft weiter) bei:
   - Angeboten in broker.json, deren „bis“-Datum abgelaufen ist oder in weniger als 14 Tagen abläuft
   - Titeln über 60 Zeichen, Beschreibungen unter 70 oder über 160 Zeichen, fehlender Beschreibung,
     keiner oder mehreren <h1>, doppelt vergebenen Titeln oder Beschreibungen
+Anleihen-Tabellen (seit 03.10.2026, Konzept „Einheitliche Anleihen-Angaben“, docs/ANLEIHEN-ANGABEN.md):
+  - Fehler, wenn der Katalog in felder.js kein lesbares JSON ist oder eine Anleihen-Tabelle im ausgelieferten HTML ihre Spalten
+    nicht in der Reihenfolge der Gesamtliste zeigt oder einen Spaltenkopf anders nennt als der Katalog (Kurzform)
 """
 import datetime
 import html as htmllib
@@ -99,6 +102,36 @@ if os.path.isfile(bj):
         rest = (datetime.date.fromisoformat(bis) - heute).days
         if rest < 14:
             warnungen.append(f"broker.json: Angebot bis {bis} " + ("abgelaufen – Eintrag pflegen" if rest < 0 else f"läuft in {rest} Tagen ab"))
+
+# Anleihen-Tabellen gegen den Katalog (felder.js): Reihenfolge der Spalten und Kurzform im Kopf. Erkannt wird eine Anleihen-Tabelle an
+# ihren Spalten-Kennungen (data-col): mindestens vier aus der Gesamtliste. Die Suche nutzt ältere Kennungen (name, rest, bon, stk, vol).
+ALIAS = {"name": "anleihe", "rest": "restlaufzeit", "bon": "bonitaet", "stk": "stueckelung", "vol": "volumen", "faellig": "restlaufzeit", "delta": "seitMerken", "zt": "zinstermin"}
+try:
+    quelle = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "felder.js"), encoding="utf-8").read()
+    KAT = json.loads(re.search(r"/\*KATALOG\*/(.*?)/\*KATALOG-ENDE\*/", quelle, re.S).group(1))
+except (OSError, ValueError, AttributeError) as e:
+    KAT = None
+    fehler.append(f"felder.js: Katalog nicht lesbar ({e})")
+if KAT:
+    REIHE, F = KAT["reihe"], KAT["felder"]
+    for f in sorted(seiten):
+        html = open(os.path.join(site, f), encoding="utf-8").read()
+        for kopf in re.findall(r"<thead[^>]*>(.*?)</thead>", re.sub(r"<script\b[^>]*>.*?</script>", "", html, flags=re.S), re.S):
+            spalten = []
+            for col, inhalt in re.findall(r'<th scope="col" data-col="([^"]+)"[^>]*>(.*?)</th>', kopf, re.S):
+                knopf = re.search(r'<button[^>]*class="sortbtn"[^>]*>(.*?)</button>', inhalt, re.S)
+                text = htmllib.unescape(re.sub(r"<[^>]+>", "", knopf.group(1) if knopf else re.sub(r"<small>.*?</small>", "", inhalt, flags=re.S))).strip()
+                spalten.append((ALIAS.get(col, col), text))
+            bekannt = [(c, t) for c, t in spalten if c in REIHE]
+            if len(bekannt) < 4:
+                continue
+            pos = [REIHE.index(c) for c, _ in bekannt]
+            if pos != sorted(pos):
+                fehler.append(f"{f}: Anleihen-Tabelle mit Spalten {', '.join(c for c, _ in bekannt)} – nicht in der Reihenfolge der Gesamtliste (felder.js)")
+            for c, t in bekannt:
+                soll = F.get(c, {}).get("kurz", "")
+                if t and soll and t != soll:
+                    fehler.append(f"{f}: Spaltenkopf „{t}“ statt „{soll}“ (Katalog felder.js, Feld {c})")
 
 for w in warnungen:
     print(f"::warning::{w}")

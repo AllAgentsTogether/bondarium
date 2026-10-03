@@ -82,7 +82,7 @@
     clear: "Auswahl löschen", landSuche: "Land suchen …", mehr: "Weitere Filter", weniger: "Weniger Filter", alle: "Alle Filter zurücksetzen",
     hint: {
       rendite: d => `Rendite bis Fälligkeit aus dem Schlusskurs vom ${d} (Börse Frankfurt, Bundeswertpapiere: Bundesbank). Ohne Rendite: variabel oder später variabel verzinste, Stufenzins-, Wandel-, Tilgungs-, unbefristete und inflationsindexierte Anleihen (inflationsindexierte Bundeswertpapiere: Realrendite, mit * gekennzeichnet) sowie Kurse ohne Umsatz mit unplausibler Rendite. Grau mit Fragezeichen: Rendite aus einer Taxe ohne Umsatz, die bei unter einem Jahr Restlaufzeit zu weit über Bund liegt (Staat 2, Öffentlich 1,5, Unternehmen 3 Prozentpunkte) – meist ist die Taxe veraltet.`,
-      stk: "Stückelung in der Währung der Anleihe.",
+      stk: "Stückelung = kleinster handelbarer Nennwert (zugleich Mindestanlage), in der Währung der Anleihe.",
       pruef: "Jede Anleihe wird gegen den Kurznamen im ESMA-Register (Kupon und Fälligkeit nach ISO 18774) und gegen ihren Namen geprüft. Weicht etwas ab, bleiben die Registerwerte stehen, der Widerspruch steht daneben („Daten?“) und es gibt keine Rendite – die Quelle wird nicht verändert.",
       vol: "Ausgegebener Nennbetrag in der Währung der Anleihe – 100 Mio. Yen sind also weniger als 100 Mio. Euro. Unter 100 Mio. stellt die Börse oft nur kleine Stückzahlen; wer vor der Fälligkeit verkaufen will, braucht Geduld oder nimmt Abschläge in Kauf. Ein Anhaltspunkt für die Handelbarkeit, keine Garantie.",
       land: "Sitz des Konzerns laut LEI-Register.",
@@ -92,7 +92,7 @@
   };
   // Reihenfolge in der Leiste: die sieben wichtigsten immer sichtbar, fünf seltener gebrauchte hinter „Weitere Filter“ (UX 29.09.2026)
   const LEISTE = [["art", "Art"], ["land", "Land"], ["w", "Währung"], ["rest", "Restlaufzeit"], ["rendite", "Rendite"], ["kupon", "Kupon"], ["bon", "Bonität"],
-    ["zins", "Zinsart", 1], ["kue", "Kündigung", 1], ["vol", "Volumen", 1], ["stk", "Mindestanlage", 1], ["pruef", "Datenprüfung", 1]];
+    ["zins", "Zinsart", 1], ["kue", "Kündigung", 1], ["vol", "Volumen", 1], ["stk", "Stückelung", 1], ["pruef", "Datenprüfung", 1]];
   // Grundfilter (bis 01.10.2026 abends „Solide Auswahl“; Nutzerwunsch): sechs Grundregeln als Vorfilter vor allen übrigen Filtern.
   // Eigener Schalter statt gesetzter Filter: 8 Monate und 10.000 sind keine Filterstufen.
   const GRUNDFILTER =
@@ -101,7 +101,7 @@
     "<li><b>Restlaufzeit mindestens 8 Monate</b> <small>– sonst fressen die Kaufkosten den Ertrag</small></li>" +
     "<li><b>Kündigung: keine, Make-Whole oder kurz vor Fälligkeit</b> <small>– die Anleihe läuft so lange wie versprochen</small></li>" +
     "<li><b>Volumen ab 100 Mio.</b> <small>– meist reger Handel, Verkauf vor Fälligkeit eher möglich</small></li>" +
-    "<li><b>Mindestanlage bis 10.000</b> <small>– in der Währung der Anleihe</small></li>" +
+    "<li><b>Stückelung (Mindestanlage) bis 10.000</b> <small>– in der Währung der Anleihe</small></li>" +
     "<li><b>Währung Euro oder US-Dollar</b></li>" +
     "<li><b>Datenprüfung ohne Befund</b> <small>– Kupon und Fälligkeit stimmen mit dem Register überein</small></li></ol>" +
     '<p class="sol-fuss">Grundregeln, keine Empfehlung: Bonität des Emittenten und Anleihebedingungen prüfst du selbst. Alle übrigen Filter wirken zusätzlich.</p></details>';

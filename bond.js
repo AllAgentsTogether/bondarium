@@ -158,8 +158,9 @@
   }
   function fmtDate(iso) { var m = ISO.exec(String(iso || "")); return m ? m[3] + "." + m[2] + "." + m[1] : "–"; }
   function fmtCoupon(c) { return fmt(c, Math.round(c * 1000) % 10 ? 3 : 2); }
-  function fmtVol(v, einheit) { return (v / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 }) + " " + (einheit || "Mrd."); }
-  function fmtStk(v) { return v.toLocaleString("de-DE", { maximumFractionDigits: 3 }); }   // drei Stellen seit 01.10.2026: Landesanleihen mit Stückelung 0,001 standen als „0“ da
+  // Ohne Zahl „–“ (seit 03.10.2026; vorher „NaN Mrd.“ bzw. Abbruch bei fehlendem Wert)
+  function fmtVol(v, einheit) { return typeof v === "number" && isFinite(v) ? (v / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 }) + " " + (einheit || "Mrd.") : "–"; }
+  function fmtStk(v) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { maximumFractionDigits: 3 }) : "–"; }   // drei Stellen seit 01.10.2026: Landesanleihen mit Stückelung 0,001 standen als „0“ da
 
   MC.bond = {
     DAY: DAY, utc: utc, addDays: addDays, monthsBack: monthsBack, settleDays: settleDays, settle: settle, yearsTo: yearsTo,

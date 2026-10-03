@@ -26,7 +26,8 @@ Schreibt:
   {updated, updatedAt, stand (Kursstand), ezb: {stand, anzahl}, regeln: {min_jahre, max_stueckelung, waehrungen, g10},
    kandidaten: {staat, oeffentlich, unternehmen}, gruppen: {"staat": [Zeile …], "oeffentlich": […], "unternehmen": […]}}
   Zeile wie in update_top10.py, ohne Handelstage und Umsatz, dazu ezb (steht auf der EZB-Liste: true/false):
-  {isin, emittent, art, cur, kupon, zins (Zinszahlungen/Jahr), faellig, kurs, datum, rendite|null, vol, stk, ezb}
+  {isin, emittent, kurz (Kurzname wie auf der Website), bon? (Bonität laut EZB), art, cur, kupon, zins (Zinszahlungen/Jahr), faellig,
+   kurs, datum, rendite|null, vol, stk, ezb}
 
 Auswahl:
   Vorgabe     drei Ranglisten, eine je Art des Index: „Staat“ (Zentralstaaten), „Öffentlich“ (Bundesländer, Regionen,
@@ -61,7 +62,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import get_with_retry, log_err, now_iso, ohne_rendite, today_iso, write_atomic, zins_felder, zinstermine_laden  # noqa: E402
+from _common import bonitaet_stufen, get_with_retry, log_err, now_iso, ohne_rendite, stamm_felder, today_iso, write_atomic, zins_felder, zinstermine_laden  # noqa: E402
 from update_top10 import AKTUELL_TAGE, INFLATION, STAATSNAME, STRIPS, WANDEL, emittent_wm, lade, plus_boersentage  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -123,6 +124,7 @@ def main() -> int:
         return 1
 
     emi, stand = idx.get("emittenten") or [], kd.get("stand")
+    stufen = bonitaet_stufen()      # Bonität laut EZB je ISIN – Spalte „Bonität“ der Tabellen (seit 03.10.2026)
     termine = zinstermine_laden()   # Zinstage laut Börsenliste (update_zinstermine.py)
     ktage, kurse = kd.get("tage") or [], kd["kurse"]
     d_stand = datetime.date.fromisoformat(stand)
@@ -162,7 +164,7 @@ def main() -> int:
         if r[2] == 1:
             em = BEZEICHNUNG.sub("", em).strip() or em
             em = em.title() if em.isupper() and " " in em else em   # „HESSEN, LAND“ → „Hessen, Land“, „NRW.BANK“ bleibt
-        zeilen[gruppe[r[2]]].append({"isin": isin, "emittent": em,
+        zeilen[gruppe[r[2]]].append({"isin": isin, "emittent": em, **stamm_felder(r, emi, stufen),
                                      "art": ART[r[2]], "cur": r[3], "kupon": r[4], **zins_felder(r, termine), "faellig": r[5],
                                      "kurs": k[0], "datum": datum, "rendite": k[1] if isinstance(k[1], (int, float)) else None,
                                      "vol": r[6], "stk": r[7], "ezb": auf_liste})
