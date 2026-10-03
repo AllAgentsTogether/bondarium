@@ -279,7 +279,8 @@ jobs:
         continue-on-error: true
         run: python scripts/update_top10_kupon.py
 
-      # Schlanker Suchindex für anleihen-suche.html (seit 30.09.2026): aus anleihen-index.json + anleihen-kurse.json
+      # Schlanker Suchindex für anleihen-suche.html (seit 30.09.2026): aus anleihen-index.json + anleihen-kurse.json;
+      # schreibt auch anleihen-auswahl.json (Kurzname, Art, Währung, Bonität der Anleihen auf den Seiten, seit 03.10.2026)
       - name: Suchindex bauen
         if: env.VOLL == '1'
         continue-on-error: true
@@ -301,7 +302,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add renditen.json unternehmen.json langlaeufer.json anleihen-index.json anleihen-kurse.json kurse-auswahl.json zinskurve.json realzins.json risikoaufschlaege.json top10-*.json suchindex.json ezb.json wechselkurse.json kurse kurse/jahre.json anleihen newsletter/seiten.json zinstermine bonitaet etf-*.json etf
+          git add renditen.json unternehmen.json langlaeufer.json anleihen-index.json anleihen-kurse.json kurse-auswahl.json zinskurve.json realzins.json risikoaufschlaege.json top10-*.json suchindex.json anleihen-auswahl.json ezb.json wechselkurse.json kurse kurse/jahre.json anleihen newsletter/seiten.json zinstermine bonitaet etf-*.json etf
           if ! git diff --cached --quiet; then
             git commit -m "Daten aktualisiert"
             # Vor dem Push mit dem Remote abgleichen (falls inzwischen gepusht wurde);

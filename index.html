@@ -991,6 +991,28 @@
     #bnd-zinsatlas .zf-go { padding: 6px 0 0; }
   }
   @media (max-width: 360px) { #bnd-broker { padding: 22px 16px 28px; } }
+
+  /* „Sechs Beispiele“ als Standardtabelle (03.10.2026, Konzept „Einheitliche Anleihen-Angaben“; felder.js, .atab in base.css):
+     Name als Zeilenkopf mit ISIN · Art · Währung darunter, Zahlen rechtsbündig, Zinstermin unter dem Kupon, Fälligkeit unter der
+     Restlaufzeit; nichts hervorgehoben (die Auswahl ist nach nichts geordnet). Bis 640 px Karten (base.css). */
+  .itab.atab th, .itab.atab td { text-align: left !important; vertical-align: top; }   /* !important: hebt die zentrierten Spalten der früheren Tabelle auf */
+  .itab.atab th.num, .itab.atab td.num { text-align: right !important; }
+  .itab.atab thead th { vertical-align: bottom; }
+  .itab.atab thead th small { display: block; font-size: var(--fs-label); font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--text); }
+  .itab.atab th:not(:first-child) .sortbtn::after { position: static; margin-left: 3px; }
+  .itab.atab tbody th[scope=row] { font-weight: 600; white-space: normal; }
+  .itab.atab tbody th[scope=row] a.name-link { color: var(--ink); text-decoration: none; }
+  .itab.atab tbody th[scope=row] a.name-link:hover { color: var(--green-text); text-decoration: underline; text-underline-offset: 3px; }
+  .itab.atab small { font-size: var(--fs-label); font-weight: 500; color: var(--text); }
+  .itab.atab tbody:not(.sortiert) tr.gr-ende > :is(td, th) { border-bottom: 2px solid rgba(26,26,25,0.2); }
+  @media (min-width: 941px) { .itab.atab tbody tr:hover > :is(td, th) { background-color: rgba(57,255,20,0.07); } }
+  @media (min-width: 641px) and (max-width: 940px) { .itab.atab { min-width: 720px; } }
+  @media (max-width: 640px) {
+    .table-scroll .itab.atab { min-width: 0; }
+    .itab.atab tbody tr.gr-ende > :is(td, th) { border-bottom: 0; }
+    .itab.atab tbody td, .itab.atab tbody td.num { text-align: left !important; white-space: normal; padding: 0; }   /* Karte: Werte linksbündig unter der Beschriftung */
+    .itab.atab tbody td small { white-space: normal; }
+  }
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Anleihen verstehen und finden", "headline": "Anleihen verstehen und finden", "description": "Anleihen verstehen und finden: Wissen in kurzen Schritten, Renditen seit 1970, die meistgehandelten Anleihen und eine Suche über rund 33.000 Anleihen.", "inLanguage": "de", "isAccessibleForFree": true, "dateModified": "2026-10-02", "publisher": {"@type": "Organization", "name": "Bondarium", "url": "https://www.bondarium.de/"}, "mainEntityOfPage": "https://www.bondarium.de/"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Bondarium","alternateName":"bondarium.de","url":"https://www.bondarium.de/","description":"Anleihen in Perspektive: Staats- und Unternehmensanleihen weltweit, Langläufer, die meistgehandelten Anleihen je Land und Restlaufzeit und eine Suche über alle Anleihen an deutschen Börsen.","inLanguage":"de"}</script>
@@ -1164,19 +1186,19 @@
       <section class="interessant" aria-labelledby="h-int">
         <div class="bt mit-link"><div><p class="kicker dach">Sechs Beispiele</p><h2 id="h-int">Was gerade viel gehandelt wird</h2><p class="bsub"><span id="itab-her">Aus Staats- und Unternehmensanleihen</span> · Kurse und Renditen vom <span id="itab-stand">25.09.2026</span></p></div><a class="more" href="anleihen-suche.html">Zur Anleihen-Suche<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></div>
         <div class="table-scroll">
-          <table class="itab">
-          <thead id="itab-head"><tr><th scope="col" data-col="name"><button type="button" class="sortbtn" data-col="name">Anleihe</button></th><th scope="col" class="isin-sp" data-col="isin"><button type="button" class="sortbtn" data-col="isin">ISIN</button></th><th scope="col" class="num" data-col="rend"><button type="button" class="sortbtn" data-col="rend">Rendite p. a.</button></th><th scope="col" class="num" data-col="kupon"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th><th scope="col" class="num" data-col="kurs"><button type="button" class="sortbtn" data-col="kurs">Kurs</button></th><th scope="col" class="num" data-col="faellig"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th><th scope="col" data-col="art"><button type="button" class="sortbtn" data-col="art">Art</button></th><th scope="col" class="c" data-col="cur"><button type="button" class="sortbtn" data-col="cur">Währung</button></th><th scope="col" class="num" data-col="stk"><button type="button" class="sortbtn" data-col="stk">Stückelung</button></th><th scope="col" class="go-z"><span class="sr-only">Steckbrief</span></th></tr></thead>
-          <tbody>
-            <tr data-isin="DE000BU2Z015"><td class="nm"><a href="anleihe.html?isin=DE000BU2Z015">Bundesanleihe</a><small class="nm-i">DE000BU2Z015</small><small class="nm-f">fällig 15.08.2033</small></td><td class="isin-sp">DE000BU2Z015</td><td class="num ren rend">3,47&nbsp;%</td><td class="num kup">2,60&nbsp;%<small class="zt">am 15.08.</small></td><td class="num kurs">94,76</td><td class="num">15.08.2033</td><td><span class="art">Staat</span></td><td class="c">EUR</td><td class="num">0,01&nbsp;€</td><td class="go-z"><a href="anleihe.html?isin=DE000BU2Z015" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></td></tr>
-            <tr data-isin="AT0000A2HLC4"><td class="nm"><a href="anleihe.html?isin=AT0000A2HLC4">Staatsanleihe Österreich</a><small class="nm-i">AT0000A2HLC4</small><small class="nm-f">fällig 30.06.2120</small></td><td class="isin-sp">AT0000A2HLC4</td><td class="num ren rend">3,34&nbsp;%</td><td class="num kup">0,85&nbsp;%<small class="zt">am 30.06.</small></td><td class="num kurs">28,83</td><td class="num">30.06.2120</td><td><span class="art">Staat</span></td><td class="c">EUR</td><td class="num">1.000&nbsp;€</td><td class="go-z"><a href="anleihe.html?isin=AT0000A2HLC4" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></td></tr>
-            <tr data-isin="US912810TV08"><td class="nm"><a href="anleihe.html?isin=US912810TV08">Staatsanleihe USA</a><small class="nm-i">US912810TV08</small><small class="nm-f">fällig 15.11.2053</small></td><td class="isin-sp">US912810TV08</td><td class="num ren rend">5,42&nbsp;%</td><td class="num kup">4,75&nbsp;%<small class="zt">15.05. · 15.11.</small></td><td class="num kurs">91,52</td><td class="num">15.11.2053</td><td><span class="art">Staat</span></td><td class="c">USD</td><td class="num">100 $</td><td class="go-z"><a href="anleihe.html?isin=US912810TV08" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></td></tr>
-            <tr data-isin="IT0005647265"><td class="nm"><a href="anleihe.html?isin=IT0005647265">Staatsanleihe Italien</a><small class="nm-i">IT0005647265</small><small class="nm-f">fällig 15.07.2032</small></td><td class="isin-sp">IT0005647265</td><td class="num ren rend">3,93&nbsp;%</td><td class="num kup">3,25&nbsp;%<small class="zt">15.01. · 15.07.</small></td><td class="num kurs">96,55</td><td class="num">15.07.2032</td><td><span class="art">Staat</span></td><td class="c">EUR</td><td class="num">1.000&nbsp;€</td><td class="go-z"><a href="anleihe.html?isin=IT0005647265" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></td></tr>
-            <tr data-isin="DE000A3LH6U5"><td class="nm"><a href="anleihe.html?isin=DE000A3LH6U5">Mercedes-Benz</a><small class="nm-i">DE000A3LH6U5</small><small class="nm-f">fällig 30.05.2031</small></td><td class="isin-sp">DE000A3LH6U5</td><td class="num ren rend">3,97&nbsp;%</td><td class="num kup">3,70&nbsp;%<small class="zt">am 30.05.</small></td><td class="num kurs">98,86</td><td class="num">30.05.2031</td><td><span class="art u">Unternehmen</span></td><td class="c">EUR</td><td class="num">1.000&nbsp;€</td><td class="go-z"><a href="anleihe.html?isin=DE000A3LH6U5" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></td></tr>
-            <tr data-isin="XS2383886947"><td class="nm"><a href="anleihe.html?isin=XS2383886947">Lanxess</a><small class="nm-i">XS2383886947</small><small class="nm-f">fällig 08.09.2027</small></td><td class="isin-sp">XS2383886947</td><td class="num ren rend">4,34&nbsp;%</td><td class="num kup">0&nbsp;%<small class="zt">kein Zinstermin</small></td><td class="num kurs">96,07</td><td class="num">08.09.2027</td><td><span class="art u">Unternehmen</span></td><td class="c">EUR</td><td class="num">1.000&nbsp;€</td><td class="go-z"><a href="anleihe.html?isin=XS2383886947" tabindex="-1" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></td></tr>
-          </tbody>
+          <table class="itab atab">
+<thead><tr><th scope="col" data-col="anleihe" class="" title="Kurzname: bei Staaten das Land, sonst der Emittent ohne Rechtsform. Ein Klick öffnet den Steckbrief."><button type="button" class="sortbtn" data-col="anleihe">Anleihe</button><small>ISIN · Art · Währung</small></th><th scope="col" data-col="rendite" class="num" title="Rendite bis Fälligkeit in % pro Jahr – von uns aus dem Schlusskurs berechnet (Bundeswertpapiere: Rendite der Deutschen Bundesbank)"><button type="button" class="sortbtn" data-col="rendite">Rendite</button></th><th scope="col" data-col="kupon" class="num" title="Zinssatz pro Jahr auf den Nennwert"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th><th scope="col" data-col="restlaufzeit" class="num" title="Zeit von heute bis zur Fälligkeit, darunter der Fälligkeitstag"><button type="button" class="sortbtn" data-col="restlaufzeit">Restlaufzeit</button><small>Fälligkeit</small></th><th scope="col" data-col="kurs" class="num" title="Schlusskurs in % des Nennwerts"><button type="button" class="sortbtn" data-col="kurs">Kurs</button></th><th scope="col" data-col="bonitaet" class="" title="Bonität laut EZB: Spanne der Notenskala, abgelesen aus der EZB-Liste notenbankfähiger Sicherheiten (keine Ratings der Agenturen). „–“: nicht auf der EZB-Liste."><button type="button" class="sortbtn" data-col="bonitaet">Bonität</button></th><th scope="col" data-col="stueckelung" class="num" title="Kleinster handelbarer Nennwert (zugleich Mindestanlage), in der Währung der Anleihe"><button type="button" class="sortbtn" data-col="stueckelung">Stückelung</button></th><th scope="col" data-col="merken" class="merkspalte"><span class="sr-only">Merken</span></th></tr></thead>
+<tbody>
+<tr data-isin="DE000BU2Z015"><th scope="row"><a class="name-link" href="anleihe.html?isin=DE000BU2Z015" title="Registername: Bundesrep.Deutschland Anl.v.2023 (2033)" aria-label="Steckbrief Deutschland 2,60 % 2033">Deutschland</a><small>DE000BU2Z015 · Staat · EUR</small></th><td class="num gross" data-l="Rendite">3,36 %</td><td class="num gross" data-l="Kupon">2,60 %<small data-p="Zinsen">am 15.08.</small></td><td class="num gross" data-l="Restlaufzeit">6,9 Jahre<small data-p="fällig">15.08.2033</small></td><td class="num" data-l="Kurs"><span title="Schlusskurs vom 01.10.2026, Börse Frankfurt">95,387 %</span></td><td data-l="Bonität">AAA bis A−</td><td class="num" data-l="Stückelung">0,01 EUR</td><td class="merkspalte"></td></tr>
+<tr data-isin="AT0000A2HLC4"><th scope="row"><a class="name-link" href="anleihe.html?isin=AT0000A2HLC4" title="Registername: Österreich, Republik EO-Medium-Term Nts 2020(2120)" aria-label="Steckbrief Österreich 0,85 % 2120">Österreich</a><small>AT0000A2HLC4 · Staat · EUR</small></th><td class="num gross" data-l="Rendite">3,26 %</td><td class="num gross" data-l="Kupon">0,85 %<small data-p="Zinsen">am 30.06.</small></td><td class="num gross" data-l="Restlaufzeit">93,7 Jahre<small data-p="fällig">30.06.2120</small></td><td class="num" data-l="Kurs"><span title="Schlusskurs vom 01.10.2026, Börse Frankfurt">29,72 %</span></td><td data-l="Bonität">AAA bis A−</td><td class="num" data-l="Stückelung">1.000 EUR</td><td class="merkspalte"></td></tr>
+<tr class="gr-ende" data-isin="US912810TV08"><th scope="row"><a class="name-link" href="anleihe.html?isin=US912810TV08" title="Registername: United States of America DL-Bonds 2023(53)" aria-label="Steckbrief USA 4,75 % 2053">USA</a><small>US912810TV08 · Staat · USD</small></th><td class="num gross" data-l="Rendite">5,78 %</td><td class="num gross" data-l="Kupon">4,75 %<small data-p="Zinsen">15.05. · 15.11.</small></td><td class="num gross" data-l="Restlaufzeit">27,1 Jahre<small data-p="fällig">15.11.2053</small></td><td class="num" data-l="Kurs"><span title="Schlusskurs vom 01.10.2026, Börse Frankfurt">86,97 %</span></td><td data-l="Bonität"><span title="nicht auf der EZB-Liste">–</span></td><td class="num" data-l="Stückelung">100 USD</td><td class="merkspalte"></td></tr>
+<tr data-isin="IT0005647265"><th scope="row"><a class="name-link" href="anleihe.html?isin=IT0005647265" title="Registername: Italien, Republik EO-B.T.P. 2025(32)" aria-label="Steckbrief Italien 3,25 % 2032">Italien</a><small>IT0005647265 · Staat · EUR</small></th><td class="num gross" data-l="Rendite">4,16 %</td><td class="num gross" data-l="Kupon">3,25 %<small data-p="Zinsen">15.01. · 15.07.</small></td><td class="num gross" data-l="Restlaufzeit">5,8 Jahre<small data-p="fällig">15.07.2032</small></td><td class="num" data-l="Kurs"><span title="Schlusskurs vom 01.10.2026, Börse Frankfurt">95,555 %</span></td><td data-l="Bonität">AAA bis A−</td><td class="num" data-l="Stückelung">1.000 EUR</td><td class="merkspalte"></td></tr>
+<tr data-isin="DE000A3LH6U5"><th scope="row"><a class="name-link" href="anleihe.html?isin=DE000A3LH6U5" title="Registername: Mercedes-Benz Int.Fin. B.V. EO-Medium-Term Notes 2023(31)" aria-label="Steckbrief Mercedes-Benz International Finance 3,70 % 2031">Mercedes-Benz International Finance</a><small>DE000A3LH6U5 · Unternehmen · EUR</small></th><td class="num gross" data-l="Rendite">4,10 %</td><td class="num gross" data-l="Kupon">3,70 %<small data-p="Zinsen">am 30.05.</small></td><td class="num gross" data-l="Restlaufzeit">4,7 Jahre<small data-p="fällig">30.05.2031</small></td><td class="num" data-l="Kurs"><span title="Schlusskurs vom 01.10.2026, Börse Frankfurt">98,31 %</span></td><td data-l="Bonität">AAA bis A−</td><td class="num" data-l="Stückelung">1.000 EUR</td><td class="merkspalte"></td></tr>
+<tr data-isin="XS2383886947"><th scope="row"><a class="name-link" href="anleihe.html?isin=XS2383886947" title="Registername: LANXESS AG Medium-Term Nts 2021(27/27)" aria-label="Steckbrief LANXESS Nullkupon 2027">LANXESS</a><small>XS2383886947 · Unternehmen · EUR</small></th><td class="num gross" data-l="Rendite">5,18 %</td><td class="num gross" data-l="Kupon">Nullkupon<small data-p="Zinsen">kein Zinstermin</small></td><td class="num gross" data-l="Restlaufzeit">11 Monate<small data-p="fällig">08.09.2027</small></td><td class="num" data-l="Kurs"><span title="Schlusskurs vom 01.10.2026, Börse Frankfurt">95,43 %</span></td><td data-l="Bonität">BBB+ bis BBB−</td><td class="num" data-l="Stückelung">1.000 EUR</td><td class="merkspalte"></td></tr>
+</tbody>
           </table>
         </div>
-        <p class="itab-note">Rendite p. a. = jährliche Rendite bis zur Fälligkeit beim Kauf zum aktuellen Kurs. Stückelung = kleinster handelbarer Nennwert. Unter dem Kupon steht der Zinstermin – der Tag, an dem die Zinsen gezahlt werden (laut Deutscher Börse). <a href="begriffe.html#rendite">Mehr im Glossar →</a></p>
+        <p class="itab-note">Rendite = Rendite bis zur Fälligkeit pro Jahr beim Kauf zum Schlusskurs. Unter dem Kupon steht der Zinstermin (laut Deutscher Börse), unter der Restlaufzeit der Fälligkeitstag. Stückelung = kleinster handelbarer Nennwert (Mindestanlage). Bonität laut EZB. <a href="begriffe.html#rendite">Mehr im Glossar →</a></p>
       </section>
 
       <section class="konkret" aria-labelledby="h-konkret">
@@ -1230,6 +1252,8 @@
 </div>
 
 <script src="site.js"></script>
+<script src="felder.js"></script>
+<script src="konto.js"></script>
 <script>
 // Rückfall, falls site.js nicht lädt (Netzfehler): Minimalform, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
 window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, minus: function (s) { return String(s).replace(/^-/, "\u2212"); }, zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\u2212") : "\u2013"; }, load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, hoverWrap: function (s) { return s; }, navInit: function () {} };
@@ -1262,6 +1286,12 @@ var ZT = (function () {
     var l = termine(x).map(txt);
     return '<small class="zt">' + (l.length > 2 ? (x.zins === 12 ? "monatlich" : "vierteljährlich") : l.length > 1 ? l.join(" · ") : "am " + l[0]) + "</small>";
   }
+  function text(x) {   // dieselbe Angabe als Text (Standardtabelle, felder.js: zweite Zeile unter dem Kupon)
+    if (!(x.kupon > 0)) return "kein Zinstermin";
+    if (!bekannt(x)) return "";
+    var l = termine(x).map(txt);
+    return l.length > 2 ? (x.zins === 12 ? "monatlich" : "vierteljährlich") : l.length > 1 ? l.join(" · ") : "am " + l[0];
+  }
   function karte(x) {   // Hero-Karte: Kalenderblatt mit dem nächsten Zinstermin, Zinsen als Betrag je 1.000 Nennwert
     if (!(x.kupon > 0)) return '<span class="hk-ztt"><b>Nullkupon: keine laufenden Zinsen</b>' + (x.kurs < 100 ? "<span>Ertrag aus dem Kurs unter 100\u00a0%</span>" : "") + "</span>";
     if (!bekannt(x)) return '<span class="hk-ztt"><b>' + kupon(x) + "</b></span>";
@@ -1271,7 +1301,7 @@ var ZT = (function () {
       (x.zins > 2 ? "Zinsen " + (x.zins === 12 ? "jeden Monat" : "alle drei Monate") : x.zins === 2 ? "Zinsen am " + txt(l[0]) + " und " + txt(l[1]) : "Zinsen jedes Jahr am " + txt(l[0])) + "</b><span>" +
       (x.zins >= 2 ? "jeweils " + betrag : betrag + " Nennwert") + "</span></span>";
   }
-  return { zeile: zeile, karte: karte, kup: kup };
+  return { zeile: zeile, text: text, karte: karte, kup: kup };
 })();
 
 
@@ -1279,30 +1309,28 @@ var ZT = (function () {
 // Sechs Beispiele (01.10.2026, Nutzerwunsch): jede Stunde zufällig drei Staats- und drei Unternehmensanleihen aus den
 // Top-10-Listen (je Art aus „nach Ländern“ und „nach Laufzeit“, keine ETFs), möglichst verschiedene Emittenten.
 // Zufall an der Stundennummer wie bei der Hero-Karte: innerhalb einer Stunde sieht jeder dieselben sechs.
+// Seit 03.10.2026 Standardtabelle (felder.js, Konzept „Einheitliche Anleihen-Angaben“): Anleihe (ISIN · Art · Währung) · Rendite · Kupon
+// (Zinstermin darunter) · Restlaufzeit (Fälligkeit darunter) · Kurs · Bonität · Stückelung · Merken; am Handy Karten.
 // Rückfall, falls die Listen nicht laden: die festen Zeilen im HTML mit Tageskursen aus kurse-auswahl.json (scripts/update_kurse.py).
 (function () {
-  var body = document.querySelector(".itab tbody"), st = document.getElementById("itab-stand");
-  if (!body || !MC.load) return;
-  var PFEIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg>';
-  var SYM = { EUR: "€", USD: "$", GBP: "£" };
-  var LAND = { "Bundesrepublik Deutschland": "Deutschland", "Hellenische Republik": "Griechenland", "Vereinigte Staaten": "USA", "Vereinigtes Königreich": "Großbritannien" };
-  function name(x) {   // Staaten kurz als Land („Republik Österreich“ → „Österreich“), damit neun Spalten nebeneinander passen
-    var n = x.emittent || x.isin;
-    return x.art === "Unternehmen" ? n : LAND[n] || n.replace(/^(Republik|Königreich( der)?) /, "");
-  }
+  var table = document.querySelector("table.itab"), st = document.getElementById("itab-stand");
+  if (!table || !MC.load || !MC.felder) return;
+  var IDS = ["anleihe", "rendite", "kupon", "restlaufzeit", "kurs", "bonitaet", "stueckelung"].concat(MC.konto ? ["merken"] : []);
+  var SORT = { col: null, dir: 1 }, ZEILEN = [], KSTAND = "";
   function tageskurse() {
     MC.load("kurse-auswahl.json").then(function (d) {
       if (st && d.stand && MC.datum) st.textContent = MC.datum(d.stand);
       var K = d.kurse || {};
-      body.querySelectorAll("tr[data-isin]").forEach(function (tr) {
+      table.querySelectorAll("tbody tr[data-isin]").forEach(function (tr) {
         var k = K[tr.getAttribute("data-isin")]; if (!k) return;
-        tr.querySelector(".kurs").textContent = MC.zahl(k[0], 2);
-        tr.querySelector(".rend").textContent = typeof k[1] === "number" ? MC.zahl(k[1], 2) + "\u00a0%" : "–";
+        var kurs = tr.querySelector('td[data-l="Kurs"] span'), rend = tr.querySelector('td[data-l="Rendite"]');
+        if (kurs) kurs.textContent = MC.felder.kurs(k[0]);
+        if (rend) rend.textContent = MC.felder.pct(typeof k[1] === "number" ? k[1] : null);
       });
     }).catch(function (e) { console.warn("Tageskurse nicht geladen:", e); });
   }
   function laden(namen) {
-    return Promise.all(namen.map(function (n) { return MC.load(n + ".json").catch(function () { return null; }); })).then(function (ds) {
+    return Promise.all(namen.map(function (n) { return MC.load(n).catch(function () { return null; }); })).then(function (ds) {
       var pool = {}, stand = "";
       ds.forEach(function (d) {
         if (!d || !d.gruppen) return;
@@ -1321,31 +1349,47 @@ var ZT = (function () {
   function ziehe(liste, n, rnd) {   // n zufällige, erst verschiedene Emittenten, dann auffüllen
     var a = liste.slice(), wahl = [], em = {};
     for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(rnd() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
-    a.forEach(function (x) { if (wahl.length < n && !em[x.emittent]) { em[x.emittent] = 1; wahl.push(x); } });
+    a.forEach(function (x) { var e = x.kurz || x.emittent; if (wahl.length < n && !em[e]) { em[e] = 1; wahl.push(x); } });
     a.forEach(function (x) { if (wahl.length < n && wahl.indexOf(x) < 0) wahl.push(x); });
     return wahl;
   }
-  function zeile(x, ende) {
-    var e = MC.esc, isin = e(x.isin), url = "anleihe.html?isin=" + encodeURIComponent(x.isin), d = x.faellig.split("-"), f = d[2] + "." + d[1] + "." + d[0];
-    var u = x.art === "Unternehmen", stk = typeof x.stk === "number" ? MC.zahl(x.stk, x.stk % 1 ? (x.stk < 0.01 ? 3 : 2) : 0) + "\u00a0" + e(SYM[x.cur] || x.cur || "") : "–";
-    return '<tr data-isin="' + isin + '"' + (ende ? ' class="gr-ende"' : "") + '><td class="nm"><a href="' + url + '" title="' + e(x.emittent || "") + '">' + e(name(x)) + '</a><small class="nm-i">' + isin + '</small><small class="nm-f">fällig ' + f + '</small></td>' +
-      '<td class="isin-sp">' + isin + '</td><td class="num ren rend">' + MC.zahl(x.rendite, 2) + '\u00a0%</td><td class="num kup">' + (x.kupon > 0 ? ZT.kup(x.kupon) : "0") + '\u00a0%' + ZT.zeile(x) + '</td>' +
-      '<td class="num kurs">' + MC.zahl(x.kurs, 2) + '</td><td class="num">' + f + '</td><td><span class="art' + (u ? ' u">Unternehmen' : '">Staat') + '</span></td>' +
-      '<td class="c">' + e(x.cur || "") + '</td><td class="num">' + stk + '</td><td class="go-z"><a href="' + url + '" tabindex="-1" aria-hidden="true">' + PFEIL + '</a></td></tr>';
+  function objekt(x, i) {   // Zeile der Top-10-Datei → Zeilenobjekt der Standardtabelle
+    return { platz: i + 1, isin: x.isin, kurz: x.kurz || x.emittent || x.isin, reg: "", art: x.art === "Unternehmen" ? 2 : x.art === "Öffentlich" ? 1 : 0,
+      ccy: x.cur, kupon: x.kupon, zinsart: x.kupon === 0 ? 2 : 0, faellig: x.faellig, kurs: x.kurs, kdatum: x.datum, rend: x.rendite,
+      rendGrund: "keine Rendite in den Kursdaten", bon: x.bon, stk: x.stk, vol: x.vol, quelle: x };
   }
-  Promise.all([laden(["top10-staatsanleihen-laender", "top10-staatsanleihen-laufzeit"]), laden(["top10-unternehmensanleihen-laender", "top10-unternehmensanleihen-laufzeit"])]).then(function (r) {
+  function zeichne() {
+    var html = MC.felder.tabelle(IDS, ZEILEN, { sort: SORT, sortieren: true,
+      ctx: { kstand: KSTAND, kuponZeile: function (o) { return ZT.text(o.quelle); } },
+      zeilenKlasse: function (o) { return !SORT.col && o.platz === 3 ? "gr-ende" : ""; } });   // Trennstrich Staat/Unternehmen nur in der Ausgangsreihenfolge
+    if (table.tHead) table.tHead.remove();
+    [].slice.call(table.tBodies).forEach(function (b) { b.remove(); });
+    table.insertAdjacentHTML("beforeend", html);
+  }
+  MC.felder.sortierbar(table, SORT, zeichne);
+  // Dateinamen ausgeschrieben (seit 03.10.2026): So bettet scripts/inline_data.py die vier Listen beim Veröffentlichen ein, und die Tabelle
+  // erscheint gleich mit den aktuellen Anleihen – vorher stand kurz die feste Auswahl vom 25.09.2026 da und wechselte dann
+  Promise.all([laden(["top10-staatsanleihen-laender.json", "top10-staatsanleihen-laufzeit.json"]), laden(["top10-unternehmensanleihen-laender.json", "top10-unternehmensanleihen-laufzeit.json"])]).then(function (r) {
     if (r[0].liste.length < 3 || r[1].liste.length < 3) return tageskurse();
     var her = document.getElementById("itab-her"); if (her) her.textContent = "Aus den Top 10 · stündlich neu gewählt";
-    var stand = r[0].stand > r[1].stand ? r[0].stand : r[1].stand;
-    if (st && stand && MC.datum) st.textContent = MC.datum(stand);
+    KSTAND = r[0].stand > r[1].stand ? r[0].stand : r[1].stand;
+    if (st && KSTAND && MC.datum) st.textContent = MC.datum(KSTAND);
     function zeige() {
       var h = Math.floor(Date.now() / 3600000), s = ziehe(r[0].liste, 3, zufall(h)), u = ziehe(r[1].liste, 3, zufall(h + 7919));
-      body.innerHTML = s.map(function (x, i) { return zeile(x, i === 2); }).concat(u.map(function (x) { return zeile(x, false); })).join("");
-      body.dispatchEvent(new Event("itab-neu"));   // Sortierung (unten) übernimmt die neuen Zeilen
+      ZEILEN = s.concat(u).map(objekt);
+      zeichne();
       setTimeout(zeige, 3600000 - Date.now() % 3600000 + 500);   // zur vollen Stunde wechseln, auch bei offener Seite
     }
     zeige();
   }).catch(tageskurse);
+  // Ganze Zeile öffnet den Steckbrief (UX-Review 30.09.2026); Links, Knöpfe und markierter Text behalten ihr Verhalten
+  table.addEventListener("click", function (e) {
+    if (e.target.closest("a, button, thead")) return;
+    var tr = e.target.closest("tbody tr[data-isin]"); if (!tr) return;
+    if (window.getSelection && String(window.getSelection()).length) return;
+    var url = "anleihe.html?isin=" + encodeURIComponent(tr.getAttribute("data-isin"));
+    if (e.metaKey || e.ctrlKey) window.open(url, "_blank"); else location.href = url;
+  });
 })();
 
 // Hero-Karte (01.10.2026): jede Stunde zufällig eine Anleihe aus allen Einträgen der vier Top-10-Listen (keine ETFs).
@@ -1390,53 +1434,6 @@ var ZT = (function () {
     zeige();
   });
 })();
-
-// Sortieren per Klick auf den Spaltentitel (wie auf den Datenseiten): liest die Zellen der Zeile, auch die täglich
-// eingetragenen Kurse und Renditen; bei Gleichstand bleibt die Ausgangsreihenfolge (data-rank)
-(function () {
-  var head = document.getElementById("itab-head"), body = document.querySelector(".itab tbody");
-  if (!head || !body) return;
-  var COLS = ["name", "isin", "rend", "kupon", "kurs", "faellig", "art", "cur", "stk"], col = null, dir = 1;
-  var rows;
-  function neu() {   // Zeilen (neu) einlesen – die sechs Beispiele wechseln stündlich (01.10.2026); eine gewählte Sortierung bleibt
-    rows = Array.prototype.slice.call(body.querySelectorAll("tr"));
-    rows.forEach(function (tr, i) { tr.setAttribute("data-rank", i); });
-    if (col) render();
-  }
-  function val(tr, c) {
-    var td = tr.children[COLS.indexOf(c)], t = (c === "name" ? tr.querySelector("td.nm a") : td).textContent.trim();
-    if (c === "name" || c === "isin" || c === "art" || c === "cur") return t;
-    if (c === "faellig") { var m = t.match(/(\d{2})\.(\d{2})\.(\d{4})/); return m ? +(m[3] + m[2] + m[1]) : Infinity; }
-    var n = parseFloat(t.replace(/\./g, "").replace(",", ".").replace("−", "-")); return isNaN(n) ? Infinity : n;
-  }
-  function render() {
-    rows.slice().sort(function (a, b) {
-      var x = val(a, col), y = val(b, col);
-      var r = typeof x === "string" ? x.localeCompare(y, "de", { numeric: true }) : x - y;
-      return (r || a.getAttribute("data-rank") - b.getAttribute("data-rank")) * dir;
-    }).forEach(function (tr) { body.appendChild(tr); });
-    body.classList.add("sortiert");   // Trennstrich Staat/Unternehmen gilt nur in der Ausgangsreihenfolge
-    head.querySelectorAll("th[data-col]").forEach(function (th) {
-      if (th.getAttribute("data-col") === col) th.setAttribute("aria-sort", dir > 0 ? "ascending" : "descending"); else th.removeAttribute("aria-sort");
-    });
-  }
-  // Ganze Zeile öffnet den Steckbrief (UX-Review 30.09.2026); Links, Knöpfe und markierter Text behalten ihr Verhalten
-  body.addEventListener("click", function (e) {
-    if (e.target.closest("a, button")) return;
-    var tr = e.target.closest("tr[data-isin]"); if (!tr) return;
-    if (window.getSelection && String(window.getSelection()).length) return;
-    var url = "anleihe.html?isin=" + encodeURIComponent(tr.getAttribute("data-isin"));
-    if (e.metaKey || e.ctrlKey) window.open(url, "_blank"); else location.href = url;
-  });
-  neu(); body.addEventListener("itab-neu", neu);
-  head.addEventListener("click", function (e) {
-    var b = e.target.closest(".sortbtn"); if (!b) return;
-    var c = b.getAttribute("data-col");
-    if (col === c) dir = -dir; else { col = c; dir = 1; }
-    render();
-  });
-})();
-
 
 // Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
 MC.navInit();
