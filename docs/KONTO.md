@@ -355,7 +355,7 @@ Meldungen nennen Tatsachen aus den Daten, „Passend zu deiner Merkliste“ zeig
 
 | Ansicht | Inhalt |
 |---|---|
-| Start (`konto.html`) | „Seit deinem letzten Besuch“ (ausgelöste Meldungen, Termine der nächsten 14 Tage, neue Seiten), Meine Merkliste (größte Veränderung seit dem Merken), Mein Zins-Blick, Nächste Termine (.ics), „Zuletzt angesehen“ (nur wenn eingeschaltet) |
+| Start (`konto.html`) | „Seit deinem letzten Besuch“ (ausgelöste Meldungen, Termine der nächsten 14 Tage, neue Seiten), Meine Merkliste (größte Veränderung seit dem Merken), Mein Zins-Blick, Nächste Termine (.ics), „Zuletzt angesehen“ (nur wenn eingeschaltet). Die Termine – in „Seit deinem letzten Besuch“ und „Nächste Termine“ – kommen seit 03.10.2026 aus allen Musterdepots (Nutzerwunsch; vorher aus der Merkliste), berechnet wie in der Depot-Tabelle; die Meldung „Zinstermin steht an“ prüft weiter die Merkliste |
 | Merkliste (`#merkliste`) | Pillen Alle / Anleihen / ETFs / eigene Listen; Vergleichen (bis vier, mit Kursverlauf), ISINs einfügen, Filter (filter.js), Teilen/PDF/CSV; Tabelle: Ankreuzfeld, Name mit Notiz, Rendite, Kurs mit Vortag, Kupon, Fälligkeit, „Seit dem Merken“, nächster Zinstermin, „+“ (Musterdepot), „…“ (Notiz, Liste, Meldung, Rechner, Kalender, Entfernen); darunter die gemerkten ETFs |
 | Rechnen und planen (`#planen`, auch `#depot`, `#erinnerung`) | „Mein Depot“ (Musterdepots); die Voreinstellungen darunter am 02.10.2026 auf Nutzerwunsch entfernt – nicht neu einbauen |
 | Meldungen und Konto (`#meldungen`) | Meldungen, Wochenbrief-Schalter, Mitnehmen (PDF, CSV, .ics), Konto: E-Mail ändern, Passwort ändern, angemeldete Geräte, „Zuletzt angesehen“, Daten herunterladen, Konto löschen |
