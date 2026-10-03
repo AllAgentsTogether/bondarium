@@ -49,6 +49,14 @@
 .fhint { font-size: 12px; line-height: 1.5; color: var(--muted); margin: 0; }
 .freset { font: inherit; font-size: 13px; color: var(--line); background: none; border: 0; padding: 0; cursor: pointer; }
 .freset:hover { text-decoration: underline; }
+/* Von/Bis (seit 03.10.2026): Fälligkeit im Feld „Restlaufzeit“, Spanne im Feld „Rendite“ – über den Stufen */
+.fber { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 6px 14px 10px; margin-bottom: 4px; border-bottom: 1px solid var(--rule); font-size: 13px; }
+.fber-l { font-weight: 600; color: var(--ink); }
+.fber-s { color: var(--text); }
+.fber input { width: 84px; font: inherit; font-size: 14px; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 8px; font-variant-numeric: tabular-nums; }
+.fber input:focus-visible { outline: 2px solid var(--line); outline-offset: 1px; }
+.fber input[aria-invalid="true"] { border-color: #A2561C; background: #FFF6EE; }
+.fber-h { flex-basis: 100%; margin: 2px 0 0; font-size: 12px; line-height: 1.45; color: var(--muted); }
 @media (max-width: 600px) {
   .fgrp { position: static; }
   .fpanel, .fpanel.rechts { left: 0; right: 0; max-width: none; width: auto; }
@@ -57,6 +65,7 @@
 @media (pointer: coarse) {
   .fbtn, .fmehr, .fclear, .freset { min-height: 44px; display: inline-flex; align-items: center; }
   .fopt { min-height: 44px; }
+  .fber input { min-height: 44px; font-size: 16px; }   /* 16 px: iOS vergrößert sonst beim Antippen */
 }
 .solide { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 14px; max-width: 1000px; }
 .sol-btn { font: inherit; font-size: 13px; line-height: 1.2; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.18); border-radius: 999px; padding: 7px 14px 7px 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 9px; }

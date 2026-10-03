@@ -75,7 +75,10 @@
   #treffer { margin-top: 6px; }
   /* Unter der Liste: Trefferhinweis wiederholen, Rückweg zu Suche und Filtern */
   .status-unten { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin-top: 14px; font-size: 14px; color: var(--text); }
-  .status-unten[hidden] { display: none; }   /* sonst stand nach dem Leeren des Suchfelds die alte Trefferzahl weiter da (Nutzertest 03.10.2026) */
+  .status-unten[hidden] { display: none; }
+  .status-unten .mehr-z { font: inherit; font-weight: 600; color: var(--ink); background: #fff; border: 1px solid var(--green-text); border-radius: 999px; padding: 7px 14px; cursor: pointer; }   /* „Weitere 200 anzeigen“ (seit 03.10.2026) */
+  .status-unten .mehr-z:hover { background: var(--green-tint-2); }
+  .status-unten .mehr-z:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }   /* sonst stand nach dem Leeren des Suchfelds die alte Trefferzahl weiter da (Nutzertest 03.10.2026) */
   .status-unten a { font-weight: 600; color: var(--green-text); text-decoration: none; white-space: nowrap; }
   .status-unten a:hover { text-decoration: underline; }
   /* Name öffnet die Kurzansicht (vier Kennzahlen, seit 25.09.2026 statt Link zur Börse); „Alle Details“ führt zum Steckbrief anleihe.html */
@@ -97,7 +100,7 @@
   .kpis td.num[title] { cursor: help; }
   /* Tippflächen am Touch-Gerät ≥ 44 px (Filter-Pillen, Beispiele, Schalter; Sortierknöpfe regelt base.css) */
   @media (pointer: coarse) {
-    .bsp-l a, .status-unten a { min-height: 44px; display: inline-flex; align-items: center; }
+    .bsp-l a, .status-unten a, .status-unten .mehr-z { min-height: 44px; display: inline-flex; align-items: center; }
   }
   @media (prefers-reduced-motion: no-preference) {  html.sanft { scroll-behavior: smooth; } }
   @media (hover: hover) { .kpis tbody tr.zeile:hover > * { background: rgba(57,255,20,0.07); } }   /* nur mit Maus – am Handy blieb die Zeile nach dem Tipp grün (28.09.2026) */
@@ -356,9 +359,10 @@ const T = {
   ready: n => `<strong>${n} Anleihen</strong> mit aktuellem Kurs an deutschen Börsen – Suchbegriff eingeben oder Filter wählen.`,
   loading: "Die Suche wird geladen …", relevanz: " · sortiert nach Übereinstimmung mit dem Suchbegriff",
   hits: n => n === 1 ? "<strong>1 Treffer</strong>" : `<strong>${n} Treffer</strong>`,
-  unten: (n, max) => n > max ? `Das waren die ersten ${max} von ${n.toLocaleString("de-DE")} Treffern – mit Suchbegriff oder Filtern eingrenzen.` : `${n.toLocaleString("de-DE")} Treffer.`,
+  unten: (n, z) => n > z ? `Angezeigt: ${z.toLocaleString("de-DE")} von ${n.toLocaleString("de-DE")} Treffern.` : `${n.toLocaleString("de-DE")} Treffer.`,
+  mehr: n => `Weitere ${n.toLocaleString("de-DE")} anzeigen`,
   hoch: "↑ Zur Suche und den Filtern",
-  capped: max => ` – die ersten ${max} werden angezeigt. Mit Suchbegriff oder Filtern eingrenzen.`,
+  capped: z => ` – angezeigt in Schritten von ${z.toLocaleString("de-DE")}, weitere am Ende der Liste.`,
   none: "Keine Anleihe gefunden. Tipp: Emittent oder Land und Jahr eingeben, z. B. „Bund 2030“, „Siemens 2029“ oder „Italien 2035“ – oder weniger Wörter und Filter lockern.",
   renditeSort: " · nach Rendite sortiert: zuerst Kurse mit Umsatz am Kurstag, dann Kurse ohne Umsatz (Taxen)",
   error: "Die Anleihe-Daten sind gerade nicht erreichbar. Bitte später erneut versuchen.",
@@ -594,21 +598,28 @@ function zeige() {
   sortiere(hits);
   // Genau ein Treffer für eine ISIN (Link von einer anderen Seite): Kurzansicht gleich öffnen
   if (hits.length === 1 && /^[A-Z]{2}[A-Z0-9]{9}\d$/i.test(S.q.trim()) && !S.zu) S.offen.add(hits[0][0]);
-  box.querySelector("tbody").innerHTML = hits.slice(0, MAX).map(zeile).join("");
+  // Erst 200 Zeilen, weitere in Schritten von 200 über den Knopf unter der Liste (seit 03.10.2026, Nutzertest: vorher war bei 200 Schluss)
+  S.hits = hits; S.zeig = Math.min(MAX, hits.length);
+  box.querySelector("tbody").innerHTML = hits.slice(0, S.zeig).map(zeile).join("");
   status.innerHTML = hits.length ? L("hits")(hits.length.toLocaleString("de-DE")) + (S.col === "rel" && hits.length > 1 ? L("relevanz") : S.col === "rendite" && hits.length > 1 ? L("renditeSort") : "") + (hits.length > MAX ? L("capped")(MAX) : "") : L("none");
-  // Unter langen Listen: Hinweis wiederholen und Rückweg nach oben
-  unten.hidden = hits.length <= 10;
-  if (!unten.hidden) unten.innerHTML = `<span>${L("unten")(hits.length, MAX)}</span><a href="#q" class="hoch">${L("hoch")}</a>`;
+  untenZeile();
   for (const th of box.querySelectorAll("thead th[data-col]")) {
     if (th.dataset.col === S.col) th.setAttribute("aria-sort", S.dir > 0 ? "ascending" : "descending");
     else th.removeAttribute("aria-sort");
   }
+}
+// Unter langen Listen: Stand, Knopf „Weitere … anzeigen“ und Rückweg nach oben
+function untenZeile() {
+  const unten = document.getElementById("status2"), n = S.hits ? S.hits.length : 0;
+  unten.hidden = n <= 10;
+  if (!unten.hidden) unten.innerHTML = `<span>${L("unten")(n, S.zeig)}</span>` + (S.zeig < n ? `<button type="button" class="mehr-z">${L("mehr")(Math.min(MAX, n - S.zeig))}</button>` : "") + `<a href="#q" class="hoch">${L("hoch")}</a>`;
 }
 function merkeURL() {
   const p = new URLSearchParams();
   if (S.q.trim()) p.set("q", S.q.trim());
   if (F.solide) p.set("solide", "1");
   for (const f of FILTER) if (F.sel[f.k].size) p.set(f.k, [...F.sel[f.k]].join(","));
+  [["rest", "fv", "fb"], ["rendite", "rv", "rb"]].forEach(([k, a, b]) => { const [v, t] = F.bereichTexte(k); if (v) p.set(a, v); if (t) p.set(b, t); });   // Von/Bis (seit 03.10.2026)
   if (S.eigen) p.set("sort", (S.dir < 0 ? "-" : "") + S.col);   // seit 03.10.2026: Sortierung bleibt beim Zurück erhalten
   const qs = p.toString().replace(/%2C/g, ",");
   const neu = location.pathname + (qs ? "?" + qs : "");
@@ -666,6 +677,7 @@ function laden() {
   S.q = p.get("q") || "";
   F.solide = p.get("solide") === "1";
   for (const f of FILTER) (p.get(f.k) || "").split(",").map(v => v.trim()).filter(Boolean).forEach(v => F.sel[f.k].add(f.k === "w" || f.k === "land" ? v.toUpperCase() : v));
+  F.bereichLesen("rest", p.get("fv"), p.get("fb")); F.bereichLesen("rendite", p.get("rv"), p.get("rb"));
   const so = /^(-?)(name|rendite|kurs|kupon|faellig|rest|art|isin|cur|vol|stk)$/.exec(p.get("sort") || "");
   if (so) { S.col = so[2]; S.dir = so[1] ? -1 : 1; S.eigen = true; }
   const input = document.getElementById("q");
@@ -684,6 +696,14 @@ function laden() {
   if (F.nebenAktiv()) F.mehr(true);
 
   document.getElementById("status2").addEventListener("click", e => {
+    if (e.target.closest(".mehr-z") && S.hits) {   // nächste 200 Zeilen anhängen; der Fokus springt auf die erste neue Zeile
+      const tb = document.querySelector("#treffer tbody"), von = S.zeig;
+      S.zeig = Math.min(S.hits.length, S.zeig + MAX);
+      tb.insertAdjacentHTML("beforeend", S.hits.slice(von, S.zeig).map(zeile).join(""));
+      const erste = tb.querySelectorAll("tr.zeile")[von]; if (erste) { const b = erste.querySelector(".zbtn"); if (b) b.focus(); }
+      untenZeile(); if (MC.wischPruefen) MC.wischPruefen();
+      return;
+    }
     if (!e.target.closest(".hoch")) return;
     e.preventDefault(); document.querySelector(".suche").scrollIntoView({ block: "start" });
   });
@@ -720,7 +740,7 @@ function laden() {
   // Daten erst bei Bedarf (seit 30.09.2026): Suchbegriff oder Filter in der Adresse → sofort; sonst beim ersten Fokus, Tippen oder
   // Filterklick, spätestens im Leerlauf nach dem Anzeigen (nicht bei „Datensparen“ oder langsamer Verbindung)
   const p0 = new URLSearchParams(location.search);
-  if (p0.get("q") || p0.get("solide") || FILTER.some(f => p0.get(f.k))) laden();
+  if (p0.get("q") || p0.get("solide") || FILTER.some(f => p0.get(f.k)) || ["fv", "fb", "rv", "rb"].some(k => p0.get(k))) laden();
   else {
     const c = navigator.connection || {};
     if (!c.saveData && !/(^|-)2g$|3g/.test(c.effectiveType || "")) window.addEventListener("load", () => (window.requestIdleCallback || (f => setTimeout(f, 1500)))(() => laden(), { timeout: 4000 }));

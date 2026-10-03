@@ -31,7 +31,9 @@
      F.auswerten(KEYS, SOL, pass)   → { hits: [Zeilenindex …], zahl: [Map je Filter] } – innerhalb eines Filters „oder“, zwischen
                           den Filtern „und“; gezählt wird je Option mit allen ÜBRIGEN Filtern; pass(i) = zusätzlicher Vorfilter
      F.zeigen(zahl)       Zahlen, Häkchen und Knopf-Beschriftungen aktualisieren
-     F.aktiv()            Filter mit Auswahl; F.gesetzt() = irgendein Filter oder der Grundfilter
+     F.aktiv()            Filter mit Auswahl; F.gesetzt() = irgendein Filter, ein Von/Bis-Feld oder der Grundfilter
+     F.bereichLesen(k, von, bis), F.bereichTexte(k)   Von/Bis-Felder („rest“ = Fälligkeit, „rendite“) setzen bzw. als Text lesen
+                          (für die Adresse); F.keys(r) hängt dafür Fälligkeit und angezeigte Rendite an die Filterschlüssel an
      F.zuruecksetzen()    alles löschen (ohne onChange)
      F.mehr(auf)          „Weitere Filter“ auf- oder zuklappen */
 (function (MC) {
@@ -51,6 +53,29 @@
   // Schlüssel sind meist ein Wert, beim Filter Kündigung auch ein Array (trifft, wenn einer der Werte gewählt ist)
   const trifft = (sel, v) => Array.isArray(v) ? v.some(x => sel.has(x)) : sel.has(v);
   const zaehle = (m, v) => { if (Array.isArray(v)) { for (const x of v) m.set(x, (m.get(x) || 0) + 1); } else m.set(v, (m.get(v) || 0) + 1); };
+
+  // Von/Bis (seit 03.10.2026, Nutzertest: „Restlaufzeit nur in Stufen, 2–5 Jahre nicht einstellbar“, „Juni–August 2027 muss man
+  // selbst suchen“): Fälligkeit als Zeitraum im Feld Restlaufzeit, Rendite als Spanne im Feld Rendite – zusätzlich zu den Stufen.
+  const BEREICHE = { rest: { datum: true, label: "Fällig von", ph: ["MM.JJJJ", "MM.JJJJ"], hint: "Monat und Jahr (06.2027), nur das Jahr (2027) oder ein Tag (15.06.2027)." },
+    rendite: { datum: false, label: "Rendite von", ph: ["z. B. 3", "z. B. 5"], hint: "In Prozent, z. B. von 3 bis 4,5. Anleihen ohne Rendite fallen dann heraus." } };
+  const letzterTag = (j, m) => new Date(Date.UTC(j, m, 0)).getUTCDate();
+  // „2027“, „06.2027“, „6/2027“, „15.06.2027“ oder ISO → ISO-Datum; bis = letzter Tag des Jahres bzw. Monats; "" = leer, null = ungültig
+  function datumLesen(t, bis) {
+    t = String(t == null ? "" : t).trim(); if (!t) return "";
+    let m = /^(\d{4})(?:-(\d{1,2})(?:-(\d{1,2}))?)?$/.exec(t), j, mo = null, d = null;
+    if (m) { j = +m[1]; if (m[2]) mo = +m[2]; if (m[3]) d = +m[3]; }
+    else if ((m = /^(?:(\d{1,2})[./])?(\d{1,2})[./](\d{4})$/.exec(t))) { j = +m[3]; mo = +m[2]; if (m[1]) d = +m[1]; }
+    else return null;
+    if (j < 1900 || j > 2200 || (mo != null && (mo < 1 || mo > 12))) return null;
+    if (mo == null) { mo = bis ? 12 : 1; d = bis ? 31 : 1; }
+    else if (d == null) d = bis ? letzterTag(j, mo) : 1;
+    else if (d < 1 || d > letzterTag(j, mo)) return null;
+    return j + "-" + String(mo).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+  }
+  function zahlLesen(t) {
+    t = String(t == null ? "" : t).trim().replace(/[\s%]/g, "").replace(",", "."); if (!t) return "";
+    return /^-?\d+(\.\d+)?$/.test(t) ? +t : null;
+  }
 
   const ZINS = ["fest", "variabel", "Nullkupon"];
   const TXT = {
@@ -128,6 +153,34 @@
     const sel = {};
     FILTER.forEach((f, i) => { f.i = i; sel[f.k] = new Set(); f.label = (LEISTE.find(l => l[0] === f.k) || [])[1] || f.k; });
     const aktiv = () => FILTER.filter(f => sel[f.k].size);
+    // Von/Bis: von/bis = gelesener Wert ("" = leer), tv/tb = eingegebener Text. Hinter den Filterschlüsseln einer Zeile stehen
+    // Fälligkeit (ISO) und angezeigte Rendite (keys(r) unten).
+    const bereich = { rest: { von: "", bis: "", tv: "", tb: "" }, rendite: { von: "", bis: "", tv: "", tb: "" } };
+    const bereichAn = k => bereich[k].von !== "" || bereich[k].bis !== "";
+    const bereichIrgend = () => Object.keys(bereich).some(bereichAn);
+    const NF = FILTER.length;
+    function imBereich(ks) {
+      const f = bereich.rest, y = bereich.rendite;
+      if (f.von !== "" || f.bis !== "") { const d = ks[NF]; if (!d || (f.von !== "" && d < f.von) || (f.bis !== "" && d > f.bis)) return false; }
+      if (y.von !== "" || y.bis !== "") {
+        const v = ks[NF + 1]; if (typeof v !== "number") return false;
+        const w = Math.round(v * 100) / 100;   // wie angezeigt (zwei Stellen)
+        if ((y.von !== "" && w < y.von) || (y.bis !== "" && w > y.bis)) return false;
+      }
+      return true;
+    }
+    function bereichSetzen(k, w, text) {   // w: "von" | "bis"; ungültig → leer (Feld wird markiert)
+      const b = bereich[k], v = BEREICHE[k].datum ? datumLesen(text, w === "bis") : zahlLesen(text);
+      b[w === "von" ? "tv" : "tb"] = String(text == null ? "" : text).trim();
+      b[w] = v === null ? "" : v;
+      return v !== null;
+    }
+    function bereichLeeren(k) { Object.assign(bereich[k], { von: "", bis: "", tv: "", tb: "" }); const g = grp(k); if (g) g.querySelectorAll(".fber input").forEach(i => { i.value = ""; i.removeAttribute("aria-invalid"); }); }
+    function bereichText(k) {
+      const b = bereich[k], e = BEREICHE[k].datum ? "" : "\u00a0%";
+      const v = b.von !== "" ? b.tv : "", t = b.bis !== "" ? b.tb : "";
+      return v && t ? `${v}–${t}${e}` : v ? `ab ${v}${e}` : t ? `bis ${t}${e}` : "";
+    }
     // Grundregeln: Restlaufzeit ab 8 Monaten, Kündigung keine/Make-Whole/kurz vor Fälligkeit, Volumen ab 100 Mio., Stückelung bis
     // 10.000 (Währung der Anleihe), Euro oder US-Dollar, Datenprüfung ohne Befund
     const solideRegel = r => {
@@ -156,8 +209,11 @@
         opts = [...n.keys()].sort((a, b) => n.get(b) - n.get(a) || f.name(a).localeCompare(f.name(b), "de")).map(v => [v, f.name(v)]);
       } else opts = f.opts();
       f.namen = new Map(opts.map(o => [o[0], o[1]]));
+      const B = BEREICHE[f.k], bf = bereich[f.k];
+      const feld = (w, i) => `<input type="text" class="fber-${w}" inputmode="${B.datum ? "numeric" : "decimal"}" autocomplete="off" placeholder="${B.ph[i]}" value="${esc(w === "von" ? bf.tv : bf.tb)}" aria-label="${B.datum ? (w === "von" ? "Fällig ab" : "Fällig bis") + " (Monat und Jahr)" : (w === "von" ? "Rendite ab" : "Rendite bis") + " in Prozent"}">`;
       p.innerHTML =
         (f.k === "land" ? `<input type="search" class="fsuche" placeholder="${TXT.landSuche}" aria-label="${TXT.landSuche}">` : "") +
+        (B ? `<div class="fber" data-b="${f.k}"><span class="fber-l">${B.label}</span>${feld("von", 0)}<span class="fber-s">bis</span>${feld("bis", 1)}${B.datum ? "" : '<span class="fber-s">%</span>'}<p class="fber-h">${esc(B.hint)}</p></div>` : "") +
         `<fieldset><legend class="sr-only">${esc(f.label)}</legend><div class="fopts">` +
         opts.map(([v, t, d]) => `<label class="fopt" data-v="${esc(v)}" data-n="${esc(norm(t))}"><input type="checkbox" value="${esc(v)}"><span class="ftxt">${esc(t)}${d ? `<small>${esc(d)}</small>` : ""}</span><span class="fnum"></span></label>`).join("") +
         `</div></fieldset>` +
@@ -176,6 +232,7 @@
         if (solide && !SOL[i]) continue;
         if (pass && !pass(i)) continue;
         const ks = KEYS[i];
+        if (!imBereich(ks)) continue;
         let fehl = -1, n = 0;
         for (const [fi, s] of akt) if (!trifft(s, ks[fi])) { fehl = fi; if (++n > 1) break; }
         if (n > 1) continue;
@@ -194,11 +251,12 @@
           o.querySelector(".fnum").textContent = n.toLocaleString("de-DE");
           o.classList.toggle("leer", n === 0 && !s.has(v));
         }
-        const b = g.querySelector(".fbtn"), val = g.querySelector(".fval");
-        b.classList.toggle("on", s.size > 0);
-        val.textContent = s.size === 1 ? ((f.kurz || (v => (f.namen && f.namen.get(v)) || v))([...s][0])) : s.size > 1 ? `${s.size} gewählt` : "";   // „Kupon · 2“ las sich wie 2 % (Nutzertest 03.10.2026)
+        const b = g.querySelector(".fbtn"), val = g.querySelector(".fval"), ber = BEREICHE[f.k] ? bereichText(f.k) : "";
+        b.classList.toggle("on", s.size > 0 || !!ber);
+        const stufen = s.size === 1 ? ((f.kurz || (v => (f.namen && f.namen.get(v)) || v))([...s][0])) : s.size > 1 ? `${s.size} gewählt` : "";   // „Kupon · 2“ las sich wie 2 % (Nutzertest 03.10.2026)
+        val.textContent = [ber, stufen].filter(Boolean).join(" · ");
       }
-      fclear.hidden = !aktiv().length && !solide;
+      fclear.hidden = !aktiv().length && !solide && !bereichIrgend();
       // Schalter „Weitere Filter“: Zahl der aktiven Filter im ausgeblendeten Teil
       const nNeben = FILTER.filter(f => sel[f.k].size && grp(f.k).classList.contains("neben")).length;
       fmehr.querySelector(".fanz").textContent = nNeben ? String(nNeben) : "";
@@ -223,7 +281,7 @@
       if (!auf && offen && grp(offen).classList.contains("neben")) panel(offen, false);
     }
     function setSolide(v) { solide = !!v; sol.setAttribute("aria-pressed", String(solide)); }
-    function zuruecksetzen() { FILTER.forEach(f => sel[f.k].clear()); setSolide(false); if (offen) panel(offen, false); }
+    function zuruecksetzen() { FILTER.forEach(f => sel[f.k].clear()); Object.keys(bereich).forEach(bereichLeeren); setSolide(false); if (offen) panel(offen, false); }
     const holen = () => opt.laden ? opt.laden() : Promise.resolve();
 
     // ---------- Bedienung ----------
@@ -235,16 +293,28 @@
       if (b && !bereit()) { const k = b.parentElement.dataset.f; holen().then(() => { if (bereit()) panel(k, true); }); return; }
       if (b) { const k = b.parentElement.dataset.f; panel(k, b.getAttribute("aria-expanded") !== "true"); return; }
       const r = e.target.closest(".freset");
-      if (r) { sel[r.closest(".fgrp").dataset.f].clear(); onChange(); return; }
+      if (r) { const k = r.closest(".fgrp").dataset.f; sel[k].clear(); if (bereich[k]) bereichLeeren(k); onChange(); return; }
       if (e.target.closest(".fclear")) { zuruecksetzen(); onChange(); }
     });
+    function berEingabe(i, nurGueltig) {
+      const k = i.closest(".fber").dataset.b, w = i.classList.contains("fber-von") ? "von" : "bis";
+      const v = BEREICHE[k].datum ? datumLesen(i.value, w === "bis") : zahlLesen(i.value);
+      if (nurGueltig && v === null) return;
+      const ok = bereichSetzen(k, w, i.value);
+      if (ok) i.removeAttribute("aria-invalid"); else i.setAttribute("aria-invalid", "true");
+      onChange();
+    }
+    let berT = 0;
+    leiste.addEventListener("keydown", e => { const i = e.target.closest && e.target.closest(".fber input"); if (i && e.key === "Enter") { e.preventDefault(); clearTimeout(berT); berEingabe(i); } });
     leiste.addEventListener("change", e => {
+      const i = e.target.closest(".fber input"); if (i) { clearTimeout(berT); berEingabe(i); return; }
       const c = e.target.closest(".fopt input"); if (!c) return;
       const s = sel[c.closest(".fgrp").dataset.f];
       if (c.checked) s.add(c.value); else s.delete(c.value);
       onChange();
     });
     leiste.addEventListener("input", e => {
+      const i = e.target.closest(".fber input"); if (i) { clearTimeout(berT); berT = setTimeout(() => berEingabe(i, true), 700); return; }
       const s = e.target.closest(".fsuche"); if (!s) return;
       const q = norm(s.value.trim());
       for (const o of s.parentElement.querySelectorAll(".fopt")) o.hidden = q !== "" && !o.dataset.n.includes(q) && !o.dataset.v.toLowerCase().includes(q);
@@ -256,8 +326,10 @@
     });
 
     return {
-      FILTER, sel, keys: r => FILTER.map(f => f.key(r)), solideRegel, daten, auswerten, zeigen, aktiv, mehr, zuruecksetzen,
-      gesetzt: () => aktiv().length > 0 || solide,
+      FILTER, sel, keys: r => FILTER.map(f => f.key(r)).concat([r[5] || "", rendite(r)]), solideRegel, daten, auswerten, zeigen, aktiv, mehr, zuruecksetzen,
+      gesetzt: () => aktiv().length > 0 || solide || bereichIrgend(),
+      bereichLesen: (k, von, bis) => { if (!bereich[k]) return; bereichSetzen(k, "von", von || ""); bereichSetzen(k, "bis", bis || ""); },
+      bereichTexte: k => bereich[k] ? [bereich[k].von !== "" ? bereich[k].tv : "", bereich[k].bis !== "" ? bereich[k].tb : ""] : ["", ""],
       nebenAktiv: () => FILTER.some(f => sel[f.k].size && grp(f.k).classList.contains("neben")),
       get solide() { return solide; }, set solide(v) { setSolide(v); },
     };

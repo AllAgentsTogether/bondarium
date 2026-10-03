@@ -7,6 +7,11 @@ merken sich Anleihen. „Mein Depot“ ist ein Musterdepot: gemerkte Anleihen mi
 die Zahlungen als Schaubild. Beides liegt auf dem Server und ist auf jedem Gerät da, auf dem man sich anmeldet. Es
 ist ein Planspiel, kein Wertpapierdepot: keine echten Bestände, keine Kaufpreise, keine Orders.
 
+**Name seit 03.10.2026 (Nutzerentscheid nach dem Nutzertest 2):** Der Teil mit den Musterdepots heißt überall
+„Musterdepots“ – Reiter, Überschrift, Methodik, Datenschutztext, Knöpfe „Zum Musterdepot hinzufügen“, „Im Musterdepot“,
+„Aus dem Musterdepot entfernen“ und „Musterdepots öffnen“ (Steckbrief, Merkliste, Start). „Mein Depot“ steht nur noch in
+älteren Abschnitten dieser Datei und in Code-Kommentaren; die Adressen `#planen`, `#depot`, `#erinnerung` bleiben.
+
 ## Bausteine
 
 | Datei | Aufgabe |

@@ -558,7 +558,7 @@ function depotFeld(a) {
     `<form class="dep-pop-z" id="dep-form" novalidate><div><label for="dep-nenn">Nennwert</label><span class="dep-eur"><input id="dep-nenn" type="text" inputmode="numeric" autocomplete="off" maxlength="11"><span>${MC.esc(W)}</span></span></div>` +
     `<button type="submit" class="go" id="dep-ok">Hinzufügen</button></form>` +
     `<p class="dep-pop-h" id="dep-h" role="status" aria-live="polite"></p>` +
-    `<p class="dep-pop-f" id="dep-f" hidden><button type="button" id="dep-weg">Aus dem Depot entfernen</button><a href="konto.html#depot">Mein Depot öffnen</a></p>`;
+    `<p class="dep-pop-f" id="dep-f" hidden><button type="button" id="dep-weg">Aus dem Musterdepot entfernen</button><a href="konto.html#depot">Musterdepots öffnen</a></p>`;
   idz.appendChild(pop);
   const $ = id => document.getElementById(id), feld = $("dep-nenn"), ok = $("dep-ok"), h = $("dep-h"), wahl = $("dep-muster");
   // Musterdepots aus konto.js: [[Nummer, Name, [[ISIN, Nennwert, Zeit], …]], …]; ohne eigenes Depot [[0, "Musterdepot 1", []]]
@@ -574,10 +574,10 @@ function depotFeld(a) {
     const drin = liegtIn();
     b.disabled = !!a.warum;
     b.setAttribute("aria-pressed", String(drin.length > 0));
-    b.innerHTML = (drin.length ? HAKEN : PLUS) + `<span>${drin.length ? "Im Depot" : "Zum Depot hinzufügen"}</span>`;
+    b.innerHTML = (drin.length ? HAKEN : PLUS) + `<span>${drin.length ? "Im Musterdepot" : "Zum Musterdepot hinzufügen"}</span>`;
     b.title = a.warum ? `Lässt sich dem Musterdepot nicht hinzufügen: ${a.warum}` : drin.length ? "Nennwert ändern, in ein weiteres Musterdepot legen oder entfernen" : "Zu einem deiner Musterdepots hinzufügen";
     info.innerHTML = !drin.length ? "" : (drin.length === 1 ? `Liegt mit ${betrag(nennIn(drin[0]))} in „${MC.esc(drin[0][1])}“`
-      : `Liegt in ${drin.length} Musterdepots: ${drin.map(d => `„${MC.esc(d[1])}“ (${betrag(nennIn(d))})`).join(", ")}`) + ' · <a href="konto.html#depot">Mein Depot öffnen</a>';
+      : `Liegt in ${drin.length} Musterdepots: ${drin.map(d => `„${MC.esc(d[1])}“ (${betrag(nennIn(d))})`).join(", ")}`) + ' · <a href="konto.html#depot">Musterdepots öffnen</a>';
   }
   function hinweis(text, fehler) { h.className = "dep-pop-h" + (fehler ? " fehler" : ""); h.textContent = text; }
   function zu(fokus) { pop.hidden = true; b.setAttribute("aria-expanded", "false"); if (fokus) b.focus(); }
@@ -586,7 +586,7 @@ function depotFeld(a) {
     const d = gewaehlt(), n = nennIn(d), rb = lies(($("nenn") || {}).value || "");
     $("dep-pop-t").textContent = n ? "Nennwert im Musterdepot" : "Zum Musterdepot hinzufügen";
     ok.textContent = n ? "Speichern" : "Hinzufügen"; ok.disabled = !fx;
-    $("dep-f").hidden = !n; $("dep-weg").textContent = depots().length > 1 ? "Aus diesem Musterdepot entfernen" : "Aus dem Depot entfernen";
+    $("dep-f").hidden = !n; $("dep-weg").textContent = depots().length > 1 ? "Aus diesem Musterdepot entfernen" : "Aus dem Musterdepot entfernen";
     feld.value = MC.zahl(n || (rb > 0 ? rb : stk && stk >= 1000 ? Math.ceil(stk) : stk >= 1 && Number.isInteger(stk) ? Math.ceil(5000 / stk) * stk : 5000), 0);
     if (fx) hinweis(n ? stkText : `Vorschlag: der Betrag aus dem Rechenbeispiel. ${stkText}`.trim());
   }
@@ -606,7 +606,7 @@ function depotFeld(a) {
       fuelle();
     }, () => { fx = true; fuelle(); });   // ohne Kursdatei entscheidet Mein Depot (die Anleihe steht dort mit Grund)
   }
-  const fehler = (j, d) => j && j.status === "voll" ? `„${d[1]}“ ist voll (${j.max || 10} Anleihen). Wähl ein anderes Musterdepot oder entferne in Mein Depot erst eine Anleihe.`
+  const fehler = (j, d) => j && j.status === "voll" ? `„${d[1]}“ ist voll (${j.max || 10} Anleihen). Wähl ein anderes Musterdepot oder entferne dort erst eine Anleihe.`
     : j && j.status === "netz" ? "Keine Verbindung zum Server. Bitte prüfe deine Internetverbindung." : "Das hat nicht geklappt. Bitte versuch es noch einmal.";
   function sende(n) {
     const d = gewaehlt();
@@ -927,7 +927,7 @@ function zeige(r, k, meta) {
     (rechnerUrl ? `<li><a href="${rechnerUrl}" id="zum-rechner"><span>Im Rechner öffnen<small>Kurs, Kupon, Fälligkeit und Nennwert übernommen</small></span><span class="pf" aria-hidden="true">→</span></a></li>` : "") +
     `<li><a href="erste-anleihe.html"><span>So kaufst du diese Anleihe<small>Depot, Order mit Limit, Kosten im Broker-Vergleich</small></span><span class="pf" aria-hidden="true">→</span></a></li>` +
     `<li><a href="${suche}"><span>Anleihen mit gleichen Merkmalen<small>${MC.esc([T.art[art], ccy, T.zinsChip[zinsart]].join(" · "))}</small></span><span class="pf" aria-hidden="true">→</span></a></li>` +
-    (MC.konto ? `<li><a href="konto.html"><span>Mein Bondarium<small>Merkliste und Depot ansehen</small></span><span class="pf" aria-hidden="true">→</span></a></li>` : "");
+    (MC.konto ? `<li><a href="konto.html"><span>Mein Bondarium<small>Merkliste und Musterdepots ansehen</small></span><span class="pf" aria-hidden="true">→</span></a></li>` : "");
 
   // --- Kursverlauf ---
   const el = document.getElementById("kv");

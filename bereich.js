@@ -426,7 +426,7 @@
       const st = K.stand(), seit = st.besuch ? isoVon(st.besuch) : "", zeilen = [];
       meldungenAktiv(D).forEach(m => { const s = meldungStand(m, D); zeilen.push([true, `<b>Meldung: ${esc(s.wer)}</b> – ${esc(s.was)}. ${s.stand.replace(/<\/?em>/g, "")}`, '<button type="button" data-zu="meldungen">Meldungen</button>']); });
       termine(40).filter(t => tageBis(t.tag) <= 14).slice(0, 3).forEach(t => { const n = tageBis(t.tag);
-        zeilen.push([false, `<b>${t.art === "Fälligkeit" ? "Fälligkeit" : "Zinstermin"} ${n <= 0 ? "heute" : n === 1 ? "morgen" : `in ${n} Tagen`}:</b> ${esc(titel(t.o))} ${t.art === "Fälligkeit" ? "wird" : "zahlt"} am ${esc(MC.tag(t.tag))} ${t.art === "Fälligkeit" ? "zurückgezahlt" : t.art === "Zinstermin" ? "Zinsen" : "Zinsen und den Nennwert"}.`, '<button type="button" data-zu="depot">Mein Depot</button>']); });
+        zeilen.push([false, `<b>${t.art === "Fälligkeit" ? "Fälligkeit" : "Zinstermin"} ${n <= 0 ? "heute" : n === 1 ? "morgen" : `in ${n} Tagen`}:</b> ${esc(titel(t.o))} ${t.art === "Fälligkeit" ? "wird" : "zahlt"} am ${esc(MC.tag(t.tag))} ${t.art === "Fälligkeit" ? "zurückgezahlt" : t.art === "Zinstermin" ? "Zinsen" : "Zinsen und den Nennwert"}.`, '<button type="button" data-zu="depot">Musterdepots</button>']); });
       const ab = seit || (() => { const d = new Date(HEUTE + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 14); return d.toISOString().slice(0, 10); })();
       Object.entries(st.neueSeiten || {}).filter(([f, tag]) => tag >= ab && SEITEN_TITEL[f.replace(/\.html$/, "")] && !gelesen(f.replace(/\.html$/, ""))).slice(0, 2)
         .forEach(([f]) => zeilen.push([false, `<b>Neu auf Bondarium:</b> ${esc(SEITEN_TITEL[f.replace(/\.html$/, "")])}`, `<a href="${esc(f)}">Lesen</a>`]));

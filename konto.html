@@ -587,7 +587,7 @@
             <th scope="col" data-col="faellig" class="num"><button type="button" class="sortbtn" data-col="faellig">Fälligkeit</button></th>
             <th scope="col" data-col="delta" class="num"><button type="button" class="sortbtn" data-col="delta" title="Veränderung der Rendite seit dem Tag, an dem du die Anleihe gemerkt hast, in Prozentpunkten">Seit dem Merken</button></th>
             <th scope="col" data-col="zt" class="num"><button type="button" class="sortbtn" data-col="zt" title="Nächster Zinstermin laut Deutscher Börse">Nächster Zinstermin</button></th>
-            <th scope="col"><span class="sr-only">Zum Depot hinzufügen, Notiz und mehr</span></th>
+            <th scope="col"><span class="sr-only">Zum Musterdepot hinzufügen, Notiz und mehr</span></th>
           </tr></thead>
           <tbody id="zeilen"></tbody>
         </table>
@@ -608,15 +608,15 @@
       </div>
       <div id="a-lernen" role="tabpanel" aria-labelledby="t-lernen" hidden></div>
       <div id="a-planen" role="tabpanel" aria-labelledby="t-planen" hidden>
-      <section class="kd" id="mein-depot" aria-label="Mein Depot: Musterdepots">
-        <h2 class="mb-h2">Mein Depot <small>Musterdepots – ein Planspiel</small></h2>
+      <section class="kd" id="mein-depot" aria-label="Musterdepots">
+        <h2 class="mb-h2">Musterdepots <small>ein Planspiel mit gedachten Beträgen</small></h2>
         <div class="kd-wahlleiste" id="kd-wahl"></div>   <!-- Musterdepots als Pillen, „+ Neues Musterdepot“, Umbenennen, Löschen (seit 02.10.2026) -->
         <p class="kf-status kd-wahl-status" id="kd-wahl-status" role="status" aria-live="polite"></p>
         <div id="kd-inhalt">
         <form class="kd-neu" id="f-depot" action="konto.php" method="post">
           <div><label for="kd-isin">Anleihe von deiner Merkliste</label><select id="kd-isin" name="isin" required></select></div>
           <div><label for="kd-nenn">Nennwert</label><div class="kd-eur" id="kd-nenn-box"><input id="kd-nenn" name="nennwert" type="text" inputmode="numeric" autocomplete="off" maxlength="11" value="1.000" required><span id="kd-nenn-w">€</span></div></div>
-          <button type="submit" class="go">Zum Depot hinzufügen</button>
+          <button type="submit" class="go">Zum Musterdepot hinzufügen</button>
           <p class="kf-status" id="kd-status" role="status" aria-live="polite"></p>
         </form>
         <div class="kto-leiste kd-teilleiste" id="kd-teilen-box" hidden>   <!-- „Musterdepot teilen“ (seit 02.10.2026): PDF wie bei der Merkliste -->
@@ -643,7 +643,7 @@
               <th scope="col" class="num" title="Duration: durchschnittliche Kapitalbindung in Jahren, die Zahlungen nach ihrem Barwert gewichtet. Darunter die modifizierte Duration: Um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Prozentpunkt steigt.">Duration<small>mod. Duration</small></th>
               <th scope="col" class="num" title="In der Währung der Anleihe">Nennwert</th>
               <th scope="col" class="num" title="Was der Kauf heute kosten würde, in Euro: Nennwert mal Schlusskurs plus Stückzinsen zum Valutatag (heute + 2 Börsentage), ohne Gebühren. Darunter der Schlusskurs in % des Nennwerts.">Kaufpreis<small>Kurs</small></th>
-              <th scope="col" class="num" title="Gewicht der Anleihe im Depot: ihr Kurswert geteilt durch den Kurswert aller Anleihen">Anteil</th>
+              <th scope="col" class="num" title="Gewicht der Anleihe im Musterdepot: ihr Kurswert geteilt durch den Kurswert aller Anleihen">Anteil</th>
               <th scope="col" class="num" title="Kupon mal Nennwert, in Euro, vor Steuern. Darunter der nächste Zinstermin.">Zinsen pro Jahr<small>nächster Zinstermin</small></th>
               <th scope="col"><span class="sr-only">Entfernen</span></th>
             </tr></thead>
@@ -658,7 +658,7 @@
           <button type="button" class="kd-schalter" id="kd-er-schalter" role="switch" aria-checked="false" aria-labelledby="kd-er-titel"><i></i><span>Aus</span></button>
           <p class="kf-status" id="kd-er-status" role="status" aria-live="polite"></p>
         </div>
-        <div class="kto-leer" id="kd-leer" hidden><p><b>Dieses Musterdepot ist noch leer.</b> Wähl oben eine Anleihe von deiner Merkliste, trag einen Nennwert ein – zum Beispiel 5.000 € – und füg sie hinzu. Im Steckbrief jeder Anleihe geht das auch mit „Zum Depot hinzufügen“.</p></div>
+        <div class="kto-leer" id="kd-leer" hidden><p><b>Dieses Musterdepot ist noch leer.</b> Wähl oben eine Anleihe von deiner Merkliste, trag einen Nennwert ein – zum Beispiel 5.000 € – und füg sie hinzu. Im Steckbrief jeder Anleihe geht das auch mit „Zum Musterdepot hinzufügen“.</p></div>
         <div id="kd-zahlungen" hidden>
           <h2 class="kd-h3" id="h-zahl">Zahlungen aus deinem Musterdepot</h2>
           <p class="kd-zsum" id="kd-zsum"></p>
@@ -746,7 +746,7 @@
           <p><strong>Rendite.</strong> Rendite bis zur Fälligkeit in % pro Jahr, von uns aus Kurs, Kupon und Fälligkeit berechnet – nach denselben Regeln wie in der <a href="anleihen-suche.html">Anleihen-Suche</a>, wo unter „Datenquellen und Methodik“ alle Einzelheiten stehen.</p>
           <p><strong>Stammdaten.</strong> Kupon, Fälligkeit, Art, Währung, Volumen und Stückelung aus dem Register der europäischen Wertpapieraufsicht ESMA (FIRDS). Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage, beide in der Währung der Anleihe.</p>
           <p><strong>Steckbrief.</strong> Ein Klick auf Name oder ISIN öffnet den Steckbrief der Anleihe mit Kursverlauf, Handel und Rechenbeispiel.</p>
-          <p><strong>Mein Depot.</strong> Bis zu fünf Musterdepots mit gedachten Beträgen, kein Bestand. Kaufpreis = Nennwert × Schlusskurs (Kurswert) plus Stückzinsen zum Valutatag (heute + 2 Börsentage), ohne Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Anteil = Kurswert der Anleihe geteilt durch den Kurswert aller Anleihen. Rendite = Rendite bis Fälligkeit wie in der Anleihen-Suche; laufende Verzinsung = Kupon ÷ Kurs. Duration = Macaulay-Duration, die durchschnittliche Kapitalbindung in Jahren; modifizierte Duration = Duration ÷ (1 + Rendite): Um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Prozentpunkt steigt (beides erklärt unter <a href="duration.html">Duration und Konvexität</a>). In der Summenzeile sind Rendite, Restlaufzeit und beide Durationen nach Kurswert gewichtet. Zinsen je Termin = Nennwert × Kupon ÷ Zahl der Zinstermine im Jahr; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Das Schaubild zeigt 30 Jahre einzeln, danach nur noch die Jahre mit einer Rückzahlung; die Jahre dazwischen stehen schraffiert in einer schmalen Spalte („je …“ = Zinsen in jedem dieser Jahre, „Ø“ = Durchschnitt), jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung zum Nennwert, ganz unten beides zusammen; in jedes Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Schaubild und Liste der Zinstermine zeigen dann nur die Auswahl. Die Liste nennt alle kommenden Zinstermine von heute bis zur letzten Fälligkeit, nach Jahren geordnet, ohne Rückzahlungen. Die Zinstermine stammen aus der Liste der Deutschen Börse „Alle handelbaren Instrumente“ (letzter und nächster Zinstermin je Anleihe); nennt sie für eine Anleihe keine, sind sie geschätzt – die Anleihe steht dann im Hinweis unter den Zinsterminen, die Regel im Steckbrief unter „Datenquellen und Methodik“. Maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
+          <p><strong>Musterdepots.</strong> Bis zu fünf, mit gedachten Beträgen, kein Bestand. Kaufpreis = Nennwert × Schlusskurs (Kurswert) plus Stückzinsen zum Valutatag (heute + 2 Börsentage), ohne Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Anteil = Kurswert der Anleihe geteilt durch den Kurswert aller Anleihen. Rendite = Rendite bis Fälligkeit wie in der Anleihen-Suche; laufende Verzinsung = Kupon ÷ Kurs. Duration = Macaulay-Duration, die durchschnittliche Kapitalbindung in Jahren; modifizierte Duration = Duration ÷ (1 + Rendite): Um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Prozentpunkt steigt (beides erklärt unter <a href="duration.html">Duration und Konvexität</a>). In der Summenzeile sind Rendite, Restlaufzeit und beide Durationen nach Kurswert gewichtet. Zinsen je Termin = Nennwert × Kupon ÷ Zahl der Zinstermine im Jahr; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Das Schaubild zeigt 30 Jahre einzeln, danach nur noch die Jahre mit einer Rückzahlung; die Jahre dazwischen stehen schraffiert in einer schmalen Spalte („je …“ = Zinsen in jedem dieser Jahre, „Ø“ = Durchschnitt), jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung zum Nennwert, ganz unten beides zusammen; in jedes Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Schaubild und Liste der Zinstermine zeigen dann nur die Auswahl. Die Liste nennt alle kommenden Zinstermine von heute bis zur letzten Fälligkeit, nach Jahren geordnet, ohne Rückzahlungen. Die Zinstermine stammen aus der Liste der Deutschen Börse „Alle handelbaren Instrumente“ (letzter und nächster Zinstermin je Anleihe); nennt sie für eine Anleihe keine, sind sie geschätzt – die Anleihe steht dann im Hinweis unter den Zinsterminen, die Regel im Steckbrief unter „Datenquellen und Methodik“. Maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
           <p><strong>Fremdwährungen.</strong> Anleihen in anderer Währung trägst du mit dem Nennwert in dieser Währung ein. Kurswert, Zinsen und Rückzahlung rechnen wir zur Vereinfachung in Euro um; die Anleihe trägt in der Tabelle ein Sternchen (*). Umgerechnet wird mit dem jeweils neuesten Euro-Referenzkurs der Europäischen Zentralbank (sie veröffentlicht ihn an jedem Arbeitstag gegen 16 Uhr; das Datum steht im aufklappbaren Hinweis unter der Tabelle) – und dieser Kurs ist für die ganze Laufzeit als fest angenommen. Tatsächlich schwankt der Wechselkurs: Wie viel Euro eine Zahlung am Ende wert ist, steht erst am Zahltag fest (Wechselkursrisiko). Für Währungen ohne EZB-Referenzkurs gibt es keine Umrechnung – solche Anleihen fehlen im Schaubild.</p>
           <p id="datastand"></p>
         </div>
@@ -820,7 +820,7 @@ MC.navInit();
     MODUS = m;
     if (fokus && ziel && ziel.elements) { const f = Array.from(ziel.elements).find(e => e.tagName === "INPUT" && !e.readOnly && e.tabIndex >= 0 && !e.value); if (f) f.focus(); }
   }
-  if (VOR) $("vormerk").innerHTML = `Nach dem Anmelden steht die Anleihe <b>${MC.esc(VOR)}</b> auf deiner Merkliste${DEP_VOR ? " und ist in „Mein Depot“ zum Hinzufügen ausgewählt" : ""}.`;
+  if (VOR) $("vormerk").innerHTML = `Nach dem Anmelden steht die Anleihe <b>${MC.esc(VOR)}</b> auf deiner Merkliste${DEP_VOR ? " und ist in den Musterdepots zum Hinzufügen ausgewählt" : ""}.`;
   $("anmelden").addEventListener("click", e => { const b = e.target.closest("[data-zu]"); if (b) { hinweis(""); modus(b.dataset.zu, true); } });
   $("nochmal").addEventListener("click", () => modus(ZURUECK, true));
   // Passwort anzeigen / verbergen
@@ -953,9 +953,9 @@ MC.navInit();
   // Seit 02.10.2026 mit mehreren Musterdepots: Der Knopf bezieht sich auf das gerade offene (AKTIV).
   function depotKnopf(o) {
     const n = MC.esc(aktName());
-    if (POS.some(p => p.isin === o.isin)) return `<button type="button" class="kto-dep drin" data-zum-depot title="Liegt in „${n}“ – Mein Depot öffnen" aria-label="${MC.esc(o.name)} liegt in „${n}“ – Mein Depot öffnen">✓<span class="l">Im Depot</span></button>`;
+    if (POS.some(p => p.isin === o.isin)) return `<button type="button" class="kto-dep drin" data-zum-depot title="Liegt in „${n}“ – Musterdepots öffnen" aria-label="${MC.esc(o.name)} liegt in „${n}“ – Musterdepots öffnen">✓<span class="l">Im Musterdepot</span></button>`;
     const g = grund(o);
-    return `<button type="button" class="kto-dep" data-depot="${MC.esc(o.isin)}"${g ? " disabled" : ""} title="${MC.esc(g ? `Lässt sich dem Depot nicht hinzufügen: ${g}` : `Zu „${aktName()}“ hinzufügen`)}" aria-label="${MC.esc(o.name)} zu „${n}“ hinzufügen">+<span class="l">Zum Depot hinzufügen</span></button>`;
+    return `<button type="button" class="kto-dep" data-depot="${MC.esc(o.isin)}"${g ? " disabled" : ""} title="${MC.esc(g ? `Lässt sich keinem Musterdepot hinzufügen: ${g}` : `Zu „${aktName()}“ hinzufügen`)}" aria-label="${MC.esc(o.name)} zu „${n}“ hinzufügen">+<span class="l">Zum Musterdepot hinzufügen</span></button>`;
   }
   // Nennwert-Vorschlag: rund 1.000 in der Währung der Anleihe, mindestens die Stückelung und ein Vielfaches davon
   function nennVorschlag(o) {
@@ -967,7 +967,7 @@ MC.navInit();
   function insDepot(knopf) {   // knopf: der „+“-Knopf der Zeile oder { dataset: { depot: ISIN } } aus dem Menü „…“ (bereich.js)
     const o = LISTE.find(x => x.isin === knopf.dataset.depot); if (!o) return;
     ZULETZT = "";
-    if (POS.length >= DEPOT_MAX) { NOTIZ = `„${MC.esc(aktName())}“ ist voll (${DEPOT_MAX} Anleihen) – entferne erst eine: <button type="button" class="kto-textbtn" id="zum-depot">Mein Depot öffnen</button>.`; statusText(); return; }
+    if (POS.length >= DEPOT_MAX) { NOTIZ = `„${MC.esc(aktName())}“ ist voll (${DEPOT_MAX} Anleihen) – entferne erst eine: <button type="button" class="kto-textbtn" id="zum-depot">Musterdepots öffnen</button>.`; statusText(); return; }
     const nenn = nennVorschlag(o);
     knopf.disabled = true;
     NOTIZ = `<strong>${MC.esc(o.name)}</strong> liegt mit ${fmt(nenn)} ${o.cur && o.cur !== "EUR" ? MC.esc(o.cur) : "€"} Nennwert in „${MC.esc(aktName())}“ – <button type="button" class="kto-textbtn" id="zum-depot">Nennwert ändern</button>.`;
@@ -1031,7 +1031,7 @@ MC.navInit();
   }
   function statusText() {
     const n = LISTE.length, ne = B ? B.etfZahl() : 0;
-    $("status").innerHTML = (n ? `<strong>${MF_N != null ? `${MF_N} von ${n} Anleihen` : `${n} ${n === 1 ? "Anleihe" : "Anleihen"}`}${ne && MF_N == null ? `, ${ne} ${ne === 1 ? "ETF" : "ETFs"}` : ""}</strong> auf deiner Merkliste${MF_N != null ? " passen zur Auswahl" : ""}${KSTAND ? ` · Kurse vom ${MC.esc(MC.datum(KSTAND))}` : ""}.${!ZULETZT && !NOTIZ ? " Mit <strong>+</strong> fügst du eine Anleihe deinem Depot hinzu." : ""}` : "") +
+    $("status").innerHTML = (n ? `<strong>${MF_N != null ? `${MF_N} von ${n} Anleihen` : `${n} ${n === 1 ? "Anleihe" : "Anleihen"}`}${ne && MF_N == null ? `, ${ne} ${ne === 1 ? "ETF" : "ETFs"}` : ""}</strong> auf deiner Merkliste${MF_N != null ? " passen zur Auswahl" : ""}${KSTAND ? ` · Kurse vom ${MC.esc(MC.datum(KSTAND))}` : ""}.${!ZULETZT && !NOTIZ ? " Mit <strong>+</strong> fügst du eine Anleihe deinem Musterdepot hinzu." : ""}` : "") +
       (ZULETZT ? ` ${MC.esc(ZULETZT)} entfernt – <button type="button" class="kto-textbtn" id="zurueck">rückgängig</button>.` : "") + (NOTIZ ? ` ${NOTIZ}` : "");
   }
   let lauf = 0;
@@ -1317,7 +1317,7 @@ MC.navInit();
       `<td class="num" data-l="Kaufpreis"${p.kauf != null ? ` title="${MC.esc(`Kurswert ${eur(p.kauf)}${p.sz != null ? ` + Stückzinsen ${eur(p.sz)} (Valuta ${MC.datum(VALUTA)})` : ""} · Schlusskurs vom ${MC.datum(o.datum)}${o.boerse ? ", " + o.boerse : ""}`)}"` : ""}>${p.preis != null ? `<b>${eur(p.preis)}</b>` : "–"}<small><span class="kd-m">Kurs </span>${o.kurs != null ? fmt(o.kurs, 2) + (o.datum && o.datum !== KSTAND ? ` · ${MC.esc(MC.tag(o.datum))}` : "") : "–"}</small></td>` +
       `<td class="num" data-l="Anteil">${p.anteil != null ? `<span class="kd-ant" aria-hidden="true"><i style="width: ${Math.min(100, p.anteil).toFixed(1)}%"></i></span>${fmt(p.anteil, 1)} %` : "–"}</td>` +
       `<td class="num" data-l="Zinsen pro Jahr">${p.zins != null ? eur(p.zins) : "–"}<small><span class="kd-m">nächster Zinstermin </span>${p.zt ? MC.datum(p.zt) : p.rechnet && !p.fest ? "kein Kupon" : "–"}</small></td>` +
-      `<td><button type="button" class="kto-x" data-raus="${MC.esc(p.isin)}" aria-label="${MC.esc(o.name)} aus dem Depot entfernen" title="Aus dem Depot entfernen">×<span> Entfernen</span></button></td></tr>`;
+      `<td><button type="button" class="kto-x" data-raus="${MC.esc(p.isin)}" aria-label="${MC.esc(o.name)} aus dem Musterdepot entfernen" title="Aus dem Musterdepot entfernen">×<span> Entfernen</span></button></td></tr>`;
   }
   // Summenzeile für Tabelle und PDF. Gewicht ist der Kurswert (Nennwert × Kurs): Anteil je Anleihe (wird an p.anteil gesetzt), Rendite,
   // Restlaufzeit und beide Durationen gewichtet; laufende Verzinsung = Zinsen ÷ Kurswert. Anleihen ohne Kurs zählen in die Kennzahlen nicht mit.
@@ -1331,7 +1331,7 @@ MC.navInit();
   function zeichneDepot() {
     const drin = new Set(POS.map(p => p.isin)), sel = $("kd-isin"), wahl = sel.value || WAHL;
     const frei = LISTE.filter(o => !drin.has(o.isin)).sort((a, b) => a.name.localeCompare(b.name, "de") || (a.faellig || "").localeCompare(b.faellig || ""));
-    sel.innerHTML = `<option value="">${frei.length ? "Anleihe wählen …" : LISTE.length ? "Alle Anleihen deiner Merkliste liegen im Depot" : "Deine Merkliste ist noch leer"}</option>` +
+    sel.innerHTML = `<option value="">${frei.length ? "Anleihe wählen …" : LISTE.length ? "Alle Anleihen deiner Merkliste liegen in diesem Musterdepot" : "Deine Merkliste ist noch leer"}</option>` +
       frei.map(o => { const g = grund(o); return `<option value="${MC.esc(o.isin)}"${g ? " disabled" : ""} data-stk="${typeof o.stk === "number" ? o.stk : ""}" data-cur="${MC.esc(o.cur || "")}">${MC.esc(o.name)} · ${fmtCoupon(o.kupon)}${o.faellig ? " · " + o.faellig.slice(0, 4) : ""}${o.cur && o.cur !== "EUR" ? " · " + MC.esc(o.cur) : ""}${g ? " – " + MC.esc(g) : ""}</option>`; }).join("");
     if (wahl && Array.from(sel.options).some(x => x.value === wahl && !x.disabled)) { sel.value = wahl; if (wahl === WAHL) { WAHL = ""; sel.dispatchEvent(new Event("change")); } }
     nennWaehrung();
@@ -1340,7 +1340,7 @@ MC.navInit();
     const pos = POS.slice().sort((a, b) => (a.o.faellig || "9999").localeCompare(b.o.faellig || "9999") || a.isin.localeCompare(b.isin));
     $("kd-liste").hidden = !pos.length; $("kd-leer").hidden = pos.length > 0; $("kd-teilen-box").hidden = !pos.length;
     $("kd-anzahl").innerHTML = pos.length ? `<strong>${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}</strong> in „${MC.esc(aktName())}“${KSTAND ? ` · Kurse vom ${MC.esc(MC.datum(KSTAND))}` : ""}.` : "";
-    const kn = aktName(); $("f-depot").querySelector("button[type=submit]").textContent = kn.length <= 20 ? `Zu „${kn}“ hinzufügen` : "Zum Depot hinzufügen";
+    const kn = aktName(); $("f-depot").querySelector("button[type=submit]").textContent = kn.length <= 20 ? `Zu „${kn}“ hinzufügen` : "Zum Musterdepot hinzufügen";
     const S = depotSummen(pos);   // setzt auch den Anteil je Anleihe
     $("kd-zeilen").innerHTML = pos.map(depotZeile).join("");
     $("kd-summe").innerHTML = pos.length ? `<tr><th scope="row">Summe<small>${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}${pos.length > 1 ? " · Kennzahlen nach Kurswert gewichtet" : ""}</small></th>` +
@@ -1647,7 +1647,7 @@ MC.navInit();
   window.addEventListener("hashchange", () => { const h = ausHash(); if (h) reiter(h); });
 
   // Hinzufügen, Nennwert ändern, Entfernen
-  const DEPOT_TEXT = { voll: "Ein Musterdepot fasst höchstens 10 Anleihen.", muster: DW_TEXT.muster, nennwert: "Bitte einen Nennwert als ganze Zahl eintragen, zum Beispiel 5.000.", isin: "Diese Anleihe lässt sich dem Depot nicht hinzufügen." };
+  const DEPOT_TEXT = { voll: "Ein Musterdepot fasst höchstens 10 Anleihen.", muster: DW_TEXT.muster, nennwert: "Bitte einen Nennwert als ganze Zahl eintragen, zum Beispiel 5.000.", isin: "Diese Anleihe lässt sich dem Musterdepot nicht hinzufügen." };
   function depotStatus(text, fehler) { const el = $("kd-status"); el.className = "kf-status" + (fehler ? " fehler" : ""); el.textContent = text; }
   function depotSenden(isin, nenn) {
     NOTIZ = "";
