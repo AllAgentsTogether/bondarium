@@ -1,0 +1,92 @@
+# Sicherung der Konto- und Statistik-Datenbank (seit 03.10.2026, docs/SICHERUNG.md – Bewertung 03.10.2026, Top-1 Technik)
+#
+# Jede Nacht: trigger/sicherung.php auf dem Server zieht eine saubere Kopie jeder Datenbank und verschlüsselt sie dort mit
+# dem öffentlichen Zertifikat (S/MIME, AES-256). Dieser Lauf holt nur die verschlüsselten Dateien und legt sie im privaten
+# Repo AllAgentsTogether/bondarium-sicherung ab. Den privaten Schlüssel zum Öffnen hat nur der Betreiber – weder GitHub
+# noch dieser Lauf sehen jemals eine lesbare Datenbank.
+#
+# Aufbewahrung: Tagesstände 30 Tage, der erste Stand jedes Monats 12 Monate. Das Ablage-Repo hat immer nur EINEN Commit
+# (ohne Vorgeschichte), damit gelöschte Stände wirklich verschwinden (Datenschutzerklärung, Abschnitt „Sicherung“).
+# Scheitert etwas, wird der Lauf rot = E-Mail von GitHub.
+#
+# Secrets: TRIGGER_KEY (wie für refresh.php), SICHERUNG_DEPLOY_KEY (SSH-Schreibschlüssel nur für das Ablage-Repo).
+name: Sicherung (Konten und Statistik)
+
+on:
+  schedule:
+    - cron: "40 1 * * *"   # 03:40 Uhr Berlin (Sommerzeit), 02:40 Uhr (Winterzeit) – nachts, wenig Betrieb
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: sicherung
+  cancel-in-progress: false
+
+jobs:
+  sichern:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Verschlüsselte Stände vom Server holen
+        env:
+          TRIGGER_KEY: ${{ secrets.TRIGGER_KEY }}
+        run: |
+          set -euo pipefail
+          schluessel=$(printf '%s' "$TRIGGER_KEY" | tr -d '\r\n')
+          mkdir -p neu
+          for db in konto statistik; do
+            code=$(curl -s -o "neu/$db.p7m" -w "%{http_code}" --max-time 180 -X POST \
+              -H "X-Trigger-Key: $schluessel" --data "db=$db" https://www.bondarium.de/trigger/sicherung.php || echo "000")
+            groesse=$(stat -c %s "neu/$db.p7m" 2>/dev/null || echo 0)
+            echo "$db: HTTP $code, $groesse Byte"
+            if [ "$code" != "200" ]; then echo "::error::Sicherung $db: Server antwortet mit HTTP $code"; exit 1; fi
+            # Nur verschlüsselte Antworten ablegen – eine lesbare Datenbank darf nie ins Repo
+            if ! head -c 400 "neu/$db.p7m" | grep -q "pkcs7-mime"; then
+              rm -f "neu/$db.p7m"; echo "::error::Sicherung $db: Antwort ist nicht verschlüsselt – verworfen"; exit 1
+            fi
+          done
+
+      - name: Im privaten Repo ablegen (Tagesstände 30 Tage, Monatsstände 12 Monate)
+        env:
+          DEPLOY_KEY: ${{ secrets.SICHERUNG_DEPLOY_KEY }}
+        run: |
+          set -euo pipefail
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/sicherung
+          chmod 600 ~/.ssh/sicherung
+          # GitHubs Host-Schlüssel (ed25519), Fingerabdruck SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU laut api.github.com/meta
+          echo "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl" > ~/.ssh/known_hosts
+          export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/sicherung -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
+          git clone -q --depth 1 git@github.com:AllAgentsTogether/bondarium-sicherung.git ablage
+          heute=$(TZ=Europe/Berlin date +%F)
+          mkdir -p ablage/staende
+          for db in konto statistik; do cp "neu/$db.p7m" "ablage/staende/$heute-$db.p7m"; done
+          python3 - "$heute" <<'PY'
+          import datetime, pathlib, re, sys
+          heute = datetime.date.fromisoformat(sys.argv[1])
+          ordner = pathlib.Path("ablage/staende")
+          dateien = sorted(f for f in ordner.glob("*.p7m") if re.match(r"\d{4}-\d{2}-\d{2}-", f.name))
+          tage = sorted({f.name[:10] for f in dateien})
+          erster = {}
+          for t in tage:
+              erster.setdefault(t[:7], t)   # erster Stand je Monat
+          behalten = set()
+          for t in tage:
+              alter = (heute - datetime.date.fromisoformat(t)).days
+              if alter <= 30 or (t == erster[t[:7]] and alter <= 366):
+                  behalten.add(t)
+          for f in dateien:
+              if f.name[:10] not in behalten:
+                  f.unlink()
+                  print("gelöscht:", f.name)
+          print(f"behalten: {len(behalten)} Stände")
+          PY
+          cd ablage
+          git config user.name "Bondarium Sicherung"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -q --orphan stand
+          git add -A
+          git commit -q -m "Sicherung $heute"
+          git push -q -f origin stand:main
+          echo "abgelegt: $(ls staende | grep -c p7m) Dateien, $(du -sh staende | cut -f1)"

@@ -477,6 +477,9 @@ jobs:
           mkdir -p _site/trigger
           cp strato-cron/refresh.php _site/trigger/refresh.php
           cp strato-cron/.htaccess  _site/trigger/.htaccess
+          # Sicherung (seit 03.10.2026, docs/SICHERUNG.md): verschlüsselt die Datenbanken auf dem Server; liest den Schlüssel
+          # aus refresh-config.php und das öffentliche Zertifikat (die .htaccess sperrt es für Abrufe von außen)
+          cp strato-cron/sicherung.php strato-cron/sicherung-zertifikat.pem _site/trigger/
           python3 -c '
           import os
           sq = chr(39)  # einfaches Anfuehrungszeichen
@@ -575,6 +578,13 @@ jobs:
           code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 https://www.bondarium.de/trigger/refresh-config.php || echo "000")
           echo "refresh-config.php -> HTTP $code"
           if [ "$code" = "200" ]; then echo "::error::/trigger/refresh-config.php ist öffentlich lesbar – Token sofort rotieren!"; exit 1; fi
+          # Sicherung: ohne POST und Schlüssel nie eine Datei (405), Zertifikat nicht abrufbar (403)
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 https://www.bondarium.de/trigger/sicherung.php || echo "000")
+          echo "sicherung.php (GET) -> HTTP $code"
+          if [ "$code" != "405" ]; then echo "::error::/trigger/sicherung.php antwortet auf GET mit $code statt 405"; exit 1; fi
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 -X POST --data "db=konto" https://www.bondarium.de/trigger/sicherung.php || echo "000")
+          echo "sicherung.php (POST ohne Schlüssel) -> HTTP $code"
+          if [ "$code" != "403" ]; then echo "::error::/trigger/sicherung.php antwortet ohne Schlüssel mit $code statt 403"; exit 1; fi
 
       # Der Datenordner des Benutzerbereichs (konto-daten/, Datenbank mit E-Mail-Adressen) darf NIE abrufbar sein
       # (403 durch die .htaccess im Stammordner und im Ordner). Ein Deploy, nach dem er es wäre, wird rot.

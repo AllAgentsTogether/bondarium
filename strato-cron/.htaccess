@@ -2,3 +2,7 @@
 <Files "refresh-config.php">
   Require all denied
 </Files>
+# Zertifikat für die Sicherung (öffentlich, aber kein Grund, es auszuliefern) – liest nur sicherung.php
+<Files "sicherung-zertifikat.pem">
+  Require all denied
+</Files>
