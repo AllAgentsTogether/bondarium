@@ -84,6 +84,7 @@ RewriteRule ^ https://www.bondarium.de%{REQUEST_URI} [R=301,L]
 #      auf https://www.bondarium.de/… → 410. ----
 RewriteRule ^(bip|historie|krisen|kgv|marktsentiment|sentiment|fear-greed|vix|aaii|einflussfaktoren|verlierer)\.html$ - [G,L]
 RewriteRule ^(data|sentiment|valuations|einfluss|verlierer)\.json$ - [G,L]
+# @@STECKBRIEFE@@ (scripts/steckbriefe.py setzt hier beim Deploy die Regeln für die Server-Steckbriefe der Bundeswertpapiere ein)
 </IfModule>
 
 # ---- Deploy-Manifest (Liste der hochgeladenen Dateien) nie ausliefern ----

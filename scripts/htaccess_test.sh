@@ -379,6 +379,21 @@ for pfad in /trigger/refresh.php /.well-known/security.txt; do
   esac
 done
 
+# Server-Steckbriefe der Bundeswertpapiere (seit 03.10.2026, scripts/steckbriefe.py): nur, wenn der Bau sie enthält
+if ls "$ORDNER"/steckbrief/*.html >/dev/null 2>&1; then
+  echo "== Steckbriefe der Bundeswertpapiere vom Server (anleihe.html?isin=… → steckbrief/<ISIN>.html) =="
+  SB="$(basename "$(ls "$ORDNER"/steckbrief/*.html | head -1)" .html)"
+  pruefe "Server-Steckbrief" https $W "/anleihe.html?isin=$SB" 200
+  if grep -q 'data-steckbrief="server"' "$KOERPER" && grep -q "rel=\"canonical\" href=\"$D/anleihe.html?isin=$SB\"" "$KOERPER"; then
+    ok "Server-Steckbrief: eigene Seite mit eigener kanonischer Adresse ($SB)"
+  else
+    fehler "Server-Steckbrief: anleihe.html?isin=$SB liefert nicht steckbrief/$SB.html"
+  fi
+  pruefe "Server-Steckbrief, direkter Abruf" https $W "/steckbrief/$SB.html" 301 "$D/anleihe.html?isin=$SB"
+  pruefe "Steckbrief einer anderen Anleihe (Vorlage)" https $W "/anleihe.html?isin=XS0000000000" 200
+  if grep -q 'data-steckbrief="server"' "$KOERPER"; then fehler "Vorlage: eine andere ISIN bekommt einen Server-Steckbrief"; else ok "Vorlage für alle übrigen ISIN"; fi
+fi
+
 echo "== Cache und Kopfzeilen (nur Warnung) =="
 kopf "HTML immer nachfragen" /grundlagen.html Cache-Control '^no-cache$'
 kopf "HTML gzip" /grundlagen.html Content-Encoding '^gzip$' -H "Accept-Encoding: gzip"

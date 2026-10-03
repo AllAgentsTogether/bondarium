@@ -53,9 +53,15 @@ def main():
         return
     adressen = []
     for pfad, summe in sorted(neu.items()):
-        if "/" in pfad or not pfad.endswith(".html") or alt.get(pfad) == summe:
+        if not pfad.endswith(".html") or alt.get(pfad) == summe:
             continue
-        u = BASE + ("" if pfad == "index.html" else pfad)
+        m = re.fullmatch(r"steckbrief/([A-Z]{2}[A-Z0-9]{9}[0-9])\.html", pfad)
+        if m:   # Server-Steckbrief (seit 03.10.2026): gemeldet wird seine Adresse anleihe.html?isin=…, nicht die Datei
+            u = BASE + "anleihe.html?isin=" + m.group(1)
+        elif "/" in pfad:
+            continue
+        else:
+            u = BASE + ("" if pfad == "index.html" else pfad)
         if u in sitemap:
             adressen.append(u)
     if not adressen:

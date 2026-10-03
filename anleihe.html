@@ -6,7 +6,7 @@
 <title>Anleihe: Kurs, Rendite und Kursverlauf – Bondarium</title>
 <meta name="description" content="Steckbrief einer Anleihe: Kurs und Rendite vom letzten Börsentag, Kursverlauf, Handel, Zinsformel, Rang, Kündigung und Stückelung.">
 <link rel="canonical" href="https://www.bondarium.de/anleihe.html">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, follow">   <!-- seit 03.10.2026: nur die Server-Steckbriefe (steckbrief/, scripts/steckbriefe.py) sind im Index – Entscheidung 02.10.2026 -->
 <meta name="author" content="Bondarium">
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Bondarium">
@@ -673,15 +673,19 @@ function zeige(r, k, meta, kf) {
     if (cut > 3) kopf = kopf.slice(0, cut).replace(/[\s,.;:–-]+$/, "") + " …";
   }
   const seitentitel = `${kopf}${zusatz}${ende}`;
-  document.title = `${seitentitel} – Bondarium`;
+  // Server-Steckbrief (steckbrief/<ISIN>.html, seit 03.10.2026): Titel mit Art und ISIN steht schon im HTML – nicht überschreiben
+  const serverSeite = document.documentElement.hasAttribute("data-steckbrief");
+  if (!serverSeite) document.title = `${seitentitel} – Bondarium`;
   if (MC.mein && MC.konto) MC.konto.bereit().then(() => MC.mein.angesehen(ISIN, seitentitel));   // „Zuletzt angesehen“ – nur wenn in Mein Bondarium eingeschaltet
   // Kanonische Adresse, og:url und og:title für diese ISIN (geteilte Links zeigen die Anleihe, nicht den allgemeinen Titel)
   const url = `https://www.bondarium.de/anleihe.html?isin=${encodeURIComponent(ISIN)}`;
   const setze = (sel, attr, wert) => { const el = document.querySelector(sel); if (el) el.setAttribute(attr, wert); };
   setze('link[rel="canonical"]', "href", url);
   setze('meta[property="og:url"]', "content", url);
-  setze('meta[property="og:title"]', "content", `${seitentitel} – Bondarium`);
-  setze('meta[name="twitter:title"]', "content", `${seitentitel} – Bondarium`);
+  if (!serverSeite) {
+    setze('meta[property="og:title"]', "content", `${seitentitel} – Bondarium`);
+    setze('meta[name="twitter:title"]', "content", `${seitentitel} – Bondarium`);
+  }
   document.getElementById("titel").innerHTML = `${MC.esc(titel)} <span class="fa">· ${titelFa}</span>`;
   const emiL = lesbar(emittent);
   document.getElementById("reg").innerHTML = `Registername <b>${MC.esc(name)}</b>${emittent ? ` · Emittent <b${emiL !== emittent ? ` title="${MC.esc(emittent)} (Schreibweise im LEI-Register)"` : ""}>${MC.esc(emiL)}</b>` : ""}`;

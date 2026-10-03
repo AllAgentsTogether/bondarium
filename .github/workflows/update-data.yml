@@ -470,6 +470,14 @@ jobs:
           # Kontrolle: <lastmod> der Sitemap je Datum (setzt scripts/seo.py, Datenseiten nach ihrem sichtbaren Daten-Stand)
           grep -o '<lastmod>[0-9-]*' _site/sitemap.xml | sort | uniq -c | sort -rn | head -5 || true
 
+      # ----- Steckbriefe der Bundeswertpapiere vom Server (seit 03.10.2026, scripts/steckbriefe.py; Entscheidung 02.10.2026):
+      #       je Bundeswertpapier eine fertige Seite steckbrief/<ISIN>.html aus der Vorlage anleihe.html, ausgeliefert unter
+      #       anleihe.html?isin=<ISIN> (Regel in der .htaccess), Einträge in der Sitemap. Läuft NACH den Versions-URLs (die
+      #       Vorlage trägt sie dann schon) und VOR dem Minifizieren. Scheitert er, gilt für alle ISIN die Vorlage. -----
+      - name: Steckbriefe der Bundeswertpapiere (vom Server)
+        continue-on-error: true
+        run: python3 scripts/steckbriefe.py _site
+
       # ----- Minifizieren (HTML inkl. Inline-CSS/JS) direkt vor dem Upload.
       # continue-on-error: ein Minify-Fehler darf das Deploy nicht blockieren –
       # dann geht die unminifizierte (funktional identische) Fassung raus.
