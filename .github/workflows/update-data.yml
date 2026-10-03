@@ -569,6 +569,7 @@ jobs:
       # Trigger-Konfiguration darf NIE als Quelltext ausgeliefert werden (403 durch
       # /trigger/.htaccess). Ein Deploy, nach dem sie lesbar wäre, wird rot.
       - name: Nach-Deploy-Prüfung (Trigger-Konfiguration nicht abrufbar)
+        id: ndp_trigger
         continue-on-error: true
         run: |
           code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 https://www.bondarium.de/trigger/refresh-config.php || echo "000")
@@ -578,6 +579,7 @@ jobs:
       # Der Datenordner des Benutzerbereichs (konto-daten/, Datenbank mit E-Mail-Adressen) darf NIE abrufbar sein
       # (403 durch die .htaccess im Stammordner und im Ordner). Ein Deploy, nach dem er es wäre, wird rot.
       - name: Nach-Deploy-Prüfung (Benutzerbereich – Datenordner gesperrt, Schnittstelle antwortet)
+        id: ndp_konto
         continue-on-error: true
         run: |
           for pfad in konto-daten/ konto-daten/index.html konto-daten/.sperre; do
@@ -592,6 +594,7 @@ jobs:
       # Besucherzählung (seit 01.10.2026): Datenordner und Berichts-Skript dürfen nie abrufbar sein, aufruf.php antwortet
       # immer mit 204. Die Prüfung zählt selbst nichts (GET wird nicht gezählt).
       - name: Nach-Deploy-Prüfung (Besucherzählung – Datenordner gesperrt, Zähler antwortet)
+        id: ndp_statistik
         continue-on-error: true
         run: |
           for pfad in statistik-daten/ statistik-daten/index.html statistik-daten/.sperre statistik-bericht.php erinnerung.php; do
@@ -700,8 +703,10 @@ jobs:
               # Realzins: Bundrendite börsentäglich; Verbraucherpreise monatlich (Destatis veröffentlicht den Vormonat Anfang des Monats → bis ~45 Tage alt)
               ("realzins.json → stand.zins", ((_lade("realzins.json") if os.path.exists("realzins.json") else {}).get("stand") or {}).get("zins"), 7),
               ("realzins.json → stand.vpi", ((_lade("realzins.json") if os.path.exists("realzins.json") else {}).get("stand") or {}).get("vpi"), 75),
-              # Risikoaufschläge: FRED börsentäglich; OECD-Monatswerte erscheinen mit ~2–6 Wochen Verzug → 100 Tage wie bei den Renditen
-              ("risikoaufschlaege.json → stand.us", ((_lade("risikoaufschlaege.json") if os.path.exists("risikoaufschlaege.json") else {}).get("stand") or {}).get("us"), 7),
+              # Risikoaufschläge: alles Monatswerte (seit 30.09.2026 auch USA: HQM-Kurve des US-Finanzministeriums minus OECD-Rendite,
+              # Stand „JJJJ-MM“) – sie erscheinen mit ~2–6 Wochen Verzug → 100 Tage wie bei den Renditen. Die frühere Schwelle von
+              # 7 Tagen stammte aus der Zeit der FRED-Tageswerte und ließ den Lauf seit 30.09. jeden Tag rot werden (Fehlalarm).
+              ("risikoaufschlaege.json → stand.us", ((_lade("risikoaufschlaege.json") if os.path.exists("risikoaufschlaege.json") else {}).get("stand") or {}).get("us"), 100),
               ("risikoaufschlaege.json → stand.laender", ((_lade("risikoaufschlaege.json") if os.path.exists("risikoaufschlaege.json") else {}).get("stand") or {}).get("laender"), 100),
           ]
           for quelle, wert, schwelle in checks:
@@ -747,3 +752,13 @@ jobs:
       - name: Lücken im Kursverlauf (Alarm)
         if: ${{ !cancelled() && env.VOLL == '1' }}   # auch, wenn die Frische-Prüfung schon rot ist
         run: python3 scripts/kurs_luecken.py
+
+      # ----- Alarm nach dem Deploy (seit 03.10.2026): Die drei Nach-Deploy-Prüfungen laufen mit continue-on-error, damit
+      #       Wochenbrief und Meldungen trotzdem rausgehen. Dadurch blieb der Lauf grün, auch wenn z. B. der Datenordner
+      #       des Benutzerbereichs abrufbar war – und niemand erfuhr davon. Dieser Schritt macht den Lauf am Ende rot
+      #       (= E-Mail von GitHub), sobald eine davon fehlgeschlagen ist. Läuft bei jedem Deploy, auch nach einem Push. -----
+      - name: Alarm bei fehlgeschlagener Nach-Deploy-Prüfung
+        if: ${{ !cancelled() && (steps.ndp_trigger.outcome == 'failure' || steps.ndp_konto.outcome == 'failure' || steps.ndp_statistik.outcome == 'failure') }}
+        run: |
+          echo "::error::Nach-Deploy-Prüfung fehlgeschlagen – Trigger-Konfiguration: ${{ steps.ndp_trigger.outcome }}, Benutzerbereich: ${{ steps.ndp_konto.outcome }}, Besucherzählung: ${{ steps.ndp_statistik.outcome }}. Einzelheiten in den Schritten oben."
+          exit 1

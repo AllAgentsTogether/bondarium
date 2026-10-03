@@ -1,0 +1,58 @@
+# Wächter: Ist www.bondarium.de erreichbar? (seit 03.10.2026, Bewertung 03.10.2026 – Top-1 Technik)
+#
+# Alle 15 Minuten fünf kleine Abrufe. Schlägt einer auch nach zwei Wiederholungen (je 20 s Abstand) fehl, wird der Lauf
+# rot – dann kommt eine E-Mail von GitHub, wie bei den Datenalarmen in update-data.yml. Kurze Aussetzer lösen so keinen
+# Alarm aus. Die Abrufe zählt die Besucherzählung nicht (kein JavaScript, Kennung „curl“).
+#
+# Hinweis: GitHub startet geplante Läufe zu Stoßzeiten manchmal mit einigen Minuten Verspätung; für einen Wächter reicht das.
+name: Erreichbarkeit (Wächter)
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: erreichbarkeit
+  cancel-in-progress: false
+
+jobs:
+  pruefen:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Seiten, Suchindex, Benutzerbereich und Zähler abfragen
+        run: |
+          fehler=0
+          # pruef <Adresse> <erwarteter Status> <Name> [kopf]   – „kopf“: nur die Kopfzeilen (große Dateien nicht laden)
+          pruef() {
+            local url="$1" soll="$2" name="$3" art="${4:-}" code="000"
+            for versuch in 1 2 3; do
+              if [ "$art" = "kopf" ]; then
+                code=$(curl -s -o /dev/null -I -w "%{http_code}" --max-time 25 "$url" || echo "000")
+              else
+                code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 25 "$url" || echo "000")
+              fi
+              if [ "$code" = "$soll" ]; then echo "ok   $name: HTTP $code"; return 0; fi
+              echo "     $name: HTTP $code (Versuch $versuch)"
+              [ "$versuch" -lt 3 ] && sleep 20
+            done
+            echo "::error::$name nicht erreichbar – $url antwortet mit HTTP $code statt $soll"
+            fehler=1
+          }
+          pruef "https://www.bondarium.de/" 200 "Startseite"
+          pruef "https://www.bondarium.de/anleihen-suche.html" 200 "Anleihen-Suche"
+          pruef "https://www.bondarium.de/suchindex.json" 200 "Suchindex" kopf
+          pruef "https://www.bondarium.de/aufruf.php" 204 "Besucherzählung"
+          # Benutzerbereich: antwortet mit {"status":"ok"} (wie in der Nach-Deploy-Prüfung)
+          ok=0
+          for versuch in 1 2 3; do
+            antwort=$(curl -s --max-time 25 "https://www.bondarium.de/konto.php?aktion=status" || true)
+            case "$antwort" in *'"status":"ok"'*) ok=1; break;; esac
+            echo "     Benutzerbereich: ${antwort:0:80} (Versuch $versuch)"
+            [ "$versuch" -lt 3 ] && sleep 20
+          done
+          if [ "$ok" = "1" ]; then echo "ok   Benutzerbereich"; else echo "::error::Benutzerbereich antwortet nicht mit „ok“ – Anmelden und Merkliste sind gestört"; fehler=1; fi
+          exit $fehler
