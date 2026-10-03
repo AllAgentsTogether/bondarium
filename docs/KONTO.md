@@ -12,6 +12,18 @@ ist ein Planspiel, kein Wertpapierdepot: keine echten Bestände, keine Kaufpreis
 „Aus dem Musterdepot entfernen“ und „Musterdepots öffnen“ (Steckbrief, Merkliste, Start). „Mein Depot“ steht nur noch in
 älteren Abschnitten dieser Datei und in Code-Kommentaren; die Adressen `#planen`, `#depot`, `#erinnerung` bleiben.
 
+**E-Mails an einer Stelle (03.10.2026, Nutzerentscheid nach PDF-Vorschlag `tmp/Bondarium-E-Mails-buendeln.pdf`):** Im Reiter
+„Meldungen und Konto“ steht oben rechts die Karte „E-Mails an dich“ (`#d-nl`, vorher nur der Wochenbrief) mit drei Zeilen:
+„Vor Fälligkeit“ (Schalter `#kd-er-schalter`, Spalte `nutzer.erinnern`), „Meldungen“ (Zahl der Meldungen per E-Mail, Link zur
+Karte „Meldungen“, `#em-meld` zeichnet bereich.js) und „Wochenbrief“ (`#nl-knopf`); darunter die Adresse mit „Adresse ändern“
+(öffnet `#f-email`). Im Reiter „Musterdepots“ steht statt des Kastens nur noch „E-Mail vor Fälligkeit: an/aus · ändern unter
+„Meldungen und Konto““ (`#erinnerung`); die Adresse `konto.html#erinnerung` öffnet jetzt „Meldungen und Konto“. Eine Regel für
+Fälligkeiten: erinnerung.php schreibt 20 Tage vorher und am Tag für Anleihen auf der Merkliste und in den Musterdepots (Merkliste
+ohne Nennwert, je Anleihe und Fälligkeit eine E-Mail); die Meldung „termin“ heißt „Zinstermin steht an“ und nennt keine
+Fälligkeiten mehr (auch nicht den letzten Zinstermin am Fälligkeitstag). konto.php Fassung 8 hat `erinnern` einmal für alle
+Konten gesetzt, die die Termin-Meldung per E-Mail hatten. Datenschutztext (Absätze „Erinnerung per E-Mail“, „Meldungen“,
+Wochenbrief) entsprechend.
+
 ## Bausteine
 
 | Datei | Aufgabe |

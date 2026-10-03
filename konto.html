@@ -468,7 +468,7 @@
       <p class="kf-status" id="geteilt-status" role="status" aria-live="polite"></p>
     </section>
     <section class="kto-geteilt" id="er-aus" aria-labelledby="h-er-aus" hidden>   <!-- Link „Ausschalten“ aus der Erinnerungs-E-Mail (seit 02.10.2026) -->
-      <h2 id="h-er-aus">E-Mail vor jeder Fälligkeit</h2>
+      <h2 id="h-er-aus">E-Mail vor Fälligkeit</h2>
       <p id="er-aus-text"></p>
       <p class="kto-geteilt-a"><button type="button" class="kto-textbtn" id="er-aus-zu">Schließen</button></p>
     </section>
@@ -652,12 +652,7 @@
           </table>
         </div>
         <details class="kd-fx" id="kd-fx" hidden><summary>* Fremdwährungen werden zur Vereinfachung in Euro umgerechnet</summary><p id="kd-fx-t"></p></details>
-        <div class="kd-erinnern" id="erinnerung" hidden>   <!-- „E-Mail vor jeder Fälligkeit“ (seit 02.10.2026), gilt für alle Musterdepots -->
-          <span class="kd-er-i"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.8 7l8.2 6 8.2-6"/></svg></span>
-          <div class="kd-er-t"><b id="kd-er-titel">E-Mail vor jeder Fälligkeit</b><span id="kd-er-satz"></span></div>
-          <button type="button" class="kd-schalter" id="kd-er-schalter" role="switch" aria-checked="false" aria-labelledby="kd-er-titel"><i></i><span>Aus</span></button>
-          <p class="kf-status" id="kd-er-status" role="status" aria-live="polite"></p>
-        </div>
+        <p class="kd-er-zeile" id="erinnerung" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.8 7l8.2 6 8.2-6"/></svg><span id="kd-er-zeile-t">E-Mail vor Fälligkeit: aus</span> · <a href="#meldungen" data-zu="meldungen">ändern unter „Meldungen und Konto“</a></p>   <!-- seit 03.10.2026: der Schalter steht in der Karte „E-Mails an dich“ -->
         <div class="kto-leer" id="kd-leer" hidden><p><b>Dieses Musterdepot ist noch leer.</b> Wähl oben eine Anleihe von deiner Merkliste, trag einen Nennwert ein – zum Beispiel 5.000 € – und füg sie hinzu. Im Steckbrief jeder Anleihe geht das auch mit „Zum Musterdepot hinzufügen“.</p></div>
         <div id="kd-zahlungen" hidden>
           <h2 class="kd-h3" id="h-zahl">Zahlungen aus deinem Musterdepot</h2>
@@ -687,11 +682,14 @@
         <div class="mb-zwei e" style="margin-top:0">
           <section class="mb-karte" id="mb-meld" aria-label="Meldungen"></section>
           <div class="mb-sp">
-            <section class="mb-karte" id="d-nl" aria-labelledby="h-nl">
-              <div class="mb-kh" style="align-items:center"><h2 class="mb-h2" id="h-nl">Wochenbrief per E-Mail</h2><button type="button" class="mb-schalter" id="nl-knopf" role="switch" aria-checked="false" aria-labelledby="h-nl"></button></div>
-              <p class="mb-leer" id="nl-text"></p>
-              <p class="mb-klein">Der Wochenbrief kommt nur, wenn du ihn hier einschaltest.</p>
+            <section class="mb-karte mb-em" id="d-nl" aria-labelledby="h-em">   <!-- „E-Mails an dich“ (seit 03.10.2026, Nutzerentscheid): alle E-Mails an einer Stelle -->
+              <div class="mb-kh"><h2 class="mb-h2" id="h-em">E-Mails an dich</h2></div>
+              <div class="mb-em-z" id="em-er" hidden><div><b id="kd-er-titel">Vor Fälligkeit</b><span id="kd-er-satz"></span></div><button type="button" class="mb-schalter" id="kd-er-schalter" role="switch" aria-checked="false" aria-labelledby="kd-er-titel"></button></div>
+              <p class="kf-status" id="kd-er-status" role="status" aria-live="polite"></p>
+              <div class="mb-em-z"><div><b>Meldungen</b><span id="em-meld">Noch keine Meldung angelegt.</span></div><a href="#mb-meld" id="em-meld-link">einstellen</a></div>
+              <div class="mb-em-z"><div><b id="h-nl">Wochenbrief</b><span id="nl-text"></span></div><button type="button" class="mb-schalter" id="nl-knopf" role="switch" aria-checked="false" aria-labelledby="h-nl"></button></div>
               <p class="kf-status" id="nl-status" role="status" aria-live="polite"></p>
+              <p class="mb-klein" id="em-fuss"></p>
             </section>
             <section class="mb-karte" aria-labelledby="h-mit">
               <div class="mb-kh"><h2 class="mb-h2" id="h-mit">Mitnehmen</h2></div>
@@ -1046,8 +1044,8 @@ MC.navInit();
     document.querySelectorAll("#anmelden form").forEach(f => { if (f.email && !f.email.readOnly) f.email.value = ""; });   // angemeldet: keine Adresse im Anmeldefeld lassen – nach Abmelden oder Löschen stand sie sonst noch da (Nutzertest 03.10.2026)
     // Wochenbrief (seit 02.10.2026): Stand und Schalter – seit 02.10.2026 abends in der Ansicht „Meldungen und Konto“
     $("nl-text").textContent = stand.newsletter
-      ? "Du bekommst den Wochenbrief: einmal pro Woche Zinsen, meistgehandelte Anleihen und deine Merkliste. Abbestellen kannst du ihn hier oder über den Link in jeder Ausgabe."
-      : "Einmal pro Woche per E-Mail: Zinsen, meistgehandelte Anleihen und was sich bei deiner Merkliste getan hat. Jederzeit mit einem Klick abbestellbar.";
+      ? "Bestellt – freitags Zinsen der Woche, meistgehandelte Anleihen und deine Merkliste."
+      : "Freitags: Zinsen der Woche, meistgehandelte Anleihen und deine Merkliste.";
     $("nl-knopf").setAttribute("aria-checked", String(!!stand.newsletter)); $("nl-knopf").dataset.an = stand.newsletter ? "1" : "";
     // „Seit deinem letzten Besuch“ (seit 02.10.2026 abends): einmal je Seitenaufruf den Besuch melden – die Antwort bringt den Beginn
     // des vorigen Besuchs, neue Seiten und die nächsten Zinstermine der Merkliste (für deren Tabelle) und zeichnet die Seite neu
@@ -1574,30 +1572,39 @@ MC.navInit();
   // ---------- E-Mail vor jeder Fälligkeit (seit 02.10.2026, Nutzerentscheid nach PDF-Mockup) ----------
   // Ein Schalter für alle Musterdepots (konto.php, aktion=erinnern), anfangs aus. Verschickt werden die E-Mails von erinnerung.php –
   // 20 Tage vor jeder Fälligkeit und am Tag der Fälligkeit, angestoßen vom ersten Seitenaufruf ab 7 Uhr. Daneben steht die nächste Fälligkeit und wann die
-  // E-Mail dazu käme. konto.html#erinnerung öffnet „Mein Depot“ und zeigt den Schalter (Link aus der Test-E-Mail).
+  // E-Mail dazu käme. konto.html#erinnerung öffnet „Meldungen und Konto“ und zeigt den Schalter (Link aus der Test-E-Mail).
+  // Seit 03.10.2026 (Nutzerentscheid „E-Mails an einer Stelle“): Schalter „Vor Fälligkeit“ in der Karte „E-Mails an dich“, gilt für
+  // Merkliste und Musterdepots; im Reiter „Musterdepots“ steht nur noch der Stand mit Link.
   const ERINNERUNG_TAGE = 20;   // seit 02.10.2026 abends 20 statt 30 Tage, dazu eine zweite E-Mail am Tag der Fälligkeit (Nutzerwunsch; erinnerung.php)
   // Der Schalter erschien erst, als die Absender-Domain einen SPF-Eintrag hatte (Nutzerentscheid 02.10.2026: erst SPF und Test-E-Mail,
   // dann live) – freigegeben am 02.10.2026 (SPF für bondarium.com gesetzt, Test-E-Mail angekommen). false verbirgt ihn wieder.
   const ERINNERUNG_FREI = true;
   let ER_SPRUNG = location.hash === "#erinnerung";
   function zeichneErinnerung() {
-    const st = K.stand(), an = !!st.erinnern, box = $("erinnerung");
-    box.hidden = !st.angemeldet || !ERINNERUNG_FREI; if (box.hidden) return;
-    box.classList.toggle("an", an);
-    const b = $("kd-er-schalter"); b.setAttribute("aria-checked", String(an)); b.querySelector("span").textContent = an ? "An" : "Aus";
-    let next = null;   // nächste Fälligkeit aus allen Musterdepots
-    if (DDATA) DEPOTS.forEach(d => d[2].forEach(([i]) => { const o = anleihe(i, 0, DDATA); if (o.faellig && o.faellig > HEUTE_ISO && (!next || o.faellig < next.faellig)) next = o; }));
-    const mail = `<b>${MC.esc(st.email)}</b>`;
-    let satz = an ? `${ERINNERUNG_TAGE} Tage bevor eine Anleihe aus einem deiner Musterdepots fällig wird, schreiben wir dir an ${mail} – und noch einmal am Tag der Fälligkeit, damit du die Gutschrift auf deinem Bankkonto prüfen kannst.`
-      : `Ausgeschaltet. Schaltest du sie ein, schreiben wir dir ${ERINNERUNG_TAGE} Tage bevor eine Anleihe aus einem deiner Musterdepots fällig wird und noch einmal am Tag der Fälligkeit – an ${mail}.`;
+    const st = K.stand(), an = !!st.erinnern, zeile = $("erinnerung"), z = $("em-er");
+    zeile.hidden = z.hidden = !st.angemeldet || !ERINNERUNG_FREI; if (z.hidden) return;
+    $("kd-er-zeile-t").textContent = `E-Mail vor Fälligkeit: ${an ? "an" : "aus"}`;
+    $("kd-er-schalter").setAttribute("aria-checked", String(an));
+    let next = null;   // nächste Fälligkeit aus Merkliste und Musterdepots (seit 03.10.2026 beide)
+    const pruefe = o => { if (o && o.faellig && o.faellig > HEUTE_ISO && (!next || o.faellig < next.faellig)) next = o; };
+    LISTE.forEach(pruefe);
+    if (DDATA) DEPOTS.forEach(d => d[2].forEach(([i]) => pruefe(anleihe(i, 0, DDATA))));
+    let satz = `${ERINNERUNG_TAGE} Tage vorher und am Tag der Fälligkeit – für Anleihen auf deiner Merkliste und in deinen Musterdepots.`;
     if (an && next) {
       const e = new Date(next.faellig + "T12:00:00Z"); e.setUTCDate(e.getUTCDate() - ERINNERUNG_TAGE);
       const eIso = e.toISOString().slice(0, 10);
-      satz += ` Nächste Fälligkeit: ${MC.esc(next.name)} ${fmtCoupon(next.kupon)} ${next.faellig.slice(0, 4)} am ${MC.datum(next.faellig)}${eIso > HEUTE_ISO ? ` – die erste E-Mail dazu kommt am ${MC.datum(eIso)}` : ""}.`;
+      satz += ` Nächste: ${MC.esc(next.name)} ${fmtCoupon(next.kupon)} ${next.faellig.slice(0, 4)} am ${MC.datum(next.faellig)}${eIso > HEUTE_ISO ? `, erste E-Mail am ${MC.datum(eIso)}` : ""}.`;
     }
     $("kd-er-satz").innerHTML = satz;
-    if (ER_SPRUNG && DDATA) { ER_SPRUNG = false; box.scrollIntoView({ block: "center" }); }
+    $("em-fuss").innerHTML = `Alle E-Mails gehen an <b>${MC.esc(st.email)}</b> · <button type="button" class="kto-textbtn" id="em-adresse">Adresse ändern</button>. Jede E-Mail hat einen Link zum Abbestellen.`;
+    if (ER_SPRUNG && !$("a-meldungen").hidden) { ER_SPRUNG = false; z.scrollIntoView({ block: "center" }); }
   }
+  // „Adresse ändern“ in der Karte „E-Mails an dich“ öffnet das Formular in der Karte „Konto“ darunter
+  document.addEventListener("click", e => {
+    if (!e.target.closest || !e.target.closest("#em-adresse")) return;
+    const f = $("f-email"); if (!f) return;
+    f.hidden = false; f.scrollIntoView({ block: "center" }); const i = f.querySelector("input:not([type=hidden]):not([tabindex='-1'])"); if (i) i.focus();
+  });
   $("kd-er-schalter").addEventListener("click", e => {
     const b = e.currentTarget, an = b.getAttribute("aria-checked") !== "true", st = $("kd-er-status");
     b.disabled = true; st.className = "kf-status"; st.textContent = "";
@@ -1612,8 +1619,8 @@ MC.navInit();
     try { history.replaceState(null, "", location.pathname); } catch (e) {}
     const t = $("er-aus-text"); $("er-aus").hidden = false; t.textContent = "Die Erinnerung wird ausgeschaltet …"; $("kd-er-status").textContent = "";
     K.erinnerungAus(m[1]).then(a => {
-      t.innerHTML = a.ok ? "<b>Die Erinnerung ist ausgeschaltet.</b> Du bekommst keine E-Mails mehr vor Fälligkeiten. Wieder einschalten kannst du sie jederzeit – im Reiter „Musterdepots“, unter der Tabelle."
-        : a.status === "link" ? "Dieser Link gilt nicht mehr – vielleicht ist das Konto gelöscht. Wenn du angemeldet bist, findest du den Schalter im Reiter „Musterdepots“, unter der Tabelle."
+      t.innerHTML = a.ok ? "<b>Die Erinnerung ist ausgeschaltet.</b> Du bekommst keine E-Mails mehr vor Fälligkeiten. Wieder einschalten kannst du sie jederzeit – unter „Meldungen und Konto“, Karte „E-Mails an dich“."
+        : a.status === "link" ? "Dieser Link gilt nicht mehr – vielleicht ist das Konto gelöscht. Wenn du angemeldet bist, findest du den Schalter unter „Meldungen und Konto“, Karte „E-Mails an dich“."
         : MC.esc(TEXT[a.status] || TEXT.fehler);
     });
   }
@@ -1624,7 +1631,7 @@ MC.navInit();
   // Fünf Ansichten (seit 02.10.2026 abends; vorher zwei Reiter „Merkliste“ und „Mein Depot“): Start, Merkliste, Lernen, Musterdepots
   // (darin „Mein Depot“; bis 03.10.2026 „Rechnen und planen“), Meldungen und Konto – eine ist offen. konto.html#merkliste, #lernen, #planen, #meldungen öffnen die Ansicht;
   // die älteren Adressen #depot und #erinnerung (Links in E-Mails) führen zu „Musterdepots“.
-  const ANSICHTEN = ["start", "merkliste", "planen", "meldungen", "lernen"], ALIAS = { merk: "merkliste", depot: "planen", erinnerung: "planen" };
+  const ANSICHTEN = ["start", "merkliste", "planen", "meldungen", "lernen"], ALIAS = { merk: "merkliste", depot: "planen", erinnerung: "meldungen" };
   let ANSICHT = "start";
   function reiter(r, fokus) {
     r = ALIAS[r] || r; if (!ANSICHTEN.includes(r)) r = "start";

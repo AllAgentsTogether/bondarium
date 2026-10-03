@@ -289,3 +289,20 @@ main .mb-lz a { color: var(--ink); }
   .mb-kz { align-items: flex-start; }
   .mb-pkt { width: 34px; height: 34px; }
 }
+/* Karte „E-Mails an dich“ (seit 03.10.2026, Nutzerentscheid „E-Mails an einer Stelle“): je Zeile Titel, kurzer Satz und Schalter
+   oder Link – Vor Fälligkeit, Meldungen, Wochenbrief; darunter die Adresse. Im Reiter „Musterdepots“ nur noch eine Zeile (.kd-er-zeile). */
+.mb-em-z { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px 14px; padding: 11px 0; border-top: 1px solid #EEEDE8; }
+.mb-em-z[hidden] { display: none; }
+.mb-em .mb-kh + .mb-em-z, .mb-em .mb-kh + .mb-em-z[hidden] + .kf-status + .mb-em-z { border-top: 0; padding-top: 0; }
+.mb-em-z b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); }
+.mb-em-z span { display: block; font-size: 13.5px; line-height: 1.5; color: var(--text); margin-top: 1px; }
+.mb-em-z span b { display: inline; font-size: inherit; }
+.mb-em-z > a { font-size: 14px; font-weight: 600; color: var(--green-text); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; white-space: nowrap; }
+.mb-em .kf-status { margin: 0 0 6px; }
+.mb-em .kf-status:empty { display: none; }
+.mb-em .mb-klein { border-top: 1px solid #EEEDE8; padding-top: 10px; margin-top: 0; }
+.kd-er-zeile { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 14px 0 0; font-size: 14px; line-height: 1.5; color: var(--text); }
+.kd-er-zeile[hidden] { display: none; }
+.kd-er-zeile svg { flex: none; }
+.kd-er-zeile a { color: var(--green-text); font-weight: 600; }
+@media (pointer: coarse) { .mb-em-z > a, .kd-er-zeile a { display: inline-flex; align-items: center; min-height: 44px; } }

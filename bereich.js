@@ -359,7 +359,7 @@
     }
 
     // ---------- Meldungen ----------
-    const MART = Object.assign({ termin: "Zinstermin oder Fälligkeit steht an", kurslos: "Seit 14 Tagen kein Kurs mehr oder Daten fraglich" }, SCHWELLE);
+    const MART = Object.assign({ termin: "Zinstermin steht an", kurslos: "Seit 14 Tagen kein Kurs mehr oder Daten fraglich" }, SCHWELLE);
     const meldungen = () => Object.entries(abl("meldung")).map(([id, e]) => ({ id, w: e[0] || {} })).filter(m => MART[m.w.b]);
     // Stand einer Meldung: { wer, was, stand (HTML), aktiv (jetzt ausgelöst) }
     function meldungStand(m, D) {
@@ -372,7 +372,7 @@
           stand: !an ? `${aus} · letzter Stand: ${zahl}` : w.a ? `<em>Ausgelöst am ${esc(MC.datum(w.a))}</em> · ${typeof w.aw === "number" ? (rend ? `Rendite ${fmt(w.aw, 2)} %` : `Kurs ${fmt(w.aw, 2)}`) : zahl}` : erf ? `<em>Bedingung erfüllt</em> · ${zahl}` : `Aktiv · ${zahl}` };
       }
       if (w.b === "termin") {
-        const t = termine(1, true)[0], nah = t && tageBis(t.tag) <= 7;
+        const t = termine(9999, true).filter(x => x.art === "Zinstermin")[0], nah = t && tageBis(t.tag) <= 7;   // seit 03.10.2026 nur Zinstermine
         return { wer: "Alle gemerkten Anleihen", was: MART.termin, aktiv: an && !!nah,
           stand: !an ? aus : `${nah ? `<em>In ${tageBis(t.tag)} ${tageBis(t.tag) === 1 ? "Tag" : "Tagen"}</em>` : "7 Tage vorher"} · ${t ? `nächster: ${esc(titel(t.o))}, ${esc(MC.datum(t.tag))}` : "derzeit kein Termin bekannt"}` };
       }
@@ -393,8 +393,16 @@
         `<label for="mb-m-w">Wert<input type="text" id="mb-m-w" inputmode="decimal" autocomplete="off" placeholder="z. B. 4,25"></label>` +
         `<label for="mb-m-m">Nachricht<select id="mb-m-m"><option value="1">E-Mail</option><option value="0">nur im Bereich</option></select></label></div>` +
         `<button type="submit" class="go">Meldung anlegen</button><p class="kf-status" id="mb-m-status" role="status" aria-live="polite"></p>` +
-        `<p class="mb-klein">E-Mails gehen an ${esc(K.stand().email)} – nur für Meldungen mit „E-Mail“, höchstens eine am Tag, jede mit einem Link zum Ausschalten. „Nur im Bereich“ zeigt die Meldung beim nächsten Besuch hier und auf „Start“.</p></form>`;
+        `<p class="mb-klein">E-Mails gehen an ${esc(K.stand().email)} – nur für Meldungen mit „E-Mail“, höchstens eine am Tag, jede mit einem Link zum Ausschalten. „Nur im Bereich“ zeigt die Meldung beim nächsten Besuch hier und auf „Start“. Fälligkeiten kommen über „Vor Fälligkeit“ in der Karte „E-Mails an dich“.</p></form>`;
       meldungFormular();
+      // Karte „E-Mails an dich“ (konto.html, seit 03.10.2026): Zahl der Meldungen, die per E-Mail kommen
+      const em = $("em-meld");
+      if (em) {
+        const an = ms.filter(m => m.w.an), mail = an.filter(m => m.w.m).length;
+        em.textContent = !ms.length ? "Noch keine Meldung angelegt." : !an.length ? "Alle Meldungen sind ausgeschaltet."
+          : an.length === 1 ? (mail ? "Deine Meldung kommt per E-Mail – höchstens eine E-Mail am Tag." : "Deine Meldung steht nur im Bereich, nicht per E-Mail.")
+          : `${mail} von ${an.length} Meldungen ${mail === 1 ? "kommt" : "kommen"} per E-Mail – höchstens eine E-Mail am Tag.`;
+      }
     }
     function meldungFormular() {
       const i = $("mb-m-i"), b = $("mb-m-b"); if (!i || !b) return;

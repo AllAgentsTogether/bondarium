@@ -26,6 +26,7 @@
  *                  (muster) löscht es samt Anleihen – das letzte bleibt; muster-uebernehmen (name, liste
  *                  „ISIN~Nennwert,…“) legt ein geteiltes Musterdepot als neues an (Knopf im PDF, konto.html#muster=…)
  *                  erinnern (an = 1 | 0): E-Mail 20 Tage vor und am Tag jeder Fälligkeit ein- oder ausschalten (seit 02.10.2026;
+ *                  seit 03.10.2026 für Merkliste und Musterdepots – Schalter „Vor Fälligkeit“ in der Karte „E-Mails an dich“;
  *                  verschickt werden die E-Mails von erinnerung.php, angestoßen von aufruf.php)
  *   Ohne Anmeldung aktion=erinnerung-aus (token „Nummer.Prüfsumme“ aus dem Link in der Erinnerungs-E-Mail,
  *                  konto.html#erinnerung-aus=…) schaltet die Erinnerung aus – ein Klick, ohne Passwort
@@ -116,7 +117,7 @@ const NL_JE_AUFRUF       = 40;    // E-Mails je Aufruf von newsletter-senden; de
 const NL_MERK_MAX        = 8;     // so viele gemerkte Anleihen zeigt eine Ausgabe (zuletzt gemerkte zuerst)
 const NL_FRISCH_TAGE     = 2;     // ältere Ausgaben werden nicht mehr verschickt
 const BESUCH_PAUSE        = 3 * 3600;   // nach so vielen Sekunden ohne Aufruf beginnt ein neuer Besuch
-const MELDUNG_TAGE        = 7;          // „Zinstermin oder Fälligkeit steht an“: so viele Tage vorher
+const MELDUNG_TAGE        = 7;          // „Zinstermin steht an“: so viele Tage vorher (Fälligkeiten: erinnerung.php, 20 Tage und am Tag)
 const MELDUNG_MAILS       = 200;        // E-Mails je Aufruf von meldungen-senden
 // Persönliche Ablage (seit 02.10.2026): Art → [Höchstzahl der Einträge, Höchstlänge des Werts in Bytes (JSON)].
 // Der Schlüssel ist je Art eine ISIN, ein Seitenname, eine kurze Kennung – Muster siehe ablage_schluessel().
@@ -392,6 +393,21 @@ function db(): PDO
             $db->exec('ALTER TABLE sitzungen ADD COLUMN zuletzt INTEGER NOT NULL DEFAULT 0');
             $db->exec('ALTER TABLE links ADD COLUMN nutzer INTEGER');
             $db->exec('PRAGMA user_version = 7');
+            $db->exec('COMMIT');
+        }
+        if ($fassung < 8) {
+            // Fassung 8 (03.10.2026, Nutzerentscheid „E-Mails an einer Stelle“): Fälligkeiten kommen nur noch über „Vor Fälligkeit“
+            // (Spalte erinnern, jetzt für Merkliste und Musterdepots); die Meldung „termin“ nennt nur noch Zinstermine. Wer diese
+            // Meldung bisher per E-Mail hatte, bekäme Fälligkeiten sonst nicht mehr – für diese Konten wird erinnern einmal gesetzt.
+            $db->exec('BEGIN IMMEDIATE');
+            $setze = $db->prepare('UPDATE nutzer SET erinnern = 1 WHERE id = ?');
+            foreach ($db->query("SELECT nutzer, wert FROM ablage WHERE art = 'meldung'")->fetchAll(PDO::FETCH_NUM) as [$nutzer, $wert]) {
+                $w = json_decode((string)$wert, true);
+                if (is_array($w) && ($w['b'] ?? '') === 'termin' && !empty($w['an']) && !empty($w['m'])) {
+                    $setze->execute([(int)$nutzer]);
+                }
+            }
+            $db->exec('PRAGMA user_version = 8');
             $db->exec('COMMIT');
         }
     } catch (Throwable $e) {
@@ -1040,8 +1056,9 @@ function meldung_kennung(int $id): string
  * Rendite|null, …, nächster Zinstermin|null]. Regeln je Meldung (Ablage, Art „meldung“):
  *   rendite-ueber | rendite-unter | kurs-ueber | kurs-unter   Schwelle w zur Anleihe i. Ausgelöst wird einmal: Die Meldung
  *       trägt danach „a“ (Tag) und „aw“ (Wert) und wird erst wieder scharf, wenn die Bedingung nicht mehr gilt.
- *   termin   Zinstermin oder Fälligkeit einer gemerkten Anleihe in höchstens MELDUNG_TAGE Tagen; „bis“ merkt den spätesten
- *       schon gemeldeten Tag, damit jeder Termin nur einmal kommt.
+ *   termin   Zinstermin einer gemerkten Anleihe in höchstens MELDUNG_TAGE Tagen; „bis“ merkt den spätesten schon gemeldeten
+ *       Tag, damit jeder Termin nur einmal kommt. Seit 03.10.2026 ohne Fälligkeiten und ohne den letzten Zinstermin am
+ *       Fälligkeitstag – beides kommt über „Vor Fälligkeit“ (erinnerung.php), sonst gäbe es zwei Regeln für dieselbe Fälligkeit.
  *   kurslos   prüft die Seite beim Besuch – hier übergangen.
  * Eine E-Mail je Konto mit allen neu ausgelösten Meldungen, die „per E-Mail“ (m) gewählt haben; die anderen stehen nur im
  * Bereich. Nur Tatsachen, keine Vorschläge. Jede E-Mail trägt einen Link, der alle Meldungen auf „nur im Bereich“ stellt.
@@ -1107,11 +1124,9 @@ function meldungen_senden(): array
                     if (!is_array($a) || count($a) < 7) {
                         continue;
                     }
-                    foreach ([[6, 'zahlt Zinsen'], [2, 'wird fällig']] as [$feld, $was]) {
-                        $d = $a[$feld];
-                        if (is_string($d) && $d > $heute && $d <= $bis && $d > (string)($w['bis'] ?? '')) {
-                            $neu[] = [$d, $titel($a) . ' ' . $was . ' am ' . nl_datum($d) . '.'];
-                        }
+                    $d = $a[6];   // nächster Zinstermin; am Fälligkeitstag meldet „Vor Fälligkeit“
+                    if (is_string($d) && $d !== (string)$a[2] && $d > $heute && $d <= $bis && $d > (string)($w['bis'] ?? '')) {
+                        $neu[] = [$d, $titel($a) . ' zahlt Zinsen am ' . nl_datum($d) . '.'];
                     }
                 }
                 if ($neu) {

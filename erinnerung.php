@@ -6,7 +6,10 @@
  * Anleihe und Fälligkeit einmal, mehrere in einer E-Mail. Seit 02.10.2026 abends (Nutzerwunsch: „20 Tage bevor sie fällig
  * wird und dann nochmal zum Tag der Fälligkeit, damit man sein Konto überprüfen kann“) sind es 20 statt 30 Tage, und am
  * Fälligkeitstag selbst kommt eine zweite E-Mail. Welche schon verschickt ist, steht in der Tabelle erinnert: die erste
- * unter der Fälligkeit „JJJJ-MM-TT“, die zweite unter „JJJJ-MM-TT#tag“ (keine neue Spalte nötig; beide fallen am Tag danach heraus). Nur Tatsachen (Anleihe, ISIN, Tag, Musterdepot, Nennwert), keine
+ * unter der Fälligkeit „JJJJ-MM-TT“, die zweite unter „JJJJ-MM-TT#tag“ (keine neue Spalte nötig; beide fallen am Tag danach heraus).
+ * Seit 03.10.2026 (Nutzerentscheid „E-Mails an einer Stelle“) auch für die Merkliste: Anleihen in einem Musterdepot stehen mit
+ * Depot und Nennwert in der E-Mail, nur gemerkte als „Merkliste“; je Anleihe und Fälligkeit bleibt es bei einer E-Mail (Tabelle
+ * erinnert). Die Meldung „Zinstermin steht an“ (konto.php) nennt seitdem keine Fälligkeiten mehr. Nur Tatsachen (Anleihe, ISIN, Tag, Musterdepot, Nennwert), keine
  * Vorschläge für andere Anleihen – sonst wäre es Werbung. Jede E-Mail trägt einen Link, der die Erinnerung mit einem Klick
  * ausschaltet (konto.html#erinnerung-aus=Nummer.Prüfsumme; geprüft in konto.php, aktion=erinnerung-aus).
  *
@@ -135,41 +138,45 @@ function erinnerung_datum(string $iso): string
 }
 
 /**
- * Text einer Erinnerung. $posten: [[Name, ISIN, Fälligkeit, Tage, Depotname, Nennwert, Währung], …]. $heute = true: die zweite
- * E-Mail am Tag der Fälligkeit (alle Posten sind heute fällig).
+ * Text einer Erinnerung. $posten: [[Name, ISIN, Fälligkeit, Tage, Depotname, Nennwert, Währung], …] – Depotname leer = nur auf der
+ * Merkliste (ohne Nennwert). $heute = true: die zweite E-Mail am Tag der Fälligkeit (alle Posten sind heute fällig).
  */
 function erinnerung_text(array $posten, string $aus, bool $heute = false): array
 {
     usort($posten, fn($a, $b) => strcmp($a[2], $b[2]) ?: strcmp($a[4], $b[4]));
     $isins = array_unique(array_column($posten, 1));
     $tage = fn(int $t) => $t === 1 ? 'morgen' : "in $t Tagen";
+    // Woher die Anleihen kommen: Musterdepot(s), Merkliste oder beides
+    $depots = array_values(array_unique(array_filter(array_column($posten, 4), fn($d) => $d !== '')));
+    $merk = count(array_filter($posten, fn($p) => $p[4] === '')) > 0;
+    $quelle = !$depots ? 'von deiner Merkliste'
+        : (count($depots) === 1 ? 'aus deinem Musterdepot „' . $depots[0] . '“' : 'aus deinen Musterdepots') . ($merk ? ' und von deiner Merkliste' : '');
+    $kurz = !$depots ? 'von deiner Merkliste' : ($merk ? 'aus Merkliste und Musterdepots' : (count($depots) === 1 ? 'aus deinem Musterdepot' : 'aus deinen Musterdepots'));
     if ($heute) {
-        $depots = array_unique(array_column($posten, 4));
         $eine = count($isins) === 1;
-        $betreff = $eine ? 'Bondarium: Heute wird eine Anleihe aus deinem Musterdepot fällig' : 'Bondarium: Heute werden ' . count($isins) . ' Anleihen aus deinen Musterdepots fällig';
-        $kopf = 'heute ' . ($eine ? 'wird eine Anleihe' : 'werden ' . count($isins) . ' Anleihen') . ' aus '
-            . (count($depots) === 1 ? 'deinem Musterdepot „' . $depots[0] . '“' : 'deinen Musterdepots') . ' fällig:';
+        $betreff = $eine ? "Bondarium: Heute wird eine Anleihe $kurz fällig" : 'Bondarium: Heute werden ' . count($isins) . " Anleihen $kurz fällig";
+        $kopf = 'heute ' . ($eine ? 'wird eine Anleihe' : 'werden ' . count($isins) . ' Anleihen') . " $quelle fällig:";
     } elseif (count($isins) === 1) {
         $p = $posten[0];
-        $depots = array_unique(array_column($posten, 4));
-        $betreff = 'Bondarium: Eine Anleihe aus deinem Musterdepot wird am ' . erinnerung_datum($p[2]) . ' fällig';
-        $kopf = $tage($p[3]) . ' wird eine Anleihe aus ' . (count($depots) === 1 ? 'deinem Musterdepot „' . $depots[0] . '“' : 'deinen Musterdepots') . ' fällig:';
+        $betreff = "Bondarium: Eine Anleihe $kurz wird am " . erinnerung_datum($p[2]) . ' fällig';
+        $kopf = $tage($p[3]) . " wird eine Anleihe $quelle fällig:";
     } else {
-        $betreff = 'Bondarium: ' . count($isins) . ' Anleihen aus deinen Musterdepots werden bald fällig';
-        $kopf = 'bald werden ' . count($isins) . ' Anleihen aus deinen Musterdepots fällig:';
+        $betreff = 'Bondarium: ' . count($isins) . " Anleihen $kurz werden bald fällig";
+        $kopf = 'bald werden ' . count($isins) . " Anleihen $quelle fällig:";
     }
     $bloecke = [];
     foreach ($posten as $p) {
         $w = $p[6] !== '' && $p[6] !== 'EUR' ? $p[6] : '€';
         $bloecke[] = "  {$p[0]}\n  ISIN {$p[1]} · fällig am " . erinnerung_datum($p[2]) . (count($isins) > 1 && !$heute ? ' (' . $tage($p[3]) . ')' : '') .
-            "\n  Musterdepot „{$p[4]}“ · Nennwert " . number_format((float)$p[5], 0, ',', '.') . " $w · Rückzahlung zum Nennwert (100 %)";
+            ($p[4] !== '' ? "\n  Musterdepot „{$p[4]}“ · Nennwert " . number_format((float)$p[5], 0, ',', '.') . " $w · Rückzahlung zum Nennwert (100 %)"
+                : "\n  Merkliste · Rückzahlung zum Nennwert (100 %)");
     }
     $text = $kopf . "\n\n" . implode("\n\n", $bloecke) . "\n\n" .
         ($heute ? "Hast du die Anleihe auch in deinem echten Depot? Dann sieh in den nächsten Tagen auf deinem Konto nach, ob die Rückzahlung angekommen ist.\n\n" : '') .
-        "Dein Musterdepot ansehen:\nhttps://www.bondarium.de/konto.html#depot\n\n" .
-        "Du bekommst diese E-Mail, weil du in „Mein Bondarium“ die Erinnerung vor jeder Fälligkeit eingeschaltet hast. Ausschalten kannst du sie mit einem Klick:\n" .
+        ($depots ? "Deine Musterdepots ansehen:\nhttps://www.bondarium.de/konto.html#depot\n\n" : "Deine Merkliste ansehen:\nhttps://www.bondarium.de/konto.html#merkliste\n\n") .
+        "Du bekommst diese E-Mail, weil du in „Mein Bondarium“ unter „E-Mails an dich“ die E-Mail vor Fälligkeit eingeschaltet hast. Ausschalten kannst du sie mit einem Klick:\n" .
         "https://www.bondarium.de/konto.html#$aus\n\n" .
-        "Musterdepots sind ein Planspiel – Bondarium kauft und verkauft nichts und kennt keine echten Bestände. Keine Anlageberatung.";
+        ($depots ? 'Musterdepots sind ein Planspiel – Bondarium kauft und verkauft nichts und kennt keine echten Bestände. ' : 'Bondarium kauft und verkauft nichts und kennt keine echten Bestände. ') . 'Keine Anlageberatung.';
     return [$betreff, $text];
 }
 
@@ -202,6 +209,14 @@ function erinnerungen_senden(): array
     foreach ($s->fetchAll(PDO::FETCH_NUM) as [$id, $email, $depot, $isin, $nenn]) {
         $je[(int)$id]['email'] = (string)$email;
         $je[(int)$id]['posten'][] = [(string)$depot, (string)$isin, (int)$nenn];
+    }
+    // Seit 03.10.2026 auch die Merkliste – Anleihen, die schon in einem Musterdepot liegen, stehen dort mit Depot und Nennwert
+    $f = $db->query('SELECT n.id, n.email, f.isin FROM nutzer n JOIN favoriten f ON f.nutzer = n.id WHERE n.erinnern = 1 ORDER BY n.id, f.seit');
+    foreach ($f->fetchAll(PDO::FETCH_NUM) as [$id, $email, $isin]) {
+        $id = (int)$id;
+        $je[$id]['email'] = (string)$email;
+        if (in_array((string)$isin, array_column($je[$id]['posten'] ?? [], 1), true)) continue;
+        $je[$id]['posten'][] = ['', (string)$isin, 0];
     }
     $schon = $db->prepare('SELECT 1 FROM erinnert WHERE nutzer = ? AND isin = ? AND faellig = ?');
     $merke = $db->prepare('INSERT OR IGNORE INTO erinnert (nutzer, isin, faellig, gesendet) VALUES (?, ?, ?, ?)');
