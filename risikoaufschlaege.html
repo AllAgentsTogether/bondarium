@@ -260,7 +260,7 @@
           <span class="rl-l">Niederlande</span><span class="rl-bahn"><span class="rl-bar" style="--w:11%"></span><span class="rl-w" style="--w:11%">+0,10</span></span>
           <span class="rl-null">Deutschland = 0, der Maßstab</span>
         </div>
-        <p class="sb-f" id="rl-f">10-jährige Staatsanleihen, August 2026, Prozentpunkte über Deutschland. <a href="anleihen-laender.html">Die Anleihen dazu</a>.</p></div>
+        <p class="sb-f" id="rl-f">10-jährige Staatsanleihen, August 2026, Prozentpunkte über Deutschland. Die Anleihen dazu: <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>.</p></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Der Aufschlag ist der Preis des Zweifels – ein Grund, nachzusehen, warum: <a href="bonitaet.html#zins">Bonität und Ratings</a>.</span></p>
     </section>
 
@@ -271,7 +271,7 @@
         <p><strong>Aufschläge messen nicht, ob ein Schuldner ausfällt, sondern wie viele daran zweifeln.</strong> 1992 zahlte Italien 7 Prozentpunkte mehr – wegen der Lira, nicht wegen einer Pleite. Mit dem Euro fiel der Aufschlag auf 0,1.</p><p>2011 kippte das: Italien 5,2 Prozentpunkte, Spanien 5,6, Griechenland 27. Nach Draghis „Whatever it takes“ im Juli 2012 schmolzen die Aufschläge, die Kurse stiegen.</p>
       </div>
       <div class="k-bild"><p class="sb-k">Die großen Ausschläge</p>
-        <table class="rt" id="krisen"><thead><tr><th scope="col">Krise</th><th scope="col">Wer</th><th scope="col" class="num">Auf&shy;schlag</th></tr></thead><tbody>
+        <table class="rt" id="krisen" aria-label="Risikoaufschläge in Krisen: die großen Ausschläge"><thead><tr><th scope="col">Krise</th><th scope="col">Wer</th><th scope="col" class="num">Auf&shy;schlag</th></tr></thead><tbody>
           <tr><td>1992<small>Währungskrise</small></td><td>Italien</td><td class="num minus">7,0<small>Okt 1992</small></td></tr>
           <tr><td>2008<small>Finanzkrise</small></td><td>US-Unternehmen AAA bis A</td><td class="num minus">5,0<small>Okt 2008</small></td></tr>
           <tr><td rowspan="4">2011/12<small>Eurokrise</small></td><td>Griechenland</td><td class="num minus">27,4<small>Feb 2012</small></td></tr>
@@ -291,7 +291,7 @@
         <p>Wer bis zur Fälligkeit hält, bekommt trotzdem 100&nbsp;% zurück – der Kursverlust ist dann nur vorübergehend, solange der Schuldner zahlt.</p>
       </div>
       <div class="k-bild"><p class="sb-k">So stark fällt der Kurs, wenn der Aufschlag steigt</p>
-        <table class="rt"><thead>
+        <table class="rt" aria-label="Kursverlust bei steigendem Risikoaufschlag je Restlaufzeit"><thead>
           <tr><th scope="col" rowspan="2">Mehr Aufschlag</th><th scope="colgroup" colspan="3" class="num">Kursverlust bei Restlaufzeit</th></tr>
           <tr><th scope="col" class="num">2 Jahre</th><th scope="col" class="num">5 Jahre</th><th scope="col" class="num">10 Jahre</th></tr>
         </thead><tbody>
@@ -403,7 +403,7 @@ MC.navInit();
         return `<span class="rl-l">${MC.esc(h.name)}${h.monat !== stand ? `<small>${monLang(h.monat)}</small>` : ""}</span><span class="rl-bahn"><span class="rl-bar" style="--w:${w}%${c}"></span><span class="rl-w" style="--w:${w}%">${vz(h.aufschlag, 2)}</span></span>`;
       }).join("") + `<span class="rl-null">Deutschland = 0, der Maßstab</span>`;
       rl.setAttribute("aria-label", `Rangliste der Euro-Staaten nach Aufschlag gegen Deutschland, ${monLang(stand)}: ` + heute.map(h => `${h.name} ${fmt(h.aufschlag, 2)} Prozentpunkte`).join(", ") + ".");
-      document.getElementById("rl-f").innerHTML = `10-jährige Staatsanleihen, ${monLang(stand)}, Prozentpunkte über Deutschland. <a href="anleihen-laender.html">Die Anleihen dazu</a>.`;
+      document.getElementById("rl-f").innerHTML = `10-jährige Staatsanleihen, ${monLang(stand)}, Prozentpunkte über Deutschland. Die Anleihen dazu: <a href="anleihen-laender.html">Staatsanleihen nach Ländern</a>.`;
     }
     // USA: jüngster Monat [Monat, Aufschlag, Unternehmensrendite, Staatsanleihe] und Durchschnitt seit Beginn der Reihe
     const u = d.us || {}, um = u.monate || [], uh = u.heute || [];

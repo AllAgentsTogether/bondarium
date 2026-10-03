@@ -12,7 +12,9 @@ Jetzt stehen die Zeilen im ausgelieferten HTML. Im Browser ersetzt das Seitenskr
 Fassung (innerHTML) – mit Sortieren, Aufklappen und den Handy-Karten. Die Quell-HTML im Repository bleiben unverändert.
 
   broker-vergleich.html   <div id="bv-tabelle">            ← broker.json (gleiche Tabelle wie das Seitenskript)
-  anleihen-etf.html       <table class="etf" data-gruppe>  ← top10-anleihen-etfs.json, Kurse aus kurse-auswahl.json
+  anleihen-etf.html       <table class="etf" data-gruppe>  ← top10-anleihen-etfs.json, Kurse aus kurse-auswahl.json;
+                                                             seit 02.10.2026 auch die ETF-Zahl je Kategorie-Kachel, die
+                                                             Angaben <span data-etf="…"> und die Zeile „Daten-Stand“
   anleihen-laender.html, unternehmensanleihen-laender.html
                           <tbody id="kpis-body">           ← top10-…-laender.json, Gruppe „deutschland“ – erst wenn die
                                                              automatische Rangliste gilt („aktiv“); bis dahin zeigt die
@@ -22,6 +24,13 @@ Fassung (innerHTML) – mit Sortieren, Aufklappen und den Handy-Karten. Die Quel
   staatsanleihen-laufzeit.html, unternehmensanleihen-laufzeit.html
                           <table class="kpis" data-gruppe>  ← automatische Rangliste, solange sie nicht „aktiv“ ist die
                                                              Handauswahl der Seite (ANLEIHEN im Seitenskript; seit 03.10.2026)
+
+  index.html              „Sechs Beispiele“ (table.itab)  ← Rendite, Kurs und Restlaufzeit der Zeilen aus kurse-auswahl.json,
+                                                             „Kurse und Renditen vom“ dessen Stand und die Rendite der
+                                                             Hero-Karte (seit 03.10.2026, SEO-Runde 2)
+
+Auf den Ranglisten-, Kupon- und ETF-Seiten schreibt das Skript dazu die Zeile „Daten-Stand“ im Wortlaut des Seitenskripts
+(SEO-Runde 2) – nur zusammen mit den Zeilen, zu denen sie gehört.
 
 Die Anleihen-Tabellen haben seit 03.10.2026 die Form der Standardtabelle (felder.js, MC.felder.tabelle; Regeln in
 docs/ANLEIHEN-ANGABEN.md): hier nachgebaut in std_tabelle() mit denselben Schreibweisen aus _common.py.
@@ -66,6 +75,27 @@ def datum(iso):
 def lade(site, name):
     with open(os.path.join(site, name), encoding="utf-8") as f:
         return json.load(f)
+
+
+def ist_zahl(v):
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+
+
+def ist_datum(iso):
+    return bool(re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(iso or "")))
+
+
+def datenstand_setzen(html_, text):
+    """<p id="datastand">Daten-Stand: …</p> auf text setzen; None, wenn die Zeile fehlt (dann bleibt die Seite, wie sie ist)."""
+    muster = re.compile(r'(<p id="datastand">)Daten-Stand:[^<]*(</p>)')
+    if not muster.search(html_):
+        return None
+    return muster.sub(lambda m: m.group(1) + esc_js(text) + m.group(2), html_, count=1)
+
+
+def esc_js(s):
+    """wie MC.esc (site.js)"""
+    return re.sub(r"[&<>\"']", lambda m: {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[m.group(0)], str(s))
 
 
 # ---------- Broker-Vergleich: dieselbe Rechnung und dieselben Zeilen wie das Skript in broker-vergleich.html ----------
@@ -372,14 +402,51 @@ def etf_zeile(r, rang, kurse):
             f'<td class="num" data-l="Umsatz">{etf_volumen(r.get("umsatz12"))}</td><td class="use" data-l="Zinsen aufs Konto?">{use}</td></tr>')
 
 
+def etf_monat(m):
+    """wie monat() im Seitenskript: „2026-08“ → „08/2026“"""
+    return f"{m[5:7]}/{m[:4]}" if m else "–"
+
+
+def etf_angaben(html_, D, kstand):
+    """Was das Seitenskript nach dem Laden der ETF-Liste setzt (seit 02.10.2026 auch fest im HTML):
+    die Zahl der ETFs je Kategorie-Kachel (.kat[data-k] .km b), die Angaben <span data-etf="…"> und die Zeile „Daten-Stand“.
+    Gleicher Wortlaut wie im Skript; bei einem Fehler bleibt der Text, wie er ist (Warnung)."""
+    try:
+        neu, kacheln = html_, 0
+        for key, g in (D.get("gruppen") or {}).items():
+            if not ist_zahl(g.get("anzahl")):
+                continue
+            muster = re.compile(r'(<a class="kat\b[^>]*\bdata-k="' + re.escape(key) + r'"[^>]*>(?:(?!</a>).)*?<span class="km"><span><b>)[^<]*(</b>)', re.S)
+            neu, n = muster.subn(lambda m: m.group(1) + zahl(g["anzahl"]) + m.group(2), neu, count=1)
+            kacheln += n
+        setze = {"anzahl": zahl(D.get("anzahl")) if ist_zahl(D.get("anzahl")) else None,
+                 "umsatz": f"von {etf_monat(D['umsatz'].get('von'))} bis {etf_monat(D['umsatz'].get('bis'))}" if isinstance(D.get("umsatz"), dict) else None,
+                 "stand-text": (f"ETF-Liste der Deutschen Börse vom {datum(D.get('stand'))}; Fondsvermögen und Handelskosten aus der "
+                                f"Monatsstatistik {etf_monat(D.get('statistik'))}.") if ist_datum(D.get("stand")) else None}
+        for k, text in setze.items():
+            if text is not None:
+                neu = re.sub(r'(<span data-etf="' + k + r'">)[^<]*(</span>)', lambda m, text=text: m.group(1) + esc_js(text) + m.group(2), neu)
+        if ist_datum(D.get("stand")):
+            zeile = ("Daten-Stand: " + (f"Kurse {datum(kstand)} · " if kstand else "")
+                     + f"ETF-Liste {datum(D['stand'])} · Monatsstatistik {etf_monat(D.get('statistik'))}")
+            neu = datenstand_setzen(neu, zeile) or neu
+        print(f"anleihen-etf.html: ETF-Zahl in {kacheln} Kacheln, Stand und Daten-Stand fest im HTML")
+        return neu
+    except Exception as e:
+        warn(f"anleihen-etf.html: Kacheln und Stand nicht vorab geschrieben ({type(e).__name__}: {e})")
+        return html_
+
+
 def etfs(site):
     pfad = os.path.join(site, "anleihen-etf.html")
     html_ = open(pfad, encoding="utf-8").read()
     D = lade(site, "top10-anleihen-etfs.json")
     try:
-        kurse = lade(site, "kurse-auswahl.json").get("kurse") or {}
+        K = lade(site, "kurse-auswahl.json")
+        kurse = K.get("kurse") or {}
+        kstand = K.get("stand") if ist_datum(K.get("stand")) else ""   # wie KSTAND im Seitenskript
     except Exception:
-        kurse = {}
+        kurse, kstand = {}, ""
     gefuellt, anzahl = 0, 0
     for key, g in (D.get("gruppen") or {}).items():
         reihe = g.get("etfs") or []
@@ -392,6 +459,7 @@ def etfs(site):
     if not gefuellt:
         return warn("anleihen-etf.html: keine leere ETF-Tabelle gefunden – nichts vorab geschrieben")
     html_ = re.sub(r'\n?<noscript><p class="note">Die Tabellen der ETFs brauchen JavaScript\.</p></noscript>', "", html_, count=1)
+    html_ = etf_angaben(html_, D, kstand)   # nur zusammen mit den Tabellen: Zahlen und Stand gehören zusammen
     with open(pfad, "w", encoding="utf-8") as f:
         f.write(html_)
     print(f"anleihen-etf.html: {anzahl} ETFs in {gefuellt} Tabellen fest im HTML")
@@ -542,6 +610,9 @@ def laufzeit(site, seite, datei):
         thead, tbody = std_tabelle(objs, kurse.get("stand") or stand, tage)
         html_, ok = ersetze_tabelle(html_, r'<table class="kpis(?: atab)?" data-gruppe="' + re.escape(key) + '">', thead, tbody)
         n += len(objs) if ok else 0
+    kstand = kurse.get("stand") or stand
+    if n and ist_datum(kstand):   # „Daten-Stand“ wie T10.datenstand() im Browser – nur zusammen mit den Zeilen (SEO-Runde 2)
+        html_ = datenstand_setzen(html_, "Daten-Stand: " + datum(kstand)) or html_
     with open(pfad, "w", encoding="utf-8") as f:
         f.write(html_)
     print(f"{seite}: {n} Anleihen in fünf Tabellen fest im HTML ({'automatische Rangliste' if aktiv else 'Handauswahl'})")
@@ -568,6 +639,9 @@ def laender(site, seite, datei):
     html_, ok = ersetze_tabelle(html_, r'<table class="kpis(?: atab)?" id="kpis">', thead, tbody)
     if not ok:
         return warn(f"{seite}: Tabelle #kpis nicht gefunden – nichts vorab geschrieben")
+    kstand = kurse.get("stand") or default.get("date")
+    if ist_datum(kstand):   # „Daten-Stand“ wie T10.datenstand() im Browser (SEO-Runde 2)
+        html_ = datenstand_setzen(html_, "Daten-Stand: " + datum(kstand)) or html_
     with open(pfad, "w", encoding="utf-8") as f:
         f.write(html_)
     print(f"{seite}: {len(objs)} Anleihen (Deutschland) fest im HTML")
@@ -590,9 +664,70 @@ def kupon(site, seite="anleihen-kupon.html", datei="top10-anleihen-kupon.json"):
         if ok:
             geschrieben.append(f"{len(objs)} {key}")
     if geschrieben:
+        # „Daten-Stand“ wie das Seitenskript – nur zusammen mit den Zeilen (SEO-Runde 2)
+        if ist_datum(D.get("stand")):
+            ezb = (D.get("ezb") or {}).get("stand") if isinstance(D.get("ezb"), dict) else None
+            html_ = datenstand_setzen(html_, "Daten-Stand: Kurse vom " + datum(D["stand"]) + (", EZB-Liste vom " + datum(ezb) if ezb else "")) or html_
         with open(pfad, "w", encoding="utf-8") as f:
             f.write(html_)
         print(f"{seite}: {', '.join(geschrieben)} fest im HTML")
+
+
+def startseite(site, seite="index.html"):
+    """„Sechs Beispiele“ (Standardtabelle seit 03.10.2026): In den Zeilen der Quell-HTML Rendite, Kurs und Restlaufzeit aus
+    kurse-auswahl.json, „Kurse und Renditen vom“ dessen Stand und dieselbe Rendite in der Hero-Karte. Die übrigen Zellen (Kupon
+    mit Zinstermin, Bonität, Stückelung) bleiben, wie sie sind. Fehlt eine Anleihe in den Kursen oder passt eine Zelle nicht,
+    bleibt die Seite unverändert – Zahlen und Datum gehören zusammen (SEO-Runde 2)."""
+    pfad = os.path.join(site, seite)
+    K = lade(site, "kurse-auswahl.json")
+    kurse, tage, stand = K.get("kurse") or {}, K.get("tage") or [], K.get("stand")
+    if not ist_datum(stand):
+        return warn(f"{seite}: kurse-auswahl.json ohne gültigen Stand – Seite bleibt unverändert")
+    html_ = open(pfad, encoding="utf-8").read()
+    tab = re.search(r'(<table class="itab(?: atab)?">(?:(?!</table>).)*?<tbody>)((?:(?!</table>).)*?)(</tbody>)', html_, re.S)
+    if not tab:
+        return warn(f"{seite}: Tabelle .itab nicht gefunden – Seite bleibt unverändert")
+    heute, fehler = datetime.date.today(), []
+
+    def zelle(tr, name, inhalt):
+        muster = re.compile(r'(<td class="[^"]*" data-l="' + name + r'">)(?:(?!</td>).)*(</td>)', re.S)
+        if len(muster.findall(tr)) != 1:
+            fehler.append(f"Zelle {name}")
+            return tr
+        return muster.sub(lambda m: m.group(1) + inhalt + m.group(2), tr, count=1)
+
+    def zeile(m):
+        isin, tr = m.group(1), m.group(0)
+        k = kurse.get(isin)
+        if not (isinstance(k, list) and len(k) > 3 and ist_zahl(k[0]) and isinstance(k[2], int) and k[2] < len(tage)):
+            fehler.append(isin)
+            return tr
+        kdatum = tage[k[2]]
+        boerse = {"F": "Börse Frankfurt", "T": "Tradegate", "X": "Xetra", "B": "Deutsche Bundesbank"}.get(k[3] or "", "")
+        titel = f"Schlusskurs vom {datum_text(kdatum)}" + (f", {boerse}" if boerse else "")
+        tr = zelle(tr, "Rendite", pct_text(k[1]) if ist_zahl(k[1]) else '<span title="keine Rendite in den Kursdaten">–</span>')
+        tr = zelle(tr, "Kurs", f'<span title="{esc(titel)}">{kurs_text(k[0])}</span>' + (f"<small>vom {datum_text(kdatum)[:6]}</small>" if kdatum != stand else ""))
+        f = re.search(r'<small data-p="fällig">(\d{2})\.(\d{2})\.(\d{4})</small>', tr)
+        if f:
+            faellig = datetime.date(int(f.group(3)), int(f.group(2)), int(f.group(1)))
+            tr = zelle(tr, "Restlaufzeit", restlaufzeit_text((faellig - heute).days / 365.25) + f.group(0))
+        return tr
+
+    body, n = re.subn(r'<tr(?: class="[^"]*")? data-isin="([A-Z]{2}[A-Z0-9]{9}[0-9])">.*?</tr>', zeile, tab.group(2), flags=re.S)
+    if fehler or not n:
+        return warn(f"{seite}: Tageskurs oder Zelle fehlt ({', '.join(fehler) or 'keine Zeile'}) – Seite bleibt unverändert")
+    neu = html_[:tab.start(2)] + body + html_[tab.end(2):]
+    neu, gesetzt = re.subn(r'(<span id="itab-stand">)[^<]*(</span>)', lambda m: m.group(1) + datum(stand) + m.group(2), neu, count=1)
+    if not gesetzt:
+        return warn(f"{seite}: „Kurse und Renditen vom“ (#itab-stand) nicht gefunden – Seite bleibt unverändert")
+    # Hero-Karte: zeigt ohne Skript die Rückfall-Anleihe – dieselbe Rendite wie in den Kursen
+    hero = re.search(r'<a class="hero-karte" href="anleihe\.html\?isin=([A-Z]{2}[A-Z0-9]{9}[0-9])"', neu)
+    k = kurse.get(hero.group(1)) if hero else None
+    if isinstance(k, list) and len(k) > 1 and ist_zahl(k[1]):
+        neu = re.sub(r'(<span class="hk-z" id="hk-rend">)[^<]*(</span>)', lambda m: m.group(1) + pct_text(k[1]) + m.group(2), neu, count=1)
+    with open(pfad, "w", encoding="utf-8") as f:
+        f.write(neu)
+    print(f"{seite}: {n} Beispiele mit Rendite, Kurs und Restlaufzeit vom {datum(stand)}")
 
 
 def main():
@@ -604,7 +739,8 @@ def main():
                           ("Unternehmensanleihen nach Laufzeit", lambda: laufzeit(site, "unternehmensanleihen-laufzeit.html", "top10-unternehmensanleihen-laufzeit.json")),
                           ("Staatsanleihen nach Ländern", lambda: laender(site, "anleihen-laender.html", "top10-staatsanleihen-laender.json")),
                           ("Unternehmensanleihen nach Ländern", lambda: laender(site, "unternehmensanleihen-laender.html", "top10-unternehmensanleihen-laender.json")),
-                          ("Anleihen nach Kupon", lambda: kupon(site))):
+                          ("Anleihen nach Kupon", lambda: kupon(site)),
+                          ("Startseite", lambda: startseite(site))):
         try:
             schritt()
         except Exception as e:   # Daten oder Seite anders als erwartet: Seite bleibt, wie sie ist

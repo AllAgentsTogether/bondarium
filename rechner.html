@@ -170,7 +170,7 @@
     <div class="b2-kopf">
       <div>
         <h1>Anleihen-Rechner</h1>
-        <p class="sub">Vier Rechner, die jede Kaufentscheidung braucht: Rendite, Stückzinsen, Netto nach Steuer und die Wirkung des allgemeinen Zinsniveaus.</p>
+        <p class="sub">Vier Rechner, die jede Kaufentscheidung braucht: Rendite (Effektivverzinsung), Stückzinsen, Netto nach Steuer und die Wirkung des allgemeinen Zinsniveaus.</p>
       </div>
       <div class="b2-spot"><img src="spot-rechner.svg" alt="" width="232" height="160"></div>
     </div>
@@ -206,7 +206,7 @@
       <div class="k-text">
         <span class="knr" aria-hidden="true">3</span>
         <h2 id="h-netto">Zinsen netto nach Steuer</h2>
-        <p class="intro">Auf Zinsen fällt in Deutschland Abgeltungsteuer an: 25&nbsp;% plus Solidaritätszuschlag, gegebenenfalls Kirchensteuer. Der Freistellungsauftrag stellt einen Teil frei. Gerechnet wird mit der Rendite, also Zinsen und Kursgewinn bis zur Fälligkeit, gleichmäßig aufs Jahr verteilt – ausgezahlt werden jedes Jahr nur die Zinsen laut Kupon.</p>
+        <p class="intro">Auf Zinsen fällt in Deutschland <a href="steuern-handelskosten.html#zins">Abgeltungsteuer</a> an: 25&nbsp;% plus Solidaritätszuschlag, gegebenenfalls Kirchensteuer. Der Freistellungsauftrag stellt einen Teil frei. Gerechnet wird mit der Rendite, also Zinsen und Kursgewinn bis zur Fälligkeit, gleichmäßig aufs Jahr verteilt – ausgezahlt werden jedes Jahr nur die Zinsen laut Kupon.</p>
         <form class="f" onsubmit="return false"><div><label for="r3-betrag">Anlagebetrag</label><div class="unit"><input id="r3-betrag" type="text" value="50000" inputmode="decimal" aria-describedby="r3-out"><span>€</span></div></div><div><label for="r3-rendite">Rendite vor Steuer</label><div class="unit"><input id="r3-rendite" type="text" value="3,20" inputmode="decimal" aria-describedby="r3-out"><span>% p. a.</span></div></div><div><label for="r3-jahre">Laufzeit</label><div class="unit"><input id="r3-jahre" type="text" value="5" inputmode="decimal" aria-describedby="r3-out"><span>Jahre</span></div></div><div><label for="r3-fsa">Freistellungsauftrag (frei)</label><div class="unit"><input id="r3-fsa" type="text" value="1000" inputmode="decimal" aria-describedby="r3-out"><span>€</span></div></div><div class="wide"><label for="r3-kist">Kirchensteuer</label><select id="r3-kist" aria-describedby="r3-out"><option value="0" selected>keine</option><option value="8">8&nbsp;% (Bayern, Baden-Württemberg)</option><option value="9">9&nbsp;% (übrige Länder)</option></select></div></form>
       </div>
       <div class="k-bild"><p class="sb-k">Ergebnis</p><div class="erg-w"><dl class="erg"><dt>Ertrag pro Jahr (brutto)</dt><dd id="r3-brutto">–</dd><dt>davon steuerfrei</dt><dd id="r3-frei">–</dd><dt>Steuer</dt><dd id="r3-steuer">–</dd></dl><dl class="erg"><dt>Ertrag pro Jahr (netto)</dt><dd class="big" id="r3-netto">–</dd><dt>Nettorendite</dt><dd id="r3-nrend">–</dd><dt>Netto über die Laufzeit</dt><dd id="r3-gesamt">–</dd></dl></div><p class="sr-only" id="r3-live" aria-live="polite" aria-atomic="true"></p><p class="out" id="r3-out"></p></div>
@@ -216,7 +216,7 @@
       <div class="k-text">
         <span class="knr" aria-hidden="true">4</span>
         <h2 id="h-zinsniveau">Kurs bei anderem Zinsniveau</h2>
-        <p class="intro">Der Kupon bleibt, der Kurs bewegt sich: So stark reagiert deine Anleihe, wenn das allgemeine Zinsniveau um ein oder zwei Prozentpunkte steigt oder fällt.</p>
+        <p class="intro">Der Kupon bleibt, der Kurs bewegt sich: So stark reagiert deine Anleihe, wenn das <a href="zinsniveau.html">allgemeine Zinsniveau</a> um ein oder zwei Prozentpunkte steigt oder fällt.</p>
         <form class="f" onsubmit="return false"><div><label for="r4-kupon">Kupon</label><div class="unit"><input id="r4-kupon" type="text" value="2,60" inputmode="decimal" aria-describedby="r4-out"><span>% p. a.</span></div></div><div><label for="r4-jahre">Restlaufzeit</label><div class="unit"><input id="r4-jahre" type="text" value="7" inputmode="decimal" aria-describedby="r4-out"><span>Jahre</span></div></div><div><label for="r4-rendite">Rendite heute</label><div class="unit"><input id="r4-rendite" type="text" value="3,50" inputmode="decimal" aria-describedby="r4-out"><span>% p. a.</span></div></div></form>
       </div>
       <div class="k-bild"><p class="sb-k">Ergebnis</p><div class="erg-w"><dl class="erg"><dt>Kurs heute</dt><dd id="r4-kurs">–</dd><dt>Modifizierte Duration</dt><dd id="r4-dur">–</dd></dl><dl class="erg"><dt class="sr-only">Kursänderung, wenn sich das allgemeine Zinsniveau ändert</dt><dd class="wide" style="grid-column:1/-1;text-align:left;font-weight:400"><p class="zr-k" aria-hidden="true">Allgemeines Zinsniveau ändert sich um … Prozentpunkte (Pkt.):</p><div class="zr"><span class="zl">−2 Pkt.</span><span class="zt"><span class="zb" id="r4-m2-bar"></span></span><span class="zv" id="r4-m2">–</span></div><div class="zr"><span class="zl">−1 Pkt.</span><span class="zt"><span class="zb" id="r4-m1-bar"></span></span><span class="zv" id="r4-m1">–</span></div><div class="zr"><span class="zl">+1 Pkt.</span><span class="zt"><span class="zb" id="r4-p1-bar"></span></span><span class="zv" id="r4-p1">–</span></div><div class="zr"><span class="zl">+2 Pkt.</span><span class="zt"><span class="zb" id="r4-p2-bar"></span></span><span class="zv" id="r4-p2">–</span></div></dd></dl></div><p class="sr-only" id="r4-live" aria-live="polite" aria-atomic="true"></p><p class="out" id="r4-out"></p></div>
@@ -232,6 +232,8 @@
         <li><a href="rendite-lesen.html">Rendite richtig lesen</a></li>
         <li><a href="duration.html#schieben">Duration zum Schieben: den Hebel ausprobieren</a></li>
         <li><a href="erste-anleihe.html">Deine erste Anleihe kaufen</a></li>
+        <li><a href="broker-vergleich.html">Broker im Vergleich</a></li>
+        <li><a href="handelsplaetze.html">Handelsplätze</a></li>
         <li><a href="risiko.html">Risiko kennen</a></li>
         <li><a href="begriffe.html#stueckzinsen">Glossar: Stückzinsen</a></li>
       </ul>

@@ -376,6 +376,18 @@ jobs:
         continue-on-error: true
         run: python3 scripts/statische_tabellen.py _site
 
+      # 1b) Rückfallwerte der Zinsen-Seiten (seit 02.10.2026): Tabellen, Kacheln und „Daten-Stand“ in renditen, zinskurve,
+      #     realzins, risikoaufschlaege usw. tragen im Quell-HTML den Stand der letzten Handpflege. Das Skript schreibt
+      #     sie in _site aus den Daten-JSONs neu – wer kein JavaScript ausführt, sieht dieselben Zahlen wie im Browser.
+      - name: Rückfallwerte der Zinsen-Seiten schreiben
+        continue-on-error: true
+        run: |
+          if [ -f scripts/rueckfallwerte.py ]; then
+            python3 scripts/rueckfallwerte.py _site
+          else
+            echo "::warning::scripts/rueckfallwerte.py fehlt – Rückfallwerte bleiben auf dem Stand der Quell-HTML"
+          fi
+
       # 2) Ein verknüpfter JSON-LD-Block je Seite (Organisation, Website, Artikel, Glossar, Datensätze, Rechner),
       #    Robots-Angabe mit großem Vorschaubild, sitemap.xml aus den Seiten.
       - name: Strukturierte Daten und Sitemap
@@ -402,16 +414,26 @@ jobs:
       - name: Node-Werkzeuge installieren (Minifier)
         run: npm ci --ignore-scripts --no-audit --no-fund
 
-      # ----- Zeitstempel + Cache-Busting -----
-      # * sitemap-lastmod und JSON-LD-dateModified nur für die Datenseiten (die
-      #   sich mit jedem Lauf ändern); statische Seiten (Wissen, Anlageziele,
-      #   Begriffe, Rechtliches) behalten ihr Datum aus der Quelle.
-      # * site.js/base.css werden lange gecacht (.htaccess); eine Versions-URL aus
+      # ----- CSS verkleinern (seit 02.10.2026): base.css und bildwelt2.css gingen roh live (rund ein Drittel Kommentare,
+      #       65 statt 40 KB; sie blockieren auf jeder Seite das erste Zeichnen). scripts/css_klein.py entfernt nur
+      #       Kommentare und überflüssigen Leerraum und vergleicht danach Regeln und Deklarationen mit dem Original –
+      #       weicht etwas ab, bleibt die Datei unverändert. VOR dem nächsten Schritt, damit die Versions-URL (?v=<Hash>)
+      #       zur ausgelieferten Datei gehört. continue-on-error: Scheitert er, geht das unverkleinerte CSS live. -----
+      - name: CSS verkleinern
+        continue-on-error: true
+        run: python3 scripts/css_klein.py _site
+
+      # ----- Cache-Busting -----
+      # * CSS und JS werden ein Jahr gecacht („immutable“, .htaccess); eine Versions-URL aus
       #   dem Inhalts-Hash zwingt Browser nur dann zur neuen Datei, wenn sich der
-      #   Inhalt wirklich geändert hat (früher: neue URL bei jedem Lauf).
+      #   Inhalt wirklich geändert hat (früher: neue URL bei jedem Lauf). Jede Einbindung
+      #   (<script src>, <link href>) bekommt sie hier – auch die Such-Indizes, die die Seiten per Skript laden.
+      # * dateModified und <lastmod> setzt seit 02.10.2026 nicht mehr dieser Schritt (früher bei jeder Seite mit
+      #   eingebetteten Daten das Tagesdatum, auch ohne neue Daten), sondern scripts/seo.py: Datenseiten bekommen den
+      #   Daten-Stand, den sie sichtbar zeigen (von kennzahlen.py, statische_tabellen.py und rueckfallwerte.py nur
+      #   zusammen mit den Werten geschrieben); alle übrigen Seiten behalten ihr Datum aus der Quelle.
       - name: Zeitstempel & Versions-URLs setzen
         run: |
-          HEUTE=$(date -u +%F)
           # alle eigenen Skripte minifizieren (site.js und ausgelagerte Seiten-Skripte wie top10-tabellen.js, bond.js, chart.js)
           for j in _site/*.js; do ./node_modules/.bin/terser "$j" --compress --mangle -o "$j"; done
           CSS=$(sha256sum _site/base.css | cut -c1-10)
@@ -430,23 +452,23 @@ jobs:
               n=$(basename "$c"); [ "$n" = "base.css" ] && continue; h=$(sha256sum "$c" | cut -c1-10)
               sed -i -E "s|href=\"(/?)${n//./\\.}[^\"]*\"|href=\"\1${n}?v=${h}\"|g" "$f"
             done
-            # Such-Index: Versions-URL, damit .htaccess ihn lange cachen darf (siehe dort)
-            sed -i -E "s|fetch\(\"anleihen-index\.json[^\"]*\"\)|fetch(\"anleihen-index.json?v=${IDX}\")|g" "$f"
-            sed -i -E "s|\"suchindex\.json[^\"]*\"|\"suchindex.json?v=${SIX}\"|g" "$f"
+            # Such-Indizes: Versions-URL, damit .htaccess sie lange cachen darf (siehe dort). Erfasst jede Zeichenkette
+            # "anleihen-index.json" bzw. "suchindex.json" (fetch(…), json(…), MC.json(…)), aber keine Meldungstexte.
+            sed -i -E "s|\"anleihen-index\.json(\?v=[0-9a-f]*)?\"|\"anleihen-index.json?v=${IDX}\"|g" "$f"
+            sed -i -E "s|\"suchindex\.json(\?v=[0-9a-f]*)?\"|\"suchindex.json?v=${SIX}\"|g" "$f"
             # Startseiten-Links kanonisch (Quelle nutzt index.html, damit die
             # Seiten auch lokal per file:// navigierbar bleiben)
             sed -i -E 's|href="index\.html"|href="/"|g' "$f"
-            # Datenseiten erkennt man an den eingebetteten JSON-Blöcken
-            if grep -q 'data-mc="' "$f"; then
-              sed -i -E "s|\"dateModified\": ?\"[0-9]{4}-[0-9]{2}-[0-9]{2}\"|\"dateModified\":\"${HEUTE}\"|g" "$f"
-              name=$(basename "$f"); [ "$name" = "index.html" ] && name=""
-              loc="https://www.bondarium.de/${name}"
-              sed -i -E "s|(<loc>${loc}</loc><lastmod>)[0-9]{4}-[0-9]{2}-[0-9]{2}|\1${HEUTE}|" _site/sitemap.xml
-            fi
           done
           grep -o 'src="site.js[^"]*"' _site/index.html | head -1
+          grep -o 'href="base.css[^"]*"' _site/index.html | head -1
           grep -o 'anleihen-index.json?v=[0-9a-f]*' _site/anleihen-suche.html | head -1
-          grep -c "<lastmod>${HEUTE}" _site/sitemap.xml || true
+          grep -o 'suchindex.json?v=[0-9a-f]*' _site/anleihen-suche.html _site/konto.html | head -2
+          # Kontrolle: Einbindungen von CSS/JS ohne Versions-URL (dürfte es nicht geben – sie blieben ein Jahr im Cache)
+          ohne=$(grep -o -h -E '(src|href)="/?[a-z0-9-]+\.(js|css)"' _site/*.html | sort | uniq -c || true)
+          if [ -n "$ohne" ]; then echo "::warning::CSS/JS ohne Versions-URL eingebunden:"; echo "$ohne"; fi
+          # Kontrolle: <lastmod> der Sitemap je Datum (setzt scripts/seo.py, Datenseiten nach ihrem sichtbaren Daten-Stand)
+          grep -o '<lastmod>[0-9-]*' _site/sitemap.xml | sort | uniq -c | sort -rn | head -5 || true
 
       # ----- Minifizieren (HTML inkl. Inline-CSS/JS) direkt vor dem Upload.
       # continue-on-error: ein Minify-Fehler darf das Deploy nicht blockieren –
@@ -506,6 +528,34 @@ jobs:
       #       Platzhalter (Impressum noch leer) erscheinen nur als Warnung. -----
       - name: Veröffentlichungs-Ordner prüfen
         run: python3 scripts/pruefen.py _site
+
+      # ----- .htaccess mit einem echten Apache prüfen (seit 02.10.2026): Ein Tippfehler in der .htaccess bedeutet Fehler 500
+      #       auf der ganzen Seite, und jeder Push veröffentlicht sie sofort. Der Runner bekommt deshalb einen Apache;
+      #       scripts/htaccess_test.sh startet ihn nur auf 127.0.0.1 mit _site als Docroot und fragt die wichtigsten
+      #       Adressen ab (Status, Weiterleitungsziel in genau einem Sprung, Sperren wie konto-daten/ und die
+      #       Trigger-Konfiguration). Scheitert eine dieser Prüfungen, stoppt der Lauf HIER – vor dem Upload, die Seite
+      #       behält den letzten Stand. Cache-Köpfe und 304 ergeben nur Warnungen. Lässt sich Apache nicht installieren
+      #       oder starten (Rückgabe 2), gibt es nur eine Warnung: Das ist kein .htaccess-Fehler, der Datenlauf geht weiter.
+      #       Lokal: bash scripts/htaccess_test.sh <Bau-Ordner> (macOS-Apache genügt). -----
+      - name: .htaccess prüfen (Apache im Runner)
+        run: |
+          installieren() { timeout 300 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends apache2 >> apt.log 2>&1; }
+          # veraltete Paketliste im Runner: einmal auffrischen und erneut versuchen
+          if ! installieren && ! { timeout 300 sudo apt-get update -qq >> apt.log 2>&1 && installieren; }; then
+            tail -5 apt.log
+            echo "::warning::apache2 ließ sich nicht installieren – .htaccess-Prüfung übersprungen"
+            exit 0
+          fi
+          rc=0
+          bash scripts/htaccess_test.sh _site || rc=$?
+          if [ "$rc" = "2" ]; then
+            echo "::warning::Testumgebung für die .htaccess nicht nutzbar – Prüfung übersprungen"
+            exit 0
+          fi
+          if [ "$rc" != "0" ]; then
+            echo "::error::.htaccess-Prüfung gescheitert – kein Upload, die Seite behält den letzten Stand"
+          fi
+          exit "$rc"
 
       # ----- Upload: nur geänderte Dateien (seit 30.09.2026). Vorher gingen bei jedem Lauf alle
       #       ~1.400 Dateien hoch (rund 12 Minuten). Auf dem Server liegt .deploy-manifest mit den
@@ -568,6 +618,34 @@ jobs:
           sftp_only: true
           local_path: './_site/.htaccess'
           remote_path: './'
+
+      # Die Seite antwortet nach dem Upload (seit 02.10.2026): Startseite und eine Unterseite mit 200, die alte Adresse
+      # http://bondarium.de/index.html in EINEM Sprung auf https://www.bondarium.de/, eine frühere Aktien-Seite mit 410.
+      # Fängt ab, was die Prüfung vor dem Upload nicht sehen kann (Module oder Einstellungen bei STRATO). Ein Deploy, nach
+      # dem das nicht stimmt (z. B. Fehler 500 auf allen Seiten), wird rot.
+      - name: Nach-Deploy-Prüfung (Seite erreichbar, Weiterleitung, 410)
+        id: ndp_seite
+        continue-on-error: true
+        run: |
+          fehler=0
+          for url in https://www.bondarium.de/ https://www.bondarium.de/grundlagen.html; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 --retry 2 --retry-delay 5 "$url" || echo "000")
+            echo "$url -> HTTP $code"
+            if [ "$code" != "200" ]; then echo "::error::$url antwortet mit $code statt 200 – .htaccess und Upload prüfen!"; fehler=1; fi
+          done
+          antwort=$(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" --max-time 30 --retry 2 --retry-delay 5 http://bondarium.de/index.html || echo "000")
+          echo "http://bondarium.de/index.html -> $antwort"
+          if [ "$antwort" != "301 https://www.bondarium.de/" ]; then echo "::error::http://bondarium.de/index.html leitet nicht in einem Sprung auf https://www.bondarium.de/ ($antwort)"; fehler=1; fi
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 --retry 2 --retry-delay 5 https://www.bondarium.de/kgv.html || echo "000")
+          echo "https://www.bondarium.de/kgv.html -> HTTP $code"
+          if [ "$code" != "410" ]; then echo "::error::Frühere Aktien-Seite /kgv.html antwortet mit $code statt 410"; fehler=1; fi
+          # Revalidierung (nur Hinweis): gleiches ETag („-gzip“) und Datum müssen 304 ergeben, sonst lädt jeder Besuch die ganze Seite
+          curl -s -o /dev/null -D kopf.txt --max-time 30 -H "Accept-Encoding: gzip" https://www.bondarium.de/grundlagen.html || true
+          etag=$(grep -i '^etag:' kopf.txt | head -1 | cut -d' ' -f2- | tr -d '\r'); lm=$(grep -i '^last-modified:' kopf.txt | head -1 | cut -d' ' -f2- | tr -d '\r')
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 -H "Accept-Encoding: gzip" -H "If-None-Match: $etag" -H "If-Modified-Since: $lm" https://www.bondarium.de/grundlagen.html || echo "000")
+          echo "grundlagen.html mit ETag $etag -> HTTP $code"
+          if [ "$code" != "304" ]; then echo "::warning::Revalidierung liefert $code statt 304 (ETag $etag) – RequestHeader-Zeile in der .htaccess wirkt bei STRATO nicht"; fi
+          exit "$fehler"
 
       # Trigger-Konfiguration darf NIE als Quelltext ausgeliefert werden (403 durch
       # /trigger/.htaccess). Ein Deploy, nach dem sie lesbar wäre, wird rot.
@@ -768,7 +846,7 @@ jobs:
       #       des Benutzerbereichs abrufbar war – und niemand erfuhr davon. Dieser Schritt macht den Lauf am Ende rot
       #       (= E-Mail von GitHub), sobald eine davon fehlgeschlagen ist. Läuft bei jedem Deploy, auch nach einem Push. -----
       - name: Alarm bei fehlgeschlagener Nach-Deploy-Prüfung
-        if: ${{ !cancelled() && (steps.ndp_trigger.outcome == 'failure' || steps.ndp_konto.outcome == 'failure' || steps.ndp_statistik.outcome == 'failure') }}
+        if: ${{ !cancelled() && (steps.ndp_seite.outcome == 'failure' || steps.ndp_trigger.outcome == 'failure' || steps.ndp_konto.outcome == 'failure' || steps.ndp_statistik.outcome == 'failure') }}
         run: |
-          echo "::error::Nach-Deploy-Prüfung fehlgeschlagen – Trigger-Konfiguration: ${{ steps.ndp_trigger.outcome }}, Benutzerbereich: ${{ steps.ndp_konto.outcome }}, Besucherzählung: ${{ steps.ndp_statistik.outcome }}. Einzelheiten in den Schritten oben."
+          echo "::error::Nach-Deploy-Prüfung fehlgeschlagen – Seite/Weiterleitung: ${{ steps.ndp_seite.outcome }}, Trigger-Konfiguration: ${{ steps.ndp_trigger.outcome }}, Benutzerbereich: ${{ steps.ndp_konto.outcome }}, Besucherzählung: ${{ steps.ndp_statistik.outcome }}. Einzelheiten in den Schritten oben."
           exit 1

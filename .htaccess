@@ -26,6 +26,40 @@ RewriteRule ^erinnerung\.php$ - [F,L]
 # ---- Wochenbrief (seit 02.10.2026): newsletter/ enthält die Ausgabe und die Daten je Anleihe aus dem Datenlauf – nur
 #      konto.php liest sie vom Datenträger, ausgeliefert wird der Ordner nie. ----
 RewriteRule ^newsletter(/|$) - [F,L]
+# ---- Frühere Adressen: genau EIN Sprung auf die endgültige Adresse (seit 02.10.2026) ----
+# Diese Regeln stehen VOR dem HTTPS-/Host-Block und nennen das Ziel absolut mit https://www.bondarium.de. Vorher
+# liefen z. B. http://bondarium.de/index.html und http://www.bondarium.de/entscheiden.html über zwei Sprünge (erst
+# https/www, dann die Seite), und ein relatives Ziel kam hinter dem TLS-Ende von STRATO sogar als http:// zurück.
+# „(en/)?“: Die früheren englischen Kopien (/en/…) landen ebenfalls in einem Sprung auf der deutschen Seite.
+# /trigger/ und /.well-known/ trifft keine dieser Regeln (Ausnahmen der Zweitdomain bleiben erhalten).
+# index.html → Verzeichnis-URL (Canonical ist "/"); THE_REQUEST verhindert eine Schleife mit DirectoryIndex
+RewriteCond %{THE_REQUEST} \s/+(en/+)?index\.html[\s?] [NC]
+RewriteRule ^(en/)?index\.html$ https://www.bondarium.de/ [R=301,L]
+# Laufzeit-Seite (23.09.2026) aufgeteilt in Staats- und Unternehmensanleihen nach Laufzeit
+RewriteRule ^(en/)?anleihen-laufzeit\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html [R=301,L]
+# Laufzeit-Einzelseiten (23.09.2026) – Ziel seit der Aufteilung: staatsanleihen-laufzeit.html
+RewriteRule ^(en/)?anleihen-sehr-kurzfristig\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html#sehr-kurzfristig [R=301,NE,L]
+RewriteRule ^(en/)?anleihen-kurzfristig\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html#kurzfristig [R=301,NE,L]
+RewriteRule ^(en/)?anleihen-mittelfristig\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html#mittelfristig [R=301,NE,L]
+RewriteRule ^(en/)?anleihen-langfristig\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html#langfristig [R=301,NE,L]
+RewriteRule ^(en/)?anleihen-sehr-langfristig\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html#sehr-langfristig [R=301,NE,L]
+# Übersicht „Optimierung“ (23.09.2026) umbenannt in „Wissen“
+RewriteRule ^(en/)?optimierung\.html$ https://www.bondarium.de/wissen.html [R=301,L]
+# Top 10 nach Kupon hieß am 01.10.2026 für einige Stunden unternehmensanleihen-kupon.html (nur Unternehmensanleihen)
+RewriteRule ^(en/)?unternehmensanleihen-kupon\.html$ https://www.bondarium.de/anleihen-kupon.html [R=301,L]
+# Navigation neu (01.10.2026 abends): Die Übersichten „Entscheiden“ und „Vertiefen“ sind Abschnitte der Akademie-Übersicht
+RewriteRule ^(en/)?entscheiden\.html$ https://www.bondarium.de/wissen.html#auswaehlen [R=301,NE,L]
+RewriteRule ^(en/)?vertiefen\.html$ https://www.bondarium.de/wissen.html#fortgeschrittene [R=301,NE,L]
+# ---- Aktien-Teil (23.09.2026) archiviert (Ordner website_aktien_archiv) ----
+# Die Seiten liegen noch auf dem Server (der Deploy löscht nur, was er selbst hochgeladen hat).
+# (30.09.2026) Die frühere Regel „anleihen.html → /“ ist entfernt: anleihen.html ist heute die Anleihen-Übersicht.
+# (02.10.2026) zinsen.html führt auf die Zinsen-Übersicht (Menü „Zinsen“) statt auf renditen.html, steuer.html auf
+# die Seite zu Steuern. Die übrigen Aktien-Seiten antworten mit 410 – siehe Ende dieses Blocks.
+RewriteRule ^(en/)?zinsen\.html$ https://www.bondarium.de/beobachten.html [R=301,L]
+RewriteRule ^(en/)?steuer\.html$ https://www.bondarium.de/steuern-handelskosten.html [R=301,L]
+# Frühere englische Kopien (/en/…) sonst dauerhaft auf die deutsche Seite gleichen Namens
+RewriteRule ^en/?$ https://www.bondarium.de/ [R=301,L]
+RewriteRule ^en/(.+)$ https://www.bondarium.de/$1 [R=301,L]
 # ---- HTTPS erzwingen ----
 # Beide Bedingungen (UND-verknüpft) verhindern eine Redirect-Schleife, wenn
 # Strato TLS vor dem Apache terminiert: dann ist %{HTTPS} zwar "off", aber
@@ -43,34 +77,12 @@ RewriteRule ^ https://www.bondarium.de%{REQUEST_URI} [R=301,L]
 RewriteCond %{HTTP_HOST} ^(www\.)?bondarium\.com$ [NC]
 RewriteCond %{REQUEST_URI} !^/(trigger|\.well-known)/
 RewriteRule ^ https://www.bondarium.de%{REQUEST_URI} [R=301,L]
-# ---- index.html -> Verzeichnis-URL (Canonical ist "/") ----
-RewriteCond %{THE_REQUEST} \s/+index\.html[\s?] [NC]
-RewriteRule ^index\.html$ / [R=301,L]
-# ---- Frühere englische Kopien (/en/…) dauerhaft auf die deutschen Seiten ----
-RewriteRule ^en/?$ / [R=301,L]
-RewriteRule ^en/(.+)$ /$1 [R=301,L]
-# ---- Laufzeit-Seite (23.09.2026) aufgeteilt in Staats- und Unternehmensanleihen nach Laufzeit ----
-RewriteRule ^anleihen-laufzeit\.html$ /staatsanleihen-laufzeit.html [R=301,L]
-# ---- Laufzeit-Einzelseiten (23.09.2026) – Ziel seit der Aufteilung: staatsanleihen-laufzeit.html ----
-RewriteRule ^anleihen-sehr-kurzfristig\.html$ /staatsanleihen-laufzeit.html#sehr-kurzfristig [R=301,NE,L]
-RewriteRule ^anleihen-kurzfristig\.html$ /staatsanleihen-laufzeit.html#kurzfristig [R=301,NE,L]
-RewriteRule ^anleihen-mittelfristig\.html$ /staatsanleihen-laufzeit.html#mittelfristig [R=301,NE,L]
-RewriteRule ^anleihen-langfristig\.html$ /staatsanleihen-laufzeit.html#langfristig [R=301,NE,L]
-RewriteRule ^anleihen-sehr-langfristig\.html$ /staatsanleihen-laufzeit.html#sehr-langfristig [R=301,NE,L]
-# ---- Übersicht „Optimierung“ (23.09.2026) umbenannt in „Wissen“ ----
-RewriteRule ^optimierung\.html$ /wissen.html [R=301,L]
-# Top 10 nach Kupon hieß am 01.10.2026 für einige Stunden unternehmensanleihen-kupon.html (nur Unternehmensanleihen)
-RewriteRule ^unternehmensanleihen-kupon\.html$ /anleihen-kupon.html [R=301,L]
-# Navigation neu (01.10.2026 abends): Die Übersichten „Entscheiden“ und „Vertiefen“ sind Abschnitte der Akademie-Übersicht
-RewriteRule ^entscheiden\.html$ /wissen.html#auswaehlen [R=301,NE,L]
-RewriteRule ^vertiefen\.html$ /wissen.html#fortgeschrittene [R=301,NE,L]
-# ---- Aktien-Teil (23.09.2026) archiviert (Ordner website_aktien_archiv) ----
-# Die Seiten liegen noch auf dem Server (der Deploy löscht nichts), werden aber
-# dauerhaft auf die passende Anleihen-Seite umgeleitet.
-# (30.09.2026) Die frühere Regel „anleihen.html → /“ ist entfernt: anleihen.html ist heute die Anleihen-Übersicht.
-RewriteRule ^zinsen\.html$ /renditen.html [R=301,L]
-RewriteRule ^(bip|steuer)\.html$ /wissen.html [R=301,L]
-RewriteRule ^(historie|krisen|kgv|marktsentiment|sentiment|fear-greed|vix|aaii|einflussfaktoren|verlierer)\.html$ / [R=301,L]
+# ---- Frühere Aktien-Seiten (02.10.2026): 410 „gibt es nicht mehr“ (Fehlerseite unten) statt einer Weiterleitung auf
+#      die Startseite – die werteten Suchmaschinen als verkappten 404 (Soft-404). Diese Regeln stehen bewusst NACH dem
+#      HTTPS-/Host-Block: Die Fehlerseite wird intern als /404.html nachgeladen, und davor würde der HTTPS-Block diesen
+#      internen Abruf bei http-Anfragen in eine Weiterleitung auf /404.html verwandeln. So: http/ohne www → ein Sprung
+#      auf https://www.bondarium.de/… → 410. ----
+RewriteRule ^(bip|historie|krisen|kgv|marktsentiment|sentiment|fear-greed|vix|aaii|einflussfaktoren|verlierer)\.html$ - [G,L]
 RewriteRule ^(data|sentiment|valuations|einfluss|verlierer)\.json$ - [G,L]
 </IfModule>
 
@@ -84,8 +96,9 @@ RewriteRule ^(data|sentiment|valuations|einfluss|verlierer)\.json$ - [G,L]
   Require all denied
 </FilesMatch>
 
-# ---- Eigene 404-Seite (mit Marke und Navigation) ----
+# ---- Eigene 404-Seite (mit Marke und Navigation) – auch für 410 (frühere Aktien-Seiten, „gibt es nicht mehr“) ----
 ErrorDocument 404 /404.html
+ErrorDocument 410 /404.html
 
 # ---- Security-Header ----
 <IfModule mod_headers.c>
@@ -101,10 +114,18 @@ Header always set Content-Security-Policy "default-src 'self'; script-src 'self'
 # HSTS: HTTPS läuft seit 10.07.2026 stabil (Redirect + Zertifikat verifiziert)
 Header always set Strict-Transport-Security "max-age=31536000"
 
+# ---- Revalidierung (seit 02.10.2026): mod_deflate hängt an das ETag komprimierter Antworten „-gzip“ an. Schickt der
+#      Browser dieses ETag zurück, passt es nicht zur Datei – der Server lieferte nie 304, sondern jedes Mal die ganze
+#      Datei (bekannter Apache-Fehler 45023). Die Zeile reicht zusätzlich das ETag ohne Zusatz weiter: unverändert → 304,
+#      geändert → 200 (ETag und Datum passen dann nicht mehr). Geprüft mit scripts/htaccess_test.sh. ----
+RequestHeader edit "If-None-Match" '^"((.*)-gzip)"$' '"$1", "$2"'
+
 # ---- Caching: Daten-JSONs kurz, HTML gar nicht (immer revalidieren – Daten 1×/Tag
-#      um 10 Uhr neu, das HTML enthält die eingebetteten Daten), statische Assets lang – base.css
-#      und site.js bekommen im Deploy eine Versions-URL (?v=<Hash>), daher
-#      ist ein langer Cache dort unschädlich. ----
+#      um 10 Uhr neu, das HTML enthält die eingebetteten Daten), statische Assets lang.
+#      CSS und JS (seit 02.10.2026) ein Jahr und „immutable“: Jede Einbindung in den Seiten bekommt im Deploy eine
+#      Versions-URL aus dem Inhalts-Hash (?v=<Hash>, Schritt „Zeitstempel & Versions-URLs setzen“), eine geänderte Datei
+#      hat also eine neue Adresse. Wer CSS oder JS anders einbindet (z. B. per Skript nachlädt), muss die Versions-URL
+#      mitgeben – sonst bliebe die alte Datei bis zu einem Jahr im Browser. ----
 <FilesMatch "\.json$">
   Header set Cache-Control "max-age=900, stale-while-revalidate=3600"
   # Rohdaten gehören nicht als eigene Treffer in den Suchindex (seit 30.09.2026). Abrufen dürfen Suchmaschinen sie
@@ -116,11 +137,13 @@ Header always set Strict-Transport-Security "max-age=31536000"
 <FilesMatch "^llms(-full)?\.txt$">
   Header set X-Robots-Tag "noindex"
 </FilesMatch>
-# Such-Index (≈ 1 MB gzip, wöchentlich neu): die Suche lädt ihn seit 25.09.2026 über eine
-# Versions-URL (?v=<Hash>, gesetzt im Deploy) – deshalb darf er lange im Browser bleiben.
-<Files "anleihen-index.json">
+# Such-Index anleihen-index.json (≈ 1 MB gzip, wöchentlich neu; seit 30.09.2026 nur noch Rückfall der Suche) und der
+# schlanke Suchindex suchindex.json (≈ 1,2 MB gzip, täglich neu; Suche und „Mein Bondarium“): Die Seiten laden beide
+# nur über eine Versions-URL (?v=<Hash>, gesetzt im Deploy) – deshalb dürfen sie lange im Browser bleiben (vorher hielt
+# suchindex.json nur 15 Minuten, danach kamen erneut 1,2 MB).
+<FilesMatch "^(anleihen-index|suchindex)\.json$">
   Header set Cache-Control "max-age=2592000, immutable"
-</Files>
+</FilesMatch>
 # Kursverlauf (kurse/<Jahr>/<teil>.json, kurse/bund/<ISIN>.json): ändert sich einmal am Tag;
 # gilt auch für die Stammdaten-Teildateien anleihen/<teil>.json (Steckbrief anleihe.html, wöchentlich neu)
 <FilesMatch "^[0-9a-f]{2}\.json$|^[A-Z]{2}[A-Z0-9]{9}[0-9]\.json$">
@@ -133,9 +156,15 @@ Header always set Strict-Transport-Security "max-age=31536000"
   Header set Cache-Control "no-cache"
 </FilesMatch>
 <FilesMatch "\.(css|js)$">
-  Header set Cache-Control "max-age=604800, stale-while-revalidate=604800"
+  Header set Cache-Control "max-age=31536000, immutable"
 </FilesMatch>
-<FilesMatch "\.(svg|png|webp|woff2|ico|txt|xml)$">
+# Schriften (manrope-*.woff2) ändern sich praktisch nie: ein Jahr (seit 02.10.2026, vorher ein Tag). Sie tragen keine
+# Versions-URL – eine geänderte Schrift bekommt deshalb einen neuen Dateinamen.
+<FilesMatch "\.woff2$">
+  Header set Cache-Control "max-age=31536000"
+</FilesMatch>
+# Bilder, Icons, robots.txt, Sitemap: ohne Versions-URL, daher nur einen Tag
+<FilesMatch "\.(svg|png|webp|ico|txt|xml)$">
   Header set Cache-Control "max-age=86400, stale-while-revalidate=604800"
 </FilesMatch>
 </IfModule>

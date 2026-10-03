@@ -1,6 +1,6 @@
 # Auffindbarkeit: Suchmaschinen und KI-Dienste
 
-Stand 30.09.2026. Was die Seite für Google, Bing und KI-Dienste (ChatGPT, Claude, Perplexity, Gemini) tut, wo es
+Stand 02.10.2026. Was die Seite für Google, Bing und KI-Dienste (ChatGPT, Claude, Perplexity, Gemini) tut, wo es
 im Code steht und was beim Anlegen einer neuen Seite zu beachten ist.
 
 ## Grundsatz
@@ -11,22 +11,70 @@ Daten. Alles Folgende entsteht beim Deploy im Ordner `_site`; die Quell-HTML im 
 
 ## Was beim Deploy passiert
 
-Reihenfolge im Workflow `update-data.yml`, nach `kennzahlen.py` und vor `inline_data.py`:
+Reihenfolge im Workflow `update-data.yml` (alles auf `_site`):
 
 | Schritt | Skript | Ergebnis |
 | --- | --- | --- |
-| Tabellen fest ins HTML | `scripts/statische_tabellen.py` | Die 18 Broker (`broker.json`: Liste „Kosten und Angebot“ für 5.000 € mit Rechenweg, Quellen je Anbieter – dieselbe Rechnung wie im Seitenskript) und die 70 ETFs (`top10-anleihen-etfs.json`) stehen fest im HTML. Im Browser ersetzt das Seitenskript sie durch seine eigene Fassung. Die Top 10 nach Ländern (Deutschland) folgen, sobald die automatische Rangliste gilt (`aktiv`). |
-| Strukturierte Daten, Sitemap | `scripts/seo.py` | Ein JSON-LD-Block je Seite (`@graph`): Organisation und Website mit fester Kennung, Artikel mit Autor und Bild, Glossar als `DefinedTermSet` (67 Begriffe), Rechner als `WebApplication`, sechs Zeitreihen als `Dataset`. Robots-Angabe mit `max-image-preview:large`. `sitemap.xml` aus den Seiten. |
-| llms.txt, llms-full.txt | `scripts/llms.py` | Kurzfassung (je Seite eine Zeile aus Titel und Beschreibung, gruppiert nach Brotkrumen) und Volltext aller Seiten als Markdown mit den aktuellen Zahlen aus den Daten-JSONs. |
-| Prüfung | `scripts/pruefen.py` | Stoppt den Deploy bei fehlendem Titel, fehlender oder fremder kanonischer Adresse, unlesbarem JSON-LD. Warnt bei Titel über 60, Beschreibung außerhalb 70–160 Zeichen, keiner oder mehreren H1, doppelten Titeln. |
+| Kennzahlen | `scripts/kennzahlen.py` | Zahlen im Text (`data-kz`: Anzahl Anleihen, Renditespannen, ETF- und Broker-Zahlen) und die Zeile „Daten-Stand“ der Anleihen-Suche (Register- und Kursstand aus `suchindex.json`). |
+| Tabellen fest ins HTML | `scripts/statische_tabellen.py` | Die 18 Broker (`broker.json`: Liste „Kosten und Angebot“ für 5.000 € mit Rechenweg, Quellen je Anbieter, „Geprüft am“ – dieselbe Rechnung wie im Seitenskript), die 70 ETFs (`top10-anleihen-etfs.json`, dazu die ETF-Zahl je Kachel und „Daten-Stand“), die Top 30 nach Kupon (drei Tabellen und „Daten-Stand“ mit Kurs- und EZB-Liste-Datum), die vier Top-10-Seiten (Handauswahl der Seite mit Kurs und Rendite aus `kurse-auswahl.json`, solange die Rangliste nicht `aktiv` ist; Länder-Seiten: Deutschland) und auf der Startseite die sechs Beispiele mit „Kurse und Renditen vom“. Im Browser ersetzt das Seitenskript sie durch seine eigene Fassung. |
+| Rückfallwerte | `scripts/rueckfallwerte.py` | Kacheln, Tabellen, Textzahlen und „Daten-Stand“ von renditen, unternehmensanleihen, zinskurve, realzins, risikoaufschlaege und langlaeufer aus den Daten-JSONs – gleiche Rechnung, Rundung und Schreibweise wie das Seitenskript. Die Zeilen des Seitenskripts, die nachgebaut sind, stehen als `ANKER` im Skript; fehlt eine, bleibt die Seite unverändert (Warnung). |
+| Strukturierte Daten, Sitemap | `scripts/seo.py` | Ein JSON-LD-Block je Seite (`@graph`): Organisation und Website mit fester Kennung, je Seite ein WebPage-Knoten mit Brotkrumen, Artikel als Hauptinhalt mit Autor, Bild und erwähnten Glossar-Begriffen (`mentions`), Glossar als `DefinedTermSet` (mit `alternateName` und geprüften Wikidata-Kennungen), Rechner als `WebApplication`, sechs Zeitreihen als `Dataset` mit ihren Quellen (`isBasedOn`). Robots-Angabe mit `max-image-preview:large`. `article:modified_time`. `sitemap.xml` aus den Seiten. |
+| llms.txt, llms-full.txt | `scripts/llms.py` | Kurzfassung (je Seite eine Zeile aus Titel und Beschreibung, gruppiert nach Brotkrumen, „Über Bondarium“ direkt nach „Start“) und Volltext aller Seiten als Markdown mit den aktuellen Zahlen aus den Daten-JSONs, je Seite „Seite geändert: …“ (dateModified). Rückfallwerte, deren sichtbarer Stand älter ist als die Daten, ersetzt dort ein Verweis (Warnung im Protokoll). |
+| Themen für die Suche | `scripts/themen.py` | `themen.json` (seit 03.10.2026): Lernseiten und Glossarbegriffe für „Passende Themen“ in der Anleihen-Suche – aus Menü, Titel, H1/H2, Beschreibung und `begriffe.html`. |
+| Daten einbetten | `scripts/inline_data.py` | Die Daten-JSONs einer Seite als `<script type="application/json">` in die Seite. |
+| CSS verkleinern | `scripts/css_klein.py` | Kommentare und Leerraum aus `base.css` und `bildwelt2.css`; vergleicht danach Regeln und Deklarationen mit dem Original, bei Abweichung bleibt die Datei unverändert. Läuft vor den Versions-URLs. |
+| Versions-URLs | Workflow | Jede Einbindung von CSS und JS (und die beiden Such-Indizes) bekommt `?v=<Hash>` aus dem Inhalt. Setzt seit 02.10.2026 kein Datum mehr. |
+| Prüfung | `scripts/pruefen.py` | Stoppt den Deploy bei toten internen Links, fehlendem Titel, fehlender oder fremder kanonischer Adresse, unlesbarem JSON-LD. Warnt (je Regel eine Sammelzeile) u. a. bei Titel über 60 bzw. 580 px, Beschreibung außerhalb 70–160 Zeichen bzw. über 990 px, Ladetext ohne JavaScript, Zusage- und Empfehlungswörtern, Hauswortschatz, Brotkrumen, `@id`-Verweisen ohne Knoten, Sitemap-`lastmod` jünger als `dateModified`, sichtbarem „Daten-Stand“ mehr als 7 Tage älter oder neuer als `dateModified`. |
+| .htaccess prüfen | `scripts/htaccess_test.sh` | Startet im Runner einen Apache nur auf 127.0.0.1 mit `_site` als Docroot und fragt die wichtigsten Adressen ab (Status, Weiterleitung in genau einem Sprung, 410, Sperren, Ausnahmen der Zweitdomain). Ein harter Fehler stoppt den Lauf vor dem Upload; Cache-Köpfe und 304 nur Warnung; lässt sich Apache nicht starten, nur Warnung. |
 | Meldung an Bing | `scripts/indexnow.py` | Nach dem Upload gehen die Adressen der geänderten Seiten an IndexNow (Bing, Yandex, Seznam, Naver). Schlüssel: `indexnow-key.txt`. |
 
-Die ersten drei Schritte sind Zugaben (`continue-on-error`): Scheitert einer, geht die Seite ohne ihn live.
+Tabellen, Rückfallwerte, strukturierte Daten, llms-Dateien und CSS verkleinern sind Zugaben (`continue-on-error`):
+Scheitert einer, geht die Seite ohne ihn live. Alle schreiben Zahlen und „Daten-Stand“ nur gemeinsam – passt etwas
+nicht, bleibt die Seite im Zustand der Quell-HTML.
+
+### Datum der Seiten (`dateModified`, `<lastmod>`, `article:modified_time`)
+
+- Seiten ohne Daten: das `dateModified` aus der Quelle. Bei Textänderungen dort von Hand nachziehen.
+- Datenseiten (`DATENSTAND` in `scripts/seo.py`): das jüngere von Quelldatum und dem Stand, den die gebaute Seite
+  sichtbar nennt – jüngstes Datum in `<p id="datastand">`, auf der Startseite `#itab-stand`, im Broker-Vergleich
+  `<span data-bv="stand">`. Hat ein Skript die Rückfallwerte nicht erneuert, zeigt die Seite den alten Stand, und es
+  bleibt beim Quelldatum (Warnung). So meldet die Sitemap nie einen Stand, den das HTML ohne JavaScript nicht zeigt,
+  und der sichtbare Stand ist nie neuer als `dateModified`.
+- Neue Datenseite: in `DATENSTAND` eintragen (Seite → Daten-JSONs für die Gegenprobe) und den Stand in einer dieser
+  Stellen zeigen. Fehlt der Eintrag, meldet `pruefen.py` „Sichtbarer Daten-Stand neuer als dateModified“.
+- `Dataset.dateModified` ist der Datenstand der Zeitreihe (Ende von `temporalCoverage`), nicht das Seitendatum.
+- `updated` in den JSONs (Lauf-Datum des Datenbots) zählt nirgends – sonst hätte jede Seite jeden Tag ein neues Datum.
+
+### Pflege in `scripts/seo.py`
+
+- `QUELLEN`: genau die Quellen aus dem sichtbaren Abschnitt „Datenquellen“ einer Datenseite. `beleg` muss dort
+  wörtlich stehen, sonst fällt die Quelle mit Warnung weg. Datenreihen als `Dataset`, Emittenten und Angaben zu
+  Anleihen (Bedingungen, Stammdaten) als `CreativeWork` (`"art"`). Neue oder entfernte Quelle auf der Seite → hier
+  im selben Commit nachziehen.
+- `KEIN_SYNONYM`: Klammerzusätze von Glossar-Stichwörtern, die KEIN anderer Name für denselben Begriff sind
+  (Unterarten, Erläuterungen). Neues Stichwort mit Klammer → prüfen, ob es hierher gehört.
+- `WIKIDATA`: nur von Hand geprüfte Kennungen; im Zweifel keine.
+- `ORGANISATION`: Angaben wie im Impressum; das Skript warnt, wenn sie dort nicht mehr stehen.
 
 ## Server (`.htaccess`, `robots.txt`)
 
 - `bondarium.com` und `www.bondarium.com` leiten dauerhaft auf `www.bondarium.de` um (vorher: gleicher Inhalt
   unter zwei Adressen). Ausgenommen `/trigger/` und `/.well-known/`.
+- Frühere Adressen (index.html, /en/…, alte Laufzeit-Seiten, entscheiden/vertiefen …) leiten in genau EINEM Sprung
+  auf die absolute Zieladresse `https://www.bondarium.de/…`. Neue Umleitungen in denselben Block vor dem HTTPS-Block
+  und in die Prüfliste von `scripts/htaccess_test.sh`.
+- Frühere Aktien-Seiten antworten mit **410** („gibt es nicht mehr“) statt einer Weiterleitung auf die Startseite
+  (Soft-404). `ErrorDocument 410 /404.html` zeigt dabei die eigene Fehlerseite; die 410-Regeln stehen bewusst nach
+  dem HTTPS-/Host-Block.
+- Cache: HTML `no-cache` (immer nachfragen), Daten-JSONs 15 Minuten, Such-Indizes 30 Tage (nur mit Versions-URL),
+  **CSS und JS ein Jahr `immutable`** – jede Einbindung braucht deshalb `?v=<Hash>` (setzt der Deploy für `<script
+  src>` und `<link href>`; wer CSS oder JS anders nachlädt, muss die Versions-URL selbst mitgeben). Schriften
+  (`*.woff2`) ein Jahr ohne Versions-URL: eine geänderte Schrift bekommt einen **neuen Dateinamen**. Bilder,
+  `robots.txt`, Sitemap einen Tag.
+- Revalidierung: `RequestHeader edit "If-None-Match"` gleicht das „-gzip“-ETag von mod_deflate aus, damit
+  unveränderte Dateien mit 304 antworten.
+- Lokal prüfen: `bash scripts/htaccess_test.sh <Bau-Ordner>` (macOS-Apache genügt). Die Ausnahmen `/trigger/` und
+  `/.well-known/` prüft das Skript nur, wenn beide Dateien im Bau liegen (siehe „Lokal prüfen“).
 - JSON-Dateien und die beiden llms-Dateien tragen `X-Robots-Tag: noindex`: abrufbar, aber kein eigener Suchtreffer.
 - `robots.txt` nennt die KI-Crawler ausdrücklich (GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, Claude-SearchBot,
   Claude-User, PerplexityBot, Google-Extended und weitere). Es gelten dieselben Regeln wie für alle: alles erlaubt,
@@ -47,19 +95,26 @@ Eine Seite steht von selbst in Sitemap, llms.txt und llms-full.txt, wenn ihr Kop
 5. Genau eine `<h1>`; der Inhalt in `<main>`.
 6. Zeichnet ein Skript eine Tabelle aus einer JSON-Datei, gehört sie in `statische_tabellen.py`.
 
-`dateModified` von Hand nachziehen, wenn sich der Text ändert – daraus wird `<lastmod>` der Sitemap. Bei
-Datenseiten setzt der Deploy das Tagesdatum selbst.
+`dateModified` von Hand nachziehen, wenn sich der Text ändert – daraus wird `<lastmod>` der Sitemap. Datenseiten
+bekommen beim Deploy zusätzlich ihren sichtbaren Daten-Stand, wenn er jünger ist (siehe „Datum der Seiten“).
 
 ## Lokal prüfen
 
 ```bash
 S=tmp/seo-site; rm -rf $S; mkdir -p $S
-cp *.html *.json *.svg *.css *.js *.png *.webp *.woff2 robots.txt sitemap.xml indexnow-key.txt $S/
-python3 scripts/kennzahlen.py $S && python3 scripts/statische_tabellen.py $S && python3 scripts/seo.py $S \
-  && python3 scripts/llms.py $S && python3 scripts/inline_data.py $S && python3 scripts/pruefen.py $S
+cp *.html *.json *.svg *.css *.js *.png *.webp *.woff2 favicon.ico robots.txt sitemap.xml indexnow-key.txt .htaccess $S/
+cp -r kurse anleihen $S/
+python3 scripts/security_txt.py $S
+mkdir -p $S/trigger && cp strato-cron/refresh.php strato-cron/.htaccess $S/trigger/
+python3 scripts/kennzahlen.py $S && python3 scripts/statische_tabellen.py $S && python3 scripts/rueckfallwerte.py $S \
+  && python3 scripts/seo.py $S && python3 scripts/llms.py $S && python3 scripts/themen.py $S && python3 scripts/inline_data.py $S \
+  && python3 scripts/css_klein.py $S && python3 scripts/pruefen.py $S
+bash scripts/htaccess_test.sh $S
 ```
 
-Die vier neuen Skripte laufen auch mit dem lokalen Python 3.9. Ansehen: `http://localhost:8080/tmp/seo-site/…`.
+Die Skripte laufen auch mit dem lokalen Python 3.9 – außer `statische_tabellen.py`, das seit 03.10.2026 `_common.py` nutzt
+(Typangaben ab Python 3.10; lokal über einen Starter mit `from __future__ import annotations`). Ansehen: `http://localhost:8080/tmp/seo-site/…`. Lokal fehlen
+Minify, Versions-URLs und die Trigger-Konfiguration – die prüft nur der Workflow.
 
 ## Nicht im Code lösbar
 
@@ -76,9 +131,17 @@ Die vier neuen Skripte laufen auch mit dem lokalen Python 3.9. Ansehen: `http://
 - **Steckbriefe der rund 33.000 Anleihen** (`anleihe.html?isin=…`): entstehen erst im Browser; Titel und kanonische
   Adresse setzt das Skript. Für Suchen nach ISIN oder WKN wäre eine vom Server erzeugte Seite je Anleihe der größte
   einzelne Hebel (PHP bei STRATO oder vorab erzeugte Dateien) – eine Entscheidung über 33.000 zusätzliche Adressen.
-- **Rückfallwerte der Datenseiten**: Tabellen und Kacheln in `renditen.html`, `zinskurve.html` usw. tragen im HTML
-  den Stand der letzten Handpflege; aktuell werden sie erst im Browser. In `llms-full.txt` stehen die aktuellen
-  Werte. Wer sie auch im HTML will, ergänzt `statische_tabellen.py` je Seite.
+- **Rückfallwerte von zinsniveau.html und fortgeschrittene.html**: Die sechs Zinsen-Datenseiten, die Top-10-Seiten,
+  die Top 30 nach Kupon, die ETF-Seite und die Startseite schreibt der Deploy aktuell (siehe oben). Die Kacheln von
+  `zinsniveau.html` (`zn-*`, Renditen, Inflation) und der Kasten „Bund, Stand …“ auf `fortgeschrittene.html` (`fk-t`)
+  tragen weiter den Stand der letzten Handpflege; aktuell werden sie erst im Browser. `llms-full.txt` ersetzt sie
+  durch einen Verweis (Warnung im Protokoll), und `pruefen.py` warnt, sobald der sichtbare Stand mehr als 7 Tage
+  älter ist als `dateModified`. Lösung: `rueckfallwerte.py` um beide Seiten erweitern (zinskurve.json `heute.DE`,
+  realzins.json `vpi`, ezb.json); bis dahin beide Seiten NICHT in `DATENSTAND` aufnehmen.
+- **Top-10-Seiten bei „aktiv“**: Sobald eine Rangliste `"aktiv": true` trägt, lässt `statische_tabellen.py` die
+  Laufzeit-Seiten im Quellzustand (Handauswahl, alter „Daten-Stand“) – `dateModified` bleibt dann beim Quelldatum.
+  Fehlt eine ISIN der Handauswahl in `kurse-auswahl.json` (z. B. nach ihrer Fälligkeit), bleibt ebenfalls die ganze
+  Seite auf dem alten Stand; dann die Handauswahl im Seitenskript nachziehen.
 - **Überschriften der Übersichtsseiten**: seit 02.10.2026 mit Thema („Akademie: Anleihen verstehen“, „Anleihen finden: …“,
   „Anleihen kaufen: …“, „Zinsen im Verlauf: …“, „Glossar: Anleihen-Begriffe von A bis Z“); im Menü bleiben die kurzen Namen.
   Liste aller Überschriften mit Urteil: `tmp/ueberschriften/bewertung.py`.

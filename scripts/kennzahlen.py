@@ -26,8 +26,19 @@ In den Quell-HTML stehen die Werte als lesbarer Rückfall, markiert mit data-kz:
 
 Außerdem wird in Meta-/og-/JSON-LD-Texten die Wendung „Suche über rund NN.000 Anleihen“ auf die aktuelle Zahl gesetzt
 (nur diese Wendung – Zahlen wie „Börse Frankfurt rund 27.700 Anleihen“ bleiben unberührt).
+Seit 02.10.2026 ebenso, in Kopf und Text aller Seiten:
+    „NN Anleihen-ETFs“ (ein- oder zweistellig)  → Kennzahl etf-top-anzahl (die ETFs auf anleihen-etf.html); dreistellige
+                                                 Zahlen meinen das Register (data-kz „etf-anzahl“) und bleiben unberührt
+    „NN Themen und das Glossar“ (wissen.html)    → Zahl der Akademie-Themen im Menü (AKADEMIE in scripts/nav.py, ohne Glossar)
+und auf anleihen-suche.html die Zeile <p id="datastand">Daten-Stand: wird geladen</p> mit demselben Text, den das
+Seitenskript setzt (Register- und Kursstand aus suchindex.json – derselbe Datenlauf wie „rund 33.000“ auf der Seite).
+Den „Daten-Stand“ der Seiten mit Tabellen (anleihen-etf, anleihen-kupon, Top-10-Seiten) schreibt statische_tabellen.py –
+nur zusammen mit den Zeilen, zu denen er gehört.
+Jede Ergänzung ist mit try/except abgesichert: Dieser Schritt läuft im Workflow ohne continue-on-error; geht etwas schief,
+gibt es eine Warnung, und der Rückfall-Text der Seite bleibt stehen.
 Die Quell-HTML-Dateien im Repository bleiben unverändert.
 """
+import html as htmllib
 import json
 import os
 import re
@@ -55,6 +66,41 @@ def perzentil(r, p):
     i = (len(r) - 1) * p
     u = int(i)
     return r[u] + (r[min(u + 1, len(r) - 1)] - r[u]) * (i - u)
+
+
+def iso_de(iso):
+    """„2026-09-30“ → „30.09.2026“ (wie MC.datum); kein gültiges Datum → None"""
+    return ".".join(reversed(iso.split("-"))) if re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(iso or "")) else None
+
+
+def datenstand_suche(site):
+    """„Daten-Stand“ der Anleihen-Suche im Wortlaut des Seitenskripts (anleihen-suche.html, T.stand):
+    „Daten-Stand: <Register> (ESMA-Register) · Kurse: <Kurse> (Deutsche Börse, Bundesbank)“ – aus suchindex.json
+    (stand, kstand), Rückfall wie die Seite auf anleihen-index.json und anleihen-kurse.json. Ohne beide Daten: None."""
+    try:
+        s = lade(site, "suchindex.json")
+    except Exception:
+        s = None
+    if not isinstance(s, dict):
+        ix, ku = lade(site, "anleihen-index.json") or {}, lade(site, "anleihen-kurse.json") or {}
+        s = {"stand": ix.get("stand"), "kstand": ku.get("stand")}
+    d, k = iso_de(s.get("stand")), iso_de(s.get("kstand"))
+    if not (d and k):
+        return None
+    return f"Daten-Stand: {d} (ESMA-Register) · Kurse: {k} (Deutsche Börse, Bundesbank)"
+
+
+def akademie_themen():
+    """Zahl der Themen im Akademie-Menü (scripts/nav.py, AKADEMIE: drei Spalten, ohne das Glossar) – gelesen, nicht ausgeführt."""
+    import ast
+    pfad = os.path.join(os.path.dirname(os.path.abspath(__file__)), "nav.py")
+    with open(pfad, encoding="utf-8") as f:
+        baum = ast.parse(f.read())
+    for knoten in baum.body:
+        if isinstance(knoten, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "AKADEMIE" for t in knoten.targets):
+            akademie = ast.literal_eval(knoten.value)
+            return sum(len(spalte[2]) for spalte in akademie[2])
+    return None
 
 
 def main():
@@ -101,13 +147,31 @@ def main():
                 werte["broker-stand"] = ".".join(reversed(b["stand"].split("-")))
         except Exception as e:   # Rechnung nicht möglich: der Rückfall-Text der Seiten bleibt stehen
             print(f"::warning::kennzahlen.py: Broker-Kennzahlen nicht gesetzt ({type(e).__name__}: {e})")
-    print("Kennzahlen:", werte)
+    try:   # Zahl der Akademie-Themen für „NN Themen und das Glossar“ (wissen.html)
+        n = akademie_themen()
+        if n:
+            werte["akademie-themen"] = str(n)
+    except Exception as e:
+        print(f"::warning::kennzahlen.py: Zahl der Akademie-Themen nicht gesetzt ({type(e).__name__}: {e})")
+    datenstand = {}
+    try:   # „Daten-Stand“ der Anleihen-Suche (sonst „wird geladen“ bis zum Skript)
+        t = datenstand_suche(site)
+        if t:
+            datenstand["anleihen-suche.html"] = t
+    except Exception as e:
+        print(f"::warning::kennzahlen.py: Daten-Stand der Anleihen-Suche nicht gesetzt ({type(e).__name__}: {e})")
+    print("Kennzahlen:", werte, datenstand)
 
     span_re = re.compile(r'(<span data-kz="([a-z-]+)">)([^<]*)(</span>)')
     # nur die feste Wendung „Suche über rund NN.000 Anleihen“ – andere Zahlen (z. B. je Börse) bleiben unberührt
     meta_re = re.compile(r'Suche über rund \d{1,3}\.\d{3} Anleihen')
     # „19 Anbieter im Vergleich“ / „19 Broker im Vergleich“ (Titel, Beschreibungen, Knöpfe) – Zahl aus broker.json
     broker_re = re.compile(r'\b\d+( (?:Anbieter|Broker) im Vergleich)')
+    # „70 Anleihen-ETFs“ (anleihen.html, Beschreibungen) – nur ein- und zweistellig: dreistellige Zahlen meinen das Register
+    etf_re = re.compile(r'(?<![\d.,])\b\d{1,2}( Anleihen-ETFs)\b')
+    # „19 Themen und das Glossar“ (wissen.html, Beschreibungen) – Zahl der Akademie-Themen aus nav.py
+    themen_re = re.compile(r'\b\d+( Themen und das Glossar)\b')
+    stand_re = re.compile(r'(<p id="datastand">)Daten-Stand: wird geladen(</p>)')
     for fname in sorted(os.listdir(site)):
         if not fname.endswith(".html"):
             continue
@@ -118,6 +182,15 @@ def main():
             neu = meta_re.sub("Suche über " + werte["anleihen-kurs"] + " Anleihen", neu)
         if "broker-anzahl" in werte:
             neu = broker_re.sub(lambda m: werte["broker-anzahl"] + m.group(1), neu)
+        try:
+            if "etf-top-anzahl" in werte:
+                neu = etf_re.sub(lambda m: werte["etf-top-anzahl"] + m.group(1), neu)
+            if "akademie-themen" in werte:
+                neu = themen_re.sub(lambda m: werte["akademie-themen"] + m.group(1), neu)
+            if fname in datenstand:
+                neu = stand_re.sub(lambda m: m.group(1) + htmllib.escape(datenstand[fname], quote=False) + m.group(2), neu, count=1)
+        except Exception as e:   # Rückfall-Text der Seite bleibt
+            print(f"::warning::kennzahlen.py: {fname}: Zahlen im Kopf oder Daten-Stand nicht gesetzt ({type(e).__name__}: {e})")
         if neu != html:
             with open(path, "w", encoding="utf-8") as f:
                 f.write(neu)
