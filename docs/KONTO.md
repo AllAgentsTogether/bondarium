@@ -410,6 +410,13 @@ Kurswert ÷ Summe der Kurswerte; Rendite aus dem Suchindex; laufende Verzinsung 
 Schaubild steht der Unterschied weiter an den Rückzahlungsbalken). Das PDF des Musterdepots hat dieselben Spalten (Nutzer: „ja“);
 Tabelle und PDF nehmen die Summenzeile aus `depotSummen()`.
 
+**Neue Reihenfolge (03.10.2026, Nutzerwunsch „Rendite, Kupon, lfd. …, Restlaufzeit, Fälligkeit, Duration, modifizierte Duration, der
+ganze Rest“):** Anleihe, Rendite, Kupon / lfd. Verzinsung, Restlaufzeit / Fälligkeit, Duration / mod. Duration, Nennwert, Kaufpreis /
+Kurs, Anteil, Zinsen pro Jahr / nächster Zinstermin. Neu ist die Duration (Macaulay, `MC.bond.duration().macaulay`, angezeigt wie die
+Restlaufzeit mit `MC.restlaufzeit`, also „14 Tage“, „13,7 Jahre“); darunter die modifizierte Duration wie bisher (Macaulay ÷ (1 +
+Rendite)). Summenzeile: Rendite, lfd. Verzinsung, Restlaufzeit und beide Durationen nach Kurswert gewichtet, Kupon und Fälligkeit „–“
+bzw. leer. Das PDF hat die neue Reihenfolge noch nicht.
+
 ## Lokal testen
 
 Lokal braucht es PHP (`brew install php`). Der Python-Server der Vorschau führt kein PHP aus.

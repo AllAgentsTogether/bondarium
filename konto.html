@@ -633,14 +633,17 @@
             <thead><tr>
               <!-- Spalten seit 02.10.2026 abends nach Konzept B „Depotübersicht“ (Nutzerentscheid nach PDF tmp/Bondarium-Musterdepot-Konzepte.pdf):
                    je Zelle zwei Angaben übereinander; neu sind Kaufpreis mit Stückzinsen, Anteil, Rendite, laufende Verzinsung, Restlaufzeit,
-                   Duration und nächster Zinstermin; „Kurswert“ mit „bis Fälligkeit +/−“ ist entfallen -->
+                   Duration und nächster Zinstermin; „Kurswert“ mit „bis Fälligkeit +/−“ ist entfallen.
+                   Reihenfolge seit 03.10.2026 (Nutzerwunsch): Rendite, Kupon, lfd. Verzinsung, Restlaufzeit, Fälligkeit, Duration,
+                   modifizierte Duration, dann der Rest -->
               <th scope="col">Anleihe</th>
-              <th scope="col" class="num">Kupon<small>Fälligkeit</small></th>
+              <th scope="col" class="num" title="Rendite bis Fälligkeit in % pro Jahr, wie in der Anleihen-Suche – sie fasst Kurs, Zinsen und Rückzahlung zusammen.">Rendite</th>
+              <th scope="col" class="num" title="Zinssatz auf den Nennwert. Darunter die laufende Verzinsung: Kupon geteilt durch Kurs, ohne die Rückzahlung.">Kupon<small>lfd. Verzinsung</small></th>
+              <th scope="col" class="num" title="Zeit bis zur Fälligkeit, darunter der Fälligkeitstag.">Restlaufzeit<small>Fälligkeit</small></th>
+              <th scope="col" class="num" title="Duration: durchschnittliche Kapitalbindung in Jahren, die Zahlungen nach ihrem Barwert gewichtet. Darunter die modifizierte Duration: Um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Punkt steigt.">Duration<small>mod. Duration</small></th>
               <th scope="col" class="num" title="In der Währung der Anleihe">Nennwert</th>
               <th scope="col" class="num" title="Was der Kauf heute kosten würde, in Euro: Nennwert mal Schlusskurs plus Stückzinsen zum Valutatag (heute + 2 Börsentage), ohne Gebühren. Darunter der Schlusskurs in % des Nennwerts.">Kaufpreis<small>Kurs</small></th>
               <th scope="col" class="num" title="Gewicht der Anleihe im Depot: ihr Kurswert geteilt durch den Kurswert aller Anleihen">Anteil</th>
-              <th scope="col" class="num" title="Rendite bis Fälligkeit in % pro Jahr, wie in der Anleihen-Suche – sie fasst Kurs, Zinsen und Rückzahlung zusammen. Darunter die laufende Verzinsung: Kupon geteilt durch Kurs, ohne die Rückzahlung.">Rendite<small>lfd. Verzinsung</small></th>
-              <th scope="col" class="num" title="Zeit bis zur Fälligkeit. Darunter die modifizierte Duration: Um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Punkt steigt.">Restlaufzeit<small>Duration</small></th>
               <th scope="col" class="num" title="Kupon mal Nennwert, in Euro, vor Steuern. Darunter der nächste Zinstermin.">Zinsen pro Jahr<small>nächster Zinstermin</small></th>
               <th scope="col"><span class="sr-only">Entfernen</span></th>
             </tr></thead>
@@ -743,7 +746,7 @@
           <p><strong>Rendite.</strong> Rendite bis zur Fälligkeit in % pro Jahr, von uns aus Kurs, Kupon und Fälligkeit berechnet – nach denselben Regeln wie in der <a href="anleihen-suche.html">Anleihen-Suche</a>, wo unter „Datenquellen und Methodik“ alle Einzelheiten stehen.</p>
           <p><strong>Stammdaten.</strong> Kupon, Fälligkeit, Art, Währung, Volumen und Stückelung aus dem Register der europäischen Wertpapieraufsicht ESMA (FIRDS). Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage, beide in der Währung der Anleihe.</p>
           <p><strong>Steckbrief.</strong> Ein Klick auf Name oder ISIN öffnet den Steckbrief der Anleihe mit Kursverlauf, Handel und Rechenbeispiel.</p>
-          <p><strong>Mein Depot.</strong> Bis zu fünf Musterdepots mit gedachten Beträgen, kein Bestand. Kaufpreis = Nennwert × Schlusskurs (Kurswert) plus Stückzinsen zum Valutatag (heute + 2 Börsentage), ohne Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Anteil = Kurswert der Anleihe geteilt durch den Kurswert aller Anleihen. Rendite = Rendite bis Fälligkeit wie in der Anleihen-Suche; laufende Verzinsung = Kupon ÷ Kurs. Duration = modifizierte Duration: Um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Punkt steigt (erklärt unter <a href="duration.html">Duration und Konvexität</a>). In der Summenzeile sind Rendite, Restlaufzeit und Duration nach Kurswert gewichtet. Zinsen je Termin = Nennwert × Kupon ÷ Zahl der Zinstermine im Jahr; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Das Schaubild zeigt 30 Jahre einzeln, danach nur noch die Jahre mit einer Rückzahlung; die Jahre dazwischen stehen schraffiert in einer schmalen Spalte („je …“ = Zinsen in jedem dieser Jahre, „Ø“ = Durchschnitt), jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung zum Nennwert, ganz unten beides zusammen; in jedes Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Schaubild und Liste der Zinstermine zeigen dann nur die Auswahl. Die Liste nennt alle kommenden Zinstermine von heute bis zur letzten Fälligkeit, nach Jahren geordnet, ohne Rückzahlungen. Die Zinstermine stammen aus der Liste der Deutschen Börse „Alle handelbaren Instrumente“ (letzter und nächster Zinstermin je Anleihe); nennt sie für eine Anleihe keine, sind sie geschätzt – die Anleihe steht dann im Hinweis unter den Zinsterminen, die Regel im Steckbrief unter „Datenquellen und Methodik“. Maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
+          <p><strong>Mein Depot.</strong> Bis zu fünf Musterdepots mit gedachten Beträgen, kein Bestand. Kaufpreis = Nennwert × Schlusskurs (Kurswert) plus Stückzinsen zum Valutatag (heute + 2 Börsentage), ohne Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Anteil = Kurswert der Anleihe geteilt durch den Kurswert aller Anleihen. Rendite = Rendite bis Fälligkeit wie in der Anleihen-Suche; laufende Verzinsung = Kupon ÷ Kurs. Duration = Macaulay-Duration, die durchschnittliche Kapitalbindung in Jahren; modifizierte Duration = Duration ÷ (1 + Rendite): Um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Punkt steigt (beides erklärt unter <a href="duration.html">Duration und Konvexität</a>). In der Summenzeile sind Rendite, Restlaufzeit und beide Durationen nach Kurswert gewichtet. Zinsen je Termin = Nennwert × Kupon ÷ Zahl der Zinstermine im Jahr; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Das Schaubild zeigt 30 Jahre einzeln, danach nur noch die Jahre mit einer Rückzahlung; die Jahre dazwischen stehen schraffiert in einer schmalen Spalte („je …“ = Zinsen in jedem dieser Jahre, „Ø“ = Durchschnitt), jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung zum Nennwert, ganz unten beides zusammen; in jedes Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Schaubild und Liste der Zinstermine zeigen dann nur die Auswahl. Die Liste nennt alle kommenden Zinstermine von heute bis zur letzten Fälligkeit, nach Jahren geordnet, ohne Rückzahlungen. Die Zinstermine stammen aus der Liste der Deutschen Börse „Alle handelbaren Instrumente“ (letzter und nächster Zinstermin je Anleihe); nennt sie für eine Anleihe keine, sind sie geschätzt – die Anleihe steht dann im Hinweis unter den Zinsterminen, die Regel im Steckbrief unter „Datenquellen und Methodik“. Maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
           <p><strong>Fremdwährungen.</strong> Anleihen in anderer Währung trägst du mit dem Nennwert in dieser Währung ein. Kurswert, Zinsen und Rückzahlung rechnen wir zur Vereinfachung in Euro um; die Anleihe trägt in der Tabelle ein Sternchen (*). Umgerechnet wird mit dem jeweils neuesten Euro-Referenzkurs der Europäischen Zentralbank (sie veröffentlicht ihn an jedem Arbeitstag gegen 16 Uhr; das Datum steht im aufklappbaren Hinweis unter der Tabelle) – und dieser Kurs ist für die ganze Laufzeit als fest angenommen. Tatsächlich schwankt der Wechselkurs: Wie viel Euro eine Zahlung am Ende wert ist, steht erst am Zahltag fest (Wechselkursrisiko). Für Währungen ohne EZB-Referenzkurs gibt es keine Umrechnung – solche Anleihen fehlen im Schaubild.</p>
           <p id="datastand"></p>
         </div>
@@ -1251,16 +1254,16 @@ MC.navInit();
     p.kauf = typeof o.kurs === "number" && p.nennEur != null ? p.nennEur * o.kurs / 100 : null;
     p.diff = p.kauf != null && p.rechnet ? p.nennEur - p.kauf : null;
     // Kennzahlen der Tabelle (Konzept B, seit 02.10.2026 abends): Stückzinsen zum Valutatag und Kaufpreis (wie das Rechenbeispiel im
-    // Steckbrief), Rendite bis Fälligkeit (aus dem Suchindex), laufende Verzinsung (Kupon ÷ Kurs), modifizierte Duration, nächster Zinstermin
+    // Steckbrief), Rendite bis Fälligkeit (aus dem Suchindex), laufende Verzinsung (Kupon ÷ Kurs), Duration (Macaulay) und modifizierte Duration, nächster Zinstermin
     p.rend = typeof o.rendite === "number" ? o.rendite : null;
     p.rest = o.faellig ? jahre(o.faellig) : null;
     p.lfd = p.fest && typeof o.kurs === "number" && o.kurs > 0 ? o.kupon / o.kurs * 100 : null;
-    p.sz = null; p.preis = p.kauf; p.dur = null; p.zt = "";
+    p.sz = null; p.preis = p.kauf; p.mac = p.dur = null; p.zt = "";
     if (p.rechnet && MC.bond) {
       try {
         const b = { coupon: o.kupon, freq: p.freq, maturity: o.faellig, days: p.tage };
         if (p.kauf != null) { p.sz = p.fest ? p.nennEur * MC.bond.accrued(b, VALUTA) / 100 : 0; p.preis = p.kauf + p.sz; }
-        if (p.rend != null) p.dur = MC.bond.duration(b, p.rend / 100, VALUTA).modified;
+        if (p.rend != null) { const d = MC.bond.duration(b, p.rend / 100, VALUTA); p.mac = d.macaulay; p.dur = d.modified; }
         if (p.fest) { const cd = MC.bond.couponDates(b, HEUTE_ISO); if (cd.dates.length) p.zt = new Date(cd.dates[0]).toISOString().slice(0, 10); }
       } catch (e) { console.warn("Mein Depot: Kennzahlen nicht berechnet", isin, e); }
     }
@@ -1284,23 +1287,24 @@ MC.navInit();
     const o = p.o, steck = `anleihe.html?isin=${encodeURIComponent(p.isin)}`, stk = typeof o.stk === "number" ? o.stk : null;
     const warn = [p.warum ? p.warum + " – fehlt im Schaubild" : "", stk && p.nenn < stk ? `unter der Mindestanlage von ${fmtStk(stk)}` : stk >= 1 && Number.isInteger(stk) && p.nenn % stk ? `kein Vielfaches der Stückelung ${fmtStk(stk)}` : ""].filter(Boolean);
     return `<tr><th scope="row">${p.rechnet && p.farbe ? `<i class="kd-f" style="background: ${p.farbe}"></i>` : ""}<a href="${steck}">${MC.esc(o.name)}</a>${p.fremd ? `<span class="kd-stern" title="Zur Vereinfachung in Euro umgerechnet – siehe Hinweis unter der Tabelle">*</span>` : ""}<small${o.reg ? ` title="${MC.esc(o.reg)}"` : ""}>${MC.esc([p.isin, ART_NAME[o.art] || "", o.cur ? waehrung(o.cur) : ""].filter(Boolean).join(" · "))}</small>${warn.map(w => `<small class="kd-warn">${MC.esc(w)}</small>`).join("")}</th>` +
-      `<td class="num" data-l="Kupon">${fmtCoupon(o.kupon)}<small><span class="kd-m">fällig </span>${o.faellig ? MC.datum(o.faellig) : "unbefristet"}</small></td>` +
+      `<td class="num" data-l="Rendite">${p.rend != null ? `<b>${fmt(p.rend, 2)} %</b>` : "–"}</td>` +
+      `<td class="num" data-l="Kupon">${fmtCoupon(o.kupon)}<small><span class="kd-m">lfd. Verzinsung </span>${p.lfd != null ? fmt(p.lfd, 2) + " %" : "–"}</small></td>` +
+      `<td class="num" data-l="Restlaufzeit">${p.rest != null ? (p.rest > 0 ? MC.esc(MC.restlaufzeit(p.rest)) : "fällig") : "–"}<small><span class="kd-m">fällig </span>${o.faellig ? MC.datum(o.faellig) : "unbefristet"}</small></td>` +
+      `<td class="num" data-l="Duration">${p.mac != null ? MC.esc(MC.restlaufzeit(p.mac)) : "–"}<small><span class="kd-m">mod. Duration </span>${p.dur != null ? fmt(p.dur, 1) : "–"}</small></td>` +
       `<td class="num" data-l="Nennwert"><span class="kd-eur${p.cur ? " w3" : ""}"><input type="text" inputmode="numeric" autocomplete="off" maxlength="11" value="${fmt(p.nenn)}" data-nenn="${MC.esc(p.isin)}" aria-label="Nennwert ${MC.esc(o.name)}${p.cur ? " in " + MC.esc(p.cur) : ""}"><span>${p.cur ? MC.esc(p.cur) : "€"}</span></span>${p.fremd ? `<small>= ${eur(p.nennEur)}</small>` : ""}</td>` +
       `<td class="num" data-l="Kaufpreis"${p.kauf != null ? ` title="${MC.esc(`Kurswert ${eur(p.kauf)}${p.sz != null ? ` + Stückzinsen ${eur(p.sz)} (Valuta ${MC.datum(VALUTA)})` : ""} · Schlusskurs vom ${MC.datum(o.datum)}${o.boerse ? ", " + o.boerse : ""}`)}"` : ""}>${p.preis != null ? `<b>${eur(p.preis)}</b>` : "–"}<small><span class="kd-m">Kurs </span>${o.kurs != null ? fmt(o.kurs, 2) + (o.datum && o.datum !== KSTAND ? ` · ${MC.esc(MC.tag(o.datum))}` : "") : "–"}</small></td>` +
       `<td class="num" data-l="Anteil">${p.anteil != null ? `<span class="kd-ant" aria-hidden="true"><i style="width: ${Math.min(100, p.anteil).toFixed(1)}%"></i></span>${fmt(p.anteil, 1)} %` : "–"}</td>` +
-      `<td class="num" data-l="Rendite">${p.rend != null ? `<b>${fmt(p.rend, 2)} %</b>` : "–"}<small><span class="kd-m">lfd. Verzinsung </span>${p.lfd != null ? fmt(p.lfd, 2) + " %" : "–"}</small></td>` +
-      `<td class="num" data-l="Restlaufzeit">${p.rest != null ? (p.rest > 0 ? MC.esc(MC.restlaufzeit(p.rest)) : "fällig") : "–"}<small><span class="kd-m">Duration </span>${p.dur != null ? fmt(p.dur, 1) : "–"}</small></td>` +
       `<td class="num" data-l="Zinsen pro Jahr">${p.zins != null ? eur(p.zins) : "–"}<small><span class="kd-m">nächster Zinstermin </span>${p.zt ? MC.datum(p.zt) : p.rechnet && !p.fest ? "kein Kupon" : "–"}</small></td>` +
       `<td><button type="button" class="kto-x" data-raus="${MC.esc(p.isin)}" aria-label="${MC.esc(o.name)} aus dem Depot entfernen" title="Aus dem Depot entfernen">×<span> Entfernen</span></button></td></tr>`;
   }
   // Summenzeile für Tabelle und PDF. Gewicht ist der Kurswert (Nennwert × Kurs): Anteil je Anleihe (wird an p.anteil gesetzt), Rendite,
-  // Restlaufzeit und Duration gewichtet; laufende Verzinsung = Zinsen ÷ Kurswert. Anleihen ohne Kurs zählen in die Kennzahlen nicht mit.
+  // Restlaufzeit und beide Durationen gewichtet; laufende Verzinsung = Zinsen ÷ Kurswert. Anleihen ohne Kurs zählen in die Kennzahlen nicht mit.
   function depotSummen(pos) {
     const mk = pos.filter(p => p.kauf != null), kw = mk.reduce((x, p) => x + p.kauf, 0), mn = pos.filter(p => p.nennEur != null);
     pos.forEach(p => { p.anteil = p.kauf != null && kw > 0 ? p.kauf / kw * 100 : null; });
     const gew = feld => { const l = mk.filter(p => p[feld] != null), g = l.reduce((x, p) => x + p.kauf, 0); return g > 0 ? l.reduce((x, p) => x + p[feld] * p.kauf, 0) / g : null; };
     return { mitKurs: mk.length, kw, preis: mk.reduce((x, p) => x + p.preis, 0), sz: mk.reduce((x, p) => x + (p.sz || 0), 0), mitNenn: mn.length, nenn: mn.reduce((x, p) => x + p.nennEur, 0), nennFremd: fremdIn(mn),
-      zins: pos.reduce((x, p) => x + (p.zins || 0), 0), rend: gew("rend"), rest: gew("rest"), dur: gew("dur"), lfd: kw > 0 ? mk.reduce((x, p) => x + (p.zins || 0), 0) / kw * 100 : null };
+      zins: pos.reduce((x, p) => x + (p.zins || 0), 0), rend: gew("rend"), rest: gew("rest"), mac: gew("mac"), dur: gew("dur"), lfd: kw > 0 ? mk.reduce((x, p) => x + (p.zins || 0), 0) / kw * 100 : null };
   }
   function zeichneDepot() {
     const drin = new Set(POS.map(p => p.isin)), sel = $("kd-isin"), wahl = sel.value || WAHL;
@@ -1317,12 +1321,14 @@ MC.navInit();
     const kn = aktName(); $("f-depot").querySelector("button[type=submit]").textContent = kn.length <= 20 ? `Zu „${kn}“ hinzufügen` : "Zum Depot hinzufügen";
     const S = depotSummen(pos);   // setzt auch den Anteil je Anleihe
     $("kd-zeilen").innerHTML = pos.map(depotZeile).join("");
-    $("kd-summe").innerHTML = pos.length ? `<tr><th scope="row">Summe<small>${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}${pos.length > 1 ? " · Kennzahlen nach Kurswert gewichtet" : ""}</small></th><td></td>` +
+    $("kd-summe").innerHTML = pos.length ? `<tr><th scope="row">Summe<small>${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}${pos.length > 1 ? " · Kennzahlen nach Kurswert gewichtet" : ""}</small></th>` +
+      `<td class="num" data-l="Rendite">${S.rend != null ? fmt(S.rend, 2) + " %" : "–"}</td>` +
+      `<td class="num" data-l="Kupon">–<small><span class="kd-m">lfd. Verzinsung </span>${S.lfd != null ? fmt(S.lfd, 2) + " %" : "–"}</small></td>` +
+      `<td class="num" data-l="Restlaufzeit">${S.rest != null ? MC.esc(MC.restlaufzeit(S.rest)) : "–"}</td>` +
+      `<td class="num" data-l="Duration">${S.mac != null ? MC.esc(MC.restlaufzeit(S.mac)) : "–"}<small><span class="kd-m">mod. Duration </span>${S.dur != null ? fmt(S.dur, 1) : "–"}</small></td>` +
       `<td class="num" data-l="Nennwert">${S.mitNenn ? eur(S.nenn, S.nennFremd ? 2 : 0) : "–"}</td>` +
       `<td class="num" data-l="Kaufpreis">${S.mitKurs ? eur(S.preis) : "–"}</td>` +
       `<td class="num" data-l="Anteil">${S.mitKurs ? "100 %" : "–"}</td>` +
-      `<td class="num" data-l="Rendite">${S.rend != null ? fmt(S.rend, 2) + " %" : "–"}<small><span class="kd-m">lfd. Verzinsung </span>${S.lfd != null ? fmt(S.lfd, 2) + " %" : "–"}</small></td>` +
-      `<td class="num" data-l="Restlaufzeit">${S.rest != null ? MC.esc(MC.restlaufzeit(S.rest)) : "–"}<small><span class="kd-m">Duration </span>${S.dur != null ? fmt(S.dur, 1) : "–"}</small></td>` +
       `<td class="num" data-l="Zinsen pro Jahr">${eur(S.zins)}</td><td></td></tr>` : "";
     fxHinweis();
     if (MC.wischPruefen) MC.wischPruefen();
