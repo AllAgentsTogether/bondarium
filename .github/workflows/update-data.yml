@@ -473,8 +473,10 @@ jobs:
       # ----- Steckbriefe der Bundeswertpapiere vom Server (seit 03.10.2026, scripts/steckbriefe.py; Entscheidung 02.10.2026):
       #       je Bundeswertpapier eine fertige Seite steckbrief/<ISIN>.html aus der Vorlage anleihe.html, ausgeliefert unter
       #       anleihe.html?isin=<ISIN> (Regel in der .htaccess), Einträge in der Sitemap. Läuft NACH den Versions-URLs (die
-      #       Vorlage trägt sie dann schon) und VOR dem Minifizieren. Scheitert er, gilt für alle ISIN die Vorlage. -----
+      #       Vorlage trägt sie dann schon) und VOR dem Minifizieren. Scheitert er, gilt für alle ISIN die Vorlage (noindex) –
+      #       der Upload läuft trotzdem, der Alarm am Ende macht den Lauf dann rot. -----
       - name: Steckbriefe der Bundeswertpapiere (vom Server)
+        id: steckbriefe
         continue-on-error: true
         run: python3 scripts/steckbriefe.py _site
 
@@ -647,6 +649,17 @@ jobs:
           code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 --retry 2 --retry-delay 5 https://www.bondarium.de/kgv.html || echo "000")
           echo "https://www.bondarium.de/kgv.html -> HTTP $code"
           if [ "$code" != "410" ]; then echo "::error::Frühere Aktien-Seite /kgv.html antwortet mit $code statt 410"; fehler=1; fi
+          # Server-Steckbrief (seit 03.10.2026): ein Bundeswertpapier muss live als fertige Seite vom Server kommen – sonst
+          # gilt für alle 79 still die Vorlage mit noindex (Schritt „Steckbriefe der Bundeswertpapiere“, Regel in der .htaccess)
+          sb=""
+          for f in _site/steckbrief/*.html; do [ -e "$f" ] && sb=$(basename "$f" .html); break; done
+          if [ -z "$sb" ]; then
+            echo "::error::Keine Server-Steckbriefe erzeugt – Schritt „Steckbriefe der Bundeswertpapiere“ prüfen"; fehler=1
+          else
+            seite=$(curl -s --compressed --max-time 30 --retry 2 --retry-delay 5 "https://www.bondarium.de/anleihe.html?isin=$sb" || true)
+            if [[ "$seite" == *'data-steckbrief="server"'* ]]; then echo "anleihe.html?isin=$sb -> Server-Steckbrief"
+            else echo "::error::anleihe.html?isin=$sb kommt nicht als Server-Steckbrief – Regel in der .htaccess prüfen"; fehler=1; fi
+          fi
           # Revalidierung (nur Hinweis): gleiches ETag („-gzip“) und Datum müssen 304 ergeben, sonst lädt jeder Besuch die ganze Seite
           curl -s -o /dev/null -D kopf.txt --max-time 30 -H "Accept-Encoding: gzip" https://www.bondarium.de/grundlagen.html || true
           etag=$(grep -i '^etag:' kopf.txt | head -1 | cut -d' ' -f2- | tr -d '\r'); lm=$(grep -i '^last-modified:' kopf.txt | head -1 | cut -d' ' -f2- | tr -d '\r')
@@ -849,12 +862,13 @@ jobs:
         if: ${{ !cancelled() && env.VOLL == '1' }}   # auch, wenn die Frische-Prüfung schon rot ist
         run: python3 scripts/kurs_luecken.py
 
-      # ----- Alarm nach dem Deploy (seit 03.10.2026): Die drei Nach-Deploy-Prüfungen laufen mit continue-on-error, damit
-      #       Wochenbrief und Meldungen trotzdem rausgehen. Dadurch blieb der Lauf grün, auch wenn z. B. der Datenordner
-      #       des Benutzerbereichs abrufbar war – und niemand erfuhr davon. Dieser Schritt macht den Lauf am Ende rot
-      #       (= E-Mail von GitHub), sobald eine davon fehlgeschlagen ist. Läuft bei jedem Deploy, auch nach einem Push. -----
+      # ----- Alarm nach dem Deploy (seit 03.10.2026): Die Nach-Deploy-Prüfungen und die Server-Steckbriefe laufen mit
+      #       continue-on-error, damit Wochenbrief und Meldungen trotzdem rausgehen. Dadurch blieb der Lauf grün, auch wenn
+      #       z. B. der Datenordner des Benutzerbereichs abrufbar war – und niemand erfuhr davon. Dieser Schritt macht den Lauf
+      #       am Ende rot (= E-Mail von GitHub), sobald eines davon fehlgeschlagen ist. Läuft bei jedem Deploy, auch nach einem
+      #       Push. -----
       - name: Alarm bei fehlgeschlagener Nach-Deploy-Prüfung
-        if: ${{ !cancelled() && (steps.ndp_seite.outcome == 'failure' || steps.ndp_trigger.outcome == 'failure' || steps.ndp_konto.outcome == 'failure' || steps.ndp_statistik.outcome == 'failure') }}
+        if: ${{ !cancelled() && (steps.steckbriefe.outcome == 'failure' || steps.ndp_seite.outcome == 'failure' || steps.ndp_trigger.outcome == 'failure' || steps.ndp_konto.outcome == 'failure' || steps.ndp_statistik.outcome == 'failure') }}
         run: |
-          echo "::error::Nach-Deploy-Prüfung fehlgeschlagen – Seite/Weiterleitung: ${{ steps.ndp_seite.outcome }}, Trigger-Konfiguration: ${{ steps.ndp_trigger.outcome }}, Benutzerbereich: ${{ steps.ndp_konto.outcome }}, Besucherzählung: ${{ steps.ndp_statistik.outcome }}. Einzelheiten in den Schritten oben."
+          echo "::error::Nach-Deploy-Prüfung fehlgeschlagen – Seite/Weiterleitung: ${{ steps.ndp_seite.outcome }}, Trigger-Konfiguration: ${{ steps.ndp_trigger.outcome }}, Benutzerbereich: ${{ steps.ndp_konto.outcome }}, Besucherzählung: ${{ steps.ndp_statistik.outcome }}, Server-Steckbriefe: ${{ steps.steckbriefe.outcome }}. Einzelheiten in den Schritten oben."
           exit 1

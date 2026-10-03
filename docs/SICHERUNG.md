@@ -46,5 +46,8 @@ GitHub startet geplante Läufe zu Stoßzeiten manchmal einige Minuten später.
 - Nach-Deploy-Prüfungen (Trigger, Benutzerbereich, Besucherzählung) laufen weiter mit `continue-on-error`, damit
   Wochenbrief und Meldungen rausgehen; der Schritt „Alarm bei fehlgeschlagener Nach-Deploy-Prüfung“ am Ende macht den
   Lauf dann rot. Vorher blieb er grün.
+- Server-Steckbriefe der Bundeswertpapiere (`scripts/steckbriefe.py`, seit 03.10.2026): Scheitert der Schritt, gilt für
+  alle 79 still die Vorlage mit `noindex`. Derselbe Alarm schlägt dann an; zusätzlich prüft die Nach-Deploy-Prüfung live,
+  ob ein Bundeswertpapier als fertige Seite vom Server kommt.
 
 Alle drei melden sich über denselben Weg: Ein roter Lauf schickt eine E-Mail von GitHub an das Konto AllAgentsTogether.
