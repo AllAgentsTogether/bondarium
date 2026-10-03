@@ -1727,6 +1727,11 @@ MC.navInit();
     noten.push("Kurs: Schlusskurs in % des Nennwerts (Börse Frankfurt, Tradegate; Bundeswertpapiere: Deutsche Bundesbank), ein älterer Kurs trägt sein Datum. " +
       "Rendite: bis zur Fälligkeit, von Bondarium aus dem Kurs berechnet. Volumen: ausgegebener Nennbetrag laut ESMA-Register, in der Währung der Anleihe (Mrd. = Milliarden). " +
       "Stückelung: kleinster Nennwert, zugleich Mindestanlage, in der Währung der Anleihe. Einzelheiten zu jeder Anleihe: Klick auf den Namen.");
+    // Zweiter Knopf (Nutzerwunsch 03.10.2026): dieselben Anleihen als neues Musterdepot, über den Link des Musterdepot-PDFs. Nur, was
+    // sich rechnen lässt (wie beim „+“ der Merkliste; ein fehlender Wechselkurs auf diesem Gerät zählt nicht), Nennwert wie beim „+“,
+    // höchstens DEPOT_MAX in der Reihenfolge des Auszugs.
+    const muster = liste.filter(o => { const g = grund(o); return !g || /^kein Wechselkurs/.test(g); });
+    if (muster.length > DEPOT_MAX) noten.push(`„In meine Musterdepots übernehmen“ nimmt die ersten ${DEPOT_MAX} Anleihen dieser Liste – mehr fasst ein Musterdepot nicht.`);
     noten.push("Keine Anlageberatung: Dieser Auszug ist eine Merkliste und keine Empfehlung zum Kauf oder Verkauf. Alle Angaben ohne Gewähr.");
     const fuss = [].concat(...noten.map(t => P.umbrechen(t, B - 2 * R, 7)));
     const KNOPF = 24, UNTEN = H - 34 - fuss.length * 9 - 14 - KNOPF - 20;   // Platz für den Knopf über den Hinweisen
@@ -1784,6 +1789,12 @@ MC.navInit();
     P.rechteck(R, ky, kb, KNOPF, GRUEN, 6);
     P.text(R + 14, ky + 16, kt, { gr: 10, fett: true, farbe: INK });
     P.link(R, ky, kb, KNOPF, `${LINK}konto.html#liste=${liste.map(o => o.isin).join(",")}`);
+    if (muster.length) {
+      const mt = "In meine Musterdepots übernehmen", mx = R + kb + 10, mb = P.weite(mt, 10, true) + 28;
+      P.rechteck(mx, ky, mb, KNOPF, GRUEN, 6);
+      P.text(mx + 14, ky + 16, mt, { gr: 10, fett: true, farbe: INK });
+      P.link(mx, ky, mb, KNOPF, `${LINK}konto.html#muster=${muster.slice(0, DEPOT_MAX).map(o => o.isin + "~" + nennVorschlag(o)).join(",")}&n=${encodeURIComponent("Merkliste vom " + datum)}`);
+    }
     return { blob: P.blob("Merkliste – Bondarium"), name: `Bondarium-Merkliste-${jetzt.getFullYear()}-${zwei(jetzt.getMonth() + 1)}-${zwei(jetzt.getDate())}.pdf` };
   }
   // ---------- Musterdepot teilen (seit 02.10.2026, Nutzerentscheid): PDF wie bei der Merkliste ----------

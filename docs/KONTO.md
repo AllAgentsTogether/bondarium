@@ -179,6 +179,12 @@ die Liste bleibt so lange im Speicher der Seite (kein Cookie, kein Browser-Speic
 muss der Knopf im PDF noch einmal geklickt werden. Gespeichert wird nichts Neues: nur ISINs auf der Merkliste des
 Empfängers, wie beim Merken. Wer mit wem teilt, erfährt der Server nicht.
 
+Daneben steht seit 03.10.2026 (Nutzerwunsch) der Knopf „In meine Musterdepots übernehmen“: derselbe Link wie im
+Musterdepot-PDF (`konto.html#muster=ISIN~Nennwert,…&n=Merkliste vom TT.MM.JJJJ`), also derselbe Kasten „Geteiltes Musterdepot“
+beim Empfänger. Mit dabei sind nur Anleihen, die sich rechnen lassen (wie beim „+“ der Merkliste), mit dem Nennwert-Vorschlag des
+„+“ (`nennVorschlag`: rund 1.000 in der Währung der Anleihe, mindestens die Stückelung), höchstens 10 in der Reihenfolge des
+Auszugs; bei mehr sagt eine Zeile in den Hinweisen, dass die ersten 10 übernommen werden.
+
 Gestaltung schlicht: A4 hochkant, Helvetica, grünes Band mit dem Logo der Website (Bildzeichen „Orbit“ und
 Wortmarke als Vektor, die Wortmarke aus der Kopfzeile der Seite gelesen), „Merkliste“ mit Datum, Anzahl und Kursstand,
 die Tabelle in der gewählten Sortierung (Name mit Link auf den Steckbrief). Damit alle Angaben der Suche hochkant passen, stehen
