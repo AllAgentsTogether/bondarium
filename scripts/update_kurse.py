@@ -138,6 +138,8 @@ MIN_ANTEIL = 0.5                 # weniger als 50 % der Kurse des Vortags → Qu
 NULLKUPON_MIN = 0.5             # „Nullkupon“ mit weniger Rendite (Laufzeit > 1 Jahr) passt nicht zum Kurs → keine Rendite
 NIEDRIGZINS = {"CHF", "JPY"}     # dort sind Nullkupons nahe oder über 100 plausibel
 AUFSCHLAG_MIN = -1.0             # Nicht-Staat mehr als 1 Punkt UNTER Bund: Kurs oder Stammdaten unplausibel → keine Rendite
+KURVE_MIN = 10                   # weniger Bundeswertpapiere mit Rendite: keine brauchbare Bund-Kurve für den Aufschlag
+KURVE_ALTER_TAGE = 7             # Rückfall: Bund-Kurve höchstens so viele Kalendertage vor dem Handelstag (bund_kurve_rueckfall)
 # INFLATION, zinsplan (Zinstermine), ohne_rendite: _common.py (dieselben Regeln wie update_top10.py)
 ZINSTERMINE = None   # {ISIN: [zahlungen_je_jahr, "MM-TT", …]} – beim ersten Gebrauch geladen (zinstermine())
 
@@ -148,6 +150,39 @@ def zinstermine() -> dict:
         ZINSTERMINE = zinstermine_laden()
     return ZINSTERMINE
 ISIN_RE = re.compile(r"\b[A-Z]{2}[A-Z0-9]{9}[0-9]\b")
+
+
+def bund_kurve(zeilen: dict, punkte: dict, valuta: datetime.date) -> list:
+    """Bund-Renditekurve [(Restlaufzeit in Jahren, Rendite)] aus {ISIN: (Datum, Kurs, Rendite)} der Bundesbank –
+    nur Bundeswertpapiere ohne Inflationsschutz, sortiert."""
+    kurve = []
+    for isin, (datum, kurs, rend) in punkte.items():
+        z = zeilen.get(isin)
+        if z and z[5] and rend is not None and not INFLATION.search(z[1]):
+            kurve.append(((datetime.date.fromisoformat(z[5]) - valuta).days / 365.25, rend))
+    return sorted(kurve)
+
+
+def bund_kurve_rueckfall(zeilen: dict, bbk: dict, tag: str, valuta: datetime.date) -> tuple[list, str]:
+    """Bund-Kurve, wenn die Bundesbank für den Handelstag nichts liefert (02.10.2026: Schnittstelle antwortete mit
+    HTTP 400, statt 13.234 Aufschlägen gab es 16): die jüngste Kurve der letzten KURVE_ALTER_TAGE Tage aus dem Abruf
+    oder aus kurse/bund/<ISIN>.json. Gibt (Kurve, Datum) zurück, ([], "") ohne brauchbare Kurve."""
+    grenze = (datetime.date.fromisoformat(tag) - datetime.timedelta(days=KURVE_ALTER_TAGE)).isoformat()
+    je_tag = collections.defaultdict(dict)
+    for pfad in DIR_BUND.glob("*.json"):
+        v = lade_json(pfad, None) or {}
+        for d, k, r in zip(v.get("t", []), v.get("k", []), v.get("r", [])):
+            if grenze <= d < tag:
+                je_tag[d][pfad.stem] = (d, k, r)
+    for isin, pts in bbk.items():
+        for p in pts:
+            if grenze <= p[0] < tag:
+                je_tag[p[0]][isin] = p
+    for d in sorted(je_tag, reverse=True):
+        kurve = bund_kurve(zeilen, je_tag[d], valuta)
+        if len(kurve) >= KURVE_MIN:
+            return kurve, d
+    return [], ""
 BOERSE_NAME = {"F": "Börse Frankfurt", "T": "Tradegate", "X": "Xetra", "B": "Deutsche Bundesbank"}
 
 
@@ -555,12 +590,13 @@ def verarbeite(tag: str, feed: dict, zeilen: dict, auswahl: set, bbk: dict, etf:
     # Bund-Renditekurve des Tags (Bundesbank): (Restlaufzeit in Jahren, Rendite) der Bundeswertpapiere ohne Inflationsschutz –
     # Grundlage für den BERECHNETEN Renditeaufschlag der Euro-Anleihen
     valuta = plus_boersentage(d_tag, 2)
-    kurve = []
-    for isin, (datum, kurs, rend) in bund.items():
-        z = zeilen.get(isin)
-        if z and z[5] and rend is not None and not INFLATION.search(z[1]):
-            kurve.append(((datetime.date.fromisoformat(z[5]) - valuta).days / 365.25, rend))
-    kurve.sort()
+    kurve = bund_kurve(zeilen, bund, valuta)
+    if len(kurve) < KURVE_MIN:
+        kurve, kstand = bund_kurve_rueckfall(zeilen, bbk, tag, valuta)
+        if kurve:
+            print(f"Bundesbank ohne Kurse vom {tag} – Aufschlag zu Bund gegen die Bund-Kurve vom {kstand} ({len(kurve)} Bundeswertpapiere).")
+        else:
+            log_err(f"Keine Bund-Kurve vom {tag} und keine aus den letzten {KURVE_ALTER_TAGE} Tagen – kein Aufschlag zu Bund.")
 
     # Vortag: bisheriger Schlusskurs aus der eigenen Datei (für die BERECHNETE Veränderung)
     vor = {}

@@ -774,7 +774,7 @@ function zeige(r, k, meta) {
       zelle("Eröffnung", voll ? `${fmt(td[0], 2)} %` : td ? `${fmt(kurs, 2)} %` : "–") +
       zelle("Hoch / Tief", voll ? `${fmt(td[1], 2)} / ${fmt(td[2], 2)}` : td ? `${fmt(kurs, 2)} / ${fmt(kurs, 2)}` : "–") +
       zelle("Umsatz", k[4] ? `${fmt(k[4], 0)} ${MC.esc(ccy)}` : `0 ${MC.esc(ccy)}`) + `</div>` +
-    `<p class="meta">${td ? `<b>${fmt(voll ? td[3] : td[0], 0)}</b> Kursfeststellungen in ${platz}, davon <b>${voll ? td[4] || 0 : 0}</b> mit Abschluss` : "Keine Tagesdaten zu Kursfeststellungen"}` +
+    `<p class="meta">${td ? `<b>${fmt(voll ? td[3] : td[0], 0)}</b> ${(voll ? td[3] : td[0]) === 1 ? "Kursfeststellung" : "Kursfeststellungen"} in ${platz}, davon <b>${voll ? td[4] || 0 : 0}</b> mit Abschluss` : "Keine Tagesdaten zu Kursfeststellungen"}` +
       `${umsJe.length ? ` · Umsatz ${umsJe.join(", ")} (Stück × Kurs)` : k[4] ? " · Umsatz Stück × Kurs" : ""}` +
       `${bund ? " · Schlusskurs und Rendite: Deutsche Bundesbank" : " · Kurse 15 Minuten verzögert"}</p>`
     : '<p class="meta">In den Kursdaten der letzten Wochen gibt es keine Kursfeststellung.</p>';

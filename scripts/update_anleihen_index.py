@@ -603,6 +603,7 @@ def teildateien_schreiben(meta: dict, rows: list[list]) -> None:
 # Währungen mit zweistelligen Leitzinsen: dort sind Kupons über 20 % echt (türkische Lira 30–45 %)
 HOCHZINS = {"TRY", "ARS", "RUB", "EGP", "NGN", "KZT", "UAH", "GHS", "ZMW", "UZS", "ETB", "KES", "UGX", "VES", "IRR", "BRL"}
 KUPON_MAX = 20.0
+PLATZHALTER_JAHR = 2090   # Register-Fälligkeit ab hier = Platzhalter für überfällige Papiere (31.12.2099), siehe ueberfaellig()
 FLR_NAME = re.compile(r"FLR\b|floating|\bFRN\b|variab|\bvar\.", re.IGNORECASE)
 UNBEFRISTET_NAME = re.compile(r"\b(?:und\w*|unb\w*|unl\w*|un|perp\w*|open end|ewig)\b", re.IGNORECASE)   # Und., Undated, unb., Unl., perp
 KLAMMER = re.compile(r"(?:(?<!\d)(\d{4}|\d{2}))?\s*\(([^()]*)\)")
@@ -634,7 +635,7 @@ def ueberfaellig(row: list, heute: datetime.date) -> bool:
     """Fällig, aber nicht zurückgezahlt: Register ohne echte Fälligkeit (leer bzw. Platzhalter ab 2090), der
     Name nennt ein vergangenes Fälligkeitsjahr, das nach dem Ausgabejahr liegt."""
     reg = int(row[5][:4]) if row[5] else None
-    if reg is not None and reg < 2090:
+    if reg is not None and reg < PLATZHALTER_JAHR:
         return False
     ausgabe, faellig = jahre_im_namen(row[1], reg)
     if faellig is None or faellig >= heute.year:
@@ -699,8 +700,8 @@ def pruefung(row: list, fisn: str | None, heute: datetime.date, alt: dict | None
                    oder das Register 0 meldet und der Kurzname einen Satz nennt (Nullkupons nennen keinen)
       faelligFisn  Fälligkeit laut Kurzname, mehr als 31 Tage vom Register entfernt und von einem Namen bestätigt
       faelligName  Fälligkeitsjahr laut WM-Name, wenn es vom Registerjahr abweicht und Kurzname oder ein anderer
-                   Name es bestätigt – auch: Register ohne Fälligkeit, Name nennt ein vergangenes Jahr (fällig,
-                   nicht zurückgezahlt – Libanon 2006(21)), sofern der Kurzname nicht widerspricht
+                   Name es bestätigt – auch: Register ohne Fälligkeit oder mit Platzhalter ab 2090, Name nennt ein
+                   vergangenes Jahr (fällig, nicht zurückgezahlt – Libanon 2006(21)), sofern der Kurzname nicht widerspricht
       zinsName     "var": Name sagt FLR/variabel, Register meldet Nullkupon (Satz 0 – der Satz eines Floaters ist unbekannt)
       kuponHoch    true: Kupon über 100 % oder über 20 % außerhalb von Hochzinswährungen (Faktor 10/1000)
     fisn None (--bereinigen ohne Abruf): die Kurzname-Befunde aus alt bleiben."""
@@ -726,8 +727,11 @@ def pruefung(row: list, fisn: str | None, heute: datetime.date, alt: dict | None
             if (tage is None or tage > 31) and ff_jahr != reg_jahr and (ff_jahr in jahre or ff_jahr == name_jahr):
                 p["faelligFisn"] = ff
     ff_jahr = int(ff[:4]) if ff else None
+    # Platzhalter ab 2090 (meist 31.12.2099) zählt wie „ohne Fälligkeit“ – wie in ueberfaellig(). Seit 03.10.2026 (Nutzertest):
+    # Libanon „2006(21)“ mit Register 2099 stand ohne Befund im Grundfilter, weil der Zweig unten eine zweite Quelle verlangte.
+    platzhalter = reg_jahr is not None and reg_jahr >= PLATZHALTER_JAHR
     if name_jahr is not None and (ausgabe is None or name_jahr > ausgabe):
-        if reg_jahr is None and name_jahr < heute.year and (ff_jahr is None or ff_jahr == name_jahr):
+        if (reg_jahr is None or platzhalter) and name_jahr < heute.year and (ff_jahr is None or ff_jahr == name_jahr or ff_jahr >= PLATZHALTER_JAHR):
             p["faelligName"] = name_jahr
         elif reg_jahr is not None and name_jahr != reg_jahr and (ff_jahr == name_jahr or (ff_jahr is None and name_jahr in jahre)):
             p["faelligName"] = name_jahr

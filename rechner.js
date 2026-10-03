@@ -198,7 +198,7 @@
     var nettoRend = betrag > 0 ? net / betrag * 100 : 0, eff = brutto > 0 ? steuer / brutto * 100 : 0;
     setText("r3-brutto", eur(brutto));
     setText("r3-frei", eur(Math.min(brutto, fsa)));
-    setText("r3-steuer", eur(steuer) + (steuer > 0 ? " (" + pct(eff, 1) + " der Zinsen)" : ""));
+    setText("r3-steuer", eur(steuer) + (steuer > 0 ? " (" + pct(eff, 1) + " des Ertrags)" : ""));
     setText("r3-netto", eur(net));
     setText("r3-nrend", pct(nettoRend));
     setText("r3-gesamt", eur(net * jahre) + " in " + fmt(jahre, jahre % 1 === 0 ? 0 : 1) + (jahre === 1 ? " Jahr" : " Jahren"));   // 2,5 Jahre bleiben 2,5
@@ -206,7 +206,7 @@
     ok("r3", "Steuersatz auf Zinsen: " + pct(satz * 100, 3).replace(",000", "") + (kist !== "0"
       ? " (Abgeltungsteuer " + pct(abg, 2) + " – die Kirchensteuer mindert sie –, Solidaritätszuschlag 5,5\u00A0% darauf und Kirchensteuer " + kist + "\u00A0% darauf)"
       : " (Abgeltungsteuer 25\u00A0% + Solidaritätszuschlag 5,5\u00A0% darauf)") + ". Der Freistellungsauftrag (Sparerpauschbetrag 1.000\u00A0€ je Person, 2.000\u00A0€ bei Zusammenveranlagung) gilt je Jahr für alle Kapitalerträge zusammen. Ohne Zinseszins gerechnet; persönliche Umstände (Günstigerprüfung, Verlusttopf) nicht berücksichtigt.",
-      "Zinsen pro Jahr netto " + eur(net) + ", Nettorendite " + pct(nettoRend) + ".");
+      "Ertrag pro Jahr netto " + eur(net) + ", Nettorendite " + pct(nettoRend) + ".");
   }
 
   // ---------- 4 Zinsniveau ----------
