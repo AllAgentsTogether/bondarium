@@ -196,7 +196,7 @@
         }
         const b = g.querySelector(".fbtn"), val = g.querySelector(".fval");
         b.classList.toggle("on", s.size > 0);
-        val.textContent = s.size === 1 ? ((f.kurz || (v => (f.namen && f.namen.get(v)) || v))([...s][0])) : s.size > 1 ? `${s.size}` : "";
+        val.textContent = s.size === 1 ? ((f.kurz || (v => (f.namen && f.namen.get(v)) || v))([...s][0])) : s.size > 1 ? `${s.size} gewählt` : "";   // „Kupon · 2“ las sich wie 2 % (Nutzertest 03.10.2026)
       }
       fclear.hidden = !aktiv().length && !solide;
       // Schalter „Weitere Filter“: Zahl der aktiven Filter im ausgeblendeten Teil

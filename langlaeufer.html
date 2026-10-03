@@ -256,7 +256,7 @@
     <details class="quellen" id="quellen">
       <summary>Datenquellen und Methodik</summary>
       <div class="quellen-body">
-        <p><strong>Kurse.</strong> Schaubild: Wochenschlusskurse ab Mitte 2019 – Bundesanleihen von der Deutschen Bundesbank, automatisch aktualisiert; die übrigen fünf bis zum 15.09.2026 von der Börse Stuttgart, seit dem 24.09.2026 täglich der Schlusskurs der Börse Frankfurt (Deutsche Börse, MiFIR-Nachhandelsdaten, 15 Minuten verzögert). Tabelle: Rendite der Bundesanleihen laut Bundesbank, die übrigen aus Kurs und Kupon berechnet; Stand in der Zeile über dem Schaubild und unten.</p>
+        <p><strong>Kurse.</strong> Schaubild: Wochenschlusskurse ab Mitte 2019 – Bundesanleihen von der Deutschen Bundesbank, automatisch aktualisiert (ist der Schlusskurs der Börse Frankfurt jünger, etwa wenn die Bundesbank-Daten ausbleiben, gilt er); die übrigen fünf bis zum 15.09.2026 von der Börse Stuttgart, seit dem 24.09.2026 täglich der Schlusskurs der Börse Frankfurt (Deutsche Börse, MiFIR-Nachhandelsdaten, 15 Minuten verzögert). Tabelle: Rendite der Bundesanleihen laut Bundesbank, die übrigen aus Kurs und Kupon berechnet; Stand in der Zeile über dem Schaubild und unten.</p>
         <p><strong>Datenquellen.</strong> <a href="https://www.bundesbank.de/de/statistiken/geld-und-kapitalmaerkte">Deutsche Bundesbank</a> (Kurse und Renditen der Bundesanleihen, börsentäglich), <a href="https://www.deutsche-finanzagentur.de/bundeswertpapiere/factsheet/isin/DE0001102481">Deutsche Finanzagentur</a>, Börse Stuttgart (Wochenschlusskurse der übrigen fünf bis 15.09.2026, einmalig erfasst und fest eingebettet), <a href="https://www.boerse-frankfurt.de/">Börse Frankfurt</a> (Deutsche Börse, Schlusskurse der übrigen fünf seit 24.09.2026, täglich automatisch), <a href="https://www.dt.mef.gov.it/">Dipartimento del Tesoro</a>, <a href="https://www.aft.gouv.fr/en/publications/communiques-presse/19-january-2021-launch-new-oat-2072">Agence France Trésor</a>, <a href="https://www.oebfa.at/">OeBFA</a>, <a href="https://www.treasurydirect.gov/auctions/announcements-data-results/">TreasuryDirect</a>, <a href="https://news.microsoft.com/source/2020/05/14/microsoft-announces-pricing-terms-for-its-exchange-offers-and-increases-the-new-2060-notes-issue-cap/">Microsoft</a>, Cbonds. Renditen der Stuttgart-Reihen werden beim Seitenaufruf aus Kurs, Kupon und Restlaufzeit berechnet (jährliche Verzinsung, taggenau) und können von den Konventionen der Heimatmärkte um wenige Basispunkte abweichen.</p>
         <p id="datastand">Daten-Stand: 16.09.2026</p>
       </div>
@@ -268,7 +268,7 @@
     <nav aria-labelledby="f-kauf"><p class="fuss-k" id="f-kauf">Kaufen</p><a href="erste-anleihe.html">Deine erste Anleihe</a><a href="broker-vergleich.html">Broker im Vergleich</a><a href="steuern-handelskosten.html">Steuern und Handelskosten</a><a href="rechner.html">Rechner</a></nav>
     <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen Staatsanleihen</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html" aria-current="page">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Haftung und Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
-    <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
+    <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse sind Schlusskurse, keine Echtzeitkurse. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
 </div>
 
@@ -771,7 +771,7 @@ function prosa() {
 })();
 
 // Bundesbank-Daten nachladen (langlaeufer.json): Wochenreihen, jüngste Kurse, Extremwerte beider Bundesanleihen
-MC.load("langlaeufer.json")
+const LL = MC.load("langlaeufer.json")
   .then(d => {
     const b = d && d.bonds && d.bonds.bund2050;
     if (!b) return;
@@ -798,8 +798,21 @@ MC.load("langlaeufer.json")
 
 // Tageskurse der fünf übrigen Langläufer (kurse-auswahl.json, Deutsche Börse; seit 25.09.2026): jüngster Kurs in die
 // Tabelle, und der seit 24.09.2026 gesammelte Kursverlauf (kurse/<Jahr>/…, MC.verlauf) verlängert die Wochenreihe im Chart.
-if (MC.load && MC.verlauf) MC.load("kurse-auswahl.json").then(d => {
+// Seit 03.10.2026 (Nutzertest) auch für die beiden Bundesanleihen, wenn der Börsenkurs jünger ist als der letzte Bundesbank-Wert –
+// vorher standen dann zwei Kursstände in einer Tabelle (Bundesbank 29.09., Börse 01.10.). Wartet deshalb auf langlaeufer.json.
+if (MC.load && MC.verlauf) Promise.all([LL.catch(() => null), MC.load("kurse-auswahl.json")]).then(([, d]) => {
   const K = d.kurse || {}, tage = d.tage || [];
+  let bundNeu = false;
+  [BUND, BUND2].forEach(B => {
+    const k = K[B.isin], t = k && tage[k[2]];
+    if (!k || typeof k[0] !== "number" || !t || !B.latest || t <= B.latest.date) return;
+    const y = typeof k[1] === "number" ? k[1] : null;
+    B.latest = { date: t, price: k[0], yield: y };
+    if (Array.isArray(B.weekly) && B.weekly.length && B.weekly[B.weekly.length - 1][0] < t) B.weekly = B.weekly.concat([[t, k[0], y]]);
+    if (B.low && k[0] < B.low.price) B.low = { date: t, price: k[0], yield: y };
+    if (B.high && k[0] > B.high.price) B.high = { date: t, price: k[0], yield: y };
+    bundNeu = true;
+  });
   return Promise.all(COUPON_BONDS.map(bd => {
     const k = K[bd.isin];
     if (!k || tage[k[2]] <= bd.priceDate) return null;
@@ -813,7 +826,7 @@ if (MC.load && MC.verlauf) MC.load("kurse-auswahl.json").then(d => {
       for (const p of neu) { if (p[1] < bd.low.price) bd.low = { date: p[0], price: p[1] }; if (p[1] > bd.high.price) bd.high = { date: p[0], price: p[1] }; }
       return true;
     });
-  })).then(r => { if (r.some(Boolean)) renderAll(); });
+  })).then(r => { if (bundNeu || r.some(Boolean)) renderAll(); });
 }).catch(e => console.warn("Tageskurse der Langläufer nicht geladen:", e));
 
 // Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js

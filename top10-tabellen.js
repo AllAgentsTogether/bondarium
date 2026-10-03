@@ -45,14 +45,17 @@
       };
     });
   }
+  // Seit 03.10.2026 (Nutzertest): Der Name führt zum Steckbrief (vorher nur die ISIN ganz rechts, am Handy außerhalb des Bildes), Renditen
+  // in fremder Währung tragen das Kürzel direkt an der Zahl, Links und Merken-Knopf nennen die Anleihe im zugänglichen Namen
   function zeileHtml(r, stand) {
+    var name = r.emittent + " " + MC.bond.fmtCoupon(r.kupon) + " % " + fmtDate(r.faellig), w = r.cur && r.cur !== "EUR" ? r.cur : "";
     return '<tr><td class="num rk">' + r.rank + '</td>' +
-      '<th scope="row">' + MC.esc(r.emittent) + '<small class="fa-mobil">fällig ' + fmtDate(r.faellig) + '</small></th>' +
-      '<td class="num"' + (r.yld == null ? ' title="Kurs ohne Umsatz – Rendite nicht aussagekräftig"' : '') + '>' + (r.yld == null ? "–" : fmt(r.yld, 2) + " %") + '</td>' +
+      '<th scope="row"><a class="name-link" href="anleihe.html?isin=' + MC.esc(r.isin) + '" aria-label="Steckbrief ' + MC.esc(name) + '">' + MC.esc(r.emittent) + '</a><small class="fa-mobil">fällig ' + fmtDate(r.faellig) + '</small></th>' +
+      '<td class="num"' + (r.yld == null ? ' title="Kurs ohne Umsatz – Rendite nicht aussagekräftig"' : '') + '>' + (r.yld == null ? "–" : fmt(r.yld, 2) + " %" + (w ? ' <small class="w-kz">' + MC.esc(w) + '</small>' : "")) + '</td>' +
       '<td class="num"' + (r.datum !== stand ? ' title="Kurs vom ' + fmtDate(r.datum) + '"' : '') + '>' + fmt(r.kurs, 2) + '</td>' +
       '<td class="num">' + MC.bond.fmtCoupon(r.kupon) + ' %</td>' +
       '<td class="num">' + fmtDate(r.faellig) + '</td><td class="num">' + RL(r.years) + '</td>' +
-      '<td class="isin"><a href="anleihe.html?isin=' + MC.esc(r.isin) + '" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">' + MC.esc(r.isin) + '</a>' + (MC.konto ? MC.konto.knopf(r.isin, "nur") : "") + '</td>' +   // Merken-Stern (seit 02.10.2026 abends, „Mein Bondarium“)
+      '<td class="isin"><a href="anleihe.html?isin=' + MC.esc(r.isin) + '" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten" aria-label="ISIN ' + MC.esc(r.isin) + ', Steckbrief ' + MC.esc(name) + '">' + MC.esc(r.isin) + '</a>' + (MC.konto ? MC.konto.knopf(r.isin, "nur", name) : "") + '</td>' +   // Merken-Stern (seit 02.10.2026 abends, „Mein Bondarium“)
       '<td class="txt">' + MC.esc(r.cur) + '</td>' +
       '<td class="num">' + (typeof r.vol === "number" ? MC.bond.fmtVol(r.vol) : "–") + '</td>' +
       '<td class="num">' + (typeof r.stk === "number" ? MC.bond.fmtStk(r.stk) : "–") + '</td></tr>';
@@ -83,7 +86,18 @@
   }
   function kurseSetzen(d) { if (d) { KURSE = d.kurse || {}; KTAGE = d.tage || []; KSTAND = d.stand || ""; } }
   function aktiv(d) { return !!(d && d.aktiv && d.gruppen && d.fenster); }
-  function datenstand() { var el = document.getElementById("datastand"); if (el && KSTAND) el.textContent = "Daten-Stand: " + fmtDate(KSTAND); }
+  // Kursdatum auch sichtbar über der ersten Tabelle (seit 03.10.2026, Nutzertest: stand nur im zugeklappten Methodik-Teil)
+  function standZeile(iso) {
+    var t = document.querySelector("table.kpis[data-gruppe], .table-scroll table.kpis"), box = t && t.closest(".table-scroll");
+    if (!iso || !box) return;
+    var p = document.getElementById("kurs-stand");
+    if (!p) { p = document.createElement("p"); p.id = "kurs-stand"; p.className = "kurs-stand"; box.parentNode.insertBefore(p, box); }
+    p.textContent = "Schlusskurse vom " + fmtDate(iso);
+  }
+  function datenstand() {
+    var el = document.getElementById("datastand"); if (el && KSTAND) el.textContent = "Daten-Stand: " + fmtDate(KSTAND);
+    standZeile(KSTAND);
+  }
   function laden(daten) {
     daten = daten || [];
     return Promise.all([
@@ -267,5 +281,5 @@
     });
   }
 
-  window.T10 = { zeilen: zeilen, tabelle: tabelle, sortierbar: sortierbar, laufzeit: laufzeit, laender: laender };
+  window.T10 = { zeilen: zeilen, tabelle: tabelle, sortierbar: sortierbar, laufzeit: laufzeit, laender: laender, standZeile: standZeile };
 })();

@@ -640,7 +640,7 @@
               <th scope="col" class="num" title="Rendite bis Fälligkeit in % pro Jahr, wie in der Anleihen-Suche – sie fasst Kurs, Zinsen und Rückzahlung zusammen.">Rendite</th>
               <th scope="col" class="num" title="Zinssatz auf den Nennwert. Darunter die laufende Verzinsung: Kupon geteilt durch Kurs, ohne die Rückzahlung.">Kupon<small>lfd. Verzinsung</small></th>
               <th scope="col" class="num" title="Zeit bis zur Fälligkeit, darunter der Fälligkeitstag.">Restlaufzeit<small>Fälligkeit</small></th>
-              <th scope="col" class="num" title="Duration: durchschnittliche Kapitalbindung in Jahren, die Zahlungen nach ihrem Barwert gewichtet. Darunter die modifizierte Duration: Um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Punkt steigt.">Duration<small>mod. Duration</small></th>
+              <th scope="col" class="num" title="Duration: durchschnittliche Kapitalbindung in Jahren, die Zahlungen nach ihrem Barwert gewichtet. Darunter die modifizierte Duration: Um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Prozentpunkt steigt.">Duration<small>mod. Duration</small></th>
               <th scope="col" class="num" title="In der Währung der Anleihe">Nennwert</th>
               <th scope="col" class="num" title="Was der Kauf heute kosten würde, in Euro: Nennwert mal Schlusskurs plus Stückzinsen zum Valutatag (heute + 2 Börsentage), ohne Gebühren. Darunter der Schlusskurs in % des Nennwerts.">Kaufpreis<small>Kurs</small></th>
               <th scope="col" class="num" title="Gewicht der Anleihe im Depot: ihr Kurswert geteilt durch den Kurswert aller Anleihen">Anteil</th>
@@ -690,7 +690,7 @@
             <section class="mb-karte" id="d-nl" aria-labelledby="h-nl">
               <div class="mb-kh" style="align-items:center"><h2 class="mb-h2" id="h-nl">Wochenbrief per E-Mail</h2><button type="button" class="mb-schalter" id="nl-knopf" role="switch" aria-checked="false" aria-labelledby="h-nl"></button></div>
               <p class="mb-leer" id="nl-text"></p>
-              <p class="mb-klein">E-Mails kommen nur, wenn du sie hier einschaltest.</p>
+              <p class="mb-klein">Der Wochenbrief kommt nur, wenn du ihn hier einschaltest.</p>
               <p class="kf-status" id="nl-status" role="status" aria-live="polite"></p>
             </section>
             <section class="mb-karte" aria-labelledby="h-mit">
@@ -746,7 +746,7 @@
           <p><strong>Rendite.</strong> Rendite bis zur Fälligkeit in % pro Jahr, von uns aus Kurs, Kupon und Fälligkeit berechnet – nach denselben Regeln wie in der <a href="anleihen-suche.html">Anleihen-Suche</a>, wo unter „Datenquellen und Methodik“ alle Einzelheiten stehen.</p>
           <p><strong>Stammdaten.</strong> Kupon, Fälligkeit, Art, Währung, Volumen und Stückelung aus dem Register der europäischen Wertpapieraufsicht ESMA (FIRDS). Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage, beide in der Währung der Anleihe.</p>
           <p><strong>Steckbrief.</strong> Ein Klick auf Name oder ISIN öffnet den Steckbrief der Anleihe mit Kursverlauf, Handel und Rechenbeispiel.</p>
-          <p><strong>Mein Depot.</strong> Bis zu fünf Musterdepots mit gedachten Beträgen, kein Bestand. Kaufpreis = Nennwert × Schlusskurs (Kurswert) plus Stückzinsen zum Valutatag (heute + 2 Börsentage), ohne Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Anteil = Kurswert der Anleihe geteilt durch den Kurswert aller Anleihen. Rendite = Rendite bis Fälligkeit wie in der Anleihen-Suche; laufende Verzinsung = Kupon ÷ Kurs. Duration = Macaulay-Duration, die durchschnittliche Kapitalbindung in Jahren; modifizierte Duration = Duration ÷ (1 + Rendite): Um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Punkt steigt (beides erklärt unter <a href="duration.html">Duration und Konvexität</a>). In der Summenzeile sind Rendite, Restlaufzeit und beide Durationen nach Kurswert gewichtet. Zinsen je Termin = Nennwert × Kupon ÷ Zahl der Zinstermine im Jahr; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Das Schaubild zeigt 30 Jahre einzeln, danach nur noch die Jahre mit einer Rückzahlung; die Jahre dazwischen stehen schraffiert in einer schmalen Spalte („je …“ = Zinsen in jedem dieser Jahre, „Ø“ = Durchschnitt), jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung zum Nennwert, ganz unten beides zusammen; in jedes Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Schaubild und Liste der Zinstermine zeigen dann nur die Auswahl. Die Liste nennt alle kommenden Zinstermine von heute bis zur letzten Fälligkeit, nach Jahren geordnet, ohne Rückzahlungen. Die Zinstermine stammen aus der Liste der Deutschen Börse „Alle handelbaren Instrumente“ (letzter und nächster Zinstermin je Anleihe); nennt sie für eine Anleihe keine, sind sie geschätzt – die Anleihe steht dann im Hinweis unter den Zinsterminen, die Regel im Steckbrief unter „Datenquellen und Methodik“. Maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
+          <p><strong>Mein Depot.</strong> Bis zu fünf Musterdepots mit gedachten Beträgen, kein Bestand. Kaufpreis = Nennwert × Schlusskurs (Kurswert) plus Stückzinsen zum Valutatag (heute + 2 Börsentage), ohne Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Anteil = Kurswert der Anleihe geteilt durch den Kurswert aller Anleihen. Rendite = Rendite bis Fälligkeit wie in der Anleihen-Suche; laufende Verzinsung = Kupon ÷ Kurs. Duration = Macaulay-Duration, die durchschnittliche Kapitalbindung in Jahren; modifizierte Duration = Duration ÷ (1 + Rendite): Um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Prozentpunkt steigt (beides erklärt unter <a href="duration.html">Duration und Konvexität</a>). In der Summenzeile sind Rendite, Restlaufzeit und beide Durationen nach Kurswert gewichtet. Zinsen je Termin = Nennwert × Kupon ÷ Zahl der Zinstermine im Jahr; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Das Schaubild zeigt 30 Jahre einzeln, danach nur noch die Jahre mit einer Rückzahlung; die Jahre dazwischen stehen schraffiert in einer schmalen Spalte („je …“ = Zinsen in jedem dieser Jahre, „Ø“ = Durchschnitt), jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung zum Nennwert, ganz unten beides zusammen; in jedes Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Schaubild und Liste der Zinstermine zeigen dann nur die Auswahl. Die Liste nennt alle kommenden Zinstermine von heute bis zur letzten Fälligkeit, nach Jahren geordnet, ohne Rückzahlungen. Die Zinstermine stammen aus der Liste der Deutschen Börse „Alle handelbaren Instrumente“ (letzter und nächster Zinstermin je Anleihe); nennt sie für eine Anleihe keine, sind sie geschätzt – die Anleihe steht dann im Hinweis unter den Zinsterminen, die Regel im Steckbrief unter „Datenquellen und Methodik“. Maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
           <p><strong>Fremdwährungen.</strong> Anleihen in anderer Währung trägst du mit dem Nennwert in dieser Währung ein. Kurswert, Zinsen und Rückzahlung rechnen wir zur Vereinfachung in Euro um; die Anleihe trägt in der Tabelle ein Sternchen (*). Umgerechnet wird mit dem jeweils neuesten Euro-Referenzkurs der Europäischen Zentralbank (sie veröffentlicht ihn an jedem Arbeitstag gegen 16 Uhr; das Datum steht im aufklappbaren Hinweis unter der Tabelle) – und dieser Kurs ist für die ganze Laufzeit als fest angenommen. Tatsächlich schwankt der Wechselkurs: Wie viel Euro eine Zahlung am Ende wert ist, steht erst am Zahltag fest (Wechselkursrisiko). Für Währungen ohne EZB-Referenzkurs gibt es keine Umrechnung – solche Anleihen fehlen im Schaubild.</p>
           <p id="datastand"></p>
         </div>
@@ -759,7 +759,7 @@
     <nav aria-labelledby="f-kauf"><p class="fuss-k" id="f-kauf">Kaufen</p><a href="erste-anleihe.html">Deine erste Anleihe</a><a href="broker-vergleich.html">Broker im Vergleich</a><a href="steuern-handelskosten.html">Steuern und Handelskosten</a><a href="rechner.html">Rechner</a></nav>
     <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen Staatsanleihen</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Haftung und Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
-    <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
+    <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse sind Schlusskurse, keine Echtzeitkurse. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
 </div>
 
@@ -824,11 +824,12 @@ MC.navInit();
   $("anmelden").addEventListener("click", e => { const b = e.target.closest("[data-zu]"); if (b) { hinweis(""); modus(b.dataset.zu, true); } });
   $("nochmal").addEventListener("click", () => modus(ZURUECK, true));
   // Passwort anzeigen / verbergen
-  function zu(feld) { feld.type = "password"; const b = document.querySelector(`.kto-auge[aria-controls="${feld.id}"]`); if (b) { b.textContent = "anzeigen"; b.setAttribute("aria-pressed", "false"); } }
+  function zu(feld) { feld.type = "password"; const b = document.querySelector(`.kto-auge[aria-controls="${feld.id}"]`); if (b) { b.textContent = "anzeigen"; b.setAttribute("aria-label", "Passwort anzeigen"); b.setAttribute("aria-pressed", "false"); } }
+  document.querySelectorAll(".kto-auge").forEach(b => b.setAttribute("aria-label", "Passwort anzeigen"));   // vorgelesen wurde sonst nur „anzeigen“ (Nutzertest 03.10.2026)
   document.addEventListener("click", e => {
     const b = e.target.closest(".kto-auge"); if (!b) return;
     const feld = $(b.getAttribute("aria-controls")), zeigen = feld.type === "password";
-    if (zeigen) { feld.type = "text"; b.textContent = "verbergen"; b.setAttribute("aria-pressed", "true"); } else zu(feld);
+    if (zeigen) { feld.type = "text"; b.textContent = "verbergen"; b.setAttribute("aria-label", "Passwort verbergen"); b.setAttribute("aria-pressed", "true"); } else zu(feld);
   });
   // Ein Formular absenden: sende(f) → Promise { ok, status, … }; bei ok läuft fertig(antwort, f), sonst steht der Fehler unter dem Knopf
   function formular(id, sende, fertig, texte) {
@@ -1042,6 +1043,7 @@ MC.navInit();
     const dep = DEPOTS.find(d => d[0] === AKTIV)[2], alle = [].concat(...DEPOTS.map(d => d[2]));
     zeichneWahl();
     $("wer").textContent = stand.email; $("ae-email").value = $("lo-email").value = stand.email;
+    document.querySelectorAll("#anmelden form").forEach(f => { if (f.email && !f.email.readOnly) f.email.value = ""; });   // angemeldet: keine Adresse im Anmeldefeld lassen – nach Abmelden oder Löschen stand sie sonst noch da (Nutzertest 03.10.2026)
     // Wochenbrief (seit 02.10.2026): Stand und Schalter – seit 02.10.2026 abends in der Ansicht „Meldungen und Konto“
     $("nl-text").textContent = stand.newsletter
       ? "Du bekommst den Wochenbrief: einmal pro Woche Zinsen, meistgehandelte Anleihen und deine Merkliste. Abbestellen kannst du ihn hier oder über den Link in jeder Ausgabe."
@@ -1232,11 +1234,20 @@ MC.navInit();
   let POS = [];   // { isin, nenn (Währung der Anleihe), o (wie anleihe()), fx, fremd, nennEur, freq, fest, rechnet, zins (im Jahr, Euro, oder null), warum }
   // Tausenderpunkte nur im Dreierabstand („5.000“, „12.500“), sonst ungültig – bis 03.10.2026 wurde „5.0001.000“ (Eingabe vor
   // dem vorbelegten Wert) still zu 50.001.000 (Nutzertest)
-  function nennLesen(text) {
-    const t = String(text).replace(/[\s€]/g, "").replace(/,\d*$/, "");
-    if (!/^(\d+|\d{1,3}(\.\d{3})+)$/.test(t)) return NaN;
-    const n = parseInt(t.replace(/\./g, ""), 10); return n >= 1 && n <= NENN_MAX ? n : NaN;
+  // Seit 03.10.2026 (Nutzertest) auch keine stillen Kürzungen mehr: „1.000,50“ wurde 1.000, „1,5“ wurde 1 – jetzt eine Meldung
+  // mit dem Grund; „0“, „-5“ und Werte über der Obergrenze nennen die Grenze.
+  function nennPruefen(text) {
+    const t = String(text).replace(/[\s€]/g, "");
+    if (/^[-−]/.test(t)) return { fehler: "Der Nennwert muss mindestens 1 betragen." };
+    if (/,\d*[1-9]\d*$/.test(t)) return { fehler: "Bitte einen ganzen Betrag ohne Cent eintragen, zum Beispiel 5.000." };
+    const g = t.replace(/,0*$/, "");
+    if (!/^(\d+|\d{1,3}(\.\d{3})+)$/.test(g)) return { fehler: "Bitte einen Nennwert als ganze Zahl eintragen, zum Beispiel 5.000." };
+    const n = parseInt(g.replace(/\./g, ""), 10);
+    if (n < 1) return { fehler: "Der Nennwert muss mindestens 1 betragen." };
+    if (n > NENN_MAX) return { fehler: "Höchstens 100.000.000 – bitte einen kleineren Nennwert eintragen." };
+    return { n };
   }
+  function nennLesen(text) { const r = nennPruefen(text); return r.fehler ? NaN : r.n; }
   // Nennwert-Felder: beim Hineinklicken ganz markieren, damit die Eingabe den Wert ersetzt statt davor zu landen
   let nennFokus = null;
   document.addEventListener("focusin", e => { if (e.target.matches && e.target.matches("#kd-nenn, [data-nenn]")) { e.target.select(); nennFokus = e.target; } });
@@ -1248,6 +1259,7 @@ MC.navInit();
     if (!o.faellig) return "unbefristet";
     if (jahre(o.faellig) <= 0) return "Fälligkeit erreicht";
     if (o.kupon === "var" || o.zinsart === 1) return "variabler Zins";
+    if (o.zinsart === 0 && /stufenz|step[ -]?up|step[ -]?down|\bstep\b/i.test(o.r ? o.r[1] : o.name)) return "Stufenzins";   // künftige Kupons fehlen in den Daten – wie anleihe.html (seit 03.10.2026)
     if (typeof o.kupon !== "number") return "Kupon unbekannt";
     return "";
   }
@@ -1410,7 +1422,7 @@ MC.navInit();
       if (x.rueck) {
         const [svg, oben] = stapel(x.teile, t => t.rueck, cx, b, yR, 106, mr, "Rückzahlung"), d = Math.round(x.diff);
         const y = platzR(cx, oben - 4, Math.max(breite(kurz(x.rueck)), d ? breite(plus(d, 0)) : 0), d ? 28 : 13);
-        s += svg + (d ? text(cx, y, d < 0 ? "kd-m" : "kd-p", plus(d, 0)) : "") + text(cx, y - (d ? 15 : 0), "kd-w", kurz(x.rueck));
+        s += svg + (d ? text(cx, y, d < 0 ? "kd-m" : "kd-p", plus(d, 0) + `<title>Rückzahlung minus heutiger Kurswert: ${plus(d, 0)} €</title>`) : "") + text(cx, y - (d ? 15 : 0), "kd-w", kurz(x.rueck));
       } else s += leer(cx, yR);
       if (x.zins + x.rueck) {
         const [svg, oben] = stapel(x.teile, t => t.zins + t.rueck, cx, b, yS, hS - (eng ? 44 : 30), ms, "Zinsen und Rückzahlung");
@@ -1482,6 +1494,7 @@ MC.navInit();
     $("kd-plan-summe").innerHTML = zj.length > 1 ? `<tr><td colspan="2">Zinsen bis zur letzten Fälligkeit</td><td class="num">${eur(zj.reduce((a, x) => a + x.betrag, 0))}</td></tr>` : "";
     const gesch = POS.filter(p => p.fest && !p.tage && !AUS.has(p.isin)).map(p => p.o.name);
     $("kd-hinweis").textContent = "Zinstermine laut Deutscher Börse" + (gesch.length ? `, geschätzt bei ${gesch.join(", ")}` : "") + "; Beträge vor Steuern und Kosten. Fällt ein Termin auf ein Wochenende oder einen Feiertag, wird am nächsten Bankarbeitstag gezahlt." +
+      (POS.some(p => p.diff != null && Math.round(p.diff) !== 0 && !AUS.has(p.isin)) ? " Die Zahl über der Rückzahlung (+/−) ist der Unterschied zwischen Rückzahlung und heutigem Kurswert." : "") +
       (fehlt.length ? ` Nicht im Schaubild: ${fehlt.map(p => `${p.o.name} (${p.warum})`).join(", ")}.` : "");
     if (MC.wischPruefen) MC.wischPruefen();
   }
@@ -1575,7 +1588,7 @@ MC.navInit();
     let next = null;   // nächste Fälligkeit aus allen Musterdepots
     if (DDATA) DEPOTS.forEach(d => d[2].forEach(([i]) => { const o = anleihe(i, 0, DDATA); if (o.faellig && o.faellig > HEUTE_ISO && (!next || o.faellig < next.faellig)) next = o; }));
     const mail = `<b>${MC.esc(st.email)}</b>`;
-    let satz = an ? `${ERINNERUNG_TAGE} Tage bevor eine Anleihe aus einem deiner Musterdepots fällig wird, schreiben wir dir an ${mail} – und noch einmal am Tag der Fälligkeit, damit du dein Konto prüfen kannst.`
+    let satz = an ? `${ERINNERUNG_TAGE} Tage bevor eine Anleihe aus einem deiner Musterdepots fällig wird, schreiben wir dir an ${mail} – und noch einmal am Tag der Fälligkeit, damit du die Gutschrift auf deinem Bankkonto prüfen kannst.`
       : `Ausgeschaltet. Schaltest du sie ein, schreiben wir dir ${ERINNERUNG_TAGE} Tage bevor eine Anleihe aus einem deiner Musterdepots fällig wird und noch einmal am Tag der Fälligkeit – an ${mail}.`;
     if (an && next) {
       const e = new Date(next.faellig + "T12:00:00Z"); e.setUTCDate(e.getUTCDate() - ERINNERUNG_TAGE);
@@ -1615,6 +1628,7 @@ MC.navInit();
   let ANSICHT = "start";
   function reiter(r, fokus) {
     r = ALIAS[r] || r; if (!ANSICHTEN.includes(r)) r = "start";
+    if (ANSICHT && ANSICHT !== r && $("a-" + ANSICHT)) $("a-" + ANSICHT).querySelectorAll(".kf-status").forEach(el => { el.textContent = ""; el.classList.remove("fehler", "ok"); });   // alte Meldungen nicht stehen lassen (Nutzertest 03.10.2026)
     ANSICHT = r;
     ANSICHTEN.forEach(a => { const an = a === r, t = $("t-" + a); t.setAttribute("aria-selected", String(an)); t.tabIndex = an ? 0 : -1; $("a-" + a).hidden = !an; });
     if (fokus) $("t-" + r).focus();
@@ -1648,17 +1662,17 @@ MC.navInit();
   });
   $("f-depot").addEventListener("submit", e => {
     e.preventDefault();
-    const isin = $("kd-isin").value, nenn = nennLesen($("kd-nenn").value);
+    const isin = $("kd-isin").value, pr = nennPruefen($("kd-nenn").value);
     if (!isin) { depotStatus("Bitte wähl eine Anleihe von deiner Merkliste.", true); return; }
-    if (isNaN(nenn)) { depotStatus(DEPOT_TEXT.nennwert, true); return; }
+    if (pr.fehler) { depotStatus(pr.fehler, true); return; }
     depotStatus("Einen Moment …");
-    depotSenden(isin, nenn);
+    depotSenden(isin, pr.n);
   });
   $("kd-zeilen").addEventListener("change", e => {
     const f = e.target.closest("[data-nenn]"); if (!f) return;
-    const p = POS.find(x => x.isin === f.dataset.nenn), nenn = nennLesen(f.value);
-    if (isNaN(nenn)) { f.value = p ? fmt(p.nenn) : ""; depotStatus(DEPOT_TEXT.nennwert, true); return; }
-    depotSenden(f.dataset.nenn, nenn);
+    const p = POS.find(x => x.isin === f.dataset.nenn), pr = nennPruefen(f.value);
+    if (pr.fehler) { f.value = p ? fmt(p.nenn) : ""; depotStatus(pr.fehler, true); return; }
+    depotSenden(f.dataset.nenn, pr.n);
   });
   $("kd-zeilen").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.closest("[data-nenn]")) e.target.blur(); });
   $("kd-zeilen").addEventListener("click", e => {
@@ -1822,7 +1836,7 @@ MC.navInit();
     const noten = [];
     if (fremd.length && FX) noten.push(`* Fremdwährung: zur Vereinfachung mit dem Euro-Referenzkurs der EZB vom ${MC.datum(FX.stand)} in Euro umgerechnet (${[...new Set(fremd.map(p => p.o.cur))].sort().map(c => `1 € = ${fmtFx(FX.kurse[c])} ${c}`).join(", ")}) und für die ganze Laufzeit als fest angenommen – tatsächlich schwankt er (Wechselkursrisiko).`);
     noten.push("Musterdepot: gedachte Nennwerte, kein Bestand und kein Kauf. Kurs: Schlusskurs in % des Nennwerts. Kaufpreis = Nennwert × Kurs plus Stückzinsen zum Valutatag, ohne Gebühren. Anteil: Kurswert der Anleihe am Kurswert des Depots. " +
-      "Rendite: bis zur Fälligkeit, pro Jahr; laufende Verzinsung = Kupon ÷ Kurs. Duration: durchschnittliche Kapitalbindung in Jahren (Macaulay); mod. Duration = Duration ÷ (1 + Rendite) – um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Punkt steigt. Summe nach Kurswert gewichtet. " +
+      "Rendite: bis zur Fälligkeit, pro Jahr; laufende Verzinsung = Kupon ÷ Kurs. Duration: durchschnittliche Kapitalbindung in Jahren (Macaulay); mod. Duration = Duration ÷ (1 + Rendite) – um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Prozentpunkt steigt. Summe nach Kurswert gewichtet. " +
       "Zinsen und Rückzahlung vor Steuern und Kosten; Zinstermine laut Deutscher Börse, wo sie fehlen geschätzt; eine vorzeitige Kündigung ist nicht berücksichtigt. Maßgeblich sind die Anleihebedingungen.");
     noten.push("Keine Anlageberatung: Dieser Auszug ist ein Planspiel und keine Empfehlung zum Kauf oder Verkauf. Alle Angaben ohne Gewähr.");
     const fuss = [].concat(...noten.map(t => P.umbrechen(t, B - 2 * R, 7)));

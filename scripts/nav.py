@@ -163,7 +163,9 @@ FOOTER = [
     ("Bondarium", "f-bond", [("Über uns", "ueber-uns.html"), ("Haftung und Datenquellen", "rechtliches.html#haftung"),
                              ("Impressum", "rechtliches.html#impressum"), ("Datenschutz", "rechtliches.html#datenschutz")]),
 ]
-FOOTER_HINWEIS = 'Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="{p}rechtliches.html">Rechtliches</a>'
+# Seit 03.10.2026 (Nutzertest): „Börsenkurse bis zu 15 Minuten verzögert“ beschrieb die Quelle (MiFIR), nicht das, was die Seiten zeigen –
+# gezeigt werden Schlusskurse mit Datum, kein laufender Kurs.
+FOOTER_HINWEIS = 'Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse sind Schlusskurse, keine Echtzeitkurse. · <a href="{p}rechtliches.html">Rechtliches</a>'
 
 # Rückfall, falls site.js nicht lädt (Netzfehler): eine Minimalform für alle Seiten statt der früher je Seite
 # verschieden kopierten Zeilen (esc, minus, load, hoverWrap …). Die volle Fassung steht in site.js.

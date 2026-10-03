@@ -289,7 +289,7 @@
     <nav aria-labelledby="f-kauf"><p class="fuss-k" id="f-kauf">Kaufen</p><a href="erste-anleihe.html">Deine erste Anleihe</a><a href="broker-vergleich.html">Broker im Vergleich</a><a href="steuern-handelskosten.html">Steuern und Handelskosten</a><a href="rechner.html">Rechner</a></nav>
     <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen Staatsanleihen</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Haftung und Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
-    <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
+    <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse sind Schlusskurse, keine Echtzeitkurse. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
 </div>
 <script src="site.js"></script>
@@ -388,9 +388,12 @@ MC.navInit();
       set("ezb-stand", "Stand: " + MC.zahl(ez.aktuell[1], 2) + "\u00a0% seit " + MC.datum(ez.aktuell[0]) + " (EZB, abgerufen am " + MC.datum(ez.stand) + ").");
     }
     var h = r[0] && r[0].heute && r[0].heute.DE, v = r[1] && r[1].heute && r[1].heute.vpi;
+    // Bundesanleihe 10 Jahre: derselbe Wert wie „Bund 10 Jahre“ auf Realzins und „Staatsanleihen seit 1970“ (Anleihe mit jährlichem
+    // Kupon) – vorher die Nullkupon-Rendite der Zinskurve, die meist einige Hundertstel höher liegt (Nutzertest 03.10.2026)
+    var z = r[1] && r[1].heute && r[1].heute.zins10, z10 = z && z[1] != null ? z : null;
     if (h && v && h[1] != null && h[2] != null && v[1] != null) {
-      set("zn-2", pct(h[1], 2)); set("zn-10", pct(h[2], 2)); set("zn-i", pct(v[1], 1));
-      var st = "Renditen " + MC.datum(h[0]) + ", Inflation " + MON[+v[0].slice(5, 7) - 1] + " " + v[0].slice(0, 4);
+      set("zn-2", pct(h[1], 2)); set("zn-10", pct(z10 ? z10[1] : h[2], 2)); set("zn-i", pct(v[1], 1));
+      var st = "Renditen " + MC.datum(h[0]) + (z10 && z10[0] !== h[0] ? " und " + MC.datum(z10[0]) : "") + ", Inflation " + MON[+v[0].slice(5, 7) - 1] + " " + v[0].slice(0, 4);
       set("zn-stand", st); set("datastand", "Daten-Stand: " + st);
       if (MC.veraltet && MC.veraltet(h[0])) { var ds = document.getElementById("datastand"); if (ds) ds.classList.add("stale"); }
     }

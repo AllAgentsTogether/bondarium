@@ -278,11 +278,15 @@ def zins_felder(zeile: list, termine: dict) -> dict:
 
 
 def monate_zurueck(d: datetime.date, m: int) -> datetime.date:
-    """Datum minus m Monate, ohne Monatsüberlauf (31.05. → 30.11.)."""
+    """Datum minus m Monate, ohne Monatsüberlauf (31.05. → 30.11.). Ist d ein Monatsletzter am 30. oder 31., bleibt das
+    Ergebnis ein Monatsletzter (30.11. → 31.05., wie bei US-Staatsanleihen; vorher 30.05., Nutzertest 03.10.2026). Ende
+    Februar bleibt beim Tag – ob dort der 28. oder der Monatsletzte gemeint ist, lässt sich nicht erkennen. Gleiche Regel
+    in bond.js (monthsBack)."""
     j, mo = divmod(d.year * 12 + d.month - 1 - m, 12)
     mo += 1
     letzter = (datetime.date(j + (mo == 12), mo % 12 + 1, 1) - datetime.timedelta(days=1)).day
-    return datetime.date(j, mo, min(d.day, letzter))
+    ende = d.day >= 30 and (d + datetime.timedelta(days=1)).month != d.month
+    return datetime.date(j, mo, letzter if ende else min(d.day, letzter))
 
 
 ENDE_TOLERANZ = 20   # Tage: Ein Zinstermin so kurz vor der Fälligkeit ist der Fälligkeitstag selbst (Bankarbeitstag-Verschiebung)

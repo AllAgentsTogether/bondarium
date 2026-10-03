@@ -106,8 +106,10 @@
       var ms = Math.max(1, Math.ceil((mEnd - m + 1) / maxT));
       for (; m <= mEnd; m += ms) ticks.push([Date.UTC(Math.floor(m / 12), m % 12, 1), MON[m % 12] + " " + String(Math.floor(m / 12)).slice(2)]);
     } else {
+      // kurze Zeiträume: Beschriftung an echten Kurstagen, gleichmäßig über die Punkte verteilt – vorher gleichmäßig über die
+      // Zeit, dann stand auch ein Sonntag an der Achse (Nutzertest 03.10.2026)
       var nt = Math.min(maxT, T.length);
-      for (var j = 0; j < nt; j++) { var tt = t0 + j * (t1 - t0) / Math.max(1, nt - 1), s8 = iso(tt); ticks.push([tt, s8.slice(8, 10) + "." + s8.slice(5, 7) + "."]); }
+      for (var j = 0; j < nt; j++) { var tt = zeitOf(T[Math.round(j * (T.length - 1) / Math.max(1, nt - 1))]), s8 = iso(tt); ticks.push([tt, s8.slice(8, 10) + "." + s8.slice(5, 7) + "."]); }
     }
     ticks.forEach(function (tk) {
       var px = X(tk[0]), anc = px < ml + 24 ? "start" : px > W - mr - 24 ? "end" : "middle";

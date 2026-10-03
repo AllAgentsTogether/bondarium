@@ -120,9 +120,10 @@
     b.innerHTML = inhalt(drin);
   }
   function knoepfe() { Array.prototype.forEach.call(document.querySelectorAll("button[data-merk]"), zeichne); }
-  function knopf(isin, klasse) {
+  // name (seit 03.10.2026, Nutzertest Screenreader: 90-mal nur „Merken“ in einer Rangliste): zugänglicher Name „<Anleihe> merken“
+  function knopf(isin, klasse, name) {
     var drin = !!menge[isin];
-    return '<button type="button" class="merkbtn' + (klasse ? " " + esc(klasse) : "") + '" data-merk="' + esc(isin) + '" aria-pressed="' + drin +
+    return '<button type="button" class="merkbtn' + (klasse ? " " + esc(klasse) : "") + '" data-merk="' + esc(isin) + '"' + (name ? ' aria-label="' + esc(name) + ' merken"' : "") + ' aria-pressed="' + drin +
       '" title="' + (drin ? "Von deiner Merkliste entfernen" : "Zu deiner Merkliste hinzufügen") + '">' + inhalt(drin) + "</button>";
   }
   function melde(text) {
@@ -133,12 +134,23 @@
     }
     el.textContent = text;
   }
+  // Nicht angemeldet (seit 03.10.2026, Nutzertest): erst ein Hinweis direkt am Knopf, statt sofort auf die Anmeldeseite zu springen –
+  // so bleiben Trefferliste und Steckbrief stehen. Der Link nimmt die Anleihe mit (konto.html?merken=…, wie bisher).
+  function anmeldeHinweis(b, isin) {
+    var alt = document.getElementById("merk-hinweis");
+    if (alt) { var war = alt.getAttribute("data-isin") === isin; alt.remove(); if (war) return; }
+    var h = document.createElement("span");
+    h.id = "merk-hinweis"; h.className = "merk-hinweis"; h.setAttribute("role", "status"); h.setAttribute("data-isin", isin);
+    h.innerHTML = "Zum Merken brauchst du ein kostenloses Konto. " +
+      '<a href="' + SEITE + "?merken=" + encodeURIComponent(isin) + '">Anmelden oder registrieren</a>';
+    b.insertAdjacentElement("afterend", h);
+  }
   function klick(b) {
     var isin = b.getAttribute("data-merk");
     if (b.disabled) return;
     b.disabled = true;
     bereit().then(function () {
-      if (!st.angemeldet) { location.href = SEITE + "?merken=" + encodeURIComponent(isin); return; }
+      if (!st.angemeldet) { anmeldeHinweis(b, isin); return; }
       var weg = !!menge[isin];
       return aendere(weg ? "entfernen" : "merken", isin).then(function () {
         melde(weg ? "Anleihe " + isin + " von der Merkliste entfernt" : "Anleihe " + isin + " zur Merkliste hinzugefügt");

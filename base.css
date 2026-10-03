@@ -221,7 +221,7 @@ html { scroll-padding-top: 100px; }   /* Sprungziele nicht unter der festen Kopf
 
 /* --- Nav-Dropdowns (seit 25.09.2026 die vier Stufen Verstehen, Entscheiden, Kaufen, Einordnen – Menü „Der Weg“) ---
    Der Gruppen-Kopf (.nav-group-btn) ist ein Link auf die Übersicht der Stufe; das Menü öffnet per Hover
-   bzw. Tastaturfokus, auf Touch-Geräten per erstem Tipp (site.js, Klasse .open). Bis 760 px wird die
+   bzw. per Tastatur mit Pfeil runter oder Leertaste (seit 03.10.2026 nicht mehr beim bloßen Fokus), auf Touch-Geräten per erstem Tipp (site.js, Klasse .open). Bis 760 px wird die
    Kopfzeile zum Akkordeon hinter einem Burger-Knopf (Regeln am Dateiende). */
 .nav-group { position: relative; display: inline-block; }
 .nav-group-btn { font-family: var(--sans); font-size: 12.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; background: none; border: none; color: var(--muted); cursor: pointer; padding: 13px 4px 16px; margin: -13px -4px -13px; display: inline-flex; align-items: baseline; gap: 5px; transition: color 0.15s ease; }
@@ -307,7 +307,7 @@ table tbody tr:hover > :is(td, th) { background-color: rgba(57,255,20,0.10); }
 
 /* Mikro-Details */
 ::selection { background: var(--green-tint-2); }   /* bis 30.09.2026 noch das alte Blau */
-html { scroll-behavior: smooth; }  /* wird bei prefers-reduced-motion oben zurückgesetzt */
+html.sanft { scroll-behavior: smooth; }  /* Klasse setzt site.js erst nach dem Laden: ein Sprung von außen auf #anker steht sofort (Nutzertest 03.10.2026); bei prefers-reduced-motion oben zurückgesetzt */
 
 /* Datenquellen und Methodik (Seitenstandard seit 23.09.2026): nie offen im Bild, sondern ein unauffälliger
    Aufklapper am Seitenende – <details class="quellen" id="quellen"> direkt vor </main>. Sichtbar bleibt nur die
@@ -346,7 +346,7 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
   .topbar.nav-open .nav-toggle-i { background: transparent; }
   .topbar.nav-open .nav-toggle-i::before { top: 0; transform: rotate(45deg); }
   .topbar.nav-open .nav-toggle-i::after { top: 0; transform: rotate(-45deg); }
-  .topbar .sitenav { display: none; flex: 1 0 100%; width: 100%; flex-direction: column; align-items: stretch; gap: 0; top: 0; margin-top: 2px; max-height: calc(100vh - 90px); overflow-y: auto; }
+  .topbar .sitenav { display: none; flex: 1 0 100%; width: 100%; flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 0; top: 0; margin-top: 2px; max-height: calc(100vh - 90px); overflow-y: auto; }   /* nowrap: eine lange offene Gruppe (Akademie) bricht sonst in eine zweite Spalte rechts außerhalb um (Nutzertest 03.10.2026) */
   .topbar.nav-open .sitenav { display: flex; }
   .topbar .sitenav a.nav-cta { order: -1; margin: 4px 0 10px; padding: 12px 14px; text-align: center; }
   .nav-group { display: block; width: 100%; border-top: 1px solid rgba(26,26,25,0.16); }
@@ -444,6 +444,9 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 .merkbtn[aria-pressed="true"] svg path { fill: currentColor; }
 .merkbtn:disabled { opacity: 0.6; cursor: default; }
 .merkbtn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+/* Hinweis am Merken-Knopf, wenn niemand angemeldet ist (seit 03.10.2026, konto.js) – statt sofort auf die Anmeldeseite zu springen */
+.merk-hinweis { display: block; margin-top: 6px; font-size: 13px; font-weight: 400; line-height: 1.45; color: var(--ink); background: rgba(57,255,20,0.12); border-radius: 8px; padding: 6px 10px; white-space: normal; text-align: left; }
+.merk-hinweis a { font-weight: 600; color: var(--green-text); }
 /* nur der Stern (Top-10-Tabellen, seit 02.10.2026 abends) – der Text bleibt für Screenreader */
 .merkbtn.nur { padding: 3px; margin-left: 6px; vertical-align: -4px; }
 .merkbtn.nur span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
@@ -633,6 +636,17 @@ th[aria-sort="descending"] .sortbtn::after { content: "↓"; opacity: 1; }
 .kpis td.isin { font-variant-numeric: tabular-nums; white-space: nowrap; letter-spacing: 0.01em; }
 .kpis td.rk { color: var(--muted); padding-right: 6px; }
 .kpis td.leer { text-align: left; color: var(--text); font-style: italic; padding: 14px 8px; white-space: normal; }
+/* Ranglisten (seit 03.10.2026, Nutzertest): Name als Link zum Steckbrief, Währungskürzel an Renditen in fremder Währung, Kursdatum über
+   der ersten Tabelle. Unter 1.000 px wischt die Tabelle ohnehin – dort mehr Abstand zwischen den Spalten (vorher 2–4 px, „100,19 7,125 %“
+   las sich als „100,197,125 %“) und eine stehende Namensspalte. Die Klasse .table-scroll hebt die Regel über die knappen Seitenwerte. */
+.kpis th[scope=row] a.name-link { color: var(--ink); text-decoration: underline; text-decoration-color: rgba(26,26,25,0.3); text-underline-offset: 2px; }
+.kpis th[scope=row] a.name-link:hover { text-decoration-color: var(--ink); }
+.kpis td.num small.w-kz { font-size: 11.5px; color: var(--muted); font-weight: 500; }
+.kurs-stand { font-size: 13px; color: var(--text); margin: 0 0 6px; }
+@media (max-width: 1000px) {
+  .table-scroll .kpis th, .table-scroll .kpis td { padding-right: 12px; }
+  .table-scroll:not(#treffer) .kpis tbody th[scope=row] { position: sticky; left: 0; z-index: 1; background: var(--bg, #FBFAF7); box-shadow: 6px 0 8px -8px rgba(26,26,25,0.35); }
+}
 
 /* Legende über Charts – Grundform. <div class="legend [linie]"> mit <span class="leg"> oder <button class="leg" aria-pressed>.
    „linie“: feine Linien oben und unten (renditen, zinskurve, unternehmensanleihen, langlaeufer).

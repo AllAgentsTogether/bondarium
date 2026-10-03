@@ -88,7 +88,7 @@ main a.mb-zk-k { color: var(--ink); }
 .mb-termine li { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 12px; align-items: center; padding: 8px 0; border-top: 1px solid var(--rule); font-size: 13.5px; line-height: 1.4; color: var(--text); }
 .mb-termine li:first-child { border-top: 0; padding-top: 0; }
 .mb-termine li div b { display: block; font-size: 15px; font-weight: 600; color: var(--ink); }
-.mb-tag { display: grid; justify-items: center; font-size: 11.5px; font-weight: 600; line-height: 1.2; color: var(--text); border: 1px solid #E4E3DF; border-radius: 10px; padding: 5px 0 5px; background: #FBFAF7; white-space: nowrap; }
+.mb-tag { display: grid; justify-items: center; font-size: 12px; font-weight: 600; line-height: 1.2; color: var(--text); border: 1px solid #E4E3DF; border-radius: 10px; padding: 5px 0 5px; background: #FBFAF7; white-space: nowrap; }
 .mb-tag b { font-size: 18px; font-weight: 700; color: var(--ink); line-height: 1.1; }
 .mb-termine li:first-child .mb-tag { background: #39FF14; border-color: #1A1A19; color: #1A1A19; }
 .mb-zuletzt { margin-top: 22px; }

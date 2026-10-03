@@ -75,6 +75,7 @@
   #treffer { margin-top: 6px; }
   /* Unter der Liste: Trefferhinweis wiederholen, Rückweg zu Suche und Filtern */
   .status-unten { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin-top: 14px; font-size: 14px; color: var(--text); }
+  .status-unten[hidden] { display: none; }   /* sonst stand nach dem Leeren des Suchfelds die alte Trefferzahl weiter da (Nutzertest 03.10.2026) */
   .status-unten a { font-weight: 600; color: var(--green-text); text-decoration: none; white-space: nowrap; }
   .status-unten a:hover { text-decoration: underline; }
   /* Name öffnet die Kurzansicht (vier Kennzahlen, seit 25.09.2026 statt Link zur Börse); „Alle Details“ führt zum Steckbrief anleihe.html */
@@ -89,6 +90,7 @@
   .kpis td small.alt { display: block; font-size: 12px; color: var(--text); }
   .kpis td .fraglich { color: var(--muted); border-bottom: 1px dotted currentColor; cursor: help; }   /* Rendite aus Taxe ohne Umsatz, wahrscheinlich zu hoch (seit 27.09.2026) */
   .kpis td .fraglich sup { font-size: 10px; line-height: 0; margin-left: 1px; }
+  .kpis th .zs { display: inline-block; font-size: 12px; line-height: 1.3; color: var(--text); background: rgba(26,26,25,0.07); border-radius: 3px; padding: 0 5px; margin-left: 6px; vertical-align: 1px; white-space: nowrap; cursor: help; }   /* Zinsschein-Papier (seit 03.10.2026) */
   .kpis th .pruef { display: inline-block; font-size: 11px; line-height: 1.2; color: var(--orange-text); border: 1px solid var(--orange); border-radius: 3px; padding: 0 4px; margin-left: 6px; vertical-align: 1px; white-space: nowrap; cursor: help; }   /* Datenprüfung: Widerspruch im Register (seit 27.09.2026) */
   /* Filterleiste: Pillen wie die Knöpfe der Länder-/Laufzeit-Seiten, darunter je ein Auswahlfeld */
   .det-kpi dd.warn { color: var(--orange-text); }   /* Kündigung ab festem Termin oder ewig */
@@ -97,7 +99,7 @@
   @media (pointer: coarse) {
     .bsp-l a, .status-unten a { min-height: 44px; display: inline-flex; align-items: center; }
   }
-  @media (prefers-reduced-motion: no-preference) {  html { scroll-behavior: smooth; } }
+  @media (prefers-reduced-motion: no-preference) {  html.sanft { scroll-behavior: smooth; } }
   @media (hover: hover) { .kpis tbody tr.zeile:hover > * { background: rgba(57,255,20,0.07); } }   /* nur mit Maus – am Handy blieb die Zeile nach dem Tipp grün (28.09.2026) */
   /* Ab 1048 px passt die Tabelle in die Spalte: kein Scroll-Container mehr, der Tabellenkopf bleibt beim Scrollen unter der Kopfzeile stehen */
   @media (min-width: 1048px) {
@@ -108,6 +110,8 @@
   }
   @media (max-width: 900px) {
     .table-scroll table { min-width: 720px; }
+    .kpis tbody th[scope="row"], .kpis .zbtn { overflow-wrap: anywhere; }   /* seit 03.10.2026: lange Emittenten („Bundesimmobiliengesellschaft“) brechen um, statt die Rendite zu überdecken */
+    .kpis tbody td:nth-child(2) { padding-left: 10px; }
     .kpis tbody th[scope="row"], .kpis thead th[data-col="name"] { position: sticky; left: 0; z-index: 1; background: var(--bg); box-shadow: 6px 0 8px -8px rgba(26,26,25,0.35); max-width: 180px; white-space: normal; }   /* Name bleibt beim Querwischen stehen */
   }
 
@@ -335,7 +339,7 @@
     <nav aria-labelledby="f-kauf"><p class="fuss-k" id="f-kauf">Kaufen</p><a href="erste-anleihe.html">Deine erste Anleihe</a><a href="broker-vergleich.html">Broker im Vergleich</a><a href="steuern-handelskosten.html">Steuern und Handelskosten</a><a href="rechner.html">Rechner</a></nav>
     <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen Staatsanleihen</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Haftung und Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
-    <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
+    <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse sind Schlusskurse, keine Echtzeitkurse. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
 </div>
 
@@ -355,7 +359,8 @@ const T = {
   unten: (n, max) => n > max ? `Das waren die ersten ${max} von ${n.toLocaleString("de-DE")} Treffern – mit Suchbegriff oder Filtern eingrenzen.` : `${n.toLocaleString("de-DE")} Treffer.`,
   hoch: "↑ Zur Suche und den Filtern",
   capped: max => ` – die ersten ${max} werden angezeigt. Mit Suchbegriff oder Filtern eingrenzen.`,
-  none: "Keine Anleihe gefunden. Tipp: weniger Wörter oder Filter lockern.",
+  none: "Keine Anleihe gefunden. Tipp: Emittent oder Land und Jahr eingeben, z. B. „Bund 2030“, „Siemens 2029“ oder „Italien 2035“ – oder weniger Wörter und Filter lockern.",
+  renditeSort: " · nach Rendite sortiert: zuerst Kurse mit Umsatz am Kurstag, dann Kurse ohne Umsatz (Taxen)",
   error: "Die Anleihe-Daten sind gerade nicht erreichbar. Bitte später erneut versuchen.",
   errorKurse: "Die Kurse sind gerade nicht erreichbar – ohne aktuellen Kurs zeigt die Suche keine Anleihe. Bitte später erneut versuchen.",
   eyebrow: (n, d) => `Anleihen-Suche · ${n} Anleihen mit Kurs an deutschen Börsen · Stand: ${d}`,
@@ -406,7 +411,8 @@ const fmt = (v, dec = 0) => MC.zahl(v, dec);   // gemeinsames Zahlenformat (site
 const fmtDate = iso => !iso ? L("perp") : MC.datum ? MC.datum(iso) : iso;
 const fmtCoupon = c => c === "var" ? L("var") : typeof c === "number" ? `${fmt(c, Math.round(c * 1000) % 10 ? 3 : 2)}\u00a0%` : "–";
 // Volumen immer in Mrd., höchstens drei gültige Ziffern (0,5 Mrd. · 1,25 Mrd. · 30,5 Mrd. · 122 Mrd.)
-const fmtVol = (v, w) => typeof v === "number" ? `${(v / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 })} ${L("bn")}${w ? " " + w : ""}` : "–";   // mit Währung (seit 30.09.2026)
+const fmtVol = (v, w) => typeof v !== "number" ? "–" : (v >= 1e9 ? `${(v / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 })} ${L("bn")}`
+  : v >= 1e6 ? `${(v / 1e6).toLocaleString("de-DE", { maximumSignificantDigits: 3 })} Mio.` : v.toLocaleString("de-DE", { maximumFractionDigits: 0 })) + (w ? " " + w : "");   // seit 03.10.2026 kleine Volumen in Mio. oder als Betrag (vorher „0,000235 Mrd. USD“)   // mit Währung (seit 30.09.2026)
 const fmtStk = v => typeof v === "number" ? v.toLocaleString("de-DE", { maximumFractionDigits: 3 }) : "–";
 const norm = s => String(s).normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase();
 // Satzzeichen außer Komma/Punkt trennen Wörter („Mercedes-Benz“ → „mercedes benz“, „(2050)“ → „2050“)
@@ -439,11 +445,17 @@ function suchtext(r) {
   const d = r[5] ? `${r[5].slice(8, 10)}.${r[5].slice(5, 7)}.${r[5].slice(0, 4)}` : "unbefristet";
   return " " + woerter([r[1], r[0], r[3], k, k.replace(/\./g, ","), d, ART[r[2]], EMI[r[9]] || "", r[12] || ""].join(" ")) + " ";
 }
+// Alltagswörter auf das Register abbilden (seit 03.10.2026, Nutzertest: „Bundesanleihe“ ergab 0 Treffer – im Register heißt der
+// Emittent „Bundesrep.Deutschland“, die Website selbst schreibt „Bundesanleihe“ über 100-mal)
+const SYNONYME = [[/^bundes(anleihen?|anl|obligation(en)?|obl|schatzanweisung(en)?|wertpapiere?)$|^bobls?$/, "bundesrep"],
+  [/^staatsanleihen?$/, "staat"], [/^unternehmensanleihen?$|^firmenanleihen?$/, "unternehmen"]];
+const synonym = t => { for (const [re, w] of SYNONYME) if (re.test(t)) return w; return t; };
+const suchWoerter = q => woerter(q).split(" ").filter(Boolean).map(synonym);
 // Treffer und Zählungen je Filteroption (F.auswerten, filter.js); der Suchbegriff ist der Vorfilter.
 function auswerten() {
   // Wörter ab 4 Zeichen: irgendwo enthalten (auch in der ISIN, z. B. WKN „110248“);
   // kürzere nur am Wortanfang – sonst träfe „VW“ jede ISIN mit „VW“.
-  const toks = woerter(S.q).split(" ").filter(Boolean).map(t => t.length >= 4 ? t : " " + t);
+  const toks = suchWoerter(S.q).map(t => t.length >= 4 ? t : " " + t);
   const a = F.auswerten(KEYS, SOL, toks.length ? i => { const h = HAY[i]; return toks.every(t => h.includes(t)); } : null);
   return { hits: a.hits.map(i => IDX[i]), zahl: a.zahl, suche: toks.length > 0 };
 }
@@ -473,7 +485,7 @@ const KEY = {
 // Übereinstimmung mit dem Suchbegriff (seit 30.09.2026 Standard bei einer Suche, solange niemand eine Spalte sortiert):
 // genaue ISIN/WKN vor Treffern am Anfang des Emittenten, im Emittenten, am Wortanfang im Registernamen; bei Gleichstand das größere Volumen
 function relevanz(list) {
-  const q = woerter(S.q), toks = q.split(" ").filter(Boolean);
+  const toks = suchWoerter(S.q), q = toks.join(" ");
   for (const r of list) {
     const emi = " " + woerter(EMI[r[9]] || "") + " ", name = " " + woerter(r[1]) + " ", isin = r[0].toLowerCase();
     let p = isin === q.replace(/ /g, "") || (/^de/.test(isin) && isin.slice(5, 11) === q) ? 10000 : 0;
@@ -482,10 +494,15 @@ function relevanz(list) {
     r.rel = p + Math.log10((typeof r[6] === "number" ? r[6] : 0) + 1);   // Volumen nur als Gleichstandsregel (höchstens ~12 Punkte)
   }
 }
+// Mit Umsatz: Abschluss am Kurstag oder Kurs der Bundesbank – Taxen ohne Umsatz sind keine gehandelten Preise
+const mitUmsatz = r => { const k = KURSE[r[0]]; return !!(k && (k[4] > 0 || k[3] === "B")); };
 function sortiere(list) {
   if (S.col === "rel") relevanz(list);
   const key = KEY[S.col] || KEY.faellig;
   return list.sort((a, b) => {
+    // Seit 03.10.2026: nach Rendite zuerst die Kurse mit Umsatz, dann die Taxen (93 % der Euro-Unternehmensanleihen hatten am Kurstag
+    // keinen Umsatz; oben standen Renditen wie 6,15 % aus Taxen, die niemand bekommt – Nutzertest)
+    if (S.col === "rendite") { const ua = mitUmsatz(a), ub = mitUmsatz(b); if (ua !== ub) return ua ? -1 : 1; }
     const x = key(a), y = key(b);
     if (x == null || y == null) { if (x != null) return -1; if (y != null) return 1; }   // ohne Wert immer ans Ende
     const c = x == null ? 0 : typeof x === "string" ? x.localeCompare(y, "de", { numeric: true }) : x - y;
@@ -500,13 +517,18 @@ function zeile(r) {
   const alt = k && kDatum(k) !== KSTAND ? `<small class="alt">${fmtDate(kDatum(k)).slice(0, 6)}</small>` : "";
   const kurs = k ? `<span title="${MC.esc(L("kursTitle")(fmtDate(kDatum(k)), BOERSEN[k[3]] || "", k[4] ? fmtUmsatz(k[4], r[3]) : ""))}">${fmt(k[0], 2)}</span>${alt}` : "–";
   const anz = anzeigeName(r);
-  return `<tr class="zeile${offen ? " offen" : ""}" data-isin="${MC.esc(r[0])}"><th scope="row"><button type="button" class="zbtn" aria-expanded="${offen}" aria-controls="det-${MC.esc(r[0])}">${MC.esc(anz)}</button>${anz !== r[1] ? `<small class="reg">${MC.esc(r[1])}</small>` : ""}${befund(r) ? `<span class="pruef" title="${MC.esc(L("pruefT")(widerspruch(r)))}">${L("pruefBadge")}</span>` : ""}</th>` +
+  // Seit 03.10.2026: Knopf und Link tragen Kupon und Fälligkeit im zugänglichen Namen (Nutzertest: elfmal „Deutschland“ hintereinander
+  // im Screenreader); abgetrennte Zinsscheine und Kapitalteile ohne Zinsscheine sind gekennzeichnet (0 % Kupon zwischen Bundesanleihen)
+  const lang = `${anz} ${typeof r[4] === "number" ? fmtCoupon(r[4]) + " " : ""}${r[5] ? "fällig " + fmtDate(r[5]) : L("perp")}`;
+  const zs = /kupons? per|\bkupon\b.*\bper\b/i.test(r[1]) ? ["Zinsschein", "Abgetrennter Zinsschein: zahlt nur einen einzigen Betrag am genannten Tag, keine laufenden Zinsen"]
+    : /o\.?\s?zinssch|ohne zinssch/i.test(r[1]) ? ["ohne Zinsscheine", "Kapitalteil ohne Zinsscheine: zahlt nur den Nennwert bei Fälligkeit, keine laufenden Zinsen"] : null;
+  return `<tr class="zeile${offen ? " offen" : ""}" data-isin="${MC.esc(r[0])}"><th scope="row"><button type="button" class="zbtn" aria-expanded="${offen}" aria-controls="det-${MC.esc(r[0])}" aria-label="${MC.esc(lang)}, Kurzansicht">${MC.esc(anz)}</button>${zs ? `<span class="zs" title="${zs[1]}">${zs[0]}</span>` : ""}${anz !== r[1] ? `<small class="reg">${MC.esc(r[1])}</small>` : ""}${befund(r) ? `<span class="pruef" title="${MC.esc(L("pruefT")(widerspruch(r)))}">${L("pruefBadge")}</span>` : ""}</th>` +
     `<td class="num"${real ? ` title="${L("real")}"` : ""}>${rd != null ? (fraglich(r) ? `<span class="fraglich" title="${MC.esc(L("fraglichT")(fmt(k[7], 1)))}">${fmt(rd, 2)}\u00a0%<sup>?</sup></span>` : `${fmt(rd, 2)}\u00a0%${real ? "*" : ""}`) : "–"}</td>` +
     `<td class="num">${kurs}</td>` +
     `<td class="num">${fmtCoupon(r[4])}</td><td class="num">${!r[5] && pruefVon(r).faelligName ? L("pruefUnklar") : fmtDate(r[5])}</td>` +
     `<td class="num">${r[5] ? RL(jahre(r[5])) : "–"}</td>` +
-    `<td class="txt art">${MC.esc(ART[r[2]])}</td><td class="isin"><a href="anleihe.html?isin=${encodeURIComponent(r[0])}" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">${MC.esc(r[0])}</a></td><td class="txt">${MC.esc(r[3])}</td>` +
-    `<td class="num">${fmtVol(r[6], r[3])}</td><td class="num">${fmtStk(r[7])}</td></tr>` + (offen ? detailZeile(r) : "");
+    `<td class="txt art">${MC.esc(ART[r[2]])}</td><td class="isin"><a href="anleihe.html?isin=${encodeURIComponent(r[0])}" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten" aria-label="Steckbrief ${MC.esc(lang)} (ISIN ${MC.esc(r[0])})">${MC.esc(r[0])}</a></td><td class="txt">${MC.esc(r[3])}</td>` +
+    `<td class="num">${fmtVol(r[6], r[3])}</td><td class="num">${typeof r[7] === "number" ? `${fmtStk(r[7])} ${MC.esc(r[3])}` : "–"}</td></tr>` + (offen ? detailZeile(r) : "");   // Stückelung mit Währung (seit 03.10.2026)
 }
 // Kurzansicht (seit 26.09.2026): vier Kennzahlen zum Einordnen – alles Weitere (Kursverlauf, Handel, Aufschlag zu Bund, Rang,
 // Rückzahlung, Zinsformel, Kaufrechnung) steht auf dem Steckbrief anleihe.html?isin=…
@@ -573,7 +595,7 @@ function zeige() {
   // Genau ein Treffer für eine ISIN (Link von einer anderen Seite): Kurzansicht gleich öffnen
   if (hits.length === 1 && /^[A-Z]{2}[A-Z0-9]{9}\d$/i.test(S.q.trim()) && !S.zu) S.offen.add(hits[0][0]);
   box.querySelector("tbody").innerHTML = hits.slice(0, MAX).map(zeile).join("");
-  status.innerHTML = hits.length ? L("hits")(hits.length.toLocaleString("de-DE")) + (S.col === "rel" && hits.length > 1 ? L("relevanz") : "") + (hits.length > MAX ? L("capped")(MAX) : "") : L("none");
+  status.innerHTML = hits.length ? L("hits")(hits.length.toLocaleString("de-DE")) + (S.col === "rel" && hits.length > 1 ? L("relevanz") : S.col === "rendite" && hits.length > 1 ? L("renditeSort") : "") + (hits.length > MAX ? L("capped")(MAX) : "") : L("none");
   // Unter langen Listen: Hinweis wiederholen und Rückweg nach oben
   unten.hidden = hits.length <= 10;
   if (!unten.hidden) unten.innerHTML = `<span>${L("unten")(hits.length, MAX)}</span><a href="#q" class="hoch">${L("hoch")}</a>`;
@@ -587,6 +609,7 @@ function merkeURL() {
   if (S.q.trim()) p.set("q", S.q.trim());
   if (F.solide) p.set("solide", "1");
   for (const f of FILTER) if (F.sel[f.k].size) p.set(f.k, [...F.sel[f.k]].join(","));
+  if (S.eigen) p.set("sort", (S.dir < 0 ? "-" : "") + S.col);   // seit 03.10.2026: Sortierung bleibt beim Zurück erhalten
   const qs = p.toString().replace(/%2C/g, ",");
   const neu = location.pathname + (qs ? "?" + qs : "");
   if (neu !== location.pathname + location.search) history.replaceState(null, "", neu);
@@ -643,6 +666,8 @@ function laden() {
   S.q = p.get("q") || "";
   F.solide = p.get("solide") === "1";
   for (const f of FILTER) (p.get(f.k) || "").split(",").map(v => v.trim()).filter(Boolean).forEach(v => F.sel[f.k].add(f.k === "w" || f.k === "land" ? v.toUpperCase() : v));
+  const so = /^(-?)(name|rendite|kurs|kupon|faellig|rest|art|isin|cur|vol|stk)$/.exec(p.get("sort") || "");
+  if (so) { S.col = so[2]; S.dir = so[1] ? -1 : 1; S.eigen = true; }
   const input = document.getElementById("q");
   input.value = S.q;
   let t = 0;
@@ -664,6 +689,8 @@ function laden() {
   });
 
   const box = document.getElementById("treffer");
+  // Sortierknöpfe sagen, was sie tun (seit 03.10.2026: im Screenreader klangen sie wie die gleichnamigen Filterknöpfe)
+  for (const b of box.querySelectorAll("thead .sortbtn")) b.setAttribute("aria-label", `${b.textContent.trim()} – sortieren`);
   box.querySelector("thead").addEventListener("click", e => {
     const b = e.target.closest(".sortbtn");
     if (!b) return;

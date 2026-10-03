@@ -47,12 +47,14 @@
   function utc(iso) { var m = ISO.exec(String(iso)); return m ? Date.UTC(+m[1], +m[2] - 1, +m[3], 12) : NaN; }
   function isoOf(t) { return new Date(t).toISOString().slice(0, 10); }
   function addDays(iso, n) { var d = new Date(utc(iso)); d.setUTCDate(d.getUTCDate() + n); return isoOf(d.getTime()); }
-  // Monat zurückrechnen ohne Überlauf (31.05. → 30.11.)
+  // Monat zurückrechnen ohne Überlauf (31.05. → 30.11.). Ist t ein Monatsletzter am 30. oder 31., bleibt das Ergebnis ein
+  // Monatsletzter (30.11. → 31.05., wie bei US-Staatsanleihen; vorher 30.05., Nutzertest 03.10.2026). Ende Februar bleibt beim
+  // Tag – ob dort der 28. oder der Monatsletzte gemeint ist, lässt sich nicht erkennen. Gleiche Regel in scripts/_common.py.
   function monthsBack(t, m) {
-    var d = new Date(t), day = d.getUTCDate();
+    var d = new Date(t), day = d.getUTCDate(), ende = day >= 30 && new Date(t + DAY).getUTCDate() === 1;
     d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() - m);
     var last = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0, 12)).getUTCDate();
-    d.setUTCDate(Math.min(day, last));
+    d.setUTCDate(ende ? last : Math.min(day, last));
     return d.getTime();
   }
   function settleDays(cur) { return cur === "USD" || cur === "GBP" ? 1 : 2; }

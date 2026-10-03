@@ -289,7 +289,7 @@
       box.innerHTML = `<div class="mb-kh"><h2 class="mb-h2">Vergleich</h2><p>${ls.length} gewählt · bis zu 4 möglich · <button type="button" class="kto-textbtn" id="mb-vgl-leer">Auswahl aufheben</button></p></div>` +
         `<div class="mb-vgl-g"><div class="table-scroll"><table class="mb-vt"><thead><tr><td></td>${ls.map((o, i) => `<th scope="col"><i style="background:${VFARBEN[i]}"></i>${esc(titel(o))}</th>`).join("")}</tr></thead><tbody>` +
         zeile("Rendite bis Fälligkeit", o => o.rendite != null ? fmt(o.rendite, 2) + " %" : "–") +
-        zeile("Aufschlag zur Bundesanleihe", o => typeof o.auf === "number" && o.rendite != null ? fmt(o.auf, 2) + " Punkte" : "–") +
+        zeile("Aufschlag zur Bundesanleihe", o => typeof o.auf === "number" && o.rendite != null ? fmt(o.auf, 2) + "\u00a0Pkt." : "–") +
         zeile("Kurs", o => o.kurs != null ? fmt(o.kurs, 2) : "–") + zeile("Kupon", o => fmtCoupon(o.kupon)) +
         zeile("Fälligkeit", o => o.faellig ? esc(MC.datum(o.faellig)) : "unbefristet") + zeile("Kündbar", kue) +
         zeile("Volumen", o => typeof o.vol === "number" ? esc((o.vol / 1e6).toLocaleString("de-DE", { maximumFractionDigits: 0 })) + " Mio. " + esc(o.cur) : "–") +
@@ -321,12 +321,12 @@
     const pct = v => fmt(v, 2) + " %", KZ = {
       bund10: { t: "Bundesanleihe 10 Jahre", s: "renditen.html", f: "renditen.json", w: d => { const l = d.countries.de.latest; return [pct(l.yield), "Stand " + MC.datum(l.date)]; } },
       us10: { t: "US-Staatsanleihe 10 Jahre", s: "renditen.html", f: "renditen.json", w: d => { const l = d.countries.us.latest; return [pct(l.yield), "Stand " + MC.datum(l.date)]; } },
-      kurve: { t: "Zinskurve 10 J. minus 2 J.", s: "zinskurve.html", f: "zinskurve.json", w: d => { const h = d.heute.DE; return [plus(h[2] - h[1]) + " Punkte", `2 J. ${pct(h[1])} · 10 J. ${pct(h[2])}`]; } },
+      kurve: { t: "Zinskurve 10 J. minus 2 J.", s: "zinskurve.html", f: "zinskurve.json", w: d => { const h = d.heute.DE; return [plus(h[2] - h[1]) + "\u00a0Pkt.", `2 J. ${pct(h[1])} · 10 J. ${pct(h[2])}`]; } },
       ezb: { t: "EZB-Einlagesatz", s: "zinsniveau.html", f: "ezb.json", w: d => [pct(d.aktuell[1]), "seit " + MC.datum(d.aktuell[0])] },
       realzins: { t: "Realzins 10 Jahre", s: "realzins.html", f: "realzins.json", w: d => [pct(d.heute.zins10[1] - d.heute.vpi[1]), `Zins ${pct(d.heute.zins10[1])} − Inflation ${fmt(d.heute.vpi[1], 1)} %`] },
-      "aufschlag-it": { t: "Risikoaufschlag Italien", s: "risikoaufschlaege.html", f: "risikoaufschlaege.json", w: d => { const h = d.laender.heute.find(x => x.code === "IT"); return [fmt(h.aufschlag, 2) + " Punkte", "über Bund, 10 Jahre"]; } },
-      "aufschlag-fr": { t: "Risikoaufschlag Frankreich", s: "risikoaufschlaege.html", f: "risikoaufschlaege.json", w: d => { const h = d.laender.heute.find(x => x.code === "FR"); return [fmt(h.aufschlag, 2) + " Punkte", "über Bund, 10 Jahre"]; } },
-      "aufschlag-us": { t: "Aufschlag US-Unternehmen", s: "risikoaufschlaege.html", f: "risikoaufschlaege.json", w: d => [fmt(d.us.heute[1], 2) + " Punkte", "über US-Staatsanleihen"] },
+      "aufschlag-it": { t: "Risikoaufschlag Italien", s: "risikoaufschlaege.html", f: "risikoaufschlaege.json", w: d => { const h = d.laender.heute.find(x => x.code === "IT"); return [fmt(h.aufschlag, 2) + "\u00a0Pkt.", "über Bund, 10 Jahre"]; } },
+      "aufschlag-fr": { t: "Risikoaufschlag Frankreich", s: "risikoaufschlaege.html", f: "risikoaufschlaege.json", w: d => { const h = d.laender.heute.find(x => x.code === "FR"); return [fmt(h.aufschlag, 2) + "\u00a0Pkt.", "über Bund, 10 Jahre"]; } },
+      "aufschlag-us": { t: "Aufschlag US-Unternehmen", s: "risikoaufschlaege.html", f: "risikoaufschlaege.json", w: d => [fmt(d.us.heute[1], 2) + "\u00a0Pkt.", "über US-Staatsanleihen"] },
       bund2050: { t: "Bundesanleihe 2050", s: "langlaeufer.html", f: "langlaeufer.json", w: d => { const l = d.bonds.bund2050.latest; return [fmt(l.price, 2), `Kurs · Rendite ${pct(l.yield)}`]; } },
     };
     let KZLAUF = 0;
@@ -439,7 +439,7 @@
       const D = X.daten(), st = K.stand(), ls = X.liste(), nE = etfListe().length;
       const mitDelta = ls.filter(o => delta(o) != null).sort((a, b) => Math.abs(delta(b)) - Math.abs(delta(a))), top = (mitDelta.length ? mitDelta : ls.slice().sort((a, b) => b.seit - a.seit)).slice(0, 4);
       const merk = `<section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Meine Merkliste</h2><p>${ls.length} ${ls.length === 1 ? "Anleihe" : "Anleihen"}${nE ? ` · ${nE} ${nE === 1 ? "ETF" : "ETFs"}` : ""}</p></div>` +
-        (top.length ? `<ul class="mb-mini">${top.map(o => { const d = delta(o); return `<li><div><a href="anleihe.html?isin=${encodeURIComponent(o.isin)}">${esc(titel(o))}</a><span>gemerkt ${esc(tagDe(o.seit))}</span></div><p><b>${o.rendite != null ? fmt(o.rendite, 2) + " %" : "–"}</b><span>${d != null ? `${Math.abs(d) < 0.005 ? "±0,00" : plus(d)} seit Merken` : o.kurs != null ? `Kurs ${fmt(o.kurs, 2)}` : ""}</span></p></li>`; }).join("")}</ul>`
+        (top.length ? `<ul class="mb-mini">${top.map(o => { const d = delta(o); return `<li><div><a href="anleihe.html?isin=${encodeURIComponent(o.isin)}">${esc(titel(o))}</a><span>gemerkt ${esc(tagDe(o.seit))}</span></div><p><b>${o.rendite != null ? "Rendite\u00a0" + fmt(o.rendite, 2) + " %" : "–"}</b><span>${d != null ? `${Math.abs(d) < 0.005 ? "±0,00" : plus(d)} seit Merken` : o.kurs != null ? `Kurs ${fmt(o.kurs, 2)}` : ""}</span></p></li>`; }).join("")}</ul>`
           : st.favoriten.length ? '<p class="mb-leer">Kurse werden geladen …</p>' : '<p class="mb-leer">Noch nichts gemerkt. In der <a href="anleihen-suche.html">Anleihen-Suche</a> und auf jedem Steckbrief steht der Knopf „Merken“.</p>') +
         `<p class="mb-fuss"><span>${X.kstand() ? "Schlusskurse vom " + esc(MC.datum(X.kstand())) : ""}</span><button type="button" class="kto-textbtn" data-zu="merkliste">Zur Merkliste</button></p></section>`;
       const zins = `<section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Mein Zins-Blick</h2><p>angeheftete Kennzahlen</p></div><div id="mb-zins"></div><p class="mb-fuss"><span></span><a href="beobachten.html">Alle Zinsen</a></p></section>`;

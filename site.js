@@ -14,6 +14,8 @@
      MC.datum(iso) / MC.tag(iso)   „2026-09-25“ → „25.09.2026“ / „25.09.“; ungültig → „–“
      MC.STALE_TAGE             5 – ab so vielen Börsentagen Alter gilt ein Datenstand als veraltet
      MC.boersentage(iso[, bis]) Börsentage (Mo–Fr) nach iso bis heute; MC.veraltet(iso) → true ab STALE_TAGE
+     MC.handelstag(d), MC.plusAbwicklungstage(d, n)   nächster Handelstag; Valuta n Abwicklungstage später (mit Feiertagen)
+     MC.betragLesen(text[, {ganz, min, max}])         Betrag aus einem Eingabefeld, Tausenderpunkte nur im Dreierabstand
      MC.load(datei)            Promise mit JSON: eingebetteter Block (Deploy) oder fetch über MC.json
      MC.json(url)              fetch + JSON mit gemeinsamem Cache (jede URL einmal je Seitenaufruf)
      MC.restlaufzeit(jahre[, kurz]), MC.kuendigung(...), MC.kuendigungFeld(...)
@@ -154,8 +156,50 @@ window.MC = (function () {
   }
   function veraltet(iso, bis) { var n = boersentage(iso, bis); return n != null && n >= STALE_TAGE; }
 
+  // Handels- und Abwicklungstage (seit 03.10.2026, Nutzertest: Das Rechenbeispiel rechnete am Samstag mit „Order am 03.10.“).
+  // MC.handelstag(d) → d selbst, wenn an dem Tag an der Börse gehandelt wird, sonst der nächste Handelstag (ohne Wochenende,
+  // Neujahr, Karfreitag, Ostermontag, 1. Mai, 24.–26. und 31. Dezember – Handelskalender der Börse Frankfurt).
+  // MC.plusAbwicklungstage(d, n) → n Abwicklungstage nach d (ohne Wochenende und TARGET-Feiertage: Neujahr, Karfreitag,
+  // Ostermontag, 1. Mai, 25. und 26. Dezember) – so liegt die Valuta. d jeweils als Date um 12 Uhr UTC.
+  function ostersonntag(j) {   // Gauß/Spencer, gregorianisch
+    var a = j % 19, b = Math.floor(j / 100), c = j % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25),
+      g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4,
+      l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451), mon = Math.floor((h + l - 7 * m + 114) / 31);
+    return Date.UTC(j, mon - 1, ((h + l - 7 * m + 114) % 31) + 1, 12);
+  }
+  function feiertag(d, boerse) {
+    var mt = (d.getUTCMonth() + 1) * 100 + d.getUTCDate(), os = ostersonntag(d.getUTCFullYear()), t = d.getTime();
+    if (mt === 101 || mt === 501 || mt === 1225 || mt === 1226 || t === os - 2 * 86400000 || t === os + 86400000) return true;
+    return !!boerse && (mt === 1224 || mt === 1231);
+  }
+  function handelstag(d) {
+    var x = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 12));
+    while (!(x.getUTCDay() % 6) || feiertag(x, true)) x.setUTCDate(x.getUTCDate() + 1);
+    return x;
+  }
+  function plusAbwicklungstage(d, n) {
+    var x = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 12));
+    while (n > 0) { x.setUTCDate(x.getUTCDate() + 1); if (x.getUTCDay() % 6 && !feiertag(x, false)) n--; }
+    return x;
+  }
+
+  // Beträge aus Eingabefeldern lesen (seit 03.10.2026, Nutzertest: „5.0001.000“ vor dem vorbelegten Wert wurde im Steckbrief
+  // still zu 50.001.000). Tausenderpunkte nur im Dreierabstand („5.000“, „12.500“), Komma für Nachkommastellen, Leerzeichen und
+  // „€“ werden ignoriert. opt.ganz: nur ganze Beträge (",00" geht); opt.min / opt.max: Grenzen. Ungültig → NaN.
+  function betragLesen(text, opt) {
+    opt = opt || {};
+    var t = String(text == null ? "" : text).replace(/[\s €]/g, "");
+    var m = /^(\d+|\d{1,3}(?:\.\d{3})+)(?:,(\d+))?$/.exec(t);
+    if (!m) return NaN;
+    var nk = m[2] || "";
+    if (opt.ganz && /[1-9]/.test(nk)) return NaN;
+    var v = parseFloat(m[1].replace(/\./g, "") + (nk ? "." + nk : ""));
+    if (!isFinite(v) || (opt.min != null && v < opt.min) || (opt.max != null && v > opt.max)) return NaN;
+    return v;
+  }
+
   // Nav-Dropdowns (die vier Stufen Verstehen, Entscheiden, Kaufen, Einordnen):
-  // Hover/Fokus, auf Touch-Geräten erster Tipp; Escape und Außenklick schließen,
+  // Hover, per Tastatur Pfeil runter/Leertaste, auf Touch-Geräten erster Tipp; Escape und Außenklick schließen,
   // Öffnen einer Gruppe schließt die anderen. Bis 760 px (Handy): Burger-Knopf
   // .nav-toggle öffnet das Menü (Klasse nav-open am <header>), die Gruppenköpfe
   // klappen als Akkordeon auf und zu statt zu navigieren (die Übersichtsseite
@@ -174,6 +218,10 @@ window.MC = (function () {
     };
     openQuellen();
     window.addEventListener("hashchange", openQuellen);
+    // Weicher Bildlauf (base.css: html.sanft) erst nach dem Laden: Ein Sprung von außen auf einen Anker
+    // (z. B. begriffe.html#kupon) steht so sofort an der Stelle, statt über Tausende Pixel zu gleiten (Nutzertest 03.10.2026).
+    var sanft = function () { setTimeout(function () { document.documentElement.classList.add("sanft"); }, 200); };
+    if (document.readyState === "complete") sanft(); else window.addEventListener("load", sanft);
     var bar = document.querySelector(".topbar");
     if (bar) {
       var stuck = function () { bar.classList.toggle("is-stuck", window.pageYOffset > 0 && bar.getBoundingClientRect().top <= 0.5); };
@@ -207,8 +255,10 @@ window.MC = (function () {
     var onChange = function () { setOpen(false); };
     if (mq.addEventListener) mq.addEventListener("change", onChange); else if (mq.addListener) mq.addListener(onChange);
     // Der Gruppen-Kopf ist ein Link (Suche → anleihen-suche.html, Wissen →
-    // wissen.html). Mit Maus öffnet das Menü per Hover (CSS), per Tastatur über
-    // den Fokus (Klasse kb, unten); ein Klick navigiert.
+    // wissen.html). Mit Maus öffnet das Menü per Hover (CSS), per Tastatur mit
+    // Pfeil nach unten oder Leertaste (Klasse kb, unten); ein Klick oder Enter navigiert.
+    // Der Fokus allein öffnet nicht mehr (Nutzertest 03.10.2026: Tab führte sonst durch
+    // alle 20 Einträge der Akademie, bevor das nächste Menü kam).
     // Seit 23.09.2026 hat das Menü nur noch zwei Köpfe, alle Seiten liegen in
     // den Menüs: Auf Touch-Geräten (kein Hover) öffnet deshalb der erste Tipp
     // das Menü, der zweite Tipp auf den Kopf navigiert; Tipp daneben schließt.
@@ -239,17 +289,27 @@ window.MC = (function () {
       grp.addEventListener("focusin", function (e) {
         if (mobile()) return;
         if (grp._esc) { grp._esc = false; return; }   // Rückkehr per Escape: zu lassen
-        var kb = e.target !== btn || !btn.matches || btn.matches(":focus-visible");
-        if (kb) grp.classList.add("kb");
+        if (e.target === btn) return;   // Fokus auf dem Kopf: Menü bleibt zu, Tab geht zum nächsten Kopf
+        grp.classList.add("kb");
         btn.setAttribute("aria-expanded", "true"); place();
       });
       grp.addEventListener("focusout", function (e) {
         if (mobile()) return;
         if (!grp.contains(e.relatedTarget)) { grp.classList.remove("kb"); btn.setAttribute("aria-expanded", "false"); }
       });
-      // Pfeil nach unten auf dem Kopf: Menü öffnen und ersten Eintrag fokussieren
+      // Pfeil nach unten auf dem Kopf: Menü öffnen und ersten Eintrag fokussieren;
+      // Leertaste: Menü auf- und zuklappen, der Fokus bleibt auf dem Kopf (Tab führt dann hinein)
       btn.addEventListener("keydown", function (e) {
-        if (e.key !== "ArrowDown" || mobile()) return;
+        if (mobile()) return;
+        if (e.key === " " || e.key === "Spacebar") {
+          e.preventDefault();
+          var auf = !grp.classList.contains("kb");
+          closeAll(auf ? grp : null);
+          grp.classList.toggle("kb", auf); btn.setAttribute("aria-expanded", auf ? "true" : "false");
+          if (auf) place();
+          return;
+        }
+        if (e.key !== "ArrowDown") return;
         e.preventDefault();
         grp.classList.add("kb"); btn.setAttribute("aria-expanded", "true"); place();
         var first = menu && Array.prototype.filter.call(menu.querySelectorAll("a"), function (a) { return a.offsetParent !== null; })[0];
@@ -726,6 +786,7 @@ window.MC = (function () {
   })();
 
   return { esc: esc, minus: minus, zahl: zahl, datum: datum, tag: tag, STALE_TAGE: STALE_TAGE, boersentage: boersentage, veraltet: veraltet,
+    handelstag: handelstag, plusAbwicklungstage: plusAbwicklungstage, betragLesen: betragLesen,
     restlaufzeit: restlaufzeit, kuendigung: kuendigung, kuendigungFeld: kuendigungFeld, load: load, json: json, navInit: navInit, hoverWrap: hoverWrap, wischPruefen: wischPruefen,
     percentile: percentile, stats: stats, rate: rate, pctText: pctText, ratePill: ratePill,
     teil: teil, verlauf: verlauf };

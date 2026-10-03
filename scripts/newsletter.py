@@ -357,7 +357,7 @@ def baue(heute):
         t += ["NEUE SEITEN AUF BONDARIUM", ""]
         for x in neu:
             t += [x["titel"], x["text"], x["link"], ""]
-    t += ["--", "Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse 15 Minuten verzögert.",
+    t += ["--", "Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse sind Schlusskurse, keine Echtzeitkurse.",
           "Quellen: Deutsche Bundesbank, Europäische Zentralbank, Federal Reserve, Deutsche Börse.", "",
           "Du bekommst diese E-Mail, weil du den Wochenbrief in „Mein Bondarium“ bestellt hast.", "Abbestellen mit einem Klick: {{ABMELDEN}}", "",
           "Bondarium – ein Angebot der urbanelo GmbH, Heinrich-Baumann-Straße 38, 70190 Stuttgart", SEITE + "rechtliches.html#impressum"]
@@ -388,7 +388,7 @@ def baue(heute):
               p("".join(f'<div style="padding:0 0 10px;"><a href="{e(x["link"])}" style="color:{INK};font-weight:700;text-decoration:underline;">{e(x["titel"])}</a><br>'
                         f'<span style="color:{TXT};">{e(x["text"])}</span></div>' for x in neu))]
     H += [f'<tr><td style="padding:18px 32px 24px;border-top:1px solid {LINIE};{F}font-size:12px;line-height:1.6;color:{TXT};">Keine Anlageberatung. Alle Angaben ohne Gewähr; '
-          'Börsenkurse 15 Minuten verzögert. Quellen: Deutsche Bundesbank, Europäische Zentralbank, Federal Reserve, Deutsche Börse.<br><br>'
+          'Börsenkurse sind Schlusskurse, keine Echtzeitkurse. Quellen: Deutsche Bundesbank, Europäische Zentralbank, Federal Reserve, Deutsche Börse.<br><br>'
           f'Du bekommst diese E-Mail, weil du den Wochenbrief in „Mein Bondarium“ bestellt hast. <a href="{{{{ABMELDEN}}}}" style="color:{TIEF};">Newsletter abbestellen</a> – ein Klick genügt.<br>'
           f'Bondarium – ein Angebot der urbanelo GmbH, Heinrich-Baumann-Straße 38, 70190 Stuttgart · <a href="{SEITE}rechtliches.html#impressum" style="color:{TXT};">Impressum</a></td></tr>',
           "</table></td></tr></table></body></html>"]

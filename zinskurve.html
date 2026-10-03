@@ -183,7 +183,7 @@
     <div class="b2-kopf">
       <div>
         <h1>Zinskurve seit 1972</h1>
-        <p class="sub">Lohnt es sich gerade, dein Geld lange zu binden? Das zeigt der Abstand zwischen der 10-jährigen und der 2-jährigen Staatsanleihe. Ist er groß, bekommst du für die lange Laufzeit deutlich mehr Zins. Ist er klein oder sogar negativ, bringt kurz fast dasselbe – oder mehr. Für Deutschland seit 1972 und die USA seit 1976, täglich aktualisiert.</p>
+        <p class="sub">Lohnt es sich gerade, dein Geld lange zu binden? Das zeigt der Abstand zwischen der 10-jährigen und der 2-jährigen Staatsanleihe. Ist er groß, bekommst du für die lange Laufzeit deutlich mehr Zins. Ist er klein oder sogar negativ, bringt kurz fast dasselbe – oder mehr. Für Deutschland seit 1972 und die USA seit 1976, werktäglich aktualisiert.</p>
       </div>
       <div class="b2-spot"><img src="spot-zinskurve.svg?v=2" alt="" width="232" height="160"></div>
     </div>
@@ -200,7 +200,7 @@
       <span class="leg"><span class="sw-area" aria-hidden="true"></span>unter null: Kurve invers – kurz bringt mehr als lang</span>
       <span class="leg-hint">Deutschland oder USA antippen bzw. anklicken blendet die Kurve aus und wieder ein; im Schaubild zeigt Tippen (oder die Maus) den Wert je Monat. Mit der Maus hebt Überfahren eine Kurve hervor (Esc löst).</span>
     </div>
-    <div id="chart-zk" class="chart-scroll"><noscript><p class="note">Das Schaubild braucht JavaScript. Die aktuellen Abstände stehen in den Kacheln oben, die Daten als Datei: <a href="zinskurve.json">zinskurve.json</a>.</p></noscript></div>
+    <div id="chart-zk" class="chart-scroll"><noscript><p class="note">Das Schaubild braucht JavaScript. Die aktuellen Abstände stehen in den Feldern oben, die Daten als Datei: <a href="zinskurve.json">zinskurve.json</a>.</p></noscript></div>
     <p class="note">Rendite der 10-jährigen minus Rendite der 2-jährigen Staatsanleihe, in Prozentpunkten; Monatsdurchschnitte, der letzte Punkt ist der laufende Monat. Über null steigt die Zinskurve, unter null ist sie invers.</p>
 
     <section class="kap" id="lesen" aria-labelledby="h-lesen">
@@ -236,7 +236,7 @@
         <div class="wz normal"><span class="w1">Normal</span><span class="w2"><b>Abwägen.</b> Etwas Aufschlag für lang – lohnt sich, wenn du das Geld sicher so lange entbehren kannst.</span></div>
         <div class="wz flach"><span class="w1">Flach</span><span class="w2"><b>Kurz bringt fast dasselbe.</b> Kaum Aufschlag für lang – kurze Laufzeit, später neu anlegen, oder eine Leiter.</span></div>
         <div class="wz invers"><span class="w1">Invers</span><span class="w2"><b>Kurz bringt mehr – noch.</b> Der Markt erwartet ein fallendes allgemeines Zinsniveau; lang sichert den heutigen Zins.</span></div>
-        <p class="sb-f">Abstand über 1 Prozentpunkt = steil, 0,3 bis 1 = normal, 0 bis 0,3 = flach, unter 0 = invers – so stufen auch die Kacheln oben ein. Keine Empfehlung, sondern die Logik hinter dem Schaubild.</p></div>
+        <p class="sb-f">Abstand über 1 Prozentpunkt = steil, 0,3 bis 1 = normal, 0 bis 0,3 = flach, unter 0 = invers – so stufen auch die Felder oben ein. Keine Empfehlung, sondern die Logik hinter dem Schaubild.</p></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Steil – lang wird gut bezahlt. Normal – etwas mehr für lang. Flach – kurz bringt fast dasselbe. Invers – kurz bringt mehr, lang sichert den Zins. Dein Ziel entscheidet: <a href="anlageziele.html#zinsen-sichern">Zins sichern</a> oder <a href="anlageziele.html#kurzfristig">Geld parken</a>.</span></p>
     </section>
 
@@ -276,8 +276,8 @@
     <details class="quellen" id="quellen">
       <summary>Datenquellen und Methodik</summary>
       <div class="quellen-body">
-        <p><strong>Methodik.</strong> Gezeigt wird die Rendite der 10-jährigen minus die Rendite der 2-jährigen Staatsanleihe in Prozentpunkten. Das Schaubild zeigt Monatsdurchschnitte (der laufende Monat aus den bisherigen Handelstagen), die Kacheln oben den jüngsten Tageswert. Einstufung der Kacheln: über 1 Prozentpunkt „steil“, 0,3 bis 1 „normal“, 0 bis 0,3 „flach“, unter 0 „invers“ – eine grobe Lesehilfe, keine amtliche Definition.</p>
-        <p><strong>Datenquellen.</strong> Deutschland: <a href="https://www.bundesbank.de/de/statistiken/geld-und-kapitalmaerkte/zinssaetze-und-renditen/zinsstruktur-am-rentenmarkt">Deutsche Bundesbank</a>, Zinsstrukturkurve am Rentenmarkt (Svensson-Methode), börsennotierte Bundeswertpapiere mit Restlaufzeit 2 und 10 Jahre – Monatswerte seit September 1972, Tageswerte seit August 1997 (Zeitreihen BBSIS, abgerufen über die Bundesbank-API). Das sind Nullkupon-Renditen; der Tageswert auf <a href="renditen.html">Staatsanleihen seit 1970</a> ist die Rendite einer 10-jährigen Bundesanleihe mit jährlichem Kupon und liegt deshalb meist einige Hundertstel darunter. USA: <a href="https://www.federalreserve.gov/releases/h15/">Federal Reserve, Statistical Release H.15</a>, Treasury constant maturities 2 und 10 Jahre, Tageswerte seit Juni 1976; Monatsdurchschnitte aus den Handelstagen. Rezessionen: Datierung des <a href="https://www.nber.org/research/business-cycle-dating">NBER</a>. Aktualisierung täglich um 10 Uhr; die Bundesbank veröffentlicht den Tageswert am Abend, die Fed am Folgetag – „Stand“ nennt jeweils den letzten Wert.</p>
+        <p><strong>Methodik.</strong> Gezeigt wird die Rendite der 10-jährigen minus die Rendite der 2-jährigen Staatsanleihe in Prozentpunkten. Das Schaubild zeigt Monatsdurchschnitte (der laufende Monat aus den bisherigen Handelstagen), die Felder oben den jüngsten Tageswert. Einstufung der Felder: über 1 Prozentpunkt „steil“, 0,3 bis 1 „normal“, 0 bis 0,3 „flach“, unter 0 „invers“ – eine grobe Lesehilfe, keine amtliche Definition.</p>
+        <p><strong>Datenquellen.</strong> Deutschland: <a href="https://www.bundesbank.de/de/statistiken/geld-und-kapitalmaerkte/zinssaetze-und-renditen/zinsstruktur-am-rentenmarkt">Deutsche Bundesbank</a>, Zinsstrukturkurve am Rentenmarkt (Svensson-Methode), börsennotierte Bundeswertpapiere mit Restlaufzeit 2 und 10 Jahre – Monatswerte seit September 1972, Tageswerte seit August 1997 (Zeitreihen BBSIS, abgerufen über die Bundesbank-API). Das sind Nullkupon-Renditen; der Tageswert auf <a href="renditen.html">Staatsanleihen seit 1970</a> ist die Rendite einer 10-jährigen Bundesanleihe mit jährlichem Kupon und liegt deshalb meist einige Hundertstel darunter. USA: <a href="https://www.federalreserve.gov/releases/h15/">Federal Reserve, Statistical Release H.15</a>, Treasury constant maturities 2 und 10 Jahre, Tageswerte seit Juni 1976; Monatsdurchschnitte aus den Handelstagen. Rezessionen: Datierung des <a href="https://www.nber.org/research/business-cycle-dating">NBER</a>. Aktualisierung werktags um 10 Uhr; die Bundesbank veröffentlicht den Tageswert am Abend, die Fed am Folgetag – „Stand“ nennt jeweils den letzten Wert.</p>
         <p>Diese Seite erklärt und zeigt Daten; sie empfiehlt keine Anlage. Keine Anlageberatung.</p>
         <p id="datastand">Daten-Stand: 25.09.2026</p>
       </div>
@@ -289,7 +289,7 @@
     <nav aria-labelledby="f-kauf"><p class="fuss-k" id="f-kauf">Kaufen</p><a href="erste-anleihe.html">Deine erste Anleihe</a><a href="broker-vergleich.html">Broker im Vergleich</a><a href="steuern-handelskosten.html">Steuern und Handelskosten</a><a href="rechner.html">Rechner</a></nav>
     <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen Staatsanleihen</a><a href="zinskurve.html" aria-current="page">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Haftung und Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
-    <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
+    <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse sind Schlusskurse, keine Echtzeitkurse. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
 </div>
 
@@ -322,7 +322,7 @@ MC.navInit();
       const ab = h[2] - h[1], st = stufe(ab);
       el.querySelector(".v").textContent = vz(ab);
       const s = el.querySelector(".s"); s.textContent = st[0]; s.className = "hk-s s " + st[1];
-      el.querySelector(".d").textContent = `10 Jahre ${fmt(h[2], 2)}\u00A0% · 2 Jahre ${fmt(h[1], 2)}\u00A0% · Stand ${deDatum(h[0])}`;
+      el.querySelector(".d").textContent = `10 Jahre ${fmt(h[2], 2)}\u00A0% · 2 Jahre ${fmt(h[1], 2)}\u00A0%${land === "DE" ? " (Nullkupon)" : ""} · Stand ${deDatum(h[0])}`;   // Deutschland: Nullkupon-Renditen der Bundesbank, meist etwas über „Bund 10 Jahre“ der übrigen Seiten (Nutzertest 03.10.2026); USA: Fed-Werte ohne diesen Unterschied
     }
   }
 
@@ -397,12 +397,15 @@ MC.navInit();
     legende();
     hervorheben(HI);
     // Kopfzeile des Charts und Fußzeile
-    const staende = reihen.map(l => d.stand && d.stand[l]).filter(Boolean).sort();
+    const staende = reihen.filter(l => d.stand && d.stand[l]).map(l => [l, d.stand[l]]);
     if (staende.length) {
-      const st = staende[staende.length - 1];
-      document.getElementById("eyebrow-zk").textContent = `10 Jahre minus 2 Jahre · Monatsdurchschnitte · ${m0.slice(0, 4)} – ${m1.slice(0, 4)} · Stand: ${deDatum(st)}`;
+      const daten = staende.map(x => x[1]).sort();
+      // Stehen die Länder auf verschiedenen Tagen (Bundesbank abends, Fed am Folgetag), nennt der Kopf beide wie die Kacheln –
+      // vorher nur den jüngeren Tag, die Kachel Deutschland zeigte dann einen anderen Stand (Nutzertest 03.10.2026)
+      const standText = daten[0] === daten[daten.length - 1] ? deDatum(daten[0]) : staende.map(x => LAND[x[0]].name + " " + deDatum(x[1])).join(", ");
+      document.getElementById("eyebrow-zk").textContent = `10 Jahre minus 2 Jahre · Monatsdurchschnitte · ${m0.slice(0, 4)} – ${m1.slice(0, 4)} · Stand: ${standText}`;
       const el = document.getElementById("datastand");
-      if (el) { el.textContent = "Daten-Stand: " + deDatum(st); el.classList.toggle("stale", !!(MC.veraltet && MC.veraltet(st))); }
+      if (el) { el.textContent = "Daten-Stand: " + standText; el.classList.toggle("stale", !!(MC.veraltet && MC.veraltet(daten[0]))); }
     }
   }
 

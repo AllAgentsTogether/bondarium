@@ -80,12 +80,12 @@
   .ap-go { flex: none; display: inline-block; background: var(--green); color: var(--ink); font-size: 14px; font-weight: 600; text-decoration: none; padding: 11px 20px; border-radius: 8px; box-shadow: 0 6px 16px rgba(57,255,20,0.30); transition: background-color .15s ease; }
   .ap-go:hover { background: var(--green-hover); }
   .ap-guide { margin-top: 18px; font-size: 14.5px; line-height: 1.5; }
-  .ap-guide a { color: var(--green-text); font-weight: 600; text-decoration: none; }
+  .ap-guide a { display: block; width: fit-content; padding: 4px 0; color: var(--green-text); font-weight: 600; text-decoration: none; }   /* untereinander statt mit „·“ dazwischen: am Handy stand der Punkt sonst allein in einer Zeile, mit Maus lagen die Links ohne Abstand aneinander (Nutzertest 03.10.2026) */
   .ap-guide a:hover { text-decoration: underline; }
   .ap-kurz { max-width: 760px; margin: -8px 0 26px; padding: 14px 18px; background: #fff; border: 1px solid var(--green-line); border-left: 4px solid var(--green); border-radius: 12px; font-size: 16px; line-height: 1.55; color: var(--ink); }   /* Antwort auf die Titelfrage gleich oben (30.09.2026) */
   .ap-kurz a { color: var(--green-text); font-weight: 600; text-decoration: none; white-space: nowrap; }
   .ap-kurz a:hover { text-decoration: underline; }
-  @media (pointer: coarse) { .ap-guide a, .ap-kurz a { display: inline-block; padding: 10px 0; } }
+  @media (pointer: coarse) { .ap-guide a { padding: 10px 0; } .ap-kurz a { display: inline-block; padding: 10px 0; } }
   .ap-go:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
 
   /* Schmaler: Argumente untereinander, Foto-Spalte anteilig */
@@ -235,7 +235,7 @@
           <li><span class="ap-ic"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 2.2l8.2 3.1v6.1c0 5.1-3.5 8.9-8.2 10.4-4.7-1.5-8.2-5.3-8.2-10.4V5.3z"/><path d="M8.3 12.1l2.6 2.6 4.9-5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span><div><strong>Risiko streuen</strong> Die Einlagensicherung endet bei 100.000&nbsp;€ je Bank; Anleihen im Depot bleiben Eigentum des Unternehmens.</div></li>
           <li><span class="ap-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 6.5h10M17.5 6.5H21M3 12h3.5M11 12h10M3 17.5h12M19.5 17.5H21"/><circle cx="15.3" cy="6.5" r="2.2"/><circle cx="8.8" cy="12" r="2.2"/><circle cx="17.3" cy="17.5" r="2.2"/></svg></span><div><strong>Flexibel bleiben</strong> Börsentäglich verkäuflich – vor Fälligkeit zum Marktkurs.</div></li>
         </ul>
-        <p class="ap-guide"><a href="guide.html#nadine">So plant Nadine, Selbstständige, Geld für die Steuer ein&nbsp;→</a> · <a href="guide.html#michael">So bekommt Michael, Unternehmer, Zinsen über Jahrzehnte&nbsp;→</a></p>
+        <p class="ap-guide"><a href="guide.html#nadine">So plant Nadine, Selbstständige, Geld für die Steuer ein&nbsp;→</a><a href="guide.html#michael">So bekommt Michael, Unternehmer, Zinsen über Jahrzehnte&nbsp;→</a></p>
       </div>
     </article>
 
@@ -249,7 +249,7 @@
           <li><span class="ap-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 2.2l8.2 3.1v6.1c0 5.1-3.5 8.9-8.2 10.4-4.7-1.5-8.2-5.3-8.2-10.4V5.3z"/><path d="M8.3 12.1l2.6 2.6 4.9-5"/></svg></span><div><strong>Depot stabilisieren</strong> Anleihen guter Bonität schwanken deutlich weniger als Aktien.</div></li>
           <li><span class="ap-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="13" r="8.5"/><circle cx="11" cy="13" r="4.6"/><circle cx="11" cy="13" r="1.1" fill="currentColor"/><path d="M11 13l9-9"/><path d="M16.8 3.4l3.2.6.6 3.2"/></svg></span><div><strong>Ziele terminieren</strong> Die Fälligkeit lässt sich auf das Sparziel abstimmen – Ausbildung, Immobilie, Ruhestand.</div></li>
         </ul>
-        <p class="ap-guide"><a href="guide.html#tobias">So legt Tobias Geld für zehn Jahre an&nbsp;→</a> · <a href="guide.html#jonas">So baut Jonas einen ruhigen ETF-Baustein&nbsp;→</a></p>
+        <p class="ap-guide"><a href="guide.html#tobias">So legt Tobias Geld für zehn Jahre an&nbsp;→</a><a href="guide.html#jonas">So baut Jonas einen ruhigen ETF-Baustein&nbsp;→</a></p>
       </div>
       <div class="ap-photo">
         <img src="anlegerprofil-privatanleger.webp" width="365" height="310" alt="Privatanleger mit Kaffeetasse, entspannt im Wohnzimmer" loading="lazy" decoding="async">
@@ -277,7 +277,7 @@
     <nav aria-labelledby="f-kauf"><p class="fuss-k" id="f-kauf">Kaufen</p><a href="erste-anleihe.html">Deine erste Anleihe</a><a href="broker-vergleich.html">Broker im Vergleich</a><a href="steuern-handelskosten.html">Steuern und Handelskosten</a><a href="rechner.html">Rechner</a></nav>
     <nav aria-labelledby="f-zins"><p class="fuss-k" id="f-zins">Zinsen</p><a href="renditen.html">Renditen Staatsanleihen</a><a href="zinskurve.html">Zinskurve</a><a href="risikoaufschlaege.html">Risikoaufschläge</a><a href="langlaeufer.html">Langläufer</a></nav>
     <nav aria-labelledby="f-bond"><p class="fuss-k" id="f-bond">Bondarium</p><a href="ueber-uns.html">Über uns</a><a href="rechtliches.html#haftung">Haftung und Datenquellen</a><a href="rechtliches.html#impressum">Impressum</a><a href="rechtliches.html#datenschutz">Datenschutz</a></nav>
-    <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse bis zu 15&nbsp;Minuten verzögert. · <a href="rechtliches.html">Rechtliches</a></p>
+    <p class="fuss-hw">Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse sind Schlusskurse, keine Echtzeitkurse. · <a href="rechtliches.html">Rechtliches</a></p>
   </footer>
 </div>
 
