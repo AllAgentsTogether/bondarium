@@ -1,9 +1,12 @@
 /* bereich.js – „Mein Bondarium“ in fünf Ansichten (konto.html, seit 02.10.2026 abends; Nutzerauftrag: Mockup vom 01.10.2026 komplett
    umsetzen – 16 Funktionen). Das Seitenskript von konto.html bleibt zuständig für Anmeldung, Merklisten-Tabelle, Filter, Musterdepots
    und PDF; dieses Skript baut darauf auf und zeichnet alles Neue:
-     Start                Seit deinem letzten Besuch · Meine Merkliste · Mein Zins-Blick · Nächste Termine · Zuletzt angesehen (nur wenn
-                          eingeschaltet) – die Termine (in „Seit deinem letzten Besuch“ und „Nächste Termine“) seit 03.10.2026 aus den
-                          Musterdepots statt aus der Merkliste (Nutzerwunsch)
+     Start                Seit deinem letzten Besuch · „Deine Anleihen“: Merkliste und Musterdepots · „Markt“: Mein Zins-Blick ·
+                          Zuletzt angesehen (nur wenn eingeschaltet) – die Termine seit 03.10.2026 aus den Musterdepots statt aus der
+                          Merkliste (Nutzerwunsch); seit 03.10.2026 abends nach Herkunft sortiert (Vorschlag „Start neu sortiert“,
+                          tmp/Bondarium-Start-neu-sortiert.pdf): jede Zeile im Band trägt ein Etikett mit dem Namen des Reiters bzw.
+                          des Musterdepots, die Karte „Musterdepots“ (je Depot eine Zeile, nächste Termine mit Depotname und Betrag)
+                          ersetzt „Nächste Termine“, der Zins-Blick steht in voller Breite darunter
      Merkliste            eigene Listen, Notiz, Menü je Anleihe („…“), Vergleichen, ISINs einfügen, CSV, ETFs
      Musterdepots         nichts mehr – die Musterdepots zeichnet das Seitenskript von konto.html
      Meldungen und Konto  Meldungen (Regeln je Anleihe oder für alle gemerkten), Mitnehmen (PDF, CSV, Kalenderdatei), Konto
@@ -380,14 +383,29 @@
     // ---------- Termine: der Musterdepots (Start, seit 03.10.2026 – Nutzerwunsch) oder der Merkliste (Meldung „Zinstermin steht an“) ----------
     // Die Anleihen der Musterdepots bringen ihren nächsten Zinstermin mit (zt, berechnet wie in der Depot-Tabelle; X.depotAnleihen()).
     const naechster = o => o.zt !== undefined ? o.zt : termin(o);
+    // Termine der Musterdepots (seit 03.10.2026 abends): je Depot und Anleihe der nächste Zinstermin und die Fälligkeit, mit dem Betrag
+    // aus der Zahlungsliste des Depots (X.zahlungen – in Euro, Fremdwährung zum EZB-Kurs wie im Reiter „Musterdepots“); Anleihen, die
+    // sich nicht rechnen lassen (variabler Zins …), nur mit der Fälligkeit
+    function depotTermine(d) {
+      const z = X.zahlungen(d.pos), t = [], dep = { id: d.id, name: d.name };
+      d.pos.forEach(p => {
+        const o = Object.assign({}, p.o, { gesch: p.fest && !p.tage }), meine = z.filter(x => x.p === p);
+        const zins = meine.find(x => x.art === "Zinsen"), rueck = meine.find(x => x.art === "Rückzahlung"), mit = !!(zins && rueck && zins.tag === rueck.tag);
+        if (zins) t.push({ tag: zins.tag, o, p, dep, art: mit ? "Zinsen und Rückzahlung" : "Zinstermin", betrag: zins.betrag + (mit ? rueck.betrag : 0), roh: zins.roh + (mit ? rueck.roh : 0) });
+        if (rueck && !mit) t.push({ tag: rueck.tag, o, p, dep, art: "Fälligkeit", betrag: rueck.betrag, roh: rueck.roh });
+        if (!p.rechnet && o.faellig && o.faellig > HEUTE) t.push({ tag: o.faellig, o, p, dep, art: "Fälligkeit", betrag: p.nennEur, roh: p.nenn });
+      });
+      return t;
+    }
     function termine(max, merk) {
       const t = [];
-      (merk ? X.liste() : X.depotAnleihen() || []).forEach(o => {
+      if (!merk) (X.depots() || []).forEach(d => t.push(...depotTermine(d)));
+      else X.liste().forEach(o => {
         const zt = naechster(o);
         if (zt) t.push({ tag: zt, o, art: zt === o.faellig ? "Zinsen und Rückzahlung" : "Zinstermin" });
         if (o.faellig && o.faellig > HEUTE && zt !== o.faellig) t.push({ tag: o.faellig, o, art: "Fälligkeit" });
       });
-      return t.sort((a, b) => a.tag < b.tag ? -1 : a.tag > b.tag ? 1 : a.o.isin.localeCompare(b.o.isin)).slice(0, max);
+      return t.sort((a, b) => a.tag < b.tag ? -1 : a.tag > b.tag ? 1 : a.o.isin.localeCompare(b.o.isin) || (a.dep && b.dep ? a.dep.name.localeCompare(b.dep.name, "de") : 0)).slice(0, max);
     }
 
     // ---------- Meldungen ----------
@@ -461,36 +479,83 @@
     }
     const meldungenAktiv = D => meldungen().filter(m => meldungStand(m, D).aktiv);
 
-    // ---------- Ansicht „Start“ ----------
+    // ---------- Ansicht „Start“ (seit 03.10.2026 abends nach Herkunft sortiert: erst deins, dann der Markt) ----------
+    // Zeichen für Etiketten und Kartenköpfe: Stern = Merkliste, Mappe = Musterdepot, Kupon-Punkt = Neu auf Bondarium, Linie = Zinsen
+    const ICON = {
+      stern: '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M8 1.6l1.9 4 4.3.5-3.2 3 .9 4.3L8 11.2l-3.9 2.2.9-4.3-3.2-3 4.3-.5z"/></svg>',
+      mappe: '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="4" width="12" height="9" rx="1.5"/><path d="M5.5 4V2.8h5V4"/></svg>',
+      punkt: '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="5" fill="#39FF14" stroke="#1A1A19" stroke-width="1.6"/></svg>',
+      linie: '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 2.5L14 4"/></svg>',
+    };
+    const etikett = (ic, text, alarm) => `<span class="mb-her${alarm ? " alarm" : ""}" title="${esc(text)}">${ICON[ic]}<span>${esc(text)}</span></span>`;
+    // Beträge auf Start: Euro ganz, wenn glatt; umgerechnete Fremdwährung mit „≈“ und ganz
+    const euro = (v, ca) => (ca ? "≈ " : "") + fmt(v, ca || Math.abs(v - Math.round(v)) < 0.005 ? 0 : 2) + " €";
+    const roh = (v, cur) => `${fmt(v, Math.abs(v - Math.round(v)) < 0.005 ? 0 : 2)} ${cur}`;
+    const IN12 = (+HEUTE.slice(0, 4) + 1) + HEUTE.slice(4);
     function seitBesuch(D) {
       const st = K.stand(), seit = st.besuch ? isoVon(st.besuch) : "", zeilen = [];
-      meldungenAktiv(D).forEach(m => { const s = meldungStand(m, D); zeilen.push([true, `<b>Meldung: ${esc(s.wer)}</b> – ${esc(s.was)}. ${s.stand.replace(/<\/?em>/g, "")}`, '<button type="button" data-zu="meldungen">Meldungen</button>']); });
-      termine(40).filter(t => tageBis(t.tag) <= 14).slice(0, 3).forEach(t => { const n = tageBis(t.tag);
-        zeilen.push([false, `<b>${t.art === "Fälligkeit" ? "Fälligkeit" : "Zinstermin"} ${n <= 0 ? "heute" : n === 1 ? "morgen" : `in ${n} Tagen`}:</b> ${esc(titel(t.o))} ${t.art === "Fälligkeit" ? "wird" : "zahlt"} am ${esc(MC.tag(t.tag))} ${t.art === "Fälligkeit" ? "zurückgezahlt" : t.art === "Zinstermin" ? "Zinsen" : "Zinsen und den Nennwert"}.`, '<button type="button" data-zu="depot">Musterdepots</button>']); });
+      meldungenAktiv(D).forEach(m => { const s = meldungStand(m, D); zeilen.push([etikett("stern", "Merkliste", true), `<b>Meldung: ${esc(s.wer)}</b> – ${esc(s.was)}. ${s.stand.replace(/<\/?em>/g, "")}`, '<button type="button" data-zu="meldungen">Zur Meldung</button>']); });
+      termine(40).filter(t => tageBis(t.tag) <= 14).slice(0, 3).forEach(t => { const n = tageBis(t.tag), b = t.betrag != null ? euro(t.betrag, t.p.fremd) : "";
+        const was = t.art === "Fälligkeit" ? `wird am ${esc(MC.tag(t.tag))} zurückgezahlt${b ? ` – ${b}` : ""}.` : t.art === "Zinstermin" ? `zahlt am ${esc(MC.tag(t.tag))} Zinsen${b ? ` – ${b}` : ""}.` : `zahlt am ${esc(MC.tag(t.tag))} Zinsen und den Nennwert zurück${b ? ` – ${b}` : ""}.`;
+        zeilen.push([etikett("mappe", t.dep.name), `<b>${t.art === "Fälligkeit" ? "Fälligkeit" : "Zinstermin"} ${n <= 0 ? "heute" : n === 1 ? "morgen" : `in ${n} Tagen`}:</b> ${esc(titel(t.o))} ${was}`, `<button type="button" data-mdepot="${esc(t.dep.id)}">Zum Musterdepot</button>`]); });
       const ab = seit || (() => { const d = new Date(HEUTE + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 14); return d.toISOString().slice(0, 10); })();
       Object.entries(st.neueSeiten || {}).filter(([f, tag]) => tag >= ab && SEITEN_TITEL[f.replace(/\.html$/, "")] && !gelesen(f.replace(/\.html$/, ""))).slice(0, 2)
-        .forEach(([f]) => zeilen.push([false, `<b>Neu auf Bondarium:</b> ${esc(SEITEN_TITEL[f.replace(/\.html$/, "")])}`, `<a href="${esc(f)}">Lesen</a>`]));
+        .forEach(([f]) => zeilen.push([etikett("punkt", "Neu auf Bondarium"), `<b>${esc(SEITEN_TITEL[f.replace(/\.html$/, "")])}</b>`, `<a href="${esc(f)}">Lesen</a>`]));
       const kopf = st.besuch ? `Seit deinem letzten Besuch <small>am ${esc(tagDe(st.besuch))}</small>` : "Willkommen in deinem Bereich";
-      if (!zeilen.length) zeilen.push([false, st.besuch ? "Nichts Neues – keine Meldung und kein Termin in den nächsten 14 Tagen." : "Hier steht künftig, was sich seit deinem letzten Besuch getan hat: ausgelöste Meldungen, anstehende Zinstermine und neue Seiten.", ""]);
-      return `<section class="mb-neu" aria-labelledby="mb-h-neu"><h2 class="mb-h2" id="mb-h-neu">${kopf}</h2><ul>${zeilen.map(z => `<li><span class="mb-punkt${z[0] ? " alarm" : ""}"></span><span>${z[1]}</span>${z[2]}</li>`).join("")}</ul></section>`;
+      if (!zeilen.length) zeilen.push(["", st.besuch ? "Nichts Neues – keine Meldung und kein Termin in den nächsten 14 Tagen." : "Hier steht künftig, was sich seit deinem letzten Besuch getan hat: ausgelöste Meldungen, anstehende Zinstermine und neue Seiten.", ""]);
+      return `<section class="mb-neu" aria-labelledby="mb-h-neu"><h2 class="mb-h2" id="mb-h-neu">${kopf}</h2><ul>${zeilen.map(z => `<li>${z[0] || "<span></span>"}<span>${z[1]}</span>${z[2]}</li>`).join("")}</ul></section>`;
+    }
+    const dach = (t, u) => `<p class="mb-dz"><b>${t}</b><span>${u}</span></p>`;
+    const kartenKopf = (ic, t, rechts, unter) => `<div class="mb-kh"><h2 class="mb-h2 mb-hi">${ICON[ic]}${t}</h2><p>${rechts}</p></div><p class="mb-unter">${unter}</p>`;
+    // Karte „Merkliste“: bis zu vier Anleihen – zuerst die größten Änderungen der Rendite seit dem Merken, aufgefüllt mit den zuletzt
+    // gemerkten (dann mit Kurs); heute gemerkte zeigen „gemerkt heute“ statt einer Änderung von 0,00
+    function merkKarte(st, ls, nE) {
+      const heuteGem = o => isoVon(o.seit) === HEUTE;
+      const mitD = ls.filter(o => delta(o) != null && !heuteGem(o) && Math.abs(delta(o)) >= 0.005).sort((a, b) => Math.abs(delta(b)) - Math.abs(delta(a)));
+      const top = mitD.concat(ls.filter(o => mitD.indexOf(o) < 0).sort((a, b) => b.seit - a.seit)).slice(0, 4), weitere = ls.length - top.length;
+      const zeile = o => { const d = mitD.indexOf(o) >= 0 ? delta(o) : null;
+        return `<li><div><a href="anleihe.html?isin=${encodeURIComponent(o.isin)}">${esc(titel(o))}</a><span>${heuteGem(o) ? "gemerkt heute" : "gemerkt " + esc(tagDe(o.seit))}</span></div><p><b>${o.rendite != null ? "Rendite " + F.pct(o.rendite) : "–"}</b><span>${d != null ? `${F.pkt(d)} seit dem Merken` : o.kurs != null ? `Kurs ${F.kurs(o.kurs)}` : ""}</span></p></li>`; };
+      return `<section class="mb-karte">` + kartenKopf("stern", "Merkliste", `${ls.length} ${ls.length === 1 ? "Anleihe" : "Anleihen"}${nE ? ` · ${nE} ${nE === 1 ? "ETF" : "ETFs"}` : ""}`, `Beobachtet, ohne Beträge${mitD.length ? " · größte Änderung seit dem Merken zuerst" : ""}`) +
+        (top.length ? `<ul class="mb-mini">${top.map(zeile).join("")}</ul>${weitere > 0 ? `<p class="mb-weitere">und ${weitere} weitere</p>` : ""}`
+          : st.favoriten.length ? '<p class="mb-leer">Kurse werden geladen …</p>' : '<p class="mb-leer">Noch nichts gemerkt. In der <a href="anleihen-suche.html">Anleihen-Suche</a> und auf jedem Steckbrief steht der Knopf „Merken“.</p>') +
+        `<p class="mb-fuss"><span>${X.kstand() ? "Schlusskurse vom " + esc(MC.datum(X.kstand())) : ""}</span><button type="button" class="kto-textbtn" data-zu="merkliste">Zur Merkliste</button></p></section>`;
+    }
+    // Karte „Musterdepots“ (ersetzt „Nächste Termine“): je Depot Anleihen, Nennwert und Zinsen der nächsten zwölf Monate (in Euro),
+    // darunter die nächsten drei Termine aller Depots mit Depotname und Betrag
+    function depotKarte(st) {
+      const deps = X.depots(), nD = [].concat(...(st.depots || []).map(d => d[2])).length, zahl = (st.depots || []).length || 1;
+      const kopf = kartenKopf("mappe", "Musterdepots", `${zahl} ${zahl === 1 ? "Depot" : "Depots"}`, "Planspiel mit gedachten Beträgen");
+      let inhalt;
+      if (!nD) inhalt = '<p class="mb-leer">Sobald in deinen Musterdepots Anleihen liegen, stehen hier ihr Nennwert, die Zinsen der nächsten zwölf Monate und die nächsten Termine. Hinzufügen mit „+“ in der Merkliste oder auf jedem Steckbrief.</p>';
+      else if (!deps) inhalt = '<p class="mb-leer">Musterdepots werden geladen …</p>';
+      else {
+        const zeilen = deps.map(d => {
+          const nenn = d.pos.filter(p => p.nennEur != null), fremd = d.pos.some(p => p.fremd), z = X.zahlungen(d.pos).filter(x => x.art === "Zinsen" && x.tag < IN12);
+          const ohne = d.pos.filter(p => !p.rechnet && !(p.o.faellig && p.o.faellig <= HEUTE)).length;
+          return `<tr><th scope="row"><button type="button" class="mb-dlink" data-mdepot="${esc(d.id)}">${esc(d.name)}</button></th><td>${d.pos.length}</td>` +
+            `<td>${nenn.length ? euro(nenn.reduce((a, p) => a + p.nennEur, 0), fremd) : "–"}</td>` +
+            `<td${ohne ? ` title="${esc(`ohne ${ohne === 1 ? "eine Anleihe" : ohne + " Anleihen"} mit variablem oder unbekanntem Zins`)}"` : ""}>${d.pos.length && (z.length || ohne < d.pos.length) ? euro(z.reduce((a, x) => a + x.betrag, 0), fremd || ohne > 0) : "–"}</td></tr>`;
+        }).join("");
+        const t = termine(3);
+        inhalt = `<table class="mb-dep"><thead><tr><th scope="col">Depot</th><th scope="col">Anleihen</th><th scope="col">Nennwert</th><th scope="col">Zinsen 12 Mon.</th></tr></thead><tbody>${zeilen}</tbody></table>` +
+          `<p class="mb-zk">Nächste Termine</p>` +
+          (t.length ? `<ul class="mb-termine">${t.map(x => { const n = tageBis(x.tag);
+            return `<li><span class="mb-tag"><b>${+x.tag.slice(8, 10)}</b>${MONATE[+x.tag.slice(5, 7) - 1]} ${x.tag.slice(2, 4)}</span><div><b>${esc(titel(x.o))}</b><span class="mb-dn">${esc(x.dep.name)}</span>${esc(x.art)}${n <= 30 ? ` · ${n <= 0 ? "heute" : n === 1 ? "morgen" : `in ${n} Tagen`}` : ""}</div>` +
+              `<p class="mb-betrag">${x.betrag != null ? euro(x.betrag, x.p.fremd) : ""}<span>${x.betrag == null ? "" : x.p.fremd ? `${roh(x.roh, x.p.o.cur)} · EZB-Kurs` : `auf ${fmt(x.p.nenn, 0)} €`}</span></p></li>`; }).join("")}</ul>`
+            : '<p class="mb-leer">Für die Anleihen in deinen Musterdepots ist kein kommender Termin bekannt.</p>');
+        return `<section class="mb-karte">${kopf}${inhalt}<p class="mb-fuss"><span>Zinstermine laut Deutscher Börse${t.some(x => x.o.gesch && x.art !== "Fälligkeit") ? ", teils geschätzt" : ""}</span><span class="mb-fr">${t.length ? '<button type="button" class="kto-textbtn" data-ics="depot">Kalender (.ics)</button>' : ""}<button type="button" class="kto-textbtn" data-zu="depot">Zu den Musterdepots</button></span></p></section>`;
+      }
+      return `<section class="mb-karte">${kopf}${inhalt}<p class="mb-fuss"><span></span><button type="button" class="kto-textbtn" data-zu="depot">Zu den Musterdepots</button></p></section>`;
     }
     function zeichneStart() {
       const el = $("a-start"); if (!el) return;
-      const D = X.daten(), st = K.stand(), ls = X.liste(), nE = etfListe().length;
-      const mitDelta = ls.filter(o => delta(o) != null).sort((a, b) => Math.abs(delta(b)) - Math.abs(delta(a))), top = (mitDelta.length ? mitDelta : ls.slice().sort((a, b) => b.seit - a.seit)).slice(0, 4);
-      const merk = `<section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Meine Merkliste</h2><p>${ls.length} ${ls.length === 1 ? "Anleihe" : "Anleihen"}${nE ? ` · ${nE} ${nE === 1 ? "ETF" : "ETFs"}` : ""}</p></div>` +
-        (top.length ? `<ul class="mb-mini">${top.map(o => { const d = delta(o); return `<li><div><a href="anleihe.html?isin=${encodeURIComponent(o.isin)}">${esc(titel(o))}</a><span>gemerkt ${esc(tagDe(o.seit))}</span></div><p><b>${o.rendite != null ? "Rendite\u00a0" + F.pct(o.rendite) : "–"}</b><span>${d != null ? `${F.pkt(d)} seit dem Merken` : o.kurs != null ? `Kurs ${F.kurs(o.kurs)}` : ""}</span></p></li>`; }).join("")}</ul>`
-          : st.favoriten.length ? '<p class="mb-leer">Kurse werden geladen …</p>' : '<p class="mb-leer">Noch nichts gemerkt. In der <a href="anleihen-suche.html">Anleihen-Suche</a> und auf jedem Steckbrief steht der Knopf „Merken“.</p>') +
-        `<p class="mb-fuss"><span>${X.kstand() ? "Schlusskurse vom " + esc(MC.datum(X.kstand())) : ""}</span><button type="button" class="kto-textbtn" data-zu="merkliste">Zur Merkliste</button></p></section>`;
-      const zins = `<section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Mein Zins-Blick</h2><p>angeheftete Kennzahlen</p></div><div id="mb-zins"></div><p class="mb-fuss"><span></span><a href="beobachten.html">Alle Zinsen</a></p></section>`;
-      const t = termine(4), da = X.depotAnleihen(), nD = [].concat(...(st.depots || []).map(d => d[2])).length;
-      const term = `<section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Nächste Termine</h2><p>deiner Musterdepots</p></div>` +
-        (t.length ? `<ul class="mb-termine">${t.map(x => `<li><span class="mb-tag"><b>${+x.tag.slice(8, 10)}</b>${MONATE[+x.tag.slice(5, 7) - 1]} ${x.tag.slice(2, 4)}</span><div><b>${esc(titel(x.o))}</b>${esc(x.art)}${tageBis(x.tag) <= 30 ? ` · in ${tageBis(x.tag)} ${tageBis(x.tag) === 1 ? "Tag" : "Tagen"}` : ""}</div></li>`).join("")}</ul>`
-          : `<p class="mb-leer">${!nD ? "Sobald in deinen Musterdepots Anleihen liegen, stehen hier ihre nächsten Zinstermine und Fälligkeiten." : !da ? "Termine werden geladen …" : "Für die Anleihen in deinen Musterdepots ist kein kommender Termin bekannt."}</p>`) +
-        `<p class="mb-fuss"><span>Zinstermine laut Deutscher Börse${t.some(x => x.o.gesch && x.art !== "Fälligkeit") ? ", teils geschätzt" : ""}</span>${t.length ? '<button type="button" class="kto-textbtn" data-ics="depot">In meinen Kalender (.ics)</button>' : ""}</p></section>`;
+      const D = X.daten(), st = K.stand(), ls = X.liste(), nE = etfListe().length, nZ = Object.keys(abl("kennzahl")).filter(k => KZ[k]).slice(0, 6).length;
+      const zins = `<section class="mb-karte mb-zinsblick">` + kartenKopf("linie", "Mein Zins-Blick", nZ ? `${nZ} angeheftet` : "", "Marktzahlen, die du auf den Zinsen-Seiten angeheftet hast") +
+        `<div id="mb-zins"></div><p class="mb-fuss"><span>${nZ ? "Ein Klick auf eine Kachel öffnet die Seite dazu" : ""}</span><a href="beobachten.html">Alle Zinsen</a></p></section>`;
       const an = wert("einstellung", "zuletzt") === 1, ang = Object.entries(abl("angesehen")).sort((a, b) => b[1][1] - a[1][1]);
       const zuletzt = an && ang.length ? `<div class="mb-zuletzt"><p class="mb-zk">Zuletzt angesehen</p><p class="mb-chips-a">${ang.map(([k, e]) => `<a href="${/^[A-Z]{2}/.test(k) ? "anleihe.html?isin=" + encodeURIComponent(k) : esc(k) + ".html"}">${esc(typeof e[0] === "string" && e[0] ? e[0] : k)}</a>`).join("")}</p></div>` : "";
-      el.innerHTML = seitBesuch(D) + `<div class="mb-drei">${merk}${zins}${term}</div>${zuletzt}`;
+      el.innerHTML = seitBesuch(D) + dach("Deine Anleihen", "was du beobachtest und was du durchspielst") + `<div class="mb-reihe">${merkKarte(st, ls, nE)}${depotKarte(st)}</div>` +
+        dach("Markt", "gilt für alle – hängt nicht an deinen Anleihen") + zins + zuletzt;
       zinsBlick($("mb-zins"));
     }
 
@@ -637,6 +702,7 @@
     const depot = $("depot");
     depot.addEventListener("click", e => {
       const zu = e.target.closest("[data-zu]"); if (zu && depot.contains(zu)) { X.reiterWahl(zu.dataset.zu, true); window.scrollTo({ top: Math.max(0, depot.getBoundingClientRect().top + window.scrollY - 90) }); return; }
+      const dp = e.target.closest("[data-mdepot]"); if (dp && depot.contains(dp)) { X.oeffneDepot(+dp.dataset.mdepot); window.scrollTo({ top: Math.max(0, depot.getBoundingClientRect().top + window.scrollY - 90) }); return; }
       const ics = e.target.closest("[data-ics]"); if (ics) { kalender(ics.dataset.ics === "depot" ? X.depotAnleihen() || [] : X.liste()); return; }
       const g = e.target.closest("[data-gelesen]"); if (g) { g.disabled = true; lege("gelesen", g.dataset.gelesen, gelesen(g.dataset.gelesen) ? null : 1).catch(() => { g.disabled = false; }); return; }
       const lz = e.target.closest("[data-lz-weg]"); if (lz) { lege("lesezeichen", lz.dataset.lzWeg, null).catch(() => {}); return; }

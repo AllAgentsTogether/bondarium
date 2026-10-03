@@ -1297,9 +1297,10 @@ MC.navInit();
     }
     return p;
   }
-  function zahlungen() {
+  // liste: Positionen eines anderen Musterdepots (Start, bereich.js) – ohne liste die des offenen Depots ohne die abgewählten
+  function zahlungen(liste) {
     const out = [];
-    POS.filter(p => p.rechnet && !AUS.has(p.isin)).forEach(p => {
+    (liste || POS.filter(p => !AUS.has(p.isin))).filter(p => p.rechnet).forEach(p => {
       if (p.fest) {
         const cd = MC.bond.couponDates({ coupon: p.o.kupon, freq: p.freq, maturity: p.o.faellig, days: p.tage }, HEUTE_ISO);
         cd.dates.forEach((t, i) => { const a = i === cd.dates.length - 1 ? cd.last : 1;   // kurze letzte Zinsperiode: anteilig
@@ -2092,6 +2093,11 @@ MC.navInit();
       const isins = [...new Set([].concat(...DEPOTS.map(d => d[2])).map(d => d[0]))];
       return !isins.length ? [] : !DDATA ? null : isins.map(i => { const p = position(i, 1, DDATA); return Object.assign({}, p.o, { zt: p.fest ? p.zt : "", gesch: p.fest && !p.tage }); });
     },
+    // Musterdepots für die Karte „Musterdepots“ auf Start (seit 03.10.2026 abends, Vorschlag „Start neu sortiert“): je Depot Kennung,
+    // Name und Positionen wie in der Tabelle (position(), mit Nennwert); dazu die Zahlungen einer Positionsliste und „Depot öffnen“
+    depots: () => !DDATA ? null : DEPOTS.map(d => ({ id: d[0], name: d[1], pos: d[2].map(x => position(x[0], x[1], DDATA)) })),
+    zahlungen: liste => zahlungen(liste),
+    oeffneDepot: id => { oeffne(id); reiterWahl("depot", true); },
     zeichneListe: () => { if (LISTE.length) zeichne(); else if (B) B.nachListe(); statusText(); },
     entfernen: entferne, insDepot: isin => insDepot({ dataset: { depot: isin } }), teilen: nur => teilen(nur),
     neuLaden: () => ladeDaten().then(D => { DDATA = D; MF_EZB = D.ezb; if (!KSTAND) KSTAND = D.kstand; if (B) B.ablageNeu(); }, () => {}) }) : null;
