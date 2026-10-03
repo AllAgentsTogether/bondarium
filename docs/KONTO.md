@@ -11,7 +11,7 @@ ist ein Planspiel, kein Wertpapierdepot: keine echten Bestände, keine Kaufpreis
 
 | Datei | Aufgabe |
 | --- | --- |
-| `konto.html` | Seite „Mein Bondarium“: Anmelden, Registrieren, Passwort vergessen – oder, angemeldet, fünf Ansichten: Start, Merkliste, Lernen, Rechnen und planen (darin „Mein Depot“), Meldungen und Konto (seit 02.10.2026 abends; vorher zwei Reiter „Merkliste“ und „Mein Depot“). Für alle gleich, `noindex`. |
+| `konto.html` | Seite „Mein Bondarium“: Anmelden, Registrieren, Passwort vergessen – oder, angemeldet, fünf Ansichten: Start, Merkliste, Lernen, Musterdepots (darin „Mein Depot“; bis 03.10.2026 „Rechnen und planen“), Meldungen und Konto (seit 02.10.2026 abends; vorher zwei Reiter „Merkliste“ und „Mein Depot“). Für alle gleich, `noindex`. |
 | `konto.js` | Spricht mit `konto.php` (`MC.konto`, darunter `depot(isin, nennwert)`), zeichnet den Merken-Knopf („Merken“ / „Gemerkt“). Geladen auf `konto.html`, `anleihe.html`, `anleihen-suche.html`. |
 | `konto.php` | Schnittstelle auf dem Server (PHP bei STRATO), Antwort immer JSON. |
 | `konto-daten/` | Entsteht nur auf dem Server: SQLite-Datei mit zufälligem Namen. Nicht im Repository, nicht im Bau. |
@@ -234,7 +234,7 @@ Bei fünf Depots sagt der Kasten, dass erst eins gelöscht werden muss. Dateinam
 
 Seit 02.10.2026 (Nutzerentscheid nach PDF-Mockup; Antworten: fest 30 Tage vorher, Nennwert in der E-Mail). Seit 02.10.2026
 abends (Nutzerwunsch): **20 Tage vorher und noch einmal am Tag der Fälligkeit** („damit man sein Konto überprüfen kann“) – die
-zweite E-Mail steht in `erinnert` unter der Fälligkeit „JJJJ-MM-TT#tag“. In der Ansicht „Rechnen und planen“ (früher Reiter
+zweite E-Mail steht in `erinnert` unter der Fälligkeit „JJJJ-MM-TT#tag“. In der Ansicht „Musterdepots“ (früher Reiter
 „Mein Depot“) steht unter der Tabelle der Schalter „E-Mail vor jeder Fälligkeit“ – einer für alle Musterdepots, anfangs aus
 (`aktion=erinnern`, Feld `erinnern` in `nutzer`, Fassung 5). Daneben die nächste Fälligkeit und wann die E-Mail dazu käme.
 `konto.html#erinnerung` öffnet den Reiter beim Schalter.
@@ -357,7 +357,7 @@ Meldungen nennen Tatsachen aus den Daten, „Passend zu deiner Merkliste“ zeig
 |---|---|
 | Start (`konto.html`) | „Seit deinem letzten Besuch“ (ausgelöste Meldungen, Termine der nächsten 14 Tage, neue Seiten), Meine Merkliste (größte Veränderung seit dem Merken), Mein Zins-Blick, Nächste Termine (.ics), „Zuletzt angesehen“ (nur wenn eingeschaltet). Die Termine – in „Seit deinem letzten Besuch“ und „Nächste Termine“ – kommen seit 03.10.2026 aus allen Musterdepots (Nutzerwunsch; vorher aus der Merkliste), berechnet wie in der Depot-Tabelle; die Meldung „Zinstermin steht an“ prüft weiter die Merkliste |
 | Merkliste (`#merkliste`) | Pillen Alle / Anleihen / ETFs / eigene Listen; Vergleichen (bis vier, mit Kursverlauf), ISINs einfügen, Filter (filter.js), Teilen/PDF/CSV; Tabelle: Ankreuzfeld, Name mit Notiz, Rendite, Kurs mit Vortag, Kupon, Fälligkeit, „Seit dem Merken“, nächster Zinstermin, „+“ (Musterdepot), „…“ (Notiz, Liste, Meldung, Rechner, Kalender, Entfernen); darunter die gemerkten ETFs |
-| Rechnen und planen (`#planen`, auch `#depot`, `#erinnerung`) | „Mein Depot“ (Musterdepots); die Voreinstellungen darunter am 02.10.2026 auf Nutzerwunsch entfernt – nicht neu einbauen |
+| Musterdepots (`#planen`, auch `#depot`, `#erinnerung`) | „Mein Depot“ (Musterdepots); Reiter seit 03.10.2026 „Musterdepots“ (Nutzerwunsch, vorher „Rechnen und planen“); die Voreinstellungen darunter am 02.10.2026 auf Nutzerwunsch entfernt – nicht neu einbauen |
 | Meldungen und Konto (`#meldungen`) | Meldungen, Wochenbrief-Schalter, Mitnehmen (PDF, CSV, .ics), Konto: E-Mail ändern, Passwort ändern, angemeldete Geräte, „Zuletzt angesehen“, Daten herunterladen, Konto löschen |
 | Lernen (`#lernen`) | Lernstand je Menügruppe (Grundlagen, Auswählen, Kaufen, Für Fortgeschrittene – aus dem Menü der Seite gelesen), „Passend zu deiner Merkliste“, Lesezeichen, gemerkte Begriffe |
 

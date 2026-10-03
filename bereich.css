@@ -1,4 +1,4 @@
-/* bereich.css – „Mein Bondarium“ (konto.html) in fünf Ansichten: Start, Merkliste, Lernen, Rechnen und planen, Meldungen und Konto
+/* bereich.css – „Mein Bondarium“ (konto.html) in fünf Ansichten: Start, Merkliste, Lernen, Musterdepots, Meldungen und Konto
    (seit 02.10.2026 abends, Nutzerauftrag: Mockup vom 01.10.2026 komplett umsetzen). Bausteine mit der Vorsilbe mb-; Farben, Schrift,
    Karten und Knöpfe kommen aus base.css und dem Stilblock von konto.html. Die Knöpfe der Ablage auf den Inhaltsseiten (.ablbtn,
    .mb-seite – „Als gelesen markieren“, Lesezeichen, Begriff merken, Kennzahl anheften) stehen in base.css. Skript: bereich.js. */
@@ -221,7 +221,7 @@ main .mb-lz a { color: var(--ink); }
 .mb-lz div span { font-size: 13px; color: var(--text); }
 .mb-lz .mb-r { display: flex; align-items: center; gap: 10px; flex: none; }
 
-/* ---------- Rechnen und planen ---------- */
+/* ---------- Musterdepots (bis 03.10.2026 „Rechnen und planen“) ---------- */
 .mb-rg-d { font-size: 12.5px; font-weight: 600; color: var(--text); background: #F3F2EE; border-radius: 6px; padding: 2px 7px; white-space: nowrap; }
 
 /* ---------- Meldungen und Konto ---------- */

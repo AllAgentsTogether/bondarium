@@ -544,12 +544,12 @@
 
     <div id="depot" hidden>
       <div class="kto-kopf"><p>Angemeldet als <b id="wer"></b></p><button type="button" class="kto-leise" id="abmelden">Abmelden</button></div>
-      <!-- Fünf Ansichten (seit 02.10.2026 abends, Nutzerauftrag „Mockup komplett umsetzen“): Start, Merkliste, Lernen, Rechnen und planen
-           (darin die Musterdepots „Mein Depot“), Meldungen und Konto. Reiter: Seitenskript (reiter()); Inhalte: bereich.js, Stile bereich.css -->
+      <!-- Fünf Ansichten (seit 02.10.2026 abends, Nutzerauftrag „Mockup komplett umsetzen“): Start, Merkliste, Lernen, Musterdepots
+           (darin „Mein Depot“; bis 03.10.2026 „Rechnen und planen“), Meldungen und Konto. Reiter: Seitenskript (reiter()); Inhalte: bereich.js, Stile bereich.css -->
       <div class="mb-tabs" id="mb-tabs" role="tablist" aria-label="Bereiche von Mein Bondarium">
         <button type="button" role="tab" id="t-start" data-ansicht="start" aria-controls="a-start" aria-selected="true">Start</button>
         <button type="button" role="tab" id="t-merkliste" data-ansicht="merkliste" aria-controls="a-merkliste" aria-selected="false" tabindex="-1">Merkliste<i id="r-merk-n"></i></button>
-        <button type="button" role="tab" id="t-planen" data-ansicht="planen" aria-controls="a-planen" aria-selected="false" tabindex="-1">Rechnen und planen<i id="r-depot-n" hidden></i></button>
+        <button type="button" role="tab" id="t-planen" data-ansicht="planen" aria-controls="a-planen" aria-selected="false" tabindex="-1">Musterdepots<i id="r-depot-n" hidden></i></button>
         <button type="button" role="tab" id="t-meldungen" data-ansicht="meldungen" aria-controls="a-meldungen" aria-selected="false" tabindex="-1">Meldungen und Konto<i id="t-meld-n"></i></button>
         <button type="button" role="tab" id="t-lernen" data-ansicht="lernen" aria-controls="a-lernen" aria-selected="false" tabindex="-1">Lernen</button>
       </div>
@@ -1599,8 +1599,8 @@ MC.navInit();
     try { history.replaceState(null, "", location.pathname); } catch (e) {}
     const t = $("er-aus-text"); $("er-aus").hidden = false; t.textContent = "Die Erinnerung wird ausgeschaltet …"; $("kd-er-status").textContent = "";
     K.erinnerungAus(m[1]).then(a => {
-      t.innerHTML = a.ok ? "<b>Die Erinnerung ist ausgeschaltet.</b> Du bekommst keine E-Mails mehr vor Fälligkeiten. Wieder einschalten kannst du sie jederzeit – unter „Rechnen und planen“ in „Mein Depot“, unter der Tabelle."
-        : a.status === "link" ? "Dieser Link gilt nicht mehr – vielleicht ist das Konto gelöscht. Wenn du angemeldet bist, findest du den Schalter unter „Rechnen und planen“ in „Mein Depot“, unter der Tabelle."
+      t.innerHTML = a.ok ? "<b>Die Erinnerung ist ausgeschaltet.</b> Du bekommst keine E-Mails mehr vor Fälligkeiten. Wieder einschalten kannst du sie jederzeit – im Reiter „Musterdepots“, unter der Tabelle."
+        : a.status === "link" ? "Dieser Link gilt nicht mehr – vielleicht ist das Konto gelöscht. Wenn du angemeldet bist, findest du den Schalter im Reiter „Musterdepots“, unter der Tabelle."
         : MC.esc(TEXT[a.status] || TEXT.fehler);
     });
   }
@@ -1608,9 +1608,9 @@ MC.navInit();
   window.addEventListener("hashchange", erinnerungAusLink);
   erinnerungAusLink();
 
-  // Fünf Ansichten (seit 02.10.2026 abends; vorher zwei Reiter „Merkliste“ und „Mein Depot“): Start, Merkliste, Lernen, Rechnen und planen
-  // (darin „Mein Depot“), Meldungen und Konto – eine ist offen. konto.html#merkliste, #lernen, #planen, #meldungen öffnen die Ansicht;
-  // die älteren Adressen #depot und #erinnerung (Links in E-Mails) führen zu „Rechnen und planen“.
+  // Fünf Ansichten (seit 02.10.2026 abends; vorher zwei Reiter „Merkliste“ und „Mein Depot“): Start, Merkliste, Lernen, Musterdepots
+  // (darin „Mein Depot“; bis 03.10.2026 „Rechnen und planen“), Meldungen und Konto – eine ist offen. konto.html#merkliste, #lernen, #planen, #meldungen öffnen die Ansicht;
+  // die älteren Adressen #depot und #erinnerung (Links in E-Mails) führen zu „Musterdepots“.
   const ANSICHTEN = ["start", "merkliste", "planen", "meldungen", "lernen"], ALIAS = { merk: "merkliste", depot: "planen", erinnerung: "planen" };
   let ANSICHT = "start";
   function reiter(r, fokus) {

@@ -5,7 +5,7 @@
                           eingeschaltet) – die Termine (in „Seit deinem letzten Besuch“ und „Nächste Termine“) seit 03.10.2026 aus den
                           Musterdepots statt aus der Merkliste (Nutzerwunsch)
      Merkliste            eigene Listen, Notiz, Menü je Anleihe („…“), Vergleichen, ISINs einfügen, CSV, ETFs
-     Rechnen und planen   nichts mehr – die Musterdepots zeichnet das Seitenskript von konto.html
+     Musterdepots         nichts mehr – die Musterdepots zeichnet das Seitenskript von konto.html
      Meldungen und Konto  Meldungen (Regeln je Anleihe oder für alle gemerkten), Mitnehmen (PDF, CSV, Kalenderdatei), Konto
      Lernen               Lernstand zum Abhaken, Passend zu deiner Merkliste, Lesezeichen, gemerkte Begriffe
    Am 02.10.2026 abends auf Nutzerwunsch wieder entfernt: die Karten „Weiterlernen“ und „Gespeicherte Suchen“ auf Start (damit auch
