@@ -23,7 +23,11 @@ Repository bleiben unverändert.
                                Kopfzeile, Hinweis unter dem Schaubild, Daten-Stand
   risikoaufschlaege.html     ← risikoaufschlaege.json: Kacheln, Rangliste, Textzahlen, Kopfzeile, Daten-Stand
   langlaeufer.html           ← langlaeufer.json, kurse-auswahl.json und kurse/<Jahr>/<teil>.json (dazu die Wochenreihen
-                               aus dem Seitenskript): Kennzahlen-Tabelle, Kursspannen, Textzahlen, Kopfzeile, Daten-Stand
+                               aus dem Seitenskript): Kennzahlen-Tabelle (Standardtabelle wie felder.js), Kursspannen,
+                               Textzahlen, Kopfzeile, Daten-Stand
+  zinsniveau.html            ← zinskurve.json, realzins.json, ezb.json: Kacheln „Zinsniveau heute“, ihre Stand-Zeile,
+                               EZB-Einlagesatz, Daten-Stand (seit 04.10.2026)
+  fortgeschrittene.html      ← zinskurve.json: Kasten „Bund heute“ in Schritt 1, Daten-Stand (seit 04.10.2026)
 
 Regeln:
 - Zahlen und Stand nur zusammen: Passt auf einer Seite etwas nicht, bleibt die ganze Seite, wie sie ist (Warnung).
@@ -40,6 +44,10 @@ import os
 import re
 import sys
 from decimal import ROUND_HALF_UP, Decimal
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _common import kurs_text, kurz_name  # noqa: E402
+from statische_tabellen import std_kopf, std_zeile  # noqa: E402  (Standardtabelle wie felder.js)
 
 try:   # Ortszeit des Besuchers: Deutschland (Zoneninfo gibt es ab Python 3.9; ohne Zeitzonendaten gilt UTC)
     from zoneinfo import ZoneInfo
@@ -1204,17 +1212,19 @@ ANKER_LANGLAEUFER = [
     'o.weekly = w; o.priceDate = w[w.length - 1][0]; o.price = w[w.length - 1][1];',
     'const settle = addDays(b.priceDate, b.settleDays);',
     'return { settle, yld: yieldFromPrice(b, b.price, settle), years: MC.bond.yearsTo(b.maturity, settle) };',
-    '{ key: "bund", isin: b.isin, coupon: 0, maturity: b.maturity, price: b.latest.price, yld: b.latest.yield, years: yearsTo(b.maturity, b.latest.date), high: b.high, low: b.low },',
-    '{ key: "bund2", isin: c.isin, coupon: c.coupon, maturity: c.maturity, price: c.latest.price, yld: c.latest.yield, years: yearsTo(c.maturity, c.latest.date), high: c.high, low: c.low }',
     '["btp", "fr", "at", "us", "ms"].forEach(k => {',
-    'rows.push({ key: k, isin: bd.isin, coupon: bd.coupon, maturity: bd.maturity, price: bd.price, yld: st.yld * 100, years: st.years, high: bd.high, low: bd.low });',
+    '{ key: "bund", isin: b.isin, coupon: 0, maturity: b.maturity, price: b.latest.price, yld: b.latest.yield, years: yearsTo(b.maturity, b.latest.date), high: b.high, low: b.low, date: b.latest.date },',
+    '{ key: "bund2", isin: c.isin, coupon: c.coupon, maturity: c.maturity, price: c.latest.price, yld: c.latest.yield, years: yearsTo(c.maturity, c.latest.date), high: c.high, low: c.low, date: c.latest.date }',
+    'rows.push({ key: k, isin: bd.isin, coupon: bd.coupon, maturity: bd.maturity, price: bd.price, yld: st.yld * 100, years: st.years, high: bd.high, low: bd.low, date: bd.priceDate });',
+    'const stand = all.map(r => r.date).filter(Boolean).sort().pop() || "";',
+    'const a = AUSWAHL[r.isin] || [], art = r.art === "Staat" ? 0 : 2;',
+    'return { platz: i + 1, key: r.key, isin: r.isin, kurz: a[0] || MC.felder.kurzName(r.name, art, null, r.name), reg: a[4] || "", art, ccy: r.cur,',
+    'kupon: r.coupon, zinsart: r.coupon === 0 ? 2 : 0, faellig: r.maturity, kurs: r.price, kdatum: r.date, rend: r.yld, bon: a[3],',
+    'seitHoch: r.sinceHigh, hochText: `Hoch ${MC.felder.kurs(r.high.price)} am ${fmtDate(r.high.date)}` };',
+    'const html = MC.felder.tabelle(["anleihe", "rendite", "kupon", "restlaufzeit", "kurs", "seitHoch"].concat(MC.konto ? ["merken"] : []), rows,',
+    'ctx: { kstand: stand, nameVor: o => `<i class="tag" style="background:${COLORS[o.key]}"></i>` } });',
+    'const fmtDate = iso => MC.datum(iso);',
     'return rows.map(r => { Object.assign(r, KPI_META[r.key]); r.label = L(r.key); r.sinceHigh = (r.price / r.high.price - 1) * 100; return r; });',
-    '`<tr><th scope="row"><i class="tag" style="background:${COLORS[r.key]}"></i>${MC.esc(r.label)}</th><td class="num">${fmt(r.yld, 2)}\\u00A0%</td>` +',
-    '`<td class="num">${fmt(r.price, 2)}</td>` +',
-    '`<td class="num">${fmt(r.sinceHigh, 0)}\\u00A0%<small>Hoch ${fmt(r.high.price, 2)} (${fmtDate(r.high.date).slice(3)})</small></td>` +',
-    '`<td class="num">${fmt(r.years, 1)} ${L("years")}</td><td class="num">${fmtCoupon(r.coupon)}\\u00A0%</td><td class="num">${fmtDate(r.maturity)}</td>` +',
-    '`<td class="emi" title="${MC.esc(r.art === "Staat" ? "Staatsanleihe" : "Unternehmensanleihe")}">${MC.esc(r.name)}</td>` +',
-    '`<td class="isin"><a href="anleihe.html?isin=${r.isin}" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und Stammdaten">${r.isin}</a></td><td class="txt">${r.cur}</td></tr>`);',
     'const ids = { bund: "b-spanne", bund2: "b2-spanne", btp: "t-spanne", fr: "fr-spanne", at: "at-spanne", us: "us-spanne", ms: "ms-spanne" };',
     'if (sp) sp.textContent = `Hoch ${fmt(r.high.price, 2)} (${fmtDate(r.high.date)}) · Tief ${fmt(r.low.price, 2)} (${fmtDate(r.low.date)})`;',
     'const alt = MC.veraltet ? MC.veraltet(BUND.latest.date) : false;',
@@ -1242,6 +1252,12 @@ ANKER_LANGLAEUFER = [
     'if (okPt(c.latest)) BUND2.latest = { date: c.latest.date, price: c.latest.price, yield: typeof c.latest.yield === "number" ? c.latest.yield : null };',
     'if (okPt(c.high)) BUND2.high = c.high;',
     'if (okPt(c.low)) BUND2.low = c.low;',
+    'const k = K[B.isin], t = k && tage[k[2]];',
+    'if (!k || typeof k[0] !== "number" || !t || !B.latest || t <= B.latest.date) return;',
+    'const y = typeof k[1] === "number" ? k[1] : null;',
+    'B.latest = { date: t, price: k[0], yield: y };',
+    'if (B.low && k[0] < B.low.price) B.low = { date: t, price: k[0], yield: y };',
+    'if (B.high && k[0] > B.high.price) B.high = { date: t, price: k[0], yield: y };',
     'if (!k || tage[k[2]] <= bd.priceDate) return null;',
     'return MC.verlauf(bd.isin, { ab: bd.priceDate }).catch(() => ({ t: [], k: [] })).then(v => {',
     'v.t.forEach((t, i) => { if (t > bd.priceDate && typeof v.k[i] === "number") neu.push([t, v.k[i]]); });',
@@ -1341,6 +1357,18 @@ def langlaeufer(site, s):
     verlauf_ab = int(m.group(1)) if m else 2021
     K = lade(site, "kurse-auswahl.json")
     kurse, tage = K.get("kurse") or {}, K.get("tage") or []
+    # Seit 03.10.2026 auch die beiden Bundesanleihen: Börsenkurs, wenn er jünger ist als der letzte Bundesbank-Wert
+    for B in (bund, bund2):
+        k = kurse.get(B["isin"])
+        t = tage[k[2]] if k and isinstance(k[2], int) and 0 <= k[2] < len(tage) else None
+        if not k or not ist_zahl(k[0]) or not t or not B.get("latest") or t <= B["latest"]["date"]:
+            continue
+        y = k[1] if ist_zahl(k[1]) else None
+        B["latest"] = {"date": t, "price": k[0], "yield": y}
+        if B.get("low") and k[0] < B["low"]["price"]:
+            B["low"] = {"date": t, "price": k[0], "yield": y}
+        if B.get("high") and k[0] > B["high"]["price"]:
+            B["high"] = {"date": t, "price": k[0], "yield": y}
     for bd in kupon:
         k = kurse.get(bd["isin"])
         if not k:
@@ -1362,14 +1390,16 @@ def langlaeufer(site, s):
             if kurs > bd["high"]["price"]:
                 bd["high"] = {"date": t, "price": kurs}
 
-    # Kennzahlen-Tabelle (alle sieben, Reihenfolge wie im Schaubild) und Kursspannen
+    # Kennzahlen-Tabelle (alle sieben, Reihenfolge wie im Schaubild) und Kursspannen. Seit 03.10.2026 Standardtabelle wie
+    # MC.felder.tabelle (felder.js) – nachgebaut mit std_kopf/std_zeile aus statische_tabellen.py (eine Fassung für alle Seiten)
     zeilen = [
         {"key": "bund", "isin": bund["isin"], "coupon": 0, "maturity": bund["maturity"], "price": bund["latest"]["price"],
          "yld": bund["latest"].get("yield"), "years": years_to(bund["maturity"], bund["latest"]["date"]),
-         "high": bund["high"], "low": bund["low"]},
+         "high": bund["high"], "low": bund["low"], "date": bund["latest"]["date"]},
         {"key": "bund2", "isin": bund2["isin"], "coupon": bund2["coupon"], "maturity": bund2["maturity"],
          "price": bund2["latest"]["price"], "yld": bund2["latest"].get("yield"),
-         "years": years_to(bund2["maturity"], bund2["latest"]["date"]), "high": bund2["high"], "low": bund2["low"]},
+         "years": years_to(bund2["maturity"], bund2["latest"]["date"]), "high": bund2["high"], "low": bund2["low"],
+         "date": bund2["latest"]["date"]},
     ]
     nach_key = {b["key"]: b for b in kupon}
     for k in ("btp", "fr", "at", "us", "ms"):
@@ -1377,23 +1407,32 @@ def langlaeufer(site, s):
         settle = add_days(bd["priceDate"], bd["settleDays"])
         zeilen.append({"key": k, "isin": bd["isin"], "coupon": bd["coupon"], "maturity": bd["maturity"], "price": bd["price"],
                        "yld": yield_from_price(bd, bd["price"], settle) * 100, "years": years_to(bd["maturity"], settle),
-                       "high": bd["high"], "low": bd["low"]})
-    html_ = []
-    for r in zeilen:
+                       "high": bd["high"], "low": bd["low"], "date": bd["priceDate"]})
+    try:
+        auswahl = lade(site, "anleihen-auswahl.json").get("a") or {}
+    except (OSError, ValueError, AttributeError):
+        auswahl = {}
+    stand = max((r["date"] for r in zeilen if r.get("date")), default="")
+    objekte = []
+    for i, r in enumerate(zeilen):
         r.update(meta[r["key"]])
-        seit_hoch = (r["price"] / r["high"]["price"] - 1) * 100
-        art = "Staatsanleihe" if r["art"] == "Staat" else "Unternehmensanleihe"
-        html_.append(
-            f'<tr><th scope="row"><i class="tag" style="background:{farben[r["key"]]}"></i>{esc(T[r["key"]])}</th>'
-            f'<td class="num">{zahl(r["yld"], 2)}{NBSP}%</td>'
-            f'<td class="num">{zahl(r["price"], 2)}</td>'
-            f'<td class="num">{zahl(seit_hoch, 0)}{NBSP}%<small>Hoch {zahl(r["high"]["price"], 2)} ({datum(r["high"]["date"])[3:]})</small></td>'
-            f'<td class="num">{zahl(r["years"], 1)} {T["years"]}</td><td class="num">{fmt_coupon(r["coupon"])}{NBSP}%</td>'
-            f'<td class="num">{datum(r["maturity"])}</td>'
-            f'<td class="emi" title="{esc(art)}">{esc(r["name"])}</td>'
-            f'<td class="isin"><a href="anleihe.html?isin={r["isin"]}" title="Steckbrief: Kurs, Rendite, Kursverlauf, Handel und '
-            f'Stammdaten">{r["isin"]}</a></td><td class="txt">{r["cur"]}</td></tr>')
-    s.inner("#kpis-body", "".join(html_))
+        a = auswahl.get(r["isin"]) or []
+        art = 0 if r["art"] == "Staat" else 2
+        objekte.append({
+            "platz": i + 1, "key": r["key"], "isin": r["isin"],
+            "kurz": (a[0] if len(a) > 0 and a[0] else None) or kurz_name(r["name"], art, None, r["name"]),
+            "reg": (a[4] if len(a) > 4 and a[4] else ""), "art": art, "ccy": r["cur"],
+            "kupon": r["coupon"], "zinsart": 2 if r["coupon"] == 0 else 0, "faellig": r["maturity"],
+            "kurs": r["price"], "kdatum": r["date"], "rend": r["yld"], "rendGrund": "keine Rendite",
+            "bon": a[3] if len(a) > 3 else None,
+            "seitHoch": (r["price"] / r["high"]["price"] - 1) * 100,
+            "hochText": f'Hoch {kurs_text(r["high"]["price"])} am {datum(r["high"]["date"])}'})
+    ids_tab = ["anleihe", "rendite", "kupon", "restlaufzeit", "kurs", "seitHoch", "merken"]
+    ctx = {"kstand": stand, "nameVor": lambda o: f'<i class="tag" style="background:{farben[o["key"]]}"></i>'}
+    thead = std_kopf(ids_tab, sort=(None, 1)).replace("<thead>", '<thead class="std-kopf">', 1)
+    tbody = "".join(std_zeile(o, ids_tab, ctx, None) for o in objekte)
+    m = re.search(r'<table\b[^>]*\bid="kpis"[^>]*>\s*(<caption\b.*?</caption>)', s.html, re.S)
+    s.inner("#kpis", "\n      " + (m.group(1) if m else "") + "\n      " + thead + '<tbody id="kpis-body">' + tbody + "</tbody>\n    ")
     ids = {"bund": "b-spanne", "bund2": "b2-spanne", "btp": "t-spanne", "fr": "fr-spanne", "at": "at-spanne",
            "us": "us-spanne", "ms": "ms-spanne"}
     for r in zeilen:
@@ -1436,11 +1475,82 @@ def langlaeufer(site, s):
     setze("at-y", pct(yield_from_price(at, at["price"], add_days(at["priceDate"], at["settleDays"])) * 100))
     setze("at-d", zahl(mod_dur(at, at["price"], at["priceDate"]), 0))
     setze("at-d2", zahl(mod_dur(at, at["price"], at["priceDate"]), 0))
-    return f'{datum(bund["latest"]["date"])} (Bundesbank), Kurse bis {datum(neu)}'
+    return f'Bundesanleihen {datum(bund["latest"]["date"])}, Kurse bis {datum(neu)}'
+
+
+# ---------- zinsniveau.html (seit 04.10.2026) ----------
+ANKER_ZINSNIVEAU = [
+    'function pct(v, n) { return MC.zahl(v, n) + "\xa0%"; }',
+    'set("ezb-stand", "Stand: " + MC.zahl(ez.aktuell[1], 2) + "\\u00a0% seit " + MC.datum(ez.aktuell[0]) + " (EZB, abgerufen am " + MC.datum(ez.stand) + ").");',
+    'if (ez && ez.stufen && ez.stufen.length > 5 && ez.aktuell) {',
+    'var h = r[0] && r[0].heute && r[0].heute.DE, v = r[1] && r[1].heute && r[1].heute.vpi;',
+    'var z = r[1] && r[1].heute && r[1].heute.zins10, z10 = z && z[1] != null ? z : null;',
+    'if (h && v && h[1] != null && h[2] != null && v[1] != null) {',
+    'set("zn-2", pct(h[1], 2)); set("zn-10", pct(z10 ? z10[1] : h[2], 2)); set("zn-i", pct(v[1], 1));',
+    'var st = "Renditen " + MC.datum(h[0]) + (z10 && z10[0] !== h[0] ? " und " + MC.datum(z10[0]) : "") + ", Inflation " + MON[+v[0].slice(5, 7) - 1] + " " + v[0].slice(0, 4);',
+    'set("zn-stand", st); set("datastand", "Daten-Stand: " + st);',
+    'if (MC.veraltet && MC.veraltet(h[0])) { var ds = document.getElementById("datastand"); if (ds) ds.classList.add("stale"); }',
+]
+
+
+def zinsniveau(site, s):
+    """Kacheln „Zinsniveau heute“ (2 und 10 Jahre, Inflation), ihre Stand-Zeile, „Daten-Stand“ und der EZB-Einlagesatz."""
+    s.anker(ANKER_ZINSNIVEAU)
+    Z, R = lade(site, "zinskurve.json"), lade(site, "realzins.json")
+    try:
+        E = lade(site, "ezb.json")
+    except (OSError, ValueError):
+        E = None
+    if isinstance(E, dict) and isinstance(E.get("stufen"), list) and len(E["stufen"]) > 5 and E.get("aktuell"):
+        s.text("#ezb-stand", f'Stand: {zahl(E["aktuell"][1], 2)}{NBSP}% seit {datum(E["aktuell"][0])} '
+                             f'(EZB, abgerufen am {datum(E["stand"])}).', muss=False)
+    h = (Z.get("heute") or {}).get("DE")
+    v = (R.get("heute") or {}).get("vpi")
+    z = (R.get("heute") or {}).get("zins10")
+    z10 = z if z and ist_zahl(z[1]) else None
+    if not (h and v and ist_zahl(h[1]) and ist_zahl(h[2]) and ist_zahl(v[1])):
+        raise ValueError("zinskurve.json heute.DE oder realzins.json heute.vpi fehlt")
+    s.text("#zn-2", f"{zahl(h[1], 2)}{NBSP}%")
+    s.text("#zn-10", f"{zahl(z10[1] if z10 else h[2], 2)}{NBSP}%")
+    s.text("#zn-i", f"{zahl(v[1], 1)}{NBSP}%")
+    st = f"Renditen {datum(h[0])}" + (f" und {datum(z10[0])}" if z10 and z10[0] != h[0] else "") + f", Inflation {mon_lang(v[0])}"
+    s.text("#zn-stand", st)
+    daten_stand_veraltet(s, "Daten-Stand: " + st, h[0])
+    return st
+
+
+# ---------- fortgeschrittene.html (seit 04.10.2026) ----------
+ANKER_FORTGESCHRITTENE = [
+    'function pct(v) { return MC.zahl(v, 2) + "\\u00a0%"; }',
+    'var h = z && z.heute && z.heute.DE;',
+    'if (!h || h[1] == null || h[2] == null) return;',
+    'var d = h[2] - h[1];',
+    'set("fk-2", pct(h[1])); set("fk-10", pct(h[2]));',
+    'set("fk-d", (d >= 0 ? "+" : "") + MC.zahl(d, 2));',
+    'set("fk-s", d < 0 ? "invers" : d < 0.3 ? "flach" : d <= 1 ? "normal" : "steil");',
+    'if (MC.tag) { set("fk-t", MC.tag(h[0])); set("datastand", "Daten-Stand: Renditen " + MC.datum(h[0])); }',
+]
+
+
+def fortgeschrittene(site, s):
+    """Kasten „Bund heute“ in Schritt 1: 2- und 10-jährige Bundesanleihe, Abstand, Form der Zinskurve, Tag und „Daten-Stand“."""
+    s.anker(ANKER_FORTGESCHRITTENE)
+    h = (lade(site, "zinskurve.json").get("heute") or {}).get("DE")
+    if not h or not ist_zahl(h[1]) or not ist_zahl(h[2]):
+        raise ValueError("zinskurve.json heute.DE fehlt")
+    d = h[2] - h[1]
+    s.text("#fk-2", f"{zahl(h[1], 2)}{NBSP}%")
+    s.text("#fk-10", f"{zahl(h[2], 2)}{NBSP}%")
+    s.text("#fk-d", ("+" if d >= 0 else "") + zahl(d, 2))
+    s.text("#fk-s", "invers" if d < 0 else "flach" if d < 0.3 else "normal" if d <= 1 else "steil")
+    s.text("#fk-t", datum(h[0])[:6])
+    s.text("#datastand", "Daten-Stand: Renditen " + datum(h[0]))
+    return f"Renditen {datum(h[0])}"
 
 
 SEITEN = (("renditen.html", renditen), ("unternehmensanleihen.html", unternehmensanleihen), ("zinskurve.html", zinskurve),
-          ("realzins.html", realzins), ("risikoaufschlaege.html", risikoaufschlaege), ("langlaeufer.html", langlaeufer))
+          ("realzins.html", realzins), ("risikoaufschlaege.html", risikoaufschlaege), ("langlaeufer.html", langlaeufer),
+          ("zinsniveau.html", zinsniveau), ("fortgeschrittene.html", fortgeschrittene))
 
 
 def main():

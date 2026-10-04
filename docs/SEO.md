@@ -83,6 +83,24 @@ nicht, bleibt die Seite im Zustand der Quell-HTML.
   Google-Extended, Applebot-Extended, Meta-ExternalAgent und CCBot – die Such-Crawler (OAI-SearchBot,
   Claude-SearchBot, PerplexityBot) bleiben dann erlaubt.
 
+## Sichtbare Texte für Suche und KI-Antworten (seit 04.10.2026, SEO-Runde 2)
+
+- **Seitentitel nach dem Muster „Seitenname: Suchzusatz“**, das Suchwort vorn, höchstens 60 Zeichen und 580 px samt
+  „ – Bondarium“. Am 04.10.2026 geändert (Freigabe 02.10.2026): kaufen, erste-anleihe, anlegerprofile, zinsniveau,
+  anleihen-kupon, anleihen, rechtliches („und“ statt „&“), wissen, beobachten, laufzeit, rendite-lesen, anleihen-etf.
+  Der Titel steht dreimal im Kopf (title, og:title, twitter:title); die `headline` im JSON-LD darf die H1 sein.
+- **Antwortsatz**: Der erste Satz der Einleitung unter der H1 (`<p class="sub">`) beantwortet die Hauptfrage der Seite in
+  einem Satz – das, was Suchmaschinen und KI-Dienste als Antwort zitieren. Gesetzt auf grundlagen, rendite-lesen, bonitaet,
+  zinsniveau, anleihen-etf-erklaert, steuern-handelskosten, laufzeit, risiko (duration hatte ihn schon); neue Themenseiten
+  bekommen ihn von Anfang an. Nur Aussagen, die die Seite selbst belegt.
+- **Stand sichtbar**: hinter der Lesezeit `· <span class="stand-t">Stand: TT.MM.JJJJ</span>`. `seo.py` setzt das Datum beim
+  Deploy auf das `dateModified` der Seite – sichtbare Angabe und strukturierte Daten stimmen immer überein. Seiten mit
+  eigener Stand-Pille (`<p class="stand">`, z. B. steuern-handelskosten) bekommen keine zweite Angabe.
+- **datePublished** im JSON-LD jeder Artikelseite: der Tag, an dem die Seite auf bondarium.de erschien (erste Aufnahme ins
+  Repository; das Repository beginnt mit der Veröffentlichung am 30.09.2026).
+- **Keine Zusage-Wörter** („lohnt sich“, „sicherer Zins“, „beste“ …): am 04.10.2026 die letzten 18 Stellen beschreibend
+  umformuliert („bringt mehr“, „passt“, „Grundzins“); `pruefen.py` warnt bei neuen.
+
 ## Neue Seite anlegen
 
 Eine Seite steht von selbst in Sitemap, llms.txt und llms-full.txt, wenn ihr Kopf vollständig ist:
@@ -90,11 +108,12 @@ Eine Seite steht von selbst in Sitemap, llms.txt und llms-full.txt, wenn ihr Kop
 1. `<title>` bis 60 Zeichen, mit „ – Bondarium“ am Ende; das Suchwort vorn.
 2. `<meta name="description">` mit 70 bis 160 Zeichen; derselbe Text in `og:description` und `twitter:description`.
 3. `<link rel="canonical" href="https://www.bondarium.de/<datei>.html">` und `<meta name="robots" content="index, follow">`.
-4. Ein JSON-LD-Block `Article` (oder `WebPage`/`CollectionPage`) mit `headline`, `description`, `dateModified` und
+4. Ein JSON-LD-Block `Article` (oder `WebPage`/`CollectionPage`) mit `headline`, `description`, `datePublished`, `dateModified` und
    ein Block `BreadcrumbList`. Die zweite Brotkrume (Verstehen, Entscheiden, Kaufen, Anleihen, Zinsen) bestimmt
    den Abschnitt in llms.txt. Herausgeber, Autor, Bild und Website ergänzt `seo.py`.
 5. Genau eine `<h1>`; der Inhalt in `<main>`.
 6. Zeichnet ein Skript eine Tabelle aus einer JSON-Datei, gehört sie in `statische_tabellen.py`.
+7. Einleitung mit Antwortsatz und `Lesezeit: etwa N Minuten · <span class="stand-t">Stand: TT.MM.JJJJ</span>` (siehe oben).
 
 `dateModified` von Hand nachziehen, wenn sich der Text ändert – daraus wird `<lastmod>` der Sitemap. Datenseiten
 bekommen beim Deploy zusätzlich ihren sichtbaren Daten-Stand, wenn er jünger ist (siehe „Datum der Seiten“).
@@ -130,13 +149,11 @@ Minify, Versions-URLs und die Trigger-Konfiguration – die prüft nur der Workf
 ## Offen
 
 - **Steckbriefe der übrigen rund 33.000 Anleihen** (`anleihe.html?isin=…`): entstehen erst im Browser und tragen `noindex, follow`. Stufe 1 (seit 03.10.2026): die 79 Bundeswertpapiere als Server-Steckbriefe (`scripts/steckbriefe.py`). Ausbau nach 6–8 Wochen Search Console; Börsendaten (Kurse, Zinstermine) kommen erst ins Server-HTML, wenn die Rechtefrage geklärt ist. Ab einigen tausend Seiten eher PHP statt vorab erzeugter Dateien.
-- **Rückfallwerte von zinsniveau.html und fortgeschrittene.html**: Die sechs Zinsen-Datenseiten, die Top-10-Seiten,
-  die Top 30 nach Kupon, die ETF-Seite und die Startseite schreibt der Deploy aktuell (siehe oben). Die Kacheln von
-  `zinsniveau.html` (`zn-*`, Renditen, Inflation) und der Kasten „Bund, Stand …“ auf `fortgeschrittene.html` (`fk-t`)
-  tragen weiter den Stand der letzten Handpflege; aktuell werden sie erst im Browser. `llms-full.txt` ersetzt sie
-  durch einen Verweis (Warnung im Protokoll), und `pruefen.py` warnt, sobald der sichtbare Stand mehr als 7 Tage
-  älter ist als `dateModified`. Lösung: `rueckfallwerte.py` um beide Seiten erweitern (zinskurve.json `heute.DE`,
-  realzins.json `vpi`, ezb.json); bis dahin beide Seiten NICHT in `DATENSTAND` aufnehmen.
+- **Rückfallwerte**: seit 04.10.2026 schreibt der Deploy alle Zinsen-Zahlen aktuell ins HTML – die sechs Zinsen-Datenseiten,
+  `zinsniveau.html` (Kacheln „Zinsniveau heute“, EZB-Einlagesatz) und `fortgeschrittene.html` (Kasten „Bund heute“) über
+  `rueckfallwerte.py`, die Top-10-Seiten, Top 30 nach Kupon, ETFs, Startseite und die Liste der Bundeswertpapiere über
+  `statische_tabellen.py`. Ändert sich ein Seitenskript, bleibt die Seite auf dem alten Stand und das Protokoll warnt
+  (ANKER) – dann die Nachbildung nachziehen.
 - **Top-10-Seiten bei „aktiv“**: Sobald eine Rangliste `"aktiv": true` trägt, lässt `statische_tabellen.py` die
   Laufzeit-Seiten im Quellzustand (Handauswahl, alter „Daten-Stand“) – `dateModified` bleibt dann beim Quelldatum.
   Fehlt eine ISIN der Handauswahl in `kurse-auswahl.json` (z. B. nach ihrer Fälligkeit), bleibt ebenfalls die ganze

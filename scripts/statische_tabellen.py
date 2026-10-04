@@ -29,6 +29,13 @@ Fassung (innerHTML) – mit Sortieren, Aufklappen und den Handy-Karten. Die Quel
                                                              „Kurse und Renditen vom“ dessen Stand und die Rendite der
                                                              Hero-Karte (seit 03.10.2026, SEO-Runde 2)
 
+  bundeswertpapiere.html  <!--BUNDESLISTE-->…<!--/BUNDESLISTE-->
+                                                           ← alle laufenden Bundeswertpapiere mit Kurs und Rendite der Deutschen
+                                                             Bundesbank (kurse/bund/<ISIN>.json) und Stammdaten aus dem
+                                                             ESMA-Register (anleihen/); dazu die Zeilen als JSON (#bl-daten) für
+                                                             das Sortieren im Browser (seit 04.10.2026, SEO-Runde 2). Lokal:
+                                                             python3 scripts/statische_tabellen.py . bundeswertpapiere
+
 Auf den Ranglisten-, Kupon- und ETF-Seiten schreibt das Skript dazu die Zeile „Daten-Stand“ im Wortlaut des Seitenskripts
 (SEO-Runde 2) – nur zusammen mit den Zeilen, zu denen sie gehört.
 
@@ -468,7 +475,7 @@ def etfs(site):
 # ---------- Standardtabelle (seit 03.10.2026): gleiche Spalten, Reihenfolge und Schreibweisen wie MC.felder.tabelle (felder.js) ----------
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _common import (bonitaet_text, datum_text, felder_katalog, kupon_text, kurs_text, kurz_name, pct_text,  # noqa: E402
-                     restlaufzeit_text, stueckelung_text, titel_text, volumen_text)
+                     restlaufzeit_text, stueckelung_text, titel_text, volumen_text, NBSP)
 
 STD_REIHE = felder_katalog()["reihe"]   # Gesamtliste der Spalten – einmal im Katalog (felder.js)
 STD_NUM = {"rendite", "kupon", "lfd", "restlaufzeit", "duration", "aufschlag", "kurs", "stueckelung", "volumen", "handelstage", "seitHoch", "seitMerken", "zinstermin"}
@@ -504,11 +511,13 @@ def std_zeile(o, ids, ctx, fett):
         elif i == "anleihe":
             titel = titel_text(o["kurz"], o.get("kupon"), o.get("zinsart", 0), o.get("faellig") or "")
             reg = f'Registername: {o["reg"]}' if o.get("reg") else ""
-            h = (f'<a class="name-link" href="anleihe.html?isin={esc(o["isin"])}" title="{esc(reg)}" aria-label="Steckbrief {esc(titel)}">'
+            vor = ctx["nameVor"](o) if callable(ctx.get("nameVor")) else ""   # z. B. Farbpunkt der Linie (langlaeufer.html)
+            h = (f'{vor}<a class="name-link" href="anleihe.html?isin={esc(o["isin"])}" title="{esc(reg)}" aria-label="Steckbrief {esc(titel)}">'
                  f'{esc(o["kurz"])}</a>')
             sub = esc(" · ".join(x for x in (o["isin"], ART[o["art"]] if isinstance(o.get("art"), int) else "", o.get("ccy") or "") if x))
         elif i == "rendite":
-            h = pct_text(o["rend"]) if isinstance(o.get("rend"), (int, float)) else '<span title="keine Rendite in den Kursdaten">–</span>'
+            h = (pct_text(o["rend"]) + ('<span title="Realrendite (inflationsindexiert)">*</span>' if o.get("real") else "")
+                 if isinstance(o.get("rend"), (int, float)) else f'<span title="{esc(o.get("rendGrund") or "keine Rendite in den Kursdaten")}">–</span>')
         elif i == "kupon":
             h = kupon_text(o.get("kupon"), o.get("zinsart", 0))
         elif i == "restlaufzeit":
@@ -532,6 +541,9 @@ def std_zeile(o, ids, ctx, fett):
             h = volumen_text(o.get("vol"), o.get("ccy") or "")
         elif i == "handelstage":
             h = (f'<span title="Umsatz {esc(volumen_text(o.get("um"), o.get("ccy") or ""))}">{o["ht"]}' + (f' von {ctx["tage"]}' if ctx.get("tage") else "") + "</span>") if isinstance(o.get("ht"), int) else "–"
+        elif i == "seitHoch":
+            h = "–" if not isinstance(o.get("seitHoch"), (int, float)) else zahl(o["seitHoch"], 0) + NBSP + "%"
+            sub = o.get("hochText") or ""
         elif i == "merken":
             h = ""
         cls = " ".join(x for x in ("num" if i in STD_NUM else "", STD_CLS.get(i, ""), "gross" if i in STD_GROSS else "", "sortiert" if fett == i else "") if x)
@@ -730,8 +742,66 @@ def startseite(site, seite="index.html"):
     print(f"{seite}: {n} Beispiele mit Rendite, Kurs und Restlaufzeit vom {datum(stand)}")
 
 
+# ---------- Bundeswertpapiere (seit 04.10.2026, SEO-Runde 2: neue Seite, Entscheidung 02.10.2026) ----------
+BL_SPALTEN = ["anleihe", "rendite", "kupon", "restlaufzeit", "kurs", "volumen", "merken"]
+BL_RE = re.compile(r"(<!--BUNDESLISTE-->).*?(<!--/BUNDESLISTE-->)", re.S)
+
+
+def bundeswertpapiere(site, seite="bundeswertpapiere.html"):
+    """Alle laufenden Bundeswertpapiere: Kurs und Rendite der Deutschen Bundesbank (kurse/bund/), Art und Stammdaten aus dem
+    ESMA-Register (anleihen/). Nur Bundesbank-Daten – Börsenkurse stehen wie bei den Server-Steckbriefen nicht im HTML."""
+    import glob
+    from steckbriefe import art_von, stammdaten
+    pfad = os.path.join(site, seite)
+    if not os.path.isfile(pfad):
+        return
+    html_ = open(pfad, encoding="utf-8").read()
+    if not BL_RE.search(html_):
+        return warn(f"{seite}: Marke <!--BUNDESLISTE--> fehlt – Tabelle nicht geschrieben")
+    kurse = {}
+    for f in sorted(glob.glob(os.path.join(site, "kurse", "bund", "*.json"))):
+        d = lade(site, os.path.relpath(f, site))
+        t, k, r = d.get("t") or [], d.get("k") or [], d.get("r") or []
+        i = max((j for j in range(min(len(t), len(k))) if ist_zahl(k[j])), default=None)
+        if i is not None:
+            kurse[d.get("isin") or os.path.basename(f)[:-5]] = (t[i], k[i], r[i] if i < len(r) and ist_zahl(r[i]) else None)
+    stamm = stammdaten(site, list(kurse))
+    heute = datetime.date.today().isoformat()
+    objs = []
+    for isin, (tag, kurs_, rend) in kurse.items():
+        z = stamm.get(isin)
+        if not z or not z[4] or z[4] < heute:
+            continue
+        art = art_von(z[0])
+        if not art:
+            continue
+        kupon_ = z[3] if ist_zahl(z[3]) else None
+        objs.append({"isin": isin, "kurz": art, "reg": z[0], "art": 0, "ccy": z[2] or "EUR", "kupon": kupon_,
+                     "zinsart": 2 if (len(z) > 9 and z[9] == 2) or kupon_ == 0 else 0, "faellig": z[4], "kurs": kurs_,
+                     "kdatum": tag, "boerse": "B", "rend": rend, "real": art.startswith("Inflationsindexierte"),
+                     "vol": z[5] if ist_zahl(z[5]) else None})
+    if len(objs) < 30:   # Daten unvollständig: lieber die Seite lassen, wie sie ist
+        return warn(f"{seite}: nur {len(objs)} Bundeswertpapiere mit Kurs und Stammdaten – Tabelle nicht geschrieben")
+    objs.sort(key=lambda o: (o["faellig"], o["isin"]))
+    for i, o in enumerate(objs):
+        o["platz"] = i + 1
+    stand = max(o["kdatum"] for o in objs)
+    thead = std_kopf(BL_SPALTEN, sort=("restlaufzeit", 1)).replace("<thead>", '<thead class="std-kopf">', 1)
+    tbody = "".join(std_zeile(o, BL_SPALTEN, {"kstand": stand}, "restlaufzeit") for o in objs)
+    daten = json.dumps(objs, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    block = (f'<table class="kpis atab" id="bl-tabelle" aria-labelledby="h-liste">{thead}<tbody>{tbody}</tbody></table>'
+             f'<script type="application/json" id="bl-daten">{daten}</script>')
+    html_ = BL_RE.sub(lambda m: m.group(1) + block + m.group(2), html_, count=1)
+    html_ = re.sub(r'(<span data-bl="anzahl">)\d+(</span>)', lambda m: m.group(1) + str(len(objs)) + m.group(2), html_)
+    html_ = datenstand_setzen(html_, "Daten-Stand: " + datum(stand) + " (Deutsche Bundesbank)") or html_
+    with open(pfad, "w", encoding="utf-8") as f:
+        f.write(html_)
+    print(f"{seite}: {len(objs)} Bundeswertpapiere fest im HTML, Kurse vom {datum(stand)}")
+
+
 def main():
     site = sys.argv[1] if len(sys.argv) > 1 else "_site"
+    nur = {a.lower() for a in sys.argv[2:]}   # lokal z. B. „bundeswertpapiere“: nur diese Tabelle schreiben
     if not os.path.isdir(site):
         raise SystemExit(f"Ordner nicht gefunden: {site}")
     for name, schritt in (("Broker", lambda: broker(site)), ("ETFs", lambda: etfs(site)),
@@ -740,7 +810,10 @@ def main():
                           ("Staatsanleihen nach Ländern", lambda: laender(site, "anleihen-laender.html", "top10-staatsanleihen-laender.json")),
                           ("Unternehmensanleihen nach Ländern", lambda: laender(site, "unternehmensanleihen-laender.html", "top10-unternehmensanleihen-laender.json")),
                           ("Anleihen nach Kupon", lambda: kupon(site)),
-                          ("Startseite", lambda: startseite(site))):
+                          ("Startseite", lambda: startseite(site)),
+                          ("Bundeswertpapiere", lambda: bundeswertpapiere(site))):
+        if nur and name.lower() not in nur:
+            continue
         try:
             schritt()
         except Exception as e:   # Daten oder Seite anders als erwartet: Seite bleibt, wie sie ist

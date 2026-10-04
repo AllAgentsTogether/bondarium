@@ -867,8 +867,25 @@ jobs:
       #       z. B. der Datenordner des Benutzerbereichs abrufbar war – und niemand erfuhr davon. Dieser Schritt macht den Lauf
       #       am Ende rot (= E-Mail von GitHub), sobald eines davon fehlgeschlagen ist. Läuft bei jedem Deploy, auch nach einem
       #       Push. -----
-      - name: Alarm bei fehlgeschlagener Nach-Deploy-Prüfung
-        if: ${{ !cancelled() && (steps.steckbriefe.outcome == 'failure' || steps.ndp_seite.outcome == 'failure' || steps.ndp_trigger.outcome == 'failure' || steps.ndp_konto.outcome == 'failure' || steps.ndp_statistik.outcome == 'failure') }}
+      # ----- Sicherung aktuell? (seit 04.10.2026): GitHubs eigener Zeitplan startet die nächtliche Sicherung (sicherung.yml)
+      #       oft Stunden zu spät (am 04.10. um 04:03 statt 01:40 UTC) und kann sie ganz auslassen – ein ausgefallener Lauf
+      #       meldet sich nicht. Der 10-Uhr-Lauf, den cron-job.org zuverlässig anstößt, prüft deshalb, wann die letzte Sicherung
+      #       erfolgreich war (öffentliche Liste der Läufe, ohne Token), und schlägt Alarm, wenn das mehr als 50 Stunden her ist.
+      #       Ist die Liste nicht abrufbar, nur ein Hinweis – kein Fehlalarm. -----
+      - name: Sicherung aktuell? (Alarm nach 50 Stunden ohne erfolgreiche Sicherung)
+        id: sicherung_alter
+        if: ${{ !cancelled() && env.VOLL == '1' }}
+        continue-on-error: true
         run: |
-          echo "::error::Nach-Deploy-Prüfung fehlgeschlagen – Seite/Weiterleitung: ${{ steps.ndp_seite.outcome }}, Trigger-Konfiguration: ${{ steps.ndp_trigger.outcome }}, Benutzerbereich: ${{ steps.ndp_konto.outcome }}, Besucherzählung: ${{ steps.ndp_statistik.outcome }}, Server-Steckbriefe: ${{ steps.steckbriefe.outcome }}. Einzelheiten in den Schritten oben."
+          letzte=$(curl -s --max-time 30 "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/sicherung.yml/runs?status=success&per_page=1" \
+            | python3 -c 'import json,sys; r=json.load(sys.stdin).get("workflow_runs") or []; print(r[0]["created_at"] if r else "")' 2>/dev/null || true)
+          if [ -z "$letzte" ]; then echo "::warning::Liste der Sicherungsläufe nicht abrufbar – Alter der Sicherung unbekannt"; exit 0; fi
+          alter=$(( ( $(date +%s) - $(date -d "$letzte" +%s) ) / 3600 ))
+          echo "Letzte erfolgreiche Sicherung: $letzte (vor $alter Stunden)"
+          if [ "$alter" -gt 50 ]; then echo "::error::Seit $alter Stunden keine erfolgreiche Sicherung – Workflow „Sicherung“ prüfen und von Hand starten"; exit 1; fi
+
+      - name: Alarm bei fehlgeschlagener Nach-Deploy-Prüfung
+        if: ${{ !cancelled() && (steps.steckbriefe.outcome == 'failure' || steps.sicherung_alter.outcome == 'failure' || steps.ndp_seite.outcome == 'failure' || steps.ndp_trigger.outcome == 'failure' || steps.ndp_konto.outcome == 'failure' || steps.ndp_statistik.outcome == 'failure') }}
+        run: |
+          echo "::error::Nach-Deploy-Prüfung fehlgeschlagen – Seite/Weiterleitung: ${{ steps.ndp_seite.outcome }}, Trigger-Konfiguration: ${{ steps.ndp_trigger.outcome }}, Benutzerbereich: ${{ steps.ndp_konto.outcome }}, Besucherzählung: ${{ steps.ndp_statistik.outcome }}, Server-Steckbriefe: ${{ steps.steckbriefe.outcome }}, Sicherung aktuell: ${{ steps.sicherung_alter.outcome }}. Einzelheiten in den Schritten oben."
           exit 1

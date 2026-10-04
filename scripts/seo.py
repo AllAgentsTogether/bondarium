@@ -45,11 +45,14 @@ Außerdem:
   * Robots-Angabe: „index, follow“ wird um max-image-preview:large, max-snippet:-1 ergänzt (große Vorschaubilder,
     Textausschnitt ohne Längengrenze).
   * Artikelseiten bekommen <meta property="article:modified_time"> mit dem dateModified.
+  * Sichtbarer Stand (seit 04.10.2026): „Stand: TT.MM.JJJJ“ hinter der Lesezeit (<span class="stand-t">) wird auf das
+    dateModified der Seite gesetzt – so zeigt die Seite nie ein anderes Datum als die strukturierten Daten.
   * sitemap.xml wird aus den Seiten neu geschrieben: jede Seite mit „index“ und eigener kanonischer Adresse steht
     drin, entfernte oder gesperrte Seiten fallen heraus, <lastmod> ist das dateModified der Seite (Regel oben).
     Die Reihenfolge der Datei im Repository bleibt erhalten, neue Seiten kommen ans Ende.
 
-Nichts davon ändert sichtbaren Text. Fehlt einer Seite etwas Erwartetes, gibt es eine Warnung – der Deploy läuft.
+Außer dem Stand-Datum ändert nichts davon sichtbaren Text. Fehlt einer Seite etwas Erwartetes, gibt es eine Warnung –
+der Deploy läuft.
 """
 import calendar
 import datetime
@@ -156,6 +159,11 @@ DATENSTAND = {
     "realzins.html": ("realzins.json",),
     "risikoaufschlaege.html": ("risikoaufschlaege.json",),
     "langlaeufer.html": ("langlaeufer.json",),
+    # seit 04.10.2026 (rueckfallwerte.py): zeigen nur den deutschen Stand – ohne Gegenprobe, sonst meldete der jüngere US-Stand in
+    # zinskurve.json jeden Tag eine „veraltete“ Seite
+    "zinsniveau.html": (),
+    "fortgeschrittene.html": (),
+    "bundeswertpapiere.html": (),                             # seit 04.10.2026 (statische_tabellen.py, Kurse der Bundesbank)
     "staatsanleihen-laufzeit.html": ("top10-staatsanleihen-laufzeit.json", _TOP10),
     "unternehmensanleihen-laufzeit.html": ("top10-unternehmensanleihen-laufzeit.json", _TOP10),
     "anleihen-laender.html": ("top10-staatsanleihen-laender.json", _TOP10),
@@ -664,11 +672,29 @@ def seite(site, fname, glossar_namen=None):
     neu = ROBOTS_RE.sub(ROBOTS_NEU, neu)
     if artikel and datum:
         neu = aenderungsdatum(neu, datum)
+    neu = stand_anzeige(neu, datum, fname)
     with open(pfad, "w", encoding="utf-8") as f:
         f.write(neu)
     if url != eigen or fname in OHNE_SITEMAP:
         return None
     return url, datum
+
+
+STAND_T_RE = re.compile(r'(<span class="stand-t">Stand: )(\d{2}\.\d{2}\.\d{4})(</span>)')
+
+
+def stand_anzeige(html_, datum, fname):
+    """„Stand: TT.MM.JJJJ“ hinter der Lesezeit = dateModified der Seite (seit 04.10.2026, SEO-Runde 2)."""
+    try:
+        soll = datetime.date.fromisoformat(str(datum)[:10]).strftime("%d.%m.%Y")
+    except (TypeError, ValueError):
+        return html_
+
+    def ersetze(m):
+        if m.group(2) != soll:
+            print(f"{fname}: sichtbarer Stand {m.group(2)} → {soll} (dateModified)")
+        return m.group(1) + soll + m.group(3)
+    return STAND_T_RE.sub(ersetze, html_, count=1)
 
 
 def aenderungsdatum(html_, datum):

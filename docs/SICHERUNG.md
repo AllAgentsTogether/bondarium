@@ -41,6 +41,14 @@ drei Versuche im Abstand von 20 s; danach rot = E-Mail von GitHub.
 GitHub garantiert geplante Läufe nicht: Sie kommen oft einige Minuten später, und einen neuen Zeitplan übernimmt GitHub
 mitunter erst nach Stunden (am 03.10.2026: über drei Stunden kein Lauf mit „*/15“, darum neu eingetragen).
 
+**In diesem Repository läuft der Wächter bei GitHub nur sporadisch** – am 04.10.2026 dreimal in 13 Stunden statt rund
+fünfzigmal (02:55, 05:12, 11:04 UTC); schon der Datenlauf kam im September täglich Stunden zu spät (darum stößt ihn
+cron-job.org an, `strato-cron/refresh.php`). Der GitHub-Wächter bleibt als zweite Ebene mit den genaueren Prüfungen.
+**Der verlässliche Wächter ist ein Job bei cron-job.org** (Konto des Betreibers, dort wie der 10-Uhr-Auslöser):
+`https://www.bondarium.de/konto.php?aktion=status` alle 15 Minuten, Benachrichtigung bei Fehlschlag und bei
+Wiederherstellung an. Die Abfrage braucht keinen Schlüssel, prüft Server, PHP und die Konto-Datenbank (Störung = HTTP 503)
+und zählt nicht als Besuch (kein JavaScript).
+
 ## 3. Alarme, die etwas bedeuten
 
 - Frische-Prüfung (`update-data.yml`): Der US-Risikoaufschlag ist seit 30.09.2026 ein Monatswert (Stand „JJJJ-MM“) –
@@ -48,6 +56,10 @@ mitunter erst nach Stunden (am 03.10.2026: über drei Stunden kein Lauf mit „*
 - Nach-Deploy-Prüfungen (Trigger, Benutzerbereich, Besucherzählung) laufen weiter mit `continue-on-error`, damit
   Wochenbrief und Meldungen rausgehen; der Schritt „Alarm bei fehlgeschlagener Nach-Deploy-Prüfung“ am Ende macht den
   Lauf dann rot. Vorher blieb er grün.
+- Sicherung aktuell? (seit 04.10.2026): Die Sicherung hängt am GitHub-Zeitplan (am 04.10. kam der Lauf um 04:03 statt
+  01:40 UTC). Der 10-Uhr-Datenlauf, den cron-job.org zuverlässig anstößt, liest die öffentliche Liste der Sicherungsläufe
+  und macht den Lauf rot, wenn die letzte erfolgreiche Sicherung älter als 50 Stunden ist. Automatisch nachholen könnte er
+  sie nur mit dem zusätzlichen Recht `actions: write` für den Datenlauf – das ist bewusst offen (Entscheidung des Betreibers).
 - Server-Steckbriefe der Bundeswertpapiere (`scripts/steckbriefe.py`, seit 03.10.2026): Scheitert der Schritt, gilt für
   alle 79 still die Vorlage mit `noindex`. Derselbe Alarm schlägt dann an; zusätzlich prüft die Nach-Deploy-Prüfung live,
   ob ein Bundeswertpapier als fertige Seite vom Server kommt.

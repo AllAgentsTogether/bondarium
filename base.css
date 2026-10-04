@@ -60,6 +60,7 @@ h1 { font-family: var(--serif); font-size: 44px; font-weight: 700; line-height: 
 h2 { font-family: var(--serif); font-size: 32px; font-weight: 700; line-height: 1.15; letter-spacing: -0.025em; color: var(--ink); margin-bottom: 10px; }
 h3 { font-size: 20px; font-weight: 600; line-height: 1.25; color: var(--ink); margin-bottom: 6px; }
 .sub { font-size: 19px; color: var(--text); line-height: 1.55; max-width: 660px; margin-bottom: 24px; }
+.sub .stand-t { white-space: nowrap; }   /* „Stand: TT.MM.JJJJ“ hinter der Lesezeit (seit 04.10.2026, scripts/seo.py hält es gleich dem dateModified) */
 /* Text */
 .prose { font-size: 17px; line-height: 1.6; max-width: 720px; }
 .prose p { margin-bottom: 14px; }
