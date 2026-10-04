@@ -174,12 +174,13 @@ footer a { color: var(--blue); }
 html { scroll-padding-top: 100px; }   /* Sprungziele nicht unter der festen Kopfzeile verstecken */
 /* Seit 23.09.2026 steht die Navigation (Suche, Wissen) in derselben Zeile wie die Marke, links, auf einer Mittellinie */
 .topbar .sitenav { margin-bottom: 0; position: relative; top: 1px; flex: 1 1 auto; align-items: center; }   /* 1 px tiefer: Mitte der Großbuchstaben wie bei der Marke; flex: 1 füllt die Zeile, damit Such-Knopf und „Über uns“ (margin-left: auto) rechts stehen */
-/* Logo 06 „Kompakt & modern“ (04.10.2026): Bildzeichen 36 px, Abstand 8 px, Wortmarke 15,83 px hoch (viewBox 804 → Oberlänge 0,42 ×
-   Zeichenhöhe wie im Entwurf), 1 px unter der Mitte. Buchstaben und i-Punkt in currentColor. Keine Webschrift nötig. */
-.brand { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; color: var(--ink); line-height: 1; }
+/* Logo 06 (04.10.2026, Maße aus der Reinzeichnung): Bildzeichen 36 px, Abstand 5,3 px, Wortmarke 19,5 px hoch (viewBox 1303 × 210,
+   Oberkante i-Punkt bis Grundlinie), 1 px über der Mitte. Buchstaben in currentColor; i-Punkt grün, auf dem grünen Kopfband dunkelgrün. */
+.brand { display: inline-flex; align-items: center; gap: 5.3px; text-decoration: none; color: var(--ink); line-height: 1; }
 .brand .brand-z { width: 36px; height: 36px; flex: none; }
-.brand .brand-w { height: 15.83px; width: auto; flex: none; display: block; position: relative; top: 1px; }
-.brand .brand-i { fill: currentColor; }
+.brand .brand-w { height: 19.5px; width: auto; flex: none; display: block; position: relative; top: -1px; }
+.brand .brand-i { fill: var(--green); }
+.topbar .brand .brand-i { fill: var(--green-text); }
 .brand:hover { color: rgba(26,26,25,0.78); }
 .brand--dark { color: #FBFAF7; }
 .brand--dark .brand-i { fill: var(--green); }
@@ -370,9 +371,9 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 @media (max-width: 600px) {
   .topbar { gap: 10px 12px; padding: 14px 0; margin: -26px 0 16px; }
   html { scroll-padding-top: 66px; }
-  .brand { gap: 7px; }
+  .brand { gap: 4.5px; }
   .brand .brand-z { width: 30px; height: 30px; }
-  .brand .brand-w { height: 13.2px; top: 0.8px; }
+  .brand .brand-w { height: 16.3px; top: -0.8px; }
   .topbar .sitenav { letter-spacing: 0.08em; max-height: calc(100vh - 58px); }
   .nav-toggle { margin-top: -7px; margin-bottom: -7px; }   /* Tippfläche 44 px, Kopfzeile bleibt 58 px hoch */
   .topbar .nav-group-btn { letter-spacing: 0.08em; }
