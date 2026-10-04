@@ -215,16 +215,19 @@ function b_summe(array $verlauf, string $bis, int $n, string $feld): ?float {
     return $da ? $s : null;
 }
 
+// Logo 06 (seit 04.10.2026) wie in der Kopfzeile der Website: Bildzeichen nur aus Flächen, Wortmarke mit Kontur 24
+const BERICHT_LOGO_B = 'M21.5 19.5C21.5 15.36 24.86 12 29 12C33.14 12 36.5 15.36 36.5 19.5L36.5 41.45C44.83 33.6 57.37 32.25 67.18 38.17C76.98 44.08 81.64 55.81 78.57 66.84C75.5 77.87 65.45 85.5 54 85.5C37 85.5 21.5 75.5 21.5 58Z';
+const BERICHT_LOGO_INNEN = 'M62 62C62 68.35 56.85 73.5 50.5 73.5C44.15 73.5 39 68.35 39 62C39 55.65 44.15 50.5 50.5 50.5C56.85 50.5 62 55.65 62 62ZM76.5 46.5C76.5 52.58 71.58 57.5 65.5 57.5C59.42 57.5 54.5 52.58 54.5 46.5C54.5 40.42 59.42 35.5 65.5 35.5C71.58 35.5 76.5 40.42 76.5 46.5Z';
 function bericht_logo(Pdf $P, float $x, float $yo, string $wortPfad): void {
     $m = 28 / 100;
-    $P->rechteck($x, $yo, 28, 28, B_INK, 24 * $m);
-    $P->svg('M29 20V78', $x, $yo, $m, '#FBFAF7', ['strich' => 12]);
-    $P->rechteck($x + 33 * $m, $yo + 42 * $m, 38 * $m, 38 * $m, null, 19 * $m, '#FBFAF7', 12 * $m);
-    $P->kreis($x + 65.4 * $m, $yo + 47.6 * $m, 11.5 * $m, B_INK);
-    $P->kreis($x + 65.4 * $m, $yo + 47.6 * $m, 7.5 * $m, B_GRUEN);
-    $s = 19.5 / 780; $wx = $x + 37; $wy = $yo + 14 - 19.5 / 2 - 330 * $s;
+    $P->rechteck($x, $yo, 28, 28, B_INK, 20 * $m);
+    $P->svg(BERICHT_LOGO_B, $x, $yo, $m, '#FBFAF7');
+    $P->svg(BERICHT_LOGO_INNEN, $x, $yo, $m, B_INK);
+    $P->kreis($x + 65.5 * $m, $yo + 46.5 * $m, 8.6 * $m, B_GRUEN);
+    $s = 12.31 / 804; $wx = $x + 28 + 6.2 + 12 * $s; $wy = $yo + 14 + 0.8 - 12.31 / 2 - 318 * $s;
     $P->svg($wortPfad, $wx, $wy, $s, B_INK);
-    $P->kreis($wx + 3705.5 * $s, $wy + 406.5 * $s, 85 * $s, B_DUNKEL);
+    $P->svg($wortPfad, $wx, $wy, $s, B_INK, ['strich' => 24]);
+    $P->kreis($wx + 3705.5 * $s, $wy + 406.5 * $s, 97 * $s, B_INK);
 }
 
 /**
