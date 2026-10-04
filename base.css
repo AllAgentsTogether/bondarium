@@ -788,3 +788,13 @@ footer.fuss { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); g
   .tueren.stufen-kopf .verb { font-size: 15.5px; }
   .tueren.stufen-kopf a[aria-current="page"] { box-shadow: inset 0 -3px 0 var(--green); }
 }
+
+/* ===== Drucken (seit 04.10.2026): Akademie- und Themenseiten ohne Kopf, Menü, Sprungleisten und Fußzeile; Karten nicht teilen.
+   Seiten mit eigenen Druckregeln (erste-anleihe.html) ergänzen diese. Zugeklappte Erklärungen öffnet das Seitenskript, wo es eines gibt. ===== */
+@media print {
+  .skip-link, .topbar, .lands, .weiter, .crossnav, .mb-seite, .sb-go, footer.fuss { display: none !important; }
+  body, .wrap { background: #fff !important; }
+  .kap { box-shadow: none !important; background: #fff !important; border: 1px solid #ccc; break-inside: avoid; }
+  .merk { break-inside: avoid; }
+  a { color: inherit; }
+}

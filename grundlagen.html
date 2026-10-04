@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Anleihen einfach erklärt in sechs Schritten – Bondarium</title>
-<meta name="description" content="Anleihen einfach erklärt: was eine Anleihe ist, wie Kurs und Rendite zusammenhängen, warum der Kurs schwankt, wie sicher sie ist.">
+<meta name="description" content="Anleihen einfach erklärt an einem Beispiel: Kupon und Rendite, warum der Kurs fällt, wenn das Zinsniveau steigt, Ausfallrisiko und der Vergleich mit Festgeld.">
 <link rel="canonical" href="https://www.bondarium.de/grundlagen.html">
 <meta name="robots" content="index, follow">
 <meta name="author" content="Bondarium">
@@ -13,14 +13,14 @@
 <meta property="og:locale" content="de_DE">
 <meta property="og:url" content="https://www.bondarium.de/grundlagen.html">
 <meta property="og:title" content="Anleihen einfach erklärt in sechs Schritten – Bondarium">
-<meta property="og:description" content="Anleihen einfach erklärt: was eine Anleihe ist, wie Kurs und Rendite zusammenhängen, warum der Kurs schwankt, wie sicher sie ist.">
+<meta property="og:description" content="Anleihen einfach erklärt an einem Beispiel: Kupon und Rendite, warum der Kurs fällt, wenn das Zinsniveau steigt, Ausfallrisiko und der Vergleich mit Festgeld.">
 <meta property="og:image" content="https://www.bondarium.de/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Bondarium: Finde Anleihen, die zu deinem Leben passen">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Anleihen einfach erklärt in sechs Schritten – Bondarium">
-<meta name="twitter:description" content="Anleihen einfach erklärt: was eine Anleihe ist, wie Kurs und Rendite zusammenhängen, warum der Kurs schwankt, wie sicher sie ist.">
+<meta name="twitter:description" content="Anleihen einfach erklärt an einem Beispiel: Kupon und Rendite, warum der Kurs fällt, wenn das Zinsniveau steigt, Ausfallrisiko und der Vergleich mit Festgeld.">
 <meta name="twitter:image" content="https://www.bondarium.de/og-image.png">
 <link rel="icon" href="favicon.svg?v=4" type="image/svg+xml">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=4">
@@ -31,101 +31,110 @@
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  /* Grundlagen – neu 24.09.2026: „Anleihen einfach erklärt“. Sechs Erklärkarten im Look der Anlegerprofile: links Text und Merksatz,
-     rechts ein Schaubild. Große, ruhige Schrift; Schaubilder mit Text als HTML (bleibt am Handy lesbar),
-     Zeichnungen als SVG. Am Handy stehen Text und Schaubild untereinander. */
-  /* Sprungmenü */
-
-  /* Erklärkarte: Text links, Schaubild rechts */
-  /* Merksatz */
-  /* Schaubild-Kasten */
-
-  /* 2 – Steckbrief */
-  .pass { background: var(--ap-soft); border-radius: 12px; padding: 14px 18px 12px; }
-  .pass-k { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); margin-bottom: 6px; display: flex; justify-content: space-between; }
-  .pass-k span { color: var(--ap-text); letter-spacing: 0.04em; font-weight: 600; }
-  .pass dl div { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 12px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--green-line); }
-  .pass dt { font-size: 14px; line-height: 1.35; color: var(--ap-text); }
-  .pass dt a { display: block; font-size: 15px; font-weight: 600; text-decoration: none; margin-top: 1px; }
-  .pass dt a:hover { text-decoration: underline; }
-  @media (pointer: coarse) { .pass dt a { display: flex; align-items: center; min-height: 44px; margin: -10px 0 -12px; } .pass-f a { display: inline-block; padding: 12px 0; margin: -12px 0; } }   /* Glossar-Links am Touch-Gerät ≥ 44 px, ohne das Schaubild zu verschieben (30.09.2026) */
-  .pass dd { font-size: 19px; font-weight: 600; text-align: right; color: var(--ap-ink); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
-  .pass-f { font-size: 14px; line-height: 1.5; color: var(--ap-text); margin-top: 10px; }
-
-  /* 3 – Kurs und Rendite */
-  .kurse { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-  .kt { display: flex; flex-direction: column; align-items: center; text-align: center; background: var(--ap-soft); border-radius: 12px; padding: 12px 8px 12px; }
-  .kt:nth-child(2) { background: var(--green); color: var(--ink); }
-  .kt-k { font-size: 14px; font-weight: 600; }
-  .kt-z { font-size: 12.5px; color: var(--ap-text); margin-top: 2px; }
-  .kt:nth-child(2) .kt-z, .kt:nth-child(2) .kt-l { color: rgba(26,26,25,0.78); }
-  .kt-r { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; margin-top: 10px; color: var(--green-text); font-variant-numeric: tabular-nums; }
-  .kt:nth-child(2) .kt-r { color: var(--ink); }
-  .kt-l { font-size: 12px; color: var(--ap-text); margin-top: 2px; }
-
-  /* 4 – Wippe und Laufzeit-Hebel */
-  /* Karte 4: die Regel als zwei Zeilen (Zinsen blau, Kurs orange), Pfeile als Dreiecke */
-  .regel { display: grid; grid-template-columns: auto 26px auto; justify-content: center; align-items: center; gap: 10px 6px; margin: 6px 0 18px; font-size: 16px; font-weight: 600; line-height: 1.3; }
-  .regel .rz { color: var(--blue); text-align: right; }
-  .regel .rk { color: var(--orange-text); }
-  .regel .rp { color: var(--text); text-align: center; font-weight: 400; }
-  .regel i { display: inline-block; width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; vertical-align: middle; margin: 0 0 3px 5px; }
-  .regel i.up { border-bottom: 11px solid currentColor; }
-  .regel i.dn { border-top: 11px solid currentColor; }
-  .hebel .hb { display: grid; grid-template-columns: 72px minmax(0, 1fr); align-items: center; gap: 10px; }
-  .hebel .hb + .hb { margin-top: 8px; }
-  .hb-l { font-size: 14px; font-weight: 600; color: var(--ap-ink); }
-  .hb-bar { display: block; height: 30px; width: var(--w); min-width: 62px; background: var(--down); border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; }
-  .hb-bar b { color: #fff; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
-
-  /* 5 – Rating */
-  .skala { display: grid; grid-template-columns: repeat(8, 1fr); gap: 3px; }
-  .skala span { display: block; text-align: center; font-size: 14px; font-weight: 600; color: #fff; padding: 11px 0; border-radius: 6px; }
-  .skala .s1 { background: #1A1A19; } .skala .s2 { background: #157C00; } .skala .s3 { background: #A2561C; } .skala .s4 { background: #A2561C; }
-  .marker { position: relative; height: 30px; }
-  .marker span { position: absolute; left: var(--p); transform: translateX(calc(-1 * var(--a, 50%))); font-size: 12.5px; font-weight: 600; color: var(--ap-ink); white-space: nowrap; padding-top: 10px; }
-  .marker span::before { content: ''; position: absolute; left: var(--a, 50%); top: 0; width: 0; height: 0; border: 5px solid transparent; border-bottom-color: var(--ap-ink); transform: translate(-50%, -2px); }
-  .zonen { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; font-size: 13px; color: var(--ap-text); }
-  .zonen span { border-top: 2px solid rgba(44,44,42,0.25); padding-top: 6px; text-align: center; }
-  .treppe .tb { display: grid; grid-template-columns: 118px minmax(0, 1fr); align-items: center; gap: 10px; }
-  .treppe .tb + .tb { margin-top: 8px; }
-  .rt-ax { margin-top: 6px; text-align: right; }
-  .tb-l { font-size: 14px; font-weight: 600; color: var(--ap-ink); line-height: 1.2; }
-  .tb-l small { display: block; font-size: 12px; font-weight: 600; color: var(--ap-text); }
-  .tb-bar { display: flex; align-items: center; padding-left: 10px; height: 30px; width: var(--w); min-width: 66px; white-space: nowrap; border-radius: 6px; color: #fff; font-size: 14px; font-weight: 600; }
-  .tb-bar.s1 { background: #1A1A19; } .tb-bar.s2 { background: #A2561C; } .tb-bar.s3 { background: #A2561C; }
-
-  /* 6 – Vergleich */
-  .vgl { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 1.4; }
-  .vgl th, .vgl td { text-align: left; vertical-align: top; padding: 9px 8px; border-bottom: 1px solid rgba(44,44,42,0.10); }
-  .vgl thead th { font-size: 14.5px; font-weight: 600; color: var(--ap-ink); border-bottom: 2px solid rgba(44,44,42,0.16); }
-  .vgl thead th:nth-child(2) { color: var(--green-text); }
-  .vgl tbody th { font-weight: 600; color: var(--ap-text); font-size: 13px; width: 24%; }
-  .vgl td:nth-child(2) { font-weight: 600; color: var(--ap-ink); background: var(--ap-soft); }
-  .vgl tbody tr:last-child th, .vgl tbody tr:last-child td { border-bottom: 0; }
-
-  /* Knöpfe, Fuß */
-
-  @media (max-width: 600px) {
-    .kurse { gap: 6px; } .kt-r { font-size: 24px; } .kt-k { font-size: 13px; } .kt-z { font-size: 12px; }
-    .skala span { font-size: 12px; padding: 9px 0; }
-    .zonen { font-size: 12px; } .treppe .tb { grid-template-columns: 96px minmax(0, 1fr); } .tb-l { font-size: 13px; }
-    /* Vergleichstabelle am Handy: je Zeile ein Block, die Spaltennamen stehen vor den Werten */
-    .vgl, .vgl tbody, .vgl tr, .vgl th, .vgl td { display: block; width: auto; }
-    .vgl thead { display: none; }
-    .vgl tr { padding: 10px 0; border-bottom: 1px solid rgba(44,44,42,0.10); }
-    .vgl tr:last-child { border-bottom: 0; }
-    .vgl th, .vgl td { border: 0; padding: 2px 0; }
-    .vgl tbody th { width: auto; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
-    .vgl td { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 8px; font-size: 14px; }
-    .vgl td::before { content: attr(data-l); font-weight: 600; color: var(--ap-text); }
-    .vgl td:nth-child(2) { background: none; } .vgl td:nth-child(2)::before { color: var(--green-text); }
+  /* Grundlagen – neu 24.09.2026, neu gefasst 04.10.2026: „Anleihen einfach erklärt“. Sprungleiste, Karten (.kap), Merksatz und
+     Schaubild-Kasten kommen aus base.css/bildwelt2.css; hier nur, was diese Seite braucht. */
+  /* ===== Neufassung 04.10.2026 (Konzept 03.10.2026, tmp/grundlagen-konzept): je Schritt eine Frage, ein Schaubild, zwei, drei Sätze,
+     „Kurz gesagt“, Einzelheiten zugeklappt. Am Desktop das Schaubild links, am Handy über dem Text. Schaubilder als SVG ohne
+     eigene Schrift (erben Manrope), Schritt 2 als HTML (Begriffe mit i-Kreis zum Glossar). ===== */
+  .kap { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); grid-template-areas: "kopf kopf" "bild text" "bild merk" "bild mehr"; grid-template-rows: auto auto auto 1fr; gap: 16px 36px; align-items: start; }
+  .k-kopf { grid-area: kopf; display: flex; align-items: center; gap: 14px; }
+  .k-kopf .knr { margin: 0; flex: none; }
+  .kap .k-kopf h2 { margin: 0; }
+  .kap > figure.k-bild { grid-area: bild; margin: 0; }
+  .kap > .k-text { grid-area: text; }
+  .kap > .merk { grid-area: merk; margin-top: 0; }
+  .kap > details.mehr-k { grid-area: mehr; }
+  figure.k-bild figcaption { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #157C00; margin-bottom: 12px; }
+  svg.sb { display: block; width: 100%; max-width: 440px; height: auto; overflow: visible; }
+  svg.sb text { font-variant-numeric: tabular-nums; }
+  svg.sb.klein { max-width: 380px; margin: 4px 0 12px; }
+  .sb-f { max-width: 440px; }
+  .sb-bsp { font-size: 14px; line-height: 1.4; color: var(--text); margin: 0 0 8px; max-width: 440px; }
+  .nw { white-space: nowrap; }
+  /* i-Kreis zum Glossar (wie anleihe.html) */
+  a.hilf { display: inline-grid; place-items: center; position: relative; width: 18px; height: 18px; margin-left: 5px; border-radius: 50%; border: 1px solid rgba(26,26,25,0.3); font-size: 11px; font-weight: 700; line-height: 1; color: var(--text); text-decoration: none; vertical-align: 1px; }
+  a.hilf:hover { border-color: var(--ink); color: var(--ink); }
+  a.hilf:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  a.hilf::after { content: ""; position: absolute; inset: -4px; }
+  @media (pointer: coarse) { a.hilf::after { inset: -13px; } }
+  /* Mehr dazu */
+  details.mehr-k > summary { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; list-style: none; font-size: 15px; font-weight: 600; color: #157C00; }
+  details.mehr-k > summary::-webkit-details-marker { display: none; }
+  details.mehr-k > summary::before { content: ''; width: 7px; height: 7px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-45deg); transition: transform .15s; }
+  details.mehr-k[open] > summary::before { transform: rotate(45deg); }
+  details.mehr-k ul { margin: 2px 0 0; padding-left: 18px; font-size: 15px; line-height: 1.55; color: var(--ink); }
+  details.mehr-k li + li { margin-top: 8px; }
+  @media (prefers-reduced-motion: reduce) { details.mehr-k > summary::before { transition: none; } }
+  /* 2 – Steckbrief: „steht fest“ und „ändert sich“ */
+  .sb2 { max-width: 440px; font-variant-numeric: tabular-nums; }
+  .sb2-g { border: 1.5px solid #8A8984; border-radius: 12px; padding: 2px 14px; background: #fff; }
+  .sb2-g + .sb2-g { margin-top: 12px; }
+  .sb2-g.bewegt { border-style: dashed; background: transparent; }
+  .sb2-k { font-size: 13px; font-weight: 600; color: var(--text); padding: 10px 0 2px; }
+  .sb2 dl { margin: 0; }
+  .sb2 dl > div { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; border-top: 1px solid #E4E3DF; }
+  .sb2 dl > div:first-child { border-top: 0; }
+  .sb2 dt { font-size: 14px; font-weight: 600; color: var(--ink); display: flex; align-items: center; }
+  .sb2 dd { margin: 0; font-size: 16px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 10px; text-align: right; }
+  .sb2 dd.zwei { flex-direction: column; align-items: flex-end; gap: 0; padding: 6px 0; }
+  .sb2 dd small { font-size: 13px; font-weight: 400; color: var(--text); }
+  .sb2 dd.gr { color: #157C00; font-weight: 700; }
+  .sb2 .spark { width: 64px; height: 22px; flex: none; }
+  /* 3 – Kaufkurs ausprobieren (nur mit Skript sichtbar) */
+  .kaufkurs { margin: 14px 0 6px; padding: 14px 16px; border-radius: 12px; background: var(--bg, #FBFAF7); border: 1px solid #E4E3DF; max-width: 440px; }
+  .kk-t { font-size: 15px; font-weight: 600; margin: 0 0 6px; }
+  .kk-l { display: block; font-size: 14px; color: var(--text); }
+  .kk-l b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  .kaufkurs input[type=range] { width: 100%; margin: 10px 0 12px; accent-color: #157C00; min-height: 28px; }
+  .kk-bar { position: relative; height: 22px; border-radius: 4px; background: #F3F2EE; }
+  .kk-bar i { position: absolute; top: 0; height: 100%; }
+  .kk-z { left: 0; width: 60%; background: #DCFBD3; box-shadow: inset 0 0 0 1.5px #157C00; border-radius: 4px 0 0 4px; }
+  .kk-plus { background: #157C00; }
+  .kk-minus { background: repeating-linear-gradient(45deg, #CF7430 0 2px, #FBE8D8 2px 6px); box-shadow: inset 0 0 0 1.5px #A2561C; }
+  .kk-out { font-size: 14px; margin: 10px 0 0; font-variant-numeric: tabular-nums; }
+  .kk-out b { color: #157C00; }
+  /* 6 – Vergleich (aufgeklappt) */
+  .vgl3 { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 1.4; margin: 6px 0 10px; }
+  .vgl3 th, .vgl3 td { text-align: left; vertical-align: top; padding: 8px 6px; border-bottom: 1px solid rgba(44,44,42,0.10); }
+  .vgl3 thead th { font-weight: 600; border-bottom: 2px solid rgba(44,44,42,0.16); }
+  .vgl3 thead th:nth-child(3) { color: #157C00; }
+  .vgl3 tbody th { font-weight: 600; color: var(--text); font-size: 13px; width: 22%; }
+  .vgl3 td:nth-child(3) { background: #DCFBD3; font-weight: 600; }
+  .vgl3-f { font-size: 14px; color: var(--text); margin: 0 0 8px; }
+  /* Selbsttest */
+  .stimmt { margin-top: 34px; }
+  .stimmt h2 { margin-bottom: 10px; }
+  .stimmt details { border-top: 1px solid rgba(26,26,25,0.12); }
+  .stimmt details:last-of-type { border-bottom: 1px solid rgba(26,26,25,0.12); }
+  .stimmt summary { min-height: 44px; display: flex; align-items: center; gap: 10px; cursor: pointer; list-style: none; font-size: 16px; font-weight: 600; padding: 8px 0; }
+  .stimmt summary::-webkit-details-marker { display: none; }
+  .stimmt summary::before { content: ''; flex: none; width: 7px; height: 7px; border-right: 1.5px solid #157C00; border-bottom: 1.5px solid #157C00; transform: rotate(-45deg); }
+  .stimmt details[open] summary::before { transform: rotate(45deg); }
+  .stimmt details p { margin: 0 0 12px; font-size: 15px; line-height: 1.5; }
+  .klein-wege { margin-top: 12px; }
+  @media (max-width: 860px) {
+    .kap { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kopf" "bild" "text" "merk" "mehr"; grid-template-rows: none; }
   }
-  /* Schaubild 1: eigene Handy-Fassung (schmalere viewBox, Schrift effektiv ≥ 11 px) */
-  .sb-m { display: none; }
-  @media (max-width: 600px) { .sb-d { display: none; } .sb-m { display: block; } }
+  @media (max-width: 600px) {
+    .kap > figure.k-bild { border: 0; padding: 0; background: none; }
+    .k-kopf { gap: 10px; } .k-kopf .knr { width: 32px; height: 32px; font-size: 16px; }
+    .lands { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .lands .lbtn { position: relative; justify-content: flex-start; padding: 0 10px; min-height: 40px; font-size: 13.5px; gap: 6px; white-space: nowrap; }
+    .vgl3, .vgl3 tbody, .vgl3 tr, .vgl3 th, .vgl3 td { display: block; width: auto; }
+    .vgl3 thead { display: none; }
+    .vgl3 tr { padding: 8px 0; border-bottom: 1px solid rgba(44,44,42,0.10); }
+    .vgl3 th, .vgl3 td { border: 0; padding: 2px 0; }
+    .vgl3 tbody th { width: auto; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+    .vgl3 td { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 8px; }
+    .vgl3 td::before { content: attr(data-l); font-weight: 600; color: var(--text); }
+    .vgl3 td:nth-child(3) { background: none; } .vgl3 td:nth-child(3)::before { color: #157C00; }
+  }
+  @media print {
+    .kaufkurs { display: none !important; }
+    .kap > figure.k-bild { break-inside: avoid; }
+  }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Anleihen einfach erklärt – die Grundlagen in sechs Schritten","description":"Anleihen einfach erklärt: was eine Anleihe ist, wie Kurs und Rendite zusammenhängen, warum der Kurs schwankt, wie sicher sie ist.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-02","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/grundlagen.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Anleihen einfach erklärt – die Grundlagen in sechs Schritten","description":"Anleihen einfach erklärt an einem Beispiel: Kupon und Rendite, warum der Kurs fällt, wenn das Zinsniveau steigt, Ausfallrisiko und der Vergleich mit Festgeld.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-04","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/grundlagen.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Akademie","item":"https://www.bondarium.de/wissen.html"},{"@type":"ListItem","position":3,"name":"Anleihen einfach erklärt","item":"https://www.bondarium.de/grundlagen.html"}]}</script>
 </head>
 <body>
@@ -225,133 +234,341 @@
     <div class="b2-kopf">
       <div>
         <h1>Anleihen einfach erklärt</h1>
-        <p class="sub">Sechs kurze Schritte, jeder mit Schaubild. Lesezeit: etwa 5 Minuten.</p>
+        <p class="sub">Eine Anleihe ist ein Kredit an einen Staat oder ein Unternehmen. Sechs Schaubilder an einem Beispiel zeigen, wie sie funktioniert – und warum ihr Kurs fällt, wenn das Zinsniveau steigt. Lesezeit: etwa 4&nbsp;Minuten.</p>
       </div>
-      <div class="b2-spot"><img src="spot-grundlagen.svg" alt="" width="232" height="160"></div>
+      <div class="b2-spot"><img src="spot-grundlagen.svg?v=2" alt="" width="232" height="160"></div>
     </div>
     <nav class="lands" aria-label="Zum Schritt springen">
-      <a class="lbtn" href="#was"><span class="n">1</span>Was ist eine Anleihe?</a>
-      <a class="lbtn" href="#steckbrief"><span class="n">2</span>Fünf Angaben</a>
-      <a class="lbtn" href="#kurs"><span class="n">3</span>Kurs und Rendite</a>
-      <a class="lbtn" href="#schwankung"><span class="n">4</span>Schwankung</a>
-      <a class="lbtn" href="#sicherheit"><span class="n">5</span>Sicherheit</a>
-      <a class="lbtn" href="#vergleich"><span class="n">6</span>Vergleich</a>
+      <a class="lbtn" href="#was"><span class="n" aria-hidden="true">1</span><span class="sr-only">Schritt 1: </span>Anleihe</a>
+      <a class="lbtn" href="#steckbrief"><span class="n" aria-hidden="true">2</span><span class="sr-only">Schritt 2: </span>Steckbrief</a>
+      <a class="lbtn" href="#kurs"><span class="n" aria-hidden="true">3</span><span class="sr-only">Schritt 3: </span>Rendite</a>
+      <a class="lbtn" href="#schwankung"><span class="n" aria-hidden="true">4</span><span class="sr-only">Schritt 4: </span>Kurs</a>
+      <a class="lbtn" href="#sicherheit"><span class="n" aria-hidden="true">5</span><span class="sr-only">Schritt 5: </span>Bonität</a>
+      <a class="lbtn" href="#vergleich"><span class="n" aria-hidden="true">6</span><span class="sr-only">Schritt 6: </span>Vergleich</a>
     </nav>
 
     <section class="kap" id="was" aria-labelledby="h-was">
-      <div class="k-text">
-        <span class="knr" aria-hidden="true">1</span>
-        <h2 id="h-was">Was ist eine Anleihe?</h2>
-        <p>Eine Anleihe ist ein Kredit. <strong>Nur leihst du das Geld – nicht die Bank.</strong> Du gibst es einem Staat oder einem Unternehmen. Dafür bekommst du jedes Jahr Zinsen. Am Ende bekommst du dein Geld zurück.</p><p>Staaten wie Deutschland oder die USA geben Anleihen aus. Unternehmen wie Volkswagen oder Coca-Cola auch.</p>
-      </div>
-      <div class="k-bild"><svg class="sb sb-d" viewBox="0 0 480 258" role="img" aria-labelledby="sb1t"><title id="sb1t">Du gibst heute 1.000 Euro. Jedes Jahr kommen 30 Euro Zinsen zurück. Nach fünf Jahren kommen die 1.000 Euro zurück.</title>
-<defs><marker id="pfb" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#157C00"/></marker>
-<marker id="pfg" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1A1A19"/></marker></defs>
-<circle cx="62" cy="150" r="46" fill="#DCFBD3" stroke="#157C00" stroke-width="2.5"/>
-<circle cx="62" cy="134" r="13" fill="#157C00"/><path d="M36 184 a26 26 0 0 1 52 0z" fill="#157C00"/>
-<text x="62" y="224" text-anchor="middle" font-size="18" font-weight="600" fill="#1A1A19">Du</text>
-<rect x="374" y="106" width="94" height="88" rx="12" fill="#DCFBD3" stroke="#157C00" stroke-width="2.5"/>
-<path d="M390 176 v-32 h16 v-14 h16 v14 h16 v-24 h16 v56z" fill="#157C00"/>
-<text x="421" y="224" text-anchor="middle" font-size="16" font-weight="600" fill="#1A1A19">Staat oder</text><text x="421" y="244" text-anchor="middle" font-size="16" font-weight="600" fill="#1A1A19">Unternehmen</text>
-<path d="M118 88 H362" stroke="#157C00" stroke-width="4" stroke-linecap="round" marker-end="url(#pfb)"/><text x="240" y="62" text-anchor="middle" font-size="18" font-weight="600" fill="#157C00">1.000&nbsp;€</text><text x="240" y="80" text-anchor="middle" font-size="14" fill="#55544F">Du gibst das Geld – heute</text>
-<path d="M362 158 H118" stroke="#1A1A19" stroke-width="4" stroke-linecap="round" marker-end="url(#pfg)"/><text x="240" y="132" text-anchor="middle" font-size="18" font-weight="600" fill="#1A1A19">30&nbsp;€ Zinsen</text><text x="240" y="150" text-anchor="middle" font-size="14" fill="#55544F">jedes Jahr</text>
-<path d="M362 228 H118" stroke="#1A1A19" stroke-width="4" stroke-linecap="round" marker-end="url(#pfg)"/><text x="240" y="202" text-anchor="middle" font-size="18" font-weight="600" fill="#1A1A19">1.000&nbsp;€ zurück</text><text x="240" y="220" text-anchor="middle" font-size="14" fill="#55544F">nach 5 Jahren</text>
-</svg><svg class="sb sb-m" viewBox="0 0 330 222" role="img" aria-labelledby="sb1tm"><title id="sb1tm">Du gibst heute 1.000 Euro. Jedes Jahr kommen 30 Euro Zinsen zurück. Nach fünf Jahren kommen die 1.000 Euro zurück.</title>
-<defs><marker id="pfbm" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#157C00"/></marker>
-<marker id="pfgm" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1A1A19"/></marker></defs>
-<circle cx="34" cy="138" r="30" fill="#DCFBD3" stroke="#157C00" stroke-width="2.5"/>
-<circle cx="34" cy="128" r="9" fill="#157C00"/><path d="M17 160 a17 17 0 0 1 34 0z" fill="#157C00"/>
-<text x="34" y="190" text-anchor="middle" font-size="15" font-weight="600" fill="#1A1A19">Du</text>
-<rect x="266" y="109" width="58" height="58" rx="10" fill="#DCFBD3" stroke="#157C00" stroke-width="2.5"/>
-<path d="M275 157 v-20 h10 v-9 h10 v9 h10 v-15 h10 v35z" fill="#157C00"/>
-<text x="328" y="187" text-anchor="end" font-size="13" font-weight="600" fill="#1A1A19">Staat oder</text><text x="328" y="203" text-anchor="end" font-size="13" font-weight="600" fill="#1A1A19">Unternehmen</text>
-<path d="M70 72 H256" stroke="#157C00" stroke-width="4" stroke-linecap="round" marker-end="url(#pfbm)"/><text x="163" y="44" text-anchor="middle" font-size="15" font-weight="600" fill="#157C00">1.000&nbsp;€</text><text x="163" y="62" text-anchor="middle" font-size="14" fill="#55544F">Du gibst das Geld – heute</text>
-<path d="M256 136 H70" stroke="#1A1A19" stroke-width="4" stroke-linecap="round" marker-end="url(#pfgm)"/><text x="163" y="108" text-anchor="middle" font-size="15" font-weight="600" fill="#1A1A19">30&nbsp;€ Zinsen</text><text x="163" y="126" text-anchor="middle" font-size="14" fill="#55544F">jedes Jahr</text>
-<path d="M256 212 H70" stroke="#1A1A19" stroke-width="4" stroke-linecap="round" marker-end="url(#pfgm)"/><text x="163" y="184" text-anchor="middle" font-size="15" font-weight="600" fill="#1A1A19">1.000&nbsp;€ zurück</text><text x="163" y="202" text-anchor="middle" font-size="14" fill="#55544F">nach 5 Jahren</text>
-</svg></div>
-      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Du bist der Kreditgeber. Der Staat oder das Unternehmen ist dein Schuldner.</span></p>
+      <div class="k-kopf"><span class="knr" aria-hidden="true">1</span><h2 id="h-was">Was ist eine Anleihe?</h2></div>
+      <figure class="k-bild"><figcaption>Dein Geld in fünf Jahren</figcaption>
+        <svg class="sb" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" role="img" aria-labelledby="s1-t s1-d">
+
+<title id="s1-t">Einmal gibst du 1.000 €, fünfmal kommen 30 € Zinsen, bei Fälligkeit kommen die 1.000 € zurück – zusammen 1.150 €, wenn der Schuldner zahlen kann.</title>
+<desc id="s1-d">Zahlungsstrahl über fünf Jahre. Heute: du leihst 1.000 €. In Jahr 1, 2, 3, 4 und 5 kommen je 30 € Zinsen, das sind 3 % pro Jahr. In Jahr 5, bei Fälligkeit, kommen die 1.000 € zurück. Zusammen: 5 × 30 € + 1.000 € = 1.150 €, wenn der Schuldner zahlen kann.</desc>
+<circle cx="8" cy="8" r="6" fill="#39FF14" stroke="#1A1A19" stroke-width="2"/>
+<text x="22" y="13" font-size="14" font-weight="600" fill="#1A1A19">Zinsen: 30 € pro Jahr (3 %)</text>
+<rect x="273" y="30" width="26" height="68" fill="#157C00"/>
+<text x="265" y="41.52" font-size="16" font-weight="700" fill="#157C00" text-anchor="end">1.000 €</text>
+<text x="265" y="59.52" font-size="14" fill="#157C00" text-anchor="end">zurück</text>
+<rect x="1" y="111" width="26" height="68" fill="#1A1A19"/>
+<text x="35" y="160" font-size="16" font-weight="700" fill="#1A1A19">1.000 €</text>
+<text x="35" y="179" font-size="14" fill="#55544F">du leihst</text>
+<text x="1" y="102" font-size="14" font-weight="700" fill="#1A1A19">Heute</text>
+<line x1="1" y1="111" x2="286" y2="111" stroke="#1A1A19" stroke-width="2"/>
+<circle cx="68.4" cy="111" r="6" fill="#39FF14" stroke="#1A1A19" stroke-width="2"/>
+<text x="68.4" y="135" font-size="13" fill="#55544F" text-anchor="middle">1</text>
+<circle cx="122.8" cy="111" r="6" fill="#39FF14" stroke="#1A1A19" stroke-width="2"/>
+<text x="122.8" y="135" font-size="13" fill="#55544F" text-anchor="middle">2</text>
+<circle cx="177.2" cy="111" r="6" fill="#39FF14" stroke="#1A1A19" stroke-width="2"/>
+<text x="177.2" y="135" font-size="13" fill="#55544F" text-anchor="middle">3</text>
+<circle cx="231.6" cy="111" r="6" fill="#39FF14" stroke="#1A1A19" stroke-width="2"/>
+<text x="231.6" y="135" font-size="13" fill="#55544F" text-anchor="middle">4</text>
+<circle cx="286" cy="111" r="6" fill="#39FF14" stroke="#1A1A19" stroke-width="2"/>
+<text x="286" y="135" font-size="13" fill="#55544F" text-anchor="middle">5</text>
+<text x="286" y="154" font-size="14" font-weight="700" fill="#1A1A19" text-anchor="middle">Fälligkeit</text>
+<line x1="1" y1="195" x2="319" y2="195" stroke="#E4E3DF" stroke-width="1"/>
+<text x="1" y="217" font-size="14" fill="#1A1A19">Zusammen: 5 × 30 € + 1.000 € = <tspan font-size="22" font-weight="700" fill="#157C00">1.150 €</tspan></text>
+<text x="1" y="236" font-size="13" fill="#55544F">wenn der Schuldner zahlen kann</text>
+</svg>
+      </figure>
+      <div class="k-text"><p>Eine Anleihe ist ein Kredit – <strong>nur bist diesmal du die Bank,</strong> und dein Schuldner ist ein Staat oder ein Unternehmen. Er zahlt dir Zinsen und bei Fälligkeit das Geld zurück – solange er zahlen kann. Anders als Festgeld kannst du eine Anleihe vorher an der Börse verkaufen.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"></span><span><strong>Kurz gesagt:</strong> Du leihst Geld gegen Zinsen – zurück kommt es nur, wenn der Schuldner zahlen kann.</span></p>
+      <details class="mehr-k"><summary>Mehr dazu</summary>
+        <ul>
+          <li>Zinsen kommen am Zinstermin: meist einmal pro Jahr, bei manchen Anleihen halbjährlich.</li>
+          <li>Kaufen kannst du Anleihen über ein Depot bei deiner Bank, Sparkasse oder einem Online-Broker – ab der Stückelung, dem Mindestbetrag.</li>
+        </ul>
+        <a class="go leise sb-go" href="anleihe-arten.html#schuldner">Welche Anleihe-Arten gibt es? →</a>
+      </details>
     </section>
+
     <section class="kap kap-b" id="steckbrief" aria-labelledby="h-steckbrief">
-      <div class="k-text">
-        <span class="knr" aria-hidden="true">2</span>
-        <h2 id="h-steckbrief">Fünf Angaben, die jede Anleihe hat</h2>
-        <p>Fünf Angaben sagen dir alles Wichtige: <strong>Wer</strong> sich das Geld leiht, <strong>wie viel</strong> zurückgezahlt wird, <strong>wie viel Zins</strong> es gibt, <strong>wann</strong> das Geld zurückkommt und <strong>was</strong> die Anleihe gerade kostet.</p><p>Der Zins heißt Kupon. Er ist meist fest. Der Betrag, der am Ende zurückkommt, heißt Nennwert.</p>
-      </div>
-      <div class="k-bild"><div class="pass"><p class="pass-k">Steckbrief einer Anleihe <span>Beispiel</span></p><dl><div><dt>Wer leiht sich das Geld?<a href="begriffe.html#emittent">Emittent</a></dt><dd>ein Staat mit Bestnote AAA</dd></div><div><dt>Wie viel wird zurückgezahlt?<a href="begriffe.html#nennwert">Nennwert</a></dt><dd>1.000&nbsp;€</dd></div><div><dt>Wie viel Zins gibt es?<a href="begriffe.html#kupon">Kupon</a></dt><dd>3&nbsp;% im Jahr</dd></div><div><dt>Wann gibt es das Geld zurück?<a href="begriffe.html#faelligkeit">Fälligkeit</a></dt><dd>2031</dd></div><div><dt>Was kostet sie gerade?<a href="begriffe.html#kurs">Kurs</a></dt><dd>98,50&nbsp;%</dd></div></dl>
-<p class="pass-f">Jede Anleihe hat außerdem eine Kennnummer, die <a href="begriffe.html#isin">ISIN</a> – zwölf Zeichen, wie ein Kfz-Kennzeichen.</p></div></div>
-      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Kupon, Nennwert, Fälligkeit, Kurs – mehr brauchst du am Anfang nicht.</span></p>
+      <div class="k-kopf"><span class="knr" aria-hidden="true">2</span><h2 id="h-steckbrief">Was steht im Steckbrief einer Anleihe?</h2></div>
+      <figure class="k-bild"><figcaption>Vier Angaben fest, zwei beweglich</figcaption>
+        <div class="sb2">
+          <div class="sb2-g"><p class="sb2-k">Steht fest</p><dl>
+            <div><dt>Emittent<a class="hilf" href="begriffe.html#emittent" aria-label="Emittent im Glossar">i</a></dt><dd>ein Staat</dd></div>
+            <div><dt>Nennwert<a class="hilf" href="begriffe.html#nennwert" aria-label="Nennwert im Glossar">i</a></dt><dd>1.000&nbsp;€</dd></div>
+            <div><dt>Kupon<a class="hilf" href="begriffe.html#kupon" aria-label="Kupon im Glossar">i</a></dt><dd>3&nbsp;% pro Jahr</dd></div>
+            <div><dt>Fälligkeit<a class="hilf" href="begriffe.html#faelligkeit" aria-label="Fälligkeit im Glossar">i</a></dt><dd class="zwei">ein fester Tag<small>noch 5&nbsp;Jahre (Restlaufzeit)</small></dd></div>
+          </dl></div>
+          <div class="sb2-g bewegt"><p class="sb2-k">Ändert sich jeden Börsentag</p><dl>
+            <div><dt>Kurs<a class="hilf" href="begriffe.html#kurs" aria-label="Kurs im Glossar">i</a></dt><dd><svg class="spark" viewBox="0 0 72 24" aria-hidden="true" focusable="false"><polyline points="4.2,11.2 11.3,5.2 18.4,10.2 25.5,2.2 32.6,13.2 39.7,8.2 46.8,22.2 53.9,14.2 61.1,18.2 68.2,12.2" fill="none" stroke="#1A1A19" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><circle cx="68.2" cy="12.2" r="3" fill="#1A1A19"/></svg>100&nbsp;% = 1.000&nbsp;€</dd></div>
+            <div><dt>Rendite<a class="hilf" href="begriffe.html#rendite" aria-label="Rendite im Glossar">i</a></dt><dd class="gr">3,0&nbsp;% pro Jahr</dd></div>
+          </dl></div>
+          <p class="sb-f">Rendite gleich Kupon nur bei Kurs 100&nbsp;%. Mehr dazu in Schritt&nbsp;3.</p>
+        </div>
+      </figure>
+      <div class="k-text"><p>Der Emittent ist dein Schuldner, der Kupon der Zinssatz. Der Nennwert ist der Betrag, den der Schuldner bei Fälligkeit zurückzahlen muss. <strong>Der Kurs ist der Preis an der Börse, in Prozent vom Nennwert.</strong></p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"></span><span><strong>Kurz gesagt:</strong> Meist ändert sich nur der Kurs – und mit ihm die Rendite.</span></p>
+      <details class="mehr-k"><summary>Mehr dazu</summary>
+        <ul>
+          <li>Lautet eine Anleihe nicht auf Euro, hängt dein Ergebnis in Euro auch vom Wechselkurs ab.</li>
+          <li>Manche Anleihen darf der Schuldner vor der Fälligkeit zurückzahlen – sie sind <a href="kuendbare-anleihen.html">kündbar</a>.</li>
+        </ul>
+        <a class="go leise sb-go" href="anleihen-suche.html">Echte Steckbriefe in der Anleihen-Suche →</a>
+      </details>
     </section>
+
     <section class="kap" id="kurs" aria-labelledby="h-kurs">
-      <div class="k-text">
-        <span class="knr" aria-hidden="true">3</span>
-        <h2 id="h-kurs">Kurs und Rendite</h2>
-        <p>Der Kurs ist der Preis. Er steht in Prozent vom Nennwert. <strong>100&nbsp;% heißt: Du zahlst genau den Nennwert.</strong> Unter 100&nbsp;% ist die Anleihe günstiger, über 100&nbsp;% teurer.</p><p>Am Ende bekommst du den Nennwert zurück. Kaufst du günstiger, verdienst du mehr als den Kupon. Kaufst du teurer, verdienst du weniger. Was du wirklich im Jahr bekommst, heißt <strong><a href="rendite-lesen.html">Rendite</a></strong>.</p>
-      </div>
-      <div class="k-bild"><p class="sb-k">So hängen Kurs und Rendite zusammen</p><div class="kurse" role="img" aria-label="Drei Beispiele: Kurs 96 Prozent, du zahlst 960 Euro, Rendite 3,9 Prozent. Kurs 100 Prozent, du zahlst 1.000 Euro, Rendite 3,0 Prozent. Kurs 104 Prozent, du zahlst 1.040 Euro, Rendite 2,1 Prozent."><div class="kt"><span class="kt-k">Kurs 96&nbsp;%</span><span class="kt-z">Du zahlst 960&nbsp;€</span><span class="kt-r">3,9&nbsp;%</span><span class="kt-l">Rendite im Jahr</span></div><div class="kt"><span class="kt-k">Kurs 100&nbsp;%</span><span class="kt-z">Du zahlst 1.000&nbsp;€</span><span class="kt-r">3,0&nbsp;%</span><span class="kt-l">Rendite im Jahr</span></div><div class="kt"><span class="kt-k">Kurs 104&nbsp;%</span><span class="kt-z">Du zahlst 1.040&nbsp;€</span><span class="kt-r">2,1&nbsp;%</span><span class="kt-l">Rendite im Jahr</span></div></div>
-<p class="sb-f">Dieselbe Anleihe: 1.000&nbsp;€ Nennwert, 3&nbsp;% Kupon, noch 5 Jahre. Am Ende gibt es 1.000&nbsp;€ zurück – deshalb hängt die Rendite vom Kurs ab.</p></div>
-      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Vergleiche Anleihen mit der Rendite, nicht mit dem Kupon.</span></p>
+      <div class="k-kopf"><span class="knr" aria-hidden="true">3</span><h2 id="h-kurs">Warum ist der Kupon nicht die Rendite?</h2></div>
+      <figure class="k-bild"><figcaption>Gleiche Zinsen, anderer Kaufkurs</figcaption>
+        <p class="sb-bsp">Deine Anleihe: 1.000&nbsp;€, 3&nbsp;% Kupon, noch 5&nbsp;Jahre bis zur Fälligkeit</p>
+        <svg class="sb" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 231" role="img" aria-labelledby="s3-t s3-d">
+
+<title id="s3-t">Die Zinsen sind bei jedem Kaufkurs 150 €, erst der Kaufkurs macht daraus 3,9 %, 3,0 % oder 2,1 % Rendite pro Jahr.</title>
+<desc id="s3-d">Anleihe über 1.000 € mit 3 % Kupon und noch 5 Jahren bis zur Fälligkeit: Die Zinsen betragen in jedem Fall 5 × 30 € = 150 €. Kurs 96 %: du zahlst 960 €, bekommst 150 € Zinsen und 40 € Kursgewinn, zusammen 190 € Ertrag, Rendite 3,9 % pro Jahr. Kurs 100 %: du zahlst 1.000 €, 150 € Zinsen sind der ganze Ertrag, Rendite 3,0 % pro Jahr. Kurs 104 %: du zahlst 1.040 €, der Kursverlust von 40 € frisst einen Teil der Zinsen, es bleiben 110 € Ertrag, Rendite 2,1 % pro Jahr. Rendite bis zur Fälligkeit, vor Kosten und Steuern.</desc>
+<defs><pattern id="s3-schraffur" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="#FBE8D8"/><rect width="2" height="6" fill="#CF7430"/></pattern></defs>
+<text x="0" y="13" font-size="13" fill="#55544F">Ertrag bis zur Fälligkeit</text>
+<text x="320" y="13" font-size="13" fill="#55544F" text-anchor="end">Rendite pro Jahr</text>
+<g>
+<text x="0" y="41" font-size="14"><tspan font-weight="700" fill="#1A1A19">Kurs 96 %</tspan><tspan font-weight="400" fill="#55544F"> · du zahlst 960 €</tspan></text>
+<rect x="0.75" y="49.75" width="178.50" height="24.5" fill="#DCFBD3" stroke="#157C00" stroke-width="1.5"/>
+<rect x="178.50" y="49" width="49.50" height="26" fill="#157C00"/>
+<text x="203.25" y="67.04" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">+40 €</text>
+<text x="8" y="67.04" font-size="14" font-weight="600" fill="#1A1A19">150 € Zinsen</text>
+<text x="320" y="61.30" font-size="22" font-weight="700" fill="#157C00" text-anchor="end">3,9 %</text>
+<text x="320" y="78.87" font-size="13" fill="#55544F" text-anchor="end">190 € Ertrag</text>
+</g>
+<g>
+<text x="0" y="103" font-size="14"><tspan font-weight="700" fill="#1A1A19">Kurs 100 %</tspan><tspan font-weight="400" fill="#55544F"> · du zahlst 1.000 €</tspan></text>
+<rect x="0.75" y="111.75" width="178.50" height="24.5" fill="#DCFBD3" stroke="#157C00" stroke-width="1.5"/>
+<text x="8" y="129.04" font-size="14" font-weight="600" fill="#1A1A19">150 € Zinsen</text>
+<text x="320" y="123.30" font-size="22" font-weight="700" fill="#157C00" text-anchor="end">3,0 %</text>
+<text x="320" y="140.87" font-size="13" fill="#55544F" text-anchor="end">150 € Ertrag</text>
+</g>
+<g>
+<text x="0" y="165" font-size="14"><tspan font-weight="700" fill="#1A1A19">Kurs 104 %</tspan><tspan font-weight="400" fill="#55544F"> · du zahlst 1.040 €</tspan></text>
+<rect x="0.75" y="173.75" width="178.50" height="24.5" fill="#DCFBD3" stroke="#157C00" stroke-width="1.5"/>
+<rect x="132.00" y="173" width="48.00" height="26" fill="url(#s3-schraffur)"/>
+<path d="M132.00 173.75H180.00M132.00 198.25H180.00" fill="none" stroke="#A2561C" stroke-width="1.5" stroke-dasharray="4.0 3.333"/>
+<path d="M132.75 173V199M179.25 173V199" fill="none" stroke="#A2561C" stroke-width="1.5" stroke-dasharray="4.0 3.333"/>
+<text x="188.00" y="191.04" font-size="14" font-weight="700" fill="#A2561C">−40 €</text>
+<text x="8" y="191.04" font-size="14" font-weight="600" fill="#1A1A19">150 € Zinsen</text>
+<text x="320" y="185.30" font-size="22" font-weight="700" fill="#157C00" text-anchor="end">2,1 %</text>
+<text x="320" y="202.87" font-size="13" fill="#55544F" text-anchor="end">110 € Ertrag</text>
+</g>
+<text x="0" y="226" font-size="13" fill="#55544F">Rendite bis zur Fälligkeit, vor Kosten und Steuern.</text>
+</svg>
+      </figure>
+      <div class="k-text"><p>Meist kaufst du an der Börse von anderen Anlegern, zum Kurs des Tages. Kupon und Rückzahlung beziehen sich aber auf den Nennwert, nicht auf deinen Kaufpreis. <strong>Zinsen und Kursgewinn oder Kursverlust zusammen, umgerechnet auf ein Jahr und auf deinen Kaufpreis, ergeben die <span class="nw">Rendite<a class="hilf" href="begriffe.html#rendite" aria-label="Rendite im Glossar">i</a></span>.</strong></p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"></span><span><strong>Kurz gesagt:</strong> Vergleiche Anleihen mit der Rendite, nicht mit dem Kupon.</span></p>
+      <details class="mehr-k"><summary>Mehr dazu</summary>
+        <ul>
+          <li>So kommen die 3,9&nbsp;% zustande: 40&nbsp;€ Kursgewinn auf fünf Jahre sind 8&nbsp;€ pro Jahr. Mit 30&nbsp;€ Zinsen sind das 38&nbsp;€ pro Jahr auf 960&nbsp;€ – rund 4&nbsp;%, genau gerechnet 3,9&nbsp;%.</li>
+          <li>Echte Kurse (Deutsche Bundesbank, <span data-kz="paar-stand">30.09.2026</span>): Die <span data-kz="paar-hoch-name">Bundesanleihe 6,25&nbsp;% fällig 04.01.2030</span> kostet <span data-kz="paar-hoch-kurs">108,98&nbsp;%</span>, die <span data-kz="paar-tief-name">Bundesanleihe 2,10&nbsp;% fällig 15.11.2029</span> nur <span data-kz="paar-tief-kurs">96,48&nbsp;%</span>. Die Rendite ist fast gleich: <span data-kz="paar-hoch-rendite">3,29&nbsp;%</span> und <span data-kz="paar-tief-rendite">3,30&nbsp;%</span>. Ein Kurs unter 100&nbsp;% ist also kein Schnäppchen – er gleicht nur den niedrigeren Kupon aus.</li>
+        </ul>
+        <div class="kaufkurs" id="kaufkurs" hidden>
+          <p class="kk-t">Kaufkurs ausprobieren</p>
+          <label class="kk-l" for="kk-in">Kurs beim Kauf: <b id="kk-kurs">96,0&nbsp;%</b></label>
+          <input type="range" id="kk-in" min="90" max="110" step="0.5" value="96" aria-describedby="kk-out">
+          <div class="kk-bar" aria-hidden="true"><i class="kk-z"></i><i class="kk-plus"></i><i class="kk-minus"></i></div>
+          <p class="kk-out" id="kk-out" aria-live="polite">Du zahlst 960&nbsp;€ · Ertrag bis zur Fälligkeit 190&nbsp;€ · Rendite <b>3,9&nbsp;% pro Jahr</b></p>
+        </div>
+        <a class="go leise sb-go" href="rendite-lesen.html#kupon">Rendite richtig lesen →</a>
+      </details>
     </section>
+
     <section class="kap kap-b" id="schwankung" aria-labelledby="h-schwankung">
-      <div class="k-text">
-        <span class="knr" aria-hidden="true">4</span>
-        <h2 id="h-schwankung">Warum der Kurs schwankt</h2>
-        <p>Der Zins deiner Anleihe steht fest. Das <a href="zinsniveau.html">allgemeine Zinsniveau</a> ändert sich aber. <strong>Steigt es, fällt der Kurs deiner Anleihe</strong> – denn neue Anleihen bringen jetzt mehr. Sinkt das Zinsniveau, steigt ihr Kurs.</p><p>Das zählt nur, wenn du vorher verkaufst. Wer bis zur Fälligkeit hält, bekommt 100&nbsp;% zurück.</p>
-      </div>
-      <div class="k-bild"><p class="sb-k">Die Regel</p><div class="regel" role="img" aria-label="Steigt das allgemeine Zinsniveau, fällt der Kurs. Sinkt es, steigt der Kurs."><span class="rz">Zinsniveau steigt<i class="up"></i></span><span class="rp">→</span><span class="rk">Kurs fällt<i class="dn"></i></span><span class="rz">Zinsniveau sinkt<i class="dn"></i></span><span class="rp">→</span><span class="rk">Kurs steigt<i class="up"></i></span></div>
-<p class="sb-k">Beispiel: Zinsniveau steigt von 3&nbsp;% auf 4&nbsp;%</p>
-<div class="hebel" role="img" aria-label="Steigt das allgemeine Zinsniveau von 3 auf 4 Prozent, fällt der Kurs bei 2 Jahren Restlaufzeit um 1,9 Prozent, bei 10 Jahren um 8,1 Prozent und bei 30 Jahren um 17,3 Prozent."><div class="hb ax-row"><span class="ax-t">Restlaufzeit</span><span class="ax-t">Kursverlust in % →</span></div><div class="hb"><span class="hb-l">2 Jahre</span><span class="hb-bar" style="--w:11%"><b>−1,9&nbsp;%</b></span></div><div class="hb"><span class="hb-l">10 Jahre</span><span class="hb-bar" style="--w:47%"><b>−8,1&nbsp;%</b></span></div><div class="hb"><span class="hb-l">30 Jahre</span><span class="hb-bar" style="--w:100%"><b>−17,3&nbsp;%</b></span></div></div>
-<p class="sb-f">Je länger die Restlaufzeit, desto stärker schwankt der Kurs. Bei Fälligkeit gibt es trotzdem 100&nbsp;%.</p></div>
-      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Zinsniveau rauf, Kurs runter – und umgekehrt. Bei Fälligkeit gibt es 100&nbsp;%.</span></p>
+      <div class="k-kopf"><span class="knr" aria-hidden="true">4</span><h2 id="h-schwankung">Warum fällt der Kurs, wenn das Zinsniveau steigt?</h2></div>
+      <figure class="k-bild"><figcaption>Der Kurs fällt – und läuft zurück</figcaption>
+        <p class="sb-bsp">Deine Anleihe: 1.000&nbsp;€, 3&nbsp;% Kupon, noch 5&nbsp;Jahre bis zur Fälligkeit</p>
+        <svg class="sb" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 206" role="img" aria-labelledby="s4-t s4-d">
+
+<title id="s4-t">Steigt das Zinsniveau kurz nach dem Kauf von 3 auf 3,9 %, fällt der Kurs deiner Anleihe auf 96 % – bis zur Fälligkeit läuft er auf 100 % zurück.</title>
+<desc id="s4-d">Anleihe mit 3 % Kupon und 5 Jahren Restlaufzeit, Kauf zu 100 %. Kurz nach dem Kauf steigt das Zinsniveau von 3 auf 3,9 %. Der Kurs fällt auf 95,98 %, also rund 96,0 % (−4,0 %) – genau der Kurs, bei dem die Rendite 3,9 % beträgt. Danach steigt er Jahr für Jahr: nach 1 Jahr 96,73 %, nach 2 Jahren 97,50 %, nach 3 Jahren 98,30 %, nach 4 Jahren 99,13 %, bei Fälligkeit nach 5 Jahren 100 %. Wer zwischendurch verkauft, hat einen Kursverlust. Die Kursachse beginnt bei 94 %, nicht bei 0.</desc>
+<path d="M56 28 L56 132.52 L102 113.02 L154 93 L206 72.2 L258 50.62 L310 28 Z" fill="#FBE8D8"/>
+<path d="M50 80H310" stroke="#E4E3DF" stroke-width="1"/>
+<path d="M50 132H310" stroke="#E4E3DF" stroke-width="1"/>
+<text x="43" y="32.7" text-anchor="end" font-size="13" fill="#55544F">100 %</text>
+<text x="43" y="84.7" text-anchor="end" font-size="13" fill="#55544F">98 %</text>
+<text x="43" y="136.7" text-anchor="end" font-size="13" fill="#55544F">96 %</text><text x="43" y="188.2" text-anchor="end" font-size="13" fill="#55544F">94 %</text>
+<path d="M50 28H310" stroke="#157C00" stroke-width="1.5" stroke-dasharray="4 3"/>
+<path d="M50 183.54H310" stroke="#1A1A19" stroke-width="1.5"/>
+<path d="M50 183.54v4" stroke="#1A1A19" stroke-width="1.5"/>
+<path d="M102 183.54v4" stroke="#1A1A19" stroke-width="1.5"/>
+<path d="M154 183.54v4" stroke="#1A1A19" stroke-width="1.5"/>
+<path d="M206 183.54v4" stroke="#1A1A19" stroke-width="1.5"/>
+<path d="M258 183.54v4" stroke="#1A1A19" stroke-width="1.5"/>
+<path d="M310 183.54v4" stroke="#1A1A19" stroke-width="1.5"/>
+<text x="50" y="201.84" text-anchor="middle" font-size="13" fill="#55544F">Kauf</text>
+<text x="102" y="201.84" text-anchor="middle" font-size="13" fill="#55544F">Jahr 1</text>
+<text x="154" y="201.84" text-anchor="middle" font-size="13" fill="#55544F">2</text>
+<text x="206" y="201.84" text-anchor="middle" font-size="13" fill="#55544F">3</text>
+<text x="258" y="201.84" text-anchor="middle" font-size="13" fill="#55544F">4</text>
+<text x="310" y="201.84" text-anchor="middle" font-size="13" fill="#55544F">5</text>
+<path d="M50 28H56V132.52L102 113.02L154 93L206 72.2L258 50.62L310 28" fill="none" stroke="#1A1A19" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="56" cy="132.52" r="4.5" fill="#A2561C"/>
+<text x="64.25" y="155.5" font-size="22" font-weight="700" fill="#A2561C">96,0 % (−4,0 %)</text>
+<text x="64.25" y="175.4" font-size="13" fill="#A2561C">Zinsniveau 3 → 3,9 %</text>
+<text x="64.25" y="60" font-size="13" font-weight="600" fill="#A2561C">Verkauf = Kursverlust</text>
+<text x="50" y="16" font-size="14" font-weight="700" fill="#1A1A19">Kauf: 100 %</text>
+<text x="310" y="16" text-anchor="end" font-size="14" font-weight="700" fill="#157C00">Fälligkeit: 100 %</text>
+</svg>
+        <p class="sb-f">Wirklich passiert: Von Ende 2021 bis Ende 2022 stieg die Rendite deutscher Staatsanleihen mit zehn Jahren Restlaufzeit von <span data-kz="zk-de10-2021-12">−0,24</span>&nbsp;% auf <span data-kz="zk-de10-2022-12">2,53</span>&nbsp;% (Bundesbank).</p>
+      </figure>
+      <div class="k-text"><p>Kurz nach deinem Kauf steigt das <span class="nw">Zinsniveau<a class="hilf" href="begriffe.html#zinsniveau" aria-label="Zinsniveau im Glossar">i</a></span>: Neue Anleihen haben jetzt 3,9&nbsp;% Kupon statt 3&nbsp;%. Deine Anleihe kauft dir dann nur noch jemand für 96&nbsp;% ab – <strong>so hat auch er 3,9&nbsp;% Rendite.</strong> Hältst du sie, holt der Kurs bis zur Fälligkeit wieder auf – bis dahin bekommst du aber nur 30&nbsp;€ Zinsen pro Jahr statt 39&nbsp;€.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"></span><span><strong>Kurz gesagt:</strong> Zinsniveau rauf, Kurs runter – je länger die Restlaufzeit, desto stärker.</span></p>
+      <details class="mehr-k"><summary>Mehr dazu</summary>
+        <svg class="sb klein" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 185" role="img" aria-labelledby="s4b-t s4b-d">
+
+<title id="s4b-t">Gleicher Anstieg des Zinsniveaus von 3 auf 3,9 %: Je länger die Restlaufzeit, desto stärker fällt der Kurs.</title>
+<desc id="s4b-d">Kursverlust einer Anleihe mit 3 % Kupon, gekauft zu 100 %, wenn das Zinsniveau von 3 auf 3,9 % steigt: bei 2 Jahren Restlaufzeit −1,70 %, bei 5 Jahren (deine Anleihe) −4,02 %, bei 10 Jahren −7,34 %, bei 30 Jahren −15,75 %.</desc>
+<text x="1" y="13" font-size="13" fill="#55544F">Restlaufzeit</text>
+<text x="92" y="13" font-size="13" fill="#55544F">Kursverlust</text>
+<rect x="92" y="24" width="17.91" height="18" fill="#CF7430"/>
+<text x="1" y="38.04" font-size="14" font-weight="600" fill="#1A1A19">2 Jahre</text>
+<text x="115.91" y="38.04" font-size="14" font-weight="700" fill="#A2561C">−1,7 %</text>
+<rect x="92" y="62" width="42.34" height="18" fill="#CF7430"/>
+<text x="1" y="68" font-size="14" font-weight="700" fill="#1A1A19">5 Jahre</text>
+<text x="140.34" y="76.04" font-size="14" font-weight="700" fill="#A2561C">−4,0 %</text>
+<text x="1" y="84" font-size="13" fill="#55544F">deine Anleihe</text>
+<rect x="92" y="100" width="77.3" height="18" fill="#CF7430"/>
+<text x="1" y="114.04" font-size="14" font-weight="600" fill="#1A1A19">10 Jahre</text>
+<text x="175.3" y="114.04" font-size="14" font-weight="700" fill="#A2561C">−7,3 %</text>
+<rect x="92" y="138" width="166" height="18" fill="#CF7430"/>
+<text x="1" y="152.04" font-size="14" font-weight="600" fill="#1A1A19">30 Jahre</text>
+<text x="264" y="152.04" font-size="14" font-weight="700" fill="#A2561C">−15,8 %</text>
+<path d="M92 20V160" stroke="#1A1A19" stroke-width="1.5"/>
+<text x="1" y="179.55" font-size="13" fill="#55544F">Zinsniveau 3 → 3,9 % · 3 % Kupon · Kauf zu 100 %</text>
+</svg>
+        <ul>
+          <li>Warum genau 96&nbsp;%? Deiner Anleihe fehlen gegenüber einer neuen fünf Jahre lang je 9&nbsp;€ Zinsen. Auf heute umgerechnet sind das rund 40&nbsp;€, also 4&nbsp;% von 1.000&nbsp;€.</li>
+          <li>Auch eine schwächere Bonität drückt den Kurs (Schritt&nbsp;5).</li>
+        </ul>
+        <a class="go leise sb-go" href="duration.html#schieben">Selbst ausprobieren: Wie stark reagiert der Kurs? →</a>
+      </details>
     </section>
+
     <section class="kap" id="sicherheit" aria-labelledby="h-sicherheit">
-      <div class="k-text">
-        <span class="knr" aria-hidden="true">5</span>
-        <h2 id="h-sicherheit">Wie sicher ist eine Anleihe?</h2>
-        <p>Eine Anleihe ist so sicher wie ihr Schuldner. <strong>Zahlt er nicht, geht oft ein großer Teil deines Geldes verloren.</strong> Ratingagenturen benoten die Schuldner: AAA ist die beste Note, D heißt Ausfall.</p><p>Je schlechter die Note, desto mehr Zins muss der Schuldner bieten. Mehr Zins gibt es also fast nur für mehr Risiko.</p>
-      </div>
-      <div class="k-bild"><p class="sb-k">Die Noten für Schuldner</p><div class="rating" role="img" aria-label="Notenskala von AAA (sehr hohe Bonität) bis D (ausgefallen). AAA bis BBB gilt als gute Bonität, BB und schlechter als spekulativ. Deutschland hat AAA, Italien BBB+. Je weiter rechts, desto mehr Zins muss der Schuldner bieten.">
-<div class="skala"><span class="s1">AAA</span><span class="s1">AA</span><span class="s2">A</span><span class="s2">BBB</span><span class="s3">BB</span><span class="s3">B</span><span class="s4">CCC</span><span class="s4">D</span></div>
-<div class="marker"><span style="--p:6.25%;--a:14%">Deutschland</span><span style="--p:43.75%">Italien</span></div>
-<div class="zonen"><span>gute Bonität</span><span>spekulativ</span></div>
-<p class="ax-t rt-ax">Rating: je weiter rechts, desto unsicherer →</p>
-</div>
-<p class="sb-k" style="margin-top:16px">Mehr Risiko, mehr Zins (schematisch)</p>
-<div class="treppe" role="img" aria-label="Deutschland mit AAA muss wenig Zins bieten, Italien mit BBB+ mehr, ein Unternehmen mit B viel mehr.">
-<div class="tb ax-row"><span class="ax-t">Schuldner · Rating</span><span class="ax-t">Zins, den er bieten muss →</span></div>
-<div class="tb"><span class="tb-l">Deutschland <small>AAA</small></span><span class="tb-bar s1" style="--w:26%">wenig</span></div>
-<div class="tb"><span class="tb-l">Italien <small>BBB+</small></span><span class="tb-bar s2" style="--w:44%">mehr</span></div>
-<div class="tb"><span class="tb-l">Unternehmen <small>B</small></span><span class="tb-bar s3" style="--w:100%">viel mehr</span></div>
-</div><a class="go leise sb-go" href="bonitaet.html">Bonität und Ratings genauer →</a></div>
-      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Mehr Zins heißt mehr Risiko. Die Note zeigt, wie sicher der Schuldner ist.</span></p>
+      <div class="k-kopf"><span class="knr" aria-hidden="true">5</span><h2 id="h-sicherheit">Was, wenn der Schuldner nicht zahlt?</h2></div>
+      <figure class="k-bild"><figcaption>Schwächere Bonität, mehr Rendite</figcaption>
+        <svg class="sb" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 232" role="img" aria-labelledby="s5-t s5-d">
+
+<title id="s5-t">Je schwächer die Bonität, desto mehr Rendite muss der Schuldner bieten. Bei D zahlt er nicht mehr.</title>
+<desc id="s5-d">Schematisches Säulenbild über acht Bonitätsnoten. Die Säulenhöhe steht für die Rendite, die der Schuldner bieten muss, ohne echte Werte, in relativen Höhen: AAA 22, AA 28, A 36, BBB 48 (Zone gute Bonität, grau), BB 70, B 96, CCC 128 (Zone spekulativ, orange). Bei D steht keine Säule, nur ein gestrichelter Strich: Die Zinsen fehlen, das ist der Ausfall. Von links nach rechts steigt das Ausfallrisiko.</desc>
+<text x="2" y="13" font-size="13" fill="#55544F">Rendite, die der Schuldner bieten muss ↑</text>
+<rect x="2" y="134" width="28" height="22" fill="#8A8984"/>
+<rect x="42" y="128" width="28" height="28" fill="#8A8984"/>
+<rect x="82" y="120" width="28" height="36" fill="#8A8984"/>
+<rect x="122" y="108" width="28" height="48" fill="#8A8984"/>
+<rect x="162" y="86" width="28" height="70" fill="#CF7430"/>
+<rect x="202" y="60" width="28" height="96" fill="#CF7430"/>
+<rect x="242" y="28" width="28" height="128" fill="#CF7430"/>
+<line x1="2" y1="156" x2="276" y2="156" stroke="#1A1A19" stroke-width="1.5"/>
+<line x1="283.5" y1="156" x2="308.5" y2="156" stroke="#A2561C" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="296" y="132" font-size="13" fill="#A2561C" text-anchor="middle">Zinsen</text>
+<text x="296" y="148" font-size="13" fill="#A2561C" text-anchor="middle">fehlen</text>
+<text x="16" y="176" font-size="14" font-weight="700" fill="#1A1A19" text-anchor="middle">AAA</text>
+<text x="56" y="176" font-size="14" font-weight="700" fill="#1A1A19" text-anchor="middle">AA</text>
+<text x="96" y="176" font-size="14" font-weight="700" fill="#1A1A19" text-anchor="middle">A</text>
+<text x="136" y="176" font-size="14" font-weight="700" fill="#1A1A19" text-anchor="middle">BBB</text>
+<text x="176" y="176" font-size="14" font-weight="700" fill="#1A1A19" text-anchor="middle">BB</text>
+<text x="216" y="176" font-size="14" font-weight="700" fill="#1A1A19" text-anchor="middle">B</text>
+<text x="256" y="176" font-size="14" font-weight="700" fill="#1A1A19" text-anchor="middle">CCC</text>
+<text x="296" y="176" font-size="14" font-weight="700" fill="#1A1A19" text-anchor="middle">D</text>
+<line x1="2" y1="186" x2="150" y2="186" stroke="#8A8984" stroke-width="1.5"/>
+<text x="76" y="203" font-size="13" fill="#55544F" text-anchor="middle">gute Bonität</text>
+<line x1="162" y1="186" x2="270" y2="186" stroke="#CF7430" stroke-width="1.5"/>
+<text x="216" y="203" font-size="13" fill="#A2561C" text-anchor="middle">spekulativ</text>
+<line x1="283.5" y1="186" x2="308.5" y2="186" stroke="#A2561C" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="296" y="203" font-size="13" font-weight="700" fill="#A2561C" text-anchor="middle">Ausfall</text>
+<text x="2" y="228" font-size="13" fill="#55544F">schematisch</text>
+<text x="310" y="228" font-size="13" fill="#A2561C" text-anchor="end">Ausfallrisiko steigt →</text>
+</svg>
+      </figure>
+      <div class="k-text"><p>Dann fehlen Zinsen, und oft kommt nur ein Teil deines Geldes zurück. Eine <span class="nw">Einlagensicherung<a class="hilf" href="begriffe.html#einlagensicherung" aria-label="Einlagensicherung im Glossar">i</a></span> wie beim Festgeld gibt es nicht. Wie gut ein Schuldner zahlen kann, heißt <span class="nw">Bonität<a class="hilf" href="begriffe.html#bonitaet" aria-label="Bonität im Glossar">i</a></span>; Ratingagenturen benoten sie.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"></span><span><strong>Kurz gesagt:</strong> Keine Einlagensicherung – je schwächer die Bonität, desto mehr Rendite und desto größer das Ausfallrisiko.</span></p>
+      <details class="mehr-k"><summary>Mehr dazu</summary>
+        <ul>
+          <li>Ab BB beginnt der Hochzins-Bereich: spekulativ. Unter CCC folgen noch CC und C, D heißt Ausfall. Eine Note ist eine Einschätzung, keine Zusage.</li>
+          <li>Bei vielen Anleihen zeigt Bondarium die Bonität laut EZB im Steckbrief.</li>
+        </ul>
+        <a class="go leise sb-go" href="bonitaet.html">Bonität und Ratings genauer →</a>
+      </details>
     </section>
+
     <section class="kap kap-b" id="vergleich" aria-labelledby="h-vergleich">
-      <div class="k-text">
-        <span class="knr" aria-hidden="true">6</span>
-        <h2 id="h-vergleich">Anleihe, Aktie oder Sparbuch?</h2>
-        <p>Mit einer <strong>Aktie</strong> gehört dir ein Stück des Unternehmens. Mit einer <strong>Anleihe</strong> leihst du dem Unternehmen Geld. Ein <strong>Sparbuch</strong> ist auch ein Kredit – an deine Bank.</p><p>Anleihen liegen dazwischen: meist <a href="anleihen-anteil.html">weniger Schwankung als Aktien</a>, oft mehr Zins als das Sparbuch.</p>
-        
-      </div>
-      <div class="k-bild"><p class="sb-k">Im Vergleich</p><table class="vgl"><thead><tr><th scope="col"><span class="sr-only">Merkmal</span></th><th scope="col">Anleihe</th><th scope="col">Aktie</th><th scope="col">Sparbuch</th></tr></thead><tbody><tr><th scope="row">Du bist …</th><td data-l="Anleihe">Kreditgeber</td><td data-l="Aktie">Miteigentümer</td><td data-l="Sparbuch">Kreditgeber der Bank</td></tr><tr><th scope="row">Ertrag</th><td data-l="Anleihe">fester Zins</td><td data-l="Aktie">Dividende und Kurs – beides unsicher</td><td data-l="Sparbuch">Zins, oft niedrig</td></tr><tr><th scope="row">Kurs schwankt?</th><td data-l="Anleihe">ja, meist wenig</td><td data-l="Aktie">ja, oft stark</td><td data-l="Sparbuch">nein</td></tr><tr><th scope="row">Ende</th><td data-l="Anleihe">festes Datum, 100&nbsp;% zurück</td><td data-l="Aktie">kein Ende – du verkaufst</td><td data-l="Sparbuch">jederzeit abhebbar</td></tr><tr><th scope="row">Unternehmen insolvent?</th><td data-l="Anleihe">Gläubiger werden vor Aktionären bedient</td><td data-l="Aktie">meist Totalverlust</td><td data-l="Sparbuch">abgesichert bis 100.000&nbsp;€</td></tr></tbody></table></div>
-      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Anleihe = fester Zins, festes Ende, Nennwert zurück.</span></p>
+      <div class="k-kopf"><span class="knr" aria-hidden="true">6</span><h2 id="h-vergleich">Festgeld, Anleihe oder Aktie?</h2></div>
+      <figure class="k-bild"><figcaption>1.000&nbsp;€ über fünf Jahre – schematisch</figcaption>
+        <svg class="sb" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 213" role="img" aria-labelledby="s6-t s6-d">
+
+<title id="s6-t">Die Anleihe liegt zwischen Festgeld und Aktie: Sie hat einen Kurs und endet beim Nennwert – wenn der Schuldner zahlt.</title>
+<desc id="s6-d">Schematischer Vergleich, 1.000 € über fünf Jahre. Festgeld: kein Kurs, der Wert bleibt bei 1.000 €, fünf Zinszahlungen, Einlagensicherung. Anleihe: Der Kurs schwankt, der Wert pendelt mäßig um 1.000 € und endet bei Fälligkeit beim Nennwert von 1.000 €, wenn der Schuldner zahlt; fünf feste Zinszahlungen (Kupon). Aktie: Der Kurs schwankt stark, es gibt keine Fälligkeit. Das Ende ist offen – es kann über oder unter dem Einsatz liegen; zwei Dividenden, nicht fest.</desc>
+<rect x="104" y="0" width="112" height="213" rx="12" fill="#DCFBD3"/>
+<text x="48" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#1A1A19">Festgeld</text>
+<text x="160" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#157C00">Anleihe</text>
+<text x="272" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#1A1A19">Aktie</text>
+<line x1="3" y1="66" x2="93" y2="66" stroke="#8A8984" stroke-width="1.5" stroke-dasharray="4 3"/>
+<line x1="115" y1="66" x2="205" y2="66" stroke="#8A8984" stroke-width="1.5" stroke-dasharray="4 3"/>
+<line x1="227" y1="66" x2="291.8" y2="66" stroke="#8A8984" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="3" y="59" font-size="13" fill="#55544F">1.000 €</text>
+<path d="M3 66H93" fill="none" stroke="#1A1A19" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="93" cy="66" r="4.5" fill="#157C00"/>
+<path d="M115 66C116.07 67 119.29 70.49 121.43 71.99C123.57 73.48 125.71 74.64 127.86 74.96C130 75.27 132.14 74.78 134.29 73.89C136.43 73 138.57 71.21 140.71 69.61C142.86 68 145 65.81 147.14 64.25C149.29 62.7 151.43 61.1 153.57 60.25C155.71 59.41 157.86 59.03 160 59.17C162.14 59.31 164.29 60.17 166.43 61.09C168.57 62.02 170.71 63.56 172.86 64.74C175 65.92 177.14 67.32 179.29 68.18C181.43 69.03 183.57 69.67 185.71 69.86C187.86 70.06 190 69.74 192.14 69.34C194.29 68.94 196.43 68.02 198.57 67.46C200.71 66.9 203.93 66.24 205 66" fill="none" stroke="#1A1A19" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="205" cy="66" r="4.5" fill="#157C00"/>
+<path d="M227 66L234.2 51L241.4 63L248.6 43L255.8 57L263 81L270.2 69L277.4 86L284.6 58L291.8 66" fill="none" stroke="#1A1A19" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="291.8" y1="66" x2="317" y2="42" stroke="#A2561C" stroke-width="1.5" stroke-dasharray="4 3" stroke-linecap="round"/>
+<line x1="291.8" y1="66" x2="317" y2="66" stroke="#A2561C" stroke-width="1.5" stroke-dasharray="4 3" stroke-linecap="round"/>
+<line x1="291.8" y1="66" x2="317" y2="90" stroke="#A2561C" stroke-width="1.5" stroke-dasharray="4 3" stroke-linecap="round"/>
+<circle cx="10" cy="104.5" r="6" fill="#E4E3DF" stroke="#1A1A19" stroke-width="2"/>
+<circle cx="29" cy="104.5" r="6" fill="#E4E3DF" stroke="#1A1A19" stroke-width="2"/>
+<circle cx="48" cy="104.5" r="6" fill="#E4E3DF" stroke="#1A1A19" stroke-width="2"/>
+<circle cx="67" cy="104.5" r="6" fill="#E4E3DF" stroke="#1A1A19" stroke-width="2"/>
+<circle cx="86" cy="104.5" r="6" fill="#E4E3DF" stroke="#1A1A19" stroke-width="2"/>
+<circle cx="122" cy="104.5" r="6" fill="#39FF14" stroke="#1A1A19" stroke-width="2"/>
+<circle cx="141" cy="104.5" r="6" fill="#39FF14" stroke="#1A1A19" stroke-width="2"/>
+<circle cx="160" cy="104.5" r="6" fill="#39FF14" stroke="#1A1A19" stroke-width="2"/>
+<circle cx="179" cy="104.5" r="6" fill="#39FF14" stroke="#1A1A19" stroke-width="2"/>
+<circle cx="198" cy="104.5" r="6" fill="#39FF14" stroke="#1A1A19" stroke-width="2"/>
+<circle cx="254" cy="104.5" r="6" fill="none" stroke="#8A8984" stroke-width="2"/>
+<circle cx="290" cy="104.5" r="6" fill="none" stroke="#8A8984" stroke-width="2"/>
+<text x="48" y="127" text-anchor="middle" font-size="13" fill="#55544F">Zinsen</text>
+<text x="160" y="127" text-anchor="middle" font-size="13" fill="#55544F">Zinsen</text>
+<text x="272" y="127" text-anchor="middle" font-size="13" fill="#55544F">Dividende</text>
+<text text-anchor="middle" font-size="13"><tspan x="48" y="151" font-weight="600" fill="#1A1A19">kein Kurs</tspan><tspan x="48" y="167.5" fill="#55544F">Einlagen-</tspan><tspan x="48" y="184" fill="#55544F">sicherung</tspan></text>
+<text text-anchor="middle" font-size="13"><tspan x="160" y="151" font-weight="600" fill="#1A1A19">Kurs schwankt</tspan><tspan x="160" y="167.5" fill="#55544F">Nennwert,</tspan><tspan x="160" y="184" fill="#55544F">wenn der</tspan><tspan x="160" y="200.5" fill="#55544F">Schuldner zahlt</tspan></text>
+<text text-anchor="middle" font-size="13"><tspan x="272" y="151" font-weight="600" fill="#1A1A19">Kurs schwankt</tspan><tspan x="272" y="167.5" font-weight="600" fill="#1A1A19">stark</tspan><tspan x="272" y="184" fill="#55544F">keine Fälligkeit</tspan></text>
+</svg>
+      </figure>
+      <div class="k-text"><p>Festgeld ist ein Kredit an deine Bank, eine Aktie ein Stück eines Unternehmens. <strong>Die Anleihe liegt dazwischen:</strong> Kupon und Fälligkeit stehen meist fest wie beim Festgeld. Bis zur Fälligkeit hat sie aber einen Kurs wie eine Aktie.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"></span><span><strong>Kurz gesagt:</strong> Meist feste Zinsen, feste Fälligkeit, schwankender Kurs – und alles hängt am Schuldner.</span></p>
+      <details class="mehr-k"><summary>Alle Unterschiede</summary>
+        <table class="vgl3"><thead><tr><th scope="col"><span class="sr-only">Merkmal</span></th><th scope="col">Festgeld</th><th scope="col">Anleihe</th><th scope="col">Aktie</th></tr></thead><tbody>
+          <tr><th scope="row">Kurs</th><td data-l="Festgeld">keiner</td><td data-l="Anleihe">schwankt, stärker bei langer Restlaufzeit</td><td data-l="Aktie">schwankt oft stark</td></tr>
+          <tr><th scope="row">Vor Fälligkeit an dein Geld?</th><td data-l="Festgeld">meist nicht</td><td data-l="Anleihe">an der Börse verkaufen, zum Kurs des Tages</td><td data-l="Aktie">an der Börse verkaufen, zum Kurs des Tages</td></tr>
+          <tr><th scope="row">Fälligkeit</th><td data-l="Festgeld">fester Tag</td><td data-l="Anleihe">fester Tag; manche darf der Schuldner früher kündigen</td><td data-l="Aktie">keine</td></tr>
+          <tr><th scope="row">Bei Pleite</th><td data-l="Festgeld">Einlagensicherung bis 100.000&nbsp;€ je Kunde und Bank</td><td data-l="Anleihe">keine Einlagensicherung; wird vor den Aktionären ausgezahlt, oft nur ein Teil zurück</td><td data-l="Aktie">meist Totalverlust</td></tr>
+        </tbody></table>
+        <p class="vgl3-f">Tagesgeld: wie Festgeld, aber täglich verfügbar – der Zinssatz kann sich jederzeit ändern.</p>
+        <a class="go leise sb-go" href="anleihen-anteil.html#wozu">Wozu Anleihen neben Aktien? →</a>
+      </details>
+    </section>
+
+    <section class="stimmt" aria-labelledby="h-stimmt">
+      <h2 id="h-stimmt">Stimmt das?</h2>
+      <details><summary>Steigt das Zinsniveau, steigt auch der Wert meiner Anleihe.</summary><p><strong>Nein, umgekehrt.</strong> Ihr Kurs fällt, weil neue Anleihen mehr Zinsen zahlen – bei deiner Beispielanleihe auf rund 96&nbsp;% (Schritt&nbsp;4).</p></details>
+      <details><summary>3&nbsp;% Kupon heißt 3&nbsp;% Rendite.</summary><p><strong>Nur bei einem Kurs von 100&nbsp;%.</strong> Kaufst du zu 104&nbsp;%, sind es rund 2,1&nbsp;% pro Jahr (Schritt&nbsp;3).</p></details>
+      <details><summary>Halte ich bis zur Fälligkeit, kann nichts schiefgehen.</summary><p><strong>Nein.</strong> Zahlt der Schuldner nicht, ist oft ein großer Teil weg (Schritt&nbsp;5). Und steigen die Preise stärker als deine Rendite, kauft dein Geld bei Fälligkeit weniger als heute.</p></details>
     </section>
 
     <div class="weiter">
-      <a class="go" href="erste-anleihe.html">Deine erste Anleihe kaufen →</a>
-      <a class="go leise" href="fortgeschrittene.html">Weiter für Fortgeschrittene →</a>
+      <a class="go" href="erste-anleihe.html">Deine erste Anleihe →</a>
       <a class="go leise" href="anlegerprofile.html">Sind Anleihen etwas für dich? →</a>
-      <a class="go leise" href="begriffe.html">Alle Begriffe im Glossar →</a>
+      <a class="go leise" href="etf-oder-anleihe.html">ETF oder Anleihe? →</a>
     </div>
+    <p class="klein klein-wege"><a href="risiko.html">Risiko kennen</a> · <a href="begriffe.html">Alle Begriffe im Glossar</a></p>
     <p class="klein">Diese Seite erklärt, wie Anleihen funktionieren. Sie empfiehlt keine Anlage. Die Zahlen sind gerundet.</p>
-
-    <nav class="crossnav" aria-label="Weiter">
-      <p class="crossnav-t">Weiter</p>
-      <ul class="crossnav-l">
-        <li><a href="anleihe-arten.html">Welche Anleihe-Arten gibt es?</a></li>
-        <li><a href="risiko.html">Risiko kennen – was schiefgehen kann</a></li>
-        <li><a href="anlageziele.html">Anlageziele – welche Anleihe wozu passt</a></li>
-        <li><a href="anleihen-suche.html">Anleihen-Suche</a></li>
-      </ul>
-    </nav>
+    <details class="quellen"><summary>Datenquellen und Methodik</summary><p>Beispielanleihe: 1.000&nbsp;€ Nennwert, 3&nbsp;% Kupon, Zinsen einmal pro Jahr, Restlaufzeit 5&nbsp;Jahre, gekauft am Zinstermin, ohne Kosten und Steuern. Rendite = Rendite bis zur Fälligkeit: Kurs 96 / 100 / 104&nbsp;% ergibt 3,90 / 3,00 / 2,15&nbsp;%. Kursweg: Das Zinsniveau steigt direkt nach dem Kauf von 3 auf 3,9&nbsp;% und bleibt dort; Kurs 95,98 / 96,73 / 97,50 / 98,30 / 99,13 / 100&nbsp;%. Gleicher Anstieg bei 2 / 5 / 10 / 30&nbsp;Jahren Restlaufzeit: −1,70 / −4,02 / −7,34 / −15,75&nbsp;%. Rendite für zehn Jahre Restlaufzeit: Deutsche Bundesbank, Zinsstrukturkurve am Rentenmarkt (Svensson), Monatsendwerte. Echte Kurse in Schritt&nbsp;3: Deutsche Bundesbank, Kurse und Renditen börsennotierter Bundeswertpapiere; bei jedem Datenlauf neu gewählt – fast gleiche Fälligkeit (höchstens 120 Tage auseinander), Kupon mindestens 2&nbsp;Prozentpunkte verschieden, eine Anleihe über, eine unter 100&nbsp;%. Notentreppe schematisch. Einlagensicherung: §&nbsp;8 Einlagensicherungsgesetz. Spareinlagen: §&nbsp;21 Abs.&nbsp;4 RechKredV.</p></details>
   </main>
   <footer class="fuss">
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html#grundlagen">Grundlagen</a><a href="wissen.html#auswaehlen">Auswählen</a><a href="wissen.html#fortgeschrittene">Für Fortgeschrittene</a><a href="begriffe.html">Glossar</a></nav>
@@ -372,6 +589,46 @@ window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']
 
 // Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
 MC.navInit();
+</script>
+<script>
+// Kaufkurs ausprobieren (Schritt 3, „Mehr dazu“) – Beispielanleihe 1.000 € Nennwert, 3 % Kupon, 5 Jahre, Zinsen einmal pro Jahr.
+// Rendite bis zur Fälligkeit per Intervallhalbierung (wie Methodik: 96 % → 3,90 %, 90 % → 5,33 %, 110 % → 0,93 %). Ohne Skript bleibt der Block verborgen.
+(function () {
+  var box = document.getElementById("kaufkurs"); if (!box) return;
+  var ein = document.getElementById("kk-in"), aus = document.getElementById("kk-out"), kurs = document.getElementById("kk-kurs");
+  var plus = box.querySelector(".kk-plus"), minus = box.querySelector(".kk-minus");
+  var z = function (v, d) { return v.toLocaleString("de-DE", { minimumFractionDigits: d, maximumFractionDigits: d }); };
+  function rendite(preis) {
+    var lo = -0.5, hi = 0.5;
+    for (var i = 0; i < 80; i++) {
+      var m = (lo + hi) / 2, w = 0;
+      for (var t = 1; t <= 5; t++) w += 30 / Math.pow(1 + m, t);
+      w += 1000 / Math.pow(1 + m, 5);
+      if (w > preis) lo = m; else hi = m;
+    }
+    return (lo + hi) / 2 * 100;
+  }
+  function zeig() {
+    var k = parseFloat(ein.value), preis = k * 10, diff = 1000 - preis, ertrag = 150 + diff, r = rendite(preis);
+    kurs.textContent = z(k, 1) + "\u00a0%";
+    ein.setAttribute("aria-valuetext", z(k, 1) + " Prozent");
+    var skala = 250;   // 250 € = volle Breite (Kurs 90 %: 150 € Zinsen + 100 € Kursgewinn)
+    plus.style.left = (150 / skala * 100) + "%"; plus.style.width = (Math.max(diff, 0) / skala * 100) + "%";
+    minus.style.left = ((150 + Math.min(diff, 0)) / skala * 100) + "%"; minus.style.width = (Math.max(-diff, 0) / skala * 100) + "%";
+    aus.innerHTML = "Du zahlst " + z(preis, 0) + "\u00a0€ · Ertrag bis zur Fälligkeit " + z(ertrag, 0) + "\u00a0€ · Rendite <b>" +
+      z(r, 1).replace("-", "\u2212") + "\u00a0% pro Jahr</b>";
+  }
+  ein.addEventListener("input", zeig);
+  box.hidden = false; zeig();
+})();
+// Drucken: zugeklappte Erklärungen aufklappen, danach wieder schließen.
+(function () {
+  var offen = [];
+  window.addEventListener("beforeprint", function () {
+    offen = Array.prototype.filter.call(document.querySelectorAll("main details:not([open])"), function (d) { d.open = true; return true; });
+  });
+  window.addEventListener("afterprint", function () { offen.forEach(function (d) { d.open = false; }); offen = []; });
+})();
 </script>
 </body>
 </html>

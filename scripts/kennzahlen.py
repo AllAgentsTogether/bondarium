@@ -24,6 +24,17 @@ In den Quell-HTML stehen die Werte als lesbarer Rückfall, markiert mit data-kz:
          steuern-handelskosten.html, erste-anleihe.html, kaufen.html. Dazu wird die Wendung „NN Anbieter/Broker im Vergleich“
          in Titeln, Beschreibungen und Knöpfen auf die Zahl der Anbieter gesetzt.
 
+Seit 04.10.2026 für grundlagen.html („Anleihen einfach erklärt“), beides aus freien Quellen (Deutsche Bundesbank):
+    <span data-kz="zk-de10-2021-12">−0,24</span>          Monatsendwert der Zinsstrukturkurve (zinskurve.json, monate): Land de/us,
+         Restlaufzeit 2 oder 10 Jahre, Monat JJJJ-MM – nur abgeschlossene Monate (der laufende Monat ist ein Teilwert)
+    <span data-kz="paar-hoch-name">…</span> usw.          ein echtes Paar Bundeswertpapiere „Kupon ist nicht Rendite“ (kurse/bund/,
+         Kurse und Renditen der Bundesbank; Stammdaten aus anleihen/*.json): fast gleiche Fälligkeit (höchstens 120 Tage
+         auseinander), Kupon mindestens 2 Prozentpunkte verschieden, Rendite höchstens 0,3 Prozentpunkte verschieden, einer
+         über, einer unter 100 %, beide mit Kurs der letzten 10 Tage, Restlaufzeit mindestens 2 Jahre; ohne inflationsindexierte
+         und Grüne Bundeswertpapiere. Gewählt wird das Paar mit dem größten Kupon-Abstand, dann der kleinsten Fälligkeits-Lücke.
+         Schlüssel: paar-stand, paar-hoch-name/-kurs/-rendite, paar-tief-name/-kurs/-rendite. Findet sich kein Paar, bleibt der
+         Rückfall-Text samt seinem Datum stehen.
+
 Außerdem wird in Meta-/og-/JSON-LD-Texten die Wendung „Suche über rund NN.000 Anleihen“ auf die aktuelle Zahl gesetzt
 (nur diese Wendung – Zahlen wie „Börse Frankfurt rund 27.700 Anleihen“ bleiben unberührt).
 Seit 02.10.2026 ebenso, in Kopf und Text aller Seiten:
@@ -103,6 +114,74 @@ def akademie_themen():
     return None
 
 
+def zinskurve_werte(site):
+    """data-kz „zk-<land><jahre>-<JJJJ>-<MM>“ (z. B. zk-de10-2021-12) aus zinskurve.json → Wert mit Komma und Minuszeichen.
+    monate: [[„JJJJ-MM“, 2 Jahre, 10 Jahre], …]; der laufende Monat (letzte Zeile, Teildurchschnitt) wird nie verwendet."""
+    z = lade(site, "zinskurve.json") or {}
+    out = {}
+    for land, zeilen in (z.get("monate") or {}).items():
+        for zeile in (zeilen or [])[:-1]:
+            if not (isinstance(zeile, list) and len(zeile) >= 3 and re.fullmatch(r"\d{4}-\d{2}", str(zeile[0]))):
+                continue
+            for jahre, wert in (("2", zeile[1]), ("10", zeile[2])):
+                if isinstance(wert, (int, float)):
+                    out[f"zk-{land.lower()}{jahre}-{zeile[0]}"] = de(wert, 2).replace("-", "\u2212")
+    return out
+
+
+def anleihen_paar(site, heute=None):
+    """Echtes Paar Bundeswertpapiere für „Kupon ist nicht Rendite“ (grundlagen.html, Schritt 3) – Regel siehe Kopf."""
+    import datetime
+    import glob
+    from steckbriefe import art_von, kupon_text, stammdaten
+    heute = heute or datetime.date.today()
+    reihen = {}
+    for f in glob.glob(os.path.join(site, "kurse", "bund", "*.json")):
+        try:
+            d = json.load(open(f, encoding="utf-8"))
+            t, k, r = d.get("t") or [], d.get("k") or [], d.get("r") or []
+            if t and len(t) == len(k) == len(r) and isinstance(k[-1], (int, float)) and isinstance(r[-1], (int, float)):
+                reihen[d.get("isin") or os.path.basename(f)[:-5]] = (t[-1], k[-1], r[-1])
+        except (OSError, ValueError, TypeError):
+            continue
+    stamm = stammdaten(site, list(reihen))
+    kand = []
+    for isin, (tag, kurs, rendite) in reihen.items():
+        z = stamm.get(isin)
+        if not z:
+            continue
+        name, kupon, faellig = z[0], z[3], z[4]
+        art = art_von(name or "")
+        if not art or "Inflation" in art or art.startswith("Grüne") or not isinstance(kupon, (int, float)) or kupon <= 0:
+            continue
+        try:
+            f_tag, k_tag = datetime.date.fromisoformat(faellig), datetime.date.fromisoformat(tag)
+        except (TypeError, ValueError):
+            continue
+        if (heute - k_tag).days > 10 or (f_tag - heute).days < 730:
+            continue
+        kand.append(dict(isin=isin, art=art, kupon=kupon, faellig=f_tag, tag=k_tag, kurs=kurs, rendite=rendite))
+    bestes = None
+    for a in kand:
+        for b in kand:
+            if a["kupon"] - b["kupon"] < 2 - 1e-9:
+                continue
+            luecke = abs((a["faellig"] - b["faellig"]).days)
+            if luecke > 120 or abs(a["rendite"] - b["rendite"]) > 0.3 or not (a["kurs"] > 100 > b["kurs"]):
+                continue
+            wert = (a["kupon"] - b["kupon"], -luecke)
+            if bestes is None or wert > bestes[0]:
+                bestes = (wert, a, b)
+    if not bestes:
+        return {}
+    _, a, b = bestes
+    d = lambda x: x.strftime("%d.%m.%Y")
+    name = lambda x: f"{x['art']} {kupon_text(x['kupon'])} fällig {d(x['faellig'])}"
+    return {"paar-stand": d(max(a["tag"], b["tag"])),
+            "paar-hoch-name": name(a), "paar-hoch-kurs": de(a["kurs"], 2) + "&nbsp;%", "paar-hoch-rendite": de(a["rendite"], 2) + "&nbsp;%",
+            "paar-tief-name": name(b), "paar-tief-kurs": de(b["kurs"], 2) + "&nbsp;%", "paar-tief-rendite": de(b["rendite"], 2) + "&nbsp;%"}
+
+
 def main():
     site = sys.argv[1] if len(sys.argv) > 1 else "_site"
     werte = {}
@@ -160,9 +239,17 @@ def main():
             datenstand["anleihen-suche.html"] = t
     except Exception as e:
         print(f"::warning::kennzahlen.py: Daten-Stand der Anleihen-Suche nicht gesetzt ({type(e).__name__}: {e})")
-    print("Kennzahlen:", werte, datenstand)
+    try:   # Monatsendwerte der Zinsstrukturkurve (grundlagen.html, „Wirklich passiert“)
+        werte.update(zinskurve_werte(site))
+    except Exception as e:
+        print(f"::warning::kennzahlen.py: Werte der Zinskurve nicht gesetzt ({type(e).__name__}: {e})")
+    try:   # echtes Paar Bundeswertpapiere (grundlagen.html, Schritt 3)
+        werte.update(anleihen_paar(site))
+    except Exception as e:
+        print(f"::warning::kennzahlen.py: Anleihen-Paar nicht gesetzt ({type(e).__name__}: {e})")
+    print("Kennzahlen:", {k: v for k, v in werte.items() if not k.startswith("zk-")}, f"+ {sum(k.startswith('zk-') for k in werte)} Werte der Zinskurve", datenstand)
 
-    span_re = re.compile(r'(<span data-kz="([a-z-]+)">)([^<]*)(</span>)')
+    span_re = re.compile(r'(<span data-kz="([a-z0-9-]+)">)([^<]*)(</span>)')
     # nur die feste Wendung „Suche über rund NN.000 Anleihen“ – andere Zahlen (z. B. je Börse) bleiben unberührt
     meta_re = re.compile(r'Suche über rund \d{1,3}\.\d{3} Anleihen')
     # „19 Anbieter im Vergleich“ / „19 Broker im Vergleich“ (Titel, Beschreibungen, Knöpfe) – Zahl aus broker.json
