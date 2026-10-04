@@ -54,6 +54,7 @@ AKADEMIE = ("Akademie", "wissen.html", [
         ("Laufzeit", "laufzeit.html"),
         ("Bonität und Ratings", "bonitaet.html"),
         ("Risiko kennen", "risiko.html"),
+        ("Wenn der Schuldner nicht zahlt", "zahlungsausfall.html"),   # seit 04.10.2026 (SEO-Runde 2, Themenlücke 3): Insolvenz, Umschuldung, Bail-in
         ("Kündbare Anleihen", "kuendbare-anleihen.html"),
     ]),
     ("Auswählen", "auswaehlen", [
@@ -61,6 +62,7 @@ AKADEMIE = ("Akademie", "wissen.html", [
         ("Welche Anleihe wozu passt?", "anlageziele.html"),
         ("Wie viel Anleihen ins Depot?", "anleihen-anteil.html"),   # seit 01.10.2026: Anleihen neben Aktien – Mischung, Faustregeln, Nachjustieren
         ("Anleihen-Beispiele nach Ziel", "guide.html"),   # Anleitungen, keine Liste – bis 01.10.2026 im Menü „Anleihen“
+        ("Anleihe, Festgeld oder Tagesgeld?", "anleihe-festgeld-tagesgeld.html"),   # seit 04.10.2026 (SEO-Runde 2, Themenlücke 2), mit Geldmarkt-ETF
         ("ETF oder Anleihe?", "etf-oder-anleihe.html"),
         ("Anleihen-ETF: Vor- und Nachteile", "anleihen-etf-erklaert.html"),
         ("Anleihen für Unternehmen", "anleihen-fuer-unternehmen.html"),   # seit 01.10.2026: Depot, LEI, Steuern, Bilanz – Hausbegriff „Unternehmen“ (nicht „Firmen“); die Listen im Menü „Anleihen“ heißen „Unternehmensanleihen …“
@@ -85,6 +87,8 @@ ANLEIHEN = ("Anleihen", "anleihen.html", [
     ("Anleihen-ETFs", "anleihen-etf.html"),
     "Top 30",   # höchster Kupon unter den Anleihen der EZB-Liste – drei Top 30 auf einer Seite: Staat, Öffentlich, Unternehmen
     ("Anleihen nach Kupon", "anleihen-kupon.html"),
+    "Vom Bund",   # seit 04.10.2026 (SEO-Runde 2, Themenlücke 4): alle laufenden Bundeswertpapiere mit Kurs und Rendite der Bundesbank
+    ("Bundeswertpapiere", "bundeswertpapiere.html"),
 ])
 # „Kaufen“ (seit 01.10.2026 eigener Hauptpunkt): alles, was man beim Kauf braucht – Anleitung, Broker, Handelsplätze,
 # Steuern und Kosten, Rechner (der Rechner stand vorher doppelt: unter Entscheiden und unter „Werkzeuge“).
@@ -95,6 +99,7 @@ KAUFEN = ("Kaufen", "kaufen.html", [
     ("Deine erste Anleihe", "erste-anleihe.html"),
     ("Broker im Vergleich", "broker-vergleich.html"),
     ("Handelsplätze", "handelsplaetze.html"),
+    ("Warum kann ich diese Anleihe nicht kaufen?", "anleihe-nicht-kaufbar.html"),   # seit 04.10.2026 (SEO-Runde 2, Themenlücke 1)
     "Kosten und Rendite",
     ("Steuern und Handelskosten", "steuern-handelskosten.html"),
     ("Rechner", "rechner.html"),

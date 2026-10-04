@@ -89,6 +89,8 @@ nicht, bleibt die Seite im Zustand der Quell-HTML.
   „ – Bondarium“. Am 04.10.2026 geändert (Freigabe 02.10.2026): kaufen, erste-anleihe, anlegerprofile, zinsniveau,
   anleihen-kupon, anleihen, rechtliches („und“ statt „&“), wissen, beobachten, laufzeit, rendite-lesen, anleihen-etf.
   Der Titel steht dreimal im Kopf (title, og:title, twitter:title); die `headline` im JSON-LD darf die H1 sein.
+- **Vier neue Seiten** (Entscheidung 02.10.2026, live 04.10.2026): bundeswertpapiere, anleihe-festgeld-tagesgeld,
+  anleihe-nicht-kaufbar, zahlungsausfall – je mit Antwortsatz, Stand, datePublished, Quellen-Aufklapper (docs/SEITEN.md).
 - **Antwortsatz**: Der erste Satz der Einleitung unter der H1 (`<p class="sub">`) beantwortet die Hauptfrage der Seite in
   einem Satz – das, was Suchmaschinen und KI-Dienste als Antwort zitieren. Gesetzt auf grundlagen, rendite-lesen, bonitaet,
   zinsniveau, anleihen-etf-erklaert, steuern-handelskosten, laufzeit, risiko (duration hatte ihn schon); neue Themenseiten
