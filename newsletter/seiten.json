@@ -3,7 +3,8 @@
 "anlageziele.html": "",
 "anlegerprofile.html": "",
 "anleihe-arten.html": "",
-"anleihe.html": "",
+"anleihe-festgeld-tagesgeld.html": "2026-10-05",
+"anleihe-nicht-kaufbar.html": "2026-10-05",
 "anleihen-anteil.html": "2026-10-01",
 "anleihen-etf-erklaert.html": "",
 "anleihen-etf.html": "",
@@ -17,6 +18,7 @@
 "beobachten.html": "",
 "bonitaet.html": "",
 "broker-vergleich.html": "",
+"bundeswertpapiere.html": "2026-10-05",
 "duration.html": "",
 "erste-anleihe.html": "",
 "etf-oder-anleihe.html": "",
@@ -44,6 +46,7 @@
 "unternehmensanleihen-laufzeit.html": "",
 "unternehmensanleihen.html": "",
 "wissen.html": "",
+"zahlungsausfall.html": "2026-10-05",
 "zinskurve.html": "",
 "zinsniveau.html": ""
 }
