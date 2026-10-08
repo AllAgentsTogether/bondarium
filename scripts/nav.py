@@ -55,6 +55,7 @@ AKADEMIE = ("Akademie", "wissen.html", [
         ("Bonität und Ratings", "bonitaet.html"),
         ("Risiko kennen", "risiko.html"),
         ("Wenn der Schuldner nicht zahlt", "zahlungsausfall.html"),   # seit 04.10.2026 (SEO-Runde 2, Themenlücke 3): Insolvenz, Umschuldung, Bail-in
+        ("Eisenbahn-Blase 1873", "eisenbahn-blase-1873.html"),   # seit 08.10.2026 (Nutzerwunsch): Geschichte der Bahnanleihen-Blase, Fallbeispiel zum Zahlungsausfall
         ("Kündbare Anleihen", "kuendbare-anleihen.html"),
     ]),
     ("Auswählen", "auswaehlen", [
