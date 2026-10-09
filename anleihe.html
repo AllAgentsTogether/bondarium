@@ -37,13 +37,16 @@
      Quellen und einfache, gekennzeichnete Berechnungen daraus – keine Bewertung, keine Handlungsaufforderung, keine Signalfarben.
      Prüfung: python3 scripts/neutral_check.py */
   .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; list-style: none; padding: 0; }
-  .chips:empty { display: none; }
+  /* Leer (vor dem Laden) halten Chips und Registername ihren Platz, damit der Kopf nicht springt (seit 09.10.2026, Technik-Test
+     08.10.2026 T-83: CLS bis 0,09 bei langsamer Verbindung); ohne Steckbrief entfernt das Seitenskript beide (ohneKopf) */
+  .chips:empty { height: 26.5px; }   /* eine Chipzeile; am Handy zwei (gemessen: bis rund 500 px Breite fast immer zwei Zeilen) */
+  @media (max-width: 500px) { .chips:empty { height: 59px; } }
   .chips li { font-size: 12.5px; font-weight: 600; line-height: 1; padding: 6px 10px; border-radius: 999px; background: #fff; border: 1px solid rgba(26,26,25,0.16); color: var(--ink); white-space: nowrap; }
   h1 { font-size: 34px; line-height: 1.15; margin-bottom: 8px; max-width: 900px; overflow-wrap: anywhere; }
   h1 .fa { color: var(--text); }
   .reg { font-size: 14px; color: var(--text); margin-bottom: 8px; overflow-wrap: anywhere; }
   .reg b { color: var(--ink); font-weight: 600; }
-  .reg:empty { display: none; }
+  .reg:empty { min-height: 1.6em; }   /* eine Zeile; am Handy zwei (Block 600 px) */
   .idz { font-size: 14px; color: var(--text); margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: center; }
   .idz[hidden] { display: none; }
   .idz b { color: var(--ink); font-weight: 600; }
@@ -125,7 +128,8 @@
   .leer { max-width: 620px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; padding: 18px 20px; font-size: 15px; line-height: 1.6; }
   .leer a { color: var(--green-text); }
   .nix-suche { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-  .nix-suche input { flex: 1 1 200px; font: inherit; font-size: 16px; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.25); border-radius: 999px; padding: 10px 16px; }
+  /* Feldrand rgba(26,26,25,0.55) wie in Mein Bondarium, 3,9:1 (seit 09.10.2026, Technik-Test 08.10.2026 T-117; vorher 1,6:1) */
+  .nix-suche input { flex: 1 1 200px; font: inherit; font-size: 16px; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.55); border-radius: 999px; padding: 10px 16px; }
   .nix-suche button { font: inherit; font-size: 15px; font-weight: 600; color: var(--ink); background: var(--green); border: 0; border-radius: 999px; padding: 10px 18px; cursor: pointer; }
   .nix-suche input:focus-visible, .nix-suche button:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   @media (max-width: 940px) {
@@ -137,9 +141,17 @@
   }
   @media (max-width: 760px) {
     body.mit-leiste { padding-bottom: 96px; }
+    html.mit-leiste { scroll-padding-bottom: 96px; }   /* Tastaturfokus nicht unter der festen Leiste (seit 09.10.2026, T-31) */
     .leiste { display: grid; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; grid-template-columns: 1fr; gap: 8px; padding: 10px 14px calc(12px + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.97); border-top: 1px solid var(--rule); box-shadow: 0 -6px 20px rgba(26,26,25,0.08); }
     .leiste[hidden] { display: none; }
     .leiste a, .leiste button { font: inherit; font-size: 15px; font-weight: 600; text-align: center; border-radius: 999px; padding: 11px 10px; text-decoration: none; color: var(--ink); border: 1px solid rgba(44,44,42,0.25); background: #fff; cursor: pointer; }
+  }
+  /* Wenig Höhe (Zoom 200/400 %, Handy quer): Leiste am Ende des Inhalts statt fest – vorher belegten Kopf und Leiste 36 bzw. 50 % der
+     Höhe (seit 09.10.2026, Technik-Test 08.10.2026 T-112); die Kopfzeile bleibt, wie sie ist */
+  @media (max-width: 760px) and (max-height: 500px) {
+    .leiste { position: static; }
+    body.mit-leiste { padding-bottom: 0; }
+    html.mit-leiste { scroll-padding-bottom: 0; }
   }
   @media (max-width: 600px) {
     h1 { font-size: 26px; min-height: 2.3em; }
@@ -153,13 +165,17 @@
     .neben { flex-direction: column; gap: 3px; }
     .abs { margin-top: 24px; padding-top: 20px; }
     .kv { min-height: calc((100vw - 32px) * 0.66 + 40px); }
+    .reg:empty { min-height: 3.2em; }   /* zwei Zeilen (T-83) */
   }
   /* „Zum Depot hinzufügen“ neben „Merken“ (seit 02.10.2026, Nutzerentscheid): Knopf in der Form des Merken-Knopfs (.merkbtn,
      base.css), darunter ein kleines Feld mit Nennwert. Liegt die Anleihe im Musterdepot, zeigt der Knopf „Im Depot“ und die Zeile
      .dep-info darunter, mit wie viel. */
   .idz { position: relative; }
   .depbtn svg { color: var(--green-text); }
-  .depbtn[aria-pressed="true"] svg { color: var(--ink); }
+  /* liegt im Musterdepot: Aussehen wie .merkbtn[aria-pressed="true"] in base.css – bis 09.10.2026 über aria-pressed (T-119) */
+  .depbtn.drin { background: var(--green); border-color: var(--green); }
+  .depbtn.drin svg { color: var(--ink); }
+  .depbtn.drin svg path { fill: currentColor; }
   .depbtn[aria-expanded="true"] { border-color: var(--ink); }
   .dep-info { flex-basis: 100%; font-size: 13.5px; color: var(--text); margin-top: -2px; }
   .dep-info:empty { display: none; }
@@ -189,7 +205,7 @@
   @media (max-width: 600px) { .dep-pop { left: 0 !important; right: 0; width: auto; } }
   @media (prefers-reduced-motion: no-preference) { html.sanft { scroll-behavior: smooth; } }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Anleihe – Steckbrief","description":"Steckbrief einer Anleihe: Kurs und Rendite vom letzten Börsentag, Kursverlauf, Handel, Zinsformel, Rang, Kündigung und Stückelung.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-02","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihe.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Anleihe – Steckbrief","description":"Steckbrief einer Anleihe: Kurs und Rendite vom letzten Börsentag, Kursverlauf, Handel, Zinsformel, Rang, Kündigung und Stückelung.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-09","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihe.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.bondarium.de/anleihen.html"},{"@type":"ListItem","position":3,"name":"Anleihen-Suche","item":"https://www.bondarium.de/anleihen-suche.html"},{"@type":"ListItem","position":4,"name":"Anleihe","item":"https://www.bondarium.de/anleihe.html"}]}</script>
 </head>
 <body>
@@ -370,9 +386,10 @@
         <p id="datastand">Daten-Stand: wird geladen</p>
       </div>
     </details>
+    <!-- feste Leiste am Handy: seit 09.10.2026 innerhalb von <main> (Technik-Test 08.10.2026 T-118; Lage unverändert, sie ist fest positioniert) -->
+    <div class="leiste" id="leiste" hidden><button type="button" id="leiste-kopie">ISIN kopieren</button></div>
   </main>
   <p class="sr-only" id="kopie-status" role="status" aria-live="polite"></p>
-  <div class="leiste" id="leiste" hidden><button type="button" id="leiste-kopie">ISIN kopieren</button></div>
   <footer class="fuss">
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html#grundlagen">Grundlagen</a><a href="wissen.html#auswaehlen">Auswählen</a><a href="wissen.html#fortgeschrittene">Für Fortgeschrittene</a><a href="begriffe.html">Glossar</a></nav>
     <nav aria-labelledby="f-anl"><p class="fuss-k" id="f-anl">Anleihen</p><a href="anleihen-suche.html">Anleihen-Suche</a><a href="anleihen.html">Top-10-Listen</a><a href="anleihen-kupon.html">Anleihen nach Kupon</a><a href="anleihen-etf.html">Anleihen-ETFs</a></nav>
@@ -408,8 +425,13 @@ const T = {
   wtag: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
 };
 const p = new URLSearchParams(location.search);
-const ISIN = (p.get("isin") || "").trim().toUpperCase();
-const HEUTE = Date.now();
+// Leerzeichen und Bindestriche fallen weg (seit 09.10.2026, Technik-Test 08.10.2026 T-92): „DE00 0110 2580“ oder „DE000-110258-0“
+// aus getippten oder fremden Links zeigt den Steckbrief statt „keine gültige ISIN“
+const ISIN = (p.get("isin") || "").replace(/[\s-]+/g, "").toUpperCase();
+// „Heute“ ist der Berliner Kalendertag um 12:00 UTC (MC.heuteBerlin, seit 09.10.2026, Technik-Test 08.10.2026 T-51) – für Restlaufzeit,
+// Valuta und Alter des Kurses. Vorher Gerätedatum bzw. Uhrzeit: am Fälligkeitstag stand zwischen 0 und 2 Uhr „1 Tag“, in fernen
+// Zeitzonen war die Valuta einen Tag später und ein Kurs einen Börsentag älter als in Berlin. Ohne site.js: das Ortsdatum.
+const HEUTE = MC.heuteBerlin ? MC.heuteBerlin().getTime() : (h => Date.UTC(h.getFullYear(), h.getMonth(), h.getDate(), 12))(new Date());
 const NAMEN = (() => { try { return { land: new Intl.DisplayNames(["de"], { type: "region" }), w: new Intl.DisplayNames(["de"], { type: "currency" }) }; } catch (e) { return {}; } })();
 const landName = c => c === "INT" ? "International (supranational)" : ((NAMEN.land && (() => { try { return NAMEN.land.of(c); } catch (e) { return ""; } })()) || c);
 // Zahlen und Daten: gemeinsame Formate (site.js MC.zahl/MC.datum, bond.js MC.bond.fmtCoupon) – seit 30.09.2026 statt eigener Kopien
@@ -417,7 +439,9 @@ const fmt = (v, dec = 0) => MC.zahl(v, dec);
 const fmtDate = iso => MC.datum ? MC.datum(iso) : (iso ? `${iso.slice(8, 10)}.${iso.slice(5, 7)}.${iso.slice(0, 4)}` : "–");
 const isoOf = d => d.toISOString().slice(0, 10);
 const fmtCoupon = c => c === "var" ? "variabel" : typeof c === "number" ? `${MC.bond ? MC.bond.fmtCoupon(c) : fmt(c, 2)} %` : "–";
-const fmtVol = v => typeof v === "number" ? (v >= 1e9 ? `${(v / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 })} Mrd.` : `${(v / 1e6).toLocaleString("de-DE", { maximumSignificantDigits: 3 })} Mio.`) : "–";
+// Volumen wie in allen Anleihen-Tabellen (MC.felder.volumen, seit 09.10.2026, Technik-Test 08.10.2026 T-54): erst auf drei gültige
+// Ziffern gerundet, dann die Einheit – 999,6 Mio. stand als „1.000 Mio.“ da, jetzt „1 Mrd.“; unter 1 Mio. die ganze Zahl
+const fmtVol = v => MC.felder ? MC.felder.volumen(v) : typeof v === "number" ? (v >= 1e9 ? `${(v / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 })} Mrd.` : `${(v / 1e6).toLocaleString("de-DE", { maximumSignificantDigits: 3 })} Mio.`) : "–";
 const fmtStk = v => typeof v === "number" ? v.toLocaleString("de-DE", { maximumFractionDigits: 3 }) : "–";
 const jahre = iso => iso ? (new Date(iso + "T12:00:00Z").getTime() - HEUTE) / (365.25 * 86400000) : Infinity;
 const RL = y => MC.restlaufzeit ? MC.restlaufzeit(y) : `${fmt(Math.max(0, y), 1)} Jahre`;
@@ -457,13 +481,14 @@ const letzterKupon = (faellig, freq, tage) => MC.bond.couponDates(anleiheB(0, fa
 // rechnerischen Zinstermin und das Ausgabejahr nicht davor, ist die Anleihe im ersten Zinsjahr – Zinslauf vereinfacht ab dem ersten
 // Handelstag, der erste Kupon anteilig (erster = Anteil). Vorher rechnete der Steckbrief z. B. für die Bundesobligation „v.2026(31)“,
 // erster Handelstag 21.07.2026, 363 Tage Stückzinsen seit 08.10.2025 und eine volle erste Zinszahlung.
+// Seit 09.10.2026 (Technik-Test 08.10.2026 T-16) steht die Regel in bond.js (b.ab, b.ausgabe) – Musterdepot und Rechner rechnen
+// damit wie der Steckbrief. Ergebnis: anteil (Stückzinsen), letzter (Beginn des Zinslaufs), naechster, tage, neu, erster (Anteil der
+// ersten Zahlung).
 function stueckzins(kupon, faellig, freq, valuta, tage, neu) {
-  const b = anleiheB(kupon, faellig, freq, tage), v = isoOf(valuta), cd = MC.bond.couponDates(b, v);
-  const letzter = new Date(cd.prev), naechster = new Date(cd.dates[0]), periode = Math.round((naechster - letzter) / 86400000);
-  if (neu && neu.ab && neu.jahr && neu.ab > letzter && neu.ab < valuta && neu.jahr >= letzter.getUTCFullYear())
-    return { anteil: kupon / freq * (valuta - neu.ab) / (naechster - letzter), letzter: neu.ab, naechster, tage: Math.round((valuta - neu.ab) / 86400000),
-      periode, neu: true, erster: (naechster - neu.ab) / (naechster - letzter) };
-  return { anteil: MC.bond.accrued(b, v), letzter, naechster, tage: Math.round((valuta - letzter) / 86400000), periode };
+  const b = anleiheB(kupon, faellig, freq, tage), v = isoOf(valuta);
+  if (neu && neu.ab && neu.jahr) { b.ab = isoOf(neu.ab); b.ausgabe = neu.jahr; }
+  const cd = MC.bond.couponDates(b, v), letzter = new Date(cd.start), naechster = new Date(cd.dates[0]);
+  return { anteil: MC.bond.accrued(b, v), letzter, naechster, tage: Math.round((valuta - letzter) / 86400000), neu: cd.start !== cd.prev, erster: cd.first };
 }
 // Ausgabejahr aus dem Namen: „v.2026(31)“, „Anl.v.2023 (2030)“, „IHS v.26(32)“, „EO-IHS 26(34)“, „DL-Notes 2024(24/54)“ – sonst null
 function ausgabeJahr(name) {
@@ -535,7 +560,6 @@ function depotFeld(a) {
   const HAKEN = '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   const b = document.createElement("button");
   b.type = "button"; b.className = "merkbtn depbtn"; b.id = "depbtn";
-  b.setAttribute("aria-haspopup", "dialog"); b.setAttribute("aria-expanded", "false"); b.setAttribute("aria-controls", "dep-pop");
   vor.after(b);
   const info = document.createElement("span"); info.className = "dep-info"; info.id = "dep-info"; idz.appendChild(info);
   const pop = document.createElement("div");
@@ -556,18 +580,28 @@ function depotFeld(a) {
   const lies = t => liesBetrag(t, { ganz: true, min: 1, max: DEP_NENN_MAX });   // seit 03.10.2026 streng (vorher wurde „5.0001.000“ zu 50.001.000)
   const stkText = stk ? `Stückelung ${fmtStk(stk)} ${W}.` : "";
   const betrag = n => `${MC.zahl(n, 0)} ${MC.esc(W)}`;
-  let fx = W === "€";   // Fremdwährung: erst nach dem Blick in die EZB-Kurse
+  // Fremdwährung: erst nach dem Blick in die EZB-Kurse. Frühere Euro-Währungen (DEM, ATS …) rechnet Mein Depot zum festen Kurs um
+  // (MC.EURO_FEST, seit 09.10.2026, Technik-Test 08.10.2026 T-40; vorher „keinen Euro-Referenzkurs der EZB“)
+  let fx = W === "€" || !!(MC.EURO_FEST && MC.EURO_FEST[a.ccy]);
+  // ARIA (seit 09.10.2026, Technik-Test 08.10.2026 T-119): Feld-Angaben (haspopup, expanded, controls) nur angemeldet – abgemeldet
+  // führt der Knopf zur Anmeldung und öffnet nichts. Kein aria-pressed: Der Zustand steht im Text („Im Musterdepot“), die
+  // Gestaltung hängt an der Klasse .drin (vorher trug der Knopf haspopup, expanded und pressed zugleich).
+  function aria() {
+    if (K.stand().angemeldet) {
+      if (!b.hasAttribute("aria-haspopup")) { b.setAttribute("aria-haspopup", "dialog"); b.setAttribute("aria-expanded", String(!pop.hidden)); b.setAttribute("aria-controls", "dep-pop"); }
+    } else ["aria-haspopup", "aria-expanded", "aria-controls"].forEach(x => b.removeAttribute(x));
+  }
   function zeichne() {
     const drin = liegtIn();
     b.disabled = !!a.warum;
-    b.setAttribute("aria-pressed", String(drin.length > 0));
+    b.classList.toggle("drin", drin.length > 0); aria();
     b.innerHTML = (drin.length ? HAKEN : PLUS) + `<span>${drin.length ? "Im Musterdepot" : "Zum Musterdepot hinzufügen"}</span>`;
     b.title = a.warum ? `Lässt sich dem Musterdepot nicht hinzufügen: ${a.warum}` : drin.length ? "Nennwert ändern, in ein weiteres Musterdepot legen oder entfernen" : "Zu einem deiner Musterdepots hinzufügen";
     info.innerHTML = !drin.length ? "" : (drin.length === 1 ? `Liegt mit ${betrag(nennIn(drin[0]))} in „${MC.esc(drin[0][1])}“`
       : `Liegt in ${drin.length} Musterdepots: ${drin.map(d => `„${MC.esc(d[1])}“ (${betrag(nennIn(d))})`).join(", ")}`) + ' · <a href="konto.html#depot">Musterdepots öffnen</a>';
   }
   function hinweis(text, fehler) { h.className = "dep-pop-h" + (fehler ? " fehler" : ""); h.textContent = text; }
-  function zu(fokus) { pop.hidden = true; b.setAttribute("aria-expanded", "false"); if (fokus) b.focus(); }
+  function zu(fokus) { pop.hidden = true; if (b.hasAttribute("aria-expanded")) b.setAttribute("aria-expanded", "false"); if (fokus) b.focus(); }
   // Feld für das gewählte Depot füllen: liegt die Anleihe dort, ihr Nennwert; sonst ein Vorschlag (5.000, bei großer Stückelung
   // die Stückelung, sonst das kleinste Vielfache der Stückelung ab 5.000) – bis 03.10.2026 der Betrag aus dem Rechenbeispiel
   function fuelle() {
@@ -584,7 +618,7 @@ function depotFeld(a) {
     wahl.value = String((drin[0] || ds[0])[0]);
     $("dep-wahl").hidden = ds.length < 2;
     fuelle();
-    pop.hidden = false; b.setAttribute("aria-expanded", "true");
+    aria(); pop.hidden = false; b.setAttribute("aria-expanded", "true");
     pop.style.left = b.offsetLeft + "px";
     pop.style.setProperty("--pfeil", Math.max(14, b.offsetLeft - pop.offsetLeft + 18) + "px");
     (ds.length > 1 ? wahl : feld).focus(); if (ds.length < 2) feld.select();
@@ -619,7 +653,11 @@ function depotFeld(a) {
   });
   $("dep-weg").addEventListener("click", () => sende(0));
   document.addEventListener("keydown", e => { if (e.key === "Escape" && !pop.hidden) zu(true); });
-  document.addEventListener("click", e => { if (!pop.hidden && !pop.contains(e.target) && !b.contains(e.target)) zu(); });
+  const daneben = e => { if (!pop.hidden && !pop.contains(e.target) && !b.contains(e.target)) zu(); };
+  document.addEventListener("click", daneben);
+  // iPhone/iPad: Ein Fingertipp auf Text ohne eigenen Klick löst dort kein click am document aus – die Tafel blieb offen. Deshalb
+  // dieselbe Regel schon beim Aufsetzen des Fingers (seit 09.10.2026, Technik-Test 08.10.2026 T-144; wie das Menü in site.js)
+  document.addEventListener("pointerdown", e => { if (e.pointerType === "touch") daneben(e); });
   zeichne(); K.beiAenderung(zeichne); K.bereit().then(zeichne);
 }
 
@@ -634,7 +672,7 @@ function zeige(r, k, meta, kf) {
   // Bundeswertpapier (seit 03.10.2026): Staat Deutschland, gleich woher der heutige Kurs stammt. „bund“ heißt nur „Kurs von der
   // Bundesbank“ – seit dem Bundesbank-Ausfall am 02.10.2026 tragen alle Bund-Kurse die Quelle Börse Frankfurt.
   const bundWp = art === 0 && land === "DE";
-  const heute = new Date(HEUTE), heuteUTC = new Date(Date.UTC(heute.getFullYear(), heute.getMonth(), heute.getDate(), 12));
+  const heuteUTC = new Date(HEUTE);   // Berliner Kalendertag, 12:00 UTC (T-51; vorher das Ortsdatum des Geräts)
   // Order frühestens am nächsten Handelstag (am Wochenende und an Börsenfeiertagen nicht heute), Valuta zwei Abwicklungstage später –
   // seit 03.10.2026 (Nutzertest: „Order am 03.10.“, einem Samstag, Valuta 06.10. statt 07.10.)
   const orderTag = MC.handelstag ? MC.handelstag(heuteUTC) : heuteUTC;
@@ -644,7 +682,9 @@ function zeige(r, k, meta, kf) {
   const nachFaellig = !!(faellig && valuta >= new Date(faellig + "T12:00:00Z"));
   const abgelaufen = !!(faellig && jahre(faellig) < 0);
   let rend = k && typeof k[1] === "number" && !befund && !nachFaellig ? k[1] : null;
-  let auf = k && typeof k[7] === "number" && !befund && !nachFaellig ? k[7] : null;
+  // Kein Aufschlag bei Bundeswertpapieren (seit 09.10.2026, Technik-Test 08.10.2026 T-04): Die Kursdaten trugen auch für sie einen
+  // „Aufschlag zu sich selbst“ (−0,46 bis +1,37 Pkt.); es gilt „– Bundeswertpapier ist die Bezugsgröße“ (aufGrund unten)
+  let auf = k && typeof k[7] === "number" && !befund && !nachFaellig && !bundWp ? k[7] : null;
   const real = rend != null && bund && /inflation|infl\./i.test(name);
   const taxe = !!(k && !k[4] && !bund);   // Kurs ohne Abschluss: Feststellung des Spezialisten
   // Plausibilitätsregel (27.09.2026, unverändert): Taxe ohne Umsatz und Rendite außerhalb der Grenzen → keine Rendite, kein Aufschlag
@@ -656,14 +696,15 @@ function zeige(r, k, meta, kf) {
   // also; die künftigen Stufen stehen nicht in unseren Daten. Darum kein „fest“, kein Rechenbeispiel (vorher mit dem heutigen Kupon gerechnet).
   const stufen = zinsart === 0 && /stufenz|step[ -]?up|step[ -]?down|\bstep\b/i.test(name);
   const kue = MC.kuendigung ? MC.kuendigung(name, rz, faellig, m[1]) : { k: "n", jahr: null, put: false };
-  const kueAb = kue.jahr ? `${kue.jahr <= heute.getFullYear() ? "seit" : "ab"} ${kue.jahr}` : "";
+  const kueAb = kue.jahr ? `${kue.jahr <= heuteUTC.getUTCFullYear() ? "seit" : "ab"} ${kue.jahr}` : "";
   // Zinstermine: zt = [Zahlungen je Jahr, "MM-TT", …] laut Börsenliste, [Zahlungen je Jahr] = geschätzt (scripts/update_zinstermine.py)
   const freq = Array.isArray(zt) && zt[0] > 0 ? zt[0] : 1, zinstage = Array.isArray(zt) && zt.length > 1 ? zt.slice(1) : null;
   const rhythmus = { 2: "halbjährlich", 4: "vierteljährlich", 12: "monatlich" }[freq] || "";
   const wName = (() => { try { const n = NAMEN.w && NAMEN.w.of(ccy); return n && n !== ccy ? n : ""; } catch (e) { return ""; } })();
   const wkn = /^DE/.test(ISIN) ? ISIN.slice(5, 11) : "";
-  const alter = datum && MC.boersentage ? MC.boersentage(datum, heute) : null;   // Börsentage seit dem Kursdatum (gemeinsame Regel, site.js)
-  const veraltet = !!(datum && MC.veraltet && MC.veraltet(datum, heute));
+  // Börsentage seit dem Kursdatum bis heute in Berlin (gemeinsame Regel, site.js; seit 09.10.2026 ohne das Ortsdatum als zweites Argument, T-51)
+  const alter = datum && MC.boersentage ? MC.boersentage(datum) : null;
+  const veraltet = !!(datum && MC.veraltet && MC.veraltet(datum));
 
   // --- Kopf: Chips, lesbarer Titel, Registername, ISIN und Datenstand ---
   const kurz = kurzName(emittent, art, land);
@@ -757,8 +798,10 @@ function zeige(r, k, meta, kf) {
     : faellig && jahre(faellig) > 30 ? "nur bis 30 Jahre Restlaufzeit berechnet" : "zurzeit nicht verfügbar – die Bund-Vergleichskurve fehlt";
   // Fremdwährung (seit 03.10.2026, Nutzertest): Die Rendite gilt in der Währung der Anleihe. Ein Beispiel zeigt, was 10 % Kursverlust
   // der Währung bis zur Fälligkeit für die Rendite in Euro bedeutet: ((1 + r)^T × 0,9)^(1/T) − 1 – keine Prognose
-  const restJ = faellig ? jahre(faellig) : null;
-  const fxBsp = ccy !== "EUR" && rend != null && restJ > 0.25 ? (Math.pow(Math.pow(1 + rend / 100, restJ) * 0.9, 1 / restJ) - 1) * 100 : null;
+  // Frühere Euro-Währungen (DEM, ATS, ITL, NLG …, MC.EURO_FEST) haben einen festen Kurs zum Euro – kein Beispiel (seit 09.10.2026,
+  // Technik-Test 08.10.2026 T-40; vorher „Fällt DEM … um 10 %“)
+  const restJ = faellig ? jahre(faellig) : null, euroFest = !!(MC.EURO_FEST && MC.EURO_FEST[ccy]);
+  const fxBsp = ccy !== "EUR" && !euroFest && rend != null && restJ > 0.25 ? (Math.pow(Math.pow(1 + rend / 100, restJ) * 0.9, 1 / restJ) - 1) * 100 : null;
   // Duration und modifizierte Duration (seit 03.10.2026, wie in den Musterdepots): Zahlungen nach Barwert gewichtet, Valuta wie im Rechenbeispiel
   let dur = null;
   if (rend != null && faellig && !nachFaellig && !inflIdx && !stufen && ((zinsart === 0 && typeof kupon === "number") || zinsart === 2)) {
@@ -785,7 +828,7 @@ function zeige(r, k, meta, kf) {
   // Neue Zeilen seit 03.10.2026 (Konzept „Einheitliche Anleihen-Angaben“): Zinsrhythmus, nächster Zinstermin, Stückzinsen je 1.000 heute
   const festKupon = zinsart === 0 && typeof kupon === "number" && kupon > 0 && faellig && !abgelaufen;
   const rhythmusZeile = festKupon ? kv("Zinsrhythmus", rhythmus || "jährlich", zinstage ? "laut Deutscher Börse" : 'geschätzt · <a href="#quellen" class="zt-warum">Erklärung</a>') : "";
-  let naechsterZeile = "", stueckZeile = "";
+  let naechsterZeile = "", stueckZeile = "", neuAb = "";   // neuAb: erster Handelstag, wenn die Neuemissions-Regel greift (für den Rechner-Link)
   if (festKupon && !stufen) {
     try {
       const ks = kommendeTermine(faellig, freq, heuteUTC, zinstage), n = ks.length ? isoOf(ks[0]) : "";
@@ -793,6 +836,7 @@ function zeige(r, k, meta, kf) {
       // 03.10.2026 nur im Rechenbeispiel, das auf Nutzerwunsch entfallen ist)
       const neu = m[1] ? { ab: new Date(m[1] + "T12:00:00Z"), jahr: ausgabeJahr(name) } : null;
       const sz = !nachFaellig && !inflIdx ? stueckzins(kupon, faellig, freq, valuta, zinstage, neu) : null, erst = sz && sz.neu ? sz.erster : 1;
+      if (sz && sz.neu) neuAb = m[1];
       if (n) naechsterZeile = kv(`Nächster Zinstermin${hilf("zinstermin", "Zinstermin")}`, fmtDate(n), n === faellig ? "mit Rückzahlung" : `${fmt(kupon * 10 / freq * (ks.length === 1 ? letzterKupon(faellig, freq, zinstage) : 1) * erst, 2)} ${MC.esc(ccy)} je 1.000 ${MC.esc(ccy)}${erst < 1 ? " · anteilig, erste Zinsperiode" : ""}${zinstage ? "" : " · geschätzt"}`);
       if (sz) stueckZeile = kv(`Stückzinsen je 1.000${hilf("stueckzinsen", "Stückzinsen")}`, `${fmt(sz.anteil * 10, 2)} ${MC.esc(ccy)}`, `zum Valutatag ${fmtDate(isoOf(valuta))}${sz.neu ? ` · Zinslauf ab ${fmtDate(isoOf(sz.letzter))} (erster Handelstag, vereinfacht)` : ""}`);
     } catch (e) { /* ohne die Zusatzzeilen */ }
@@ -858,9 +902,13 @@ function zeige(r, k, meta, kf) {
 
   // --- Werkzeuge ---
   // Seit 03.10.2026 auch die Zinstage laut Börse (sonst schätzt der Rechner die Termine anders als der Steckbrief); der Rechner füllt
-  // damit alle vier Rechner (Nutzertest: nur Rechner 1 wurde gefüllt)
-  const rechnerUrl = kurs != null && zinsart === 0 && typeof kupon === "number" && faellig && !nachFaellig && !befund && !stufen
-    ? `rechner.html?kurs=${encodeURIComponent(fmtKurs(kurs))}&kupon=${encodeURIComponent(fmt(kupon, 3))}&faellig=${fmtDate(faellig)}&freq=${freq}&w=${encodeURIComponent(ccy)}${zinstage ? `&zt=${zinstage.join(",")}` : ""}${rend != null ? `&rendite=${encodeURIComponent(fmt(rend, 2))}` : ""}&isin=${encodeURIComponent(ISIN)}&titel=${encodeURIComponent(MC.felder ? MC.felder.titel({ kurz: kurz || name, kupon, zinsart, faellig }) : seitentitel)}#rendite` : "";
+  // damit alle vier Rechner (Nutzertest: nur Rechner 1 wurde gefüllt).
+  // Seit 09.10.2026 (Technik-Test 08.10.2026 T-05/T-15/T-16) über den gemeinsamen Link-Bauer MC.felder.rechnerUrl (auch für Mein
+  // Bondarium): nur mit Rendite – wo der Steckbrief bewusst keine rechnet (Floater, Wandelanleihe, Tilgung, Inflationsindex,
+  // Plausibilitätsregel …), zeigte der Rechner sonst eine; bei einer Neuemission mit dem ersten Handelstag (&ab=) für den Zinslauf;
+  // ohne Titel in der Adresse (den Namen holt der Rechner aus den Daten)
+  const rechnerUrl = kurs != null && zinsart === 0 && typeof kupon === "number" && faellig && !nachFaellig && !befund && !stufen && MC.felder
+    ? MC.felder.rechnerUrl({ kurs, kupon, faellig, ccy, zt: Array.isArray(zt) ? zt : null, rendite: rend, isin: ISIN, ab: neuAb }) : "";
   const suche = `anleihen-suche.html?art=${art}&w=${encodeURIComponent(ccy)}&zins=${zinsart}`;
   document.getElementById("werkz").innerHTML =
     `<li><button type="button" class="kopie-w" data-isin="${MC.esc(ISIN)}"><span>ISIN kopieren<small>${MC.esc(ISIN)}</small></span><span class="pf" aria-hidden="true">⧉</span></button></li>` +
@@ -928,12 +976,16 @@ function zeige(r, k, meta, kf) {
   };
   document.querySelectorAll("#kopie, .kopie-w, #leiste-kopie").forEach(b => b.addEventListener("click", e => kopiere(e.currentTarget, false)));
   document.querySelectorAll(".link-w").forEach(b => b.addEventListener("click", e => kopiere(e.currentTarget, true)));
+  // Klasse auch am <html> (seit 09.10.2026, Technik-Test 08.10.2026 T-31): Dort hält scroll-padding-bottom den Tastaturfokus über der
+  // festen Leiste – vorher lagen am Handy bis zu 7 Tab-Stopps ganz darunter (i-Punkt, Fußzeile)
   const leiste = document.getElementById("leiste");
-  if (leiste) { leiste.hidden = false; document.body.classList.add("mit-leiste"); }
+  if (leiste) { leiste.hidden = false; document.body.classList.add("mit-leiste"); document.documentElement.classList.add("mit-leiste"); }
 }
 
 (function () {
-  const nix = () => { document.getElementById("idz").hidden = true; document.getElementById("inhalt").remove(); document.getElementById("nix").hidden = false;
+  // Freigehaltener Platz für Merkmal-Chips und Registernamen (T-83, Stil oben): ohne Steckbrief wieder weg – leer gebliebene Zeilen
+  const ohneKopf = () => ["chips", "reg"].forEach(id => { const e = document.getElementById(id); if (e && !e.textContent.trim()) e.remove(); });
+  const nix = () => { document.getElementById("idz").hidden = true; document.getElementById("inhalt").remove(); document.getElementById("nix").hidden = false; ohneKopf();
     const rob = document.querySelector('meta[name="robots"]'); if (rob) rob.content = "noindex, follow"; };
   if (!/^[A-Z]{2}[A-Z0-9]{9}\d$/.test(ISIN)) {
     nix(); document.getElementById("datastand").textContent = "Daten-Stand: –";
@@ -959,8 +1011,12 @@ function zeige(r, k, meta, kf) {
     zeige(r, k, ix, kf);
   }).catch(e => {
     console.warn("Steckbrief nicht geladen:", e);
-    document.getElementById("inhalt").remove();
+    document.getElementById("inhalt").remove(); ohneKopf();
     document.getElementById("idz").innerHTML = "<span>Die Daten sind gerade nicht erreichbar. Bitte später erneut versuchen.</span>";
+    // „Daten-Stand: wird geladen“ blieb sonst im Abschnitt „Datenquellen und Methodik“ stehen (seit 09.10.2026, Technik-Test 08.10.2026
+    // T-86); der Stand eines Server-Steckbriefs (scripts/steckbriefe.py) gehört zu dessen Stammdaten und bleibt
+    const ds = document.getElementById("datastand");
+    if (/wird geladen/.test(ds.textContent)) ds.textContent = "Daten-Stand: –";
   });
 })();
 
