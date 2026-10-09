@@ -13,8 +13,10 @@
      MC.zahl(v, nachkomma)     1234.5 → „1.234,50“ (de-DE, echtes Minus); keine Zahl → „–“
      MC.datum(iso) / MC.tag(iso)   „2026-09-25“ → „25.09.2026“ / „25.09.“; ungültig → „–“
      MC.STALE_TAGE             5 – ab so vielen Börsentagen Alter gilt ein Datenstand als veraltet
-     MC.boersentage(iso[, bis]) Börsentage (Mo–Fr) nach iso bis heute; MC.veraltet(iso) → true ab STALE_TAGE
+     MC.heuteBerlin()          heutiger Kalendertag in Berlin (Börsentag) als Date um 12:00 UTC – „heute“ für Restlaufzeit, Valuta, Alter
+     MC.boersentage(iso[, bis]) Börsentage (Mo–Fr ohne Börsenfeiertage) nach iso bis heute (Berlin); MC.veraltet(iso) → true ab STALE_TAGE
      MC.handelstag(d), MC.plusAbwicklungstage(d, n)   nächster Handelstag; Valuta n Abwicklungstage später (mit Feiertagen)
+     MC.EURO_FEST              feste Umrechnungskurse der früheren Euro-Währungen (Einheiten je Euro, z. B. DEM 1,95583)
      MC.betragLesen(text[, {ganz, min, max}])         Betrag aus einem Eingabefeld, Tausenderpunkte nur im Dreierabstand
      MC.load(datei)            Promise mit JSON: eingebetteter Block (Deploy) oder fetch über MC.json
      MC.json(url)              fetch + JSON mit gemeinsamem Cache (jede URL einmal je Seitenaufruf)
@@ -130,28 +132,48 @@ window.MC = (function () {
 
   // --- Zahlen und Daten (seit 30.09.2026 zentral; vorher in vielen Seiten als fmt()/fmtDate() nachgebaut) ---
   // MC.zahl(v, nachkomma): deutsches Zahlenformat mit fester Nachkommazahl und echtem Minuszeichen (U+2212);
-  // keine Zahl (null, NaN, Text) → „–“. Beispiel: MC.zahl(-1234.5, 2) → „−1.234,50“.
+  // keine Zahl (null, NaN, Text) → „–“. Beispiel: MC.zahl(-1234.5, 2) → „−1.234,50“. Kein Minus vor einer Null:
+  // MC.zahl(-0.004, 2) → „0,00“ (seit 09.10.2026, Technik-Test 08.10.2026 T-53; vorher „−0,00“, wie _common.zahl_de).
   var NF = {};
   function zahl(v, dec) {
     if (typeof v !== "number" || !isFinite(v)) return "–";
     dec = dec || 0;
     var nf = NF[dec] || (NF[dec] = new Intl.NumberFormat("de-DE", { minimumFractionDigits: dec, maximumFractionDigits: dec }));
-    return minus(nf.format(v));
+    var s = nf.format(v);
+    return /[1-9]/.test(s) ? minus(s) : s.replace(/^[-−]/, "");
   }
   // ISO-Datum „JJJJ-MM-TT…“ → „TT.MM.JJJJ“ (MC.datum) bzw. „TT.MM.“ (MC.tag); ungültig → „–“
   var ISO_RE = /^(\d{4})-(\d{2})-(\d{2})/;
   function datum(iso) { var m = ISO_RE.exec(String(iso || "")); return m ? m[3] + "." + m[2] + "." + m[1] : "–"; }
   function tag(iso) { var m = ISO_RE.exec(String(iso || "")); return m ? m[3] + "." + m[2] + "." : "–"; }
-  // Veraltete Daten (eine Regel für alle Seiten): ab MC.STALE_TAGE Börsentagen (Mo–Fr, ohne Feiertage) Alter gilt
-  // ein Kurs/Datenstand als „veraltet“. Gezählt wie auf anleihe.html: Werktage NACH dem Datum bis heute einschließlich
-  // (Kurs von Freitag ist am Montag 1 Börsentag alt). MC.boersentage(iso[, bis]) → Anzahl; bis = Date, Standard heute.
+  // „Heute“ ist der Berliner Kalendertag (seit 09.10.2026, Technik-Test 08.10.2026 T-51): Die Kurse sind Berliner Börsentage. Vorher
+  // galt das Gerätedatum bzw. die UTC-Grenze – am Fälligkeitstag zwischen 0 und 2 Uhr stand „1 Tag“, in Auckland war ein Kurs einen
+  // Börsentag älter als in Berlin. MC.heuteBerlin() → Date um 12:00 UTC dieses Tages; ohne Zeitzonen-Daten im Browser das Ortsdatum.
+  // Der Tag bleibt zwischengespeichert, solange er sicher gilt (Berlin ist UTC+1 oder UTC+2: von 13 h vor bis 10 h nach 12:00 UTC).
+  var berlinFmt = null, berlinTag = NaN;
+  function heuteBerlin() {
+    var jetzt = Date.now();
+    if (jetzt >= berlinTag - 13 * 36e5 && jetzt < berlinTag + 10 * 36e5) return new Date(berlinTag);
+    try {
+      if (!berlinFmt) berlinFmt = new Intl.DateTimeFormat("en-US", { timeZone: "Europe/Berlin", year: "numeric", month: "numeric", day: "numeric" });
+      var p = {};
+      berlinFmt.formatToParts(new Date(jetzt)).forEach(function (x) { p[x.type] = +x.value; });
+      if (p.year > 0 && p.month > 0 && p.day > 0) { berlinTag = Date.UTC(p.year, p.month - 1, p.day, 12); return new Date(berlinTag); }
+    } catch (e) { /* alter Browser ohne Zeitzonen: Ortsdatum */ }
+    var h = new Date(jetzt);
+    return new Date(Date.UTC(h.getFullYear(), h.getMonth(), h.getDate(), 12));
+  }
+  // Veraltete Daten (eine Regel für alle Seiten): ab MC.STALE_TAGE Börsentagen (Mo–Fr, ohne Börsenfeiertage) Alter gilt
+  // ein Kurs/Datenstand als „veraltet“. Gezählt wie auf anleihe.html: Börsentage NACH dem Datum bis heute einschließlich
+  // (Kurs von Freitag ist am Montag 1 Börsentag alt). MC.boersentage(iso[, bis]) → Anzahl; bis = Date (Ortsdatum), Standard
+  // heute in Berlin. Feiertage zählen seit 09.10.2026 nicht mehr mit (T-50: am 30.12. galt ein Kurs vom 23.12. als 5 Tage alt).
   var STALE_TAGE = 5;
   function boersentage(iso, bis) {
     var m = ISO_RE.exec(String(iso || ""));
     if (!m) return null;
-    var h = bis instanceof Date ? bis : new Date();
-    var ende = Date.UTC(h.getFullYear(), h.getMonth(), h.getDate(), 12), d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], 12)), n = 0;
-    while (d.getTime() < ende) { d.setUTCDate(d.getUTCDate() + 1); if (d.getTime() <= ende && d.getUTCDay() % 6) n++; }
+    var ende = bis instanceof Date ? Date.UTC(bis.getFullYear(), bis.getMonth(), bis.getDate(), 12) : heuteBerlin().getTime();
+    var d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], 12)), n = 0;
+    while (d.getTime() < ende) { d.setUTCDate(d.getUTCDate() + 1); if (d.getTime() <= ende && d.getUTCDay() % 6 && !feiertag(d, true)) n++; }
     return n;
   }
   function veraltet(iso, bis) { var n = boersentage(iso, bis); return n != null && n >= STALE_TAGE; }
@@ -182,6 +204,10 @@ window.MC = (function () {
     while (n > 0) { x.setUTCDate(x.getUTCDate() + 1); if (x.getUTCDay() % 6 && !feiertag(x, false)) n--; }
     return x;
   }
+  // Feste Umrechnungskurse der früheren Währungen des Euroraums (Einheiten je Euro, unwiderruflich seit 1999 bzw. GRD 2001).
+  // Anleihen in DEM, ATS, ITL oder NLG sind damit Euro-Anleihen, kein Wechselkursrisiko (seit 09.10.2026, Technik-Test T-40).
+  var EURO_FEST = { DEM: 1.95583, ATS: 13.7603, ITL: 1936.27, NLG: 2.20371, FRF: 6.55957, BEF: 40.3399, LUF: 40.3399, ESP: 166.386,
+    PTE: 200.482, FIM: 5.94573, IEP: 0.787564, GRD: 340.750 };
 
   // Beträge aus Eingabefeldern lesen (seit 03.10.2026, Nutzertest: „5.0001.000“ vor dem vorbelegten Wert wurde im Steckbrief
   // still zu 50.001.000). Tausenderpunkte nur im Dreierabstand („5.000“, „12.500“), Komma für Nachkommastellen, Leerzeichen und
@@ -333,14 +359,26 @@ window.MC = (function () {
         place();
       });
     });
-    document.addEventListener("click", function (e) {
-      if (!e.target.closest) return;
+    var daneben = function (e) {
+      if (!e.target || !e.target.closest) return;
       if (e.target.closest(".nav-group")) return;
       if (bar && bar.classList.contains("nav-open") && !e.target.closest(".topbar")) { setOpen(false); return; }   // Tipp neben das offene Handy-Menü
       if (!e.target.closest(".nav-toggle")) closeAll(null);
-    });
+    };
+    document.addEventListener("click", daneben);
+    // iPhone/iPad: Ein Fingertipp auf Inhalt ohne eigenen Klick (Text, Überschrift) löst dort kein click am document aus – Menü blieb
+    // offen. Deshalb dieselbe Regel schon beim Aufsetzen des Fingers (seit 09.10.2026, Technik-Test 08.10.2026 T-144; wie die Schaubilder
+    // unten) – nur in der breiten Ansicht, wo das Menü über dem Inhalt liegt. Im Handy-Akkordeon (bis 1000 px) schiebt das Zuklappen die
+    // Seite, bevor der Klick ankommt: Der Tipp auf „Mein Bondarium“ im offenen Menü traf dann etwas anderes. Dort bleibt es beim click.
+    document.addEventListener("pointerdown", function (e) { if (e.pointerType === "touch" && !mobile()) daneben(e); });
+    // Escape blendet auch das per Maus geöffnete Menü aus (WCAG 1.4.13, seit 09.10.2026, T-124): Klasse nav-esc am <html> bis zur
+    // nächsten Mausbewegung – die CSS-Regel dazu (html.nav-esc blendet das Hover-Menü aus) gehört nach base.css; die
+    // Schaubild-Tooltips schließt der Escape-Handler in hoverInit.
+    var escAus = function () { document.documentElement.classList.remove("nav-esc"); document.removeEventListener("pointermove", escAus); };
     document.addEventListener("keydown", function (e) {
       if (e.key !== "Escape") return;
+      document.documentElement.classList.add("nav-esc");
+      document.addEventListener("pointermove", escAus);
       if (bar && bar.classList.contains("nav-open")) { setOpen(false); if (toggle) toggle.focus(); return; }
       closeAll(null);
       // Steckt der Fokus in einem Menü-Link, zurück auf den Gruppen-Button; das
@@ -580,6 +618,9 @@ window.MC = (function () {
       if (e.target && e.target.classList && e.target.classList.contains("hovergraph")) e.target.classList.remove("tipon");
     });
     document.addEventListener("keydown", function (e) {
+      // Escape schließt jeden offenen Tooltip – auch den per Maus eingeblendeten, ohne Fokus im Schaubild (WCAG 1.4.13,
+      // seit 09.10.2026, Technik-Test 08.10.2026 T-124); die nächste Mausbewegung über dem Schaubild zeigt ihn wieder
+      if (e.key === "Escape") { hideAll(null); return; }
       var wrap = document.activeElement;
       if (!(wrap && wrap.classList && wrap.classList.contains("hovergraph") && wrap.getAttribute("data-hover"))) return;
       if (e.key === "ArrowLeft" || e.key === "ArrowRight" || e.key === "Home" || e.key === "End") {
@@ -590,8 +631,6 @@ window.MC = (function () {
         var cur = Number(wrap.dataset.tipIdx != null ? wrap.dataset.tipIdx : n - 1);
         var i = e.key === "Home" ? 0 : e.key === "End" ? n - 1 : Math.max(0, Math.min(n - 1, cur + (e.key === "ArrowRight" ? 1 : -1)));
         show(wrap, data[0].x[i]);
-      } else if (e.key === "Escape") {
-        wrap.classList.remove("tipon");
       }
     });
   }
@@ -785,8 +824,8 @@ window.MC = (function () {
     } catch (e) { /* Zählen darf die Seite nie stören */ }
   })();
 
-  return { esc: esc, minus: minus, zahl: zahl, datum: datum, tag: tag, STALE_TAGE: STALE_TAGE, boersentage: boersentage, veraltet: veraltet,
-    handelstag: handelstag, plusAbwicklungstage: plusAbwicklungstage, betragLesen: betragLesen,
+  return { esc: esc, minus: minus, zahl: zahl, datum: datum, tag: tag, STALE_TAGE: STALE_TAGE, heuteBerlin: heuteBerlin, boersentage: boersentage, veraltet: veraltet,
+    handelstag: handelstag, plusAbwicklungstage: plusAbwicklungstage, EURO_FEST: EURO_FEST, betragLesen: betragLesen,
     restlaufzeit: restlaufzeit, kuendigung: kuendigung, kuendigungFeld: kuendigungFeld, load: load, json: json, navInit: navInit, hoverWrap: hoverWrap, wischPruefen: wischPruefen,
     percentile: percentile, stats: stats, rate: rate, pctText: pctText, ratePill: ratePill,
     teil: teil, verlauf: verlauf };

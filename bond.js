@@ -7,8 +7,13 @@
 
    Konventionen: Datumsangaben als ISO-Zeichenkette „JJJJ-MM-TT“, Kurse und Kupons in Prozent vom Nennwert,
    Renditen als Dezimalzahl (0,0312 = 3,12 %). Anleihe-Objekt b = { coupon: 2.5, freq: 1 | 2 | 4 | 12, maturity: "2034-02-15",
-   days: ["04-30", "10-30"] (optional) }.
-   Rechnung wie bisher: jährliche Verzinsung, Zeit taggenau (Tage / 365,25), Stückzinsen linear im Kuponzeitraum.
+   days: ["04-30", "10-30"] (optional), ab: "2026-10-01" (optional, erster Handelstag), ausgabe: 2026 (optional, Ausgabejahr laut Name) }.
+   Rechnung wie bisher: jährliche Verzinsung, Zeit taggenau (Tage / 365,25), Stückzinsen linear im Kuponzeitraum – immer aus dem
+   Betrag der nächsten Zahlung (seit 09.10.2026, Technik-Test 08.10.2026 T-17: in einer kurzen Schlussperiode wuchsen sie bis zum
+   vollen Kupon, obwohl nur ein anteiliger gezahlt wird).
+   Neuemission (seit 09.10.2026, T-16; Regel bis dahin nur in anleihe.html): Liegt der erste Handelstag b.ab nach dem letzten
+   rechnerischen Zinstermin und vor dem Valutatag und das Ausgabejahr b.ausgabe nicht vor dem Jahr dieses Termins, ist die Anleihe im
+   ersten Zinsabschnitt – Zinslauf vereinfacht ab dem ersten Handelstag, die erste Zahlung anteilig. Ohne b.ab/b.ausgabe wie bisher.
    Kupontermine (seit 02.10.2026 wie scripts/_common.py, zinszahlungen):
      mit days  – die Zinstage „MM-TT“ laut Instrumentenliste der Deutschen Börse, jedes Jahr an diesen Tagen; der letzte Zins
                  kommt am Fälligkeitstag, bei einer kurzen Schlussperiode (mehr als 20 Tage neben dem Zinstag) anteilig;
@@ -20,13 +25,16 @@
      utc(iso)                          ms-Zeitstempel (12:00 UTC) des Datums
      addDays(iso, n)                   Datum + n Kalendertage → ISO
      monthsBack(t, m)                  Zeitstempel t minus m Monate, ohne Monatsüberlauf → Zeitstempel
-     settleDays(cur)                   Valuta in Tagen: USD/GBP 1, sonst 2
-     settle(iso, cur)                  Valutatag zum Handelstag → ISO (= addDays(iso, settleDays(cur)))
+     settleDays(cur)                   Valuta in Abwicklungstagen: 2 für alle Währungen (Börsenhandel in Deutschland; bis 09.10.2026 USD/GBP 1)
+     settle(iso, cur)                  Valutatag zum Handelstag → ISO: settleDays(cur) Abwicklungstage später, ohne Wochenende und
+                                       TARGET-Feiertage (MC.plusAbwicklungstage aus site.js; bis 09.10.2026 Kalendertage)
      yearsTo(maturity, from)           Restlaufzeit in Jahren (Tage / 365,25)
      couponDates(b, settle)            { dates: [künftige Kupontermine (ms), aufsteigend], prev: letzter Termin davor (ms),
-                                         last: Anteil des letzten Kupons (1 = voll; kleiner bei kurzer Schlussperiode) }
+                                         last: Anteil des letzten Kupons (1 = voll; kleiner bei kurzer Schlussperiode),
+                                         first: Anteil der nächsten Zahlung (1 = voll; kleiner im ersten Zinsabschnitt einer Neuemission),
+                                         start: Beginn des Zinslaufs (ms) – prev, bei einer Neuemission der erste Handelstag }
                                        (Termine je Anleihe einmal erzeugt und zwischengespeichert – schnell für lange Reihen)
-     accrued(b, settle)                Stückzinsen in % vom Nennwert
+     accrued(b, settle)                Stückzinsen in % vom Nennwert: nächste Zahlung × (Valuta − start) / (nächster Termin − start)
      pricer(b, settle)                 { price(y), slope(y) } – Clean-Kurs und Ableitung als Funktion der Rendite
      cleanPrice(b, y, settle)          Clean-Kurs (%) bei Rendite y
      dirtyPrice(b, y, settle)          Kurs inkl. Stückzinsen
@@ -35,7 +43,8 @@
      fmt(v, dec)                       wie MC.zahl: „1.234,50“, keine Zahl → „–“
      fmtDate(iso)                      „TT.MM.JJJJ“, ungültig → „–“
      fmtCoupon(c)                      Kupon mit 2 oder 3 Nachkommastellen („2,50“ / „2,125“)
-     fmtVol(v[, einheit])              Volumen in Mrd., höchstens drei gültige Ziffern („1,25 Mrd.“)
+     fmtVol(v[, einheit])              Volumen in Mrd., höchstens drei gültige Ziffern („1,25 Mrd.“); erst gerundet, dann die Einheit
+                                       (999,6 Mrd. → „1 Bio.“ statt „1.000 Mrd.“)
      fmtStk(v)                         Stückelung („0,001“ · „0,01“ · „1.000“ · „200.000“)
 */
 (function (MC) {
@@ -57,8 +66,18 @@
     d.setUTCDate(ende ? last : Math.min(day, last));
     return d.getTime();
   }
-  function settleDays(cur) { return cur === "USD" || cur === "GBP" ? 1 : 2; }
-  function settle(iso, cur) { return addDays(iso, settleDays(cur)); }
+  // Valuta (seit 09.10.2026, Technik-Test 08.10.2026 T-49): an deutschen Börsen T+2 für alle Währungen, gezählt in Abwicklungstagen
+  // wie Steckbrief und Rechner (MC.plusAbwicklungstage: ohne Wochenende und TARGET-Feiertage). Vorher Kalendertage – Valuta am
+  // Sonntag oder am 1. Weihnachtstag (MC.bond.settle("2026-10-09", "EUR") = 11.10.). Ohne site.js nur ohne Wochenende.
+  function settleDays(cur) { return 2; }
+  function settle(iso, cur) {
+    var n = settleDays(cur), t = utc(iso);
+    if (isNaN(t)) return addDays(iso, n);   // ungültiges Datum: wie bisher (addDays wirft)
+    if (MC.plusAbwicklungstage) return isoOf(MC.plusAbwicklungstage(new Date(t), n).getTime());
+    var d = new Date(t);
+    while (n > 0) { d.setUTCDate(d.getUTCDate() + 1); if (d.getUTCDay() % 6) n--; }
+    return isoOf(d.getTime());
+  }
   function yearsTo(maturity, from) { return (utc(maturity) - utc(from)) / DAY / 365.25; }
 
   // Kupontermine: vom Fälligkeitstag in Schritten von 12/freq Monaten rückwärts – immer vom Fälligkeitstag aus
@@ -92,7 +111,7 @@
     seq.push(mat);
     return (CACHE[key] = { seq: seq, last: last });
   }
-  function couponDates(b, settleIso) {
+  function termine(b, settleIso) {
     var s = utc(settleIso), mat = utc(b.maturity), step = 12 / b.freq;
     if (b.days && b.days.length) {
       var f = folgeTage(b), q = f.seq, a = 1, e = q.length;
@@ -108,17 +127,28 @@
     while (lo < hi) { var m = (lo + hi) >> 1; if (seq[m] > s) hi = m; else lo = m + 1; }
     return { dates: seq.slice(lo), prev: seq[lo - 1], last: 1 };
   }
-  function accrued(b, settleIso) {
-    var s = utc(settleIso), cd = couponDates(b, settleIso);
-    if (!cd.dates.length) return 0;
-    return b.coupon / b.freq * (s - cd.prev) / (cd.dates[0] - cd.prev);
+  // Termine plus Neuemissions-Regel (T-16, vorher nur anleihe.html stueckzins): first = Anteil der nächsten Zahlung, start = Zinslaufbeginn
+  function couponDates(b, settleIso) {
+    var cd = termine(b, settleIso), s = utc(settleIso), ab = b.ab ? utc(b.ab) : NaN;
+    cd.first = 1; cd.start = cd.prev;
+    if (cd.dates.length && ab > cd.prev && ab < s && b.ausgabe >= new Date(cd.prev).getUTCFullYear()) {
+      cd.first = (cd.dates[0] - ab) / (cd.dates[0] - cd.prev); cd.start = ab;
+    }
+    return cd;
   }
+  // Kupon der i-ten künftigen Zahlung (ohne Tilgung): anteilig als letzte Zahlung einer kurzen Schlussperiode (last) und als erste
+  // Zahlung einer Neuemission (first)
+  function kupon(b, cd, i) { var n = cd.dates.length; return b.coupon / b.freq * (i === n - 1 ? cd.last : 1) * (i === 0 ? cd.first : 1); }
+  // Stückzinsen aus dem Betrag der nächsten Zahlung (T-17): in der kurzen Schlussperiode wachsen sie wie der anteilige Schlusskupon
+  // (Kupon × Tage / 365,25), nicht bis zum vollen Kupon
+  function stueck(b, cd, s) { return cd.dates.length ? kupon(b, cd, 0) * (s - cd.start) / (cd.dates[0] - cd.start) : 0; }
+  function accrued(b, settleIso) { return stueck(b, couponDates(b, settleIso), utc(settleIso)); }
   // Clean-Kurs als Funktion der Rendite für einen Valutatag – Laufzeiten der Zahlungen einmal vorberechnet
   function pricer(b, settleIso) {
-    var s = utc(settleIso), cd = couponDates(b, settleIso), dates = cd.dates, n = dates.length, c = b.coupon / b.freq;
+    var s = utc(settleIso), cd = couponDates(b, settleIso), dates = cd.dates, n = dates.length;
     var tau = dates.map(function (t) { return (t - s) / DAY / 365.25; });
-    var cf = dates.map(function (t, i) { return i === n - 1 ? c * cd.last + 100 : c; });
-    var acc = n ? c * (s - cd.prev) / (dates[0] - cd.prev) : 0;
+    var cf = dates.map(function (t, i) { return kupon(b, cd, i) + (i === n - 1 ? 100 : 0); });
+    var acc = stueck(b, cd, s);
     return {
       price: function (y) { var pv = 0; for (var i = 0; i < n; i++) pv += cf[i] / Math.pow(1 + y, tau[i]); return pv - acc; },
       slope: function (y) { var d = 0; for (var i = 0; i < n; i++) d -= tau[i] * cf[i] / Math.pow(1 + y, tau[i] + 1); return d; },
@@ -158,8 +188,13 @@
   }
   function fmtDate(iso) { var m = ISO.exec(String(iso || "")); return m ? m[3] + "." + m[2] + "." + m[1] : "–"; }
   function fmtCoupon(c) { return fmt(c, Math.round(c * 1000) % 10 ? 3 : 2); }
-  // Ohne Zahl „–“ (seit 03.10.2026; vorher „NaN Mrd.“ bzw. Abbruch bei fehlendem Wert)
-  function fmtVol(v, einheit) { return typeof v === "number" && isFinite(v) ? (v / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 }) + " " + (einheit || "Mrd.") : "–"; }
+  // Ohne Zahl „–“ (seit 03.10.2026; vorher „NaN Mrd.“ bzw. Abbruch bei fehlendem Wert). Erst auf drei gültige Ziffern runden, dann die
+  // Einheit wählen (seit 09.10.2026, T-54: 999,6 Mrd. stand als „1.000 Mrd.“ da)
+  function fmtVol(v, einheit) {
+    if (typeof v !== "number" || !isFinite(v)) return "–";
+    var r = +v.toPrecision(3), bio = Math.abs(r) >= 1e12;
+    return (bio ? r / 1e12 : r / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 }) + " " + (bio ? "Bio." : einheit || "Mrd.");
+  }
   function fmtStk(v) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { maximumFractionDigits: 3 }) : "–"; }   // drei Stellen seit 01.10.2026: Landesanleihen mit Stückelung 0,001 standen als „0“ da
 
   MC.bond = {

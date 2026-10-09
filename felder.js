@@ -17,6 +17,7 @@
      kurzName(emittent, art, land, reg)   Staat (art 0, Land ≠ INT): Ländername; sonst Emittent ohne Rechtsform; ohne Emittent: Registername
      titel(o)                   „Italien 3,50 % 2030“ (Kurzname, Kupon, Fälligkeitsjahr) – Legenden, Listen, Kalender, Auswahlfelder
      Formate: pct, kupon(o), kurs, pkt, datum, tag, restlaufzeit(iso|Jahre), volumen, stueckelung, betrag, bonitaet, jahre(iso)
+     rechnerUrl(o)              Link „Im Rechner öffnen“ für Steckbrief und Mein Bondarium – "" ohne Rendite (siehe unten)
      spalten, tabelle(spaltenIds, zeilen, opt), sortiere(zeilen, sort, spaltenIds, opt), sortierbar(table, sort, neu)
 
    Zeilenobjekt der Standardtabelle (Felder, die eine Spalte braucht; fehlende = „–“):
@@ -75,7 +76,9 @@
   function landName(c) { if (c === "INT") return "International"; try { return (DN && DN.of(c)) || c; } catch (e) { return c; } }
 
   // ---------- Schreibweisen (Kapitel 6 des Konzepts) ----------
-  function jahre(iso) { return iso ? (Date.parse(String(iso).slice(0, 10) + "T12:00:00Z") - Date.now()) / (365.25 * 864e5) : null; }
+  // Jahre von heute bis iso – „heute“ ist der Berliner Kalendertag (MC.heuteBerlin, seit 09.10.2026, Technik-Test 08.10.2026 T-51):
+  // ganze Tage, am Fälligkeitstag 0 („fällig“). Vorher gegen die Uhrzeit: am Fälligkeitstag zwischen 0 und 2 Uhr stand „1 Tag“.
+  function jahre(iso) { return iso ? (Date.parse(String(iso).slice(0, 10) + "T12:00:00Z") - (MC.heuteBerlin ? MC.heuteBerlin().getTime() : Date.now())) / (365.25 * 864e5) : null; }
   function pct(v) { return typeof v === "number" && isFinite(v) ? zahl(v, 2) + NBSP + "%" : "–"; }
   function kuponZahl(c) { return zahl(c, Math.round(c * 1000) % 10 ? 3 : 2) + NBSP + "%"; }
   function kupon(o) {
@@ -84,20 +87,40 @@
     if (o.zinsart === 2 || (o.kupon === 0 && o.zinsart !== 0)) return "Nullkupon";
     return typeof o.kupon === "number" ? kuponZahl(o.kupon) : "–";
   }
-  function kurs(v) { return typeof v === "number" && isFinite(v) ? zahl(v, Math.abs(v * 100 - Math.round(v * 100)) > 1e-6 ? 3 : 2) + NBSP + "%" : "–"; }
+  function kursZahl(v) { return zahl(v, Math.abs(v * 100 - Math.round(v * 100)) > 1e-6 ? 3 : 2); }   // dritte Stelle, wenn vorhanden (99,015)
+  function kurs(v) { return typeof v === "number" && isFinite(v) ? kursZahl(v) + NBSP + "%" : "–"; }
   function pkt(v, d) { d = d == null ? 2 : d; if (typeof v !== "number" || !isFinite(v)) return "–"; var r = Math.round(v * Math.pow(10, d)) / Math.pow(10, d) || 0; return (r > 0 ? "+" : "") + zahl(r, d) + NBSP + "Pkt."; }
   function datum(iso) { return iso ? MC.datum(iso) : "–"; }
   function tag(iso) { return iso ? MC.tag(iso) : "–"; }
   function restlaufzeit(x) { var y = typeof x === "number" ? x : jahre(x); return y == null ? "unbefristet" : MC.restlaufzeit(y); }
+  // Ab 1 Mio. mit höchstens drei gültigen Ziffern – erst gerundet, dann die Einheit (seit 09.10.2026, Technik-Test 08.10.2026 T-54:
+  // 999,6 Mio. stand als „1.000 Mio.“ da, jetzt „1 Mrd.“)
   function volumen(v, w) {
     if (typeof v !== "number" || !isFinite(v) || v <= 0) return "–";
-    var t = v < 1e6 ? zahl(v, 0) : (v >= 1e9 ? v / 1e9 : v / 1e6).toLocaleString("de-DE", { maximumSignificantDigits: 3 }) + NBSP + (v >= 1e9 ? "Mrd." : "Mio.");
+    var r = +v.toPrecision(3);
+    var t = v < 1e6 ? zahl(v, 0) : (r >= 1e9 ? r / 1e9 : r / 1e6).toLocaleString("de-DE", { maximumSignificantDigits: 3 }) + NBSP + (r >= 1e9 ? "Mrd." : "Mio.");
     return t + (w ? NBSP + w : "");
   }
   function stueckelung(v, w) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { maximumFractionDigits: 3 }) + (w ? NBSP + w : "") : "–"; }
   function betrag(v, w, d) { return typeof v === "number" && isFinite(v) ? zahl(v, d == null ? 2 : d) + (w ? NBSP + w : "") : "–"; }
   function bonitaet(b) { return b != null && K.bonitaet[String(b)] || ""; }
   function titel(o) { return [o.kurz || o.reg || o.isin, kupon(o), o.faellig ? String(o.faellig).slice(0, 4) : "unbefristet"].join(" "); }
+
+  // ---------- Link „Im Rechner öffnen“ (seit 09.10.2026, Technik-Test 08.10.2026 T-05/T-15) ----------
+  // Eine Stelle für Steckbrief und Mein Bondarium – vorher baute jede Seite den Link selbst: aus der Merkliste ohne Zinsrhythmus,
+  // Zinstage und Rendite (halbjährliche Anleihen rechnete der Rechner jährlich), aus dem Steckbrief auch dort, wo er bewusst keine
+  // Rendite rechnet (Floater, Wandelanleihen, Tilgung, Inflationsindex, Plausibilitätsregel …).
+  // o = { kurs, kupon, faellig (ISO), ccy, zt ([Zahlungen je Jahr, "MM-TT", …] laut Börsenliste oder null), rendite (in %, Zahl oder null),
+  //       isin, ab (ISO, erster Handelstag – Zinslauf einer Neuemission) }. "" ohne Rendite und ohne Kurs, Kupon oder Fälligkeit.
+  function rechnerUrl(o) {
+    var zahlOk = function (x) { return typeof x === "number" && isFinite(x); }, ISO = /^\d{4}-\d{2}-\d{2}/;
+    if (!o || !zahlOk(o.rendite) || !zahlOk(o.kurs) || !zahlOk(o.kupon) || !ISO.test(String(o.faellig || ""))) return "";
+    var zt = Array.isArray(o.zt) ? o.zt : null, q = function (s) { return encodeURIComponent(String(s).replace(/^−/, "-")); };
+    return "rechner.html?kurs=" + q(kursZahl(o.kurs)) + "&kupon=" + q(zahl(o.kupon, 3)) + "&faellig=" + q(MC.datum(o.faellig)) +
+      "&freq=" + (zt && zt[0] > 0 ? zt[0] : 1) + "&w=" + q(o.ccy || "EUR") + (zt && zt.length > 1 ? "&zt=" + q(zt.slice(1).join(",")) : "") +
+      "&rendite=" + q(zahl(o.rendite, 2)) + (o.isin ? "&isin=" + q(o.isin) : "") + (ISO.test(String(o.ab || "")) ? "&ab=" + String(o.ab).slice(0, 10) : "") +
+      "#rendite";
+  }
 
   // ---------- Standardtabelle (Kapitel 5 des Konzepts) ----------
   // Gesamtliste der Spalten in fester Reihenfolge; jede Tabelle wählt aus, stellt aber nie um. Zelle: { h: HTML, s: zweite Zeile (HTML),
@@ -217,7 +240,7 @@
   }
 
   MC.felder = {
-    K: K, F: F, ART: ART, BOERSE: BOERSE, lesbar: lesbar, kurzName: kurzName, landName: landName, titel: titel, jahre: jahre,
+    K: K, F: F, ART: ART, BOERSE: BOERSE, lesbar: lesbar, kurzName: kurzName, landName: landName, titel: titel, jahre: jahre, rechnerUrl: rechnerUrl,
     pct: pct, kupon: kupon, kuponZahl: kuponZahl, kurs: kurs, pkt: pkt, datum: datum, tag: tag, restlaufzeit: restlaufzeit,
     volumen: volumen, stueckelung: stueckelung, betrag: betrag, bonitaet: bonitaet,
     SPALTEN: SPALTEN, REIHE: REIHE, spalten: spalten, tabelle: tabelle, sortiere: sortiere, sortierbar: sortierbar
