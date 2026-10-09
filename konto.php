@@ -34,7 +34,8 @@
  *                  registrieren mit newsletter=1 (Häkchen im Formular, nicht vorab gesetzt) → das Bestätigen der
  *                  Registrierung bestätigt auch den Newsletter; aktion=newsletter (angemeldet, wert=1|0) schaltet ihn
  *                  an oder aus; aktion=newsletter-ab (Kennung aus dem Abmelde-Link, ohne Anmeldung) und ein POST auf
- *                  konto.php?nl=<Kennung> (List-Unsubscribe der E-Mail-Programme) bestellen ihn ab;
+ *                  konto.php?nl=<Kennung> (List-Unsubscribe der E-Mail-Programme) bestellen ihn ab (ein GET dorthin
+ *                  bestellt nichts ab, er leitet nur auf konto.html#nl-ab=<Kennung> um);
  *                  aktion=newsletter-senden (Kopf X-Trigger-Key, ruft der Workflow nach dem Datenlauf) verschickt die
  *                  Ausgabe aus newsletter/ausgabe.json an alle Abonnenten, die diese Kalenderwoche noch keine haben.
  *   Mein Bondarium (seit 02.10.2026 abends, Nutzerauftrag „Mockup komplett umsetzen“; docs/KONTO.md, Abschnitt „Mein Bondarium“):
@@ -1264,6 +1265,13 @@ if ($methode === 'POST' && isset($_GET['nl'])) {
         antwort(500, 'fehler');
     }
     antwort(200, 'ok');   // auch bei unbekannter Kennung: nichts verraten
+}
+// Dieselbe Adresse im Browser geöffnet (E-Mail-Programme ohne RFC 8058) oder von einer Link-Vorschau abgerufen: Der GET
+// bestellt nichts ab, er leitet nur auf konto.html#nl-ab=<Kennung> um – dort bestellt das Seitenskript ab wie beim Link im Text.
+if (($methode === 'GET' || $methode === 'HEAD') && isset($_GET['nl'])) {
+    $k = is_string($_GET['nl']) ? $_GET['nl'] : '';
+    header('Location: ' . ursprung() . '/konto.html' . (preg_match('/^\d{1,12}\.[0-9a-f]{32}$/D', $k) ? '#nl-ab=' . $k : ''), true, 303);
+    exit;
 }
 
 if ($methode === 'GET') {
