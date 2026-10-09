@@ -187,9 +187,14 @@ def main():
             seiten[isin] = (seite(vorlage, isin, r, stand), stand)
         except ValueError as e:
             fehler.append(str(e))
-    if fehler or not seiten:
+    if not seiten:
         print("::warning::steckbriefe.py: nichts geschrieben – " + ("; ".join(fehler[:5]) or "keine Bundeswertpapiere"))
         return
+    if fehler:
+        # Einzelne Bundeswertpapiere mit unvollständigen Stammdaten (z. B. Registername „Bundesrepublik Deutschland  Bond“
+        # ohne erkennbare Art, 09.10.2026) bekommen keinen Server-Steckbrief und bleiben bei der Vorlage (noindex) – die
+        # übrigen werden trotzdem geschrieben. Bis 09.10.2026 verhinderte ein einziger solcher Eintrag alle 79 Seiten.
+        print(f"::warning::steckbriefe.py: {len(fehler)} Bundeswertpapier(e) ohne Server-Steckbrief – " + "; ".join(fehler[:5]))
     # 1) Seiten
     ordner = os.path.join(site, "steckbrief")
     os.makedirs(ordner, exist_ok=True)
