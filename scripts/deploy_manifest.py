@@ -29,6 +29,7 @@ Seit 09.10.2026 (Technik-Test 08.10.2026):
     schon fehlende Datei darf den Upload nicht abbrechen. (T-128)
   * ALTLASTEN: Dateien, die vor dem Aufräumen (30.09.2026) aus dem Repository verschwanden und deshalb in keinem Manifest
     stehen, aber noch auf dem Server lagen. Werden bei jedem Deploy gelöscht (einmal wirksam, danach „schon weg“). (T-81)
+    Seit 09.10.2026 auch Dateien unter trigger/, die das Aufräumen nie anfasst (die entfernte Sicherung).
 """
 import hashlib
 import os
@@ -37,7 +38,10 @@ import sys
 LOESCH_MAX = 40
 GESCHUETZT = (".deploy-manifest", "newsletter/ausgabe.json", "newsletter/anleihen.json")
 # Vor dem Aufräumen gelöscht, nie im Manifest – lagen am 08.10.2026 noch live (etfs.json mit der handgepflegten ETF-Liste)
-ALTLASTEN = ["etfs.json", "laufzeit.js", "guide-aylin.webp", "guide-renate.webp"]
+ALTLASTEN = ["etfs.json", "laufzeit.js", "guide-aylin.webp", "guide-renate.webp",
+             # Sicherung am 09.10.2026 entfernt (docs/BETRIEB.md): lagen unter trigger/, das das Aufräumen nie anfasst –
+             # die beiden Dateien standen im alten Manifest, darum hier ohne Rücksicht darauf
+             "trigger/sicherung.php", "trigger/sicherung-zertifikat.pem"]
 
 
 def loeschbar(pfad):
@@ -92,7 +96,7 @@ def main():
         print(f"put -O {q(ziel)} {q(os.path.join(site, p))}")
     # Altlasten (nie im Manifest): löschen, solange der Bau sie nicht wieder enthält
     for p in ALTLASTEN:
-        if p not in neu and p not in alt:
+        if p not in neu:
             print(f"rm -f {q(p)} || echo {q('Altlast schon entfernt: ' + p)}")
     # Aufräumen: nur Dateien aus dem alten Manifest, die der neue Bau nicht mehr enthält
     weg = sorted(p for p in alt if p not in neu and loeschbar(p))
