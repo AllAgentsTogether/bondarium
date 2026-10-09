@@ -77,7 +77,8 @@ Das Register enthält vereinzelt Fehler (Vodafone XS3109655293: Kupon 0 %, Fäll
 selben Register sagt 3,875 % bis 2038; Fingrid „1125“ = Faktor 10; Libanon 2006(21) ohne Fälligkeit). Statt zu
 korrigieren, bekommt jede Anleihe das Feld pruef (Index 14, Teildateien 13): ein Objekt mit Befunden (leer = ohne
 Befund) – kuponFisn, faelligFisn (Kurzname nach ISO 18774 gegen Register), faelligName (WM-Name gegen Register,
-auch „fällig, nicht zurückgezahlt“), zinsName (FLR im Namen, Register Nullkupon), kuponHoch (siehe pruefung()).
+auch „fällig, nicht zurückgezahlt“), zinsName (FLR im Namen, Register Nullkupon), kuponHoch, waehrungName (Währungskürzel
+im Namen gegen Register; siehe pruefung()). Währung: NtnlCcy, bei Abweichung die Währung des Nennbetrags (seit 09.10.2026).
 Suche und Steckbrief zeigen den Registerwert mit dem Widerspruch daneben; update_kurse.py rechnet bei einem
 Befund keine Rendite (_common.ohne_rendite). Bis 26.09.2026 wurden diese Fälle korrigiert bzw. entfernt (Kupon →
 unbekannt, FLR → variabel, überfällige entfernt) – das ist zugunsten der unveränderten Quelle aufgegeben.
@@ -310,6 +311,13 @@ def lies_firds(links: list[str], heute: str) -> dict[str, list[dict]]:
                              "ccy": g.findtext(NS + "NtnlCcy") or "", "lei": el.findtext(NS + "Issr") or ""}
                         r["ftd"] = (el.findtext(f"{NS}TradgVnRltdAttrbts/{NS}FrstTradDt") or "")[:10]
                         if d is not None:
+                            # Währung des Nennbetrags (Attribut Ccy): Gegenprobe zu NtnlCcy, das das Register vereinzelt
+                            # falsch meldet (FR001400PRQ7 Iliad: NtnlCcy GBP, Nennbetrag EUR) – seit 09.10.2026, T-07
+                            for feld in ("TtlIssdNmnlAmt", "NmnlValPerUnit"):
+                                ne = d.find(NS + feld)
+                                if ne is not None and re.fullmatch(r"[A-Z]{3}", ne.get("Ccy") or ""):
+                                    r["nccy"] = ne.get("Ccy")
+                                    break
                             r["vol"] = d.findtext(NS + "TtlIssdNmnlAmt")
                             r["mat"] = d.findtext(NS + "MtrtyDt") or ""
                             r["stk"] = d.findtext(NS + "NmnlValPerUnit")
@@ -330,17 +338,61 @@ def lies_firds(links: list[str], heute: str) -> dict[str, list[dict]]:
 
 
 # ---------------------------------------------------------------- GLEIF
+def lateinisch(name: str) -> bool:
+    """Alle Buchstaben aus der lateinischen Schrift (auch mit Akzent: „Moët“, „Société“)?"""
+    return all("LATIN" in unicodedata.name(c, "") for c in name or "" if c.isalpha())
+
+
+def lesbarer_name(e: dict) -> tuple[str, bool]:
+    """(Name, lateinisch?) eines GLEIF-Eintrags. Steht der amtliche Name in fremder Schrift (한국수력원자력(주), 中国银行 …),
+    gilt der englische Name (otherNames, ALTERNATIVE_LANGUAGE_LEGAL_NAME, Sprache „en“), sonst die Umschrift
+    (transliteratedOtherNames: PREFERRED_ASCII_…, dann AUTO_ASCII_…). Ohne beides bleibt der amtliche Name; main()
+    nimmt dann den Emittententeil des Börsennamens (seit 09.10.2026, Technik-Test T-34)."""
+    name = (e.get("legalName") or {}).get("name") or ""
+    if lateinisch(name):
+        return name, True
+    andere = [x for x in e.get("otherNames") or [] if isinstance(x, dict) and x.get("name")]
+    for x in andere:
+        if (x.get("type") == "ALTERNATIVE_LANGUAGE_LEGAL_NAME" and str(x.get("language") or "").lower().startswith("en")
+                and lateinisch(x["name"])):
+            return x["name"], True
+    umschrift = [x for x in e.get("transliteratedOtherNames") or [] if isinstance(x, dict) and x.get("name")]
+    for typ in ("PREFERRED_ASCII_TRANSLITERATED_LEGAL_NAME", "AUTO_ASCII_TRANSLITERATED_LEGAL_NAME"):
+        for x in umschrift:
+            if x.get("type") == typ and lateinisch(x["name"]):
+                return x["name"], True
+    return name, False
+
+
 def gleif(leis: list[str]) -> dict[str, dict]:
-    """LEI → {name, land, kat, sub} (je Anfrage 200 LEIs)."""
+    """LEI → {name, land, kat, sub} (je Anfrage 200 LEIs); „fremd“: True, wenn der Name nicht lateinisch ist und es
+    keine lateinische Form gibt."""
     out = {}
     for i in range(0, len(leis), 200):
         q = urllib.parse.urlencode({"filter[lei]": ",".join(leis[i:i + 200]), "page[size]": 200})
         d = json.loads(get_with_retry(GLEIF_API + q, headers={**UA, "Accept": "application/vnd.api+json"}, timeout=60))
         for x in d.get("data", []):
             e = x["attributes"]["entity"]
-            out[x["id"]] = {"name": e["legalName"]["name"], "land": e["legalAddress"]["country"],
+            name, latein = lesbarer_name(e)
+            out[x["id"]] = {"name": name, "land": e["legalAddress"]["country"],
                             "kat": e.get("category"), "sub": e.get("subCategory")}
+            if not latein:
+                out[x["id"]]["fremd"] = True
     return out
+
+
+EMITTENT_IM_NAMEN = re.compile(r"^(.+?)\s+(?:[A-Z]{2}-|\d)")   # „Korea Hydro & Nuclear Pwr Co. DL-Notes 2022(27)“
+
+
+def emittent_aus_namen(namen: list[tuple[str, str]]) -> str:
+    """Emittententeil der Börsennamen [(Name, Währung)] bis zum Währungskürzel („ DL-“, „ EO-“ …) bzw. zur ersten Zahl –
+    der häufigste lateinische; "" ohne Treffer. Rückfall, wenn GLEIF nur einen Namen in fremder Schrift kennt."""
+    teile = collections.Counter()
+    for n, ccy in namen:
+        m = EMITTENT_IM_NAMEN.match(ohne_praefix(n, ccy) if n else "")
+        if m and lateinisch(m.group(1)) and len(m.group(1).strip()) >= 3:
+            teile[m.group(1).strip()] += 1
+    return teile.most_common(1)[0][0] if teile else ""
 
 
 def golden_copy(teil: str, publ: dict | None):
@@ -503,12 +555,26 @@ def ganz(s):
         return None
 
 
+def waehrung(rs: list[dict]) -> str:
+    """Währung der Anleihe: NtnlCcy; weicht die Währung des Nennbetrags davon ab (Mehrheit über alle Handelsplätze),
+    gilt sie (seit 09.10.2026, Technik-Test T-07: 20 Anleihen standen mit GBP statt EUR im Index)."""
+    ntnl = rs[0]["ccy"]
+    nenn = collections.Counter(r["nccy"] for r in rs if r.get("nccy"))
+    if nenn:
+        mehrheit = nenn.most_common(1)[0][0]
+        if mehrheit != ntnl:
+            return mehrheit
+    return ntnl
+
+
 def anleihe(isin: str, rs: list[dict]) -> dict:
     """Eine Zeile aus den Datensätzen aller Handelsplätze."""
+    ccy = waehrung(rs)
+
     def namenswahl():
         for gruppe in NAME_RANG:
             kandidaten = [r["name"] for r in rs if r["mic"] in gruppe and r["name"]]
-            gut = [n for n in kandidaten if n != n.upper() and ohne_praefix(n, rs[0]["ccy"]) == n]
+            gut = [n for n in kandidaten if n != n.upper() and ohne_praefix(n, ccy) == n]
             if gut or kandidaten:
                 return collections.Counter(gut or kandidaten).most_common(1)[0][0]
         return collections.Counter(r["name"] for r in rs).most_common(1)[0][0]
@@ -516,7 +582,7 @@ def anleihe(isin: str, rs: list[dict]) -> dict:
     fx = next((r["fx"] for r in rs if r.get("fx") is not None), None)
     stk = collections.Counter(zahl(r.get("stk")) for r in rs if zahl(r.get("stk")))
     vols = [zahl(r.get("vol")) for r in rs if zahl(r.get("vol"))]
-    return {"isin": isin, "name": namenswahl(), "ccy": rs[0]["ccy"],
+    return {"isin": isin, "name": namenswahl(), "ccy": ccy,
             "kupon": round(float(fx), 4) if fx is not None else ("var" if any(r.get("fl") for r in rs) else None),
             "faellig": max((r.get("mat") or "" for r in rs), default=""),
             "vol": int(max(vols)) if vols else None,
@@ -605,6 +671,11 @@ HOCHZINS = {"TRY", "ARS", "RUB", "EGP", "NGN", "KZT", "UAH", "GHS", "ZMW", "UZS"
 KUPON_MAX = 20.0
 PLATZHALTER_JAHR = 2090   # Register-Fälligkeit ab hier = Platzhalter für überfällige Papiere (31.12.2099), siehe ueberfaellig()
 FLR_NAME = re.compile(r"FLR\b|floating|\bFRN\b|variab|\bvar\.", re.IGNORECASE)
+# Währungskürzel der WM-Namen („Iliad S.A. EO-Obl. …“, „… DL-Notes …“) – nur heutige Währungen: Altwährungen (DM-, LI-, FL- …)
+# stehen oft noch im Namen umgestellter Euro-Anleihen und wären kein Widerspruch (seit 09.10.2026, Technik-Test T-07)
+WM_WAEHRUNG = {"EO": "EUR", "DL": "USD", "LS": "GBP", "SF": "CHF", "YN": "JPY", "AD": "AUD", "CD": "CAD", "NK": "NOK",
+               "SK": "SEK", "DK": "DKK", "NZ": "NZD", "ZY": "PLN"}
+WM_KUERZEL = re.compile(r"(?:^|[\s.])([A-Z]{2})[-/]")
 UNBEFRISTET_NAME = re.compile(r"\b(?:und\w*|unb\w*|unl\w*|un|perp\w*|open end|ewig)\b", re.IGNORECASE)   # Und., Undated, unb., Unl., perp
 KLAMMER = re.compile(r"(?:(?<!\d)(\d{4}|\d{2}))?\s*\(([^()]*)\)")
 
@@ -704,6 +775,8 @@ def pruefung(row: list, fisn: str | None, heute: datetime.date, alt: dict | None
                    vergangenes Jahr (fällig, nicht zurückgezahlt – Libanon 2006(21)), sofern der Kurzname nicht widerspricht
       zinsName     "var": Name sagt FLR/variabel, Register meldet Nullkupon (Satz 0 – der Satz eines Floaters ist unbekannt)
       kuponHoch    true: Kupon über 100 % oder über 20 % außerhalb von Hochzinswährungen (Faktor 10/1000)
+      waehrungName Währung laut Währungskürzel im Namen (EO-, DL-, LS- …), wenn sie von der Registerwährung abweicht –
+                   auch nachdem die Währung des Nennbetrags NtnlCcy ersetzt hat (seit 09.10.2026)
     fisn None (--bereinigen ohne Abruf): die Kurzname-Befunde aus alt bleiben."""
     p = {}
     kupon, reg = row[4], row[5]
@@ -739,6 +812,9 @@ def pruefung(row: list, fisn: str | None, heute: datetime.date, alt: dict | None
         p["zinsName"] = "var"   # nur bei gemeldetem Nullkupon: ein fester Anfangssatz (Fix-to-Float) ist kein Widerspruch
     if isinstance(kupon, (int, float)) and (kupon > 100 or (kupon > KUPON_MAX and row[3] not in HOCHZINS)):
         p["kuponHoch"] = True
+    m = WM_KUERZEL.search(row[1] or "")
+    if m and WM_WAEHRUNG.get(m.group(1), row[3]) != row[3]:
+        p["waehrungName"] = WM_WAEHRUNG[m.group(1)]   # Name nennt eine andere Währung als das Register (beide Felder)
     return p
 
 
@@ -844,6 +920,8 @@ def main() -> int:
     emi_idx = {}
     for lei in sorted(namen):
         n = (register.get(lei) or {}).get("name", "")
+        if n and (register.get(lei) or {}).get("fremd"):
+            n = emittent_aus_namen(namen[lei]) or n
         if n:
             n = " ".join([n] + [w for rx, w in KUERZEL if rx.search(n)])
             emi_idx[lei] = len(emittenten)
@@ -868,7 +946,8 @@ def main() -> int:
                        "zinsart", "land", "extra", "mehr", "pruef"],
             "pruef": {"kuponFisn": "Kupon laut Kurzname (ISO 18774), weicht vom Register ab", "faelligFisn": "Fälligkeit laut Kurzname, weicht vom Register ab",
                       "faelligName": "Fälligkeitsjahr laut Name, weicht vom Register ab (Register ohne Fälligkeit: vermutlich fällig, nicht zurückgezahlt)",
-                      "zinsName": "Name sagt variabel (FLR), Register meldet Nullkupon", "kuponHoch": "Kupon unplausibel hoch (Faktor 10/1000)"},
+                      "zinsName": "Name sagt variabel (FLR), Register meldet Nullkupon", "kuponHoch": "Kupon unplausibel hoch (Faktor 10/1000)",
+                      "waehrungName": "Währung laut Währungskürzel im Namen (EO-, DL-, LS- …), weicht vom Register ab"},
             "mehr": ["rang+rueckzahlung+garantie (je ein Buchstabe, - = unbekannt)", "ausgabe (erster Handelstag)", "floater [referenz, einheit, wert, aufschlag_bp] – nur bei variablem Zins"],
             "rang": {"S": "erstrangig", "U": "nachrangig", "J": "tief nachrangig", "M": "Mezzanine"},
             "rueckzahlung": {"F": "feste Fälligkeit", "G": "feste Fälligkeit, vom Emittenten kündbar", "C": "feste Fälligkeit, vom Anleger kündbar",

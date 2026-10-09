@@ -302,6 +302,14 @@ window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']
   if (!Array.isArray(zeilen) || !zeilen.length) return;
   var SORT = { col: "restlaufzeit", dir: 1 };
   var stand = zeilen.map(function (o) { return o.kdatum; }).filter(Boolean).sort().pop() || "";
+  // Veraltete Bundesbank-Kurse kennzeichnen (seit 09.10.2026): eine Regel für alle Seiten (MC.veraltet, wie zinskurve.html);
+  // statische_tabellen.py schreibt beim Veröffentlichen schon „· veraltet“ dazu, hier gilt der Tag des Besuchs.
+  var ds = document.getElementById("datastand");
+  if (ds && stand && MC.veraltet) {
+    var alt = MC.veraltet(stand);
+    ds.classList.toggle("stale", alt);
+    if (alt && ds.textContent.indexOf("veraltet") < 0) ds.textContent += " · veraltet";
+  }
   function zeichne() {
     var html = MC.felder.tabelle(["anleihe", "rendite", "kupon", "restlaufzeit", "kurs", "volumen"].concat(MC.konto ? ["merken"] : []), zeilen,
       { sort: SORT, sortieren: true, ctx: { kstand: stand } });

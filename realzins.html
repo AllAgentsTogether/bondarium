@@ -82,6 +82,8 @@
   .rt tr.sum td { font-weight: 600; border-bottom: 0; padding-top: 10px; }
   .rt td small, .rt th[scope=row] small { display: block; font-size: 12px; color: var(--text); font-weight: 400; letter-spacing: 0; text-transform: none; }
   .rt th[scope=row] { font-size: 13.5px; letter-spacing: 0; text-transform: none; color: var(--ink); font-weight: 600; }
+  #steuer-tab th[scope=row] { font-size: inherit; font-weight: 400; color: inherit; }   /* Zeilenköpfe (seit 09.10.2026) wie die übrigen Zellen */
+  #steuer-tab tr.sum th[scope=row] { font-weight: 600; border-bottom: 0; padding-top: 10px; }
   .rt th[scope=row] a.name-link { color: var(--ink); text-decoration: underline; text-decoration-color: rgba(26,26,25,0.3); text-underline-offset: 2px; }
   @media (max-width: 600px) { .rt { font-size: 12.5px; } .rt th, .rt td { padding: 6px 5px 6px 0; } .rt th.num { white-space: normal; } .rt td:last-child, .rt th:last-child { padding-right: 0; } }
   /* Sehr schmale Handys (320–380 px): Tabellen passen in die Karte */
@@ -103,10 +105,11 @@
   .kk-einsatz span { position: absolute; left: var(--einsatz); transform: translateX(-50%); white-space: nowrap; }
   @media (max-width: 600px) { .kk { grid-template-columns: 84px minmax(0, 1fr); gap: 6px 8px; } .kk-l { font-size: 12.5px; } .kk-w { font-size: 13px; } }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Realzins seit 1970: Zins minus Inflation","description":"Zins minus Inflation: Realzins der 10-jährigen Bundesanleihe seit 1970, heute und nach Steuern – plus die Inflationserwartung des Markts bis 2046.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-30","dateModified":"2026-10-02","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/realzins.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Realzins seit 1970: Zins minus Inflation","description":"Zins minus Inflation: Realzins der 10-jährigen Bundesanleihe seit 1970, heute und nach Steuern – plus die Inflationserwartung des Markts bis 2046.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-30","dateModified":"2026-10-09","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/realzins.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Zinsen","item":"https://www.bondarium.de/beobachten.html"},{"@type":"ListItem","position":3,"name":"Realzins seit 1970","item":"https://www.bondarium.de/realzins.html"}]}</script>
 </head>
 <body>
+<noscript><p style="margin:0;padding:12px 16px;background:#FBE9D0;border-bottom:1px solid #E0CBA8;color:#5A4A2A;font-size:14px;text-align:center">Diese Seite benötigt JavaScript für Schaubilder und aktuelle Marktdaten.</p></noscript>
 <a class="skip-link" href="#main">Zum Inhalt springen</a>
 <div class="wrap">
   <header class="topbar" data-rubrik="zinsen">
@@ -294,10 +297,10 @@
       </div>
       <div class="k-bild"><p class="sb-k">Die Rechnung heute</p>
         <table class="rt" id="steuer-tab" aria-label="Realzins nach Steuern: die Rechnung"><tbody>
-          <tr><td>Bund 10 Jahre, nominal</td><td class="num" id="st-z">3,63 %</td></tr>
-          <tr><td>Abgeltungsteuer + Soli (26,375 %)<small>auf den vollen Zins, oberhalb des Pauschbetrags</small></td><td class="num" id="st-st">−0,96</td></tr>
-          <tr><td>Inflation<small>Verbraucherpreise gegen Vorjahr</small></td><td class="num" id="st-i">−2,90</td></tr>
-          <tr class="sum"><td>Realzins nach Steuern</td><td class="num minus" id="st-r">−0,23</td></tr>
+          <tr><th scope="row">Bund 10 Jahre, nominal</th><td class="num" id="st-z">3,63 %</td></tr>
+          <tr><th scope="row">Abgeltungsteuer + Soli (26,375 %)<small>auf den vollen Zins, oberhalb des Pauschbetrags</small></th><td class="num" id="st-st">−0,96</td></tr>
+          <tr><th scope="row">Inflation<small>Verbraucherpreise gegen Vorjahr</small></th><td class="num" id="st-i">−2,90</td></tr>
+          <tr class="sum"><th scope="row">Realzins nach Steuern</th><td class="num minus" id="st-r">−0,23</td></tr>
         </tbody></table>
         <p class="sb-f">In Prozentpunkten pro Jahr; ohne Kirchensteuer. Unterhalb des Sparerpauschbetrags entfällt die Steuerzeile. Mit deinen Zahlen: <a href="rechner.html#netto">Rechner „Zinsen netto nach Steuer“</a>.</p></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Nominal × 0,74 minus Inflation – das ist der Realzins nach Steuern. Bei <span id="m-vpi">2,9</span> % Inflation braucht es <strong><span id="m-noetig">3,94</span> % Zins</strong>, nur um gleichzuziehen. Und: Freistellungsauftrag stellen, damit der Pauschbetrag wirkt.</span></p>
@@ -406,9 +409,13 @@ MC.navInit();
     }
     if (h.linker && h.linker.length) {
       const l = h.linker.find(x => x.faellig.startsWith("2033")) || h.linker[0];
+      const sl = d.stand && d.stand.linker;   // Datum der Realrenditen (seit 09.10.2026 in der Kachel genannt)
       if (l.breakeven != null) {
         document.getElementById("h-be").innerHTML = `${fmt(l.breakeven, 1)}<small>% Inflation</small>`;
-        setT("h-be-d", `pro Jahr bis ${l.faellig.slice(0, 4)} im Euroraum, abgeleitet aus der inflationsindexierten Bundesanleihe`);
+        setT("h-be-d", `pro Jahr bis ${l.faellig.slice(0, 4)} im Euroraum, abgeleitet aus der inflationsindexierten Bundesanleihe${sl ? ` · Stand ${deDatum(sl)}` : ""}`);
+      } else {   // ohne Breakeven (Zinskurve fehlt) keinen festen Wert aus dem HTML stehen lassen
+        document.getElementById("h-be").innerHTML = "–";
+        setT("h-be-d", "zurzeit nicht verfügbar");
       }
       const tb = document.querySelector("#linker-tab tbody");
       // Erste Spalte seit 03.10.2026 wie in jeder Anleihen-Tabelle: Titel (Kurzname, Kupon, Fälligkeitsjahr) als Link zum Steckbrief

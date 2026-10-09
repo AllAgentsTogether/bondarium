@@ -55,6 +55,12 @@ geladen); die JSDA sperrt bei mehr als ~7 Abrufen binnen Minuten die IP für ein
 Viertelstunde – dort werden je Lauf nur wenige Monate mit 12 s Pause geholt, die
 Historie ab 2002 füllt sich über die täglichen Läufe rückwärts auf (Jahresmittel
 erscheinen im Chart, sobald ein Jahr zwölf Monatswerte hat).
+Seit 09.10.2026 (Technik-Test, T-60): Die Monatsenden einer Archivseite stehen in
+unternehmen.json unter „jsdaArchiv“; eine Archivseite wird höchstens einmal je Monat
+geladen, davor 45 s Pause. Nach HTTP 429 wartet ein JSDA-Abruf das Retry-After ab
+(bis 120 s) und versucht es einmal neu. Eine Reihe zählt nur als geliefert, wenn ihre
+Quelle in diesem Lauf antwortete; antwortet keine, endet das Skript mit Exit 1 und
+schreibt kein neues checkedAt (T-62).
 
 Einmaliges Nachladen (FRED/RBA komplett, Japan/China mit großem Budget):
 
@@ -67,12 +73,14 @@ Der Backfill ergänzt nur fehlende Jahre/Monate (ersetzt bestehende nicht).
 
 import csv
 import datetime
+import email.utils
 import io
 import json
 import os
 import re
 import sys
 import time
+import urllib.error
 from pathlib import Path
 
 from _common import get_with_retry, log_err, now_iso, plausible, today_iso, write_atomic
@@ -222,11 +230,46 @@ def fetch_rba() -> dict[str, dict[str, float]]:
 # ---------- Quellen: JSDA (Japan) und ChinaBond (China), gesampelt ----------
 
 _jsda_files_cache: dict[int, dict[str, str]] = {}
+# Seit 09.10.2026 (Technik-Test T-60: Monatsendwert September fehlte nach HTTP 429 in sieben Läufen):
+JSDA_ARCHIV_PAUSE = 45.0   # s Pause vor einem Abruf der Archivseite (die JSDA sperrt nach ~7 Abrufen binnen Minuten)
+JSDA_RETRY_MAX = 120.0     # s: längste Wartezeit nach HTTP 429/503 mit Retry-After (_common deckelt auf 30 s)
+# Monatsenden je Jahr aus der Archivseite, in unternehmen.json unter „jsdaArchiv“ zwischengespeichert:
+#   {"JJJJ": {"geladen": "JJJJ-MM-TT", "monate": {"JJJJ-MM": [Handelstag, Pfad unter JSDA_BASE] | null}}}
+# Eine Archivseite wird höchstens einmal je Monat geladen: nur, wenn ein gesuchter Monat beim letzten Laden noch nicht
+# abgeschlossen war. Monate, die alle Japan-Reihen schon haben, fallen aus dem Speicher.
+_jsda_archiv: dict = {}
+
+
+def jsda_get(url: str, timeout: int = 40) -> bytes:
+    """JSDA-Abruf mit eigener Wiederholung: nach HTTP 429/503 einmal neu versuchen, nach Retry-After (höchstens
+    JSDA_RETRY_MAX s; ohne Angabe JSDA_ARCHIV_PAUSE s). Andere Fehler gehen sofort weiter."""
+    try:
+        return get_with_retry(url, headers=UA, timeout=timeout, tries=1)
+    except urllib.error.HTTPError as e:
+        if e.code not in (429, 503):
+            raise
+        wait = JSDA_ARCHIV_PAUSE
+        raw = e.headers.get("Retry-After") if e.headers is not None else None
+        if raw:
+            try:
+                wait = float(raw)
+            except ValueError:
+                try:
+                    wann = email.utils.parsedate_to_datetime(raw)
+                    if wann.tzinfo is None:
+                        wann = wann.replace(tzinfo=datetime.timezone.utc)
+                    wait = (wann - datetime.datetime.now(datetime.timezone.utc)).total_seconds()
+                except (TypeError, ValueError, IndexError):
+                    pass
+        wait = max(1.0, min(wait, JSDA_RETRY_MAX))
+        print(f"JSDA: HTTP {e.code} – neuer Versuch in {wait:g} s: {url}", file=sys.stderr, flush=True)
+        time.sleep(wait)
+        return get_with_retry(url, headers=UA, timeout=timeout, tries=1)
 
 
 def jsda_files_from(url: str, year: int, pause: float) -> dict[str, str]:
     """Links auf Rating-Matrix-Dateien einer JSDA-Seite als {"JJJJ-MM-TT": URL}."""
-    html = get_with_retry(url, headers=UA, timeout=40, tries=2).decode("utf-8", "replace")
+    html = jsda_get(url).decode("utf-8", "replace")
     time.sleep(pause)
     files = {}
     for href in re.findall(r'href="([^"]*?R(\d{2})(\d{2})(\d{2})\.csv)"', html):
@@ -256,6 +299,35 @@ def jsda_handelstage(files: dict[str, str]) -> dict[str, str]:
     return {days[i - 1]: files[days[i]] for i in range(1, len(days))}
 
 
+def jsda_monatsende(m: str, pause: float, today: datetime.date) -> tuple[str, str] | None:
+    """(Handelstag, URL) der Datei mit dem letzten Handelstag des Monats m („JJJJ-MM“); None, wenn das Archiv für m keine
+    Datei hat. Aus dem Speicher (unternehmen.json, jsdaArchiv); die Archivseite des Jahres wird nur geladen, wenn m beim
+    letzten Laden noch nicht abgeschlossen war – vorher JSDA_ARCHIV_PAUSE s Pause."""
+    jahr = m[:4]
+    eintrag = _jsda_archiv.get(jahr) if isinstance(_jsda_archiv.get(jahr), dict) else {}
+    monate = eintrag.get("monate") if isinstance(eintrag.get("monate"), dict) else {}
+    # neu laden, wenn der Monat nicht im Speicher steht oder beim letzten Laden noch nicht abgeschlossen war
+    if m not in monate or str(eintrag.get("geladen", ""))[:7] <= m:
+        if int(jahr) not in _jsda_files_cache:
+            print(f"Japan: Archivseite {jahr} wird geladen (nach {JSDA_ARCHIV_PAUSE:g} s Pause).")
+            time.sleep(JSDA_ARCHIV_PAUSE)
+        tage = jsda_handelstage(jsda_year_files(int(jahr), pause))
+        monate = {}
+        for tag in sorted(tage):   # je Monat bleibt der letzte Handelstag
+            if tag[:7] < today.isoformat()[:7]:
+                url = tage[tag]
+                monate[tag[:7]] = [tag, url[len(JSDA_BASE):] if url.startswith(JSDA_BASE) else url]
+        for mm in month_ends(f"{jahr}-01", f"{jahr}-12"):
+            if mm < today.isoformat()[:7]:
+                monate.setdefault(mm, None)   # abgeschlossener Monat ohne Datei
+        _jsda_archiv[jahr] = {"geladen": today.isoformat(), "monate": monate}
+    wert = monate.get(m)
+    if not wert:
+        return None
+    tag, pfad = wert
+    return tag, pfad if pfad.startswith("http") else JSDA_BASE + pfad
+
+
 def jsda_year_files(year: int, pause: float) -> dict[str, str]:
     """Alle Dateien eines Jahres (Archivseite archiveJJJJ.html – existiert auch für
     das laufende Jahr; die Startseite listet nur die jüngsten Handelstage). Ein Abruf je Jahr."""
@@ -269,7 +341,7 @@ def jsda_values(url: str, agency: str = "1", bucket: str = "10") -> dict[str, fl
     Klassen einer Zeile: Agentur (1 = R&I), Restlaufzeit-Klasse (10 = 10 Jahre);
     je Rating-Block Label, Rendite, Standardabweichung, Anzahl Emissionen, Anzahl
     Meldungen. Shift-JIS. Rückgabe {"AA": 3.52, "A": 3.78, …} (leer, wenn ohne Wert)."""
-    text = get_with_retry(url, headers=UA, timeout=40, tries=2).decode("shift_jis", "replace")
+    text = jsda_get(url).decode("shift_jis", "replace")
     out: dict[str, float] = {}
     # zeilenweise füttern: die Dateien enthalten \r-Zeilenumbrüche, an denen csv.reader
     # auf einem StringIO stolpert ("new-line character seen in unquoted field")
@@ -387,21 +459,19 @@ def sample_jp(series: dict, cfg: dict, today: datetime.date, save=None) -> bool:
         return any(m not in s["monthly"] and m not in s["nodata"] for s in ser.values())
     missing = [m for m in reversed(month_ends(cfg["start"], last_full)) if missing_in_any(m)]
     for m in missing[: cfg["budget"]]:
-        yr = int(m[:4])
         try:
-            yfiles = jsda_handelstage(jsda_year_files(yr, pause))
+            ende = jsda_monatsende(m, pause, today)
         except Exception as e:
-            log_err(f"Japan: Archivseite {yr} nicht abrufbar: {e}")
+            log_err(f"Japan: Archivseite {m[:4]} nicht abrufbar: {e}")
             break
-        days = [d for d in yfiles if d.startswith(m)]
-        if not days:
+        if not ende:
             if apply(m, {}, latest=False):
                 changed = True
             continue
         try:
-            vals = jsda_values(yfiles[max(days)])
+            vals = jsda_values(ende[1])
         except Exception as e:
-            log_err(f"Japan: Datei {max(days)} nicht abrufbar: {e} – Rest im nächsten Lauf.")
+            log_err(f"Japan: Datei {ende[0]} nicht abrufbar: {e} – Rest im nächsten Lauf.")
             break
         time.sleep(pause)
         if apply(m, vals, latest=False):
@@ -495,6 +565,10 @@ def update(data: dict, backfill: bool = False) -> tuple[bool, int]:
     except Exception as e:
         log_err(f"RBA F3 nicht abrufbar: {e}")
     # Gesampelte Reihen: Monatsendwerte liegen persistent in series[key].monthly
+    _jsda_archiv.clear()   # Speicher der JSDA-Archivseiten (siehe jsda_monatsende), wird mit unternehmen.json geschrieben
+    _jsda_archiv.update(data["jsdaArchiv"] if isinstance(data.get("jsdaArchiv"), dict) else {})
+    data["jsdaArchiv"] = _jsda_archiv
+    geantwortet = set()   # Reihen, deren Quelle in DIESEM Lauf ohne Ausnahme antwortete (seit 09.10.2026, T-62)
     for key, cfg in SAMPLED.items():
         if os.environ.get("SKIP_" + key.upper()):   # manuell: z. B. SKIP_JP_A=1 (Quelle gerade gesperrt)
             print(f"{key}: Sampling übersprungen (SKIP_{key.upper()}).")
@@ -504,17 +578,32 @@ def update(data: dict, backfill: bool = False) -> tuple[bool, int]:
                 save = lambda: write_atomic(DATA_FILE, data)  # noqa: E731
                 if key == "jp_a":
                     ok = sample_jp(series, cfg, today, save=save)      # befüllt jp_aa und jp_a zugleich
+                    geantwortet.update(JSDA_RATINGS)
                 else:
                     ok = sample_cn(series.setdefault(key, {}), cfg, today, save=save)
+                    geantwortet.add(key)
                 if ok:
                     changed = True
             except Exception as e:
                 log_err(f"{key}: Sampling fehlgeschlagen: {e}")
+    # Speicher der JSDA-Archivseiten klein halten: Monate, die alle Japan-Reihen haben (Wert oder „ohne Daten“), entfernen
+    for jahr in list(_jsda_archiv):
+        monate = _jsda_archiv[jahr].get("monate") if isinstance(_jsda_archiv[jahr], dict) else None
+        for mm in list(monate or {}):
+            if all(mm in (series.get(k) or {}).get("monthly", {}) or mm in (series.get(k) or {}).get("nodata", [])
+                   for k in JSDA_RATINGS):
+                del monate[mm]
+        if not monate:
+            del _jsda_archiv[jahr]
+    if not _jsda_archiv:
+        data.pop("jsdaArchiv", None)
     for key in list(JSDA_RATINGS) + [k for k in SAMPLED if k != "jp_a"]:
         s = series.setdefault(key, {})
         monthly_all[key] = dict(s.get("monthly", {}))
-        if s.get("latest"):
-            delivered += 1   # Reihe hat einen Stand (auch wenn dieser Lauf nichts Neues brachte)
+        # „geliefert“ nur, wenn die Quelle in diesem Lauf antwortete – ein alter Stand allein zählt nicht mehr
+        # (bis 08.10.2026 schrieb ein Lauf ohne jede Antwort ein neues checkedAt und endete mit Exit 0)
+        if s.get("latest") and key in geantwortet:
+            delivered += 1
 
     for key in KEYS:
         s = series.setdefault(key, {})

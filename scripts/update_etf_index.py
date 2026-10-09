@@ -423,14 +423,23 @@ def boersenliste() -> bytes:
     if fix:
         return (fix / "Master_DataSheet_Download.xls").read_bytes()
     html = get_with_retry(SEITE_LISTE, headers=UA, timeout=60).decode("utf-8", "replace")
-    m = re.search(r'href="(/resource/blob/[^"]+/Master_DataSheet[^"]*\.xlsx?)"', html)
+    m = re.search(r'href="' + PRAEFIX + r'(/resource/blob/[^"]+/Master_DataSheet[^"]*\.xlsx?)"', html)
     if not m:
-        raise ValueError("Link zur ETF-Liste auf der Seite der Börse nicht gefunden")
+        raise ValueError(f"Link zur ETF-Liste auf der Seite der Börse nicht gefunden ({seite_kurz(html)})")
     time.sleep(PAUSE)
     return get_with_retry(BASIS + m.group(1), headers=UA, timeout=120)
 
 
-MONATSLINK = re.compile(r'href="(/resource/blob/[^"]+/(\d{4})(\d{2})\d{2}[-_][^"/]*Statisti[^"/]*\.xlsx)"')
+# Die Börse schreibt ihre Links je nach Server mal relativ („/resource/…“), mal absolut („https://www.cashmarket…/resource/…“;
+# 08.10.2026: 8 von 9 Abrufen) – beide Formen zählen, die Gruppe bleibt der Pfad (Technik-Test 08.10.2026, T-08).
+PRAEFIX = r'(?:https?://(?:www\.)?cashmarket\.deutsche-boerse\.com)?'
+MONATSLINK = re.compile(r'href="' + PRAEFIX + r'(/resource/blob/[^"]+/(\d{4})(\d{2})\d{2}[-_][^"/]*Statisti[^"/]*\.xlsx)"')
+
+
+def seite_kurz(html: str) -> str:
+    """Länge und <title> einer Börsen-Seite für die Fehlermeldung (zeigt, ob eine Sperr- oder Umleitungsseite kam)."""
+    t = re.search(r"<title[^>]*>(.*?)</title>", html, re.S | re.I)
+    return f"{len(html)} Zeichen, Titel „{' '.join(t.group(1).split())[:120] if t else '–'}“"
 
 
 def statistik_links(ab: str) -> dict:
@@ -446,7 +455,9 @@ def statistik_links(ab: str) -> dict:
         return out
     html = get_with_retry(SEITE_STATISTIK, headers=UA, timeout=60).decode("utf-8", "replace")
     out = {f"{j}-{mo}": BASIS + href for href, j, mo in MONATSLINK.findall(html)}
-    suche = re.search(r'data-js-search-filter-link="([^"?]+!search)', html)
+    if not out:
+        log_err(f"ETF-Register: keine Monatsstatistik auf der Seite der Börse gefunden ({seite_kurz(html)})")
+    suche = re.search(r'data-js-search-filter-link="' + PRAEFIX + r'([^"?]+!search)', html)
     seite = 0
     while suche and (not out or min(out) > ab) and seite < 12:
         time.sleep(PAUSE)

@@ -28,6 +28,8 @@ Repository bleiben unverändert.
   zinsniveau.html            ← zinskurve.json, realzins.json, ezb.json: Kacheln „Zinsniveau heute“, ihre Stand-Zeile,
                                EZB-Einlagesatz, Daten-Stand (seit 04.10.2026)
   fortgeschrittene.html      ← zinskurve.json: Kasten „Bund heute“ in Schritt 1, Daten-Stand (seit 04.10.2026)
+  markttechnik.html          ← ezb.json: Einlagesatz mit Stand unter dem Schaubild „Was der Markt einpreist“ (seit 09.10.2026)
+  risiko.html                ← langlaeufer.json: Verlust der Bundesanleihe 0 % 2050 seit 2019 und ihr Stand (seit 09.10.2026)
 
 Regeln:
 - Zahlen und Stand nur zusammen: Passt auf einer Seite etwas nicht, bleibt die ganze Seite, wie sie ist (Warnung).
@@ -941,7 +943,10 @@ ANKER_REALZINS = [
     'const st = document.getElementById("st-r"); st.textContent = vz(netto, 2); st.className = "num " + (netto > 0 ? "plus" : netto < 0 ? "minus" : "");',
     'const l = h.linker.find(x => x.faellig.startsWith("2033")) || h.linker[0];',
     'document.getElementById("h-be").innerHTML = `${fmt(l.breakeven, 1)}<small>% Inflation</small>`;',
-    'setT("h-be-d", `pro Jahr bis ${l.faellig.slice(0, 4)} im Euroraum, abgeleitet aus der inflationsindexierten Bundesanleihe`);',
+    'const sl = d.stand && d.stand.linker;',
+    'setT("h-be-d", `pro Jahr bis ${l.faellig.slice(0, 4)} im Euroraum, abgeleitet aus der inflationsindexierten Bundesanleihe${sl ? ` · Stand ${deDatum(sl)}` : ""}`);',
+    'document.getElementById("h-be").innerHTML = "–";',
+    'setT("h-be-d", "zurzeit nicht verfügbar");',
     'const F = MC.felder, pct = v => F ? F.pct(v) : fmt(v, 2) + "\\u00A0%";',
     'const k = x.name.match(/(\\d+),(\\d+)\\s%/), kupon = k ? +(k[1] + "." + k[2]) : null;',
     'const titel = F ? F.titel({ kurz: "Deutschland", kupon, zinsart: 0, faellig: x.faellig }) : x.name;',
@@ -1010,9 +1015,14 @@ def realzins(site, s):
     linker = h.get("linker") or []
     if linker:
         l = next((x for x in linker if str(x.get("faellig", "")).startswith("2033")), linker[0])
+        sl = (d.get("stand") or {}).get("linker")
         if l.get("breakeven") is not None:
             s.inner("#h-be", f"{zahl(l['breakeven'], 1)}<small>% Inflation</small>")
-            s.text("#h-be-d", f"pro Jahr bis {l['faellig'][:4]} im Euroraum, abgeleitet aus der inflationsindexierten Bundesanleihe", muss=False)
+            s.text("#h-be-d", f"pro Jahr bis {l['faellig'][:4]} im Euroraum, abgeleitet aus der inflationsindexierten Bundesanleihe"
+                   + (f" · Stand {datum(sl)}" if sl else ""), muss=False)
+        else:   # seit 09.10.2026: ohne Breakeven nicht den festen Wert aus dem Quell-HTML stehen lassen
+            s.inner("#h-be", "–")
+            s.text("#h-be-d", "zurzeit nicht verfügbar", muss=False)
         if s.finde("#linker-tab tbody"):
             zeilen = []
             def pct(v):   # wie MC.felder.pct
@@ -1548,9 +1558,50 @@ def fortgeschrittene(site, s):
     return f"Renditen {datum(h[0])}"
 
 
+# ---------- markttechnik.html (seit 09.10.2026, Technik-Test T-38) ----------
+ANKER_MARKTTECHNIK = [
+    'if (window.MC && MC.load) MC.load("ezb.json").then(function (d) {',
+    'var e = document.getElementById("ezb-stand");',
+    'if (e && d && d.aktuell) e.textContent = "Einlagesatz " + MC.zahl(d.aktuell[1], 2) + "\\u00a0% seit " + MC.datum(d.aktuell[0]) + " (Stand " + MC.datum(d.stand) + ")";',
+]
+
+
+def markttechnik(site, s):
+    """Ausgangspunkt des Schaubilds „Was der Markt einpreist“: aktueller EZB-Einlagesatz mit Stand (ezb.json)."""
+    s.anker(ANKER_MARKTTECHNIK)
+    E = lade(site, "ezb.json")
+    if not isinstance(E, dict) or not E.get("aktuell"):
+        raise ValueError("ezb.json ohne aktuell")
+    s.text("#ezb-stand", f'Einlagesatz {zahl(E["aktuell"][1], 2)}{NBSP}% seit {datum(E["aktuell"][0])} (Stand {datum(E.get("stand"))})')
+    return datum(E.get("stand"))
+
+
+# ---------- risiko.html (seit 09.10.2026, Technik-Test T-38) ----------
+ANKER_B50 = [   # eigener Name: ANKER_RISIKO gehört zu risikoaufschlaege.html
+    'if (window.MC && MC.json) MC.json("langlaeufer.json").then(function (d) {',
+    'var b = d.bonds && d.bonds.bund2050, v = document.getElementById("b50-verlust"), t = document.getElementById("b50-stand");',
+    'if (!b || !b.first || !b.latest || !v) return;',
+    'v.textContent = MC.zahl(Math.round((1 - b.latest.price / b.first.price) * 100));',
+    'if (t) t.textContent = MC.datum(b.latest.date);',
+]
+
+
+def risiko(site, s):
+    """Bildunterschrift „Bund 0 % 2050“: Verlust seit der Ausgabe 2019 in Prozent und Stand des Kurses (langlaeufer.json)."""
+    s.anker(ANKER_B50)
+    b = (lade(site, "langlaeufer.json").get("bonds") or {}).get("bund2050") or {}
+    first, latest = b.get("first") or {}, b.get("latest") or {}
+    if not (ist_zahl(first.get("price")) and first["price"] and ist_zahl(latest.get("price"))):
+        raise ValueError("langlaeufer.json bonds.bund2050 ohne Erst- oder Schlusskurs")
+    s.text("#b50-verlust", zahl(js_round((1 - latest["price"] / first["price"]) * 100), 0))
+    s.text("#b50-stand", datum(latest.get("date")), muss=False)
+    return datum(latest.get("date"))
+
+
 SEITEN = (("renditen.html", renditen), ("unternehmensanleihen.html", unternehmensanleihen), ("zinskurve.html", zinskurve),
           ("realzins.html", realzins), ("risikoaufschlaege.html", risikoaufschlaege), ("langlaeufer.html", langlaeufer),
-          ("zinsniveau.html", zinsniveau), ("fortgeschrittene.html", fortgeschrittene))
+          ("zinsniveau.html", zinsniveau), ("fortgeschrittene.html", fortgeschrittene), ("markttechnik.html", markttechnik),
+          ("risiko.html", risiko))
 
 
 def main():

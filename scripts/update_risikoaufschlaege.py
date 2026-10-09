@@ -32,7 +32,8 @@ Struktur:
    "us": {"monate": [["1984-01", aufschlag, hqm, staat], …], # Aufschlag in Prozentpunkten, Renditen in %
           "heute": ["JJJJ-MM", aufschlag, hqm, staat]}}       # jüngster Monat mit beiden Werten
 
-Schutz: Bleibt eine Quelle aus, behält ihr Teil den alten Stand. Werte außerhalb
+Schutz: Bleibt eine Quelle aus, behält ihr Teil den alten Stand. Fehlen einzelne Monatswerte der Länder in einer neuen
+OECD-Antwort, bleiben die bisherigen (seit 09.10.2026); „heute“ fällt je Land nicht auf einen älteren Monat zurück. Werte außerhalb
 −5…40 Punkte (Aufschlag) bzw. −5…40 % (Rendite) oder eine um mehr als 10 % geschrumpfte
 Reihe lassen die Datei unverändert. Zwei Abrufe, ~10 s (OECD-Datei ~1,8 MB).
 
@@ -83,6 +84,21 @@ def oecd() -> dict[str, dict[str, float]]:
     if len(out.get("DE", {})) < 600 or any(len(out.get(k, {})) < 300 for k in CHART):
         raise RuntimeError(f"OECD: Reihen unvollständig ({ {k: len(v) for k, v in out.items()} })")
     return out
+
+
+def alte_monate_behalten(r: dict[str, dict[str, float]], alt: dict) -> list[str]:
+    """Monatswerte der bisherigen Datei, die in der neuen OECD-Antwort fehlen, in r übernehmen (seit 09.10.2026,
+    Technik-Test T-37: am 08.10. fehlte Frankreich/Portugal 09/2026 in einer unvollständigen Antwort, die Seite fiel auf
+    August zurück). Neue Werte haben Vorrang (Revisionen der OECD). Rückgabe: Liste „Land Monat“ der übernommenen Werte."""
+    behalten = []
+    for z in (alt.get("laender") or {}).get("monate") or []:
+        if not isinstance(z, list) or len(z) != len(LAENDER) + 1 or not isinstance(z[0], str):
+            continue
+        for (k, _, _), v in zip(LAENDER, z[1:]):
+            if isinstance(v, (int, float)) and not isinstance(v, bool) and z[0] not in r.setdefault(k, {}):
+                r[k][z[0]] = v
+                behalten.append(f"{k} {z[0]}")
+    return behalten
 
 
 def laender(r: dict[str, dict[str, float]]) -> tuple[list, list, str]:
@@ -154,7 +170,19 @@ def main() -> int:
         return 1
 
     try:
+        behalten = alte_monate_behalten(renditen, alt)
+        if behalten:
+            log_err(f"Risikoaufschläge: {len(behalten)} Monatswerte fehlen in der OECD-Antwort (z. B. {', '.join(behalten[-3:])}) – "
+                    "die bisherigen Werte bleiben.")
         monate, heute, stand = laender(renditen)
+        # „heute“ je Land nicht hinter den bisherigen Monat zurückfallen lassen
+        vorher = {h.get("code"): h for h in (alt.get("laender") or {}).get("heute") or [] if isinstance(h, dict)}
+        for i, h in enumerate(heute):
+            v = vorher.get(h["code"])
+            if v and isinstance(v.get("monat"), str) and v["monat"] > h["monat"]:
+                log_err(f"Risikoaufschläge: {h['name']} {h['monat']} wäre älter als bisher {v['monat']} – bisheriger Wert bleibt.")
+                heute[i] = v
+        heute.sort(key=lambda h: -h["aufschlag"])
         if not plausibel([v for z in monate for v in z[1:]], "Länder (Renditen)"):
             return 1
         vor = (alt.get("laender") or {}).get("monate") or []

@@ -85,6 +85,7 @@
   .kk-t { font-size: 15px; font-weight: 600; margin: 0 0 6px; }
   .kk-l { display: block; font-size: 14px; color: var(--text); }
   .kk-l b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  [data-kz="paar-stand"].stale { color: var(--down); }   /* Beispielpaar: veraltete Kurse (MC.veraltet, seit 09.10.2026) */
   .kaufkurs input[type=range] { width: 100%; margin: 10px 0 12px; accent-color: #157C00; min-height: 28px; }
   .kk-bar { position: relative; height: 22px; border-radius: 4px; background: #F3F2EE; }
   .kk-bar i { position: absolute; top: 0; height: 100%; }
@@ -626,6 +627,14 @@ MC.navInit();
   }
   ein.addEventListener("input", zeig);
   box.hidden = false; zeig();
+})();
+// Beispielpaar „Echte Kurse“ (Schritt 3, seit 09.10.2026): veraltete Bundesbank-Kurse kennzeichnen wie die übrigen Datenstände
+// (MC.veraltet, wie zinskurve.html). Das Datum schreibt kennzahlen.py beim Veröffentlichen.
+(function () {
+  var el = document.querySelector('[data-kz="paar-stand"]'), m = el && /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(el.textContent.trim());
+  if (!m || !window.MC || !MC.veraltet || !MC.veraltet(m[3] + "-" + m[2] + "-" + m[1])) return;
+  el.classList.add("stale");
+  el.textContent = el.textContent.trim() + " · veraltet";
 })();
 // Drucken: zugeklappte Erklärungen aufklappen, danach wieder schließen.
 (function () {

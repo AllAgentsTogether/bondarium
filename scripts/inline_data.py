@@ -33,12 +33,15 @@ ISIN_RE = re.compile(r'\b([A-Z]{2}[A-Z0-9]{9}[0-9])\b')
 
 
 def kuerzen(data, html):
-    """kurse-auswahl.json u. ä.: nur die ISINs einbetten, die auf der Seite vorkommen (Startseite: 6 statt 324)."""
-    if isinstance(data, dict) and isinstance(data.get("kurse"), dict):
-        isins = set(ISIN_RE.findall(html))
-        if isins:
-            data = dict(data)
-            data["kurse"] = {k: v for k, v in data["kurse"].items() if k in isins}
+    """kurse-auswahl.json u. ä.: nur die ISINs einbetten, die auf der Seite vorkommen (Startseite: 6 statt 324).
+    Seit 09.10.2026 ebenso anleihen-auswahl.json (Feld „a“, je ISIN Kurzname und Bonität): langlaeufer.html nutzt 7 von 310
+    (Technik-Test T-61). Automatische Listen (top10-*.json) bringen Kurzname und Bonität in ihren Zeilen selbst mit."""
+    for feld in ("kurse", "a"):
+        if isinstance(data, dict) and isinstance(data.get(feld), dict):
+            isins = set(ISIN_RE.findall(html))
+            if isins:
+                data = dict(data)
+                data[feld] = {k: v for k, v in data[feld].items() if k in isins}
     return data
 ANCHOR_RE = re.compile(r'<script src="site\.js[^"]*"></script>')
 

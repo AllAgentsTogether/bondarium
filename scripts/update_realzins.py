@@ -32,6 +32,10 @@ Der Realzins (nominal − Inflation) wird auf der Seite gerechnet. Datei ~25 KB,
 
 Schutz: Bleibt eine Quelle aus, behält ihr Teil den alten Stand; Werte außerhalb −5…25 % (Zins) bzw.
 −5…30 % (Inflation) oder eine Reihe kürzer als 90 % des Vorbestands lassen die Datei unverändert.
+Seit 09.10.2026 (Technik-Test 08.10.2026): Fehlt die Zinskurve, bleibt die Inflationserwartung GANZ beim alten Stand
+(Realrendite, nominal, Breakeven, stand.linker – nie neue Real- mit alter Nominalrendite mischen). Ist der Tageswert
+Bund 10 J. in renditen.json (gleiche Reihe ZAR, anderer Abrufweg) jünger, gilt er. Ist keine Quelle erreichbar:
+Exit 1; die Datei bleibt samt checkedAt unverändert, außer der Tageswert aus renditen.json ist neu.
 
 Aufruf: python scripts/update_realzins.py
 """
@@ -47,6 +51,7 @@ from pathlib import Path
 from _common import get_with_retry, log_err, now_iso, today_iso, write_atomic
 
 OUT = Path(__file__).resolve().parent.parent / "realzins.json"
+RENDITEN = Path(__file__).resolve().parent.parent / "renditen.json"   # Rückfall für den Tageswert Bund 10 J. (gleiche Reihe)
 
 OECD = ("https://sdmx.oecd.org/public/rest/data/OECD.SDD.STES,DSD_STES@DF_FINMARK,4.0/"
         "DEU.M.IRLT.PA.....?startPeriod=1970-01&format=csvfilewithlabels")
@@ -193,6 +198,25 @@ def inflation_jahre(vpi_a: dict[int, float]) -> dict[int, float]:
     return out
 
 
+def renditen_tageswert() -> tuple[str, float] | None:
+    """(Datum, Rendite) Bund 10 J. aus renditen.json (countries.de.latest) – nur ein Tageswert, nicht in der Zukunft,
+    in den Grenzen; sonst None."""
+    try:
+        de = (json.loads(RENDITEN.read_text(encoding="utf-8")).get("countries") or {}).get("de") or {}
+    except (OSError, ValueError, AttributeError) as e:
+        log_err(f"Realzins: renditen.json nicht lesbar ({e}) – kein Rückfall für den Tageswert.")
+        return None
+    l = de.get("latest") if isinstance(de, dict) else None
+    d, w = (l.get("date"), l.get("yield")) if isinstance(l, dict) else (None, None)
+    try:
+        tag_ok = isinstance(d, str) and datetime.date.fromisoformat(d).isoformat() == d and d <= today_iso()
+    except ValueError:
+        tag_ok = False
+    if tag_ok and isinstance(w, (int, float)) and not isinstance(w, bool) and ZINS_LO < w < ZINS_HI:
+        return d, float(w)
+    return None
+
+
 def interpoliert(kurve: dict[float, float], jahre: float) -> float | None:
     pts = sorted(kurve.items())
     if not pts or jahre < pts[0][0] or jahre > pts[-1][0]:
@@ -214,6 +238,7 @@ def main() -> int:
     stand = dict(alt.get("stand", {}))
     monate, jahre, laufend = alt.get("monate"), alt.get("jahre"), alt.get("laufend")
     fehler = 0
+    netz_aus = 0   # gescheiterte Abrufe (Zinskurve, ZAR, OECD, Verbraucherpreise, Realrenditen) – 5 = Totalausfall
 
     # 1) Bund 10 Jahre: OECD-Monate + Bundesbank-Tage (laufender Monat, Tageswert)
     seit = (datetime.date.today() - datetime.timedelta(days=100)).replace(day=1).isoformat()
@@ -223,18 +248,29 @@ def main() -> int:
         log_err(f"Realzins: Bundesbank-Zinskurve nicht abrufbar ({e}) – Breakeven bleibt alt.")
         kurve = {}
         fehler += 1
+        netz_aus += 1
     # Tageswert und laufender Monat: ZAR 10 Jahre (wie renditen.html); Rückfall: ZST 10 Jahre aus der Kurve
     try:
         zins10 = bundesbank_zar10(seit)
     except Exception as e:  # noqa: BLE001
         log_err(f"Realzins: Bundesbank ZAR 10 J. nicht abrufbar ({e}) – Rückfall auf die Svensson-Kurve.")
         zins10 = {d: w[10.0] for d, w in kurve.items() if 10.0 in w}
+        netz_aus += 1
     tage = sorted(zins10)
     if tage:
         letzter = tage[-1]
         heute["zins10"] = [letzter, round(zins10[letzter], 2)]
         stand["zins"] = letzter
-    else:
+    # Rückfall (seit 09.10.2026, Technik-Test T-01): update_renditen.py holt dieselbe Reihe (ZAR 10 J.) über den
+    # Download-Weg der Bundesbank und läuft im Datenlauf vorher. Ist sein Tageswert jünger, gilt er – nur für den
+    # Tageswert, nicht für die Monatsreihe.
+    ersatz = renditen_tageswert()
+    if ersatz and ersatz[0] > ((heute.get("zins10") or [""])[0] or ""):
+        print(f"Realzins: Tageswert Bund 10 J. aus renditen.json ({ersatz[0]}, {ersatz[1]} %) – jünger als "
+              f"{(heute.get('zins10') or ['kein Wert'])[0]}.")
+        heute["zins10"] = [ersatz[0], round(ersatz[1], 2)]
+        stand["zins"] = ersatz[0]
+    elif not tage:
         log_err("Realzins: kein Tageswert Bund 10 J. – Tageswert bleibt alt.")
         fehler += 1
     try:
@@ -243,6 +279,7 @@ def main() -> int:
         log_err(f"Realzins: OECD nicht abrufbar ({e}) – Monatsreihe bleibt alt.")
         oecd = {m[0]: m[1] for m in (monate or []) if m[1] is not None}
         fehler += 1
+        netz_aus += 1
     # fehlende jüngste Monate (OECD hinkt 1–2 Monate nach) und laufender Monat aus den Bundesbank-Tagen
     je_monat = defaultdict(list)
     for d in tage:
@@ -261,6 +298,7 @@ def main() -> int:
         stand["vpi"] = letzter_vpi
     except Exception as e:  # noqa: BLE001
         log_err(f"Realzins: Bundesbank-VPI nicht abrufbar ({e}) – Inflation bleibt alt.")
+        netz_aus += 1
         infl_m = {m[0]: m[2] for m in (monate or []) if m[2] is not None}
         infl_a = {j[0]: j[2] for j in (jahre or []) if j[2] is not None}
         fehler += 1
@@ -294,16 +332,30 @@ def main() -> int:
             linker.append({"isin": isin, "name": name, "faellig": faellig, "datum": datum, "real": round(r, 2),
                            "nominal": None if nominal is None else round(nominal, 2),
                            "breakeven": None if nominal is None else round(nominal - r, 2)})
-        if linker:
+        if not linker:
+            raise RuntimeError("keine Realrenditen gefunden")
+        if not kurve and any(x.get("breakeven") is not None for x in heute.get("linker") or []):
+            # Ohne Zinskurve keine Nominalrendite gleicher Restlaufzeit, also kein Breakeven. Der alte Block bleibt GANZ
+            # (Realrendite, nominal, Breakeven, Datum, stand.linker) – neue Realrendite und alte Nominalrendite ergäben
+            # einen Breakeven aus zwei Tagen (Technik-Test 08.10.2026, T-06).
+            log_err(f"Realzins: ohne Zinskurve kein Breakeven – Inflationserwartung bleibt beim Stand {stand.get('linker')}.")
+        else:
             heute["linker"] = linker
             stand["linker"] = max(l["datum"] for l in linker)
-        else:
-            raise RuntimeError("keine Realrenditen gefunden")
     except Exception as e:  # noqa: BLE001
         log_err(f"Realzins: Realrenditen nicht abrufbar ({e}) – Inflationserwartung bleibt alt.")
         fehler += 1
+        netz_aus += 1
 
     # 5) Plausibilität und Schutz
+    # Totalausfall (Technik-Test T-62, bis 08.10.2026 Exit 0): Exit 1. Geschrieben wird nur, wenn der Tageswert aus
+    # renditen.json neu ist – sonst bleibt die Datei samt checkedAt unverändert.
+    totalausfall = netz_aus >= 5
+    if totalausfall:
+        if heute == alt.get("heute"):
+            log_err("Realzins: keine Quelle erreichbar – realzins.json bleibt unverändert.")
+            return 1
+        log_err("Realzins: keine Quelle erreichbar – nur der Tageswert Bund 10 J. aus renditen.json ist neu.")
     schlecht = [m for m in neu_monate if not (ZINS_LO < m[1] < ZINS_HI) or (m[2] is not None and not (INFL_LO < m[2] < INFL_HI))]
     if schlecht:
         log_err(f"Realzins: {len(schlecht)} Monatswerte außerhalb der Grenzen (z. B. {schlecht[0]}) – Datei bleibt.")
@@ -333,7 +385,7 @@ def main() -> int:
           f"Bund 10 J. {heute.get('zins10')}, Inflation {heute.get('vpi')}, "
           f"Linker {[(l['isin'][-4:], l['real'], l['breakeven']) for l in heute.get('linker', [])]}"
           + (f" – {fehler} Quelle(n) ausgefallen" if fehler else ""))
-    return 0
+    return 1 if totalausfall else 0
 
 
 if __name__ == "__main__":

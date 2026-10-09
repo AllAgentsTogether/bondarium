@@ -92,12 +92,41 @@ def ist_datum(iso):
     return bool(re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(iso or "")))
 
 
-def datenstand_setzen(html_, text):
-    """<p id="datastand">Daten-Stand: …</p> auf text setzen; None, wenn die Zeile fehlt (dann bleibt die Seite, wie sie ist)."""
-    muster = re.compile(r'(<p id="datastand">)Daten-Stand:[^<]*(</p>)')
+def datenstand_setzen(html_, text, stale=None):
+    """<p id="datastand">Daten-Stand: …</p> auf text setzen; None, wenn die Zeile fehlt (dann bleibt die Seite, wie sie ist).
+    stale True/False setzt bzw. entfernt die Klasse „stale“ (rote Schrift, base.css; seit 09.10.2026), None lässt den Tag,
+    wie er ist."""
+    muster = re.compile(r'(<p id="datastand")(?: class="([^"]*)")?(>)Daten-Stand:[^<]*(</p>)')
     if not muster.search(html_):
         return None
-    return muster.sub(lambda m: m.group(1) + esc_js(text) + m.group(2), html_, count=1)
+
+    def ersatz(m):
+        klassen = [k for k in (m.group(2) or "").split() if stale is None or k != "stale"] + (["stale"] if stale else [])
+        return m.group(1) + (f' class="{" ".join(klassen)}"' if klassen else "") + m.group(3) + esc_js(text) + m.group(4)
+    return muster.sub(ersatz, html_, count=1)
+
+
+# „veraltet“ wie MC.veraltet (site.js, MC.STALE_TAGE): ab 5 Börsentagen (Mo–Fr) nach dem Datum bis heute einschließlich;
+# „heute“ in deutscher Zeit wie beim Besucher (rueckfallwerte.py rechnet ebenso)
+STALE_TAGE = 5
+try:
+    from zoneinfo import ZoneInfo
+    BERLIN = ZoneInfo("Europe/Berlin")
+except Exception:   # ohne Zeitzonendaten gilt UTC
+    BERLIN = None
+
+
+def veraltet(iso):
+    m = re.match(r"(\d{4})-(\d{2})-(\d{2})", str(iso or ""))
+    if not m:
+        return False
+    d, n = datetime.date(int(m.group(1)), int(m.group(2)), int(m.group(3))), 0
+    ende = datetime.datetime.now(BERLIN or datetime.timezone.utc).date()
+    while d < ende:
+        d += datetime.timedelta(days=1)
+        if d.weekday() < 5:
+            n += 1
+    return n >= STALE_TAGE
 
 
 def esc_js(s):
@@ -793,7 +822,10 @@ def bundeswertpapiere(site, seite="bundeswertpapiere.html"):
              f'<script type="application/json" id="bl-daten">{daten}</script>')
     html_ = BL_RE.sub(lambda m: m.group(1) + block + m.group(2), html_, count=1)
     html_ = re.sub(r'(<span data-bl="anzahl">)\d+(</span>)', lambda m: m.group(1) + str(len(objs)) + m.group(2), html_)
-    html_ = datenstand_setzen(html_, "Daten-Stand: " + datum(stand) + " (Deutsche Bundesbank)") or html_
+    # seit 09.10.2026 (Technik-Test T-01): veraltete Bundesbank-Kurse beim Veröffentlichen kennzeichnen wie im Browser (MC.veraltet)
+    alt = veraltet(stand)
+    html_ = datenstand_setzen(html_, "Daten-Stand: " + datum(stand) + " (Deutsche Bundesbank)" + (" · veraltet" if alt else ""),
+                              stale=alt) or html_
     with open(pfad, "w", encoding="utf-8") as f:
         f.write(html_)
     print(f"{seite}: {len(objs)} Bundeswertpapiere fest im HTML, Kurse vom {datum(stand)}")
