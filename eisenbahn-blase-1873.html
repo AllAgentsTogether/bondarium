@@ -22,9 +22,9 @@
 <meta name="twitter:title" content="Eisenbahn-Blase 1873: Gründerkrach und Panik – Bondarium">
 <meta name="twitter:description" content="Die Eisenbahn-Blase der frühen 1870er einfach erklärt: wie Bahnanleihen mit hohen Kupons 1873 ausfielen, was Anleger verloren und was das für dich heißt.">
 <meta name="twitter:image" content="https://www.bondarium.de/og-image.png">
-<link rel="icon" href="favicon.svg?v=3" type="image/svg+xml">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=3">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
+<link rel="icon" href="favicon.svg?v=4" type="image/svg+xml">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=4">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
@@ -297,8 +297,8 @@
 <script src="konto.js"></script>
 <script src="mein.js"></script>
 <script>
-// Rückfall, falls site.js nicht lädt (Netzfehler): Minimalform, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
-window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, minus: function (s) { return String(s).replace(/^-/, "\u2212"); }, zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\u2212") : "\u2013"; }, load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, hoverWrap: function (s) { return s; }, navInit: function () {} };
+// Rückfall, falls site.js nicht lädt (Netzfehler): ergänzt jede fehlende Funktion einzeln, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
+(function (F) { var M = window.MC = window.MC || {}; for (var k in F) if (typeof M[k] !== "function") M[k] = F[k]; })({ esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, minus: function (s) { return String(s).replace(/^-/, "\u2212"); }, zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\u2212") : "\u2013"; }, datum: function (iso) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || "")); return m ? m[3] + "." + m[2] + "." + m[1] : "\u2013"; }, load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, teil: function (s) { for (var h = 0, i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 65536; return ("0" + (h % 256).toString(16)).slice(-2); }, hoverWrap: function (s) { return s; }, navInit: function () {} });
 
 // Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
 MC.navInit();

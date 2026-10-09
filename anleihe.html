@@ -407,8 +407,8 @@
 <script src="konto.js"></script>
 <script src="mein.js"></script>
 <script>
-// Rückfall, falls site.js nicht lädt (Netzfehler): Minimalform, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
-window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, minus: function (s) { return String(s).replace(/^-/, "\u2212"); }, zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\u2212") : "\u2013"; }, load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, hoverWrap: function (s) { return s; }, navInit: function () {} };
+// Rückfall, falls site.js nicht lädt (Netzfehler): ergänzt jede fehlende Funktion einzeln, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
+(function (F) { var M = window.MC = window.MC || {}; for (var k in F) if (typeof M[k] !== "function") M[k] = F[k]; })({ esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, minus: function (s) { return String(s).replace(/^-/, "\u2212"); }, zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\u2212") : "\u2013"; }, datum: function (iso) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || "")); return m ? m[3] + "." + m[2] + "." + m[1] : "\u2013"; }, load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, teil: function (s) { for (var h = 0, i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 65536; return ("0" + (h % 256).toString(16)).slice(-2); }, hoverWrap: function (s) { return s; }, navInit: function () {} });
 
 // ---------- Daten ----------
 // anleihen/<hh>.json (scripts/update_anleihen_index.py, wöchentlich): rows[ISIN] = [name, art, waehrung, kupon, faellig, volumen,
@@ -930,7 +930,9 @@ function zeige(r, k, meta, kf) {
   // Seit 03.10.2026 nach der Art (Bundeswertpapier) statt nach der Quelle des heutigen Kurses: Nach dem Bundesbank-Ausfall am 02.10. trugen
   // alle Bund-Kurse die Quelle Börse Frankfurt, und der Steckbrief zeigte nur eine Woche statt des Verlaufs seit Ausgabe (Nutzertest).
   // MC.verlauf nimmt den Bundesbank-Verlauf nur, wenn die ISIN in kurse/jahre.json steht – sonst die Börsenkurse.
-  if (MC.verlauf) MC.verlauf(ISIN, bundWp).then(v => {
+  // Ohne MC.verlauf (site.js nicht geladen) dieselbe Meldung wie bei einem Ladefehler statt „wird geladen“ (seit 09.10.2026, T-85)
+  if (!MC.verlauf) el.innerHTML = '<p class="kv-leer">Der Kursverlauf ist gerade nicht erreichbar.</p>';
+  else MC.verlauf(ISIN, bundWp).then(v => {
     if (v.bund) quelle.textContent = "Quelle: Deutsche Bundesbank, seit Ausgabe.";
     // US-Staatsanleihen (seit 29.09.2026): vor dem 24.09.2026 Tagespreise des U.S. Treasury (FedInvest, End of Day), danach Börse Frankfurt
     // Niederländische Staatsanleihen (seit 02.10.2026): vor dem 24.09.2026 Tagesfixing von MTS Netherlands, veröffentlicht von der DSTA

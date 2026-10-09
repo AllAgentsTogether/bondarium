@@ -33,7 +33,11 @@
   function RL(y) { return MC.restlaufzeit ? MC.restlaufzeit(y) : fmt(y, 1) + " Jahre"; }
 
   // ---------- Zeilen: Kurs, Datum, Rendite – als Zeilenobjekte der Standardtabelle (felder.js) ----------
+  // Ohne felder.js (MC.felder) – etwa wenn site.js nicht lädt und felder.js deshalb abbricht – still beenden: Die statischen
+  // Tabellen der Seite bleiben stehen (seit 09.10.2026, Technik-Test 08.10.2026, T-85; vorher eine Ausnahme)
+  function bereit() { return !!(window.MC && MC.felder); }
   function zeilen(liste, def) {
+    if (!bereit()) return [];
     def = def || {};
     return liste.map(function (r, i) {
       var k = KURSE[r.isin], kurs = k ? k[0] : r.kurs, datum = k ? KTAGE[k[2]] : (r.datum || def.date);
@@ -54,6 +58,7 @@
   // Tabelle zeichnen (Kopf und Zeilen neu): rows aus zeilen(), sort = { col, dir } (Spalten-Ids aus felder.js), leer = Text ohne Zeile,
   // rang = Spalte, nach der gerankt ist (fett, solange nach Platz sortiert ist): Handelstage bei der automatischen Rangliste, sonst angegeben
   function tabelle(table, rows, sort, leer, rang) {
+    if (!bereit()) return;
     var ids = ["platz", "anleihe", "rendite", "kupon", "restlaufzeit", "kurs", "bonitaet", "stueckelung", "volumen"];
     var ht = rows.length > 0 && rows.every(function (r) { return typeof r.ht === "number"; });
     if (ht) ids.push("handelstage");
@@ -65,7 +70,7 @@
     [].slice.call(table.tBodies).forEach(function (b) { b.remove(); });
     table.insertAdjacentHTML("beforeend", html);
   }
-  function sortierbar(table, sort, neu) { MC.felder.sortierbar(table, sort, neu); }
+  function sortierbar(table, sort, neu) { if (bereit()) MC.felder.sortierbar(table, sort, neu); }
   function kurseSetzen(d) { if (d) { KURSE = d.kurse || {}; KTAGE = d.tage || []; KSTAND = d.stand || ""; } }
   function auswahlSetzen(d) { if (d && d.a) AUS = d.a; }
   function aktiv(d) { return !!(d && d.aktiv && d.gruppen && d.fenster); }

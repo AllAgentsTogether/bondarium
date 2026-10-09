@@ -34,7 +34,9 @@ Seit 30.09.2026 schreibt das Skript außerdem (alles idempotent, --check meldet 
   * die Brotkrumen-Zeile <nav class="krumen"> direkt unter der Kopfzeile – erzeugt aus dem JSON-LD
     BreadcrumbList der Seite (nicht auf index.html und 404.html; ohne BreadcrumbList keine Zeile),
   * die gemeinsame Fußzeile <footer class="fuss"> (FOOTER; fünf Spalten in der Reihenfolge des Menüs),
-  * den Rückfall-Block für window.MC (FALLBACK) in einheitlicher Minimalform, falls site.js nicht lädt.
+  * den Rückfall-Block für window.MC (FALLBACK) in einheitlicher Minimalform, falls site.js nicht lädt
+    (seit 09.10.2026: ergänzt jede fehlende Funktion einzeln).
+Seit 09.10.2026 außerdem die drei Favicon-Zeilen im <head> (ICONS, Version ICON_V) – --check meldet abweichende Versionen.
 """
 import html
 import json
@@ -174,16 +176,37 @@ FOOTER_HINWEIS = 'Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse 
 
 # Rückfall, falls site.js nicht lädt (Netzfehler): eine Minimalform für alle Seiten statt der früher je Seite
 # verschieden kopierten Zeilen (esc, minus, load, hoverWrap …). Die volle Fassung steht in site.js.
-FALLBACK = ('// Rückfall, falls site.js nicht lädt (Netzfehler): Minimalform, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.\n'
-            'window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"\']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, '
+# Seit 09.10.2026 (Technik-Test 08.10.2026, T-85) ergänzt der Rückfall jede fehlende Funktion einzeln. Vorher griff er nur, wenn
+# window.MC ganz fehlte – bond.js, konto.js, filter.js, pdf.js und bereich.js legen aber schon vorher ein MC-Objekt an, und ohne
+# site.js warfen 49 von 55 Seiten eine Ausnahme (MC.navInit, MC.load …). Dazu kamen datum (renditen.html) und teil (Datei-Teil
+# der Stammdaten wie in site.js – ohne ihn meldete der Steckbrief „Die ISIN … kennen wir nicht“, mit ihm lädt er vollständig).
+# Was site.js gesetzt hat, bleibt unberührt (nur fehlende Funktionen werden ergänzt).
+FALLBACK = ('// Rückfall, falls site.js nicht lädt (Netzfehler): ergänzt jede fehlende Funktion einzeln, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.\n'
+            '(function (F) { var M = window.MC = window.MC || {}; for (var k in F) if (typeof M[k] !== "function") M[k] = F[k]; })({ '
+            'esc: function (s) { return String(s).replace(/[&<>"\']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, '
             'minus: function (s) { return String(s).replace(/^-/, "\\u2212"); }, '
             'zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\\u2212") : "\\u2013"; }, '
+            'datum: function (iso) { var m = /^(\\d{4})-(\\d{2})-(\\d{2})/.exec(String(iso || "")); return m ? m[3] + "." + m[2] + "." + m[1] : "\\u2013"; }, '
             'load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, '
-            'hoverWrap: function (s) { return s; }, navInit: function () {} };\n')
+            'teil: function (s) { for (var h = 0, i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 65536; return ("0" + (h % 256).toString(16)).slice(-2); }, '
+            'hoverWrap: function (s) { return s; }, navInit: function () {} });\n')
+# erkennt die alte Form (window.MC = window.MC || {…};) und die neue (function (F) {…})({…}); – idempotent
 FALLBACK_RE = re.compile(
     r'(?:// (?:Fallback, falls site\.js nicht l(?:ae|ä)dt|Rückfall, falls site\.js nicht lädt)[^\n]*\n(?://(?! Nav)[^\n]*\n)?)?'
-    r'window\.MC = window\.MC \|\| \{[^\n]*\};\n'
+    r'(?:window\.MC = window\.MC \|\| \{[^\n]*\};\n'
+    r'|\(function \(F\) \{ var M = window\.MC = window\.MC \|\| \{\};[^\n]*\}\)\(\{[^\n]*\}\);\n)'
     r'(?:(?://[^\n]*\n)?window\.MC\.\w+ = window\.MC\.\w+ \|\| [^\n]*;\n)*')
+
+# Favicons (seit 09.10.2026, Technik-Test 08.10.2026, T-82): die drei Icon-Zeilen im <head> einheitlich mit derselben Version.
+# Vier Seiten aus einer älteren Vorlage (04.10.2026) und die Eisenbahn-Seite (08.10.2026) trugen noch ?v=3. Neues Icon:
+# ICON_V hochzählen und das Skript laufen lassen; --check meldet jede Seite mit abweichender Version.
+ICON_V = "4"
+ICONS = ('<link rel="icon" href="{p}favicon.svg?v={v}" type="image/svg+xml">\n'
+         '<link rel="icon" type="image/png" sizes="32x32" href="{p}favicon-32.png?v={v}">\n'
+         '<link rel="apple-touch-icon" href="{p}apple-touch-icon.png?v={v}">\n')
+ICONS_RE = re.compile(r'<link rel="icon" href="/?favicon\.svg(?:\?v=\w+)?" type="image/svg\+xml">\n'
+                      r'<link rel="icon" type="image/png" sizes="32x32" href="/?favicon-32\.png(?:\?v=\w+)?">\n'
+                      r'<link rel="apple-touch-icon" href="/?apple-touch-icon\.png(?:\?v=\w+)?">\n')
 
 
 # Seiten außerhalb der Aufklapper (anleihe.html ist der Steckbrief einer einzelnen Anleihe und zählt zum Menü „Anleihen“ – MENU_EXTRA)
@@ -322,7 +345,7 @@ def render(page, absolute=False):
 
 
 def apply(check_only=False):
-    changed, same, missing, ohne_fuss, ohne_mc = [], [], [], [], []
+    changed, same, missing, ohne_fuss, ohne_mc, ohne_icons, icons_alt = [], [], [], [], [], [], []
     for f in sorted(glob.glob("*.html")):
         s = open(f, encoding="utf-8").read()
         absolute = f == "404.html"
@@ -341,6 +364,14 @@ def apply(check_only=False):
             new = FALLBACK_RE.sub(lambda m: FALLBACK, new, count=1)
         elif "site.js" in new and f != "404.html":
             ohne_mc.append(f)
+        mi = ICONS_RE.search(new)
+        if mi:
+            icons = ICONS.format(p="/" if absolute else "", v=ICON_V)
+            if mi.group(0) != icons:
+                icons_alt.append(f)
+                new = new[:mi.start()] + icons + new[mi.end():]
+        else:
+            ohne_icons.append(f)
         if new == s:
             same.append(f)
         else:
@@ -355,7 +386,11 @@ def apply(check_only=False):
         print(f"  ohne <footer>: {ohne_fuss}")
     if ohne_mc:
         print(f"  ohne MC-Rückfall-Block: {ohne_mc}")
-    return 1 if (check_only and changed) or missing else 0
+    if icons_alt:
+        print(f"  Favicons nicht ?v={ICON_V}" + (" (" + ("abweichend" if check_only else "angeglichen") + ")") + f": {icons_alt}")
+    if ohne_icons:
+        print(f"  ohne die drei Favicon-Zeilen: {ohne_icons}")
+    return 1 if (check_only and (changed or ohne_icons)) or missing else 0
 
 
 if __name__ == "__main__":
