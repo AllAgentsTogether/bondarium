@@ -56,7 +56,7 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-
 main a { color: var(--blue); text-decoration-thickness: 1px; text-underline-offset: 3px; }
 /* Seitenkopf */
 .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--rub-text); margin-bottom: 8px; }
-h1 { font-family: var(--serif); font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; color: var(--ink); margin-bottom: 14px; overflow-wrap: break-word; hyphens: auto; hyphenate-limit-chars: 12 5 5; -webkit-hyphenate-limit-before: 5; -webkit-hyphenate-limit-after: 5; }   /* seit 02.10.2026: nur lange Wörter trennen, nie „Su-che“ oder „An-leitung“ */
+h1 { font-family: var(--serif); font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; color: var(--ink); margin-bottom: 14px; overflow-wrap: break-word; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 12 5 5; -webkit-hyphenate-limit-before: 5; -webkit-hyphenate-limit-after: 5; }   /* seit 02.10.2026: nur lange Wörter trennen, nie „Su-che“ oder „An-leitung“ */
 h2 { font-family: var(--serif); font-size: 32px; font-weight: 700; line-height: 1.15; letter-spacing: -0.025em; color: var(--ink); margin-bottom: 10px; }
 h3 { font-size: 20px; font-weight: 600; line-height: 1.25; color: var(--ink); margin-bottom: 6px; }
 .sub { font-size: 19px; color: var(--text); line-height: 1.55; max-width: 660px; margin-bottom: 24px; }
@@ -107,7 +107,7 @@ a.lbtn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
    Akademie-Seiten): je Stufe eine Spalte mit eigener Überschrift. */
 .crossnav { font-size: 14px; color: var(--text); margin-top: 44px; border-top: 2px solid var(--rub-line); padding-top: 18px; }
 .crossnav-t { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin: 0 0 6px; }
-.crossnav-l { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); column-gap: 32px; }
+.crossnav-l { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(290px, 100%), 1fr)); column-gap: 32px; }   /* min(…, 100%): unter 306 px Breite keine überstehende Spalte (T-29) */
 .crossnav-l li { border-bottom: 1px solid var(--rule); min-width: 0; }
 .crossnav .crossnav-l a { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; padding: 11px 2px 11px 0; font-size: 15px; line-height: 1.4; color: var(--ink); text-decoration: none; }
 .crossnav .crossnav-l a::after { content: "→"; flex: none; color: var(--green-text); transition: transform .15s; }
@@ -143,6 +143,10 @@ footer a { color: var(--blue); }
   .knr { width: 36px; height: 36px; font-size: 17px; }
   .k-bild { padding: 14px 14px; }
   .go { width: 100%; text-align: center; }
+  /* Tabellen in Kapitel-Bildern dürfen am Handy umbrechen (Technik-Test 08.10.2026, T-29): Zahlenspalten mit nowrap und lange
+     Wörter („Einlagensicherung“) machten die Seite bei 320–414 px breiter als den Bildschirm. Spezifischer als „.tab td.z“ der Seiten. */
+  .k-bild table th, .k-bild table td { -webkit-hyphens: auto; hyphens: auto; }
+  .k-bild table td.z, .k-bild table th.z, .k-bild table td small, .k-bild table .z small { white-space: normal; }
 }
 
 .topbar { display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 12px 24px; margin-bottom: 40px; }   /* Spaltenabstand 24 px (vorher 44), damit vier Stufen, Such-Knopf und „Über uns“ neben die Marke passen */
@@ -238,6 +242,7 @@ html { scroll-padding-top: 100px; }   /* Sprungziele nicht unter der festen Kopf
    ersten Eintrag war das Menü kurz ausgeblendet und der Fokus fiel auf <body>. */
 .nav-group.open .nav-group-menu, .nav-group.kb .nav-group-menu { display: block; }
 @media (hover: hover) and (min-width: 1001px) { .nav-group:hover .nav-group-menu { display: block; } }
+.nav-esc .nav-group:hover .nav-group-menu { display: none; }   /* Escape schließt auch das per Maus geöffnete Menü (WCAG 1.4.13, T-124): site.js setzt nav-esc bis zur nächsten Mausbewegung */
 @media (min-width: 761px) { .nav-group-menu { max-height: calc(100vh - 110px); overflow-y: auto; } }   /* seit 27.09.2026 (Verstehen hat 19 Zeilen): auf niedrigen Bildschirmen scrollt der Aufklapper statt abgeschnitten zu werden */
 /* Früher: rechtsbündig bei Platzmangel. Seit 23.09.2026 verschiebt site.js navInit das Menü per style.left passgenau; die Klasse bleibt als Rückfall. */
 .nav-group-menu.nav-menu-right { left: auto; right: -12px; }
@@ -279,7 +284,7 @@ html { scroll-padding-top: 100px; }   /* Sprungziele nicht unter der festen Kopf
 .kopfsuche button:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 .kopfsuche button svg { width: 18px; height: 18px; display: block; }
 .kopfsuche input { flex: 1 1 auto; width: 0; min-width: 0; height: 100%; margin: 0 0 0 3px; padding: 0; border: 0; outline: 0; background: none; font-family: var(--sans); font-size: 14.5px; color: var(--ink); }
-.kopfsuche input::placeholder { color: #8E8D86; opacity: 1; }
+.kopfsuche input::placeholder { color: #6F6E68; opacity: 1; }   /* 5,1:1 auf Weiß (vorher #8E8D86 = 3,3:1, T-116) */
 .kopfsuche input::-webkit-search-cancel-button { -webkit-appearance: none; }
 /* Knopf „Mein Bondarium“ rechts neben dem Suchfeld (nav.py KONTO, seit 01.10.2026 abends – vorher ein Menüpunkt): gleiche Höhe
    und gleicher tiefgrüner Rand wie das Suchfeld, aber ohne weiße Fläche – das Feld bleibt das Auffälligste. Bis 1000 px steht
@@ -367,6 +372,8 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
   .topbar .sitenav > a:not(.nav-cta), .topbar .sitenav > a.nav-konto { display: block; border-top: 1px solid rgba(26,26,25,0.16); padding: 13px 4px; margin: 0; }
   .kopfkonto { display: none; }
   .topbar .sitenav > a.current { text-decoration: none; font-weight: 600; }
+  /* Ohne JavaScript öffnet der Burger-Knopf nichts: dann das Menü gleich zeigen, die Köpfe führen direkt zur Übersicht (T-87) */
+  @media (scripting: none) { .nav-toggle { display: none; } .topbar .sitenav { display: flex; } .nav-caret { display: none; } }
 }
 /* Kopfzeile am Handy: Marke etwas kompakter */
 @media (max-width: 600px) {
@@ -405,7 +412,7 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
   .table-scroll.ueberlauf[data-wisch]::before, .chart-scroll.ueberlauf[data-wisch]::before { content: attr(data-wisch); }
 }
 @media (max-width: 600px) {
-  select, input[type="search"], input[type="text"], input[type="number"] { font-size: max(16px, 1em) !important; }   /* !important, weil Seiten-Styles wie „caption select { font: inherit }“ sonst gewinnen */
+  select, textarea, input[type="search"], input[type="text"], input[type="number"] { font-size: max(16px, 1em) !important; }   /* !important, weil Seiten-Styles wie „caption select { font: inherit }“ sonst gewinnen */
 }
 
 /* ---- Kursverlauf (site.js: MC.verlauf, MC.kursChart; seit 25.09.2026) ---- */
@@ -503,8 +510,10 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 .tueren a { position: relative; display: flex; align-items: center; gap: 10px; min-height: 108px; padding: 18px 12px 18px 18px; border-left: 1px solid var(--rule); text-decoration: none; color: var(--ink); background: #fff; transition: background-color .18s ease; }
 .tueren a:first-child { border-left: 0; }
 .tueren a::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--green); transform: scaleY(0); transform-origin: top; transition: transform .18s ease; }
-.tueren a:hover, .tueren a:focus-visible { background: var(--tint); }
-.tueren a:hover::before, .tueren a:focus-visible::before { transform: scaleY(1); }
+.tueren a:hover { background: var(--tint); }
+.tueren a:focus-visible { background: var(--tint); }   /* getrennt von :hover: alte Browser ohne :focus-visible verwerfen sonst die ganze Regel (T-138) */
+.tueren a:hover::before { transform: scaleY(1); }
+.tueren a:focus-visible::before { transform: scaleY(1); }
 .tueren a:focus-visible { outline: 2px solid var(--blue); outline-offset: -4px; }
 .tueren .txt { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .tueren .kopf { display: flex; align-items: center; gap: 8px; }
@@ -581,7 +590,7 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 .hub-card:hover { border-color: var(--green-line); transform: translateY(-2px); }
 .hub-card:hover :is(h2, h3) { color: var(--green-text); }
 .hub-card:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
-.hub-card :is(h2, h3) { font-family: var(--sans); font-weight: 600; font-size: 17.5px; line-height: 1.25; margin-bottom: 0; overflow-wrap: anywhere; }
+.hub-card :is(h2, h3) { font-family: var(--sans); font-weight: 600; font-size: 17.5px; line-height: 1.25; margin-bottom: 0; overflow-wrap: anywhere; -webkit-hyphens: auto; hyphens: auto; hyphenate-limit-chars: 10 4 4; -webkit-hyphenate-limit-before: 4; -webkit-hyphenate-limit-after: 4; }   /* T-140: lange Titel bei 320 px mit Trennstrich statt „Handelsplätz|e“; kurze Wörter bleiben ganz */
 .hub-card .desc { font-size: 13px; line-height: 1.4; color: var(--muted); }
 .hub-img { width: 100%; height: 92px; display: block; margin-bottom: 6px; }
 .hub-card.next { background: linear-gradient(160deg, rgba(57,255,20,0.14) 0%, rgba(57,255,20,0.04) 100%); border-color: rgba(57,255,20,0.55); }
@@ -790,6 +799,14 @@ footer.fuss { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); g
   .tueren.stufen-kopf a[aria-current="page"] { box-shadow: inset 0 -3px 0 var(--green); }
 }
 
+/* Kontrastmodus (forced-colors, z. B. Windows): Knöpfe „Suchen“/„Anmelden“ brauchen einen Umriss, sonst wirken sie wie Text
+   (!important: Seitenregeln wie „.suche404 .go { border: 0 }“ sind spezifischer); HTML-Balken und Farbmarken der Legenden behalten
+   ihre Farbe, sonst verschwinden sie (T-115). */
+@media (forced-colors: active) {
+  .go { border: 2px solid ButtonText !important; }
+  .hb-bar, .sw, .sw-line, .sw-area { forced-color-adjust: none; }
+}
+
 /* ===== Drucken (seit 04.10.2026): Akademie- und Themenseiten ohne Kopf, Menü, Sprungleisten und Fußzeile; Karten nicht teilen.
    Seiten mit eigenen Druckregeln (erste-anleihe.html) ergänzen diese. Zugeklappte Erklärungen öffnet das Seitenskript, wo es eines gibt. ===== */
 @media print {
@@ -798,4 +815,6 @@ footer.fuss { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); g
   .kap { box-shadow: none !important; background: #fff !important; border: 1px solid #ccc; break-inside: avoid; }
   .merk { break-inside: avoid; }
   a { color: inherit; }
+  .merkbtn, #depbtn, .kopie, .kopie-w, .link-w, .kv-zeit, .fbtn, #fmehr { display: none !important; }   /* Bedienknöpfe nicht drucken (T-121); Rechner-Felder bleiben, sie tragen die Werte */
+  th .sortbtn { display: contents; }   /* Chrome druckt Knopftext im wiederholten Tabellenkopf nicht – ab Seite 2 fehlten die Spaltentitel (T-121, anleihen-kupon) */
 }

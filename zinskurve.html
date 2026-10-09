@@ -46,6 +46,8 @@
   .hk-s.invers { background: rgba(153,60,29,0.12); color: var(--down); }
   .hk-d { grid-column: 1 / -1; font-size: 13px; color: var(--text); margin-top: 6px; }
   @media (max-width: 600px) { .heute { grid-template-columns: 1fr; gap: 10px; } .hk { padding: 14px 16px 14px; } .hk-v { font-size: 32px; } }
+  @media (max-width: 700px) { .heute { grid-template-columns: 1fr; } }   /* bis 700 px untereinander: zwei Kacheln nebeneinander überdeckten „Prozentpunkte“ und „normal“ (T-30) */
+  @media (max-width: 400px) { .hk-v small { display: block; margin: 4px 0 0; } }
 
   /* Legende und Chart wie auf „Staatsanleihen seit 1970“ */
   /* Legende: Grundform .legend.linie in base.css; hier nur Farbe und die Schalter-Gestaltung */
@@ -226,7 +228,7 @@
         <text class="axt" x="450" y="250" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Laufzeit →</text>
         <path d="M90 166 C 190 130, 300 96, 400 82" fill="none" stroke="#157C00" stroke-width="3" stroke-linecap="round"/><circle cx="400" cy="82" r="4" fill="#157C00"/><text x="410" y="78" font-size="14" font-weight="600" fill="#157C00">steil</text>
         <path d="M90 126 C 190 122, 300 119, 400 116" fill="none" stroke="#55544F" stroke-width="3" stroke-linecap="round"/><circle cx="400" cy="116" r="4" fill="#55544F"/><text x="410" y="120" font-size="14" font-weight="600" fill="#55544F">flach</text>
-        <path d="M90 82 C 190 100, 300 120, 400 150" fill="none" stroke="#CF7430" stroke-width="3" stroke-linecap="round"/><circle cx="400" cy="150" r="4" fill="#CF7430"/><text x="410" y="158" font-size="14" font-weight="600" fill="#CF7430">invers</text>
+        <path d="M90 82 C 190 100, 300 120, 400 150" fill="none" stroke="#CF7430" stroke-width="3" stroke-linecap="round"/><circle cx="400" cy="150" r="4" fill="#CF7430"/><text x="410" y="158" font-size="14" font-weight="600" fill="#A2561C">invers</text>
       </svg><p class="sb-f">Das große Schaubild oben zeigt für jeden Monat genau diesen Abstand: 10 Jahre (rechtes Ende) minus 2 Jahre (linkes Ende). Hier bei „steil“ +2 Prozentpunkte, bei „flach“ +0,2, bei „invers“ −1.</p></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.8V18h4.8v-.8c0-.7.3-1.3.9-1.8A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 2v1.5M4.5 6l1 1M19.5 6l-1 1"/></svg></span><span><strong>Kurz gesagt:</strong> Der Abstand sagt dir, wie viel Zins die lange Laufzeit extra bringt – nicht, wie hoch das allgemeine Zinsniveau ist. Beides zusammen lesen: das Niveau bei <a href="renditen.html">Staatsanleihen seit 1970</a>, die Form hier.</span></p>
     </section>

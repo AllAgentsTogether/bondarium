@@ -52,8 +52,10 @@
   .bk-wahl-t { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-right: 4px; }
   .bk-wahl button.lbtn { font-size: 14px; font-weight: 600; padding: 9px 14px; font-variant-numeric: tabular-nums; }
   .bk-frei { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text); margin-left: 6px; }
-  .bk-frei input { font: inherit; font-weight: 600; color: var(--ink); width: 104px; text-align: right; background: #fff; border: 1px solid rgba(26,26,25,0.18); border-radius: 8px; padding: 7px 10px; font-variant-numeric: tabular-nums; }
+  .bk-frei input { font: inherit; font-weight: 600; color: var(--ink); width: 104px; text-align: right; background: #fff; border: 1px solid rgba(26,26,25,0.55); border-radius: 8px; padding: 7px 10px; font-variant-numeric: tabular-nums; }
   .bk-frei input:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .bk-frei input[aria-invalid="true"] { border-color: var(--down); }
+  .bk-frei-h { font-size: 13px; font-weight: 600; color: var(--down); }
   /* Liste: eine Zeile je Anbieter – Name · Balken mit Preis und Rechenweg · Anleihen-Angebot · Handelsplätze · Depot im Jahr; darunter der Aufklapper */
   .bk-box { background: #fff; border: 1px solid rgba(26,26,25,0.10); border-radius: var(--radius); box-shadow: var(--shadow); padding: 6px 22px 10px; }
   .bk-kopf, .bk-z { display: grid; grid-template-columns: 150px minmax(0, 1fr) 178px 208px 88px; column-gap: 18px; }
@@ -315,7 +317,8 @@
       <div class="bk-wahl" id="bk-wahl" role="group" aria-label="Kaufbetrag wählen" hidden>
         <span class="bk-wahl-t">Kaufbetrag</span>
         <span class="bk-knoepfe lands"></span>
-        <label class="bk-frei">oder eigener Betrag <input type="text" id="bk-frei" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="z. B. 7.500" aria-label="Eigener Kaufbetrag in Euro"> €</label>
+        <label class="bk-frei">oder eigener Betrag <input type="text" id="bk-frei" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="z. B. 7.500" aria-label="Eigener Kaufbetrag in Euro" aria-describedby="bk-frei-h"> €</label>
+        <span class="bk-frei-h" id="bk-frei-h" hidden>100&nbsp;€ bis 10&nbsp;Mio.&nbsp;€</span>
       </div>
       <div class="bk-box">
         <div class="bk-kopf" aria-hidden="true"><span>Anbieter</span><span>Kosten für einen Kauf über <span data-bv="betrag">5.000&nbsp;€</span></span><span>Anleihen</span><span>Handelsplätze</span><span>Depot im Jahr</span></div>
@@ -557,13 +560,23 @@ MC.navInit();
     }).join("");
     function setze(B, vonFeld) {
       [].forEach.call(wahl.querySelectorAll("button.lbtn"), function (k) { k.setAttribute("aria-pressed", String(+k.getAttribute("data-b") === B)); });
-      if (!vonFeld) frei.value = "";
+      if (!vonFeld) { frei.value = ""; freiMarke(false); }
       zeichne(B);
     }
     wahl.addEventListener("click", function (e) { var k = e.target.closest("button.lbtn"); if (k) setze(+k.getAttribute("data-b")); });
+    // Eigener Betrag wie in den Rechnern gelesen: „2.500,50“ = 2.500,50 € (vorher wurden alle Nicht-Ziffern gestrichen → 250.050 €, T-43).
+    // Außerhalb 100 € bis 10 Mio. € oder unlesbar: erst beim Verlassen des Feldes markieren, nicht bei jedem Tastendruck.
+    var freiH = document.getElementById("bk-frei-h");
+    function freiMarke(falsch) {
+      if (falsch) frei.setAttribute("aria-invalid", "true"); else frei.removeAttribute("aria-invalid");
+      freiH.hidden = !falsch;
+    }
     frei.addEventListener("input", function () {
-      var v = parseInt(frei.value.replace(/[^\d]/g, ""), 10);
-      if (v >= 100 && v <= 10000000) setze(v, true);
+      var v = MC.betragLesen(frei.value, { min: 100, max: 1e7 });
+      if (!isNaN(v)) { freiMarke(false); setze(v, true); }
+    });
+    frei.addEventListener("change", function () {
+      freiMarke(frei.value.trim() !== "" && isNaN(MC.betragLesen(frei.value, { min: 100, max: 1e7 })));
     });
     wahl.hidden = false;
     zeichne(B0);

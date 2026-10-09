@@ -45,17 +45,24 @@
     background: radial-gradient(70% 120% at 0% 0%, #FFFFFF 0%, rgba(249,255,247,0) 70%), linear-gradient(100deg, #FFFFFF 0%, #FFFFFF 60%, #DCFBD3 100%); }   /* seit 26.09.2026 grün statt beige */
   /* Fotobox: --ar Seitenverhältnis, --oxn/--oyn Bildausschnitt (0…1), --bx/--by Lage des Kreis-Symbols im Bild (0…1).
      Das Symbol folgt dem Bild auch bei object-fit: cover (Containereinheiten) und deckt die Stelle ab, an der es im Entwurf saß. */
-  .ap-photo { position: relative; container-type: size; min-height: 303px; }
+  .ap-photo { position: relative; min-height: 303px; }
   .ap-u .ap-photo { --ar: 1.0767; --oxn: 0.3; --oyn: 0; --bx: 0.202; --by: 0.236; }
   .ap-p .ap-photo { --ar: 1.1774; --oxn: 0.85; --oyn: 0.3; --bx: 0.819; --by: 0.194; }
   .ap-photo img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover;
     object-position: calc(var(--oxn) * 100%) calc(var(--oyn) * 100%); }
   .ap-u .ap-photo img { -webkit-mask-image: linear-gradient(to right, #000 80%, transparent); mask-image: linear-gradient(to right, #000 80%, transparent); }
   .ap-p .ap-photo img { -webkit-mask-image: linear-gradient(to left, #000 78%, transparent); mask-image: linear-gradient(to left, #000 78%, transparent); }
-  .ap-badge { --wr: max(100cqw, 100cqh * var(--ar)); --hr: calc(var(--wr) / var(--ar));
-    position: absolute; left: calc((100cqw - var(--wr)) * var(--oxn) + var(--wr) * var(--bx)); top: calc((100cqh - var(--hr)) * var(--oyn) + var(--hr) * var(--by));
-    width: clamp(58px, calc(var(--wr) * 0.205), 78px); aspect-ratio: 1; transform: translate(-50%, -50%);
+  .ap-badge { position: absolute; left: calc(var(--bx) * 100%); top: calc(var(--by) * 100%);
+    width: 70px; aspect-ratio: 1; transform: translate(-50%, -50%);
     border-radius: 50%; background: #fff; display: grid; place-items: center; box-shadow: 0 6px 22px rgba(30,45,80,0.16); }
+  /* Rückfall oben für Browser ohne Containereinheiten (Chrome < 105, Safari < 16 – sonst saß der Kreis in der Fotoecke, T-137);
+     mit cq-Einheiten genau auf der Stelle im beschnittenen Foto */
+  @supports (container-type: size) and (width: 1cqw) {
+    .ap-photo { container-type: size; }
+    .ap-badge { --wr: max(100cqw, 100cqh * var(--ar)); --hr: calc(var(--wr) / var(--ar));
+      left: calc((100cqw - var(--wr)) * var(--oxn) + var(--wr) * var(--bx)); top: calc((100cqh - var(--hr)) * var(--oyn) + var(--hr) * var(--by));
+      width: clamp(58px, calc(var(--wr) * 0.205), 78px); }
+  }
   .ap-badge svg { width: 48%; height: 48%; }
   .ap-u .ap-badge { color: var(--green-text); }
 
@@ -83,7 +90,7 @@
   .ap-guide a { display: block; width: fit-content; padding: 4px 0; color: var(--green-text); font-weight: 600; text-decoration: none; }   /* untereinander statt mit „·“ dazwischen: am Handy stand der Punkt sonst allein in einer Zeile, mit Maus lagen die Links ohne Abstand aneinander (Nutzertest 03.10.2026) */
   .ap-guide a:hover { text-decoration: underline; }
   .ap-kurz { max-width: 760px; margin: -8px 0 26px; padding: 14px 18px; background: #fff; border: 1px solid var(--green-line); border-left: 4px solid var(--green); border-radius: 12px; font-size: 16px; line-height: 1.55; color: var(--ink); }   /* Antwort auf die Titelfrage gleich oben (30.09.2026) */
-  .ap-kurz a { color: var(--green-text); font-weight: 600; text-decoration: none; white-space: nowrap; }
+  .ap-kurz a { color: var(--green-text); font-weight: 600; text-decoration: none; }
   .ap-kurz a:hover { text-decoration: underline; }
   @media (pointer: coarse) { .ap-guide a { padding: 10px 0; } .ap-kurz a { display: inline-block; padding: 10px 0; } }
   .ap-go:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }

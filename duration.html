@@ -114,6 +114,11 @@
   .kap-hebel input[type="range"]:focus-visible { outline: none; }
   .kap-hebel input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(207,116,48,0.55); }
   .kap-hebel input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba(207,116,48,0.55); }
+  /* Kontrastmodus (forced-colors): Schatten und Verlauf fallen weg – Fokusrahmen und Spur in Systemfarben (T-114) */
+  @media (forced-colors: active) {
+    .kap-hebel input[type="range"]:focus-visible { outline: 2px solid Highlight; outline-offset: 3px; }
+    .kap-hebel input[type="range"]::-webkit-slider-runnable-track { background: CanvasText; }
+  }
   .dh-zahlen { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .dh-z { display: flex; flex-direction: column; background: #F6F5F1; border-radius: 12px; padding: 11px 12px 12px; }
   .dh-z.dh-z1 { background: #DCFBD3; }

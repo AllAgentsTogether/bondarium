@@ -76,7 +76,9 @@
     .korb-t span { padding: 8px 3px; font-size: 12px; }
     .dp { grid-template-columns: 1fr; gap: 4px; }
     .dp-ax { grid-template-columns: 1fr; } .dp-ax .ax-k { display: none; }
+    #auswahl dt, #auswahl dd { -webkit-hyphens: auto; hyphens: auto; overflow-wrap: anywhere; }   /* T-30 */
   }
+  @media (max-width: 359px) { .korb-t span { white-space: normal; } }   /* sonst verlieren die Chips bei 320 px die Jahreszahl (T-126) */
   /* Zeitverlauf (3): eigene Handy-Fassung (schmalere viewBox, Schrift effektiv ≥ 11 px) */
   .sb-m { display: none; }
   @media (max-width: 600px) { .sb-d { display: none; } .sb-m { display: block; } }
@@ -241,7 +243,7 @@
 <circle cx="380" cy="106" r="7" fill="#1A1A19" stroke="#fff" stroke-width="3"/>
 <line x1="380" y1="46" x2="380" y2="166" stroke="#1A1A19" stroke-width="1.5" stroke-dasharray="3 3"/>
 <text x="386" y="34" text-anchor="end" font-size="15" font-weight="600" fill="#1A1A19">Anleihe: Fälligkeit, 100&nbsp;% zurück</text>
-<text x="462" y="186" text-anchor="end" font-size="15" font-weight="600" fill="#CF7430">ETF: kein Ende</text>
+<text x="462" y="186" text-anchor="end" font-size="15" font-weight="600" fill="#A2561C">ETF: kein Ende</text>
 <text x="60" y="186" font-size="14" fill="#55544F">Kauf</text>
 <text class="axt" x="4" y="34" font-size="13" font-weight="600" fill="#55544F">↑ Kurs in %</text>
 <text class="axt" x="462" y="212" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Zeit →</text>
@@ -255,7 +257,7 @@
 <circle cx="266" cy="106" r="6" fill="#1A1A19" stroke="#fff" stroke-width="2.5"/>
 <line x1="266" y1="50" x2="266" y2="162" stroke="#1A1A19" stroke-width="1.5" stroke-dasharray="3 3"/>
 <text x="272" y="40" text-anchor="end" font-size="14" font-weight="600" fill="#1A1A19">Anleihe: Fälligkeit, 100&nbsp;% zurück</text>
-<text x="322" y="182" text-anchor="end" font-size="14" font-weight="600" fill="#CF7430">ETF: kein Ende</text>
+<text x="322" y="182" text-anchor="end" font-size="14" font-weight="600" fill="#A2561C">ETF: kein Ende</text>
 <text x="48" y="182" font-size="13" fill="#55544F">Kauf</text>
 <text x="0" y="14" font-size="13" font-weight="600" fill="#55544F">↑ Kurs in %</text>
 <text x="322" y="206" text-anchor="end" font-size="13" font-weight="600" fill="#55544F">Zeit →</text>

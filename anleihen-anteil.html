@@ -55,7 +55,7 @@
   .zf { display: flex; flex-direction: column; background: var(--ap-soft); border-radius: 12px; padding: 12px 12px; }
   .zf-k { font-size: 15px; font-weight: 600; }
   .zf dl { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; margin-top: 8px; font-size: 14px; }
-  .zf dt { color: var(--ap-text); }
+  .zf dt { color: var(--ap-text); overflow-wrap: anywhere; }   /* bei großen Textabständen (WCAG 1.4.12) bricht „Bundesanleihen (REXP)“ um, statt in den Wert zu laufen (T-30) */
   .zf dd { font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
   .zf dd.plus { color: var(--up); } .zf dd.minus { color: var(--down); }
   .zf .sum { grid-column: 1 / -1; height: 1px; background: rgba(26,26,25,0.12); margin: 3px 0; }

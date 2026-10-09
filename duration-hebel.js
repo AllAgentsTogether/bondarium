@@ -183,9 +183,11 @@
     }
     svg.appendChild(el("circle", { cx: X(0), cy: Y(0), r: 6.5, fill: "#39FF14", stroke: FARBE.tinte, "stroke-width": 2.5 }));
 
-    // Regler unter dem Schaubild genau auf die x-Achse legen: Knopfmitte = Wert
-    R.delta.style.marginLeft = (ML - DAUMEN / 2) + "px";
-    R.delta.style.width = (pw + DAUMEN) + "px";
+    // Regler unter dem Schaubild genau auf die x-Achse legen: Knopfmitte = Wert. Unter 280 px Kastenbreite zeichnet das Schaubild
+    // weiter 280 Einheiten breit und schrumpft – der Regler schrumpft mit (kk), sonst ragt er heraus und der Knopf steht neben dem Wert (T-29).
+    var kk = Math.min(1, box.clientWidth / W);
+    R.delta.style.marginLeft = (ML * kk - DAUMEN / 2) + "px";
+    R.delta.style.width = (pw * kk + DAUMEN) + "px";
 
     // Ansage für Bildschirmleser, erst wenn der Regler ruht (nicht beim bloßen Neuzeichnen nach Größenänderung)
     if (ansage !== true) return;
@@ -201,8 +203,8 @@
   var zieht = false;
   function setzeAus(ev) {
     var rect = svg.getBoundingClientRect();
-    var W = rect.width, pw = W - ML - MR;
-    var v = ((ev.clientX - rect.left) - ML) / pw * 2 * DMAX - DMAX;
+    var W = (svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width) || rect.width, pw = W - ML - MR;   // in Einheiten der viewBox (geschrumpftes Schaubild)
+    var v = ((ev.clientX - rect.left) * W / rect.width - ML) / pw * 2 * DMAX - DMAX;
     v = Math.max(-DMAX, Math.min(DMAX, Math.round(v / 0.05) * 0.05));
     R.delta.value = v.toFixed(2);
     zeichne(true);
@@ -211,7 +213,15 @@
   svg.addEventListener("pointermove", function (ev) { if (zieht) setzeAus(ev); });
   ["pointerup", "pointercancel"].forEach(function (t) { svg.addEventListener(t, function () { zieht = false; }); });
 
-  if (window.ResizeObserver) new ResizeObserver(function () { zeichne(); }).observe(box);
+  // Neu zeichnen nur bei geänderter Breite und erst im nächsten Bild: zeichne() ändert die Höhe des Kastens, ein direkter Aufruf
+  // löste „ResizeObserver loop completed with undelivered notifications“ aus (T-89)
+  var bw = 0;
+  if (window.ResizeObserver) new ResizeObserver(function (e) {
+    var w = Math.round(e[0].contentRect.width);
+    if (w === bw) return;
+    bw = w;
+    requestAnimationFrame(function () { zeichne(); });
+  }).observe(box);
   else window.addEventListener("resize", zeichne);
   zeichne();
 })();

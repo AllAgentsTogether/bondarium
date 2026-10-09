@@ -28,21 +28,27 @@
   // Kursverlauf zeichnen. el: Container; v: verlauf(); o: {einheit: "%" | "€", name, waehrung, breit}
   // Zeitraum-Knöpfe erscheinen nur, wenn der Verlauf länger ist als der Zeitraum.
   var ZEITRAUM = [["1 Monat", 31], ["3 Monate", 92], ["1 Jahr", 366], ["5 Jahre", 1827], ["Alles", Infinity]];
+  // Bei Größenänderung in der neuen Breite zeichnen (Handy drehen, Fenster ziehen): EIN resize-Listener für alle Container.
+  // Bis 08.10.2026 hängte jeder Container einen eigenen Listener an window, der nie entfernt wurde – die ETF-Tabelle sammelte
+  // beim Sortieren Listener und alte Knoten an (T-131). Container, die nicht mehr im Dokument stehen, fallen aus der Liste.
+  var kvListe = [], kvT;
+  function kvAufraeumen() { kvListe = kvListe.filter(function (e) { return e.isConnected; }); }
+  window.addEventListener("resize", function () {
+    clearTimeout(kvT);
+    kvT = setTimeout(function () {
+      kvAufraeumen();
+      kvListe.forEach(function (el) {
+        if (el.__kvCW && Math.abs(el.clientWidth - el.__kvCW) > 24) kursChart(el, el.__kvArgs[0], el.__kvArgs[1]);
+      });
+    }, 150);
+  });
   function kursChart(el, v, o) {
     o = o || {};
     var einheit = o.einheit || "%";
     var fmtK = function (x) { return zahl(x, x < 10 ? 3 : 2) + (einheit === "%" ? "\u00a0%" : "\u00a0€"); };
     el.__kvArgs = [v, o];
-    if (!el.__kvResize) {   // bei Größenänderung in der neuen Breite zeichnen (Handy drehen, Fenster ziehen)
-      var rt;
-      el.__kvResize = function () {
-        clearTimeout(rt);
-        rt = setTimeout(function () {
-          if (el.isConnected && el.__kvCW && Math.abs(el.clientWidth - el.__kvCW) > 24) kursChart(el, el.__kvArgs[0], el.__kvArgs[1]);
-        }, 150);
-      };
-      window.addEventListener("resize", el.__kvResize);
-    }
+    kvAufraeumen();
+    if (kvListe.indexOf(el) < 0) kvListe.push(el);
     if (!v || !v.t || !v.t.length) {
       el.innerHTML = '<p class="kv-leer">Für dieses Papier gibt es noch keinen Kursverlauf – er beginnt mit dem ersten Börsentag, an dem ein Kurs festgestellt wird.</p>';
       return;
@@ -111,8 +117,13 @@
       var nt = Math.min(maxT, T.length);
       for (var j = 0; j < nt; j++) { var tt = zeitOf(T[Math.round(j * (T.length - 1) / Math.max(1, nt - 1))]), s8 = iso(tt); ticks.push([tt, s8.slice(8, 10) + "." + s8.slice(5, 7) + "."]); }
     }
+    var tickRechts = -Infinity;
     ticks.forEach(function (tk) {
       var px = X(tk[0]), anc = px < ml + 24 ? "start" : px > W - mr - 24 ? "end" : "middle";
+      // Beschriftung auslassen, wenn sie die vorige überdecken würde (Breite geschätzt: Zeichen × 0,6 × Schriftgröße, T-113)
+      var bw = tk[1].length * 0.6 * FS, links = anc === "start" ? px : anc === "end" ? px - bw : px - bw / 2;
+      if (links < tickRechts + 4) return;
+      tickRechts = links + bw;
       g.push('<line x1="' + px.toFixed(1) + '" x2="' + px.toFixed(1) + '" y1="' + (H - mb) + '" y2="' + (H - mb + 4) + '" stroke="#1A1A19" stroke-opacity="0.35"/>' +
         '<text x="' + px.toFixed(1) + '" y="' + (H - mb + 17) + '" text-anchor="' + anc + '" font-size="' + FS + '" fill="#55544F">' + tk[1] + '</text>');
     });

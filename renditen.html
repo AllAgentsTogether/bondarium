@@ -75,7 +75,7 @@
   /* Tabellenkopf: Titel links, Währungsfilter rechts */
   caption .cap-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px 20px; flex-wrap: wrap; }
   caption label { font-size: 13px; color: var(--muted); display: inline-flex; align-items: center; gap: 8px; }
-  caption select { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--rule); border-radius: 4px; padding: 4px 8px; cursor: pointer; }
+  caption select { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid rgba(26,26,25,0.55); border-radius: 4px; padding: 4px 8px; cursor: pointer; }
   caption .cap-note { flex-basis: 100%; font-size: 13px; font-weight: 400; color: var(--muted); }
   /* Handy: Tabelle scrollt quer – Titel, Währungsfilter und Hinweis bleiben links im Bild */
   @media (max-width: 899px) { caption .cap-row { position: sticky; left: 0; width: min(100%, calc(100vw - 32px)); justify-content: flex-start; } }
@@ -420,13 +420,13 @@ function ageDays(d, ref) {
 // Unterscheidungsmerkmal neben der Farbe).
 const COUNTRIES = [
   { key: "us", code: "US", cur: "USD", nameKey: "cUs", color: "#1A1A19" },
-  { key: "cn", code: "CN", cur: "CNY", nameKey: "cCn", tblKey: "cCnNote", color: "#8E8D86" },
+  { key: "cn", code: "CN", cur: "CNY", nameKey: "cCn", tblKey: "cCnNote", color: "#8E8D86", text: "#55544F" },
   { key: "de", code: "DE", cur: "EUR", nameKey: "cDe", color: "#157C00" },
   { key: "in", code: "IN", cur: "INR", nameKey: "cIn", tblKey: "cInNote", color: "#A9A7A0", text: "#55544F" },
   { key: "jp", code: "JP", cur: "JPY", nameKey: "cJp", color: "#B5B3AC", text: "#55544F" },
-  { key: "gb", code: "GB", cur: "GBP", nameKey: "cGb", color: "#9C9A93" },
+  { key: "gb", code: "GB", cur: "GBP", nameKey: "cGb", color: "#9C9A93", text: "#55544F" },
   { key: "fr", code: "FR", cur: "EUR", nameKey: "cFr", color: "#C4C2BB", text: "#55544F" },
-  { key: "it", code: "IT", cur: "EUR", nameKey: "cIt", color: "#7D7C76", dash: "6 3" }
+  { key: "it", code: "IT", cur: "EUR", nameKey: "cIt", color: "#7D7C76", text: "#55544F", dash: "6 3" }
 ];
 // Währungszeichen zur Spalte "Währung" (ISO-Code + Symbol)
 const CUR_SYM = { USD: "$", CNY: "¥", EUR: "€", INR: "₹", JPY: "¥", GBP: "£", AUD: "$" };

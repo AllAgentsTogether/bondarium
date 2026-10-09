@@ -81,7 +81,7 @@
   .k-bild svg.jsr .a { font-size: 12.5px; font-weight: 600; }
   .k-bild svg.jsr .x { font-size: 13px; font-weight: 600; fill: #55544F; }
   @media (max-width: 600px) {
-    .live { gap: 6px; } .lk { padding: 10px 8px; } .lk-v { font-size: 20px; } .lk-k { font-size: 12px; }
+    .live { gap: 6px; } .lk { padding: 10px 8px; } .lk-v { font-size: 20px; } .lk-k { font-size: 12px; -webkit-hyphens: auto; hyphens: auto; overflow-wrap: anywhere; }   /* T-30 */
     .stk .hb { grid-template-columns: 52px minmax(0, 1fr); } .st { font-size: 12px; }
     .zw { gap: 6px; } .zp { padding: 10px; } .zp dd { font-size: 13.5px; }
     .k-bild svg:not(.jsr) .tk, .k-bild svg:not(.jsr) .an, .k-bild svg:not(.jsr) .axt { font-size: 19px; }
@@ -350,10 +350,20 @@ MC.navInit();
       svg.appendChild(el("text", { x: x, y: H - B + 18, "text-anchor": "middle", "class": "t" }, String(v)));
     });
     svg.appendChild(el("text", { x: W - 2, y: H - 4, "text-anchor": "end", "class": "x" }, "Jahr →"));
+    var markeVor = null;   // Box der vorigen Marke: im schmalen Schaubild überdeckten sich „EZB erhöht“ und „EZB senkt“ (T-113)
     (o.marken || []).forEach(function (m) {
       var x = X(m.x);
       svg.appendChild(el("line", { x1: x.toFixed(1), y1: T + 8, x2: x.toFixed(1), y2: H - B, stroke: "#1A1A19", "stroke-opacity": 0.35, "stroke-dasharray": "3 4" }));
-      svg.appendChild(el("text", { x: (x + (m.anker === "end" ? -5 : 5)).toFixed(1), y: T + 20, "text-anchor": m.anker || "start", "class": "a", fill: "#1A1A19" }, m.text));
+      var mt = el("text", { x: (x + (m.anker === "end" ? -5 : 5)).toFixed(1), y: T + 20, "text-anchor": m.anker || "start", "class": "a", fill: "#1A1A19" }, m.text);
+      svg.appendChild(mt);
+      try {
+        var bb = mt.getBBox();
+        if (markeVor && bb.x < markeVor.x + markeVor.width + 4 && bb.x + bb.width + 4 > markeVor.x && Math.abs(bb.y - markeVor.y) < bb.height) {
+          mt.setAttribute("y", (T + 20 + Math.ceil(bb.height) + 2).toFixed(1));   // eine Zeile tiefer
+          bb = mt.getBBox();
+        }
+        markeVor = bb;
+      } catch (e) {}
     });
     o.serien.forEach(function (s) {
       var d = "", i, p = s.p;
