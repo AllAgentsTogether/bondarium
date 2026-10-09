@@ -18,9 +18,11 @@ Konsolidiert die bislang vierfach duplizierten Helfer:
 """
 
 import datetime
+import decimal
 import email.utils
 import http.client
 import json
+import math
 import os
 import random
 import re
@@ -344,6 +346,41 @@ def monate_zurueck(d: datetime.date, m: int) -> datetime.date:
     return datetime.date(j, mo, letzter if ende else min(d.day, letzter))
 
 
+# ---------- Abwicklungstage (Valuta) ----------
+def ostersonntag(j: int) -> datetime.date:
+    """Ostersonntag im gregorianischen Kalender (Gauß/Spencer) – wie ostersonntag() in site.js."""
+    a, b, c = j % 19, j // 100, j % 100
+    d, e = b // 4, b % 4
+    f = (b + 8) // 25
+    g = (b - f + 1) // 3
+    h = (19 * a + b - d - g + 15) % 30
+    i, k = c // 4, c % 4
+    w = (32 + 2 * e + 2 * i - h - k) % 7
+    m = (a + 11 * h + 22 * w) // 451
+    return datetime.date(j, (h + w - 7 * m + 114) // 31, (h + w - 7 * m + 114) % 31 + 1)
+
+
+def target_feiertag(d: datetime.date) -> bool:
+    """TARGET-Feiertag – an dem Tag wird nicht abgewickelt: Neujahr, Karfreitag, Ostermontag, 1. Mai, 25. und 26. Dezember.
+    Gleiche Regel wie feiertag(d, false) in site.js (der 24. und 31.12. sind Abwicklungstage, aber keine Börsentage)."""
+    if (d.month, d.day) in ((1, 1), (5, 1), (12, 25), (12, 26)):
+        return True
+    ostern = ostersonntag(d.year)
+    return d in (ostern - datetime.timedelta(days=2), ostern + datetime.timedelta(days=1))
+
+
+def plus_abwicklungstage(d: datetime.date, n: int) -> datetime.date:
+    """n Abwicklungstage nach d, ohne Wochenende und TARGET-Feiertage – so liegt die Valuta (Handelstag + 2, alle Währungen).
+    Eine Regel für Datenlauf und Seiten: wie MC.plusAbwicklungstage in site.js (Steckbrief, Rechner). Seit 09.10.2026
+    (Technik-Test 08.10.2026, T-49): vorher zählten update_kurse.py und die Top-Listen nur Mo–Fr (Handelstag 23.12.2026 →
+    Valuta 25.12. statt 28.12.) und nahmen für USD/GBP einen Tag."""
+    while n > 0:
+        d += datetime.timedelta(days=1)
+        if d.weekday() < 5 and not target_feiertag(d):
+            n -= 1
+    return d
+
+
 ENDE_TOLERANZ = 20   # Tage: Ein Zinstermin so kurz vor der Fälligkeit ist der Fälligkeitstag selbst (Bankarbeitstag-Verschiebung)
 
 
@@ -515,19 +552,53 @@ def kurz_name(emittent, art, land, reg=""):
     return e
 
 
+# ---------- Schreibweisen wie auf den Seiten (site.js MC.zahl, felder.js MC.felder) ----------
+# Gerundet wird wie im Browser (seit 09.10.2026, Technik-Test 08.10.2026 T-52). Vorher rundete Python anders: f"{3.565:.2f}"
+# ergibt „3,56“ (der Binärwert ist 3,56499…), round(2.5) ergibt 2 – die Seiten zeigen „3,57“ und „3“. Vorgerenderte Tabellen,
+# Server-Steckbriefe und Wochenbrief standen deshalb bei rund 350 Renditen eine Stelle anders da als nach dem Laden der Seite.
+def _ist_zahl(v) -> bool:
+    """Endliche Zahl (kein bool, nicht unendlich, kein NaN) – wie typeof v === "number" && isFinite(v)."""
+    return isinstance(v, (int, float)) and not isinstance(v, bool) and math.isfinite(v)
+
+
+_RUNDEN = decimal.Context(prec=400, rounding=decimal.ROUND_HALF_UP)
+
+
+def _dezimal(v, d: int) -> decimal.Decimal:
+    """|v| auf d Nachkommastellen wie Intl.NumberFormat bzw. toLocaleString im Browser: von der kürzesten Dezimaldarstellung
+    der Zahl aus (repr: 3.565 → „3.565“), genau in der Mitte aufgerundet (3,565 → 3,57; 2,5 → 3)."""
+    return decimal.Decimal(repr(float(abs(v)))).quantize(decimal.Decimal(1).scaleb(-d), context=_RUNDEN)
+
+
+def runden_wie_browser(v: float, d: int) -> float:
+    """v auf d Nachkommastellen gerundet, wie die Seiten die Zahl zeigen (zahl_de, MC.zahl) – für Werte, die gerundet
+    gespeichert und später noch einmal formatiert werden (Wochenbrief: newsletter/anleihen.json). Ohne „−0“."""
+    r = float(_dezimal(v, d))
+    return -r if v < 0 and r else r
+
+
+def _js_round(x: float) -> int:
+    """Math.round in JavaScript: nächste ganze Zahl, genau in der Mitte nach oben (2,5 → 3, −2,5 → −2). Pythons round()
+    rundet die Mitte zur geraden Zahl (2,5 → 2)."""
+    f = math.floor(x)
+    return f + 1 if x - f >= 0.5 else f
+
+
 def zahl_de(v, d=0) -> str:
-    """Zahl mit Dezimalkomma, Tausenderpunkt und echtem Minus (wie MC.zahl)."""
-    if not isinstance(v, (int, float)) or isinstance(v, bool):
+    """Zahl mit Dezimalkomma, Tausenderpunkt und echtem Minus (wie MC.zahl), gerundet wie im Browser (_dezimal). Keine
+    endliche Zahl → „–“. Kein Minus vor einer gerundeten Null („0,00“, nicht „−0,00“)."""
+    if not _ist_zahl(v):
         return "–"
-    s = f"{abs(v):,.{d}f}".replace(",", "#").replace(".", ",").replace("#", ".")
-    return ("−" if v < 0 and float(s.replace(".", "").replace(",", ".")) != 0 else "") + s
+    b = _dezimal(v, d)
+    s = f"{b:,.{d}f}".replace(",", "#").replace(".", ",").replace("#", ".")
+    return ("−" if v < 0 and b else "") + s
 
 
 NBSP = " "
 
 
 def pct_text(v) -> str:
-    return zahl_de(v, 2) + NBSP + "%" if isinstance(v, (int, float)) else "–"
+    return zahl_de(v, 2) + NBSP + "%" if _ist_zahl(v) else "–"
 
 
 def kupon_text(kupon, zinsart=0) -> str:
@@ -536,21 +607,22 @@ def kupon_text(kupon, zinsart=0) -> str:
         return "variabel"
     if zinsart == 2 or (kupon == 0 and zinsart != 0):
         return "Nullkupon"
-    if not isinstance(kupon, (int, float)):
+    if not _ist_zahl(kupon):
         return "–"
-    return zahl_de(kupon, 3 if round(kupon * 1000) % 10 else 2) + NBSP + "%"
+    return zahl_de(kupon, 3 if _js_round(kupon * 1000) % 10 else 2) + NBSP + "%"
 
 
 def kurs_text(v) -> str:
-    if not isinstance(v, (int, float)):
+    if not _ist_zahl(v):
         return "–"
     return zahl_de(v, 3 if abs(v * 100 - round(v * 100)) > 1e-6 else 2) + NBSP + "%"
 
 
 def pkt_text(v, d=2) -> str:
-    if not isinstance(v, (int, float)):
+    """„+0,25 Pkt.“, „−0,10 Pkt.“, „0,00 Pkt.“ – wie MC.felder.pkt: Math.round(v × 10^d) / 10^d, dann formatiert."""
+    if not _ist_zahl(v):
         return "–"
-    r = round(v, d) or 0.0
+    r = _js_round(v * 10 ** d) / 10 ** d or 0.0
     return ("+" if r > 0 else "") + zahl_de(r, d) + NBSP + "Pkt."
 
 
@@ -574,22 +646,36 @@ def restlaufzeit_text(jahre) -> str:
 
 
 def _signifikant(x: float, n: int = 3) -> str:
-    """Höchstens n gültige Ziffern, ohne Endnullen, deutsch geschrieben (wie toLocaleString maximumSignificantDigits)."""
+    """Höchstens n gültige Ziffern, ohne Endnullen, deutsch geschrieben (wie toLocaleString maximumSignificantDigits).
+    Nur einmal gerundet, in zahl_de – vorher zusätzlich vorab mit round(): 1,125 Mrd. stand als „1,12“ statt „1,13“ da (T-52)."""
     if x == 0:
         return "0"
-    import math
     stellen = max(0, n - 1 - int(math.floor(math.log10(abs(x)))))
-    s = zahl_de(round(x, stellen), stellen)
+    s = zahl_de(x, stellen)
     if "," in s:
         s = s.rstrip("0").rstrip(",")
     return s
 
 
+def _gueltige_ziffern(x: float, n: int = 3) -> float:
+    """x auf n gültige Ziffern gerundet wie +x.toPrecision(n) in JavaScript (genauer Binärwert, die Mitte aufgerundet)."""
+    if x == 0:
+        return 0.0
+    e = decimal.Decimal(x)
+    return float(e.quantize(decimal.Decimal(1).scaleb(e.adjusted() - n + 1), context=_RUNDEN))
+
+
 def volumen_text(v, w="") -> str:
-    """„1,25 Mrd. EUR“, „250 Mio. EUR“, unter 1 Mio. ganze Zahl (wie MC.felder.volumen)."""
-    if not isinstance(v, (int, float)) or v <= 0:
+    """„1,25 Mrd. EUR“, „250 Mio. EUR“, unter 1 Mio. ganze Zahl (wie MC.felder.volumen). Erst auf drei gültige Ziffern
+    gerundet, dann die Einheit gewählt (seit 09.10.2026, Technik-Test 08.10.2026 T-54: 999,6 Mio. stand als „1.000 Mio.“ da,
+    jetzt „1 Mrd.“) – gleiche Regel wie felder.js und bond.js."""
+    if not _ist_zahl(v) or v <= 0:
         return "–"
-    t = zahl_de(v, 0) if v < 1e6 else (_signifikant(v / 1e9) + NBSP + "Mrd." if v >= 1e9 else _signifikant(v / 1e6) + NBSP + "Mio.")
+    if v < 1e6:
+        t = zahl_de(v, 0)
+    else:
+        r = _gueltige_ziffern(v, 3)
+        t = _signifikant(r / 1e9) + NBSP + "Mrd." if r >= 1e9 else _signifikant(r / 1e6) + NBSP + "Mio."
     return t + (NBSP + w if w else "")
 
 

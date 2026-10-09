@@ -62,8 +62,9 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import bonitaet_stufen, get_with_retry, log_err, now_iso, ohne_rendite, stamm_felder, today_iso, write_atomic, zins_felder, zinstermine_laden  # noqa: E402
-from update_top10 import AKTUELL_TAGE, INFLATION, STAATSNAME, STRIPS, WANDEL, emittent_wm, lade, plus_boersentage  # noqa: E402
+from _common import (bonitaet_stufen, get_with_retry, log_err, now_iso, ohne_rendite, plus_abwicklungstage, stamm_felder,  # noqa: E402
+                     today_iso, write_atomic, zins_felder, zinstermine_laden)
+from update_top10 import AKTUELL_TAGE, INFLATION, STAATSNAME, STRIPS, WANDEL, emittent_wm, lade  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 INDEX, KURSE = ROOT / "anleihen-index.json", ROOT / "anleihen-kurse.json"
@@ -157,7 +158,7 @@ def main() -> int:
         mehr = r[13] if len(r) > 13 and r[13] else ["---"]
         if (mehr[0] or "-")[0] in "UJM" or (mehr[0] + "--")[1] in "PQ":   # nachrangig bzw. unbefristet
             continue
-        valuta = plus_boersentage(d_stand, 1 if r[3] == "USD" else 2)
+        valuta = plus_abwicklungstage(d_stand, 2)   # wie update_top10.py: T+2 ohne TARGET-Feiertage (seit 09.10.2026, T-49)
         if (datetime.date.fromisoformat(r[5]) - valuta).days / 365.25 < MIN_JAHRE:
             continue
         em = (STAATSNAME.get(r[11]) if r[2] == 0 else None) or GEKLEBT.sub("", emittent_wm(name, emi[r[9]] if r[9] < len(emi) else "")).strip()

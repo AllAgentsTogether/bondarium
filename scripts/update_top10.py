@@ -48,7 +48,8 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import bonitaet_stufen, log_err, now_iso, ohne_rendite, stamm_felder, today_iso, write_atomic, zins_felder, zinstermine_laden  # noqa: E402
+from _common import (bonitaet_stufen, log_err, now_iso, ohne_rendite, plus_abwicklungstage, stamm_felder, today_iso,  # noqa: E402
+                     write_atomic, zins_felder, zinstermine_laden)
 
 ROOT = Path(__file__).resolve().parent.parent
 INDEX, KURSE, VERLAUF = ROOT / "anleihen-index.json", ROOT / "anleihen-kurse.json", ROOT / "kurse"
@@ -107,14 +108,6 @@ def emittent_wm(name, fallback):
     return re.sub(r"\s{2,}", " ", e)
 
 
-def plus_boersentage(d, n):
-    while n:
-        d += datetime.timedelta(days=1)
-        if d.weekday() < 5:
-            n -= 1
-    return d
-
-
 def lade(p, leer=None):
     try:
         return json.loads(Path(p).read_text(encoding="utf-8"))
@@ -171,8 +164,9 @@ def main() -> int:
         mehr = r[13] if len(r) > 13 and r[13] else ["---"]
         if (mehr[0] or "-")[0] in "UJM":
             return None
-        # Restlaufzeit ab Valuta wie auf den Seiten (USD/GBP ein, sonst zwei Börsentage nach dem Kursstand)
-        valuta = plus_boersentage(d_stand, 1 if r[3] in ("USD", "GBP") else 2)
+        # Restlaufzeit ab Valuta wie auf den Seiten: zwei Abwicklungstage nach dem Kursstand, ohne TARGET-Feiertage, alle Währungen
+        # (seit 09.10.2026, Technik-Test 08.10.2026 T-49; vorher nur Mo–Fr und für USD/GBP ein Tag)
+        valuta = plus_abwicklungstage(d_stand, 2)
         jahre = (datetime.date.fromisoformat(r[5]) - valuta).days / 365.25
         if jahre < 14 / 365.25:
             return None

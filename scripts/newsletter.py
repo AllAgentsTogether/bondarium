@@ -70,7 +70,8 @@ from zoneinfo import ZoneInfo
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _common import (NBSP, datum_text, felder_katalog, kupon_text, kurs_text, kurz_name, log_err, pct_text, pkt_text,  # noqa: E402
-                     restlaufzeit_text, titel_text, write_atomic, zahl_de, zinsplan, zinstermine_laden, zinszahlungen)
+                     restlaufzeit_text, runden_wie_browser, titel_text, write_atomic, zahl_de, zinsplan, zinstermine_laden,
+                     zinszahlungen)
 
 ROOT = Path(__file__).resolve().parent.parent
 AUS = ROOT / "newsletter"
@@ -204,7 +205,10 @@ def anleihen_daten(heute):
         name = kurz_name(emi[r[9]] if isinstance(r[9], int) and 0 <= r[9] < len(emi) else "", r[2], r[11], r[1])
         zt, geschaetzt = naechster_zinstermin(r, termine, heute)
         diff = round(kurs - vorwoche[isin], 3) if isin in vorwoche else None
-        aus[isin] = [name, kupon_text(r[4], r[10]), r[5] or "", kurs, None if rend is None else round(rend, 2), diff, zt, r[10], geschaetzt]
+        # Rendite auf zwei Stellen wie die Website sie zeigt (seit 09.10.2026, Technik-Test 08.10.2026 T-52): round() machte aus
+        # 3,565 „3,56“, die Seite zeigt „3,57“ – konto.php formatiert den gespeicherten Wert nur noch
+        aus[isin] = [name, kupon_text(r[4], r[10]), r[5] or "", kurs, None if rend is None else runden_wie_browser(rend, 2), diff, zt,
+                     r[10], geschaetzt]
     return aus, si.get("kstand") or ""
 
 

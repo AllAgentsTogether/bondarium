@@ -60,7 +60,8 @@ Schreibt (alle im Website-Ordner):
                            gegenläufig mitgeht – Bundesbank am 30.04.2021: Bund 2042 101,01 zwischen 165,34 und 163,60).
 
 Die Seite rechnet nichts nach: Die Rendite bis Fälligkeit steht fertig in der Datei (jährliche Verzinsung,
-Zeit taggenau, Valuta zwei Börsentage nach dem Handelstag – wie auf den Länder- und Langläufer-Seiten).
+Zeit taggenau, Valuta zwei Abwicklungstage nach dem Handelstag ohne TARGET-Feiertage – _common.plus_abwicklungstage, wie
+Steckbrief und Rechner; Stückzinsen aus dem Betrag der nächsten Zahlung, in einer kurzen Schlussperiode also anteilig).
 Zinstermine (seit 02.10.2026): aus der Instrumentenliste der Deutschen Börse (zinstermine/zinstermine.json,
 scripts/update_zinstermine.py) – Zahlungen je Jahr und die Zinstage. Nur wo die Liste nichts sagt, wird geschätzt:
 Termine vom Fälligkeitstag aus zurückgerechnet, ein Monatsende bleibt Monatsende (31.08. → 28.02. → 31.08.),
@@ -111,8 +112,8 @@ import sys
 import urllib.error
 from pathlib import Path
 
-from _common import (INFLATION, ausreisser, get_with_retry, log_err, now_iso, ohne_rendite, today_iso, write_atomic,
-                     zinsplan, zinstermine_laden, zinszahlungen)
+from _common import (INFLATION, ausreisser, get_with_retry, log_err, now_iso, ohne_rendite, plus_abwicklungstage, today_iso,
+                     write_atomic, zinsplan, zinstermine_laden, zinszahlungen)
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT_SUCHE = ROOT / "anleihen-kurse.json"
@@ -214,12 +215,9 @@ def isin_ok(s: str) -> bool:
     return (10 - summe % 10) % 10 == int(s[-1])
 
 
-def plus_boersentage(d: datetime.date, n: int) -> datetime.date:
-    while n:
-        d += datetime.timedelta(days=1)
-        if d.weekday() < 5:
-            n -= 1
-    return d
+# Valuta: Handelstag + 2 Abwicklungstage ohne TARGET-Feiertage (_common.plus_abwicklungstage, seit 09.10.2026, T-49). Der alte
+# Name bleibt für bestehende Aufrufe von außen (Prüf- und Nachrechen-Skripte) – vorher zählte er nur Mo–Fr.
+plus_boersentage = plus_abwicklungstage
 
 
 def lade_json(path: Path, leer):
@@ -236,7 +234,10 @@ def rendite(kupon: float, faellig: datetime.date, kurs: float, valuta: datetime.
     if faellig <= valuta:
         return None
     vorher, zahlungen = zinszahlungen(kupon, faellig, valuta, freq, tage)
-    stueckzins = kupon / freq * (valuta - vorher).days / max(1, (zahlungen[0][0] - vorher).days)
+    # Stückzinsen aus dem Betrag der nächsten Zahlung (seit 09.10.2026, Technik-Test 08.10.2026 T-17): In einer kurzen
+    # Schlussperiode ist das der anteilige Schlusskupon – vorher wuchsen sie bis zum vollen Kupon, gezahlt wurde aber nur
+    # der anteilige (Rendite ab 15.12.2026 bei rund 150 Anleihen um Punkte falsch). Gleiche Regel in bond.js (accrued).
+    stueckzins = zahlungen[0][1] * (valuta - vorher).days / max(1, (zahlungen[0][0] - vorher).days)
     zeiten = [(t - valuta).days / 365.25 for t, _ in zahlungen]
     flows = [z + (100 if i == len(zahlungen) - 1 else 0) for i, (_, z) in enumerate(zahlungen)]
 
@@ -524,17 +525,23 @@ def main() -> int:
 
     # 1) Deutsche Börse: alle gelisteten Tagesdateien, die jünger sind als der gespeicherte Stand –
     #    so geht kein Tag verloren, wenn ein Lauf ausfällt oder eine Datei erst spät erscheint.
-    listen = {}
+    listen, ohne_liste = {}, 0
     for k in ("F", "X", "T"):
         try:
             listen[k] = tagesdateien(k)
         except Exception as e:  # noqa: BLE001
             log_err(f"{DIENSTE[k]}: Dateiliste nicht abrufbar ({e}).")
             listen[k] = []
+            ohne_liste += 1
     tage = sorted({d for k in listen for d, _ in listen[k] if d > alt_stand})
     rc = 0
     # Bund-Verlauf im finally (seit 09.10.2026, T-01): geholte Bundesbank-Daten gehen auch bei einem Absturz nicht verloren
     try:
+        if ohne_liste == len(listen):
+            # Totalausfall (seit 09.10.2026, Technik-Test 08.10.2026 T-62): vorher hieß es nur „Keine neue Tagesdatei“ mit
+            # Exit 0. Jetzt Exit 1 – in kurse-nachholen.yml bricht der Schritt damit gewollt ab (kein Commit, kein Anstoß).
+            log_err("Deutsche Börse: keine der drei Dateilisten abrufbar – keine Kurse.")
+            return 1
         if not tage:
             log_err(f"Keine neue Tagesdatei (Stand {alt_stand or 'unbekannt'}) – Kurse bleiben unverändert.")
             return 0
@@ -618,7 +625,7 @@ def verarbeite(tag: str, feed: dict, zeilen: dict, auswahl: set, bbk: dict, etf:
 
     # Bund-Renditekurve des Tags (Bundesbank): (Restlaufzeit in Jahren, Rendite) der Bundeswertpapiere ohne Inflationsschutz –
     # Grundlage für den BERECHNETEN Renditeaufschlag der Euro-Anleihen
-    valuta = plus_boersentage(d_tag, 2)
+    valuta = plus_abwicklungstage(d_tag, 2)
     kurve = bund_kurve(zeilen, bund, valuta)
     pruefkurve = None
     if len(kurve) < KURVE_MIN:
@@ -783,7 +790,7 @@ def neu_rechnen() -> int:
     for isin, e in alle.items():
         z = zeilen.get(isin)
         if e[3] == "B" and z and z[5] and e[1] is not None and not INFLATION.search(z[1]):
-            val = plus_boersentage(datetime.date.fromisoformat(e[2]), 2)
+            val = plus_abwicklungstage(datetime.date.fromisoformat(e[2]), 2)
             kurven.setdefault(e[2], []).append(((datetime.date.fromisoformat(z[5]) - val).days / 365.25, e[1]))
     for k in kurven.values():
         k.sort()
@@ -793,7 +800,7 @@ def neu_rechnen() -> int:
         z = zeilen.get(isin)
         if not z or e[3] == "B":
             continue
-        valuta = plus_boersentage(datetime.date.fromisoformat(e[2]), 2)
+        valuta = plus_abwicklungstage(datetime.date.fromisoformat(e[2]), 2)
         if e[2] not in kurven and e[2] not in pruef:
             pruef[e[2]] = bund_kurve_rueckfall(zeilen, {}, e[2], valuta, PRUEFKURVE_ALTER_TAGE)[0]
         rend, auf = rendite_und_aufschlag(z, e[0], valuta, kurven.get(e[2]), pruef.get(e[2]))
