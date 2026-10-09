@@ -704,6 +704,7 @@
                 <li><div><a href="#merkliste" data-zu="merkliste">Merkliste als PDF oder CSV</a><span>entsteht im Browser, ohne Persönliches</span></div><span class="mb-r"><button type="button" class="kto-textbtn" id="mb-mit-pdf">PDF</button><button type="button" class="kto-textbtn" id="mb-mit-csv">CSV</button></span></li>
                 <li><div><a href="#merkliste" data-zu="merkliste">Termine als Kalenderdatei</a><span>Zinstermine und Fälligkeiten (.ics)</span></div><span class="mb-r"><button type="button" class="kto-textbtn" id="mb-mit-ics">Speichern</button></span></li>
               </ul>
+              <p class="kto-teilen-status" id="mb-mit-status" role="status" aria-live="polite"></p>
             </section>
           </div>
         </div>
@@ -1748,7 +1749,8 @@ MC.navInit();
     if (punkt) P.kreis(wx + +punkt.getAttribute("cx") * s, wy + +punkt.getAttribute("cy") * s, +punkt.getAttribute("r") * s, "#157C00");
   }
   function depotPdf() {
-    const P = MC.pdf(), B = P.B, H = P.H, R = 40, liste = sortiert(), n = liste.length, jetzt = new Date();
+    // PB = Seitenbreite; nicht „B“ nennen – B ist das Bereichs-Objekt (KEY.delta/KEY.zt brauchen es, Technik-Test 08.10.2026)
+    const P = MC.pdf(), PB = P.B, H = P.H, R = 40, liste = sortiert(), n = liste.length, jetzt = new Date();
     const datum = `${zwei(jetzt.getDate())}.${zwei(jetzt.getMonth() + 1)}.${jetzt.getFullYear()}`, uhr = `${zwei(jetzt.getHours())}:${zwei(jetzt.getMinutes())}`;
     // Seit 03.10.2026 dieselben Spalten in derselben Reihenfolge wie die Tabelle (Konzept „Einheitliche Anleihen-Angaben“): je Spalte oben
     // und darunter (t2); x = linker Rand, b = Breite; Zahlen rechtsbündig (r). Unter dem Namen stehen ISIN, Art und Währung.
@@ -1771,15 +1773,15 @@ MC.navInit();
     const muster = liste.filter(o => { const g = grund(o); return !g || /^kein Wechselkurs/.test(g); });
     if (muster.length > DEPOT_MAX) noten.push(`„In meine Musterdepots übernehmen“ nimmt die ersten ${DEPOT_MAX} Anleihen dieser Liste – mehr fasst ein Musterdepot nicht.`);
     noten.push("Keine Anlageberatung: Dieser Auszug ist eine Merkliste und keine Empfehlung zum Kauf oder Verkauf. Alle Angaben ohne Gewähr.");
-    const fuss = [].concat(...noten.map(t => P.umbrechen(t, B - 2 * R, 7)));
+    const fuss = [].concat(...noten.map(t => P.umbrechen(t, PB - 2 * R, 7)));
     const KNOPF = 24, UNTEN = H - 34 - fuss.length * 9 - 14 - KNOPF - 20;   // Platz für den Knopf über den Hinweisen
     let y = 0;
     function kopf() {
       const nr = P.seite();
-      P.rechteck(0, 0, B, 56, GRUEN);   // grünes Band wie die Kopfzeile der Website
+      P.rechteck(0, 0, PB, 56, GRUEN);   // grünes Band wie die Kopfzeile der Website
       pdfLogo(P, R, 14);
-      P.text(B - R, 35, "www.bondarium.de", { gr: 9, farbe: INK, rechts: true });
-      P.link(B - R - P.weite("www.bondarium.de", 9), 24, P.weite("www.bondarium.de", 9), 14, LINK);
+      P.text(PB - R, 35, "www.bondarium.de", { gr: 9, farbe: INK, rechts: true });
+      P.link(PB - R - P.weite("www.bondarium.de", 9), 24, P.weite("www.bondarium.de", 9), 14, LINK);
       y = 94;
       if (nr === 0) {
         P.text(R, y, "Merkliste", { gr: 24, fett: true });
@@ -1791,7 +1793,7 @@ MC.navInit();
         P.text(s.r ? rx(i) : lx(i), y, s.t.toUpperCase(), { gr: 6.5, fett: true, farbe: GRAU, rechts: s.r });
         if (s.t2) P.text(s.r ? rx(i) : lx(i), y + 8.5, s.t2, { gr: 6.5, farbe: GRAU, rechts: s.r });
       });
-      y += 14; P.linie(R, y, B - R, y, INK, 0.8);
+      y += 14; P.linie(R, y, PB - R, y, INK, 0.8);
     }
     kopf();
     liste.forEach(o => {
@@ -1808,22 +1810,22 @@ MC.navInit();
       P.text(rx(4), z1, o.kurs != null ? pt(F.kurs(o.kurs)) : "–", { gr: 8.5, rechts: true });
       if (o.kurs != null && o.datum && o.datum !== KSTAND) P.text(rx(4), z2, `vom ${MC.tag(o.datum)}`, Object.assign({ rechts: true }, klein));
       else if (dv != null) P.text(rx(4), z2, pt(F.pkt(dv)), Object.assign({ rechts: true }, klein));
-      const dm = B ? B.delta(o) : null;
+      const dm = KEY.delta(o);
       P.text(rx(5), z1, dm != null ? pt(F.pkt(dm)) : "–", { gr: 8.5, rechts: true });
       if (o.seit) P.text(rx(5), z2, new Date(o.seit * 1000).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }), Object.assign({ rechts: true }, klein));
-      const zt = B ? B.termin(o) : null;
+      const zt = KEY.zt(o);
       P.text(rx(6), z1, zt ? MC.datum(zt) : "–", { gr: 8.5, rechts: true });
       if (!zt && (o.zinsart === 2 || o.kupon === 0)) P.text(rx(6), z2, "kein Kupon", Object.assign({ rechts: true }, klein));
       else if (zt && zt === o.faellig) P.text(rx(6), z2, "mit Rückzahlung", Object.assign({ rechts: true }, klein));
-      y += 31; P.linie(R, y, B - R, y, LINIE, 0.5);
+      y += 31; P.linie(R, y, PB - R, y, LINIE, 0.5);
     });
     for (let i = 0, gesamt = P.anzahl(); i < gesamt; i++) {
       P.auf(i);
       let fy = H - 34 - fuss.length * 9;
-      P.linie(R, fy - 12, B - R, fy - 12, LINIE, 0.5);
+      P.linie(R, fy - 12, PB - R, fy - 12, LINIE, 0.5);
       fuss.forEach(z => { P.text(R, fy, z, { gr: 7, farbe: GRAU }); fy += 9; });
       P.text(R, H - 22, "Bondarium – Anleihen verstehen und finden · www.bondarium.de", { gr: 7, farbe: GRAU });
-      P.text(B - R, H - 22, `Seite ${i + 1} von ${gesamt}`, { gr: 7, farbe: GRAU, rechts: true });
+      P.text(PB - R, H - 22, `Seite ${i + 1} von ${gesamt}`, { gr: 7, farbe: GRAU, rechts: true });
     }
     // Knopf für Empfänger (Nutzerwunsch 01.10.2026): öffnet konto.html#liste=ISIN,… – dort lässt sich die Liste in die eigene
     // Merkliste übernehmen. Die ISINs stehen hinter „#“, gehen also beim Öffnen nicht an den Server. Er steht unten links über
@@ -2041,6 +2043,8 @@ MC.navInit();
   const TEILEN = {
     merkliste: { bau: depotPdf, status: "teilen-status", titel: "Merkliste – Bondarium", fertig: "Deine Merkliste ist geteilt." },
     depot: { bau: musterPdf, status: "kd-teilen-status", titel: "Musterdepot – Bondarium", fertig: "Dein Musterdepot ist geteilt." },
+    // „Mitnehmen → PDF“ (Reiter „Meldungen und Konto“): Statuszeile in der Karte – #teilen-status ist dort ausgeblendet
+    mitnehmen: { bau: depotPdf, status: "mb-mit-status", titel: "Merkliste – Bondarium", fertig: "Deine Merkliste ist geteilt." },
   };
   function teilenStatus(text, fehler, id) { const el = $(id || "teilen-status"); el.className = "kto-teilen-status" + (fehler ? " fehler" : ""); el.textContent = text; }
   function speichere(d, stattTeilen, id) {
@@ -2107,7 +2111,7 @@ MC.navInit();
     zahlungen: liste => zahlungen(liste),
     oeffneDepot: id => { oeffne(id); reiterWahl("depot", true); },
     zeichneListe: () => { if (LISTE.length) zeichne(); else if (B) B.nachListe(); statusText(); },
-    entfernen: entferne, insDepot: isin => insDepot({ dataset: { depot: isin } }), teilen: nur => teilen(nur),
+    entfernen: entferne, insDepot: isin => insDepot({ dataset: { depot: isin } }), teilen: nur => teilen(nur, "mitnehmen"),
     neuLaden: () => ladeDaten().then(D => { DDATA = D; MF_EZB = D.ezb; if (!KSTAND) KSTAND = D.kstand; if (B) B.ablageNeu(); }, () => {}) }) : null;
   reiter(ausHash() || (VOR ? "merkliste" : "start"));
 
