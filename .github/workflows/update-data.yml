@@ -124,11 +124,14 @@ jobs:
         with:
           python-version: "3.12"
 
-      # Fehler der Updater werden NICHT mehr verschluckt (früher "|| true"):
-      # continue-on-error markiert den Schritt rot (sichtbar im Lauf-Protokoll),
-      # das Deploy läuft trotzdem weiter – die Seiten behalten den letzten Stand.
+      # Fehler der Updater werden NICHT mehr verschluckt (früher "|| true"): Der Schritt scheitert, das Deploy läuft dank
+      # continue-on-error trotzdem weiter – die Seiten behalten den letzten Stand. Achtung: GitHub zeigt einen solchen Schritt
+      # in der Übersicht GRÜN (conclusion „success“); nur sein outcome ist „failure“. Deshalb hat jeder Abruf-Schritt eine id,
+      # und der Schritt „Ergebnis der Abruf-Schritte“ (vor der Frische-Prüfung) schreibt outcome je Schritt in die
+      # Zusammenfassung des Laufs. Den Alarm (E-Mail) gibt die Frische-Prüfung (scripts/frische.py) aus den Daten selbst.
       # Staatsanleihen-Renditen (renditen.html)
       - name: Anleihenrenditen holen (Treasury/Bundesbank/MoF/ChinaBond/OECD)
+        id: abruf_renditen
         if: env.VOLL == '1'
         continue-on-error: true
         run: python scripts/update_renditen.py
@@ -137,6 +140,7 @@ jobs:
       # FRED (HQM, Moody's Baa), Bundesbank (Unternehmen), JSDA (Japan AA/A),
       # ChinaBond (AAA), RBA (A/BBB 10 J.)
       - name: Unternehmensanleihen holen (FRED/Bundesbank/JSDA/ChinaBond/RBA)
+        id: abruf_unternehmen
         if: env.VOLL == '1'
         continue-on-error: true
         run: python scripts/update_unternehmen.py
@@ -144,6 +148,7 @@ jobs:
       # Langläufer (langlaeufer.html): Tageskurs/-rendite der Bundesanleihen 0 % 2050 und 4,75 % 2040
       # 0 % 2050 (DE0001102481) aus der Bundesbank-Reihe BBSSY, komplette Historie
       - name: Langläufer-Kurse holen (Bundesbank, Bund 0 % 2050 und 4,75 % 2040)
+        id: abruf_langlaeufer
         if: env.VOLL == '1'
         continue-on-error: true
         run: python scripts/update_langlaeufer.py
@@ -161,6 +166,7 @@ jobs:
       # zum nächsten Lauf, und Renditen liefen mit dem Vorwochen-Index). Schlägt der Index fehl, laufen die
       # Kurse trotzdem (continue-on-error) – mit dem bisherigen Index.
       - name: Anleihen-Suche aktualisieren (ESMA FIRDS + GLEIF, 1×/Woche)
+        id: abruf_index
         if: env.VOLL == '1'
         continue-on-error: true
         run: python scripts/update_anleihen_index.py
@@ -172,6 +178,7 @@ jobs:
       # anleihen/<hh>.json. Läuft NACH dem Index (der schreibt die Teildateien wöchentlich neu) und VOR den Kursen
       # (Rendite) und den Top-Listen. Schlägt es fehl, gelten die Termine des letzten Laufs.
       - name: Zinstermine holen (Deutsche Börse, Instrumentenliste Frankfurt)
+        id: abruf_zinstermine
         if: env.VOLL == '1'
         continue-on-error: true
         run: python scripts/update_zinstermine.py
@@ -184,6 +191,7 @@ jobs:
       # anleihen/<hh>.json. Läuft NACH dem Index und den Zinsterminen und VOR dem Suchindex. Schlägt es fehl oder passt
       # die Tabelle nicht mehr zur Liste, gelten die Stufen des letzten Laufs.
       - name: Bonitätsstufe ablesen (EZB, Liste der notenbankfähigen Sicherheiten)
+        id: abruf_bonitaet
         if: env.VOLL == '1'
         continue-on-error: true
         run: python scripts/update_bonitaet.py
@@ -195,6 +203,7 @@ jobs:
       # bekommt ein neu gelisteter ETF am selben Tag einen Kurs. Schlägt es fehl, laufen die Kurse mit dem
       # bisherigen Register.
       - name: ETF-Register aktualisieren (Deutsche Börse, ESMA FIRDS)
+        id: abruf_etf
         if: env.VOLL == '1'
         continue-on-error: true
         run: python scripts/update_etf_index.py
@@ -207,6 +216,7 @@ jobs:
       # des Registers, seit 30.09.2026) und den Kursverlauf kurse/
       # (kurse/<Jahr>/<teil>.json enthält seit 26.09.2026 auch „aktuell“ für den Steckbrief anleihe.html).
       - name: Kurse holen (Deutsche Börse MiFIR-Delayed-Data, Bundesbank)
+        id: abruf_kurse
         if: env.VOLL == '1'
         continue-on-error: true
         env:
@@ -214,12 +224,16 @@ jobs:
         run: python scripts/update_kurse.py
 
       # Rohe Tagesdateien der Börse 90 Tage als Artefakt aufheben (seit 29.09.2026): Die Börse hält sie nur etwa einen
-      # Börsentag bereit. Mit dem Artefakt lässt sich ein fehlerhaft verarbeiteter Tag später neu rechnen
-      # (FIXTURE_DIR=<entpackter Ordner> python scripts/update_kurse.py). Nicht im Repo (≈ 28 MB je Tag).
+      # Börsentag bereit. Nicht im Repo (≈ 28 MB je Tag). Nachtragen aus dem entpackten Artefakt: FIXTURE_DIR=<Ordner>
+      # python scripts/update_kurse.py verarbeitet nur Tage NACH dem jüngsten Stand. Ältere Tage (z. B. der 05.10.2026,
+      # Technik-Test 08.10.2026) gehen mit python3 scripts/import_kurshistorie.py <Tagesdateien> (ergänzt nur fehlende
+      # Werte) und für ETFs/Papiere außerhalb des Index mit FIXTURE_DIR=<Ordner> python scripts/update_kurse.py --nachtragen.
+      # Läuft auch, wenn der Kurs-Schritt scheitert (continue-on-error) – gerade dann wird der Tag gebraucht.
       - name: Rohe Kursdateien sichern (Artefakt, 90 Tage)
+        id: roh_sichern
         if: env.VOLL == '1' && hashFiles('_roh/*') != ''
         continue-on-error: true
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1 (Node 24; v4.6.2 zielte auf das abgekündigte Node 20)
         with:
           name: kurse-roh-${{ github.run_id }}
           path: _roh/
@@ -230,6 +244,7 @@ jobs:
       # Zinsstrukturkurve BBSIS, Monats- und Tageswerte) und USA (Fed H.15, Tageswerte);
       # vier Abrufe, ~5 s.
       - name: Zinskurve holen (Bundesbank BBSIS, Fed H.15)
+        id: abruf_zinskurve
         if: env.VOLL == '1'
         continue-on-error: true
         run: python scripts/update_zinskurve.py
@@ -238,6 +253,7 @@ jobs:
       # Tageswert), Verbraucherpreise (Bundesbank BBDP1, ab 1992; davor Konstanten aus Destatis) und
       # Realrenditen der inflationsindexierten Bundesanleihen (Bundesbank BBSSY); fünf Abrufe, ~5 s.
       - name: Realzins holen (OECD, Bundesbank BBSIS/BBDP1/BBSSY)
+        id: abruf_realzins
         if: env.VOLL == '1'
         continue-on-error: true
         run: python scripts/update_realzins.py
@@ -246,6 +262,7 @@ jobs:
       # 11 Länder, ~1,6 MB) und US-Unternehmen Aaa/Baa gegen 10-jährige US-Staatsanleihe (FRED, monatlich seit 1953
       # und täglich); vier Abrufe, ~10 s.
       - name: Risikoaufschläge holen (OECD, FRED)
+        id: abruf_risiko
         if: env.VOLL == '1'
         continue-on-error: true
         run: python scripts/update_risikoaufschlaege.py
@@ -255,6 +272,7 @@ jobs:
       # aus dem Index. Schreibt vier kleine top10-*.json (werden in die Seiten eingebettet); die Seiten ersetzen
       # ihre Handauswahl erst, wenn die Datei „aktiv“ ist (mindestens 20 Börsentage erfasst). Sekunden.
       - name: EZB-Einlagesatz holen (EZB Data Portal)
+        id: abruf_ezb
         if: env.VOLL == '1'
         continue-on-error: true
         run: python scripts/update_ezb.py
@@ -262,11 +280,13 @@ jobs:
       # Euro-Referenzkurse der EZB (seit 01.10.2026): „Mein Depot“ (konto.html) rechnet Anleihen in fremder Währung damit in Euro um.
       # Scheitert der Abruf, bleibt wechselkurse.json vom Vortag stehen. Sekunden.
       - name: Wechselkurse holen (EZB-Referenzkurse)
+        id: abruf_wechselkurse
         if: env.VOLL == '1'
         continue-on-error: true
         run: python scripts/update_wechselkurse.py
 
       - name: Top 10 berechnen (aus Kursverlauf und Index)
+        id: abruf_top10
         if: env.VOLL == '1'
         continue-on-error: true
         run: python scripts/update_top10.py
@@ -275,6 +295,7 @@ jobs:
       # notenbankfähiger Sicherheiten (Staatsanleihen der G10-Länder außerhalb Europas auch ohne Eintrag),
       # Restlaufzeit ab zwei Jahren, Stückelung bis 10.000. Lädt die Tagesdatei der EZB; fehlt sie, bleibt die Liste vom Vortag stehen.
       - name: Top 30 nach Kupon berechnen (Index, Kurse, EZB-Liste)
+        id: abruf_top30
         if: env.VOLL == '1'
         continue-on-error: true
         run: python scripts/update_top10_kupon.py
@@ -282,6 +303,7 @@ jobs:
       # Schlanker Suchindex für anleihen-suche.html (seit 30.09.2026): aus anleihen-index.json + anleihen-kurse.json;
       # schreibt auch anleihen-auswahl.json (Kurzname, Art, Währung, Bonität der Anleihen auf den Seiten, seit 03.10.2026)
       - name: Suchindex bauen
+        id: suchindex
         if: env.VOLL == '1'
         continue-on-error: true
         run: python scripts/suchindex.py
@@ -292,11 +314,13 @@ jobs:
       # vollständigen, frischen Daten (Feld „versand“); verschickt wird ganz unten, nur im Abruf-Lauf. newsletter/seiten.json
       # (Gedächtnis für „Neue Seiten“) wird im Abruf-Lauf mit committet.
       - name: Wochenbrief bauen
+        id: wochenbrief_bauen
         continue-on-error: true
         run: python3 scripts/newsletter.py
 
       # ----- Versionierung: nur im Abruf-Lauf (nicht bei Push/'schnell') -----
       - name: Änderungen committen (Versionierung auf GitHub)
+        id: commit
         if: env.VOLL == '1'
         continue-on-error: true   # blockiert NICHT den Strato-Upload, falls der Push mal scheitert
         run: |
@@ -319,17 +343,15 @@ jobs:
         run: if [ -f scripts/kurse_jahre.py ]; then python3 scripts/kurse_jahre.py; fi
 
       # ----- PHP-Syntax prüfen (seit 30.09.2026): ein Tippfehler in kontakt.php, konto.php oder refresh.php soll den Lauf stoppen,
-      #       nicht erst beim Besucher als Fehler 500 auffallen. Lokal gibt es kein PHP – der Runner bringt es mit. -----
+      #       nicht erst beim Besucher als Fehler 500 auffallen. Lokal gibt es kein PHP – der Runner bringt es mit.
+      #       Seit 09.10.2026 jede PHP-Datei im Stammordner und in strato-cron/ (vorher fehlte sicherung.php; eine neue Datei
+      #       wird so nicht mehr vergessen – Technik-Test 08.10.2026, T-130). -----
       - name: PHP-Syntax prüfen
         run: |
           if command -v php >/dev/null 2>&1; then
-            php -l kontakt.php
-            php -l konto.php
-            php -l wechselkurse.php
-            php -l aufruf.php
-            php -l statistik-bericht.php
-            php -l erinnerung.php
-            php -l strato-cron/refresh.php
+            fehler=0
+            for f in *.php strato-cron/*.php; do php -l "$f" || fehler=1; done
+            exit "$fehler"
           else
             echo "::warning::php fehlt auf dem Runner – Syntaxprüfung übersprungen"
           fi
@@ -574,7 +596,10 @@ jobs:
       #       im Bau nicht mehr gibt, löscht das Skript auf dem Server (seit 30.09.2026; nur Dateien aus dem alten
       #       Manifest, höchstens 40 je Lauf – sonst Warnung statt Löschen). Zielordner = Startverzeichnis des SFTP-Zugangs
       #       (/bondarium, Strato-Nutzer su1338619) = Docroot der Domain.
-      #       Scheitert dieser Weg, lädt der Rückfall darunter wie früher alles hoch. -----
+      #       Reihenfolge (seit 09.10.2026): erst JSON/JS/CSS/Bilder, dann die HTML-Seiten, zuletzt .htaccess und das Manifest –
+      #       sonst verlangt eine neue Seite im Upload-Fenster eine Versions-URL, unter der noch die alte Datei liegt.
+      #       Scheitert ein put, bricht lftp ab (cmd:fail-exit), bevor das neue Manifest hochgeht. Dann lädt der Rückfall
+      #       darunter wie früher alles hoch. -----
       - name: Geänderte Dateien per SFTP hochladen
         id: inkrementell
         continue-on-error: true
@@ -585,9 +610,11 @@ jobs:
         run: |
           sudo apt-get install -y -qq lftp > /dev/null
           python3 scripts/deploy_manifest.py manifest _site > neu.manifest
-          rm -f alt.manifest
+          rm -f alt.manifest alt-sitemap.xml
+          # Vor dem Upload: altes Manifest und (seit 09.10.2026) die alte sitemap.xml – IndexNow meldet danach nur neue Adressen
+          # und Adressen mit geändertem <lastmod>. Das Manifest zuletzt holen: Sein Ergebnis bestimmt den Rückgabewert von lftp.
           lftp -u "$SFTP_USERNAME" --env-password "sftp://$SFTP_SERVER" \
-            -e "set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 30; get .deploy-manifest -o alt.manifest; bye" \
+            -e "set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 30; get sitemap.xml -o alt-sitemap.xml; get .deploy-manifest -o alt.manifest; bye" \
             || echo "Kein Manifest auf dem Server – alles wird hochgeladen"
           touch alt.manifest
           python3 scripts/deploy_manifest.py lftp alt.manifest neu.manifest _site > upload.lftp
@@ -596,11 +623,13 @@ jobs:
 
       # ----- Geänderte Seiten an IndexNow melden (seit 30.09.2026): Bing, Yandex, Seznam und Naver erfahren sofort, welche
       #       Adressen neu sind – Bing ist der Suchindex hinter ChatGPT-Suche und Copilot. Nur nach dem Upload der geänderten
-      #       Dateien (dort liegen beide Manifeste); übertragen werden nur öffentliche Adressen der eigenen Seite. -----
+      #       Dateien; übertragen werden nur öffentliche Adressen der eigenen Seite. Seit 09.10.2026 nur neue Adressen und
+      #       Adressen mit geändertem <lastmod> (alte sitemap.xml vom Server gegen die neue) – vorher täglich ~97 Steckbriefe,
+      #       deren HTML sich nur durch eingebettete Wechselkurse änderte, während lastmod gleich blieb. -----
       - name: Geänderte Seiten an IndexNow melden
         if: steps.inkrementell.outcome == 'success'
         continue-on-error: true
-        run: python3 scripts/indexnow.py alt.manifest neu.manifest _site
+        run: python3 scripts/indexnow.py alt-sitemap.xml _site
 
       - name: Rückfall – alles per SFTP hochladen
         if: steps.inkrementell.outcome == 'failure'
@@ -639,14 +668,14 @@ jobs:
         run: |
           fehler=0
           for url in https://www.bondarium.de/ https://www.bondarium.de/grundlagen.html; do
-            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 --retry 2 --retry-delay 5 "$url" || echo "000")
+            code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 30 --retry 2 --retry-delay 5 "$url" || true)
             echo "$url -> HTTP $code"
             if [ "$code" != "200" ]; then echo "::error::$url antwortet mit $code statt 200 – .htaccess und Upload prüfen!"; fehler=1; fi
           done
-          antwort=$(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" --max-time 30 --retry 2 --retry-delay 5 http://bondarium.de/index.html || echo "000")
+          antwort=$(curl -sS -o /dev/null -w "%{http_code} %{redirect_url}" --max-time 30 --retry 2 --retry-delay 5 http://bondarium.de/index.html || true)
           echo "http://bondarium.de/index.html -> $antwort"
           if [ "$antwort" != "301 https://www.bondarium.de/" ]; then echo "::error::http://bondarium.de/index.html leitet nicht in einem Sprung auf https://www.bondarium.de/ ($antwort)"; fehler=1; fi
-          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 --retry 2 --retry-delay 5 https://www.bondarium.de/kgv.html || echo "000")
+          code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 30 --retry 2 --retry-delay 5 https://www.bondarium.de/kgv.html || true)
           echo "https://www.bondarium.de/kgv.html -> HTTP $code"
           if [ "$code" != "410" ]; then echo "::error::Frühere Aktien-Seite /kgv.html antwortet mit $code statt 410"; fehler=1; fi
           # Server-Steckbrief (seit 03.10.2026): ein Bundeswertpapier muss live als fertige Seite vom Server kommen – sonst
@@ -656,14 +685,14 @@ jobs:
           if [ -z "$sb" ]; then
             echo "::error::Keine Server-Steckbriefe erzeugt – Schritt „Steckbriefe der Bundeswertpapiere“ prüfen"; fehler=1
           else
-            seite=$(curl -s --compressed --max-time 30 --retry 2 --retry-delay 5 "https://www.bondarium.de/anleihe.html?isin=$sb" || true)
+            seite=$(curl -sS --compressed --max-time 30 --retry 2 --retry-delay 5 "https://www.bondarium.de/anleihe.html?isin=$sb" || true)
             if [[ "$seite" == *'data-steckbrief="server"'* ]]; then echo "anleihe.html?isin=$sb -> Server-Steckbrief"
             else echo "::error::anleihe.html?isin=$sb kommt nicht als Server-Steckbrief – Regel in der .htaccess prüfen"; fehler=1; fi
           fi
           # Revalidierung (nur Hinweis): gleiches ETag („-gzip“) und Datum müssen 304 ergeben, sonst lädt jeder Besuch die ganze Seite
-          curl -s -o /dev/null -D kopf.txt --max-time 30 -H "Accept-Encoding: gzip" https://www.bondarium.de/grundlagen.html || true
+          curl -sS -o /dev/null -D kopf.txt --max-time 30 -H "Accept-Encoding: gzip" https://www.bondarium.de/grundlagen.html || true
           etag=$(grep -i '^etag:' kopf.txt | head -1 | cut -d' ' -f2- | tr -d '\r'); lm=$(grep -i '^last-modified:' kopf.txt | head -1 | cut -d' ' -f2- | tr -d '\r')
-          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 -H "Accept-Encoding: gzip" -H "If-None-Match: $etag" -H "If-Modified-Since: $lm" https://www.bondarium.de/grundlagen.html || echo "000")
+          code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 30 -H "Accept-Encoding: gzip" -H "If-None-Match: $etag" -H "If-Modified-Since: $lm" https://www.bondarium.de/grundlagen.html || true)
           echo "grundlagen.html mit ETag $etag -> HTTP $code"
           if [ "$code" != "304" ]; then echo "::warning::Revalidierung liefert $code statt 304 (ETag $etag) – RequestHeader-Zeile in der .htaccess wirkt bei STRATO nicht"; fi
           exit "$fehler"
@@ -674,14 +703,14 @@ jobs:
         id: ndp_trigger
         continue-on-error: true
         run: |
-          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 https://www.bondarium.de/trigger/refresh-config.php || echo "000")
+          code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 30 https://www.bondarium.de/trigger/refresh-config.php || true)
           echo "refresh-config.php -> HTTP $code"
           if [ "$code" = "200" ]; then echo "::error::/trigger/refresh-config.php ist öffentlich lesbar – Token sofort rotieren!"; exit 1; fi
           # Sicherung: ohne POST und Schlüssel nie eine Datei (405), Zertifikat nicht abrufbar (403)
-          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 https://www.bondarium.de/trigger/sicherung.php || echo "000")
+          code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 30 https://www.bondarium.de/trigger/sicherung.php || true)
           echo "sicherung.php (GET) -> HTTP $code"
           if [ "$code" != "405" ]; then echo "::error::/trigger/sicherung.php antwortet auf GET mit $code statt 405"; exit 1; fi
-          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 -X POST --data "db=konto" https://www.bondarium.de/trigger/sicherung.php || echo "000")
+          code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 30 -X POST --data "db=konto" https://www.bondarium.de/trigger/sicherung.php || true)
           echo "sicherung.php (POST ohne Schlüssel) -> HTTP $code"
           if [ "$code" != "403" ]; then echo "::error::/trigger/sicherung.php antwortet ohne Schlüssel mit $code statt 403"; exit 1; fi
 
@@ -692,11 +721,11 @@ jobs:
         continue-on-error: true
         run: |
           for pfad in konto-daten/ konto-daten/index.html konto-daten/.sperre; do
-            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://www.bondarium.de/$pfad" || echo "000")
+            code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 30 "https://www.bondarium.de/$pfad" || true)
             echo "$pfad -> HTTP $code"
             if [ "$code" = "200" ]; then echo "::error::/$pfad ist öffentlich abrufbar – Datenordner des Benutzerbereichs sofort sperren!"; exit 1; fi
           done
-          antwort=$(curl -s --max-time 30 "https://www.bondarium.de/konto.php?aktion=status" || true)
+          antwort=$(curl -sS --max-time 30 "https://www.bondarium.de/konto.php?aktion=status" || true)
           echo "konto.php?aktion=status -> $antwort"
           case "$antwort" in *'"status":"ok"'*) ;; *) echo "::error::Benutzerbereich antwortet nicht mit „ok“ – Anmelden und Merkliste sind gestört"; exit 1;; esac
 
@@ -707,11 +736,11 @@ jobs:
         continue-on-error: true
         run: |
           for pfad in statistik-daten/ statistik-daten/index.html statistik-daten/.sperre statistik-bericht.php erinnerung.php; do
-            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://www.bondarium.de/$pfad" || echo "000")
+            code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 30 "https://www.bondarium.de/$pfad" || true)
             echo "$pfad -> HTTP $code"
             if [ "$code" = "200" ]; then echo "::error::/$pfad ist öffentlich abrufbar – sofort sperren!"; exit 1; fi
           done
-          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://www.bondarium.de/aufruf.php" || echo "000")
+          code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 30 "https://www.bondarium.de/aufruf.php" || true)
           echo "aufruf.php -> HTTP $code"
           if [ "$code" != "204" ]; then echo "::error::aufruf.php antwortet nicht mit 204 – die Besucherzählung ist gestört"; exit 1; fi
 
@@ -719,18 +748,36 @@ jobs:
       # freigegeben ist (freitags, Daten vollständig), jedem Abonnenten höchstens einmal je Kalenderwoche und höchstens 40
       # E-Mails je Aufruf; deshalb wird wiederholt, bis nichts mehr offen ist. An allen anderen Tagen antwortet der Server
       # nur mit „kein Versandtag“. Die Antwort nennt Zahlen, keine Adressen.
+      # Netzfehler (seit 09.10.2026, Technik-Test 08.10.2026, T-27): Ein Aufruf wird wiederholt (höchstens 3 Versuche, 30 s
+      # Pause) – aber NUR, wenn gar keine Verbindung zustande kam (curl-Exitcode 6 = Name nicht auflösbar, 7 = keine
+      # Verbindung, 35 = TLS-Aufbau gescheitert). Dann hat der Server sicher nichts verschickt. Nach einer Zeitüberschreitung
+      # (28) nicht: Der erste Aufruf könnte auf dem Server noch laufen, ein zweiter würde dieselben Empfänger auswählen.
+      # Deshalb auch kein „curl --retry-all-errors“.
       - name: Wochenbrief verschicken (nur am Versandtag)
+        id: wochenbrief_senden
         if: env.VOLL == '1'
         continue-on-error: true
         env:
           TRIGGER_KEY: ${{ secrets.TRIGGER_KEY }}
         run: |
-          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://www.bondarium.de/newsletter/ausgabe.json" || echo "000")
+          code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 30 "https://www.bondarium.de/newsletter/ausgabe.json" || true)
           echo "newsletter/ausgabe.json -> HTTP $code"
           if [ "$code" = "200" ]; then echo "::error::/newsletter/ ist öffentlich abrufbar – kein Versand"; exit 1; fi
           KEY=$(printf '%s' "$TRIGGER_KEY" | tr -d '\r\n')
+          # aufrufen <aktion>: POST an konto.php, setzt $code; wiederholt nur bei curl-Exitcode 6, 7 oder 35 (siehe oben)
+          aufrufen() {
+            local versuch rc
+            for versuch in 1 2 3; do
+              rc=0; rm -f antwort.json
+              code=$(curl -sS -o antwort.json -w "%{http_code}" --connect-timeout 20 --max-time 180 -H "X-Requested-With: bondarium-konto" -H "X-Trigger-Key: $KEY" --data "aktion=$1" https://www.bondarium.de/konto.php) || rc=$?
+              case "$rc" in 6|7|35) ;; *) return 0 ;; esac
+              echo "::warning::$1: keine Verbindung zu www.bondarium.de (curl-Exitcode $rc, Versuch $versuch von 3)"
+              if [ "$versuch" -lt 3 ]; then sleep 30; fi
+            done
+            return 0
+          }
           for i in $(seq 1 25); do
-            code=$(curl -s -o antwort.json -w "%{http_code}" --max-time 180 -H "X-Requested-With: bondarium-konto" -H "X-Trigger-Key: $KEY" --data "aktion=newsletter-senden" https://www.bondarium.de/konto.php || echo 000)
+            aufrufen newsletter-senden
             echo "HTTP $code: $(cat antwort.json 2>/dev/null)"
             [ "$code" = "200" ] || { echo "::warning::Wochenbrief: Versand-Aufruf fehlgeschlagen (HTTP $code)"; exit 1; }
             offen=$(python3 -c 'import json; print(int(json.load(open("antwort.json")).get("offen") or 0))' 2>/dev/null || echo 0)
@@ -743,117 +790,84 @@ jobs:
       # E-Mail mit den neu ausgelösten – nur für Meldungen, bei denen der Nutzer „E-Mail“ gewählt hat. Eine ausgelöste Meldung
       # kommt erst wieder, wenn ihre Bedingung zwischendurch nicht mehr galt. Die Antwort nennt Zahlen, keine Adressen.
       - name: Meldungen prüfen und verschicken
+        id: meldungen
         if: env.VOLL == '1'
         continue-on-error: true
         env:
           TRIGGER_KEY: ${{ secrets.TRIGGER_KEY }}
         run: |
           KEY=$(printf '%s' "$TRIGGER_KEY" | tr -d '\r\n')
-          code=$(curl -s -o antwort.json -w "%{http_code}" --max-time 180 -H "X-Requested-With: bondarium-konto" -H "X-Trigger-Key: $KEY" --data "aktion=meldungen-senden" https://www.bondarium.de/konto.php || echo "000")
+          # wie beim Wochenbrief: wiederholt nur, wenn keine Verbindung zustande kam (curl-Exitcode 6, 7, 35), nie nach einer
+          # Zeitüberschreitung – sonst könnte dieselbe Meldung zweimal verschickt werden
+          for versuch in 1 2 3; do
+            rc=0; rm -f antwort.json
+            code=$(curl -sS -o antwort.json -w "%{http_code}" --connect-timeout 20 --max-time 180 -H "X-Requested-With: bondarium-konto" -H "X-Trigger-Key: $KEY" --data "aktion=meldungen-senden" https://www.bondarium.de/konto.php) || rc=$?
+            case "$rc" in 6|7|35) ;; *) break ;; esac
+            echo "::warning::Meldungen: keine Verbindung zu www.bondarium.de (curl-Exitcode $rc, Versuch $versuch von 3)"
+            if [ "$versuch" -lt 3 ]; then sleep 30; fi
+          done
           echo "HTTP $code: $(cat antwort.json 2>/dev/null)"
           [ "$code" = "200" ] || { echo "::warning::Meldungen: Aufruf fehlgeschlagen (HTTP $code)"; exit 1; }
 
-      # ----- Automatische Alarm-Prüfung: schlägt fehl (= E-Mail von GitHub), wenn
-      #       Daten veraltet sind. Nur im Abruf-Lauf (1×/Tag), nicht bei
-      #       Push-Deploys (früher bis zu 48 Alarm-Mails am Tag). -----
+      # ----- Ergebnis der Abruf-Schritte (seit 09.10.2026, Technik-Test 08.10.2026, T-26): Mit continue-on-error zeigt GitHub
+      #       einen gescheiterten Abruf-Schritt grün. Dieser Schritt schreibt das outcome jedes Abruf-Schritts als Tabelle in die
+      #       Zusammenfassung des Laufs und meldet gescheiterte als Warnung. Den Alarm gibt die Frische-Prüfung danach. -----
+      - name: Ergebnis der Abruf-Schritte (Zusammenfassung des Laufs)
+        if: ${{ !cancelled() && env.VOLL == '1' }}
+        env:
+          ERGEBNISSE: |
+            Anleihenrenditen=${{ steps.abruf_renditen.outcome }}
+            Unternehmensanleihen=${{ steps.abruf_unternehmen.outcome }}
+            Langläufer=${{ steps.abruf_langlaeufer.outcome }}
+            Anleihen-Suche (Register)=${{ steps.abruf_index.outcome }}
+            Zinstermine=${{ steps.abruf_zinstermine.outcome }}
+            Bonitätsstufe (EZB)=${{ steps.abruf_bonitaet.outcome }}
+            ETF-Register=${{ steps.abruf_etf.outcome }}
+            Kurse=${{ steps.abruf_kurse.outcome }}
+            Rohe Kursdateien (Artefakt)=${{ steps.roh_sichern.outcome }}
+            Zinskurve=${{ steps.abruf_zinskurve.outcome }}
+            Realzins=${{ steps.abruf_realzins.outcome }}
+            Risikoaufschläge=${{ steps.abruf_risiko.outcome }}
+            EZB-Einlagesatz=${{ steps.abruf_ezb.outcome }}
+            Wechselkurse=${{ steps.abruf_wechselkurse.outcome }}
+            Top 10=${{ steps.abruf_top10.outcome }}
+            Top 30 nach Kupon=${{ steps.abruf_top30.outcome }}
+            Suchindex=${{ steps.suchindex.outcome }}
+            Wochenbrief bauen=${{ steps.wochenbrief_bauen.outcome }}
+            Änderungen committen=${{ steps.commit.outcome }}
+        run: |
+          gescheitert=""
+          {
+            echo "### Abruf-Schritte"
+            echo
+            echo "| Schritt | Ergebnis |"
+            echo "|---|---|"
+            while IFS='=' read -r name ergebnis; do
+              [ -n "$name" ] || continue
+              case "$ergebnis" in
+                success) zeichen="ok" ;;
+                failure) zeichen="**gescheitert**"; gescheitert="$gescheitert, $name" ;;
+                skipped) zeichen="übersprungen" ;;
+                cancelled) zeichen="abgebrochen" ;;
+                *) zeichen="${ergebnis:-–}" ;;
+              esac
+              echo "| $name | $zeichen |"
+            done <<< "$ERGEBNISSE"
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$gescheitert" ]; then
+            echo "::warning::Abruf-Schritte gescheitert (GitHub zeigt sie wegen continue-on-error grün): ${gescheitert#, }"
+          else
+            echo "Alle Abruf-Schritte ohne Fehler."
+          fi
+
+      # ----- Automatische Alarm-Prüfung: schlägt fehl (= E-Mail von GitHub), wenn Daten veraltet oder unvollständig sind.
+      #       Nur im Abruf-Lauf (1×/Tag), nicht bei Push-Deploys (früher bis zu 48 Alarm-Mails am Tag). Seit 09.10.2026
+      #       scripts/frische.py statt einer Liste hier (die kannte 9 von 22 Datendateien, kurse/bund gar nicht und zählte
+      #       Kalendertage): jede Datendatei, kurse/bund, Pflichtwerte (Breakeven, Anteil der Kurse mit Aufschlag zu Bund);
+      #       Soll in Handelstagen, Alarm ab 2 Handelstagen Rückstand. Regeln im Kopf des Skripts. -----
       - name: Frische-Prüfung (Alarm bei veralteten Daten)
         if: env.VOLL == '1'
-        run: |
-          python - <<'PY'
-          import json, sys, datetime, os
-
-          probleme = []
-          heute = datetime.date.today()
-
-          def _datum(wert):
-              """ISO-Datum/-Zeitstempel oder Monat 'JJJJ-MM' (OECD) -> date; None wenn unlesbar."""
-              s = str(wert)[:10]
-              if len(s) == 7:
-                  s += "-15"   # Monatswert: Monatsmitte annehmen
-              try:
-                  return datetime.date.fromisoformat(s)
-              except ValueError:
-                  return None
-
-          def _alter(wert, quelle):
-              d = _datum(wert)
-              if d is None:
-                  probleme.append(f"{quelle}: Datum unlesbar ({wert!r})")
-                  return None
-              return (heute - d).days
-
-          def _lade(fname):
-              try:
-                  return json.load(open(fname, encoding="utf-8"))
-              except Exception as e:
-                  probleme.append(f"{fname} beschädigt/unlesbar: {e}")
-                  return {}
-
-          # 1) Feld-spezifische Frische der Anleihen-Suche
-          checks = [
-              # Anleihen-Suche: ESMA-Gesamtdatei erscheint wöchentlich (samstags)
-              ("anleihen-index.json → stand", (_lade("anleihen-index.json") if os.path.exists("anleihen-index.json") else {}).get("stand"), 16),
-              # Kurse (Deutsche Börse, Bundesbank): börsentäglich
-              ("anleihen-kurse.json → stand", (_lade("anleihen-kurse.json") if os.path.exists("anleihen-kurse.json") else {}).get("stand"), 7),
-              ("kurse-auswahl.json → stand", (_lade("kurse-auswahl.json") if os.path.exists("kurse-auswahl.json") else {}).get("stand"), 7),
-              # ETF-Register (Liste der Deutschen Börse, börsentäglich) und die Kurse aller Anleihen-ETFs
-              ("etf-index.json → stand", (_lade("etf-index.json") if os.path.exists("etf-index.json") else {}).get("stand"), 7),
-              ("etf-kurse.json → stand", (_lade("etf-kurse.json") if os.path.exists("etf-kurse.json") else {}).get("stand"), 7),
-              # Zinstermine (Instrumentenliste der Deutschen Börse, börsentäglich)
-              ("zinstermine/zinstermine.json → stand", (_lade("zinstermine/zinstermine.json") if os.path.exists("zinstermine/zinstermine.json") else {}).get("stand"), 7),
-              # Bonitätsstufe laut EZB (Liste der notenbankfähigen Sicherheiten, täglich Mo–Fr)
-              ("bonitaet/ezb-stufen.json → stand", (_lade("bonitaet/ezb-stufen.json") if os.path.exists("bonitaet/ezb-stufen.json") else {}).get("stand"), 7),
-              # Steckbrief anleihe.html: Teildateien Stammdaten (wöchentlich) und aktuelle Kurse (börsentäglich), Stichprobe 00
-              ("anleihen/00.json → stand", (_lade("anleihen/00.json") if os.path.exists("anleihen/00.json") else {}).get("stand"), 16),
-              (f"kurse/{heute.year}/00.json → stand", (_lade(f"kurse/{heute.year}/00.json") if os.path.exists(f"kurse/{heute.year}/00.json") else {}).get("stand"), 7),
-              # Zinskurve: Bundesbank und Fed börsentäglich (stand ist ein Dict je Land)
-              ("zinskurve.json → stand.DE", ((_lade("zinskurve.json") if os.path.exists("zinskurve.json") else {}).get("stand") or {}).get("DE"), 7),
-              ("zinskurve.json → stand.US", ((_lade("zinskurve.json") if os.path.exists("zinskurve.json") else {}).get("stand") or {}).get("US"), 7),
-              # Realzins: Bundrendite börsentäglich; Verbraucherpreise monatlich (Destatis veröffentlicht den Vormonat Anfang des Monats → bis ~45 Tage alt)
-              ("realzins.json → stand.zins", ((_lade("realzins.json") if os.path.exists("realzins.json") else {}).get("stand") or {}).get("zins"), 7),
-              ("realzins.json → stand.vpi", ((_lade("realzins.json") if os.path.exists("realzins.json") else {}).get("stand") or {}).get("vpi"), 75),
-              # Risikoaufschläge: alles Monatswerte (seit 30.09.2026 auch USA: HQM-Kurve des US-Finanzministeriums minus OECD-Rendite,
-              # Stand „JJJJ-MM“) – sie erscheinen mit ~2–6 Wochen Verzug → 100 Tage wie bei den Renditen. Die frühere Schwelle von
-              # 7 Tagen stammte aus der Zeit der FRED-Tageswerte und ließ den Lauf seit 30.09. jeden Tag rot werden (Fehlalarm).
-              ("risikoaufschlaege.json → stand.us", ((_lade("risikoaufschlaege.json") if os.path.exists("risikoaufschlaege.json") else {}).get("stand") or {}).get("us"), 100),
-              ("risikoaufschlaege.json → stand.laender", ((_lade("risikoaufschlaege.json") if os.path.exists("risikoaufschlaege.json") else {}).get("stand") or {}).get("laender"), 100),
-          ]
-          for quelle, wert, schwelle in checks:
-              if not wert:
-                  probleme.append(f"{quelle}: Feld fehlt/leer")
-                  continue
-              age = _alter(wert, quelle)
-              if age is None:
-                  continue
-              print(f"{quelle}: {wert} (vor {age} Tagen, Schwelle {schwelle})")
-              if age > schwelle:
-                  probleme.append(f"{quelle} veraltet: {wert} ({age} Tage alt, Schwelle {schwelle} Tage)")
-
-          # 2) Anleihenrenditen je Land: Tagesquellen (USA, Deutschland, Japan,
-          #    China) 10 Tage; OECD-Monatswerte (Indien, GB, Frankreich, Italien)
-          #    erscheinen mit ~2 Monaten Verzug → 100 Tage.
-          renj = _lade("renditen.json") if os.path.exists("renditen.json") else {}
-          if not renj:
-              probleme.append("renditen.json fehlt/leer")
-          for land, c in (renj.get("countries") or {}).items():
-              wert = (c.get("latest") or {}).get("date")
-              schwelle = 10 if land in ("us", "de", "jp", "cn") else 100
-              if not wert:
-                  probleme.append(f"renditen.json → {land}: kein latest.date")
-                  continue
-              age = _alter(wert, f"renditen.json → {land}")
-              if age is None:
-                  continue
-              print(f"renditen.json → {land}: {wert} (vor {age} Tagen, Schwelle {schwelle})")
-              if age > schwelle:
-                  probleme.append(f"renditen.json → {land} veraltet: {wert} ({age} Tage alt, Schwelle {schwelle} Tage)")
-
-          if probleme:
-              for p in probleme:
-                  print(f"::error::{p}")
-              sys.exit(1)
-          print("Alles frisch und gültig. ✓")
-          PY
+        run: python3 scripts/frische.py .
 
       # ----- Lücken im Kursverlauf (seit 29.09.2026): fehlt ein Börsentag seit dem 24.09.2026 in kurse/, wird der
       #       Lauf rot (= E-Mail von GitHub). Ein fehlender Tag ist nur nachholbar, solange die Tagesdatei der Börse
@@ -877,15 +891,28 @@ jobs:
         if: ${{ !cancelled() && env.VOLL == '1' }}
         continue-on-error: true
         run: |
-          letzte=$(curl -s --max-time 30 "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/sicherung.yml/runs?status=success&per_page=1" \
+          letzte=$(curl -sS --max-time 30 "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/workflows/sicherung.yml/runs?status=success&per_page=1" \
             | python3 -c 'import json,sys; r=json.load(sys.stdin).get("workflow_runs") or []; print(r[0]["created_at"] if r else "")' 2>/dev/null || true)
           if [ -z "$letzte" ]; then echo "::warning::Liste der Sicherungsläufe nicht abrufbar – Alter der Sicherung unbekannt"; exit 0; fi
           alter=$(( ( $(date +%s) - $(date -d "$letzte" +%s) ) / 3600 ))
           echo "Letzte erfolgreiche Sicherung: $letzte (vor $alter Stunden)"
           if [ "$alter" -gt 50 ]; then echo "::error::Seit $alter Stunden keine erfolgreiche Sicherung – Workflow „Sicherung“ prüfen und von Hand starten"; exit 1; fi
 
+      # Seit 09.10.2026 auch Wochenbrief (Bau und Versand) und Meldungen (Technik-Test 08.10.2026, T-129): Stürzte
+      # newsletter.py an einem Freitag ab, fiel der Wochenbrief still aus.
       - name: Alarm bei fehlgeschlagener Nach-Deploy-Prüfung
-        if: ${{ !cancelled() && (steps.steckbriefe.outcome == 'failure' || steps.sicherung_alter.outcome == 'failure' || steps.ndp_seite.outcome == 'failure' || steps.ndp_trigger.outcome == 'failure' || steps.ndp_konto.outcome == 'failure' || steps.ndp_statistik.outcome == 'failure') }}
+        if: ${{ !cancelled() && (steps.steckbriefe.outcome == 'failure' || steps.sicherung_alter.outcome == 'failure' || steps.ndp_seite.outcome == 'failure' || steps.ndp_trigger.outcome == 'failure' || steps.ndp_konto.outcome == 'failure' || steps.ndp_statistik.outcome == 'failure' || steps.wochenbrief_bauen.outcome == 'failure' || steps.wochenbrief_senden.outcome == 'failure' || steps.meldungen.outcome == 'failure') }}
         run: |
-          echo "::error::Nach-Deploy-Prüfung fehlgeschlagen – Seite/Weiterleitung: ${{ steps.ndp_seite.outcome }}, Trigger-Konfiguration: ${{ steps.ndp_trigger.outcome }}, Benutzerbereich: ${{ steps.ndp_konto.outcome }}, Besucherzählung: ${{ steps.ndp_statistik.outcome }}, Server-Steckbriefe: ${{ steps.steckbriefe.outcome }}, Sicherung aktuell: ${{ steps.sicherung_alter.outcome }}. Einzelheiten in den Schritten oben."
+          echo "::error::Nach-Deploy-Prüfung fehlgeschlagen – Seite/Weiterleitung: ${{ steps.ndp_seite.outcome }}, Trigger-Konfiguration: ${{ steps.ndp_trigger.outcome }}, Benutzerbereich: ${{ steps.ndp_konto.outcome }}, Besucherzählung: ${{ steps.ndp_statistik.outcome }}, Server-Steckbriefe: ${{ steps.steckbriefe.outcome }}, Sicherung aktuell: ${{ steps.sicherung_alter.outcome }}, Wochenbrief bauen: ${{ steps.wochenbrief_bauen.outcome }}, Wochenbrief verschicken: ${{ steps.wochenbrief_senden.outcome }}, Meldungen: ${{ steps.meldungen.outcome }}. Einzelheiten in den Schritten oben."
+          exit 1
+
+      # ----- Reserve-Lauf musste selbst abrufen (seit 09.10.2026, Technik-Test 08.10.2026, T-136): Der Job „update“ läuft beim
+      #       Zeitplan (10:15) nur, wenn heute noch kein Abruf gespeichert war (Job „sperre“). Dann ist der 10-Uhr-Lauf
+      #       ausgefallen (cron-job.org, refresh.php, GH_DISPATCH_TOKEN) oder er lief, schrieb aber kein checkedAt in
+      #       renditen.json (update_renditen.py ganz gescheitert, Commit gescheitert). Der Reserve-Lauf hat die Daten geholt –
+      #       der Lauf wird trotzdem rot, damit jemand die Ursache prüft (sonst bliebe ein Ausfall des Auslösers unbemerkt). -----
+      - name: Reserve-Lauf musste selbst abrufen (Alarm)
+        if: ${{ !cancelled() && github.event_name == 'schedule' }}
+        run: |
+          echo "::error::Reserve-Lauf musste selbst abrufen – der 10-Uhr-Lauf hat heute keinen Abruf gespeichert (cron-job.org, GH_DISPATCH_TOKEN, update_renditen.py prüfen)"
           exit 1

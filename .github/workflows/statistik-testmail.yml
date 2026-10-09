@@ -26,6 +26,6 @@ jobs:
           ART: ${{ inputs.art }}
         run: |
           KEY=$(printf '%s' "$TRIGGER_KEY" | tr -d '\r\n')
-          code=$(curl -s -o antwort.txt -w "%{http_code}" --max-time 90 -H "X-Trigger-Key: $KEY" --data "aktion=testmail" --data "art=${ART:-bericht}" https://www.bondarium.de/aufruf.php || echo 000)
+          code=$(curl -sS -o antwort.txt -w "%{http_code}" --max-time 90 -H "X-Trigger-Key: $KEY" --data "aktion=testmail" --data "art=${ART:-bericht}" https://www.bondarium.de/aufruf.php || true)
           echo "HTTP $code: $(cat antwort.txt 2>/dev/null)"
           [ "$code" = "200" ]

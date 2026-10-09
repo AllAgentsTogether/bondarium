@@ -18,6 +18,6 @@ jobs:
           TRIGGER_KEY: ${{ secrets.TRIGGER_KEY }}
         run: |
           KEY=$(printf '%s' "$TRIGGER_KEY" | tr -d '\r\n')
-          code=$(curl -s -o antwort.json -w "%{http_code}" --max-time 90 -H "X-Requested-With: bondarium-konto" -H "X-Trigger-Key: $KEY" --data "aktion=newsletter-senden&an=betreiber" https://www.bondarium.de/konto.php || echo 000)
+          code=$(curl -sS -o antwort.json -w "%{http_code}" --max-time 90 -H "X-Requested-With: bondarium-konto" -H "X-Trigger-Key: $KEY" --data "aktion=newsletter-senden&an=betreiber" https://www.bondarium.de/konto.php || true)
           echo "HTTP $code: $(cat antwort.json 2>/dev/null)"
           [ "$code" = "200" ]

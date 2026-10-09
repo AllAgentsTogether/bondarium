@@ -254,7 +254,7 @@ Jede Phase endet mit einem Ergebnis, das du in der Vorschau ansehen kannst. Ver�
 - **Rendite und Duration fehlen.** Die ETF-Seite ist stark bei Kosten, Handel, Größe und Laufzeit, zeigt aber nicht mehr die Zahl, die Leser zuerst suchen.
 - **Fehler in den Quellen werden sichtbar.** Ohne Handpflege korrigiert niemand eine veraltete Kostenangabe der Börsenliste. Gegenmittel: die Quelle dazuschreiben; später ein zweiter automatischer Kostenwert vom Anbieter.
 - **Kategorien sind aus Namen abgeleitet.** Ob ein ETF ein Anleihen-ETF ist, entscheidet weitgehend die Börse; Kategorie, Laufzeit und Absicherung bleiben eine Näherung. Gegenmittel: Kennzeichnung, Regeln verbessern.
-- **Aufbau der Börsenseiten.** Der Link zur Liste und die Monatsdateien werden aus den Seiten der Börse gelesen. Ändert die Börse den Aufbau, schlägt der Schritt fehl; das Register bleibt dann auf dem letzten Stand, und nach sieben Tagen schlägt die Frische-Prüfung Alarm.
+- **Aufbau der Börsenseiten.** Der Link zur Liste und die Monatsdateien werden aus den Seiten der Börse gelesen. Ändert die Börse den Aufbau, schlägt der Schritt fehl; das Register bleibt dann auf dem letzten Stand, und ab zwei Börsentagen Rückstand schlägt die Frische-Prüfung Alarm (`scripts/frische.py`, seit 09.10.2026; vorher nach sieben Tagen).
 - **Kurzer Kursverlauf.** Ein-Jahres-Werte gibt es frühestens im Herbst 2027, außer mit einer Kurslieferung.
 - **Kurse in Fremdwährung.** 36 Anteilsklassen werden an Xetra nicht in Euro gehandelt; ihr Kurs und ihr Tagesumsatz stehen in der Handelswährung. Die ETF-Seite schreibt das Währungszeichen dazu.
 

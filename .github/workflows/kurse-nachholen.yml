@@ -4,8 +4,9 @@ name: Kurse nachholen (falls der 10-Uhr-Lauf den Vortag verpasst hat)
 # online – fällt der 10-Uhr-Lauf aus oder scheitert der Kurs-Schritt, wäre der Tag sonst für immer verloren.
 # Dieser Workflow prüft um 13:40 und 17:40 Uhr (Berlin, Mo–Fr), ob der letzte Börsentag im Kursverlauf fehlt
 # (scripts/kurs_luecken.py --fehlt-neu). Nur dann holt er die Kurse (update_kurse.py verarbeitet jede gelistete
-# Tagesdatei, die jünger ist als der Stand), rechnet die Top 10 neu, committet und stößt einen
-# Veröffentlichungs-Lauf („schnell“, ohne Abruf) von update-data.yml an. Sonst endet er nach Sekunden.
+# Tagesdatei, die jünger ist als der Stand), rechnet die Top 10, die Top 30 nach Kupon und (seit 09.10.2026) den
+# Suchindex neu, committet und stößt einen Veröffentlichungs-Lauf („schnell“, ohne Abruf) von update-data.yml an.
+# Sonst endet er nach Sekunden.
 on:
   schedule:
     - cron: "40 13 * * 1-5"
@@ -47,10 +48,12 @@ jobs:
           ROH_DIR: _roh
         run: python scripts/update_kurse.py
 
+      # Auch wenn „Kurse holen“ scheitert (!cancelled()): Gerade dann wird die Rohdatei gebraucht – die Börse hält sie nur
+      # etwa einen Börsentag bereit (am 06.10.2026 stürzte der Schritt ab, und der 05.10. war danach nicht mehr abrufbar).
       - name: Rohe Kursdateien sichern (Artefakt, 90 Tage)
-        if: steps.pruefen.outputs.holen == '1' && hashFiles('_roh/*') != ''
+        if: ${{ !cancelled() && steps.pruefen.outputs.holen == '1' && hashFiles('_roh/*') != '' }}
         continue-on-error: true
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1 (Node 24; v4.6.2 zielte auf das abgekündigte Node 20)
         with:
           name: kurse-roh-${{ github.run_id }}
           path: _roh/
@@ -67,6 +70,13 @@ jobs:
         continue-on-error: true
         run: python scripts/update_top10_kupon.py
 
+      # Suchindex (seit 09.10.2026): Der anschließende Veröffentlichungs-Lauf („schnell“) baut ihn nicht neu – ohne diesen
+      # Schritt zeigte die Suche ältere Kurse als der Steckbrief (Technik-Test 08.10.2026, T-57).
+      - name: Suchindex neu bauen
+        if: steps.pruefen.outputs.holen == '1'
+        continue-on-error: true
+        run: python scripts/suchindex.py
+
       - name: Committen und veröffentlichen
         if: steps.pruefen.outputs.holen == '1'
         env:
@@ -74,7 +84,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add anleihen-kurse.json kurse-auswahl.json etf-*.json top10-*.json kurse
+          git add anleihen-kurse.json kurse-auswahl.json etf-*.json top10-*.json suchindex.json anleihen-auswahl.json kurse
           if git diff --cached --quiet; then
             echo "Keine neue Tagesdatei verarbeitet – nichts zu tun."
             exit 0

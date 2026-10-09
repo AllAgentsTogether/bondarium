@@ -33,9 +33,9 @@ jobs:
             local url="$1" soll="$2" name="$3" art="${4:-}" code="000"
             for versuch in 1 2 3; do
               if [ "$art" = "kopf" ]; then
-                code=$(curl -s -o /dev/null -I -w "%{http_code}" --max-time 25 "$url" || echo "000")
+                code=$(curl -sS -o /dev/null -I -w "%{http_code}" --max-time 25 "$url" || true)
               else
-                code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 25 "$url" || echo "000")
+                code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 25 "$url" || true)
               fi
               if [ "$code" = "$soll" ]; then echo "ok   $name: HTTP $code"; return 0; fi
               echo "     $name: HTTP $code (Versuch $versuch)"
@@ -51,7 +51,7 @@ jobs:
           # Benutzerbereich: antwortet mit {"status":"ok"} (wie in der Nach-Deploy-Prüfung)
           ok=0
           for versuch in 1 2 3; do
-            antwort=$(curl -s --max-time 25 "https://www.bondarium.de/konto.php?aktion=status" || true)
+            antwort=$(curl -sS --max-time 25 "https://www.bondarium.de/konto.php?aktion=status" || true)
             case "$antwort" in *'"status":"ok"'*) ok=1; break;; esac
             echo "     Benutzerbereich: ${antwort:0:80} (Versuch $versuch)"
             [ "$versuch" -lt 3 ] && sleep 20

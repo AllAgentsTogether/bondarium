@@ -5,6 +5,9 @@
 
 Bricht mit Fehler ab (Deploy wird rot, nichts geht live) bei:
   - internen Links auf Seiten, die es nicht gibt
+  - (seit 09.10.2026) Verweisen auf Dateien, die im Bau fehlen: src, href (außer Seiten), srcset und CSS-url() der Seiten,
+    Server-Steckbriefe und Stylesheets – ohne „?v=…“ gegen den Ordner geprüft (fehlendes Skript, Stylesheet oder Bild)
+  - (seit 09.10.2026) einer *.json im Bau, die sich nicht als JSON lesen lässt (Daten der Seiten, kurse/, anleihen/ …)
   - Resten des alten Namens (METALCONCRETE / metalconcrete.de) im ausgelieferten Text
   - Seiten für Suchmaschinen (ohne „noindex“) ohne <title>, ohne oder mit fremder kanonischer Adresse,
     oder mit unlesbarem JSON-LD – das kostet Auffindbarkeit, ohne dass man es der Seite ansieht
@@ -14,12 +17,17 @@ Warnt (Deploy läuft weiter) bei:
   - Angeboten in broker.json, deren „bis“-Datum abgelaufen ist oder in weniger als 14 Tagen abläuft
   - Titeln über 60 Zeichen, Beschreibungen unter 70 oder über 160 Zeichen, fehlender Beschreibung,
     keiner oder mehreren <h1>, doppelt vergebenen Titeln oder Beschreibungen
+Server-Steckbriefe (seit 09.10.2026): steckbrief/<ISIN>.html wird unter anleihe.html?isin=<ISIN> ausgeliefert – Links und
+Dateien werden deshalb gegen den Stammordner aufgelöst, kanonische Adresse ist anleihe.html?isin=<ISIN>. Fehler wie oben
+(je Ursache eine Zeile), alle übrigen Regeln als Sammelzeilen „Server-Steckbriefe: …“; die SEO-Regeln unten gelten auch für
+sie (Technik-Test 08.10.2026, T-76).
 Anleihen-Tabellen (seit 03.10.2026, Konzept „Einheitliche Anleihen-Angaben“, docs/ANLEIHEN-ANGABEN.md):
   - Fehler, wenn der Katalog in felder.js kein lesbares JSON ist oder eine Anleihen-Tabelle im ausgelieferten HTML ihre Spalten
     nicht in der Reihenfolge der Gesamtliste zeigt oder einen Spaltenkopf anders nennt als der Katalog (Kurzform)
 Seit 02.10.2026 außerdem (SEO-Prüfung; je Regel EINE Sammelzeile mit Anzahl und höchstens 5 Beispielen, nur auf Seiten
 für Suchmaschinen):
-  - Ladetext („wird geladen“, „lädt …“) im ausgelieferten Text – ohne JavaScript sieht ihn jeder Crawler
+  - Ladetext („wird geladen“, „lädt …“) im ausgelieferten Text – ohne JavaScript sieht ihn jeder Crawler (Bereiche mit dem
+    Attribut hidden zählen seit 09.10.2026 nicht: Sie sind ohne JavaScript unsichtbar)
   - Seitenskript ändert link[rel=canonical], obwohl ein fester Canonical im HTML steht
   - Titel breiter als 580 px bzw. Beschreibung breiter als 990 px im Suchergebnis (Schätzung mit Arial-Zeichenbreiten)
   - Zusage- und Empfehlungswörter („lohnt sich“, „garantiert“, „risikolos“, „beste“, „sichere Rendite“ …) in Titel,
@@ -35,34 +43,141 @@ import datetime
 import html as htmllib
 import json
 import os
+import posixpath
 import re
 import sys
+import urllib.parse
+from html.parser import HTMLParser
 
 site = sys.argv[1] if len(sys.argv) > 1 else "_site"
 seiten = {f for f in os.listdir(site) if f.endswith(".html")}
+# Server-Steckbriefe (scripts/steckbriefe.py): Datei → Adresse, unter der sie ausgeliefert wird
+SB_ORDNER = "steckbrief"
+steckbriefe = {}
+if os.path.isdir(os.path.join(site, SB_ORDNER)):
+    for d in sorted(os.listdir(os.path.join(site, SB_ORDNER))):
+        m = re.fullmatch(r"([A-Z]{2}[A-Z0-9]{9}[0-9])\.html", d)
+        if m:
+            steckbriefe[f"{SB_ORDNER}/{d}"] = "anleihe.html?isin=" + m.group(1)
 ids = {}
 fehler, warnungen, hinweise = [], [], []
+sb_fehler = {}   # Steckbriefe: Fehlermeldung → [Adressen] (eine Zeile je Ursache statt einer je Steckbrief)
+funde = {}       # Regel → [(Datei, Ausschnitt)] – Sammelzeilen (SEO-Warnungen, Warnungen der Steckbriefe)
 HREF = re.compile(r'href="(?!https?:|mailto:|tel:|data:|javascript:|#)(/|\./)?([^"#?]+\.html)?(?:\?[^"#]*)?(?:#([^"]+))?"')
 PLATZ = re.compile(r'\[(?:VORNAME|NACHNAME|STRASSE|PLZ|E-MAIL|TELEFON)[^\]]*\]')
 
-for f in seiten:
-    html = open(os.path.join(site, f), encoding="utf-8").read()
-    ids[f] = set(re.findall(r'\sid="([^"]+)"', html))
 
-for f in sorted(seiten):
-    html = open(os.path.join(site, f), encoding="utf-8").read()
+def lies_html(f):
+    with open(os.path.join(site, f), encoding="utf-8") as d:
+        return d.read()
+
+
+def sb_fehler_add(meldung, adresse):
+    sb_fehler.setdefault(meldung, []).append(adresse)
+
+
+def fund(regel, datei, text=""):
+    funde.setdefault(regel, []).append((datei, text))
+
+
+for f in list(seiten) + list(steckbriefe):
+    ids[f] = set(re.findall(r'\sid="([^"]+)"', lies_html(f)))
+
+for f in sorted(seiten) + list(steckbriefe):
+    html = lies_html(f)
+    sb = steckbriefe.get(f)
     ohne_skript = re.sub(r"<script\b[^>]*>.*?</script>", "", html, flags=re.S)
     for wurzel, ziel, anker in HREF.findall(ohne_skript):
         if not ziel and wurzel:   # „/#akademie“ oder „./#akademie“ = Startseite
             ziel = "index.html"
         if ziel and ziel not in seiten:
-            fehler.append(f"{f}: Link auf fehlende Seite {ziel}")
+            if sb:
+                sb_fehler_add(f"Link auf fehlende Seite {ziel}", sb)
+            else:
+                fehler.append(f"{f}: Link auf fehlende Seite {ziel}")
         elif anker and "$" not in anker and anker not in ids.get(ziel or f, set()):
-            warnungen.append(f"{f}: Anker #{anker} fehlt auf {ziel or f}")
+            if sb:
+                fund("Server-Steckbriefe: Anker fehlt", sb, f"#{anker} auf {ziel or 'der Seite'}")
+            else:
+                warnungen.append(f"{f}: Anker #{anker} fehlt auf {ziel or f}")
     if re.search(r"METALCONCRETE|metalconcrete\.de", ohne_skript, re.I):
-        fehler.append(f"{f}: alter Name METALCONCRETE im Text")
+        if sb:
+            sb_fehler_add("alter Name METALCONCRETE im Text", sb)
+        else:
+            fehler.append(f"{f}: alter Name METALCONCRETE im Text")
     for p in sorted(set(PLATZ.findall(ohne_skript))):
-        warnungen.append(f"{f}: Platzhalter {p}")
+        if sb:
+            fund("Server-Steckbriefe: Platzhalter", sb, p)
+        else:
+            warnungen.append(f"{f}: Platzhalter {p}")
+
+# ---------- Dateien im Bau (seit 09.10.2026, T-76): Verweise der Seiten, Steckbriefe und Stylesheets; lesbares JSON ----------
+URL_CSS = re.compile(r"""url\(\s*['"]?([^'")]+)""")
+
+
+class Verweise(HTMLParser):
+    """src, href (außer Seiten – die prüft der Link-Teil oben), srcset und style-url() aller Tags."""
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.refs = []
+
+    def handle_starttag(self, tag, attrs):
+        a = {k: v for k, v in attrs if v}
+        for k in ("src", "href"):
+            if k in a and not (k == "href" and re.search(r"\.html(?:[?#]|$)", a[k])):
+                self.refs.append(a[k])
+        for teil in (a.get("srcset") or "").split(","):
+            if teil.strip():
+                self.refs.append(teil.strip().split()[0])
+        self.refs += URL_CSS.findall(a.get("style") or "")
+
+    handle_startendtag = handle_starttag
+
+
+def lokaler_pfad(ref):
+    """Pfad im Bau zu einem Verweis (ohne ?v=… und #…, gegen den Stammordner) oder None bei fremden Adressen."""
+    ref = htmllib.unescape(ref.strip())
+    if not ref or re.match(r"^(?:[a-z][a-z0-9+.-]*:|//|#)", ref, re.I) or "${" in ref or "{{" in ref:
+        return None
+    pfad = urllib.parse.unquote(ref.split("#")[0].split("?")[0])
+    pfad = re.sub(r"^(?:\./|/)+", "", pfad)
+    if not pfad or pfad.endswith("/"):
+        return None
+    return posixpath.normpath(pfad)
+
+
+fehlt_datei = {}   # Pfad → [Seiten]
+for f in sorted(seiten) + list(steckbriefe):
+    # Inhalt der Skripte weg (Zeichenketten im Code sind keine Verweise), das Tag bleibt – <script src="…"> zählt
+    html = re.sub(r"(<script\b[^>]*>).*?(</script>)", r"\1\2", lies_html(f), flags=re.S)
+    v = Verweise()
+    v.feed(html)
+    v.close()
+    for ref in v.refs + URL_CSS.findall(html):
+        pfad = lokaler_pfad(ref)
+        if pfad and not os.path.isfile(os.path.join(site, pfad)):
+            fehlt_datei.setdefault(pfad, []).append(steckbriefe.get(f, f))
+for f in sorted(x for x in os.listdir(site) if x.endswith(".css")):
+    for ref in URL_CSS.findall(lies_html(f)):
+        pfad = lokaler_pfad(ref)
+        if pfad and not os.path.isfile(os.path.join(site, pfad)):
+            fehlt_datei.setdefault(pfad, []).append(f)
+for pfad, wo in sorted(fehlt_datei.items()):
+    wo = sorted(set(wo))
+    fehler.append(f"Verweis auf fehlende Datei {pfad} (in {', '.join(wo[:5])}" + (f" und {len(wo) - 5} weiteren" if len(wo) > 5 else "") + ")")
+kaputt = []
+for wurzel, _, dateien in os.walk(site):
+    for d in sorted(dateien):
+        if d.endswith(".json"):
+            pfad = os.path.join(wurzel, d)
+            try:
+                with open(pfad, encoding="utf-8") as j:
+                    json.load(j)
+            except (OSError, ValueError) as e:
+                kaputt.append(f"{os.path.relpath(pfad, site)} ({e})")
+for k in kaputt:
+    fehler.append(f"JSON unlesbar: {k}")
 
 # ---------- Auffindbarkeit (seit 30.09.2026): Titel, Beschreibung, kanonische Adresse, H1, strukturierte Daten ----------
 BASE = "https://www.bondarium.de/"
@@ -71,43 +186,57 @@ BASE = "https://www.bondarium.de/"
 JS_CANONICAL = {"anleihe.html"}
 CANONICAL_JS = re.compile(r"""link\[rel=\\?["']?canonical\\?["']?\]""")
 titel_von, text_von = {}, {}
-for f in sorted(seiten):
-    html = open(os.path.join(site, f), encoding="utf-8").read()
+for f in sorted(seiten) + list(steckbriefe):
+    html = lies_html(f)
+    sb = steckbriefe.get(f)
     kopf = html.split("</head>")[0]
     if f == "404.html" or re.search(r'<meta name="robots" content="[^"]*noindex', kopf):
         continue
+    # Steckbriefe: Fehler je Ursache in einer Zeile, Warnungen als Sammelzeilen je Regel
+    def warn(regel, text, f=f, sb=sb):
+        if sb:
+            fund(f"Server-Steckbriefe: {regel}", sb, text)
+        else:
+            warnungen.append(f"{f}: {text}")
+
+    def feh(text, f=f, sb=sb):
+        if sb:
+            sb_fehler_add(text.replace(sb, "<Adresse>"), sb)
+        else:
+            fehler.append(f"{f}: {text}")
+    name = sb or f
     m = re.search(r"<title>(.*?)</title>", kopf, re.S)
     titel = htmllib.unescape(m.group(1)).strip() if m else ""
     if not titel:
-        fehler.append(f"{f}: <title> fehlt")
+        feh("<title> fehlt")
     else:
-        titel_von.setdefault(titel, []).append(f)
+        titel_von.setdefault(titel, []).append(name)
         if len(titel) > 60:
-            warnungen.append(f"{f}: Titel hat {len(titel)} Zeichen (über 60 wird er im Suchergebnis abgeschnitten)")
+            warn("Titel über 60 Zeichen", f"Titel hat {len(titel)} Zeichen (über 60 wird er im Suchergebnis abgeschnitten)")
     m = re.search(r'<meta name="description" content="([^"]*)"', kopf)
     text = htmllib.unescape(m.group(1)).strip() if m else ""
     if not text:
-        warnungen.append(f"{f}: Beschreibung (meta description) fehlt")
+        warn("Beschreibung fehlt", "Beschreibung (meta description) fehlt")
     else:
-        text_von.setdefault(text, []).append(f)
+        text_von.setdefault(text, []).append(name)
         if not 70 <= len(text) <= 160:
-            warnungen.append(f"{f}: Beschreibung hat {len(text)} Zeichen (gut sind 70 bis 160)")
+            warn("Beschreibung nicht 70 bis 160 Zeichen", f"Beschreibung hat {len(text)} Zeichen (gut sind 70 bis 160)")
     m = re.search(r'<link rel="canonical" href="([^"]+)"', kopf)
-    eigen = BASE + ("" if f == "index.html" else f)
+    eigen = BASE + (sb or ("" if f == "index.html" else f))
     if not m and f in JS_CANONICAL and CANONICAL_JS.search(html):
         hinweise.append(f"{f}: kein fester Canonical – die kanonische Adresse setzt das Seitenskript (je ISIN)")
     elif not m:
-        fehler.append(f"{f}: kanonische Adresse (link rel=canonical) fehlt")
+        feh("kanonische Adresse (link rel=canonical) fehlt")
     elif m.group(1) != eigen:
-        fehler.append(f"{f}: kanonische Adresse zeigt auf {m.group(1)} statt auf {eigen}")
+        feh(f"kanonische Adresse zeigt auf {m.group(1)} statt auf {eigen}")
     h1 = len(re.findall(r"<h1\b", re.sub(r"<script\b[^>]*>.*?</script>", "", html, flags=re.S)))
     if h1 != 1:
-        warnungen.append(f"{f}: {h1} Hauptüberschriften (<h1>) statt einer")
+        warn("nicht genau eine <h1>", f"{h1} Hauptüberschriften (<h1>) statt einer")
     for roh in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S):
         try:
             json.loads(roh)
         except ValueError as e:
-            fehler.append(f"{f}: JSON-LD unlesbar ({e})")
+            feh(f"JSON-LD unlesbar ({e})")
 for art, gruppen in (("Titel", titel_von), ("Beschreibung", text_von)):
     for wert, dateien in gruppen.items():
         if len(dateien) > 1:
@@ -152,20 +281,64 @@ if KAT:
                 if t and soll and t != soll:
                     fehler.append(f"{f}: Spaltenkopf „{t}“ statt „{soll}“ (Katalog felder.js, Feld {c})")
 
-# ---------- SEO-Warnungen (seit 02.10.2026): nur Warnungen, je Regel eine Sammelzeile ----------
-funde = {}   # Regel → [(Datei, Ausschnitt)]
-
-
-def fund(regel, datei, text=""):
-    funde.setdefault(regel, []).append((datei, text))
-
-
+# ---------- SEO-Warnungen (seit 02.10.2026): nur Warnungen, je Regel eine Sammelzeile (funde, fund() oben) ----------
 INLINE = r"abbr|b|em|i|mark|strong|sub|sup|wbr"   # Auszeichnung im Wort: ohne Leerraum entfernen, alle übrigen Tags trennen
 
 
+LEER = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"}
+
+
+class Versteckt(HTMLParser):
+    """Bereiche (Anfang, Ende) der Elemente mit dem Attribut hidden – ohne JavaScript unsichtbar (z. B. der Inhalt des
+    Server-Steckbriefs bis zum Laden der Kurse, SEO-09). Verschachtelte Elemente gleichen Namens zählt ein Stapel mit."""
+
+    def __init__(self, text):
+        super().__init__(convert_charrefs=False)
+        self.text, self.stapel, self.bereiche, self.offen = text, [], [], None
+        self.zeilen = [0] + [m.end() for m in re.finditer("\n", text)]
+        self.feed(text)
+        self.close()
+        if self.offen:
+            self.bereiche.append((self.offen[1], len(text)))
+
+    def _pos(self):
+        z, s = self.getpos()
+        return self.zeilen[z - 1] + s
+
+    def handle_starttag(self, tag, attrs):
+        if tag in LEER:
+            return
+        if self.offen is None and any(k == "hidden" for k, _ in attrs):
+            self.offen = (len(self.stapel), self._pos())
+        self.stapel.append(tag)
+
+    def handle_startendtag(self, tag, attrs):
+        pass   # <x … /> hat keinen Inhalt
+
+    def handle_endtag(self, tag):
+        if tag not in self.stapel:
+            return
+        while self.stapel.pop() != tag:
+            pass
+        if self.offen and len(self.stapel) <= self.offen[0]:
+            ende = self.text.find(">", self._pos())
+            self.bereiche.append((self.offen[1], ende + 1 if ende >= 0 else len(self.text)))
+            self.offen = None
+
+
+def ohne_versteckte(s):
+    if not re.search(r"<[a-z][^>]*\shidden(?=[\s=/>])", s, re.I):
+        return s
+    for a, b in reversed(Versteckt(s).bereiche):
+        s = s[:a] + " " + s[b:]
+    return s
+
+
 def klartext(s):
-    """Sichtbarer Text eines HTML-Stücks: ohne Skripte, Stile, Vorlagen und Kommentare."""
+    """Sichtbarer Text eines HTML-Stücks: ohne Skripte, Stile, Vorlagen, Kommentare und (seit 09.10.2026) ohne Bereiche mit
+    dem Attribut hidden."""
     s = re.sub(r"<(script|style|template)\b[^>]*>.*?</\1\s*>", " ", s, flags=re.S | re.I)
+    s = ohne_versteckte(s)
     s = re.sub(r"<!--.*?-->", " ", s, flags=re.S)
     s = re.sub(rf"</?(?:{INLINE})\b[^>]*>", "", s, flags=re.I)
     s = re.sub(r"<[^>]+>", " ", s)
@@ -218,6 +391,7 @@ AUSNAHMEN_ZUSAGE = [
     ("*", "AAA (beste"),                    # Ratingskala
     ("*", "die beste Note"),                # Ratingskala
     ("*", "das beste der von ihr anerkannten"),   # EZB-Regel: bestes Rating der anerkannten Agenturen
+    ("*", "ist die beste Gruppe"),          # Ratingskala: Bonität laut EZB im Server-Steckbrief (seit 09.10.2026 geprüft)
     ("*", "sich für ihn lohnt"),            # Kündigung: Abwägung des Emittenten, keine Aussage über den Anleger
 ]
 WORTSCHATZ = [   # (Fundwort → Hauswort), im sichtbaren Text
@@ -250,11 +424,15 @@ geaendert = {}    # Datei → dateModified (für Sitemap und Daten-Stand)
 STAND_STELLE = re.compile(r'<(p|span)\b[^>]*?\b(?:id="(?:datastand|itab-stand)"|data-bv="stand")[^>]*>(.*?)</\1>', re.S)
 
 
-def seo_pruefung(f, html):
-    """SEO-Warnungen einer Seite (nur Seiten für Suchmaschinen)."""
+def seo_pruefung(f, html, adresse=None):
+    """SEO-Warnungen einer Seite (nur Seiten für Suchmaschinen). adresse: Server-Steckbrief, ausgeliefert unter dieser
+    Adresse (anleihe.html?isin=…) – sie steht dann in den Meldungen, gilt als kanonische Adresse und als Schlüssel für die
+    Sitemap-Prüfung."""
     kopf = html.split("</head>")[0]
     if f == "404.html" or re.search(r'<meta name="robots" content="[^"]*noindex', kopf):
         return
+    if adresse:
+        f = adresse
     eigen = BASE + ("" if f == "index.html" else f)
     m = re.search(r"<title>(.*?)</title>", kopf, re.S)
     titel = htmllib.unescape(m.group(1)).strip() if m else ""
@@ -270,7 +448,7 @@ def seo_pruefung(f, html):
     m = LADEN.search(sichtbar)
     if m:
         fund("Ladetext im ausgelieferten HTML (ohne JavaScript sichtbar)", f, ausschnitt(sichtbar, m))
-    if re.search(r'<link rel="canonical"', kopf):
+    if re.search(r'<link rel="canonical"', kopf) and not adresse:   # Steckbrief: Vorlage anleihe.html setzt ihn je ISIN (JS_CANONICAL)
         skripte = "".join(re.findall(r"<script\b(?![^>]*\bsrc=)(?![^>]*application/(?:ld\+)?json)[^>]*>(.*?)</script>", html, re.S))
         for src in re.findall(r'<script\b[^>]*\bsrc="(?:\./|/)?([\w.-]+\.js)(?:\?[^"]*)?"', html):
             if os.path.isfile(os.path.join(site, src)):
@@ -379,11 +557,11 @@ def seo_pruefung(f, html):
              f"{d:%d.%m.%Y} gegen {b:%d.%m.%Y}")
 
 
-for f in sorted(seiten):
+for f in sorted(seiten) + list(steckbriefe):
     try:   # die Zusatzprüfung darf den Deploy nie stoppen – ein unerwarteter Aufbau wird nur gemeldet
-        seo_pruefung(f, open(os.path.join(site, f), encoding="utf-8").read())
+        seo_pruefung(f, lies_html(f), steckbriefe.get(f))
     except Exception as e:
-        fund("SEO-Prüfung übersprungen (unerwarteter Aufbau)", f, f"{type(e).__name__}: {e}")
+        fund("SEO-Prüfung übersprungen (unerwarteter Aufbau)", steckbriefe.get(f, f), f"{type(e).__name__}: {e}")
 
 
 # Sitemap: lastmod darf nicht jünger sein als das Änderungsdatum der Seite
@@ -398,6 +576,9 @@ if os.path.isfile(sm):
 if ohne_datum:
     hinweise.append(f"{len(ohne_datum)} Artikel ohne datePublished im JSON-LD (z. B. {', '.join(ohne_datum[:3])})")
 
+for meldung, wo in sb_fehler.items():
+    fehler.append(f"Server-Steckbriefe: {meldung} ({len(wo)}×, z. B. {', '.join(wo[:3])})")
+
 for w in warnungen:
     print(f"::warning::{w}")
 for regel, liste in funde.items():
@@ -408,7 +589,7 @@ for h in hinweise:
 for e in fehler:
     print(f"::error::{e}")
 anzahl = len(warnungen) + sum(len(x) for x in funde.values())
-print(f"{len(seiten)} Seiten geprüft – {len(fehler)} Fehler, {anzahl} Warnung{'' if anzahl == 1 else 'en'}"
+print(f"{len(seiten)} Seiten und {len(steckbriefe)} Server-Steckbriefe geprüft – {len(fehler)} Fehler, {anzahl} Warnung{'' if anzahl == 1 else 'en'}"
       + (f" (davon {anzahl - len(warnungen)} in {len(funde)} Sammelzeile{'' if len(funde) == 1 else 'n'})" if funde else "")
       + (f", {len(hinweise)} Hinweis{'' if len(hinweise) == 1 else 'e'}" if hinweise else ""))
 sys.exit(1 if fehler else 0)
