@@ -26,6 +26,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=4">
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
 <meta name="theme-color" content="#39FF14">
+<script>/* Suchbegriff oder Filter in der Adresse: Platz für die Treffer gleich reservieren (CLS, seit 09.10.2026, Technik-Test 08.10.2026 T-13) */(function(){var p=new URLSearchParams(location.search);if(p.get("q")||["solide","art","land","w","kupon","bon","zins","rest","kue","rendite","vol","pruef","stk","fv","fb","rv","rb"].some(function(k){return p.get(k);}))document.documentElement.classList.add("mit-suche");})();</script>
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
 <link rel="stylesheet" href="filter.css">
@@ -48,7 +49,8 @@
   .kpis thead th { vertical-align: bottom; font-size: 12.5px; letter-spacing: 0; text-transform: none; font-weight: 600; color: var(--text); }
   .kpis thead th .sortbtn { position: relative; }   /* Grundform: base.css */
   .kpis thead th .sortbtn::after { content: "↕"; font-size: 12px; opacity: 0; position: absolute; left: 100%; margin-left: 2px; transition: opacity .12s; }
-  .kpis thead th .sortbtn:hover::after, .kpis thead th .sortbtn:focus-visible::after { opacity: 0.5; }
+  .kpis thead th .sortbtn:hover::after { opacity: 0.5; }
+  .kpis thead th .sortbtn:focus-visible::after { opacity: 0.5; }   /* getrennt: alte Browser ohne :focus-visible verwarfen sonst auch :hover (T-138) */
   .kpis thead th[aria-sort] .sortbtn::after { position: static; margin-left: 0; }
   .kpis th, .kpis td { padding: 9px 7px 9px 0; }
   .kpis th[scope=row] { font-weight: 400; }
@@ -56,9 +58,9 @@
   /* Suchfeld mit Lupe (UX 29.09.2026) */
   .suche { position: relative; max-width: 760px; margin: 4px 0 0; scroll-margin-top: calc(var(--kopf, 90px) + 16px); }
   .suche svg { position: absolute; left: 18px; top: 50%; width: 19px; height: 19px; transform: translateY(-50%); color: var(--green-text); pointer-events: none; }
-  .suche input[type=search] { width: 100%; font-family: var(--sans); font-size: 17px; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.25); border-radius: 999px; padding: 14px 20px 14px 48px; box-shadow: 0 1px 2px rgba(26,26,25,0.04); transition: border-color .15s, box-shadow .15s; }
-  .suche input[type=search]::placeholder { color: #8E8D86; opacity: 1; }
-  .suche input[type=search]:hover { border-color: rgba(44,44,42,0.4); }
+  .suche input[type=search] { width: 100%; font-family: var(--sans); font-size: 17px; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.55); border-radius: 999px; padding: 14px 20px 14px 48px; box-shadow: 0 1px 2px rgba(26,26,25,0.04); transition: border-color .15s, box-shadow .15s; }
+  .suche input[type=search]::placeholder { color: #6F6E68; opacity: 1; }   /* Rand 3,9:1 und Platzhalter 5,1:1 (seit 09.10.2026, T-116/T-117; vorher 1,6:1 und 3,3:1) */
+  .suche input[type=search]:hover { border-color: rgba(26,26,25,0.8); }
   .suche input[type=search]:focus-visible { outline: 0; border-color: var(--green-text); box-shadow: 0 0 0 3px var(--green-tint-2); }
   /* Statuszeile: Trefferzahl fett, beim Laden ein ruhiger Kreis */
   .status { margin-top: 16px; font-size: 14px; color: var(--text); }
@@ -75,6 +77,12 @@
   .themen { margin-top: 14px; }   /* „Passende Themen“: Lernseiten und Glossar zum Suchbegriff (seit 03.10.2026) */
   .themen[hidden] { display: none; }
   #treffer { margin-top: 6px; }
+  /* Kein Springen beim Laden einer Suche (seit 09.10.2026, Technik-Test 08.10.2026 T-13; vorher CLS 0,21–0,30 am Desktop): Filterleiste
+     mit ihrer fertigen Höhe; mit Suchbegriff oder Filter in der Adresse (Klasse mit-suche, Skript im Kopf) bleiben die Beispiele weg und
+     die Trefferliste hält bis zum unteren Bildrand Platz (Skript nach #treffer) – zeige() nimmt beides zurück, wenn es nichts zu zeigen gibt */
+  #filterbox { min-height: 79px; }
+  .mit-suche #bsp { display: none; }
+  .mit-suche #treffer[hidden] { display: block; visibility: hidden; }
   /* Unter der Liste: Trefferhinweis wiederholen, Rückweg zu Suche und Filtern */
   .status-unten { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin-top: 14px; font-size: 14px; color: var(--text); }
   .status-unten[hidden] { display: none; }
@@ -135,6 +143,7 @@
      dieselben Zellen, per CSS umgebrochen (Name oben, darunter drei Spalten mit Beschriftung), Sortierknöpfe als Chips über der Liste,
      Kurzansicht hängt unter ihrer Karte. Kein Scroll-Container, kein Querwischen. Ab 601 px weiter die Tabelle mit Querwischen. */
   @media (max-width: 600px) {
+    #filterbox { min-height: 192px; }
     #treffer.table-scroll { overflow: visible; background: none; }
     #treffer.table-scroll::before { content: none; }
     #treffer table.kpis { display: block; min-width: 0; width: 100%; margin-top: 12px; font-size: 14px; }
@@ -161,6 +170,10 @@
     .kpis tbody tr.zeile { column-gap: 0 !important; position: relative; }
     .kpis tbody tr.zeile > td[data-l="Kurs"], .kpis tbody tr.zeile > td[data-l="Bonität"], .kpis tbody tr.zeile > td[data-l="Stückelung"] { border-top: 1px solid var(--rule); padding-top: 9px; }
     .kpis tbody tr.zeile > td.aktion { position: absolute; top: 8px; right: 8px; width: auto; padding: 0 !important; }
+    /* Stern antippbar (seit 09.10.2026, Technik-Test 08.10.2026 T-14): der Name (z-index 1 aus der Tabellenansicht, wirkt im Raster weiter)
+       lag über dem Stern, der Tipp öffnete die Kurzansicht. Der Konto-Hinweis zum Merken erscheint als Sprechblase unter dem Stern. */
+    .kpis tbody tr.zeile > th { z-index: auto; }
+    .kpis tbody tr.zeile > td.aktion .merk-hinweis { position: absolute; top: calc(100% + 4px); right: 0; width: max-content; max-width: min(300px, calc(100vw - 64px)); background: #fff linear-gradient(rgba(57,255,20,0.12), rgba(57,255,20,0.12)); border: 1px solid var(--green-line); box-shadow: var(--shadow); }
     .kpis tbody tr.zeile.offen { border-color: var(--green-line); border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
     .kpis tbody tr.zeile.offen > * { background: none; }
     .kpis tbody tr.zdet { display: block; margin-top: -10px; }
@@ -169,7 +182,7 @@
   }
   /* Grundfilter (bis 01.10.2026 abends „Solide Auswahl“; Nutzerwunsch): ein Schalter über den Filtern, sechs Grundregeln für Privatanleger als Vorfilter */
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Anleihen-Suche","description":"Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen: Suche nach Name, ISIN oder WKN, Filter nach Land, Währung, Laufzeit.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-04","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihen-suche.html","isBasedOn":{"@type":"Dataset","name":"Financial Instruments Reference Data System (FIRDS)","creator":{"@type":"Organization","name":"European Securities and Markets Authority (ESMA)"},"url":"https://registers.esma.europa.eu/publication/searchRegister?core=esma_registers_firds"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Anleihen-Suche","description":"Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen: Suche nach Name, ISIN oder WKN, Filter nach Land, Währung, Laufzeit.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-09","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihen-suche.html","isBasedOn":{"@type":"Dataset","name":"Financial Instruments Reference Data System (FIRDS)","creator":{"@type":"Organization","name":"European Securities and Markets Authority (ESMA)"},"url":"https://registers.esma.europa.eu/publication/searchRegister?core=esma_registers_firds"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.bondarium.de/anleihen.html"},{"@type":"ListItem","position":3,"name":"Anleihen-Suche","item":"https://www.bondarium.de/anleihen-suche.html"}]}</script>
 </head>
 <body>
@@ -310,6 +323,7 @@
       <tbody></tbody>
     </table>
     </div>
+    <script>(function(){var t=document.getElementById("treffer");if(document.documentElement.classList.contains("mit-suche"))t.style.minHeight=Math.max(0,Math.ceil(innerHeight-t.getBoundingClientRect().top))+"px";})();</script>
     <p class="status-unten" id="status2" hidden></p>
 
 
@@ -333,7 +347,7 @@
       <div class="quellen-body">
         <p><strong>Quelle.</strong> ESMA, Financial Instruments Reference Data System (FIRDS) – für diese Seite auf Anleihen an deutschen Börsen gefiltert und aufbereitet, die Werte selbst unverändert (Datenprüfung: Kupon und Fälligkeit jeder Anleihe werden gegen den Kurznamen im Register und gegen ihren Namen geprüft; bei Abweichung steht „Daten?“ am Namen, der Widerspruch in der Kurzansicht, und es gibt keine Rendite); die ESMA steht in keiner Verbindung zu dieser Seite und prüft sie nicht. Art und Land nach dem LEI-Register (GLEIF). Kurse: Deutsche Börse (Börse Frankfurt, Tradegate) – die Nachhandelsdaten, die jeder Handelsplatz nach der EU-Finanzmarktverordnung MiFIR 15 Minuten verzögert kostenlos veröffentlichen muss; Bundeswertpapiere: Deutsche Bundesbank. Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert – beide in der Währung der Anleihe. Der Filter „Volumen“ trennt bei 100 Mio.: Darunter stellt die Börse oft nur kleine Stückzahlen, ein Verkauf vor der Fälligkeit kann dauern – das Volumen ist ein Anhaltspunkt für die Handelbarkeit, keine Garantie.</p>
         <p><strong>Alle Anleihen mit Kurs an deutschen Börsen.</strong> Grundlage ist das Register der europäischen Wertpapieraufsicht ESMA, in dem jeder Handelsplatz der EU seine Wertpapiere meldet. Aufgenommen ist jede Anleihe, die in Stuttgart, Frankfurt, auf Xetra, in München (auch gettex), Berlin, Düsseldorf, Hamburg, Hannover oder bei Tradegate gehandelt wird, weder fällig noch vom Handel genommen ist und in den letzten zwei Wochen einen Kurs hatte – Staatsanleihen, öffentliche Anleihen und Unternehmensanleihen einschließlich Medium-Term Notes. Nicht enthalten sind Zertifikate und andere strukturierte Produkte, Wandelanleihen, verbriefte Anleihen (ABS/MBS) und Geldmarktpapiere. Das Register wird wöchentlich übernommen.</p>
-        <p><strong>Suche und Filter.</strong> Jedes Wort muss im Namen, im Emittenten, in der ISIN, der Währung, im Kupon oder im Fälligkeitsjahr vorkommen – „Bund 2050“ findet die Bundesanleihen mit Fälligkeit 2050. Bei deutschen ISINs ist die WKN Teil der ISIN und damit ebenfalls suchbar. Innerhalb eines Filters gilt „oder“, zwischen den Filtern „und“; die Zahl neben jeder Auswahl zeigt, wie viele Anleihen sie mit den übrigen Einstellungen ergibt. Suchbegriff und Filter stehen in der Adresszeile – so lässt sich jede Auswahl als Link teilen. Angezeigt werden höchstens 200 Treffer.</p>
+        <p><strong>Suche und Filter.</strong> Jedes Wort muss im Namen, im Emittenten, in der ISIN, der Währung, im Kupon oder im Fälligkeitsjahr vorkommen – „Bund 2050“ findet die Bundesanleihen mit Fälligkeit 2050. Bei deutschen ISINs ist die WKN Teil der ISIN und damit ebenfalls suchbar. Innerhalb eines Filters gilt „oder“, zwischen den Filtern „und“; die Zahl neben jeder Auswahl zeigt, wie viele Anleihen sie mit den übrigen Einstellungen ergibt. Suchbegriff und Filter stehen in der Adresszeile – so lässt sich jede Auswahl als Link teilen. Angezeigt werden zuerst 200 Treffer, weitere über „Weitere … anzeigen“ am Ende der Liste.</p>
         <p><strong>Kündigung.</strong> Von uns eingeordnet aus dem Namen – die Klammer „Ausgabejahr(erstes Kündigungsjahr/Fälligkeitsjahr)“, „Und.“ für unbefristet – und der Rückzahlungsart im ESMA-Register; der Name hat Vorrang, weil das Register die Rückzahlungsart oft ungenau meldet. Kündigungsjahr gleich Ausgabejahr: Make-Whole (bei Fix-to-Float-Anleihen „FLR“ dagegen Termin unklar – der erste echte Kündigungstermin ist meist der erste Zinsanpassungstermin); im letzten Jahr vor der Fälligkeit: kurz vor Fälligkeit; früher: ab festem Termin; ohne Jahr im Namen, aber laut Register kündbar: Termin unklar. Hat der Anleger laut Register ein Kündigungsrecht, steht die Anleihe zusätzlich unter „du kannst kündigen“. Verbindlich sind nur die Anleihebedingungen; die Arten erklärt die Seite <a href="kuendbare-anleihen.html">Kündbare Anleihen</a>.</p>
         <p><strong>Art und Land.</strong> „Staat“ sind Anleihen eines Zentralstaats, „Öffentlich“ solche von Bundesländern, Regionen und Städten, Förderbanken wie der KfW, staatlich garantierten Emittenten und supranationalen Institutionen wie der Europäischen Investitionsbank; alle übrigen – auch Banken und Versicherer – sind „Unternehmen“. Das Land ist der Sitz des Konzerns laut LEI-Register der GLEIF: Anleihen einer Finanzierungstochter zählen zum Land der Konzernmutter – die Mercedes-Benz International Finance B.V. also zu Deutschland, nicht zu den Niederlanden. Supranationale Institutionen stehen unter „International“.</p>
         <p><strong>Kurs.</strong> Der Schlusskurs des letzten Börsentags in Prozent des Nennwerts, jeden Morgen übernommen. Für rund drei Viertel aller Anleihen stellt die Börse Frankfurt täglich einen Kurs fest – meist durch den Spezialisten, auch wenn an diesem Tag niemand gehandelt hat („ohne Umsatz“); gab es Abschlüsse, steht der Umsatz auf dem Steckbrief der Anleihe. Bundeswertpapiere zeigen den Kurs der Deutschen Bundesbank. Ohne Kurs in den letzten zwei Wochen erscheint eine Anleihe nicht in der Suche – das betrifft vor allem Anleihen mit 100.000er-Stückelung und Fremdwährungsanleihen, die an deutschen Börsen kaum gehandelt werden. Sobald die Börse wieder einen Kurs feststellt, ist die Anleihe am nächsten Morgen wieder dabei.</p>
@@ -375,6 +389,9 @@ const T = {
   capped: z => ` – angezeigt in Schritten von ${z.toLocaleString("de-DE")}, weitere am Ende der Liste.`,
   none: "Keine Anleihe gefunden. Tipp: Emittent oder Land und Jahr eingeben, z. B. „Bund 2030“, „Siemens 2029“ oder „Italien 2035“ – oder weniger Wörter und Filter lockern.",
   noneThemen: "Keine Anleihe gefunden. Passende Themen findest du darunter.",
+  // Von über Bis (seit 09.10.2026, T-91): statt des Tipps sagen, woran es liegt – die Felder sind markiert, getauscht wird nichts
+  verkehrt: t => `Keine Anleihe gefunden: Von liegt über Bis (${t}). Bitte die Spanne im Filter prüfen.`,
+  verkehrtFeld: { rest: (v, b) => `Fällig von ${v} bis ${b}`, rendite: (v, b) => `Rendite von ${v} bis ${b}\u00a0%` },
   renditeSort: " · nach Rendite sortiert: zuerst Kurse mit Umsatz am Kurstag, dann Kurse ohne Umsatz (Taxen)",
   error: "Die Anleihe-Daten sind gerade nicht erreichbar. Bitte später erneut versuchen.",
   errorKurse: "Die Kurse sind gerade nicht erreichbar – ohne aktuellen Kurs zeigt die Suche keine Anleihe. Bitte später erneut versuchen.",
@@ -432,7 +449,9 @@ const fmtStk = v => typeof v === "number" ? v.toLocaleString("de-DE", { maximumF
 const norm = s => String(s).normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase();
 // Satzzeichen außer Komma/Punkt trennen Wörter („Mercedes-Benz“ → „mercedes benz“, „(2050)“ → „2050“)
 const woerter = s => norm(s).replace(/[^\p{L}\p{N},.]+/gu, " ").trim();
-const HEUTE = Date.now();
+// „Heute“ = Berliner Kalendertag um 12 Uhr UTC (MC.heuteBerlin, site.js; seit 09.10.2026, Technik-Test 08.10.2026 T-51) – für Restlaufzeit
+// und das Ausblenden fälliger Anleihen; vorher die Uhrzeit des Geräts (am Fälligkeitstag zwischen 0 und 2 Uhr „1 Tag“)
+const HEUTE = MC.heuteBerlin ? MC.heuteBerlin().getTime() : Date.now();
 const jahre = iso => iso ? (new Date(iso + "T12:00:00Z").getTime() - HEUTE) / (365.25 * 86400000) : Infinity;
 // Restlaufzeit lesbar (Tage / Monate / Jahre, site.js); Rückfall: Jahre mit einer Nachkommastelle
 const RL = y => MC.restlaufzeit ? MC.restlaufzeit(y) : `${fmt(Math.max(0, y), 1)} ${L("years")}`;
@@ -456,23 +475,29 @@ const F = MC.anleihenFilter({ box: document.getElementById("filterbox"), art: ()
 const FILTER = F.FILTER;
 
 // ---------- Suche ----------
+// Umschreibung (seit 09.10.2026, Technik-Test 08.10.2026 T-10): ß → ss, ae/oe/ue → a/o/u auf beiden Seiten – „Thueringen“ findet
+// „Thüringen“, „Österreichische Kontrollbank“ die im Register „Oesterreichische …“ geschriebene. Komma und Punkt bleiben (Kupon, Datum).
+const umschr = s => s.replace(/ß/g, "ss").replace(/ae/g, "a").replace(/oe/g, "o").replace(/ue/g, "u");
 function suchtext(r) {
   // ohne toLocaleString (bei 43.000 Anleihen zu langsam): Kupon „4,75“ und „4.75“, Datum „15.08.2050“
   const k = typeof r[4] === "number" ? `${r[4].toFixed(2)} ${r[4].toFixed(3)} ${r[4]}` : r[4] === "var" ? "variabel floater" : "";
   const d = r[5] ? `${r[5].slice(8, 10)}.${r[5].slice(5, 7)}.${r[5].slice(0, 4)}` : "unbefristet";
-  return " " + woerter([r[1], r[0], r[3], k, k.replace(/\./g, ","), d, ART[r[2]], EMI[r[9]] || "", r[12] || ""].join(" ")) + " ";
+  // Nullkupon-Anleihen auch unter „Nullkupon“ und „Zerobond“ (seit 09.10.2026, T-93 – im Namen steht das fast nie)
+  return " " + umschr(woerter([r[1], r[0], r[3], k, k.replace(/\./g, ","), d, ART[r[2]], EMI[r[9]] || "", r[12] || "", r[10] === 2 ? "nullkupon zerobond" : ""].join(" "))) + " ";
 }
 // Alltagswörter auf das Register abbilden (seit 03.10.2026, Nutzertest: „Bundesanleihe“ ergab 0 Treffer – im Register heißt der
 // Emittent „Bundesrep.Deutschland“, die Website selbst schreibt „Bundesanleihe“ über 100-mal)
 const SYNONYME = [[/^bundes(anleihen?|anl|obligation(en)?|obl|schatzanweisung(en)?|wertpapiere?)$|^bobls?$/, "bundesrep"],
   [/^staatsanleihen?$/, "staat"], [/^unternehmensanleihen?$|^firmenanleihen?$/, "unternehmen"]];
 const synonym = t => { for (const [re, w] of SYNONYME) if (re.test(t)) return w; return t; };
-const suchWoerter = q => woerter(q).split(" ").filter(Boolean).map(synonym);
+const suchWoerter = q => woerter(q).split(" ").filter(Boolean).map(w => synonym(umschr(w)));
 // Treffer und Zählungen je Filteroption (F.auswerten, filter.js); der Suchbegriff ist der Vorfilter.
 function auswerten() {
   // Wörter ab 4 Zeichen: irgendwo enthalten (auch in der ISIN, z. B. WKN „110248“);
-  // kürzere nur am Wortanfang – sonst träfe „VW“ jede ISIN mit „VW“.
-  const toks = suchWoerter(S.q).map(t => t.length >= 4 ? t : " " + t);
+  // kürzere nur am Wortanfang – sonst träfe „VW“ jede ISIN mit „VW“. Maßgeblich ist die Länge wie eingegeben, vor der Umschreibung
+  // („Blue“ bleibt ein langes Wort, auch als „blu“).
+  const roh = woerter(S.q).split(" ").filter(Boolean);
+  const toks = suchWoerter(S.q).map((t, i) => roh[i].length >= 4 ? t : " " + t);
   const a = F.auswerten(KEYS, SOL, toks.length ? i => { const h = HAY[i]; return toks.every(t => h.includes(t)); } : null);
   return { hits: a.hits.map(i => IDX[i]), zahl: a.zahl, suche: toks.length > 0 };
 }
@@ -566,8 +591,9 @@ const KEY = {
 function relevanz(list) {
   const toks = suchWoerter(S.q), q = toks.join(" ");
   for (const r of list) {
-    const emi = " " + woerter(EMI[r[9]] || "") + " ", name = " " + woerter(r[1]) + " ", isin = r[0].toLowerCase();
-    let p = isin === q.replace(/ /g, "") || (/^de/.test(isin) && isin.slice(5, 11) === q) ? 10000 : 0;
+    // mit derselben Umschreibung wie Suchtext und Suchwörter (T-10), sonst zählte „Queensland“ nicht mehr als Emittent
+    const emi = " " + umschr(woerter(EMI[r[9]] || "")) + " ", name = " " + umschr(woerter(r[1])) + " ", isin = r[0].toLowerCase();
+    let p = umschr(isin) === q.replace(/ /g, "") || (/^de/.test(isin) && umschr(isin.slice(5, 11)) === q) ? 10000 : 0;
     if (emi.startsWith(" " + q)) p += 400;
     for (const t of toks) p += emi.includes(" " + t) ? 120 : emi.includes(t) ? 60 : name.includes(" " + t) ? 30 : 0;
     r.rel = p + Math.log10((typeof r[6] === "number" ? r[6] : 0) + 1);   // Volumen nur als Gleichstandsregel (höchstens ~12 Punkte)
@@ -575,18 +601,27 @@ function relevanz(list) {
 }
 // Mit Umsatz: Abschluss am Kurstag oder Kurs der Bundesbank – Taxen ohne Umsatz sind keine gehandelten Preise
 const mitUmsatz = r => { const k = KURSE[r[0]]; return !!(k && (k[4] > 0 || k[3] === "B")); };
+// Seit 09.10.2026 (Technik-Test 08.10.2026, T-11): Schlüssel je Zeile nur einmal berechnen, ein gemeinsamer Collator statt
+// localeCompare je Vergleich, Datum (ISO-Text) und Gleichstand ohne Collator – vorher hing das Handy bei 14.000 Treffern
+// 0,9–1,8 s je Sortierung oder Filterwechsel. Reihenfolge unverändert (alle Spalten, beide Richtungen, Relevanz nachgeprüft).
+const COLL = new Intl.Collator("de", { numeric: true });
 function sortiere(list) {
   if (S.col === "rel") relevanz(list);
-  const key = KEY[S.col] || KEY.faellig;
-  return list.sort((a, b) => {
+  const key = KEY[S.col] || KEY.faellig, ren = S.col === "rendite";
+  const iso = S.col === "rest" || S.col === "faellig" || !KEY[S.col];
+  const d = list.map(r => ({ r, k: key(r), u: ren && mitUmsatz(r) }));
+  d.sort((A, B) => {
     // Seit 03.10.2026: nach Rendite zuerst die Kurse mit Umsatz, dann die Taxen (93 % der Euro-Unternehmensanleihen hatten am Kurstag
     // keinen Umsatz; oben standen Renditen wie 6,15 % aus Taxen, die niemand bekommt – Nutzertest)
-    if (S.col === "rendite") { const ua = mitUmsatz(a), ub = mitUmsatz(b); if (ua !== ub) return ua ? -1 : 1; }
-    const x = key(a), y = key(b);
+    if (ren && A.u !== B.u) return A.u ? -1 : 1;
+    const x = A.k, y = B.k;
     if (x == null || y == null) { if (x != null) return -1; if (y != null) return 1; }   // ohne Wert immer ans Ende
-    const c = x == null ? 0 : typeof x === "string" ? x.localeCompare(y, "de", { numeric: true }) : x - y;
-    return c * S.dir || a[5].localeCompare(b[5]) || a[0].localeCompare(b[0]);
+    const c = x == null ? 0 : typeof x === "string" ? (iso ? (x < y ? -1 : x > y ? 1 : 0) : COLL.compare(x, y)) : x - y;
+    const a = A.r, b = B.r;
+    return c * S.dir || (a[5] < b[5] ? -1 : a[5] > b[5] ? 1 : 0) || (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
   });
+  for (let i = 0; i < d.length; i++) list[i] = d[i].r;   // an Ort und Stelle: zeige() nutzt die Rückgabe nicht
+  return list;
 }
 const kDatum = k => KTAGE[k[2]] || "";
 const fmtUmsatz = (u, w) => `${fmt(u, 0)} ${w}`;
@@ -666,6 +701,8 @@ function kopieren(b) {
 
 
 // ---------- Anzeige ----------
+// Platzhalter für die Treffer (Klasse mit-suche und Mindesthöhe, T-13) zurücknehmen: nichts zu zeigen oder Daten nicht ladbar
+const platzWeg = () => { document.documentElement.classList.remove("mit-suche"); document.getElementById("treffer").style.minHeight = ""; };
 function zeige() {
   merkeURL();
   zeigeThemen();
@@ -676,6 +713,7 @@ function zeige() {
   const aus = suche || F.gesetzt();
   document.getElementById("bsp").hidden = aus;
   const unten = document.getElementById("status2");
+  if (!aus || !hits.length) platzWeg();
   if (!aus) { box.hidden = true; unten.hidden = true; status.innerHTML = L("ready")(IDX.length.toLocaleString("de-DE")); return; }
   box.hidden = hits.length === 0;
   // Sortierung: mit Suchbegriff nach Übereinstimmung, sonst längste Restlaufzeit zuerst – bis jemand eine Spalte wählt (S.eigen)
@@ -686,7 +724,9 @@ function zeige() {
   // Erst 200 Zeilen, weitere in Schritten von 200 über den Knopf unter der Liste (seit 03.10.2026, Nutzertest: vorher war bei 200 Schluss)
   S.hits = hits; S.zeig = Math.min(MAX, hits.length);
   box.querySelector("tbody").innerHTML = hits.slice(0, S.zeig).map(zeile).join("");
-  status.innerHTML = hits.length ? L("hits")(hits.length.toLocaleString("de-DE")) + (S.col === "rel" && hits.length > 1 ? L("relevanz") : S.col === "rendite" && hits.length > 1 ? L("renditeSort") : "") + (hits.length > MAX ? L("capped")(MAX) : "") : TH ? L("noneThemen") : L("none");
+  const verk = hits.length ? [] : F.spanneVerkehrt ? F.spanneVerkehrt() : [];
+  status.innerHTML = hits.length ? L("hits")(hits.length.toLocaleString("de-DE")) + (S.col === "rel" && hits.length > 1 ? L("relevanz") : S.col === "rendite" && hits.length > 1 ? L("renditeSort") : "") + (hits.length > MAX ? L("capped")(MAX) : "")
+    : verk.length ? MC.esc(L("verkehrt")(verk.map(k => L("verkehrtFeld")[k](...F.bereichTexte(k))).join("; "))) : TH ? L("noneThemen") : L("none");
   untenZeile();
   for (const th of box.querySelectorAll("thead th[data-col]")) {
     if (th.dataset.col === S.col) th.setAttribute("aria-sort", S.dir > 0 ? "ascending" : "descending");
@@ -734,25 +774,30 @@ function laden() {
   ladeLauf = json("suchindex.json")
     .catch(err => { console.warn("suchindex.json nicht geladen – Rückfall auf anleihen-index.json und anleihen-kurse.json:", err);
       return Promise.all([json("anleihen-index.json"), json("anleihen-kurse.json")]).then(([ix, ku]) => ausEinzeldateien(ix, ku)); })
-    .then(d => {
+    .then(async d => {
       KTAGE = d.tage || []; KSTAND = d.kstand || ""; BOERSEN = d.boersen || {}; ART = d.art || ART; EMI = d.emittenten || []; EZB = d.ezb || "";
-      if (!KSTAND) { st.classList.remove("laedt"); st.textContent = L("errorKurse"); return; }
+      if (!KSTAND) { st.classList.remove("laedt"); st.textContent = L("errorKurse"); platzWeg(); return; }
       // Bereits fällige Anleihen (Fälligkeit heute oder früher) ausblenden – die Stammdaten kommen wöchentlich (Nutzerbefund 25.09.2026);
-      // nur Anleihen mit Kurs höchstens AKTUELL_TAGE vor dem Kursstand
+      // nur Anleihen mit Kurs höchstens AKTUELL_TAGE vor dem Kursstand. „Heute“ ist der Berliner Kalendertag (HEUTE, oben).
       const heute = new Date(HEUTE).toISOString().slice(0, 10);
       const grenze = new Date(Date.parse(KSTAND + "T12:00:00Z") - AKTUELL_TAGE * 86400000).toISOString().slice(0, 10);
       KURSE = {};
       for (const r of d.rows) KURSE[r[0]] = [r[15], r[16], r[17], r[18], r[19], null, r[20], r[21]];
-      IDX = d.rows.filter(r => (!r[5] || r[5] > heute) && kDatum(KURSE[r[0]]) >= grenze);
-      HAY = IDX.map(suchtext);
-      KEYS = IDX.map(F.keys);
-      SOL = IDX.map(F.solideRegel);
+      // Suchtext, Filterschlüssel und Grundregeln in Portionen zu 2.000 Zeilen (seit 09.10.2026, Technik-Test 08.10.2026 T-12): am Stück
+      // blockierte das eine halbe Sekunde am Handy, Tippen und Klicks kommen jetzt dazwischen dran. IDX erst am Ende setzen – zeige()
+      // und filter.js (bereit) prüfen IDX, vorher wären HAY und KEYS halb gefüllt.
+      const idx = d.rows.filter(r => (!r[5] || r[5] > heute) && kDatum(KURSE[r[0]]) >= grenze), hay = [], keys = [], sol = [];
+      for (let i = 0; i < idx.length; i += 2000) {
+        for (const r of idx.slice(i, i + 2000)) { hay.push(suchtext(r)); keys.push(F.keys(r)); sol.push(F.solideRegel(r)); }
+        await new Promise(r => setTimeout(r));
+      }
+      IDX = idx; HAY = hay; KEYS = keys; SOL = sol;
       F.daten(KEYS);   // Auswahlfelder bauen; Filterwerte aus der Adresse, die es nicht (mehr) gibt, fallen weg
       st.classList.remove("laedt");
       document.getElementById("datastand").textContent = L("stand")(fmtDate(d.stand), KSTAND ? fmtDate(KSTAND) : "");
       zeige();
     })
-    .catch(err => { console.warn("Anleihe-Daten nicht geladen:", err); st.classList.remove("laedt"); st.textContent = L("error"); ladeLauf = null; });
+    .catch(err => { console.warn("Anleihe-Daten nicht geladen:", err); st.classList.remove("laedt"); st.textContent = L("error"); platzWeg(); ladeLauf = null; });
   return ladeLauf;
 }
 

@@ -34,6 +34,8 @@
      F.aktiv()            Filter mit Auswahl; F.gesetzt() = irgendein Filter, ein Von/Bis-Feld oder der Grundfilter
      F.bereichLesen(k, von, bis), F.bereichTexte(k)   Von/Bis-Felder („rest“ = Fälligkeit, „rendite“) setzen bzw. als Text lesen
                           (für die Adresse); F.keys(r) hängt dafür Fälligkeit und angezeigte Rendite an die Filterschlüssel an
+     F.spanneVerkehrt()   Von/Bis-Felder, bei denen Von über Bis liegt (["rest"], ["rendite"] oder []) – beide Felder sind dann
+                          als ungültig markiert; die Seite sagt es statt „Keine Anleihe gefunden“
      F.zuruecksetzen()    alles löschen (ohne onChange)
      F.mehr(auf)          „Weitere Filter“ auf- oder zuklappen */
 (function (MC) {
@@ -45,7 +47,9 @@
   const NAMEN = (() => { try { return { land: new Intl.DisplayNames(["de"], { type: "region" }), w: new Intl.DisplayNames(["de"], { type: "currency" }) }; } catch (e) { return {}; } })();
   const landName = c => c === "INT" ? "International (supranational)" : ((NAMEN.land && (() => { try { return NAMEN.land.of(c); } catch (e) { return ""; } })()) || c);
   const wName = c => { try { const n = NAMEN.w && NAMEN.w.of(c); return n && n !== c ? `${c} · ${n}` : c; } catch (e) { return c; } };
-  const HEUTE = Date.now();
+  // „Heute“ ist der Berliner Kalendertag (MC.heuteBerlin, site.js; seit 09.10.2026, Technik-Test 08.10.2026 T-51) – vorher Uhrzeit des
+  // Geräts: zwischen 0 und 2 Uhr und in fernen Zeitzonen eine andere Restlaufzeit als im Steckbrief
+  const HEUTE = MC.heuteBerlin ? MC.heuteBerlin().getTime() : Date.now();
   const jahre = iso => iso ? (new Date(iso + "T12:00:00Z").getTime() - HEUTE) / (365.25 * 86400000) : Infinity;
   const bucket = (x, grenzen) => { for (const [g, k] of grenzen) if (x <= g) return k; return null; };
   // Kündigung je Anleihe (Regel in site.js); ohne site.js null = nicht einstufbar
@@ -136,7 +140,9 @@
         kurz: v => ({ n: "nein", m: "Make-Whole", p: "kurz vor Ende", t: "fester Termin", e: "unbefristet", u: "unklar", a: "Put" })[v] || v,
         key: r => { const o = kueVon(r); return o ? (o.put ? [o.k, "a"] : o.k) : null; }, hintHtml: () => TXT.hint.kue },
       { k: "rendite", opts: () => [["a", "unter 1 %"], ["b", "1 bis unter 2 %"], ["c", "2 bis unter 3 %"], ["d", "3 bis unter 4 %"], ["e", "4 % und mehr"]],
-        key: r => { const y = rendite(r); return y != null ? bucket(y, [[0.999999, "a"], [1.999999, "b"], [2.999999, "c"], [3.999999, "d"], [Infinity, "e"]]) : null; },   // wie angezeigt (Anzeige-Schutz)
+        // Stufe nach der angezeigten Rendite – Anzeige-Schutz und auf zwei Stellen gerundet wie in der Liste (seit 09.10.2026, Technik-Test
+        // 08.10.2026 T-41: „4,00 %“ stand vorher unter „3 bis unter 4 %“)
+        key: r => { const y = rendite(r); if (y == null) return null; const w = Math.round(y * 100) / 100; return w < 1 ? "a" : w < 2 ? "b" : w < 3 ? "c" : w < 4 ? "d" : "e"; },
         hint: () => TXT.hint.rendite(kstand() ? fmtDate(kstand()) : "–") },
       // Volumen (seit 27.09.2026): ausgegebener Nennbetrag in der Währung der Anleihe – Näherung für die Handelbarkeit;
       // eine Grenze genügt: unter 100 Mio. ist an deutschen Börsen selten ein belastbarer Markt, darüber ändert sich bis 1 Mrd. wenig
@@ -175,6 +181,15 @@
       b[w] = v === null ? "" : v;
       return v !== null;
     }
+    // Von über Bis (seit 09.10.2026, Technik-Test 08.10.2026 T-91): ergibt immer 0 Treffer – beide Felder als ungültig markieren und
+    // den Zustand nach außen geben (F.spanneVerkehrt). Nicht still tauschen: die Eingabe gehört dem Nutzer.
+    const verkehrt = k => { const b = bereich[k]; return b.von !== "" && b.bis !== "" && b.von > b.bis; };
+    // Feld ungültig: Text, der sich nicht lesen ließ, oder Von über Bis
+    const ungueltig = (k, w) => { const b = bereich[k]; return (b[w === "von" ? "tv" : "tb"] !== "" && b[w] === "") || verkehrt(k); };
+    function markieren(k) {
+      const g = grp(k); if (!g) return;
+      g.querySelectorAll(".fber input").forEach(i => { if (ungueltig(k, i.classList.contains("fber-von") ? "von" : "bis")) i.setAttribute("aria-invalid", "true"); else i.removeAttribute("aria-invalid"); });
+    }
     function bereichLeeren(k) { Object.assign(bereich[k], { von: "", bis: "", tv: "", tb: "" }); const g = grp(k); if (g) g.querySelectorAll(".fber input").forEach(i => { i.value = ""; i.removeAttribute("aria-invalid"); }); }
     function bereichText(k) {
       const b = bereich[k], e = BEREICHE[k].datum ? "" : "\u00a0%";
@@ -210,7 +225,7 @@
       } else opts = f.opts();
       f.namen = new Map(opts.map(o => [o[0], o[1]]));
       const B = BEREICHE[f.k], bf = bereich[f.k];
-      const feld = (w, i) => `<input type="text" class="fber-${w}" inputmode="${B.datum ? "numeric" : "decimal"}" autocomplete="off" placeholder="${B.ph[i]}" value="${esc(w === "von" ? bf.tv : bf.tb)}" aria-label="${B.datum ? (w === "von" ? "Fällig ab" : "Fällig bis") + " (Monat und Jahr)" : (w === "von" ? "Rendite ab" : "Rendite bis") + " in Prozent"}">`;
+      const feld = (w, i) => `<input type="text" class="fber-${w}" inputmode="${B.datum ? "numeric" : "decimal"}" autocomplete="off" placeholder="${B.ph[i]}" value="${esc(w === "von" ? bf.tv : bf.tb)}"${ungueltig(f.k, w) ? ' aria-invalid="true"' : ""} aria-label="${B.datum ? (w === "von" ? "Fällig ab" : "Fällig bis") + " (Monat und Jahr)" : (w === "von" ? "Rendite ab" : "Rendite bis") + " in Prozent"}">`;
       p.innerHTML =
         (f.k === "land" ? `<input type="search" class="fsuche" placeholder="${TXT.landSuche}" aria-label="${TXT.landSuche}">` : "") +
         (B ? `<div class="fber" data-b="${f.k}"><span class="fber-l">${B.label}</span>${feld("von", 0)}<span class="fber-s">bis</span>${feld("bis", 1)}${B.datum ? "" : '<span class="fber-s">%</span>'}<p class="fber-h">${esc(B.hint)}</p></div>` : "") +
@@ -300,8 +315,8 @@
       const k = i.closest(".fber").dataset.b, w = i.classList.contains("fber-von") ? "von" : "bis";
       const v = BEREICHE[k].datum ? datumLesen(i.value, w === "bis") : zahlLesen(i.value);
       if (nurGueltig && v === null) return;
-      const ok = bereichSetzen(k, w, i.value);
-      if (ok) i.removeAttribute("aria-invalid"); else i.setAttribute("aria-invalid", "true");
+      bereichSetzen(k, w, i.value);
+      markieren(k);   // dieses Feld und – bei Von über Bis – auch das andere
       onChange();
     }
     let berT = 0;
@@ -320,6 +335,10 @@
       for (const o of s.parentElement.querySelectorAll(".fopt")) o.hidden = q !== "" && !o.dataset.n.includes(q) && !o.dataset.v.toLowerCase().includes(q);
     });
     document.addEventListener("click", e => { if (offen && !e.target.closest(".fgrp")) panel(offen, false); });
+    // iPhone/iPad schicken beim Tipp auf eine Fläche ohne Klick-Hörer (Text, Überschrift) kein click – die Tafel blieb dann offen.
+    // Deshalb dieselbe Regel schon beim Aufsetzen des Fingers (seit 09.10.2026, Technik-Test 08.10.2026 T-144). Die Tafel liegt über dem
+    // Inhalt (position: absolute), Zuklappen verschiebt also nichts unter dem Finger.
+    document.addEventListener("pointerdown", e => { if (e.pointerType === "touch" && offen && e.target.closest && !e.target.closest(".fgrp")) panel(offen, false); });
     document.addEventListener("keydown", e => {
       if (e.key !== "Escape" || !offen) return;
       const k = offen; panel(k, false); grp(k).querySelector(".fbtn").focus();
@@ -330,6 +349,7 @@
       gesetzt: () => aktiv().length > 0 || solide || bereichIrgend(),
       bereichLesen: (k, von, bis) => { if (!bereich[k]) return; bereichSetzen(k, "von", von || ""); bereichSetzen(k, "bis", bis || ""); },
       bereichTexte: k => bereich[k] ? [bereich[k].von !== "" ? bereich[k].tv : "", bereich[k].bis !== "" ? bereich[k].tb : ""] : ["", ""],
+      spanneVerkehrt: () => Object.keys(bereich).filter(verkehrt),
       nebenAktiv: () => FILTER.some(f => sel[f.k].size && grp(f.k).classList.contains("neben")),
       get solide() { return solide; }, set solide(v) { setSolide(v); },
     };

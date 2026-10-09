@@ -37,7 +37,7 @@
   /* Suchfeld */
   .suche { position: relative; display: flex; align-items: center; max-width: 560px; margin-bottom: 14px; }
   .lupe { position: absolute; left: 14px; width: 20px; height: 20px; color: var(--ap-text); pointer-events: none; }
-  #bg-q { width: 100%; height: 48px; padding: 0 118px 0 44px; font: inherit; font-size: 16px; color: var(--ap-ink); background: #fff; border: 1.5px solid rgba(44,44,42,0.18); border-radius: 12px; outline: none; -webkit-appearance: none; appearance: none; }
+  #bg-q { width: 100%; height: 48px; padding: 0 118px 0 44px; font: inherit; font-size: 16px; color: var(--ap-ink); background: #fff; border: 1.5px solid rgba(26,26,25,0.55); border-radius: 12px; outline: none; -webkit-appearance: none; appearance: none; }
   #bg-q::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
   #bg-q:focus { border-color: var(--ap-blue); box-shadow: 0 0 0 3px rgba(29,163,0,0.15); }
   .count { position: absolute; right: 14px; font-size: 13px; color: var(--ap-text); font-variant-numeric: tabular-nums; }
@@ -88,7 +88,7 @@
     .e dt { font-size: 18px; } .e dd p { font-size: 16px; }
   }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Glossar: Anleihen-Begriffe von A bis Z","description":"67 Fachbegriffe rund um Anleihen kurz erklärt – von Kupon, Kurs und Rendite über Duration und Spread bis Abgeltungsteuer.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-30","dateModified":"2026-10-02","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/begriffe.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Glossar: Anleihen-Begriffe von A bis Z","description":"67 Fachbegriffe rund um Anleihen kurz erklärt – von Kupon, Kurs und Rendite über Duration und Spread bis Abgeltungsteuer.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-30","dateModified":"2026-10-03","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/begriffe.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Akademie","item":"https://www.bondarium.de/wissen.html"},{"@type":"ListItem","position":3,"name":"Glossar","item":"https://www.bondarium.de/begriffe.html"}]}</script>
 </head>
 <body>
@@ -279,7 +279,8 @@ MC.navInit();
   if (!q) return;
   var entries = [].slice.call(document.querySelectorAll('.e')), groups = [].slice.call(document.querySelectorAll('.grp')), letters = [].slice.call(document.querySelectorAll('.az a'));
   var total = entries.length;
-  function norm(s) { return s.toLowerCase().replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ß/g, 'ss'); }
+  // Umlaut und Umschreibung gleich: ä/ae → a, ö/oe → o, ü/ue → u, ß → ss – „stueckzins“ findet „Stückzinsen“ (seit 09.10.2026, T-10)
+  function norm(s) { return s.toLowerCase().replace(/ä/g, 'a').replace(/ö/g, 'o').replace(/ü/g, 'u').replace(/ß/g, 'ss').replace(/ae/g, 'a').replace(/oe/g, 'o').replace(/ue/g, 'u'); }
   // Suchtext aus dem sichtbaren Text (seit 30.09.2026 statt doppelter data-t-Kopie), dazu optionale Suchwörter aus data-k
   var text = entries.map(function (e) { return norm(e.textContent.replace(/\s+/g, ' ') + ' ' + (e.getAttribute('data-k') || '')); });
   var nEl = document.getElementById('bg-n'); if (nEl) nEl.textContent = total;   // Anzahl aus der Seite selbst, nicht von Hand
