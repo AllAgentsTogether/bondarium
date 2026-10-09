@@ -6,6 +6,10 @@
 Die Datei nennt nach RFC 9116 eine Adresse für Sicherheitsmeldungen. „Expires“ ist Pflicht und darf höchstens
 ein Jahr in der Zukunft liegen – deshalb entsteht die Datei bei jedem Deploy neu: Ablauf = Monatserster in rund
 sieben Monaten. So ändert sie sich nur einmal im Monat und läuft nie ab, solange veröffentlicht wird.
+
+Canonical (seit 09.10.2026, Technik-Test T-68): Die Datei wird auch unter bondarium.com und www.bondarium.com ausgeliefert
+(/.well-known/ ist dort von der Weiterleitung ausgenommen, siehe .htaccess). Nach RFC 9116 (2.5.2) soll man ihr nicht
+trauen, wenn die Abrufadresse in keinem Canonical-Feld steht – deshalb nennt sie alle drei Adressen.
 """
 import datetime
 import os
@@ -13,6 +17,7 @@ import sys
 
 KONTAKT = "mailto:info@bondarium.com"
 ADRESSE = "https://www.bondarium.de/.well-known/security.txt"
+WEITERE_ADRESSEN = ("https://bondarium.com/.well-known/security.txt", "https://www.bondarium.com/.well-known/security.txt")
 
 
 def ablauf(heute: datetime.date) -> str:
@@ -28,6 +33,7 @@ def text(heute: datetime.date) -> str:
         f"Expires: {ablauf(heute)}\n"
         "Preferred-Languages: de, en\n"
         f"Canonical: {ADRESSE}\n"
+        + "".join(f"Canonical: {a}\n" for a in WEITERE_ADRESSEN)
     )
 
 

@@ -21,7 +21,7 @@ Reihenfolge im Workflow `update-data.yml` (alles auf `_site`):
 | Strukturierte Daten, Sitemap | `scripts/seo.py` | Ein JSON-LD-Block je Seite (`@graph`): Organisation und Website mit fester Kennung, je Seite ein WebPage-Knoten mit Brotkrumen, Artikel als Hauptinhalt mit Autor, Bild und erwähnten Glossar-Begriffen (`mentions`), Glossar als `DefinedTermSet` (mit `alternateName` und geprüften Wikidata-Kennungen), Rechner als `WebApplication`, sechs Zeitreihen als `Dataset` mit ihren Quellen (`isBasedOn`). Robots-Angabe mit `max-image-preview:large`. `article:modified_time`. `sitemap.xml` aus den Seiten. |
 | llms.txt, llms-full.txt | `scripts/llms.py` | Kurzfassung (je Seite eine Zeile aus Titel und Beschreibung, gruppiert nach Brotkrumen, „Über Bondarium“ direkt nach „Start“) und Volltext aller Seiten als Markdown mit den aktuellen Zahlen aus den Daten-JSONs, je Seite „Seite geändert: …“ (dateModified). Rückfallwerte, deren sichtbarer Stand älter ist als die Daten, ersetzt dort ein Verweis (Warnung im Protokoll). |
 | Themen für die Suche | `scripts/themen.py` | `themen.json` (seit 03.10.2026): Lernseiten und Glossarbegriffe für „Passende Themen“ in der Anleihen-Suche – aus Menü, Titel, H1/H2, Beschreibung und `begriffe.html`. |
-| Steckbriefe vom Server | `scripts/steckbriefe.py` | Seit 03.10.2026 (Stufe 1, Entscheidung 02.10.2026): je Bundeswertpapier (`kurse/bund/`, 79) eine fertige Seite `steckbrief/<ISIN>.html` aus der Vorlage `anleihe.html` – Titel mit Art und ISIN, Beschreibung, kanonische Adresse `anleihe.html?isin=<ISIN>`, „index“, Überschrift, Registername, ISIN/WKN, Stammdaten ohne JavaScript (Zinstermin aus der Fälligkeit, keine Börsendaten), JSON-LD (WebPage, Brotkrumen, FinancialProduct). Die `.htaccess` liefert sie unter `anleihe.html?isin=<ISIN>` aus (Regel an der Marke `@@STECKBRIEFE@@`), direkte Abrufe von `steckbrief/…` leiten dorthin um; 79 Einträge in der Sitemap, Meldung an IndexNow. Läuft nach den Versions-URLs, vor dem Minifizieren. Alle übrigen Steckbriefe: `noindex, follow` in `anleihe.html`. Scheitert der Schritt oder kommt nach dem Upload kein Server-Steckbrief zurück (Nach-Deploy-Prüfung), wird der Lauf rot. |
+| Steckbriefe vom Server | `scripts/steckbriefe.py` | Seit 03.10.2026 (Stufe 1, Entscheidung 02.10.2026): je Bundeswertpapier (`kurse/bund/`, 79) eine fertige Seite `steckbrief/<ISIN>.html` aus der Vorlage `anleihe.html` – Titel mit Art und ISIN, Beschreibung, kanonische Adresse `anleihe.html?isin=<ISIN>`, „index“, Überschrift, Registername, ISIN/WKN, Stammdaten ohne JavaScript (Zinstermin aus der Fälligkeit, keine Börsendaten), JSON-LD (WebPage, Brotkrumen, FinancialProduct, dazu Website und Organisation aus `seo.py`). Daten-Stand („Stammdaten TT.MM.JJJJ“), `dateModified` und `<lastmod>` = Stand der Stammdaten `anleihen/*.json` (seit 09.10.2026). Die `.htaccess` liefert sie unter `anleihe.html?isin=<ISIN>` aus (Regel an der Marke `@@STECKBRIEFE@@`, die allein auf ihrer Zeile steht), direkte Abrufe von `steckbrief/…` leiten in einem Sprung dorthin um (feste Regel vor dem HTTPS-Block, auch über http, ohne www und .com); 79 Einträge in der Sitemap, Meldung an IndexNow. Läuft nach den Versions-URLs, vor dem Minifizieren. Alle übrigen Steckbriefe: `noindex, follow` in `anleihe.html`. Scheitert der Schritt oder kommt nach dem Upload kein Server-Steckbrief zurück (Nach-Deploy-Prüfung), wird der Lauf rot. |
 | Daten einbetten | `scripts/inline_data.py` | Die Daten-JSONs einer Seite als `<script type="application/json">` in die Seite. |
 | CSS verkleinern | `scripts/css_klein.py` | Kommentare und Leerraum aus `base.css` und `bildwelt2.css`; vergleicht danach Regeln und Deklarationen mit dem Original, bei Abweichung bleibt die Datei unverändert. Läuft vor den Versions-URLs. |
 | Versions-URLs | Workflow | Jede Einbindung von CSS und JS (und die beiden Such-Indizes) bekommt `?v=<Hash>` aus dem Inhalt. Setzt seit 02.10.2026 kein Datum mehr. |
@@ -43,7 +43,10 @@ nicht, bleibt die Seite im Zustand der Quell-HTML.
   und der sichtbare Stand ist nie neuer als `dateModified`.
 - Neue Datenseite: in `DATENSTAND` eintragen (Seite → Daten-JSONs für die Gegenprobe) und den Stand in einer dieser
   Stellen zeigen. Fehlt der Eintrag, meldet `pruefen.py` „Sichtbarer Daten-Stand neuer als dateModified“.
-- `Dataset.dateModified` ist der Datenstand der Zeitreihe (Ende von `temporalCoverage`), nicht das Seitendatum.
+- `Dataset.dateModified` ist der Datenstand der Zeitreihe (Ende von `temporalCoverage`), nicht das Seitendatum. Nennt eine
+  Daten-JSON unter `stand` auch Reihen, die nicht zum Datensatz gehören, zählen nur die Schlüssel aus `STAND_NUR`
+  (`realzins.html`: `zins` und `vpi`, nicht `linker`).
+- Hat eine Seite der Sitemap gar kein `dateModified`, warnt `seo.py`; `<lastmod>` bleibt dann beim bisherigen Eintrag.
 - `updated` in den JSONs (Lauf-Datum des Datenbots) zählt nirgends – sonst hätte jede Seite jeden Tag ein neues Datum.
 
 ### Pflege in `scripts/seo.py`
@@ -112,7 +115,8 @@ Eine Seite steht von selbst in Sitemap, llms.txt und llms-full.txt, wenn ihr Kop
 3. `<link rel="canonical" href="https://www.bondarium.de/<datei>.html">` und `<meta name="robots" content="index, follow">`.
 4. Ein JSON-LD-Block `Article` (oder `WebPage`/`CollectionPage`) mit `headline`, `description`, `datePublished`, `dateModified` und
    ein Block `BreadcrumbList`. Die zweite Brotkrume (Verstehen, Entscheiden, Kaufen, Anleihen, Zinsen) bestimmt
-   den Abschnitt in llms.txt. Herausgeber, Autor, Bild und Website ergänzt `seo.py`.
+   den Abschnitt in llms.txt. Herausgeber, Autor, Bild und Website ergänzt `seo.py`; auf Seiten ohne `Article` auch
+   `name` (aus `<title>`) und `description` (aus der meta description).
 5. Genau eine `<h1>`; der Inhalt in `<main>`.
 6. Zeichnet ein Skript eine Tabelle aus einer JSON-Datei, gehört sie in `statische_tabellen.py`.
 7. Einleitung mit Antwortsatz und `Lesezeit: etwa N Minuten · <span class="stand-t">Stand: TT.MM.JJJJ</span>` (siehe oben).

@@ -13,6 +13,12 @@ AddType font/woff2 .woff2
 
 <IfModule mod_rewrite.c>
 RewriteEngine On
+# ---- Fehlerseite (seit 09.10.2026, Technik-Test T-64): Der interne Abruf von /404.html als Fehlerdokument (403, 404, 410)
+#      läuft durch keine weitere Regel. Sonst würde der HTTPS-/Host-Block ihn bei Sperren über http, ohne www oder .com
+#      in eine Weiterleitung auf /404.html verwandeln (die Sperren stehen bewusst davor). Direkte Abrufe von /404.html
+#      (ohne REDIRECT_STATUS) laufen weiter durch alle Regeln. ----
+RewriteCond %{ENV:REDIRECT_STATUS} !^$
+RewriteRule ^404\.html$ - [L]
 # ---- Benutzerbereich (seit 30.09.2026): Der Ordner konto-daten/ enthält die Datenbank von konto.php (E-Mail-Adressen,
 #      Merklisten) und wird nie ausgeliefert – auf keiner Domain, vor allen Weiterleitungen. Zweiter Schutz: die
 #      .htaccess im Ordner selbst (legt konto.php an), dritter: die Sperre für *.sqlite weiter unten. ----
@@ -32,24 +38,27 @@ RewriteRule ^newsletter(/|$) - [F,L]
 # https/www, dann die Seite), und ein relatives Ziel kam hinter dem TLS-Ende von STRATO sogar als http:// zurück.
 # „(en/)?“: Die früheren englischen Kopien (/en/…) landen ebenfalls in einem Sprung auf der deutschen Seite.
 # /trigger/ und /.well-known/ trifft keine dieser Regeln (Ausnahmen der Zweitdomain bleiben erhalten).
+# Ziele mit Anker (#…) tragen QSD (seit 09.10.2026, Technik-Test T-65): Eine Abfrage (fbclid, utm_*, gclid) landete sonst
+# hinter dem Anker (wissen.html#auswaehlen?fbclid=…), und der Browser sprang den Abschnitt nicht an. Ziele ohne Anker
+# behalten die Abfrage wie bisher.
 # index.html → Verzeichnis-URL (Canonical ist "/"); THE_REQUEST verhindert eine Schleife mit DirectoryIndex
 RewriteCond %{THE_REQUEST} \s/+(en/+)?index\.html[\s?] [NC]
 RewriteRule ^(en/)?index\.html$ https://www.bondarium.de/ [R=301,L]
 # Laufzeit-Seite (23.09.2026) aufgeteilt in Staats- und Unternehmensanleihen nach Laufzeit
 RewriteRule ^(en/)?anleihen-laufzeit\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html [R=301,L]
 # Laufzeit-Einzelseiten (23.09.2026) – Ziel seit der Aufteilung: staatsanleihen-laufzeit.html
-RewriteRule ^(en/)?anleihen-sehr-kurzfristig\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html#sehr-kurzfristig [R=301,NE,L]
-RewriteRule ^(en/)?anleihen-kurzfristig\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html#kurzfristig [R=301,NE,L]
-RewriteRule ^(en/)?anleihen-mittelfristig\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html#mittelfristig [R=301,NE,L]
-RewriteRule ^(en/)?anleihen-langfristig\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html#langfristig [R=301,NE,L]
-RewriteRule ^(en/)?anleihen-sehr-langfristig\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html#sehr-langfristig [R=301,NE,L]
+RewriteRule ^(en/)?anleihen-sehr-kurzfristig\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html#sehr-kurzfristig [R=301,NE,QSD,L]
+RewriteRule ^(en/)?anleihen-kurzfristig\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html#kurzfristig [R=301,NE,QSD,L]
+RewriteRule ^(en/)?anleihen-mittelfristig\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html#mittelfristig [R=301,NE,QSD,L]
+RewriteRule ^(en/)?anleihen-langfristig\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html#langfristig [R=301,NE,QSD,L]
+RewriteRule ^(en/)?anleihen-sehr-langfristig\.html$ https://www.bondarium.de/staatsanleihen-laufzeit.html#sehr-langfristig [R=301,NE,QSD,L]
 # Übersicht „Optimierung“ (23.09.2026) umbenannt in „Wissen“
 RewriteRule ^(en/)?optimierung\.html$ https://www.bondarium.de/wissen.html [R=301,L]
 # Top 10 nach Kupon hieß am 01.10.2026 für einige Stunden unternehmensanleihen-kupon.html (nur Unternehmensanleihen)
 RewriteRule ^(en/)?unternehmensanleihen-kupon\.html$ https://www.bondarium.de/anleihen-kupon.html [R=301,L]
 # Navigation neu (01.10.2026 abends): Die Übersichten „Entscheiden“ und „Vertiefen“ sind Abschnitte der Akademie-Übersicht
-RewriteRule ^(en/)?entscheiden\.html$ https://www.bondarium.de/wissen.html#auswaehlen [R=301,NE,L]
-RewriteRule ^(en/)?vertiefen\.html$ https://www.bondarium.de/wissen.html#fortgeschrittene [R=301,NE,L]
+RewriteRule ^(en/)?entscheiden\.html$ https://www.bondarium.de/wissen.html#auswaehlen [R=301,NE,QSD,L]
+RewriteRule ^(en/)?vertiefen\.html$ https://www.bondarium.de/wissen.html#fortgeschrittene [R=301,NE,QSD,L]
 # ---- Aktien-Teil (23.09.2026) archiviert (Ordner website_aktien_archiv) ----
 # Die Seiten liegen noch auf dem Server (der Deploy löscht nur, was er selbst hochgeladen hat).
 # (30.09.2026) Die frühere Regel „anleihen.html → /“ ist entfernt: anleihen.html ist heute die Anleihen-Übersicht.
@@ -60,6 +69,13 @@ RewriteRule ^(en/)?steuer\.html$ https://www.bondarium.de/steuern-handelskosten.
 # Frühere englische Kopien (/en/…) sonst dauerhaft auf die deutsche Seite gleichen Namens
 RewriteRule ^en/?$ https://www.bondarium.de/ [R=301,L]
 RewriteRule ^en/(.+)$ https://www.bondarium.de/$1 [R=301,L]
+# Server-Steckbriefe (seit 03.10.2026, scripts/steckbriefe.py): Direkte Abrufe von steckbrief/<ISIN>.html leiten in EINEM
+# Sprung auf die Adresse mit ?isin= um – auch über http, ohne www und über .com (seit 09.10.2026 fest hier vor dem
+# HTTPS-Block, Technik-Test T-67; vorher setzte steckbriefe.py die Regel an der Marke unten ein: zwei Sprünge). THE_REQUEST:
+# nur der Abruf von außen – die interne Umschreibung anleihe.html?isin=… → steckbrief/… (an der Marke) bleibt unberührt.
+# Fehlt bei einem Lauf der Steckbrief-Bau, führt die Regel auf die Vorlage anleihe.html (keine Schleife).
+RewriteCond %{THE_REQUEST} \s/+steckbrief/([A-Z]{2}[A-Z0-9]{9}[0-9])\.html[\s?]
+RewriteRule ^steckbrief/ https://www.bondarium.de/anleihe.html?isin=%1 [R=301,L]
 # ---- HTTPS erzwingen ----
 # Beide Bedingungen (UND-verknüpft) verhindern eine Redirect-Schleife, wenn
 # Strato TLS vor dem Apache terminiert: dann ist %{HTTPS} zwar "off", aber
@@ -77,6 +93,13 @@ RewriteRule ^ https://www.bondarium.de%{REQUEST_URI} [R=301,L]
 RewriteCond %{HTTP_HOST} ^(www\.)?bondarium\.com$ [NC]
 RewriteCond %{REQUEST_URI} !^/(trigger|\.well-known)/
 RewriteRule ^ https://www.bondarium.de%{REQUEST_URI} [R=301,L]
+# ---- Unbekannte .php-Adressen (seit 09.10.2026, Technik-Test T-63): eigene 404-Seite statt der 25 Byte „No input file
+#      specified.“ von PHP. REQUEST_FILENAME statt des Musters der Regel: So greift es auch bei /nichtda.php/weiter
+#      (Rest als PATH_INFO). Vorhandene PHP-Dateien (auch mit PATH_INFO oder Abfrage) bleiben unberührt. Steht NACH dem
+#      HTTPS-/Host-Block: http/ohne www → erst ein Sprung auf https://www.bondarium.de/…, dann 404. ----
+RewriteCond %{REQUEST_FILENAME} \.php$ [NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ - [R=404,L]
 # ---- Frühere Aktien-Seiten (02.10.2026): 410 „gibt es nicht mehr“ (Fehlerseite unten) statt einer Weiterleitung auf
 #      die Startseite – die werteten Suchmaschinen als verkappten 404 (Soft-404). Diese Regeln stehen bewusst NACH dem
 #      HTTPS-/Host-Block: Die Fehlerseite wird intern als /404.html nachgeladen, und davor würde der HTTPS-Block diesen
@@ -84,7 +107,9 @@ RewriteRule ^ https://www.bondarium.de%{REQUEST_URI} [R=301,L]
 #      auf https://www.bondarium.de/… → 410. ----
 RewriteRule ^(bip|historie|krisen|kgv|marktsentiment|sentiment|fear-greed|vix|aaii|einflussfaktoren|verlierer)\.html$ - [G,L]
 RewriteRule ^(data|sentiment|valuations|einfluss|verlierer)\.json$ - [G,L]
-# @@STECKBRIEFE@@ (scripts/steckbriefe.py setzt hier beim Deploy die Regeln für die Server-Steckbriefe der Bundeswertpapiere ein)
+# Server-Steckbriefe: scripts/steckbriefe.py ersetzt beim Deploy die folgende Markenzeile durch die interne Umschreibung
+# anleihe.html?isin=<ISIN> → steckbrief/<ISIN>.html (die Zeile enthält nur die Marke, sonst bliebe ein Rest hinter der Regel)
+# @@STECKBRIEFE@@
 </IfModule>
 
 # ---- Deploy-Manifest (Liste der hochgeladenen Dateien) nie ausliefern ----
@@ -100,6 +125,9 @@ RewriteRule ^(data|sentiment|valuations|einfluss|verlierer)\.json$ - [G,L]
 # ---- Eigene 404-Seite (mit Marke und Navigation) – auch für 410 (frühere Aktien-Seiten, „gibt es nicht mehr“) ----
 ErrorDocument 404 /404.html
 ErrorDocument 410 /404.html
+# 403 (seit 09.10.2026, Technik-Test T-64): Sperren und Verzeichnis-Adressen ohne Startseite (/kurse/, /steckbrief/)
+# zeigten die nackte Apache-Seite „403 Forbidden“. Schutzregel gegen Weiterleitungen: ganz oben nach RewriteEngine On.
+ErrorDocument 403 /404.html
 
 # ---- Security-Header ----
 <IfModule mod_headers.c>
@@ -147,8 +175,11 @@ RequestHeader edit "If-None-Match" '^"((.*)-gzip)"$' '"$1", "$2"'
 </FilesMatch>
 # Kursverlauf (kurse/<Jahr>/<teil>.json, kurse/bund/<ISIN>.json): ändert sich einmal am Tag;
 # gilt auch für die Stammdaten-Teildateien anleihen/<teil>.json (Steckbrief anleihe.html, wöchentlich neu)
+# Seit 09.10.2026 (Technik-Test T-69) höchstens 10 Minuten, danach fragt der Browser nach (304, wenn unverändert). Die
+# Dateien tragen keine Versions-URL; mit „stale-while-revalidate“ zeigte der Steckbrief nach dem Datenlauf einmal bis
+# zu 25 Stunden alte Kurse.
 <FilesMatch "^[0-9a-f]{2}\.json$|^[A-Z]{2}[A-Z0-9]{9}[0-9]\.json$">
-  Header set Cache-Control "max-age=3600, stale-while-revalidate=86400"
+  Header set Cache-Control "max-age=600"
 </FilesMatch>
 <FilesMatch "\.html$">
   # seit 25.09.2026: HTML immer beim Server nachfragen (ETag/Last-Modified -> 304, wenn
@@ -178,4 +209,9 @@ RequestHeader edit "If-None-Match" '^"((.*)-gzip)"$' '"$1", "$2"'
   AddOutputFilterByType DEFLATE text/html text/plain text/css text/xml
   AddOutputFilterByType DEFLATE application/json application/javascript text/javascript application/xml image/svg+xml
 </IfModule>
+# Fehlerseite (seit 09.10.2026, Technik-Test T-70): Als Fehlerdokument (403/404/410) packt AddOutputFilterByType sie
+# nicht – die 410-Antwort der früheren Aktien-Seiten kam ungepackt (rund 24 KB). Ohne Accept-Encoding bleibt sie ungepackt.
+<Files "404.html">
+  SetOutputFilter DEFLATE
+</Files>
 </IfModule>

@@ -37,7 +37,8 @@ Datum (dateModified, <lastmod>, article:modified_time):
     verschachtelt, z. B. {"DE": …, "US": …}) und unter jedem "latest": {"date": …}. Zeigt die Seite einen älteren
     Stand als die Daten oder gar keinen, gibt es eine Warnung (Rückfallwerte nicht erneuert).
     "updated" (Lauf-Datum des Datenbots) zählt bewusst NICHT.
-  * Alle anderen Seiten behalten das dateModified aus der Quelle (bei Textänderungen dort von Hand nachziehen).
+  * Alle anderen Seiten behalten das dateModified aus der Quelle (bei Textänderungen dort von Hand nachziehen). Fehlt es
+    einer Seite der Sitemap ganz, gibt es eine Warnung (seit 09.10.2026); <lastmod> bleibt dann beim bisherigen Eintrag.
   * Dataset (Zeitreihe, eingebettet per inline_data.py): dateModified = Datenstand der JSON (Ende von
     temporalCoverage), nicht das Datum der Seite – eine Textänderung ändert die Zeitreihe nicht.
 
@@ -174,6 +175,11 @@ DATENSTAND = {
     "index.html": ("kurse-auswahl.json",),
     "anleihen-suche.html": ("anleihen-kurse.json",),
 }
+# Nur diese Schlüssel unter "stand" zählen für Gegenprobe und Ende des Datensatzes (seit 09.10.2026, Technik-Test T-74):
+# realzins.json nennt unter stand.linker auch den Stand der Realrenditen inflationsindexierter Bundesanleihen – die gehören
+# nicht zur Reihe des Datensatzes (Rendite, Inflation, Realzins). Sonst meldete der Datensatz ein Ende, das Reihe und Seite
+# nicht zeigen (07.10. statt 02.10.).
+STAND_NUR = {"realzins.html": ("zins", "vpi")}
 # Wo die gebaute Seite ihren Daten-Stand nennt: <p id="datastand">, Startseite <span id="itab-stand">, Broker-Vergleich
 # <span data-bv="stand">. Nicht verschachtelt – der Inhalt reicht bis zum ersten schließenden Tag desselben Namens.
 SICHTBAR_RE = re.compile(r'<(p|span)\b[^>]*?\b(?:id="(?:datastand|itab-stand)"|data-bv="stand")[^>]*>(.*?)</\1>', re.S)
@@ -364,11 +370,12 @@ def als_datum(wert, bis):
     return None
 
 
-def datenstand(site, namen):
+def datenstand(site, namen, nur=None):
     """Jüngster Datenstand (JJJJ-MM-TT) der Dateien „namen“ oder None.
 
     Gesammelt werden alle Werte unter dem obersten Schlüssel "stand" (auch verschachtelt, egal unter welchem inneren
     Schlüssel: {"DE": …, "US": …}, {"zins": …, "vpi": …}) und jedes "latest": {"date": …} (Länder, Reihen, Anleihen).
+    nur: Ist "stand" ein Objekt, zählen nur diese inneren Schlüssel (STAND_NUR).
     Nicht gezählt: "updated" (Lauf-Datum des Datenbots) und tiefer liegende "stand"-Angaben anderer Bestandteile
     (z. B. "ezb": {"stand": …} in top10-anleihen-kupon.json = Datum der EZB-Liste, nicht der Kurse)."""
     bis = heute()
@@ -400,7 +407,8 @@ def datenstand(site, namen):
         d = lade_json(site, name)
         if not isinstance(d, dict):
             continue
-        alle_werte(d.get("stand"))
+        st = d.get("stand")
+        alle_werte({k: st.get(k) for k in nur} if nur and isinstance(st, dict) else st)
         latest(d)
     daten = [x for x in (als_datum(f, bis) for f in funde) if x]
     return max(daten).isoformat() if daten else None
@@ -585,7 +593,7 @@ def seite(site, fname, glossar_namen=None):
 
     # Datum: Datenseiten bekommen den Stand, den sie sichtbar zeigen, wenn er jünger ist als das Quelldatum (siehe
     # DATENSTAND und Kopf dieser Datei). Der Datenstand der JSONs ist nur die Gegenprobe – und das Ende des Datensatzes.
-    stand = datenstand(site, DATENSTAND[fname]) if fname in DATENSTAND else None
+    stand = datenstand(site, DATENSTAND[fname], STAND_NUR.get(fname)) if fname in DATENSTAND else None
     if fname in DATENSTAND:
         zeigt = sichtbarer_stand(html_)
         if not zeigt:
@@ -619,6 +627,11 @@ def seite(site, fname, glossar_namen=None):
     else:
         seite_k = haupt
         seite_k.pop("mainEntityOfPage", None)
+        # name und description wie auf Artikelseiten aus <title> und meta description (seit 09.10.2026, Technik-Test T-73:
+        # CollectionPages hatten nur headline, beobachten.html eine ältere description als die Seite)
+        seite_k.setdefault("name", titel)
+        if beschreibung:
+            seite_k["description"] = beschreibung
         graph = [seite_k]
     seite_k["@id"] = url + "#seite"
     seite_k["url"] = url
@@ -677,6 +690,9 @@ def seite(site, fname, glossar_namen=None):
         f.write(neu)
     if url != eigen or fname in OHNE_SITEMAP:
         return None
+    if not datum:   # seit 09.10.2026 (Technik-Test T-58): nicht mehr still beim alten <lastmod> der Repo-Sitemap bleiben
+        warn(f"{fname}: kein dateModified im JSON-LD – <lastmod> bleibt beim bisherigen Eintrag der Sitemap; "
+             "datePublished/dateModified in der Quell-HTML ergänzen")
     return url, datum
 
 

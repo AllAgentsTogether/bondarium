@@ -8,18 +8,27 @@ Daten. Alle übrigen Steckbriefe tragen „noindex, follow“ (Quell-HTML); Ausb
 
 Ausgeliefert wird die Seite unter der gewohnten Adresse: Die .htaccess schreibt anleihe.html?isin=<ISIN> intern auf
 steckbrief/<ISIN>.html um (die Adresse im Browser bleibt, das Seitenskript liest ?isin= wie immer). Direkte Abrufe von
-steckbrief/… leiten auf die Adresse mit ?isin= um. Kurse und Rendite kommen weiter vom Seitenskript – Börsendaten (Kurse,
-Zinstermine der Börsenliste) stehen bewusst nicht im Server-HTML; den Zinstermin leiten wir aus der Fälligkeit ab
-(Bundeswertpapiere zahlen jährlich am Fälligkeitstag).
+steckbrief/… leiten auf die Adresse mit ?isin= um (seit 09.10.2026 eine feste Regel in der .htaccess vor dem HTTPS-Block –
+ein Sprung auch über http, ohne www und über .com; Technik-Test T-67). Kurse und Rendite kommen weiter vom Seitenskript –
+Börsendaten (Kurse, Zinstermine der Börsenliste) stehen bewusst nicht im Server-HTML; den Zinstermin leiten wir aus der
+Fälligkeit ab (Bundeswertpapiere zahlen jährlich am Fälligkeitstag).
 
 Läuft im Workflow NACH „Zeitstempel & Versions-URLs“ (die Vorlage _site/anleihe.html trägt dann schon die Versions-URLs)
 und VOR dem Minifizieren (das auch Unterordner erfasst):
 
     python3 scripts/steckbriefe.py _site
 
-Schreibt: _site/steckbrief/<ISIN>.html, den Regelblock in _site/.htaccess (an der Marke @@STECKBRIEFE@@) und je Seite einen
-Eintrag in _site/sitemap.xml. Nur wenn alle Seiten gebaut sind, kommen Regeln und Sitemap-Einträge dazu – sonst bleibt alles
-beim Alten (die Vorlage funktioniert für jede ISIN). Läuft mit Python 3.9 und 3.12, nur Standardbibliothek.
+Schreibt: _site/steckbrief/<ISIN>.html, die interne Umschreibung in _site/.htaccess (an der Marke @@STECKBRIEFE@@, die allein
+auf ihrer Zeile steht) und je Seite einen Eintrag in _site/sitemap.xml. Nur wenn alle Seiten gebaut sind, kommen Regel und
+Sitemap-Einträge dazu – sonst bleibt alles beim Alten (die Vorlage funktioniert für jede ISIN).
+
+Daten-Stand, dateModified und <lastmod> (seit 09.10.2026, Technik-Test T-71): der Stand der Stammdaten (jüngster „stand“ der
+Teildateien anleihen/*.json, stammdaten_stand) – das ist, was die Seite ohne JavaScript zeigt. Vorher hing er am Ende der
+Bundesbank-Kursreihe kurse/bund/<ISIN>.json: Kurse zeigt das Server-HTML aber nicht, und fiel die Reihe aus (Bundesbank ab
+01.10.2026), blieb der Stand stehen.
+
+Zahlen schreibt _common.zahl_de (wie die übrigen festen Tabellen), Organisation und Website kommen aus seo.py (gleiche Knoten wie
+auf allen Seiten, Technik-Test T-72). Läuft mit Python 3.10+ (Workflow 3.12; _common.py braucht 3.10), nur Standardbibliothek.
 """
 import datetime
 import glob
@@ -28,6 +37,10 @@ import json
 import os
 import re
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _common import zahl_de  # noqa: E402
+from seo import ORGANISATION, WEBSITE  # noqa: E402
 
 BASE = "https://www.bondarium.de/"
 ROBOTS_INDEX = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
@@ -39,14 +52,9 @@ def esc(s):
     return html.escape(str(s), quote=True)
 
 
-def zahl(v, nk):
-    s = f"{v:,.{nk}f}"
-    return s.replace(",", "X").replace(".", ",").replace("X", ".")
-
-
 def kupon_text(k):
     """wie fmtCoupon/MC.felder.kuponZahl: zwei Nachkommastellen, drei wenn nötig (5,625 %)"""
-    return zahl(k, 3 if round(k * 1000) % 10 else 2) + NBSP + "%"
+    return zahl_de(k, 3 if round(k * 1000) % 10 else 2) + NBSP + "%"
 
 
 def datum(iso):
@@ -86,6 +94,21 @@ def stammdaten(site, isins):
     return out
 
 
+def stammdaten_stand(site):
+    """Jüngster „stand“ (JJJJ-MM-TT) der Stammdaten-Teildateien anleihen/*.json oder None. Diesen Stand nennt auch das
+    Seitenskript („Daten-Stand: Stammdaten …“, anleihe.html). stammdaten() bleibt unverändert – kennzahlen.py und
+    statische_tabellen.py nutzen es."""
+    staende = []
+    for f in glob.glob(os.path.join(site, "anleihen", "*.json")):
+        try:
+            s = str(json.load(open(f, encoding="utf-8")).get("stand") or "")[:10]
+        except (OSError, ValueError, AttributeError):
+            continue
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", s):
+            staende.append(s)
+    return max(staende) if staende else None
+
+
 def ersetze(text, muster, neu, pflicht=True, flags=0):
     t2, n = re.subn(muster, lambda m: neu, text, count=1, flags=flags)
     if pflicht and n != 1:
@@ -93,7 +116,7 @@ def ersetze(text, muster, neu, pflicht=True, flags=0):
     return t2
 
 
-def seite(vorlage, isin, r, stand):
+def seite(vorlage, isin, r, stand, stand_art="Stammdaten "):
     name, kupon, faellig, volumen, stk, emittent = r[0], r[3], r[4], r[5], r[6], r[8] or "Bundesrepublik Deutschland"
     zinsart = r[9] if len(r) > 9 and isinstance(r[9], int) else 0
     art = art_von(name)
@@ -105,8 +128,8 @@ def seite(vorlage, isin, r, stand):
     url = f"{BASE}anleihe.html?isin={isin}"
     titel = f"{art} {k_text} {jahr} ({isin}) – Bondarium"
     zins = "ohne laufende Zinsen (Nullkupon)" if null else f"Zinsen jährlich am {faellig[8:10]}.{faellig[5:7]}."
-    stk_text = f"{zahl(stk, 2 if stk >= 0.01 else 3)}{NBSP}€" if isinstance(stk, (int, float)) else "–"
-    vol_text = f"{zahl(volumen / 1e9, 2).rstrip('0').rstrip(',')}{NBSP}Mrd.{NBSP}€" if isinstance(volumen, (int, float)) and volumen >= 1e9 else ""
+    stk_text = f"{zahl_de(stk, 2 if stk >= 0.01 else 3)}{NBSP}€" if isinstance(stk, (int, float)) else "–"
+    vol_text = f"{zahl_de(volumen / 1e9, 2).rstrip('0').rstrip(',')}{NBSP}Mrd.{NBSP}€" if isinstance(volumen, (int, float)) and volumen >= 1e9 else ""
     kupon_teil = "" if null else f"Kupon {k_text}, "   # bei Nullkupon sagt es „ohne laufende Zinsen“ schon
     beschr = (f"{art} {k_text} {jahr} der Bundesrepublik Deutschland, ISIN {isin}, WKN {wkn}: {kupon_teil}{zins}, fällig am "
               f"{datum(faellig)}, Stückelung {stk_text}. Kurs und Rendite börsentäglich.")
@@ -135,7 +158,8 @@ def seite(vorlage, isin, r, stand):
          "category": art, "identifier": [{"@type": "PropertyValue", "propertyID": "ISIN", "value": isin},
                                          {"@type": "PropertyValue", "propertyID": "WKN", "value": wkn}],
          "provider": {"@type": "GovernmentOrganization", "name": "Bundesrepublik Deutschland"},
-         "interestRate": 0 if null else kupon, "url": url}]}
+         "interestRate": 0 if null else kupon, "url": url},
+        WEBSITE, ORGANISATION]}
     # alle JSON-LD-Blöcke der Vorlage durch einen eigenen ersetzen
     bloecke = re.findall(r'<script type="application/ld\+json">.*?</script>', h, re.S)
     if not bloecke:
@@ -155,7 +179,7 @@ def seite(vorlage, isin, r, stand):
               + '. Kurs, Rendite und Kursverlauf zeigt der Steckbrief mit JavaScript; die Anleihe findest du auch in der '
                 '<a href="anleihen-suche.html">Anleihen-Suche</a>.</p></noscript>')
     h = ersetze(h, r"<noscript><p class=\"note\">Der Steckbrief braucht JavaScript\..*?</noscript>", fakten, flags=re.S)
-    h = ersetze(h, r'<p id="datastand">Daten-Stand: [^<]*</p>', f'<p id="datastand">Daten-Stand: {datum(stand)}</p>', pflicht=False)
+    h = ersetze(h, r'<p id="datastand">Daten-Stand: [^<]*</p>', f'<p id="datastand">Daten-Stand: {stand_art}{datum(stand)}</p>', pflicht=False)
     return h
 
 
@@ -174,6 +198,14 @@ def main():
         if re.fullmatch(r"DE[A-Z0-9]{9}[0-9]", isin) and t:
             staende[isin] = max(t)
     stamm = stammdaten(site, staende)
+    # Stand der Seite = Stand der Stammdaten (zeigt die Seite ohne JavaScript); nur ohne „stand“ in anleihen/*.json wie bisher
+    # das Ende der Kursreihe kurse/bund/<ISIN>.json
+    st_stamm, stand_art = stammdaten_stand(site), "Stammdaten "
+    if st_stamm:
+        staende = {isin: st_stamm for isin in staende}
+    else:
+        stand_art = ""
+        print("::warning::steckbriefe.py: kein „stand“ in anleihen/*.json – Daten-Stand der Steckbriefe aus kurse/bund/")
     heute = datetime.date.today().isoformat()
     seiten, fehler = {}, []
     for isin, stand in staende.items():
@@ -184,7 +216,7 @@ def main():
         if r[4] and r[4] <= heute:   # fällig: kein Steckbrief mehr (die Vorlage sagt „nicht mehr gelistet“)
             continue
         try:
-            seiten[isin] = (seite(vorlage, isin, r, stand), stand)
+            seiten[isin] = (seite(vorlage, isin, r, stand, stand_art), stand)
         except ValueError as e:
             fehler.append(str(e))
     if not seiten:
@@ -201,16 +233,17 @@ def main():
     for isin, (inhalt, _) in seiten.items():
         with open(os.path.join(ordner, isin + ".html"), "w", encoding="utf-8") as f:
             f.write(inhalt)
-    # 2) .htaccess: interne Umschreibung (Adresse bleibt) und Rückweg für direkte Abrufe
+    # 2) .htaccess: interne Umschreibung (Adresse bleibt). Der Rückweg für direkte Abrufe von steckbrief/… steht seit
+    #    09.10.2026 fest in der .htaccess vor dem HTTPS-Block (ein Sprung auch über http, ohne www, .com).
     pfad = os.path.join(site, ".htaccess")
     ht = open(pfad, encoding="utf-8").read()
     if ht.count(MARKE) != 1:
         raise SystemExit("steckbriefe.py: Marke @@STECKBRIEFE@@ fehlt in .htaccess – Seiten geschrieben, aber nicht ausgeliefert")
+    if "RewriteRule ^steckbrief/ " not in ht:
+        print("::warning::steckbriefe.py: feste Regel für direkte Abrufe von steckbrief/<ISIN>.html fehlt in .htaccess")
     liste = "|".join(sorted(seiten))
     block = ("# ---- Steckbriefe der Bundeswertpapiere vom Server (scripts/steckbriefe.py, beim Deploy eingesetzt): anleihe.html?isin=<ISIN>\n"
-             "#      liefert für diese ISIN steckbrief/<ISIN>.html aus, die Adresse bleibt. Direkte Abrufe leiten auf die Adresse mit ?isin= um. ----\n"
-             "RewriteCond %{THE_REQUEST} \\s/+steckbrief/([A-Z]{2}[A-Z0-9]{9}[0-9])\\.html[\\s?]\n"
-             "RewriteRule ^steckbrief/ https://www.bondarium.de/anleihe.html?isin=%1 [R=301,L]\n"
+             "#      liefert für diese ISIN steckbrief/<ISIN>.html aus, die Adresse bleibt. Direkte Abrufe: feste Regel vor dem HTTPS-Block. ----\n"
              f"RewriteCond %{{QUERY_STRING}} (?:^|&)isin=({liste})(?:&|$)\n"
              "RewriteRule ^anleihe\\.html$ /steckbrief/%1.html [L]")
     with open(pfad, "w", encoding="utf-8") as f:

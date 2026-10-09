@@ -117,7 +117,14 @@ lade() {  # lade <name> <datei>: LoadModule, außer das Modul ist fest eingebaut
            setenvif:mod_setenvif.so expires:mod_expires.so; do
     lade "${m%%:*}" "${m#*:}" || exit 2
   done
+  # Verzeichnis ohne Startseite (z. B. /kurse/): bei STRATO 403 über mod_autoindex (Options ohne Indexes); ohne das Modul
+  # antwortete der Test-Apache mit 404. Optional – fehlt es, entfällt nur diese eine Prüfung (seit 09.10.2026).
+  if printf '%s\n' "$STATISCH" | grep -q '^ *mod_autoindex\.c$' || [ -f "$MODDIR/mod_autoindex.so" ]; then
+    { lade autoindex mod_autoindex.so && echo "# autoindex"; } || true
+  fi
 } > "$CONF.module" || { cat "$CONF.module" >&2; exit 2; }
+AUTOINDEX=""
+grep -q '^# autoindex$' "$CONF.module" && AUTOINDEX=1
 
 MIMETYPES=""
 for k in /etc/mime.types /private/etc/apache2/mime.types /etc/apache2/mime.types /etc/httpd/conf/mime.types; do
@@ -285,6 +292,25 @@ revalidierung() {
   fi
 }
 
+# eigene_fehlerseite <beschreibung>: Die letzte Antwort ist die eigene Fehlerseite (404.html) und nicht die nackte Seite
+# von Apache („403 Forbidden“) oder PHP („No input file specified.“) – nur Warnung (seit 09.10.2026, Technik-Test T-63/T-64)
+FEHLERSEITE_TITEL="$(grep -o '<title>[^<]*' "$ORDNER/404.html" 2>/dev/null | head -1)"
+eigene_fehlerseite() {
+  [ -z "$FEHLERSEITE_TITEL" ] && return 0
+  if grep -qF "$FEHLERSEITE_TITEL" "$KOERPER" 2>/dev/null; then
+    ok "$1: eigene Fehlerseite"
+  else
+    warnung "$1: Antwort ist nicht die eigene Fehlerseite (404.html)"
+  fi
+}
+# pruefe_fehlerseite <beschreibung> <schema> <host> <pfad> <status>: Status wie pruefe, dazu die eigene Fehlerseite
+pruefe_fehlerseite() {
+  local vorher="$HARTE_FEHLER"
+  pruefe "$@"
+  [ "$HARTE_FEHLER" = "$vorher" ] && eigene_fehlerseite "$1"
+  return 0
+}
+
 W=www.bondarium.de
 D=https://www.bondarium.de
 
@@ -294,7 +320,11 @@ D=https://www.bondarium.de
 echo "== Seiten antworten (https, www) =="
 pruefe "Startseite" https $W / 200
 pruefe "Grundlagen" https $W /grundlagen.html 200
-pruefe "Fehlerseite" https $W /gibt-es-nicht.html 404
+pruefe_fehlerseite "Fehlerseite" https $W /gibt-es-nicht.html 404
+# Unbekannte .php-Adressen (seit 09.10.2026, T-63): eigene 404-Seite. Hier ohne PHP – die echte Probe (PHP antwortete
+# „No input file specified.“) braucht php-fpm; geprüft wird, dass die Regel nichts umleitet oder sperrt.
+pruefe_fehlerseite "Unbekannte .php-Adresse" https $W /gibt-es-nicht.php 404
+pruefe_fehlerseite "Unbekannte .php-Adresse mit Pfadrest" https $W /nichtda.php/weiter 404
 
 echo "== Jede Datei im Hauptordner antwortet mit 200 (keine Weiterleitung, keine Sperre, kein Fehler 500) =="
 anzahl=0
@@ -332,6 +362,10 @@ pruefe "Laufzeit (alt)" http bondarium.de /anleihen-laufzeit.html 301 "$D/staats
 pruefe "Laufzeit-Einzelseite (alt)" https $W /anleihen-kurzfristig.html 301 "$D/staatsanleihen-laufzeit.html#kurzfristig"
 pruefe "Optimierung (alt)" http $W /optimierung.html 301 "$D/wissen.html"
 pruefe "Entscheiden (alt)" http $W /entscheiden.html 301 "$D/wissen.html#auswaehlen"
+# Ziele mit Anker: eine Abfrage (fbclid, utm_*, gclid) fällt weg, statt hinter dem Anker zu landen (seit 09.10.2026, T-65)
+pruefe "Entscheiden (alt) mit Abfrage" https $W "/entscheiden.html?a=1" 301 "$D/wissen.html#auswaehlen"
+pruefe "Laufzeit-Einzelseite (alt, englisch) mit Abfrage, http" http bondarium.de "/en/anleihen-langfristig.html?gclid=1" 301 \
+  "$D/staatsanleihen-laufzeit.html#langfristig"
 pruefe "Vertiefen (alt)" https bondarium.com /vertiefen.html 301 "$D/wissen.html#fortgeschrittene"
 pruefe "Unternehmensanleihen nach Kupon (alt)" https $W /unternehmensanleihen-kupon.html 301 "$D/anleihen-kupon.html"
 pruefe "Zinsen (alt) → Zinsen-Übersicht" http bondarium.de /zinsen.html 301 "$D/beobachten.html"
@@ -348,12 +382,21 @@ pruefe "BIP (Aktien-Teil)" https $W /bip.html 410
 pruefe "Daten (Aktien-Teil)" https $W /data.json 410
 
 echo "== Sperren (vor allen Weiterleitungen) =="
-pruefe "Benutzerdaten" https $W /konto-daten/ 403
-pruefe "Benutzerdaten, http, .com" http bondarium.com /konto-daten/x.sqlite 403
-pruefe "Statistik-Daten" http bondarium.de /statistik-daten/tag.json 403
+# seit 09.10.2026 (T-64) mit der eigenen Fehlerseite – auch über http, ohne www und .com (Schutzregel für /404.html)
+pruefe_fehlerseite "Benutzerdaten" https $W /konto-daten/ 403
+pruefe_fehlerseite "Benutzerdaten, http, .com" http bondarium.com /konto-daten/x.sqlite 403
+pruefe_fehlerseite "Statistik-Daten" http bondarium.de /statistik-daten/tag.json 403
 pruefe "Statistik-Bericht" https $W /statistik-bericht.php 403
 pruefe "Deploy-Manifest" https $W /.deploy-manifest 403
 pruefe "Datenbank-Datei" https $W /beispiel.sqlite 403
+# Verzeichnis ohne Startseite (Kursdateien): 403 mit eigener Fehlerseite statt der nackten Apache-Seite (T-64)
+if [ -d "$ORDNER/kurse" ] && [ ! -f "$ORDNER/kurse/index.html" ]; then
+  if [ -n "$AUTOINDEX" ]; then
+    pruefe_fehlerseite "Verzeichnis ohne Startseite" https $W /kurse/ 403
+  else
+    echo "  --      Verzeichnis ohne Startseite: /kurse/ übersprungen (mod_autoindex fehlt im Test-Apache)"
+  fi
+fi
 if [ -f "$ORDNER/trigger/refresh-config.php" ]; then
   pruefe "Trigger-Konfiguration (Token)" https $W /trigger/refresh-config.php 403
 fi
@@ -378,6 +421,12 @@ for pfad in /trigger/refresh.php /.well-known/security.txt; do
     *) ok "Ausnahme .com: https://bondarium.com$pfad → $CODE (keine Weiterleitung)" ;;
   esac
 done
+
+# Adresse steckbrief/<ISIN>.html: feste Regel vor dem HTTPS-Block (seit 09.10.2026, T-67) – EIN Sprung auf die Adresse mit
+# ?isin=, auch über http, ohne www und .com; gilt unabhängig davon, ob der Bau die Server-Steckbriefe enthält
+echo "== Steckbrief-Adresse steckbrief/<ISIN>.html: ein Sprung auf anleihe.html?isin=… =="
+pruefe "Steckbrief-Adresse, http ohne www" http bondarium.de /steckbrief/DE0001102416.html 301 "$D/anleihe.html?isin=DE0001102416"
+pruefe "Steckbrief-Adresse, .com" https www.bondarium.com /steckbrief/DE0001102416.html 301 "$D/anleihe.html?isin=DE0001102416"
 
 # Server-Steckbriefe der Bundeswertpapiere (seit 03.10.2026, scripts/steckbriefe.py): nur, wenn der Bau sie enthält
 if ls "$ORDNER"/steckbrief/*.html >/dev/null 2>&1; then
@@ -406,6 +455,18 @@ kopf "Daten-JSON 15 Minuten" /renditen.json Cache-Control 'max-age=900'
 kopf "Daten-JSON nicht im Suchindex" /renditen.json X-Robots-Tag 'noindex'
 kopf "Such-Index lange (Versions-URL)" "/anleihen-index.json?v=test" Cache-Control 'max-age=2592000'
 kopf "Suchindex lange (Versions-URL)" "/suchindex.json?v=test" Cache-Control 'max-age=2592000'
+# Teildateien ohne Versions-URL (anleihen/<teil>.json, kurse/<Jahr>/<teil>.json): höchstens 10 Minuten, kein
+# stale-while-revalidate (seit 09.10.2026, T-69)
+if [ -f "$ORDNER/anleihen/00.json" ]; then
+  kopf "Teildateien höchstens 10 Minuten" /anleihen/00.json Cache-Control '^max-age=600$'
+fi
+# Fehlerseite als 410 (frühere Aktien-Seiten) gepackt (seit 09.10.2026, T-70)
+anfrage https $W /kgv.html -H "Accept-Encoding: gzip"
+if [ "$CODE" = "410" ] && [ "$(kopfwert Content-Encoding)" = "gzip" ]; then
+  ok "Fehlerseite (410) gzip"
+else
+  warnung "Fehlerseite (410): /kgv.html → $CODE, Content-Encoding „$(kopfwert Content-Encoding)“ statt gzip"
+fi
 kopf "Sicherheit: nosniff" /grundlagen.html X-Content-Type-Options '^nosniff$'
 kopf "Sicherheit: CSP" /grundlagen.html Content-Security-Policy "default-src 'self'"
 kopf "Sicherheit: HSTS" /grundlagen.html Strict-Transport-Security 'max-age='
