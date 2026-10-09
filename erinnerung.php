@@ -47,8 +47,8 @@ const ERINNERUNG_LAENDER = ['DE' => 'Deutschland', 'FR' => 'Frankreich', 'IT' =>
     'BR' => 'Brasilien', 'TR' => 'Türkei', 'ZA' => 'Südafrika', 'IS' => 'Island', 'IL' => 'Israel', 'CL' => 'Chile', 'ID' => 'Indonesien'];
 
 /**
- * Datenbank von konto.php – nur, wenn es genau eine gibt und sie mindestens Fassung 5 hat. Liegen zwei da (Wiederherstellen aus der
- * Sicherung, docs/SICHERUNG.md), wird nichts verschickt, statt zu raten (wie db() in konto.php; Technik-Test 08.10.2026, T-22).
+ * Datenbank von konto.php – nur, wenn es genau eine gibt und sie mindestens Fassung 5 hat. Liegen zwei da (Datei wird gerade von
+ * Hand ausgetauscht, docs/BETRIEB.md), wird nichts verschickt, statt zu raten (wie db() in konto.php; Technik-Test 08.10.2026, T-22).
  */
 function erinnerung_db(): ?PDO
 {
@@ -58,7 +58,7 @@ function erinnerung_db(): ?PDO
     if (!extension_loaded('pdo_sqlite')) return null;
     $dateien = glob(ERINNERUNG_DATEN . '/konto-*.sqlite') ?: [];
     if (count($dateien) > 1) {
-        error_log('erinnerung.php: ' . count($dateien) . ' Datenbank-Dateien in konto-daten/ – keine Erinnerungen (docs/SICHERUNG.md)');
+        error_log('erinnerung.php: ' . count($dateien) . ' Datenbank-Dateien in konto-daten/ – keine Erinnerungen (docs/BETRIEB.md)');
         return null;
     }
     if (!$dateien) return null;

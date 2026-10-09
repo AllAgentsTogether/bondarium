@@ -74,7 +74,7 @@
  *   meta       zufälliger Schlüssel für diese Hashwerte, Zeitpunkt des letzten Aufräumens, ein Vergleichs-Hashwert, seit
  *              Fassung 9 der Zeitpunkt der Umstellung der Ein-Klick-Links (link_kennung)
  * Daneben die Marke konto-daten/.angelegt (seit 09.10.2026): Es gab hier schon eine Datenbank – fehlt die Datei, legt
- * db() keine neue an (Wiederherstellen: docs/SICHERUNG.md).
+ * db() keine neue an (Datei von Hand austauschen: docs/BETRIEB.md).
  * Passwörter, Link-Kennwörter und Cookies stehen nie im Klartext in der Datei. Passwörter werden mit Argon2id gehasht
  * (wo PHP es nicht kann: bcrypt). Konten ohne Anmeldung seit zwei Jahren werden gelöscht.
  *
@@ -338,13 +338,13 @@ function db(): PDO
     $dateien = glob(DATEN . '/konto-*.sqlite') ?: [];
     sort($dateien);
     // Marke „.angelegt“ (seit 09.10.2026, Technik-Test T-22): Gibt es sie, gab es hier schon eine Datenbank. Fehlt dann die Datei
-    // (Wiederherstellen aus der Sicherung, docs/SICHERUNG.md) oder liegen zwei da, wird nichts angelegt und nichts geraten –
+    // (Datei wird gerade von Hand ausgetauscht, docs/BETRIEB.md) oder liegen zwei da, wird nichts angelegt und nichts geraten –
     // Antwort 503 „speicher“, bis wieder genau eine Datei da ist. Sonst entstünde still eine leere Datenbank, und danach
     // entschiede der zufällige Dateiname, welche gilt.
     $marke = DATEN . '/.angelegt';
     if (count($dateien) > 1 || (!$dateien && is_file($marke))) {
         error_log('konto.php: ' . (count($dateien) > 1 ? count($dateien) . ' Datenbank-Dateien in konto-daten/' : 'Datenbank-Datei fehlt, konto-daten/.angelegt ist da')
-            . ' – keine neue angelegt (docs/SICHERUNG.md)');
+            . ' – keine neue angelegt (docs/BETRIEB.md)');
         if ($sperre) {
             flock($sperre, LOCK_UN);
             fclose($sperre);
@@ -467,7 +467,7 @@ function db(): PDO
             $db->exec('COMMIT');
         }
         if (!is_file($marke)) {
-            @file_put_contents($marke, "Hier gab es eine Datenbank (konto.php, docs/SICHERUNG.md). Nicht löschen.\n");
+            @file_put_contents($marke, "Hier gab es eine Datenbank (konto.php, docs/BETRIEB.md). Nicht löschen.\n");
         }
     } catch (Throwable $e) {
         error_log('konto.php: Datenbank nicht nutzbar – ' . $e->getMessage());
