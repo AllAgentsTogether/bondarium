@@ -121,6 +121,10 @@ def lese_jsonl(text: str):
             if d.get("mmtTradingMode") == "I" or d.get("mmtModificationInd") == "C":
                 continue
             preis, menge, notiz = float(d["price"]), float(d.get("quantity") or 0), int(d.get("priceNotation") or 2)
+            # Satz ohne Zeitstempel oder Preis überspringen – wie update_kurse.auswerten (Tradegate 05.10.2026: Zeit null,
+            # Preis 0; Technik-Test 08.10.2026, T-03)
+            if not isinstance(zeit, str) or not re.match(r"\d{4}-\d{2}-\d{2}", zeit) or preis <= 0:
+                continue
         except (KeyError, TypeError, ValueError, AttributeError):
             continue
         n += 1

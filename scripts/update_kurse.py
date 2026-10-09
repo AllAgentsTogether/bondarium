@@ -140,6 +140,8 @@ NIEDRIGZINS = {"CHF", "JPY"}     # dort sind Nullkupons nahe oder über 100 plau
 AUFSCHLAG_MIN = -1.0             # Nicht-Staat mehr als 1 Punkt UNTER Bund: Kurs oder Stammdaten unplausibel → keine Rendite
 KURVE_MIN = 10                   # weniger Bundeswertpapiere mit Rendite: keine brauchbare Bund-Kurve für den Aufschlag
 KURVE_ALTER_TAGE = 7             # Rückfall: Bund-Kurve höchstens so viele Kalendertage vor dem Handelstag (bund_kurve_rueckfall)
+KURVE_WARNEN_TAGE = 4            # ab diesem Alter der Rückfall-Kurve zusätzlich „Bund-Kurve ist N Tage alt“ (seit 09.10.2026)
+PRUEFKURVE_ALTER_TAGE = 14       # ohne Kurve für den Aufschlag: AUFSCHLAG_MIN gegen eine bis so alte Kurve prüfen (seit 09.10.2026)
 # INFLATION, zinsplan (Zinstermine), ohne_rendite: _common.py (dieselben Regeln wie update_top10.py)
 ZINSTERMINE = None   # {ISIN: [zahlungen_je_jahr, "MM-TT", …]} – beim ersten Gebrauch geladen (zinstermine())
 
@@ -163,11 +165,13 @@ def bund_kurve(zeilen: dict, punkte: dict, valuta: datetime.date) -> list:
     return sorted(kurve)
 
 
-def bund_kurve_rueckfall(zeilen: dict, bbk: dict, tag: str, valuta: datetime.date) -> tuple[list, str]:
+def bund_kurve_rueckfall(zeilen: dict, bbk: dict, tag: str, valuta: datetime.date,
+                         fenster: int | None = None) -> tuple[list, str]:
     """Bund-Kurve, wenn die Bundesbank für den Handelstag nichts liefert (02.10.2026: Schnittstelle antwortete mit
-    HTTP 400, statt 13.234 Aufschlägen gab es 16): die jüngste Kurve der letzten KURVE_ALTER_TAGE Tage aus dem Abruf
-    oder aus kurse/bund/<ISIN>.json. Gibt (Kurve, Datum) zurück, ([], "") ohne brauchbare Kurve."""
-    grenze = (datetime.date.fromisoformat(tag) - datetime.timedelta(days=KURVE_ALTER_TAGE)).isoformat()
+    HTTP 400, statt 13.234 Aufschlägen gab es 16): die jüngste Kurve der letzten `fenster` Tage (Standard
+    KURVE_ALTER_TAGE; PRUEFKURVE_ALTER_TAGE nur für die Plausibilitätsprüfung) aus dem Abruf oder aus
+    kurse/bund/<ISIN>.json. Gibt (Kurve, Datum) zurück, ([], "") ohne brauchbare Kurve."""
+    grenze = (datetime.date.fromisoformat(tag) - datetime.timedelta(days=fenster or KURVE_ALTER_TAGE)).isoformat()
     je_tag = collections.defaultdict(dict)
     for pfad in DIR_BUND.glob("*.json"):
         v = lade_json(pfad, None) or {}
@@ -261,8 +265,17 @@ def kurve_rendite(kurve: list, jahre: float):
     return None
 
 
-def rendite_und_aufschlag(z: list, kurs: float, valuta: datetime.date, kurve: list | None):
-    """(Rendite, Aufschlag zu Bund) einer Anleihe (Indexzeile z) zum Kurs – beide BERECHNET, None wo nicht sinnvoll."""
+def bundeswertpapier(z: list) -> bool:
+    """Staatsanleihe Deutschlands (Indexzeile: art 0, land DE) – kein Aufschlag zu Bund, sonst wäre es ein Aufschlag zu
+    sich selbst (seit dem Bundesbank-Ausfall kommen ihre Kurse von der Börse; Technik-Test 08.10.2026, T-04)."""
+    return z[2] == 0 and z[11] == "DE"
+
+
+def rendite_und_aufschlag(z: list, kurs: float, valuta: datetime.date, kurve: list | None,
+                          pruefkurve: list | None = None):
+    """(Rendite, Aufschlag zu Bund) einer Anleihe (Indexzeile z) zum Kurs – beide BERECHNET, None wo nicht sinnvoll.
+    pruefkurve (seit 09.10.2026, T-01): ohne `kurve` eine bis PRUEFKURVE_ALTER_TAGE alte Bund-Kurve – gegen sie gilt nur
+    die Plausibilitätsregel AUFSCHLAG_MIN, ein Aufschlag wird daraus nicht geschrieben."""
     if ohne_rendite(z):
         return None, None
     f = datetime.date.fromisoformat(z[5])
@@ -275,12 +288,16 @@ def rendite_und_aufschlag(z: list, kurs: float, valuta: datetime.date, kurve: li
     if z[10] == 2 and r < NULLKUPON_MIN and jahre > 1 and z[3] not in NIEDRIGZINS:
         return None, None   # „Nullkupon“ laut Register, der Kurs passt aber nicht dazu
     rend, aufschlag = round(r, 3), None
-    if z[3] == "EUR" and kurve and jahre <= 30:   # auch Kurzläufer (seit 27.09.2026): Taxen ohne Umsatz fallen dort am stärksten auf
+    if z[3] == "EUR" and kurve and jahre <= 30 and not bundeswertpapier(z):   # auch Kurzläufer (seit 27.09.2026): Taxen ohne Umsatz fallen dort am stärksten auf
         b = kurve_rendite(kurve, jahre)
         if b is not None:
             aufschlag = round(rend - b, 2)
             if z[2] != 0 and aufschlag < AUFSCHLAG_MIN:
                 return None, None   # z. B. Taxe ohne Umsatz weit über dem Markt oder Sonderausstattung (aufzinsender Nullkupon)
+    elif z[3] == "EUR" and not kurve and pruefkurve and jahre <= 30 and z[2] != 0:
+        b = kurve_rendite(pruefkurve, jahre)
+        if b is not None and round(rend - b, 2) < AUFSCHLAG_MIN:
+            return None, None   # dieselbe Regel ohne aktuelle Kurve – sonst kämen unplausible Renditen zurück (z. B. −5,36 %)
     return rend, aufschlag
 
 
@@ -413,6 +430,10 @@ def auswerten(roh: bytes, behalten: set, waehrung: dict | None = None) -> tuple[
                 continue
             zeit, preis, menge = d["tradingDateAndTime"], float(d["price"]), float(d.get("quantity") or 0)
             notiz = int(d.get("priceNotation") or 2)
+            # Satz ohne Zeitstempel oder Preis überspringen (Tradegate 05.10.2026: XS2356041165 mit Zeit null und Preis 0 –
+            # der TypeError brach den ganzen Kursabruf ab, Technik-Test 08.10.2026, T-03)
+            if not isinstance(zeit, str) or not re.match(r"\d{4}-\d{2}-\d{2}", zeit) or preis <= 0:
+                continue
         except (KeyError, TypeError, ValueError):
             continue
         tage[zeit[:10]] = tage.get(zeit[:10], 0) + 1
@@ -511,33 +532,41 @@ def main() -> int:
             log_err(f"{DIENSTE[k]}: Dateiliste nicht abrufbar ({e}).")
             listen[k] = []
     tage = sorted({d for k in listen for d, _ in listen[k] if d > alt_stand})
-    if not tage:
-        log_err(f"Keine neue Tagesdatei (Stand {alt_stand or 'unbekannt'}) – Kurse bleiben unverändert.")
-        bund_verlauf(zeilen, bbk)
-        return 0
     rc = 0
-    for tag in tage:
-        feed = {}
-        for k in ("F", "X", "T"):
-            for d, name in listen[k]:
-                if d != tag:
-                    continue
-                try:
-                    roh = tagesdatei_holen(k, name)
-                except Exception as e:  # noqa: BLE001
-                    log_err(f"{DIENSTE[k]}: {name} nicht abrufbar ({e}).")
-                    roh = None
-                if roh:
-                    t, daten = auswerten(roh, set(zeilen) | auswahl | set(etf), waehrung)
-                    feed[k] = daten
-                    print(f"{name}: {len(daten)} Papiere, Handelstag {t}")
-                    break
-        if "F" not in feed:
-            log_err(f"Börse Frankfurt fehlt für {tag} – dieser Tag wird übersprungen.")
-            rc = 1
-            continue
-        rc = verarbeite(tag, feed, zeilen, auswahl, bbk, etf) or rc
-    bund_verlauf(zeilen, bbk)
+    # Bund-Verlauf im finally (seit 09.10.2026, T-01): geholte Bundesbank-Daten gehen auch bei einem Absturz nicht verloren
+    try:
+        if not tage:
+            log_err(f"Keine neue Tagesdatei (Stand {alt_stand or 'unbekannt'}) – Kurse bleiben unverändert.")
+            return 0
+        for tag in tage:
+            feed = {}
+            for k in ("F", "X", "T"):
+                for d, name in listen[k]:
+                    if d != tag:
+                        continue
+                    try:
+                        roh = tagesdatei_holen(k, name)
+                    except Exception as e:  # noqa: BLE001
+                        log_err(f"{DIENSTE[k]}: {name} nicht abrufbar ({e}).")
+                        roh = None
+                    if roh:
+                        # Eine nicht auswertbare Datei gilt als fehlend (seit 09.10.2026, T-03) – ohne Frankfurt wird der
+                        # Tag wie bisher übersprungen, ohne Xetra/Tradegate geht es ohne sie weiter.
+                        try:
+                            t, daten = auswerten(roh, set(zeilen) | auswahl | set(etf), waehrung)
+                        except Exception as e:  # noqa: BLE001
+                            log_err(f"{DIENSTE[k]}: {name} nicht auswertbar ({type(e).__name__}: {e}).")
+                            continue
+                        feed[k] = daten
+                        print(f"{name}: {len(daten)} Papiere, Handelstag {t}")
+                        break
+            if "F" not in feed:
+                log_err(f"Börse Frankfurt fehlt für {tag} – dieser Tag wird übersprungen.")
+                rc = 1
+                continue
+            rc = verarbeite(tag, feed, zeilen, auswahl, bbk, etf) or rc
+    finally:
+        bund_verlauf(zeilen, bbk)
     return rc
 
 
@@ -591,12 +620,22 @@ def verarbeite(tag: str, feed: dict, zeilen: dict, auswahl: set, bbk: dict, etf:
     # Grundlage für den BERECHNETEN Renditeaufschlag der Euro-Anleihen
     valuta = plus_boersentage(d_tag, 2)
     kurve = bund_kurve(zeilen, bund, valuta)
+    pruefkurve = None
     if len(kurve) < KURVE_MIN:
         kurve, kstand = bund_kurve_rueckfall(zeilen, bbk, tag, valuta)
         if kurve:
-            print(f"Bundesbank ohne Kurse vom {tag} – Aufschlag zu Bund gegen die Bund-Kurve vom {kstand} ({len(kurve)} Bundeswertpapiere).")
+            # als Warnung mit Alter der Kurve (seit 09.10.2026, T-01) – vorher nur eine Zeile im Protokoll
+            alter = (d_tag - datetime.date.fromisoformat(kstand)).days
+            log_err(f"Bundesbank ohne Kurse vom {tag} – Aufschlag zu Bund gegen die Bund-Kurve vom {kstand}, "
+                    f"{alter} Tage alt ({len(kurve)} Bundeswertpapiere).")
+            if alter >= KURVE_WARNEN_TAGE:
+                log_err(f"Bund-Kurve ist {alter} Tage alt")
         else:
-            log_err(f"Keine Bund-Kurve vom {tag} und keine aus den letzten {KURVE_ALTER_TAGE} Tagen – kein Aufschlag zu Bund.")
+            pruefkurve, pstand = bund_kurve_rueckfall(zeilen, bbk, tag, valuta, PRUEFKURVE_ALTER_TAGE)
+            log_err(f"Keine Bund-Kurve vom {tag} und keine aus den letzten {KURVE_ALTER_TAGE} Tagen – kein Aufschlag zu Bund. "
+                    + (f"Plausibilitätsregel (mehr als {-AUFSCHLAG_MIN:g} Punkt unter Bund) gegen die Bund-Kurve vom {pstand}."
+                       if pruefkurve else f"Auch keine Bund-Kurve aus den letzten {PRUEFKURVE_ALTER_TAGE} Tagen für die "
+                                          f"Plausibilitätsregel."))
 
     # Vortag: bisheriger Schlusskurs aus der eigenen Datei (für die BERECHNETE Veränderung)
     vor = {}
@@ -641,7 +680,7 @@ def verarbeite(tag: str, feed: dict, zeilen: dict, auswahl: set, bbk: dict, etf:
                 kurs = kurs * faktor
             if not KURS_GRENZEN[0] < kurs < KURS_GRENZEN[1]:
                 continue
-        rend, aufschlag = rendite_und_aufschlag(z, kurs, valuta, kurve) if ist_anleihe else (None, None)
+        rend, aufschlag = rendite_und_aufschlag(z, kurs, valuta, kurve, pruefkurve) if ist_anleihe else (None, None)
         neu[isin] = [round(kurs, 4 if kurs < 10 else 3), rend, a["t"][:10], quelle, round(umsatz),
                      tagesdaten(feed, isin, quelle, faktor), vor.get(isin), aufschlag]
 
@@ -749,12 +788,16 @@ def neu_rechnen() -> int:
     for k in kurven.values():
         k.sort()
     geaendert = collections.Counter()
+    pruef = {}   # Kursdatum ohne eigene Kurve → Bund-Kurve bis PRUEFKURVE_ALTER_TAGE alt, nur für AUFSCHLAG_MIN (seit 09.10.2026)
     for isin, e in alle.items():
         z = zeilen.get(isin)
         if not z or e[3] == "B":
             continue
-        rend, auf = rendite_und_aufschlag(z, e[0], plus_boersentage(datetime.date.fromisoformat(e[2]), 2), kurven.get(e[2]))
-        if e[2] not in kurven and rend is not None:
+        valuta = plus_boersentage(datetime.date.fromisoformat(e[2]), 2)
+        if e[2] not in kurven and e[2] not in pruef:
+            pruef[e[2]] = bund_kurve_rueckfall(zeilen, {}, e[2], valuta, PRUEFKURVE_ALTER_TAGE)[0]
+        rend, auf = rendite_und_aufschlag(z, e[0], valuta, kurven.get(e[2]), pruef.get(e[2]))
+        if e[2] not in kurven and rend is not None and not bundeswertpapier(z):
             auf = e[7]                          # kein Bund-Kurs vom selben Tag gespeichert: Aufschlag bleibt
         if e[1] != rend:
             geaendert["Rendite"] += 1

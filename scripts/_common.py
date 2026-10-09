@@ -22,10 +22,12 @@ import email.utils
 import http.client
 import json
 import os
+import random
 import re
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -121,6 +123,16 @@ def plausible(new: float, old, label: str, max_rel: float = 0.5,
 _RETRY_CODES = frozenset({408, 429})
 _RETRY_AFTER_MAX = 30.0  # Sekunden – Obergrenze für ein Retry-After des Servers
 
+# Bundesbank (seit 09.10.2026, Technik-Test 08.10.2026, T-01): Die Schnittstelle antwortet dem GitHub-Runner seit
+# 01.10.2026 oft mit HTTP 400, von außen kommen dieselben Abfragen mit 200. Nur für diesen Host wird HTTP 400 bis zu
+# zweimal wiederholt (Pause 20–30 s mit Zufallsanteil); alle Wiederholungen bei der Bundesbank zusammen warten je Lauf
+# (Prozess) höchstens _BBK_WARTEN_MAX Sekunden. Andere Hosts: 400 bleibt dauerhaft.
+_BBK_HOST = "api.statistiken.bundesbank.de"
+_BBK_400_PAUSE = (20.0, 30.0)
+_BBK_400_VERSUCHE = 2
+_BBK_WARTEN_MAX = 240.0
+_bbk_gewartet = 0.0      # Modul-Zähler: Sekunden, die dieser Lauf schon auf Bundesbank-Wiederholungen gewartet hat
+
 
 def _retry_after_seconds(headers) -> float | None:
     """Wartezeit aus dem Retry-After-Header (Sekunden oder HTTP-Datum), auf
@@ -157,6 +169,28 @@ def _should_retry(exc: BaseException) -> bool:
     return isinstance(exc, (urllib.error.URLError, OSError, http.client.HTTPException))
 
 
+def _ist_bundesbank(url: str) -> bool:
+    try:
+        return (urllib.parse.urlsplit(url).hostname or "").lower() == _BBK_HOST
+    except ValueError:
+        return False
+
+
+def _http_fehler_ergaenzen(exc: urllib.error.HTTPError) -> None:
+    """Content-Type und die ersten 500 Bytes der Antwort in die Fehlermeldung schreiben (str(exc) = „HTTP Error <Status>:
+    …“) – sonst steht im Protokoll nur „HTTP Error 400: Bad Request“ und die Ursache bleibt offen (T-01, 08.10.2026)."""
+    try:
+        typ = exc.headers.get("Content-Type") if exc.headers is not None else None
+    except Exception:  # noqa: BLE001 – exotische Header-Objekte
+        typ = None
+    try:
+        roh = exc.read() or b""
+    except Exception:  # noqa: BLE001 – Antwort nicht (mehr) lesbar
+        roh = b""
+    text = " ".join(roh[:500].decode("utf-8", errors="replace").split())
+    exc.msg = f"{exc.msg} – Content-Type: {typ or 'keiner'}; Antwort: {text or '(leer)'}"
+
+
 def get_with_retry(url: str, headers: dict | None = None, timeout: int = 30,
                    tries: int = 3, backoff: float = 2.0, data: bytes | None = None) -> bytes:
     """HTTP-GET (bzw. POST, wenn data gesetzt ist – z. B. b"" für Endpunkte, die
@@ -168,23 +202,44 @@ def get_with_retry(url: str, headers: dict | None = None, timeout: int = 30,
     _should_retry); HTTP 403/404 & Co. werden sofort weitergeworfen. Bei 429
     (und 503, gleiche Semantik) wird ein Retry-After des Servers beachtet –
     gedeckelt auf 30 s, damit ein einzelner Abruf den Lauf nicht blockiert.
+    Ausnahme Bundesbank (_BBK_HOST, seit 09.10.2026): dort auch HTTP 400 bis zu zweimal, Pause 20–30 s; alle
+    Wiederholungen bei der Bundesbank zusammen höchstens _BBK_WARTEN_MAX Sekunden je Lauf.
+    Bei HTTP-Fehlern stehen Content-Type und Anfang der Antwort in der Fehlermeldung (_http_fehler_ergaenzen).
     Beim endgültigen Fehlschlag wird die letzte Exception weitergeworfen."""
+    global _bbk_gewartet
     hdrs = dict(HEADERS) if headers is None else dict(headers)
+    bbk, n400 = _ist_bundesbank(url), 0
     for attempt in range(tries):
         try:
             req = urllib.request.Request(url, data=data, headers=hdrs)
             with urllib.request.urlopen(req, timeout=timeout) as resp:
                 return resp.read()
         except Exception as exc:
-            if attempt == tries - 1 or not _should_retry(exc):
+            if isinstance(exc, urllib.error.HTTPError):
+                _http_fehler_ergaenzen(exc)
+            bbk_400 = bbk and isinstance(exc, urllib.error.HTTPError) and exc.code == 400 and n400 < _BBK_400_VERSUCHE
+            if attempt == tries - 1 or not (bbk_400 or _should_retry(exc)):
                 raise
-            wait = backoff * (attempt + 1)
-            if isinstance(exc, urllib.error.HTTPError) and exc.code in (429, 503):
-                ra = _retry_after_seconds(getattr(exc, "headers", None))
-                if ra is not None:
-                    wait = ra
+            if bbk_400:
+                n400 += 1
+                wait = random.uniform(*_BBK_400_PAUSE)
+            else:
+                wait = backoff * (attempt + 1)
+                if isinstance(exc, urllib.error.HTTPError) and exc.code in (429, 503):
+                    ra = _retry_after_seconds(getattr(exc, "headers", None))
+                    if ra is not None:
+                        wait = ra
+            if bbk:
+                rest = _BBK_WARTEN_MAX - _bbk_gewartet
+                if bbk_400:
+                    wait = min(wait, rest)
+                if wait > rest or (bbk_400 and wait < _BBK_400_PAUSE[0]):
+                    print(f"Bundesbank: keine weitere Wiederholung – Wartezeit dieses Laufs ({_BBK_WARTEN_MAX:g} s) "
+                          f"aufgebraucht: {url}", file=sys.stderr, flush=True)
+                    raise
+                _bbk_gewartet += wait
             print(f"HTTP-Abruf fehlgeschlagen (Versuch {attempt + 1}/{tries}: "
-                  f"{type(exc).__name__}: {exc}) – neuer Versuch in {wait:g} s: {url}",
+                  f"{type(exc).__name__}: {exc}) – neuer Versuch in {wait:.3g} s: {url}",
                   file=sys.stderr, flush=True)
             time.sleep(wait)
     raise RuntimeError("unreachable")

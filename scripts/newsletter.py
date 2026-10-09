@@ -371,7 +371,7 @@ def baue(heute):
         probleme.append(f"Kurse veraltet (Stand {kstand or 'unbekannt'})")
     if len(anleihen) < 10000:
         probleme.append(f"nur {len(anleihen)} Anleihen mit Kurs")
-    if not b or (heute - datetime.date.fromisoformat(b[10]["tag"])).days > 6:
+    if not b or any((heute - datetime.date.fromisoformat(b[j]["tag"])).days > 6 for j in (2, 10)):   # 2 und 10 Jahre (T-01)
         probleme.append("Bundrenditen der Bundesbank fehlen oder sind veraltet")
     if len(ezb.get("aktuell") or []) < 2 or len(ezb.get("stufen") or []) < 2:
         probleme.append("EZB-Einlagesatz fehlt")
