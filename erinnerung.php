@@ -46,7 +46,10 @@ const ERINNERUNG_LAENDER = ['DE' => 'Deutschland', 'FR' => 'Frankreich', 'IT' =>
     'US' => 'USA', 'CA' => 'Kanada', 'AU' => 'Australien', 'JP' => 'Japan', 'NZ' => 'Neuseeland', 'MX' => 'Mexiko',
     'BR' => 'Brasilien', 'TR' => 'Türkei', 'ZA' => 'Südafrika', 'IS' => 'Island', 'IL' => 'Israel', 'CL' => 'Chile', 'ID' => 'Indonesien'];
 
-/** Datenbank von konto.php – nur, wenn es sie schon gibt und sie mindestens Fassung 5 hat */
+/**
+ * Datenbank von konto.php – nur, wenn es genau eine gibt und sie mindestens Fassung 5 hat. Liegen zwei da (Wiederherstellen aus der
+ * Sicherung, docs/SICHERUNG.md), wird nichts verschickt, statt zu raten (wie db() in konto.php; Technik-Test 08.10.2026, T-22).
+ */
 function erinnerung_db(): ?PDO
 {
     static $db = false;
@@ -54,7 +57,10 @@ function erinnerung_db(): ?PDO
     $db = null;
     if (!extension_loaded('pdo_sqlite')) return null;
     $dateien = glob(ERINNERUNG_DATEN . '/konto-*.sqlite') ?: [];
-    sort($dateien);
+    if (count($dateien) > 1) {
+        error_log('erinnerung.php: ' . count($dateien) . ' Datenbank-Dateien in konto-daten/ – keine Erinnerungen (docs/SICHERUNG.md)');
+        return null;
+    }
     if (!$dateien) return null;
     $p = new PDO('sqlite:' . $dateien[0], null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_TIMEOUT => 5]);
     $p->exec('PRAGMA foreign_keys = ON');
@@ -86,11 +92,15 @@ function erinnerung_faellig(): bool
     return true;
 }
 
-/** Prüfsumme für den Link „Ausschalten“ – wie schluessel_hash() in konto.php, mit dem Schlüssel aus der Datenbank */
-function erinnerung_token(PDO $db, int $id): string
+/**
+ * Kennung für den Link „Ausschalten“ – wie link_kennung('erinnerung-aus', …) in konto.php: Prüfsumme über Kontonummer und
+ * Anlagezeitpunkt mit dem Schlüssel aus der Datenbank. Seit 09.10.2026 mit dem Anlagezeitpunkt (Technik-Test 08.10.2026, T-103):
+ * Die Nummer eines gelöschten Kontos wird wieder vergeben, sein alter Link schaltete sonst die Erinnerung des neuen Kontos aus.
+ */
+function erinnerung_token(PDO $db, int $id, int $erstellt): string
 {
     $geheim = (string)erinnerung_meta($db, 'hmac');
-    return $id . '.' . substr(hash_hmac('sha256', 'erinnerung-aus:' . $id, $geheim), 0, 32);
+    return $id . '.' . substr(hash_hmac('sha256', 'erinnerung-aus|' . $id . '|' . $erstellt, $geheim), 0, 32);
 }
 
 /** Teildatei der Stammdaten wie MC.teil() in site.js */
@@ -252,17 +262,19 @@ function erinnerungen_senden(): array
     if ($db === null) return [0, 0];
     $heute = date('Y-m-d');
     $db->prepare('DELETE FROM erinnert WHERE faellig < ?')->execute([$heute]);   // „JJJJ-MM-TT#tag“ (zweite E-Mail) fällt wie die erste am Tag nach der Fälligkeit heraus
-    $s = $db->query('SELECT n.id, n.email, m.name, d.isin, d.nennwert FROM nutzer n JOIN musterdepots m ON m.nutzer = n.id JOIN depot d ON d.muster = m.id WHERE n.erinnern = 1 ORDER BY n.id, m.id, d.seit');
+    $s = $db->query('SELECT n.id, n.email, n.erstellt, m.name, d.isin, d.nennwert FROM nutzer n JOIN musterdepots m ON m.nutzer = n.id JOIN depot d ON d.muster = m.id WHERE n.erinnern = 1 ORDER BY n.id, m.id, d.seit');
     $je = [];
-    foreach ($s->fetchAll(PDO::FETCH_NUM) as [$id, $email, $depot, $isin, $nenn]) {
+    foreach ($s->fetchAll(PDO::FETCH_NUM) as [$id, $email, $erstellt, $depot, $isin, $nenn]) {
         $je[(int)$id]['email'] = (string)$email;
+        $je[(int)$id]['erstellt'] = (int)$erstellt;
         $je[(int)$id]['posten'][] = [(string)$depot, (string)$isin, (int)$nenn];
     }
     // Seit 03.10.2026 auch die Merkliste – Anleihen, die schon in einem Musterdepot liegen, stehen dort mit Depot und Nennwert
-    $f = $db->query('SELECT n.id, n.email, f.isin FROM nutzer n JOIN favoriten f ON f.nutzer = n.id WHERE n.erinnern = 1 ORDER BY n.id, f.seit');
-    foreach ($f->fetchAll(PDO::FETCH_NUM) as [$id, $email, $isin]) {
+    $f = $db->query('SELECT n.id, n.email, n.erstellt, f.isin FROM nutzer n JOIN favoriten f ON f.nutzer = n.id WHERE n.erinnern = 1 ORDER BY n.id, f.seit');
+    foreach ($f->fetchAll(PDO::FETCH_NUM) as [$id, $email, $erstellt, $isin]) {
         $id = (int)$id;
         $je[$id]['email'] = (string)$email;
+        $je[$id]['erstellt'] = (int)$erstellt;
         if (in_array((string)$isin, array_column($je[$id]['posten'] ?? [], 1), true)) continue;
         $je[$id]['posten'][] = ['', (string)$isin, 0];
     }
@@ -282,13 +294,15 @@ function erinnerungen_senden(): array
             if ($tage < 0 || $tage > ERINNERUNG_TAGE) continue;
             $marke = $tage === 0 ? $a[1] . '#tag' : $a[1];
             $schon->execute([$id, $isin, $marke]);
-            if ($schon->fetchColumn()) continue;
+            $da = $schon->fetchColumn();
+            $schon->closeCursor();   // offene Leseanweisung vor dem Schreiben (merke) schließen – sonst „database is locked“ (T-20)
+            if ($da) continue;
             $p = [erinnerung_titel($isin) ?? $a[0], $isin, $a[1], $tage, $depot, $nenn, $a[2], $marke];   // Titel erst hier: nur für fällige Anleihen suchen
             if ($tage === 0) $amTag[] = $p; else $vorab[] = $p;
         }
         foreach ([[$vorab, false], [$amTag, true]] as [$posten, $heuteFaellig]) {
             if (!$posten) continue;
-            [$betreff, $text] = erinnerung_text($posten, 'erinnerung-aus=' . erinnerung_token($db, $id), $heuteFaellig);
+            [$betreff, $text] = erinnerung_text($posten, 'erinnerung-aus=' . erinnerung_token($db, $id, $u['erstellt']), $heuteFaellig);
             if (erinnerung_mail($u['email'], $betreff, $text)) {
                 foreach ($posten as $p) $merke->execute([$id, $p[1], $p[7], time()]);
                 $ok++;

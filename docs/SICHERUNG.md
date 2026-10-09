@@ -33,6 +33,17 @@ gunzip konto.sqlite.gz && sqlite3 konto.sqlite 'pragma integrity_check'   # „o
 Dann auf dem Server die Datei in `konto-daten/` ersetzen (alte vorher umbenennen, nicht löschen; der Dateiname bleibt der
 zufällige der dortigen Datenbank). Entschlüsselte Kopien auf dem Mac danach löschen – sie enthalten E-Mail-Adressen.
 
+**Während des Austauschs meldet `konto.php` 503 („speicher“); der Wächter-Alarm ist dann erwartet.** Seit 09.10.2026
+(Technik-Test 08.10.2026, T-22) legt `konto.php` neben die Datenbank die Marke `konto-daten/.angelegt`. Gibt es die Marke,
+aber keine `konto-*.sqlite`, oder liegen zwei solche Dateien da, legt `konto.php` nichts an und antwortet 503 – vorher
+entstand in dieser Lücke still eine leere Datenbank (auch durch den Wächter alle 15 Minuten), und danach entschied der
+zufällige Dateiname, welche gilt. `erinnerung.php` verschickt bei zwei Dateien nichts. Darum:
+
+- Die alte Datei so umbenennen, dass der Name nicht mehr auf `.sqlite` endet (z. B. `konto-….sqlite.alt`) – sonst liegen zwei
+  Datenbanken da, und es bleibt bei 503.
+- Sobald wieder genau eine `konto-*.sqlite` da ist, läuft alles weiter; `konto.php?aktion=status` muss wieder „ok“ melden.
+- Die Marke nicht löschen. Nur wer bewusst mit einer leeren Datenbank neu anfangen will, löscht sie zusammen mit der Datei.
+
 ## 2. Wächter (Erreichbarkeit)
 
 Workflow `erreichbarkeit.yml`, alle 15 Minuten (Minute 7, 22, 37, 52 – nicht zur vollen Stunde): Startseite,

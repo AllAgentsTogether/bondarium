@@ -66,7 +66,9 @@ header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: max-age=900');
 header('X-Robots-Tag: noindex');
 header('X-Content-Type-Options: nosniff');
-if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'GET') {
+// GET und HEAD (Wächter und Werkzeuge fragen oft nur die Kopfzeilen ab); alles andere 405 mit „Allow“ (RFC 9110; T-99)
+if (!in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['GET', 'HEAD'], true)) {
+    header('Allow: GET, HEAD');
     http_response_code(405);
     echo '{"status":"methode"}';
     exit;

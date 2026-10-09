@@ -13,7 +13,8 @@
  *   tage      je Tag: Besucher, Seitenaufrufe, aussortierte Robot-Abrufe
  *   seiten    je Tag und Seite: Aufrufe
  *   herkunft  je Tag, Gruppe (Suchmaschinen, KI-Assistenten, Andere Websites, Direkt) und Quelle (nur der Name der
- *             Website, nie die volle Adresse): Besucher – gezählt beim ersten Aufruf eines Besuchers am Tag
+ *             Website, nie die volle Adresse): Besucher – gezählt beim ersten Aufruf eines Besuchers am Tag; bei „Andere
+ *             Websites“ höchstens STAT_QUELLEN_MAX Namen je Tag, jede weitere zählt als „weitere Websites“
  *   geraete   je Tag und Geräteart (Handy, Computer, Tablet, aus der Browser-Kennung): Besucher
  *   heute     Prüfsummen der Besucher von heute und ihre Aufrufe (Bremse gegen Massenmeldungen) – täglich gelöscht
  *   meta      Tages-Schlüssel und sein Datum, zuletzt verschickter Bericht
@@ -45,11 +46,23 @@ const BERICHT_AN         = 'info@bondarium.com';
 const BERICHT_STUNDE     = 6;
 const AUFBEWAHREN_MONATE = 25;
 const MAX_AUFRUFE        = 300;   // mehr Aufrufe je Besucher und Tag gelten als automatisiert
+// Höchstens so viele verschiedene Quellen der Gruppe „Andere Websites“ je Tag; jede weitere zählt unter STAT_WEITERE. Erfundene
+// Herkunftsangaben füllen die Tabelle „herkunft“ (25 Monate aufbewahrt) und den Tagesbericht so nicht unbegrenzt (Technik-Test
+// 08.10.2026, T-96). Keine Grenze je IP-Adresse – das wäre eine neue Verarbeitung.
+const STAT_QUELLEN_MAX   = 200;
+const STAT_WEITERE       = 'weitere Websites';   // kein gültiger Hostname (Leerzeichen) – kann keiner echten Quelle gleichen
 const ROBOT = '~bot|crawl|spider|slurp|archiver|facebookexternalhit|embedly|preview|headless|phantomjs|selenium|puppeteer|'
     . 'playwright|lighthouse|pagespeed|gtmetrix|pingdom|uptime|monitor|python|curl|wget|java/|go-http|okhttp|axios|'
     . 'node-fetch|scrapy|httpclient|libwww|^mozilla/5\.0$~i';
 
 date_default_timezone_set('Europe/Berlin');
+
+/** Feld aus $_POST als Text; eine Liste („feld[]=…“) zählt wie ein leeres Feld – ohne PHP-Warnung im Fehlerprotokoll (T-132). */
+function text(array $q, string $k): string
+{
+    $v = $q[$k] ?? '';
+    return is_string($v) ? $v : '';
+}
 
 function stat_db(): PDO
 {
@@ -172,6 +185,14 @@ function stat_zaehlen(string $pfad, string $referrer, string $utm, string $ip, s
         if ($bisher === false) {
             $db->prepare('INSERT INTO heute (kennung, aufrufe) VALUES (?, 1)')->execute([$kennung]);
             [$gruppe, $quelle] = stat_herkunft($referrer, $utm);
+            if ($gruppe === 'Andere Websites') {
+                // neue Quelle, aber schon STAT_QUELLEN_MAX andere an diesem Tag → unter STAT_WEITERE zählen (T-96)
+                $s = $db->prepare('SELECT (SELECT COUNT(*) FROM herkunft WHERE tag = ? AND gruppe = ? AND quelle = ?), (SELECT COUNT(*) FROM herkunft WHERE tag = ? AND gruppe = ? AND quelle <> ?)');
+                $s->execute([$tag, $gruppe, $quelle, $tag, $gruppe, STAT_WEITERE]);
+                [$schon, $andere] = $s->fetch(PDO::FETCH_NUM);
+                $s->closeCursor();
+                if ((int)$schon === 0 && (int)$andere >= STAT_QUELLEN_MAX) $quelle = STAT_WEITERE;
+            }
             $db->prepare('UPDATE tage SET besucher = besucher + 1 WHERE tag = ?')->execute([$tag]);
             $db->prepare('INSERT INTO herkunft (tag, gruppe, quelle, besucher) VALUES (?, ?, ?, 1) ON CONFLICT (tag, gruppe, quelle) DO UPDATE SET besucher = besucher + 1')
                 ->execute([$tag, $gruppe, $quelle]);
@@ -226,7 +247,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') exit;
 // Testmail (seit 01.10.2026): POST aktion=testmail mit dem Kopf X-Trigger-Key (derselbe Schlüssel wie trigger/refresh.php)
 // schickt sofort einen Bericht über den laufenden Tag. Ausgelöst über den Workflow „Statistik – Testmail“; höchstens
 // einmal in fünf Minuten.
-if (($_POST['aktion'] ?? '') === 'testmail') {
+if (text($_POST, 'aktion') === 'testmail') {
     $cfg = is_file(__DIR__ . '/trigger/refresh-config.php') ? require __DIR__ . '/trigger/refresh-config.php' : [];
     $soll = trim((string)($cfg['secret'] ?? ''));
     if ($soll === '' || !hash_equals($soll, trim((string)($_SERVER['HTTP_X_TRIGGER_KEY'] ?? '')))) { http_response_code(403); exit; }
@@ -234,7 +255,7 @@ if (($_POST['aktion'] ?? '') === 'testmail') {
     if (time() - (int)(stat_meta($db, 'testmail') ?? 0) < 300) { http_response_code(429); exit; }
     stat_meta_setzen($db, 'testmail', (string)time());
     try {
-        if (($_POST['art'] ?? '') === 'erinnerung') {
+        if (text($_POST, 'art') === 'erinnerung') {
             require __DIR__ . '/erinnerung.php';
             $ok = erinnerung_testmail(BERICHT_AN);
         } else {
@@ -256,11 +277,11 @@ $fetchSite = $_SERVER['HTTP_SEC_FETCH_SITE'] ?? '';
 if (($origin !== '' && $origin !== $ursprung) || ($fetchSite !== '' && $fetchSite !== 'same-origin')) exit;
 $widerspruch = ($_SERVER['HTTP_SEC_GPC'] ?? '') === '1' || ($_SERVER['HTTP_DNT'] ?? '') === '1';   // site.js prüft das auch
 
-$pfad = stat_pfad(substr((string)($_POST['p'] ?? ''), 0, 100));
+$pfad = stat_pfad(substr(text($_POST, 'p'), 0, 100));
 $bericht = null;
 try {
     if ($pfad !== null && !$widerspruch) {
-        stat_zaehlen($pfad, substr((string)($_POST['r'] ?? ''), 0, 500), substr((string)($_POST['q'] ?? ''), 0, 100),
+        stat_zaehlen($pfad, substr(text($_POST, 'r'), 0, 500), substr(text($_POST, 'q'), 0, 100),
             (string)($_SERVER['REMOTE_ADDR'] ?? ''), substr((string)($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 400));
     }
     $bericht = stat_bericht_faellig();

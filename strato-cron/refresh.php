@@ -79,8 +79,7 @@ curl_setopt_array($ch, [
 
 $resp = curl_exec($ch);
 $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-$err  = curl_error($ch);
-curl_close($ch);
+$err  = curl_error($ch);   // das Handle schließt PHP selbst; die Schließ-Funktion ist seit PHP 8.0 ohne Wirkung und seit 8.5 veraltet (T-133)
 
 if ($code === 204) {
     http_response_code(200);

@@ -16,6 +16,13 @@
  */
 declare(strict_types=1);
 
+/** Feld aus $_POST als Text; eine Liste („feld[]=…“) zählt wie ein leeres Feld – ohne PHP-Warnung im Fehlerprotokoll (T-132). */
+function text(array $q, string $k): string
+{
+    $v = $q[$k] ?? '';
+    return is_string($v) ? $v : '';
+}
+
 header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex');
 
@@ -36,7 +43,7 @@ if ($soll === '' || !is_string($ist) || !hash_equals($soll, trim($ist))) {
 
 // Datenbank → Ordner im Webroot (beide per .htaccess gesperrt) und Namensanfang der Datei (Rest des Namens ist zufällig)
 $DATENBANKEN = ['konto' => 'konto-daten', 'statistik' => 'statistik-daten'];
-$db = (string)($_POST['db'] ?? '');
+$db = text($_POST, 'db');
 if (!isset($DATENBANKEN[$db])) {
     http_response_code(400);
     exit('unbekannte Datenbank');

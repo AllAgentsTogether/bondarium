@@ -38,6 +38,13 @@ function laenge(string $s): int
     return function_exists('mb_strlen') ? mb_strlen($s, 'UTF-8') : strlen($s);
 }
 
+/** Feld aus $_POST als Text; eine Liste („feld[]=…“) zählt wie ein leeres Feld – ohne PHP-Warnung im Fehlerprotokoll (T-132). */
+function text(array $q, string $k): string
+{
+    $v = $q[$k] ?? '';
+    return is_string($v) ? $v : '';
+}
+
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     header('Allow: POST');
     antwort(405, 'methode');
@@ -50,10 +57,10 @@ if ($origin !== '' && $origin !== URSPRUNG) {
     antwort(403, 'ursprung');
 }
 
-$name  = trim((string)($_POST['name'] ?? ''));
-$mail  = trim((string)($_POST['email'] ?? ''));
-$text  = trim((string)($_POST['nachricht'] ?? ''));
-$falle = (string)($_POST['website'] ?? '');
+$name  = trim(text($_POST, 'name'));
+$mail  = trim(text($_POST, 'email'));
+$text  = trim(text($_POST, 'nachricht'));
+$falle = text($_POST, 'website');
 
 // Honigtopf ausgefüllt: so antworten, als wäre alles gut – gesendet wird nichts
 if ($falle !== '') {

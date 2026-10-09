@@ -71,7 +71,10 @@
  *              aus der Browser-Kennung, angemeldet am, zuletzt genutzt)
  *   zaehler    Schutz vor Missbrauch: verschlüsselte Hashwerte von Adresse und IP-Adresse für verschickte E-Mails und
  *              falsche Passwörter, gezählt werden 24 Stunden, danach gelöscht (aufraeumen)
- *   meta       zufälliger Schlüssel für diese Hashwerte, Zeitpunkt des letzten Aufräumens, ein Vergleichs-Hashwert
+ *   meta       zufälliger Schlüssel für diese Hashwerte, Zeitpunkt des letzten Aufräumens, ein Vergleichs-Hashwert, seit
+ *              Fassung 9 der Zeitpunkt der Umstellung der Ein-Klick-Links (link_kennung)
+ * Daneben die Marke konto-daten/.angelegt (seit 09.10.2026): Es gab hier schon eine Datenbank – fehlt die Datei, legt
+ * db() keine neue an (Wiederherstellen: docs/SICHERUNG.md).
  * Passwörter, Link-Kennwörter und Cookies stehen nie im Klartext in der Datei. Passwörter werden mit Argon2id gehasht
  * (wo PHP es nicht kann: bcrypt). Konten ohne Anmeldung seit zwei Jahren werden gelöscht.
  *
@@ -79,17 +82,21 @@
  *   - Änderungen nur per POST mit dem Kopf „X-Requested-With: bondarium-konto“ – fremde Seiten können ihn im
  *     Browser nicht mitschicken (CORS); ein fremder Ursprung (Origin) wird abgewiesen; das Cookie ist SameSite=Strict
  *   - Passwort: mindestens PW_MIN Zeichen, keine sehr häufigen Passwörter (passwort_gut)
- *   - falsche Passwörter werden gezählt und gebremst (LOGIN_GRENZEN); die Antwort verrät nicht, ob es zu einer
- *     Adresse ein Konto gibt (anmelden, registrieren und vergessen antworten in beiden Fällen gleich)
- *   - Obergrenzen für verschickte E-Mails: je Adresse, je IP-Adresse und insgesamt (GRENZEN); Honigtopf-Feld „website“
+ *   - falsche Passwörter werden gezählt und gebremst (LOGIN_GRENZEN; angemeldet beim Bestätigen mit Passwort
+ *     LOGIN_GRENZEN_ANGEMELDET); die Antwort verrät nicht, ob es zu einer Adresse ein Konto gibt (anmelden, registrieren und
+ *     vergessen antworten in beiden Fällen gleich)
+ *   - Obergrenzen für verschickte E-Mails: je Adresse, je IP-Adresse und insgesamt (GRENZEN); Honigtopf-Feld „website“.
+ *     „IP-Adresse“ heißt bei IPv6 das ganze /64-Netz eines Anschlusses (ip())
  *   - Passwort ändern oder zurücksetzen meldet alle anderen Geräte ab
  *
  * Status: ok · methode · anfrage · ursprung · aktion · email · passwort (zu schwach) · zugang (E-Mail oder Passwort
- *         falsch) · zuviel · versand · link (abgelaufen oder benutzt) · anmelden (nicht angemeldet) · isin · voll ·
+ *         falsch) · zuviel (Grenze je Adresse oder Anschluss) · zuviel-gesamt (Gesamtgrenze für E-Mails, seit 09.10.2026) ·
+ *         versand · link (abgelaufen oder benutzt) · anmelden (nicht angemeldet) · isin · voll ·
  *         nennwert (keine ganze Zahl von 0 bis NENNWERT_MAX) · muster (kein eigenes Musterdepot) · name (leer) ·
  *         mustervoll (schon MAX_MUSTER Musterdepots) · letztes (das letzte Musterdepot bleibt) · speicher (Datenbank nicht
- *         nutzbar) · art (unbekannte Art der Ablage) · wert (kein gültiger Wert oder zu lang) · voll (Ablage dieser Art
- *         voll) · gleich (neue E-Mail-Adresse ist die alte) · fehler
+ *         nutzbar, fehlt nach dem Anlegen oder liegt doppelt da) · art (unbekannte Art der Ablage) · wert (kein gültiger Wert
+ *         oder zu lang) · voll (Ablage dieser Art voll) · aus („Zuletzt angesehen“ ist ausgeschaltet) · gleich (neue
+ *         E-Mail-Adresse ist die alte) · fehler
  * Ändert sich hier etwas an den verarbeiteten Daten, muss die Datenschutzerklärung (rechtliches.html) mit – und der
  * Betreiber vorher gefragt werden.
  *
@@ -97,6 +104,10 @@
  * die Cookies kommen ohne „Secure“, und die E-Mail landet in konto-daten/lokal-mail.txt statt im Versand.
  */
 declare(strict_types=1);
+
+// Deutsche Zeit für date() und strtotime() – Export, „heute“ der Meldungen, Alter der Wochenbrief-Ausgabe (wie aufruf.php und
+// wechselkurse.php; die Voreinstellung des Servers ist von außen nicht erkennbar; Technik-Test 08.10.2026, T-107)
+date_default_timezone_set('Europe/Berlin');
 
 const LOKAL              = PHP_SAPI === 'cli-server';
 const ABSENDER           = 'info@bondarium.com';   // eigenes Postfach bei STRATO, wie kontakt.php
@@ -110,6 +121,7 @@ const MAX_FAVORITEN      = 200;
 const MAX_DEPOT          = 10;          // Anleihen je Musterdepot (Nutzerentscheid 01.10.2026; je Anleihe eine Farbe im Schaubild)
 const MAX_MUSTER         = 5;           // Musterdepots je Konto (Nutzerentscheid 02.10.2026)
 const NAME_MAX           = 40;          // Zeichen im Namen eines Musterdepots
+const NOTIZ_MAX          = 200;         // Zeichen einer Notiz (wie das Feld in bereich.js); die Grenze in Byte steht in ABLAGE
 const NENNWERT_MAX       = 100000000;   // gedachter Nennwert je Anleihe, in der Währung der Anleihe
 const PW_MIN             = 10;
 const PW_MAX             = 200;
@@ -126,7 +138,7 @@ const MELDUNG_MAILS       = 200;        // E-Mails je Aufruf von meldungen-sende
 // Der Schlüssel ist je Art eine ISIN, ein Seitenname, eine kurze Kennung – Muster siehe ablage_schluessel().
 // Die Arten „suche“ und „rechnung“ gab es nur am 02.10.2026 (auf Nutzerwunsch am selben Abend entfernt); aufraeumen() löscht ihre Reste.
 const ABLAGE = [
-    'notiz'       => [200, 600],    // Schlüssel ISIN: private Notiz zur gemerkten Anleihe
+    'notiz'       => [200, 1000],   // Schlüssel ISIN: private Notiz zur gemerkten Anleihe – höchstens NOTIZ_MAX Zeichen; 1000 Byte, damit auch „€“, „“ und Emoji passen (T-109)
     'liste'       => [12, 3400],    // eigene Liste der Merkliste: {n: Name, i: [ISIN, …]}
     'gelesen'     => [120, 8],      // Schlüssel Seitenname: „Als gelesen markieren“
     'lesezeichen' => [40, 400],     // Schlüssel Seite oder Seite#Abschnitt: {t: Titel, a: Abschnitt}
@@ -153,6 +165,14 @@ const GRENZEN = [
 const LOGIN_GRENZEN = [
     ['le', 900, 5],
     ['lm', 3600, 30], ['lm', 86400, 100],
+    ['li', 900, 30], ['li', 86400, 200],
+];
+// Dieselben Grenzen ohne „lm“ für Aktionen, bei denen die Inhaberin schon angemeldet ist und ihr Passwort bestätigt (Passwort
+// ändern, E-Mail ändern, Konto löschen): Fremde Fehlversuche auf ihre Adresse sperren sie dort nicht aus. Ihre eigenen falschen
+// Eingaben bremst weiter „le“, und gezählt wird weiter auch „lm“ (Technik-Test 08.10.2026, T-24 Teil a). Bei der Anmeldung
+// bleibt „lm“ (offene Entscheidung des Betreibers).
+const LOGIN_GRENZEN_ANGEMELDET = [
+    ['le', 900, 5],
     ['li', 900, 30], ['li', 86400, 200],
 ];
 // Sehr häufige Passwörter ab zehn Zeichen (Vergleich in Kleinbuchstaben). Kein Ersatz für ein gutes Passwort, aber die
@@ -205,10 +225,17 @@ function laenge(string $s): int
     return function_exists('mb_strlen') ? mb_strlen($s, 'UTF-8') : strlen($s);
 }
 
+/** Feld aus $_POST/$_GET als Text; eine Liste („feld[]=…“) zählt wie ein leeres Feld – ohne PHP-Warnung im Fehlerprotokoll (T-132). */
+function text(array $q, string $k): string
+{
+    $v = $q[$k] ?? '';
+    return is_string($v) ? $v : '';
+}
+
 /** E-Mail-Adresse aus dem Formular, klein geschrieben; ungültig → Antwort „email“. */
 function email_lesen(): string
 {
-    $mail = strtolower(trim((string)($_POST['email'] ?? '')));
+    $mail = strtolower(trim(text($_POST, 'email')));
     if ($mail === '' || strlen($mail) > 254 || preg_match('/[\r\n]/', $mail) || filter_var($mail, FILTER_VALIDATE_EMAIL) === false) {
         antwort(422, 'email');
     }
@@ -218,7 +245,7 @@ function email_lesen(): string
 /** Anleihe, die nach dem Anmelden gleich gemerkt wird (vom Merken-Knopf), oder null. */
 function isin_lesen(): ?string
 {
-    $isin = strtoupper(trim((string)($_POST['isin'] ?? '')));
+    $isin = strtoupper(trim(text($_POST, 'isin')));
     return ist_isin($isin) ? $isin : null;
 }
 
@@ -310,6 +337,20 @@ function db(): PDO
     }
     $dateien = glob(DATEN . '/konto-*.sqlite') ?: [];
     sort($dateien);
+    // Marke „.angelegt“ (seit 09.10.2026, Technik-Test T-22): Gibt es sie, gab es hier schon eine Datenbank. Fehlt dann die Datei
+    // (Wiederherstellen aus der Sicherung, docs/SICHERUNG.md) oder liegen zwei da, wird nichts angelegt und nichts geraten –
+    // Antwort 503 „speicher“, bis wieder genau eine Datei da ist. Sonst entstünde still eine leere Datenbank, und danach
+    // entschiede der zufällige Dateiname, welche gilt.
+    $marke = DATEN . '/.angelegt';
+    if (count($dateien) > 1 || (!$dateien && is_file($marke))) {
+        error_log('konto.php: ' . (count($dateien) > 1 ? count($dateien) . ' Datenbank-Dateien in konto-daten/' : 'Datenbank-Datei fehlt, konto-daten/.angelegt ist da')
+            . ' – keine neue angelegt (docs/SICHERUNG.md)');
+        if ($sperre) {
+            flock($sperre, LOCK_UN);
+            fclose($sperre);
+        }
+        antwort(503, 'speicher');
+    }
     $pfad = $dateien[0] ?? DATEN . '/konto-' . bin2hex(random_bytes(16)) . '.sqlite';
     try {
         $db = new PDO('sqlite:' . $pfad, null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_TIMEOUT => 5]);
@@ -413,6 +454,21 @@ function db(): PDO
             $db->exec('PRAGMA user_version = 8');
             $db->exec('COMMIT');
         }
+        if ($fassung < 9) {
+            // Fassung 9 (09.10.2026, Technik-Test 08.10.2026): Indizes für die häufigen Abfragen je Konto und je Adresse (T-111) und
+            // der Zeitpunkt, ab dem die Ein-Klick-Links an Kontonummer und Anlagezeitpunkt hängen (T-103, siehe link_kennung()) –
+            // die alte Form gilt nur noch für Konten, die vorher angelegt wurden.
+            $db->exec('BEGIN IMMEDIATE');
+            $db->exec('CREATE INDEX IF NOT EXISTS sitzungen_n ON sitzungen (nutzer)');
+            $db->exec('CREATE INDEX IF NOT EXISTS links_e ON links (email)');
+            $db->exec('CREATE INDEX IF NOT EXISTS links_n ON links (nutzer)');
+            $db->prepare("INSERT OR IGNORE INTO meta (k, v) VALUES ('kennung_neu_ab', ?)")->execute([(string)time()]);
+            $db->exec('PRAGMA user_version = 9');
+            $db->exec('COMMIT');
+        }
+        if (!is_file($marke)) {
+            @file_put_contents($marke, "Hier gab es eine Datenbank (konto.php, docs/SICHERUNG.md). Nicht löschen.\n");
+        }
     } catch (Throwable $e) {
         error_log('konto.php: Datenbank nicht nutzbar – ' . $e->getMessage());
         antwort(503, 'speicher');
@@ -435,9 +491,22 @@ function schluessel_hash(string $wert): string
     return substr(hash_hmac('sha256', $wert, $geheim), 0, 32);
 }
 
+/**
+ * Anschluss für die Bremsen: IPv4 wie sie ist, IPv6 als ganzes /64-Netz (ein Anschluss bekommt meist ein ganzes /64 und kann die
+ * Adresse darin frei wechseln), IPv4 in IPv6-Schreibweise (::ffff:a.b.c.d) als IPv4 – sonst teilten sich alle diese Adressen
+ * das Netz „::/64“. Gespeichert wird davon nur der Hashwert (schluessel_hash). Technik-Test 08.10.2026, T-23.
+ */
 function ip(): string
 {
-    return (string)($_SERVER['REMOTE_ADDR'] ?? '');
+    $ip = (string)($_SERVER['REMOTE_ADDR'] ?? '');
+    $b = @inet_pton($ip);
+    if ($b === false || strlen($b) !== 16) {
+        return $ip;
+    }
+    if (substr($b, 0, 12) === str_repeat("\0", 10) . "\xff\xff") {
+        return (string)inet_ntop(substr($b, 12));
+    }
+    return inet_ntop(substr($b, 0, 8) . str_repeat("\0", 8)) . '/64';
 }
 
 /** true, wenn eine der Obergrenzen erreicht ist. $schl: Art → Schlüssel in der Tabelle zaehler. */
@@ -463,12 +532,19 @@ function zaehle(array $schl): void
     }
 }
 
-/** Obergrenze für verschickte E-Mails prüfen und den Versand zählen; erreicht → Antwort „zuviel“. */
+/**
+ * Obergrenze für verschickte E-Mails prüfen und den Versand zählen. Erreicht je Adresse oder Anschluss → Antwort „zuviel“;
+ * erreicht nur die Gesamtgrenze → „zuviel-gesamt“: Dann liegt es nicht an dieser Adresse, und die Seite sagt das so
+ * (Technik-Test 08.10.2026, T-25; die Höhe der Grenzen ist eine offene Entscheidung des Betreibers).
+ */
 function versand_zaehlen(string $mail): void
 {
     $schl = ['m' => 'm:' . schluessel_hash($mail), 'i' => 'i:' . schluessel_hash(ip()), 'g' => 'g'];
-    if (gebremst(GRENZEN, $schl)) {
+    if (gebremst(array_filter(GRENZEN, fn($g) => $g[0] !== 'g'), $schl)) {
         antwort(429, 'zuviel');
+    }
+    if (gebremst(array_filter(GRENZEN, fn($g) => $g[0] === 'g'), $schl)) {
+        antwort(429, 'zuviel-gesamt');
     }
     zaehle($schl);
 }
@@ -538,6 +614,9 @@ function nutzer(): ?array
     $s = $db->prepare('SELECT s.nutzer AS id, s.ablauf, s.zuletzt AS szuletzt, n.email, n.zuletzt, n.pw FROM sitzungen s JOIN nutzer n ON n.id = s.nutzer WHERE s.hash = ? AND s.ablauf > ?');
     $s->execute([$hash, $jetzt]);
     $z = $s->fetch(PDO::FETCH_ASSOC);
+    // Leseanweisung schließen, bevor dieselbe Verbindung schreibt: Eine offene Anweisung hält die Lesesperre, und SQLite
+    // bricht das Schreiben bei gleichzeitigen Anfragen sofort mit „database is locked“ ab (Technik-Test 08.10.2026, T-20)
+    $s->closeCursor();
     if (!$z) {
         cookies_loeschen();
         return null;
@@ -685,7 +764,7 @@ function musterdepots(int $id): array
 /** Nummer eines eigenen Musterdepots aus dem Formular (fehlt sie oder ist sie 0: das erste, notfalls neu angelegt) */
 function muster_lesen(int $id): int
 {
-    $m = (int)($_POST['muster'] ?? 0);
+    $m = (int)text($_POST, 'muster');
     if ($m <= 0) {
         return muster_erstes($id);
     }
@@ -717,10 +796,16 @@ function muster_anzahl(int $id): int
     return (int)$s->fetchColumn();
 }
 
-/** Name eines Musterdepots: ohne Steuerzeichen, Leerraum zusammengefasst, höchstens NAME_MAX Zeichen; leer → $ersatz */
+/**
+ * Name eines Musterdepots: Leerraum (auch Tabulator und Zeilenumbruch) wird ein Leerzeichen – erst danach fallen Steuer- und
+ * unsichtbare Format-Zeichen weg (Schreibrichtung U+202E, Breite null U+200B …; Technik-Test 08.10.2026, T-108), sonst klebten
+ * „Rente⇥2030“ zu „Rente2030“ zusammen. Der Verbinder U+200D bleibt, er hält Emoji wie 👨‍👩‍👧 zusammen. Höchstens NAME_MAX
+ * Zeichen; leer → $ersatz
+ */
 function name_lesen(string $roh, string $ersatz): string
 {
-    $n = trim((string)preg_replace('/\s+/u', ' ', (string)preg_replace('/[\x00-\x1F\x7F]/u', '', $roh)));
+    $n = (string)preg_replace('/\s+/u', ' ', $roh);
+    $n = trim((string)preg_replace('/ {2,}/', ' ', (string)preg_replace('/[\p{Cc}]|(?!\x{200D})\p{Cf}/u', '', $n)));
     if ($n === '') {
         return $ersatz;
     }
@@ -741,15 +826,20 @@ function konto_stand(int $id, string $email): array
 function merke(int $id, string $isin): bool
 {
     $db = db();
-    $s = $db->prepare('SELECT COUNT(*) FROM favoriten WHERE nutzer = ?');
-    $s->execute([$id]);
-    if ((int)$s->fetchColumn() >= MAX_FAVORITEN) {
-        $s = $db->prepare('SELECT 1 FROM favoriten WHERE nutzer = ? AND isin = ?');
-        $s->execute([$id, $isin]);
-        return (bool)$s->fetchColumn();
+    // Zählen und Einfügen in EINER Anweisung (Technik-Test 08.10.2026, T-20): Vorher lief erst ein COUNT, dessen offene
+    // Leseanweisung bei gleichzeitigem Merken „database is locked“ auslöste – und zwei Anfragen zugleich konnten beide
+    // unter MAX_FAVORITEN zählen. So bleibt die Grenze auch bei gleichzeitigen Anfragen, und vor dem Schreiben ist nichts offen.
+    $s = $db->prepare('INSERT OR IGNORE INTO favoriten (nutzer, isin, seit, rendite) SELECT ?, ?, ?, ? WHERE (SELECT COUNT(*) FROM favoriten WHERE nutzer = ?) < ' . MAX_FAVORITEN);
+    $s->execute([$id, $isin, time(), rendite_heute($isin), $id]);
+    if ($s->rowCount() > 0) {
+        return true;
     }
-    $db->prepare('INSERT OR IGNORE INTO favoriten (nutzer, isin, seit, rendite) VALUES (?, ?, ?, ?)')->execute([$id, $isin, time(), rendite_heute($isin)]);
-    return true;
+    // nichts eingefügt: schon gemerkt (true) oder die Merkliste ist voll (false)
+    $s = $db->prepare('SELECT 1 FROM favoriten WHERE nutzer = ? AND isin = ?');
+    $s->execute([$id, $isin]);
+    $da = (bool)$s->fetchColumn();
+    $s->closeCursor();
+    return $da;
 }
 
 /** Stand für die Seite nach Anmelden, Bestätigen oder neuem Passwort; legt die vorgemerkte Anleihe ab. */
@@ -780,6 +870,9 @@ function aufraeumen(): void
     $db->prepare('DELETE FROM newsletter_log WHERE zeit < ?')->execute([$jetzt - 25 * 31 * 86400]);
     $db->exec("DELETE FROM ablage WHERE art IN ('suche', 'rechnung')");   // entfernte Arten (siehe ABLAGE)
     $db->exec("DELETE FROM ablage WHERE art = 'einstellung' AND schluessel <> 'zuletzt'");   // entfernte Voreinstellungen (siehe EINSTELLUNGEN)
+    // „Zuletzt angesehen“ nur bei eingeschalteter Einstellung (Datenschutzerklärung: „schaltest du es wieder aus, löschen wir sie“) –
+    // räumt auch Reste aus der Zeit auf, als nur die Seite gelöscht hat (Technik-Test 08.10.2026, T-18)
+    $db->exec("DELETE FROM ablage WHERE art = 'angesehen' AND nutzer NOT IN (SELECT nutzer FROM ablage WHERE art = 'einstellung' AND schluessel = 'zuletzt' AND wert = '1')");
     // Notizen zu Anleihen, die seit 30 Tagen nicht mehr auf der Merkliste stehen
     $db->prepare("DELETE FROM ablage WHERE art = 'notiz' AND zeit < ? AND NOT EXISTS (SELECT 1 FROM favoriten f WHERE f.nutzer = ablage.nutzer AND f.isin = ablage.schluessel)")
        ->execute([$jetzt - 30 * 86400]);
@@ -788,7 +881,7 @@ function aufraeumen(): void
 /** Gültigen Link lesen (ohne ihn zu verbrauchen) oder Antwort „link“. */
 function link_lesen(string $art): array
 {
-    $t = $_POST['token'] ?? '';
+    $t = text($_POST, 'token');
     if (!ist_kennwort($t)) {
         antwort(410, 'link');
     }
@@ -830,10 +923,54 @@ function ausloeser_pruefen(): void
 
 // ---------- Newsletter (seit 02.10.2026, docs/NEWSLETTER.md) ----------
 
-/** Kennung für den Abmelde-Link: Kontonummer und ein Hashwert über Nummer und Adresse mit dem Schlüssel der Datenbank. */
-function nl_kennung(int $id, string $email): string
+/**
+ * Kennung der Ein-Klick-Links in E-Mails – Wochenbrief abbestellen („nl“), keine Meldungen per E-Mail („meldungen-aus“),
+ * Erinnerung vor Fälligkeit aus („erinnerung-aus“, dieselbe Formel in erinnerung_token(), erinnerung.php): „Nummer.Prüfsumme“,
+ * die Prüfsumme über Zweck, Kontonummer und Anlagezeitpunkt mit dem Schlüssel der Datenbank. Seit 09.10.2026 (Technik-Test
+ * 08.10.2026, T-103): vorher hing sie an der Adresse (ein Abmelde-Link wirkte nach einem Adresswechsel nicht mehr) bzw. nur an der
+ * Nummer (die Nummer eines gelöschten Kontos wird wieder vergeben – sein alter Link traf dann das neue Konto).
+ */
+function link_kennung(string $zweck, int $id, int $erstellt): string
 {
-    return $id . '.' . schluessel_hash('nl|' . $id . '|' . $email);
+    return $id . '.' . schluessel_hash($zweck . '|' . $id . '|' . $erstellt);
+}
+
+/**
+ * Wurde das Konto vor der Umstellung der Kennungen (Fassung 9) angelegt? Nur dann gilt die alte Form noch – seine E-Mails tragen
+ * sie. Ein Konto aus derselben Sekunde wie die Umstellung zählt als neu: E-Mails mit Ein-Klick-Links bekam es noch keine.
+ */
+function kennung_alt_erlaubt(int $erstellt): bool
+{
+    static $ab = null;
+    if ($ab === null) {
+        $ab = (int)db()->query("SELECT v FROM meta WHERE k = 'kennung_neu_ab'")->fetchColumn();
+    }
+    return $erstellt < $ab;
+}
+
+/** Kennung eines Ein-Klick-Links prüfen → Kontonummer, oder null: kein Konto mit dieser Nummer, oder die Kennung passt nicht */
+function link_kennung_pruefen(string $zweck, string $kennung): ?int
+{
+    if (!preg_match('/^(\d{1,12})\.[0-9a-f]{32}$/D', $kennung, $m)) {
+        return null;
+    }
+    $id = (int)$m[1];
+    $s = db()->prepare('SELECT email, erstellt FROM nutzer WHERE id = ?');
+    $s->execute([$id]);
+    $z = $s->fetch(PDO::FETCH_NUM);
+    $s->closeCursor();   // vor dem Schreiben des Aufrufers schließen (T-20, siehe nutzer())
+    if (!$z) {
+        return null;
+    }
+    if (hash_equals(link_kennung($zweck, $id, (int)$z[1]), $kennung)) {
+        return $id;
+    }
+    // alte Form (bis 09.10.2026): Wochenbrief über Nummer und Adresse, Meldungen und Erinnerung nur über die Nummer
+    $alt = ['nl' => 'nl|' . $id . '|' . $z[0], 'meldungen-aus' => 'meldungen-aus:' . $id, 'erinnerung-aus' => 'erinnerung-aus:' . $id][$zweck] ?? null;
+    if ($alt !== null && kennung_alt_erlaubt((int)$z[1]) && hash_equals($id . '.' . schluessel_hash($alt), $kennung)) {
+        return $id;
+    }
+    return null;
 }
 
 /** Newsletter an- oder abschalten; zählt die Änderung (ohne Kontobezug). Gibt true zurück, wenn sich etwas geändert hat. */
@@ -852,16 +989,11 @@ function nl_setzen(int $id, bool $an): bool
 /** Abbestellen über die Kennung des Abmelde-Links (ohne Anmeldung). false: Kennung passt zu keinem Konto. */
 function nl_abbestellen(string $kennung): bool
 {
-    if (!preg_match('/^(\d{1,12})\.([0-9a-f]{32})$/', $kennung, $m)) {
+    $id = link_kennung_pruefen('nl', $kennung);
+    if ($id === null) {
         return false;
     }
-    $s = db()->prepare('SELECT email FROM nutzer WHERE id = ?');
-    $s->execute([(int)$m[1]]);
-    $email = $s->fetchColumn();
-    if (!is_string($email) || !hash_equals(nl_kennung((int)$m[1], $email), $kennung)) {
-        return false;
-    }
-    nl_setzen((int)$m[1], false);
+    nl_setzen($id, false);
     return true;
 }
 
@@ -1065,7 +1197,7 @@ function nl_senden(): array
     }
     $anleihen = nl_datei('anleihen.json') ?? [];
     $db = db();
-    if ((string)($_POST['an'] ?? '') === 'betreiber') {
+    if (text($_POST, 'an') === 'betreiber') {
         $ok = nl_mail($a, ABSENDER, '0.' . str_repeat('0', 32), nl_merkliste($a, $anleihen, (array)($a['muster'] ?? [])), 0);
         return ['gesendet' => $ok ? 1 : 0, 'offen' => 0, 'kw' => $a['kw'], 'grund' => 'Probe an den Betreiber'];
     }
@@ -1083,7 +1215,7 @@ function nl_senden(): array
         return ['gesendet' => 0, 'offen' => 0, 'kw' => $a['kw'], 'grund' => $grund];
     }
     $kw = (string)$a['kw'];
-    $s = $db->prepare('SELECT id, email FROM nutzer WHERE newsletter = 1 AND newsletter_kw <> ? ORDER BY id LIMIT ' . NL_JE_AUFRUF);
+    $s = $db->prepare('SELECT id, email, erstellt FROM nutzer WHERE newsletter = 1 AND newsletter_kw <> ? ORDER BY id LIMIT ' . NL_JE_AUFRUF);
     $s->execute([$kw]);
     $fav = $db->prepare('SELECT isin FROM favoriten WHERE nutzer = ? ORDER BY seit DESC, isin');
     $merke = $db->prepare('UPDATE nutzer SET newsletter_kw = ? WHERE id = ?');
@@ -1092,7 +1224,7 @@ function nl_senden(): array
     foreach ($s->fetchAll(PDO::FETCH_ASSOC) as $n) {
         $fav->execute([(int)$n['id']]);
         $merk = nl_merkliste($a, $anleihen, $fav->fetchAll(PDO::FETCH_COLUMN));
-        if (nl_mail($a, (string)$n['email'], nl_kennung((int)$n['id'], (string)$n['email']), $merk, (int)$n['id'])) {
+        if (nl_mail($a, (string)$n['email'], link_kennung('nl', (int)$n['id'], (int)$n['erstellt']), $merk, (int)$n['id'])) {
             $merke->execute([$kw, (int)$n['id']]);   // erst nach dem Versand – ein Abbruch verschickt beim nächsten Aufruf nichts doppelt
             $gesendet++;
         } else {
@@ -1102,10 +1234,13 @@ function nl_senden(): array
     $s = $db->prepare('SELECT COUNT(*) FROM nutzer WHERE newsletter = 1 AND newsletter_kw <> ?');
     $s->execute([$kw]);
     $offen = (int)$s->fetchColumn();
+    $s->closeCursor();
     $s = $db->prepare('SELECT COUNT(*) FROM nutzer WHERE newsletter_kw = ?');
     $s->execute([$kw]);
+    $empfaenger = (int)$s->fetchColumn();
+    $s->closeCursor();   // vor dem Schreiben schließen (T-20, siehe nutzer())
     $db->prepare("INSERT OR REPLACE INTO meta (k, v) VALUES ('newsletter_letzte', ?)")
-       ->execute([json_encode(['kw' => $kw, 'zeit' => time(), 'empfaenger' => (int)$s->fetchColumn()])]);
+       ->execute([json_encode(['kw' => $kw, 'zeit' => time(), 'empfaenger' => $empfaenger])]);
     return ['gesendet' => $gesendet, 'offen' => $fehler > 0 && $gesendet === 0 ? 0 : $offen, 'fehler' => $fehler, 'kw' => $kw];
 }
 
@@ -1133,11 +1268,6 @@ function ablage_sauber($w, int $tiefe = 0)
     return '';
 }
 
-function meldung_kennung(int $id): string
-{
-    return $id . '.' . schluessel_hash('meldungen-aus:' . $id);
-}
-
 /**
  * Meldungen prüfen und verschicken (aktion=meldungen-senden, nur mit dem Schlüssel des Auslösers; der Workflow ruft nach
  * dem täglichen Datenlauf). Geprüft wird gegen newsletter/anleihen.json (Felder siehe zeile_heute(); der Name in der E-Mail ist
@@ -1161,10 +1291,11 @@ function meldungen_senden(): array
     $db = db();
     $heute = date('Y-m-d');
     $bis = date('Y-m-d', time() + MELDUNG_TAGE * 86400);
-    $s = $db->query("SELECT a.nutzer, a.schluessel, a.wert, n.email FROM ablage a JOIN nutzer n ON n.id = a.nutzer WHERE a.art = 'meldung' ORDER BY a.nutzer, a.zeit");
+    $s = $db->query("SELECT a.nutzer, a.schluessel, a.wert, n.email, n.erstellt FROM ablage a JOIN nutzer n ON n.id = a.nutzer WHERE a.art = 'meldung' ORDER BY a.nutzer, a.zeit");
     $je = [];
     foreach ($s->fetchAll(PDO::FETCH_ASSOC) as $z) {
         $je[(int)$z['nutzer']]['email'] = (string)$z['email'];
+        $je[(int)$z['nutzer']]['erstellt'] = (int)$z['erstellt'];
         $je[(int)$z['nutzer']]['regeln'][(string)$z['schluessel']] = json_decode((string)$z['wert'], true);
     }
     $fav = $db->prepare('SELECT isin FROM favoriten WHERE nutzer = ?');
@@ -1243,7 +1374,7 @@ function meldungen_senden(): array
             $ok = mail_senden($k['email'], $n === 1 ? 'Bondarium: eine Meldung aus deinem Bereich' : "Bondarium: $n Meldungen aus deinem Bereich",
                 "du hast in „Mein Bondarium“ Meldungen eingerichtet. Nach den Schlusskursen vom letzten Börsentag gilt:\n\n- " . implode("\n- ", $zeilen)
                 . "\n\nAlle Meldungen ansehen oder ändern:\n" . SEITE . "/konto.html#meldungen\n\n"
-                . "Keine E-Mails mehr zu Meldungen (sie stehen dann nur noch in deinem Bereich) – ein Klick:\n" . SEITE . '/konto.html#meldungen-aus=' . meldung_kennung($id) . "\n\n"
+                . "Keine E-Mails mehr zu Meldungen (sie stehen dann nur noch in deinem Bereich) – ein Klick:\n" . SEITE . '/konto.html#meldungen-aus=' . link_kennung('meldungen-aus', $id, $k['erstellt']) . "\n\n"
                 . 'Das sind Tatsachen aus den Kursdaten, keine Empfehlung zum Kauf oder Verkauf. Keine Anlageberatung.');
             $ok ? $gesendet++ : $fehler++;
         }
@@ -1253,13 +1384,13 @@ function meldungen_senden(): array
 
 // ---------- Anfrage prüfen ----------
 $methode = $_SERVER['REQUEST_METHOD'] ?? '';
-$aktion  = (string)($methode === 'POST' ? ($_POST['aktion'] ?? '') : ($_GET['aktion'] ?? ''));
+$aktion  = $methode === 'POST' ? text($_POST, 'aktion') : text($_GET, 'aktion');
 
 // Abmelden aus dem E-Mail-Programm (RFC 8058): POST auf konto.php?nl=<Kennung> – ohne unseren Kopf, ohne Cookie.
 // Die Kennung ist der Nachweis; sie steht nur in der E-Mail des Abonnenten.
 if ($methode === 'POST' && isset($_GET['nl'])) {
     try {
-        nl_abbestellen((string)$_GET['nl']);
+        nl_abbestellen(text($_GET, 'nl'));
     } catch (Throwable $e) {
         error_log('konto.php: ' . $e->getMessage());
         antwort(500, 'fehler');
@@ -1269,7 +1400,7 @@ if ($methode === 'POST' && isset($_GET['nl'])) {
 // Dieselbe Adresse im Browser geöffnet (E-Mail-Programme ohne RFC 8058) oder von einer Link-Vorschau abgerufen: Der GET
 // bestellt nichts ab, er leitet nur auf konto.html#nl-ab=<Kennung> um – dort bestellt das Seitenskript ab wie beim Link im Text.
 if (($methode === 'GET' || $methode === 'HEAD') && isset($_GET['nl'])) {
-    $k = is_string($_GET['nl']) ? $_GET['nl'] : '';
+    $k = text($_GET, 'nl');
     header('Location: ' . ursprung() . '/konto.html' . (preg_match('/^\d{1,12}\.[0-9a-f]{32}$/D', $k) ? '#nl-ab=' . $k : ''), true, 303);
     exit;
 }
@@ -1300,11 +1431,11 @@ try {
             // no break – antwort() beendet das Skript
 
         case 'registrieren':
-            if ((string)($_POST['website'] ?? '') !== '') {
+            if (text($_POST, 'website') !== '') {
                 antwort(200, 'ok', ['stunden' => BESTAETIGEN_STUNDEN]);   // Honigtopf ausgefüllt: so antworten, als wäre alles gut
             }
             $mail = email_lesen();
-            $pw = (string)($_POST['passwort'] ?? '');
+            $pw = text($_POST, 'passwort');
             if (!passwort_gut($pw, $mail)) {
                 antwort(422, 'passwort', ['min' => PW_MIN]);
             }
@@ -1322,7 +1453,7 @@ try {
                     . 'Du wolltest dich gar nicht registrieren? Dann hat jemand deine Adresse eingegeben. Du musst nichts tun; an deinem Konto ändert sich nichts.');
             } else {
                 $t = kennwort();
-                $nl = (string)($_POST['newsletter'] ?? '') === '1' ? 1 : 0;   // Häkchen im Formular – gilt erst mit dem Bestätigen
+                $nl = text($_POST, 'newsletter') === '1' ? 1 : 0;   // Häkchen im Formular – gilt erst mit dem Bestätigen
                 $db->prepare("INSERT INTO links (hash, email, isin, ablauf, art, pw, newsletter) VALUES (?, ?, ?, ?, 'neu', ?, ?)")
                    ->execute([hash('sha256', $t), $mail, $isin, time() + BESTAETIGEN_STUNDEN * 3600, $pwHash, $nl]);
                 // Kennwort hinter „#“: Dieser Teil der Adresse wird nicht an den Server geschickt und steht in keinem Log
@@ -1347,7 +1478,7 @@ try {
 
         case 'bestaetigen':
             $l = link_lesen('neu');
-            $pw = (string)($_POST['passwort'] ?? '');
+            $pw = text($_POST, 'passwort');
             $db = db();
             $schl = login_schluessel($l['hash']);
             if (gebremst(LOGIN_GRENZEN, $schl)) {
@@ -1378,7 +1509,7 @@ try {
 
         case 'anmelden':
             $mail = email_lesen();
-            $pw = (string)($_POST['passwort'] ?? '');
+            $pw = text($_POST, 'passwort');
             $db = db();
             aufraeumen();
             $schl = login_schluessel($mail);
@@ -1388,6 +1519,7 @@ try {
             $s = $db->prepare('SELECT id, pw FROM nutzer WHERE email = ?');
             $s->execute([$mail]);
             $z = $s->fetch(PDO::FETCH_ASSOC);
+            $s->closeCursor();   // vor dem Schreiben schließen (T-20, siehe nutzer())
             $hash = $z && $z['pw'] !== null ? (string)$z['pw'] : null;
             if (strlen($pw) > 4 * PW_MAX || !pw_stimmt($pw, $hash)) {
                 zaehle($schl);
@@ -1402,7 +1534,7 @@ try {
             antwort(200, 'ok', stand($id, $mail, isin_lesen()));
 
         case 'vergessen':
-            if ((string)($_POST['website'] ?? '') !== '') {
+            if (text($_POST, 'website') !== '') {
                 antwort(200, 'ok', ['minuten' => RESET_MINUTEN]);
             }
             $mail = email_lesen();
@@ -1411,7 +1543,9 @@ try {
             versand_zaehlen($mail);
             $s = $db->prepare('SELECT 1 FROM nutzer WHERE email = ?');
             $s->execute([$mail]);
-            if ($s->fetchColumn()) {
+            $da = $s->fetchColumn();
+            $s->closeCursor();   // vor dem Schreiben schließen (T-20, siehe nutzer())
+            if ($da) {
                 $t = kennwort();
                 $db->prepare("INSERT INTO links (hash, email, ablauf, art) VALUES (?, ?, ?, 'passwort')")
                    ->execute([hash('sha256', $t), $mail, time() + RESET_MINUTEN * 60]);
@@ -1436,7 +1570,7 @@ try {
 
         case 'passwort-neu':
             $l = link_lesen('passwort');
-            $pw = (string)($_POST['passwort'] ?? '');
+            $pw = text($_POST, 'passwort');
             if (!passwort_gut($pw, $l['email'])) {
                 antwort(422, 'passwort', ['min' => PW_MIN]);
             }
@@ -1454,6 +1588,9 @@ try {
             $id = (int)$id;
             $db->prepare('UPDATE nutzer SET pw = ? WHERE id = ?')->execute([$pwHash, $id]);
             $db->prepare('DELETE FROM sitzungen WHERE nutzer = ?')->execute([$id]);   // alle Geräte abmelden
+            // Eine offene Adressänderung verfällt mit dem neuen Passwort: Wer das alte kannte, hätte sonst noch 24 Stunden lang die
+            // Adresse des Kontos auf seine eigene umstellen können (Technik-Test 08.10.2026, T-19)
+            $db->prepare("DELETE FROM links WHERE art = 'email' AND nutzer = ?")->execute([$id]);
             $db->prepare('DELETE FROM zaehler WHERE schluessel = ?')->execute(['lm:' . schluessel_hash($l['email'])]);
             sitzung_starten($id);
             $aus = stand($id, $l['email'], null);
@@ -1462,11 +1599,11 @@ try {
 
         case 'passwort-aendern':
             $n = angemeldet();
-            $alt = (string)($_POST['alt'] ?? '');
-            $pw = (string)($_POST['passwort'] ?? '');
+            $alt = text($_POST, 'alt');
+            $pw = text($_POST, 'passwort');
             $db = db();
             $schl = login_schluessel($n['email']);
-            if (gebremst(LOGIN_GRENZEN, $schl)) {
+            if (gebremst(LOGIN_GRENZEN_ANGEMELDET, $schl)) {   // ohne „lm“: fremde Fehlversuche sperren die Angemeldete nicht aus (T-24)
                 antwort(429, 'zuviel');
             }
             if (!pw_stimmt($alt, $n['pw'])) {
@@ -1479,6 +1616,7 @@ try {
             $db->prepare('UPDATE nutzer SET pw = ? WHERE id = ?')->execute([pw_hash($pw), $n['id']]);
             $db->prepare('DELETE FROM sitzungen WHERE nutzer = ? AND hash <> ?')->execute([$n['id'], hash('sha256', (string)$_COOKIE[COOKIE])]);   // andere Geräte abmelden
             $db->prepare("DELETE FROM links WHERE email = ? AND art = 'passwort'")->execute([$n['email']]);
+            $db->prepare("DELETE FROM links WHERE art = 'email' AND nutzer = ?")->execute([$n['id']]);   // offene Adressänderung verfällt (T-19, wie passwort-neu)
             mail_senden($n['email'], 'Dein Passwort bei Bondarium wurde geändert', "das Passwort deines Kontos bei Bondarium wurde soeben geändert. Alle anderen Geräte sind abgemeldet.\n\n"
                 . "Das warst nicht du? Dann setze sofort ein neues Passwort – auf dieser Seite über „Passwort vergessen“:\n\n" . ursprung() . '/konto.html');
             antwort(200, 'ok');
@@ -1486,7 +1624,7 @@ try {
         case 'merken':
         case 'entfernen':
             $n = angemeldet();
-            $isin = strtoupper(trim((string)($_POST['isin'] ?? '')));
+            $isin = strtoupper(trim(text($_POST, 'isin')));
             if (!ist_isin($isin)) {
                 antwort(422, 'isin');
             }
@@ -1506,7 +1644,7 @@ try {
             // Geteilte Merkliste (Link im PDF-Auszug, seit 01.10.2026): alle gültigen ISINs, die noch fehlen, bis die Merkliste voll ist
             $n = angemeldet();
             $isins = [];
-            foreach (explode(',', strtoupper((string)($_POST['isins'] ?? ''))) as $i) {
+            foreach (explode(',', strtoupper(text($_POST, 'isins'))) as $i) {
                 $i = trim($i);
                 if (ist_isin($i)) {
                     $isins[$i] = true;
@@ -1543,11 +1681,11 @@ try {
 
         case 'depot':
             $n = angemeldet();
-            $isin = strtoupper(trim((string)($_POST['isin'] ?? '')));
+            $isin = strtoupper(trim(text($_POST, 'isin')));
             if (!ist_isin($isin)) {
                 antwort(422, 'isin');
             }
-            $roh = trim((string)($_POST['nennwert'] ?? ''));
+            $roh = trim(text($_POST, 'nennwert'));
             if (!preg_match('/^\d{1,9}$/', $roh) || (int)$roh > NENNWERT_MAX) {
                 antwort(422, 'nennwert', ['max' => NENNWERT_MAX]);
             }
@@ -1580,7 +1718,7 @@ try {
             $n = angemeldet();
             $liste = [];
             if ($aktion === 'muster-uebernehmen') {
-                foreach (explode(',', strtoupper((string)($_POST['liste'] ?? ''))) as $teil) {
+                foreach (explode(',', strtoupper(text($_POST, 'liste'))) as $teil) {
                     $t = explode('~', trim($teil));
                     if (count($t) === 2 && ist_isin($t[0]) && preg_match('/^\d{1,9}$/', $t[1]) && (int)$t[1] >= 1 && (int)$t[1] <= NENNWERT_MAX) {
                         $liste[$t[0]] = (int)$t[1];
@@ -1605,7 +1743,7 @@ try {
                 muster_erstes($n['id']);   // das bisher nur gedachte „Musterdepot 1“ zuerst anlegen, damit das neue das zweite ist
                 $zahl = 1;
             }
-            $name = name_lesen((string)($_POST['name'] ?? ''), 'Musterdepot ' . ($zahl + 1));
+            $name = name_lesen(text($_POST, 'name'), 'Musterdepot ' . ($zahl + 1));
             $db->prepare('INSERT INTO musterdepots (nutzer, name, erstellt) VALUES (?, ?, ?)')->execute([$n['id'], $name, $jetzt]);
             $m = (int)$db->lastInsertId();
             $ein = $db->prepare('INSERT INTO depot (muster, isin, nennwert, seit) VALUES (?, ?, ?, ?)');
@@ -1621,7 +1759,7 @@ try {
             $db = db();
             $db->exec('BEGIN IMMEDIATE');
             $m = muster_lesen($n['id']);
-            $name = name_lesen((string)($_POST['name'] ?? ''), '');
+            $name = name_lesen(text($_POST, 'name'), '');
             if ($name === '') {
                 $db->exec('COMMIT');
                 antwort(422, 'name', ['max' => NAME_MAX]);
@@ -1647,17 +1785,16 @@ try {
         case 'erinnern':
             // E-Mail 20 Tage vor und am Tag jeder Fälligkeit (seit 02.10.2026, Nutzerentscheid): an = 1 einschalten, 0 ausschalten
             $n = angemeldet();
-            db()->prepare('UPDATE nutzer SET erinnern = ? WHERE id = ?')->execute([($_POST['an'] ?? '') === '1' ? 1 : 0, $n['id']]);
+            db()->prepare('UPDATE nutzer SET erinnern = ? WHERE id = ?')->execute([text($_POST, 'an') === '1' ? 1 : 0, $n['id']]);
             antwort(200, 'ok', konto_stand($n['id'], $n['email']));
 
         case 'erinnerung-aus':
-            // Link „Ausschalten“ aus der Erinnerungs-E-Mail: „Nummer.Prüfsumme“ (dieselbe Prüfsumme bildet erinnerung.php).
+            // Link „Ausschalten“ aus der Erinnerungs-E-Mail: „Nummer.Prüfsumme“ (link_kennung(); dieselbe Prüfsumme bildet erinnerung.php).
             // Schaltet nur aus – mehr kann der Link nicht. Ist dasselbe Konto hier angemeldet, kommt der neue Stand mit.
-            if (!preg_match('/^(\d{1,10})\.([0-9a-f]{32})$/', (string)($_POST['token'] ?? ''), $t)
-                || !hash_equals(schluessel_hash('erinnerung-aus:' . $t[1]), $t[2])) {
+            $id = link_kennung_pruefen('erinnerung-aus', text($_POST, 'token'));
+            if ($id === null) {
                 antwort(410, 'link');
             }
-            $id = (int)$t[1];
             $s = db()->prepare('UPDATE nutzer SET erinnern = 0 WHERE id = ?');
             $s->execute([$id]);
             if ($s->rowCount() === 0) {
@@ -1668,7 +1805,7 @@ try {
 
         case 'newsletter':
             $n = angemeldet();
-            $wert = (string)($_POST['wert'] ?? '');
+            $wert = text($_POST, 'wert');
             if ($wert !== '1' && $wert !== '0') {
                 antwort(400, 'aktion');
             }
@@ -1677,7 +1814,7 @@ try {
 
         case 'newsletter-ab':
             // Abmelde-Link der Ausgabe (konto.html#nl-ab=…): ohne Anmeldung, die Kennung ist der Nachweis
-            if (!nl_abbestellen((string)($_POST['token'] ?? ''))) {
+            if (!nl_abbestellen(text($_POST, 'token'))) {
                 antwort(410, 'link');
             }
             antwort(200, 'ok');
@@ -1689,8 +1826,8 @@ try {
             // Persönliche Ablage (seit 02.10.2026 abends): einen Eintrag setzen oder – mit leerem Wert – löschen. Antwort: alle
             // Einträge dieser Art, die Seite übernimmt sie in ihren Stand.
             $n = angemeldet();
-            $art = (string)($_POST['art'] ?? '');
-            $k = (string)($_POST['schluessel'] ?? '');
+            $art = text($_POST, 'art');
+            $k = text($_POST, 'schluessel');
             if (!isset(ABLAGE[$art])) {
                 antwort(422, 'art');
             }
@@ -1698,20 +1835,48 @@ try {
                 antwort(422, 'wert');
             }
             [$max, $lang] = ABLAGE[$art];
-            $roh = (string)($_POST['wert'] ?? '');
+            $roh = text($_POST, 'wert');
             $db = db();
+            // „Zuletzt angesehen“ (Technik-Test 08.10.2026, T-18, Zusage der Datenschutzerklärung „schaltest du es wieder aus, löschen
+            // wir sie“): Ausschalten löscht im selben Schritt alle gemerkten Seiten und Anleihen – nicht erst die Seite, Eintrag für
+            // Eintrag –, und solange es aus ist, nimmt der Server keine neuen an. Eingeschaltet heißt: einstellung/zuletzt = 1 (wie bereich.js).
+            $zuletzt = $art === 'einstellung' && $k === 'zuletzt';
             if ($roh === '') {
+                if ($zuletzt) {
+                    $db->exec('BEGIN IMMEDIATE');
+                }
                 $db->prepare('DELETE FROM ablage WHERE nutzer = ? AND art = ? AND schluessel = ?')->execute([$n['id'], $art, $k]);
+                if ($zuletzt) {
+                    $db->prepare("DELETE FROM ablage WHERE nutzer = ? AND art = 'angesehen'")->execute([$n['id']]);
+                    $db->exec('COMMIT');
+                }
             } else {
                 $w = strlen($roh) <= 4 * $lang ? json_decode($roh, true) : null;
                 if ($w === null) {
                     antwort(422, 'wert', ['max' => $lang]);
                 }
-                $json = json_encode(ablage_sauber($w), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                $w = ablage_sauber($w);
+                if ($art === 'notiz' && is_string($w) && laenge($w) > NOTIZ_MAX) {
+                    antwort(422, 'wert', ['max' => NOTIZ_MAX]);   // Zeichen statt Byte (T-109): „€“ zählt wie „e“
+                }
+                $json = json_encode($w, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 if (!is_string($json) || strlen($json) > $lang) {
                     antwort(422, 'wert', ['max' => $lang]);
                 }
                 $db->exec('BEGIN IMMEDIATE');
+                if ($art === 'angesehen') {
+                    $s = $db->prepare("SELECT 1 FROM ablage WHERE nutzer = ? AND art = 'einstellung' AND schluessel = 'zuletzt' AND wert = '1'");
+                    $s->execute([$n['id']]);
+                    $an = $s->fetchColumn();
+                    $s->closeCursor();
+                    if (!$an) {
+                        $db->exec('COMMIT');
+                        antwort(409, 'aus');   // „Zuletzt angesehen“ ist ausgeschaltet – mein.js fängt das still ab
+                    }
+                }
+                if ($zuletzt && $json !== '1') {
+                    $db->prepare("DELETE FROM ablage WHERE nutzer = ? AND art = 'angesehen'")->execute([$n['id']]);   // jeder andere Wert heißt „aus“
+                }
                 $s = $db->prepare('SELECT 1 FROM ablage WHERE nutzer = ? AND art = ? AND schluessel = ?');
                 $s->execute([$n['id'], $art, $k]);
                 if ($s->fetchColumn()) {
@@ -1773,15 +1938,34 @@ try {
             antwort(200, 'ok', konto_stand($n['id'], $n['email']));
 
         case 'export':
-            // „Meine Daten herunterladen“: alles, was zu diesem Konto gespeichert ist – ohne Passwort-Hashwert und Cookies
+            // „Meine Daten herunterladen“: alles, was zu diesem Konto gespeichert ist – ohne Passwort-Hashwert und Cookies. Seit
+            // 09.10.2026 vollständig (Technik-Test 08.10.2026, T-105): auch die verschickten Erinnerungen vor Fälligkeit, eine offene
+            // Adressänderung, die zuletzt erhaltene Wochenbrief-Ausgabe und der Beginn des laufenden Besuchs
             $n = angemeldet();
-            $s = db()->prepare('SELECT erstellt, zuletzt, newsletter_seit FROM nutzer WHERE id = ?');
+            $db = db();
+            $s = $db->prepare('SELECT erstellt, zuletzt, newsletter_seit, newsletter_kw, besuch FROM nutzer WHERE id = ?');
             $s->execute([$n['id']]);
-            $z = $s->fetch(PDO::FETCH_NUM) ?: [0, 0, null];
+            $z = $s->fetch(PDO::FETCH_NUM) ?: [0, 0, null, '', 0];
+            $s->closeCursor();
+            // [ISIN, Fälligkeit, welche E-Mail („vorher“: 20 Tage vorher, „am Tag“: am Fälligkeitstag; erinnerung.php), verschickt am]
+            $s = $db->prepare('SELECT isin, faellig, gesendet FROM erinnert WHERE nutzer = ? ORDER BY faellig, isin');
+            $s->execute([$n['id']]);
+            $erinnerungen = [];
+            foreach ($s->fetchAll(PDO::FETCH_NUM) as [$isin, $faellig, $gesendet]) {
+                $erinnerungen[] = [(string)$isin, substr((string)$faellig, 0, 10), substr((string)$faellig, -4) === '#tag' ? 'am Tag' : 'vorher', date('c', (int)$gesendet)];
+            }
+            $s = $db->prepare("SELECT email, ablauf FROM links WHERE art = 'email' AND nutzer = ? AND ablauf > ? ORDER BY ablauf DESC LIMIT 1");
+            $s->execute([$n['id'], time()]);
+            $l = $s->fetch(PDO::FETCH_NUM);
+            $s->closeCursor();
             $st = konto_stand($n['id'], $n['email']);
             unset($st['angemeldet'], $st['depot']);
             antwort(200, 'ok', ['daten' => ['erstellt_am' => date('c'), 'konto_angelegt' => date('c', (int)$z[0]), 'zuletzt_angemeldet' => date('c', (int)$z[1]),
-                'wochenbrief_seit' => $z[2] === null ? null : date('c', (int)$z[2])] + $st]);
+                'wochenbrief_seit' => $z[2] === null ? null : date('c', (int)$z[2]),
+                'wochenbrief_letzte_ausgabe' => (string)$z[3] !== '' ? (string)$z[3] : null,
+                'besuch_beginn' => (int)$z[4] > 0 ? date('c', (int)$z[4]) : null,
+                'erinnerungen' => $erinnerungen,
+                'offene_adressaenderung' => $l ? ['email' => (string)$l[0], 'gueltig_bis' => date('c', (int)$l[1])] : null] + $st]);
 
         case 'email-aendern':
             // Neue E-Mail-Adresse: Passwort zur Bestätigung, dann ein Link an die NEUE Adresse – erst der Klick stellt um
@@ -1789,10 +1973,10 @@ try {
             $neu = email_lesen();
             $db = db();
             $schl = login_schluessel($n['email']);
-            if (gebremst(LOGIN_GRENZEN, $schl)) {
+            if (gebremst(LOGIN_GRENZEN_ANGEMELDET, $schl)) {   // ohne „lm“ (T-24, siehe passwort-aendern)
                 antwort(429, 'zuviel');
             }
-            if (!pw_stimmt((string)($_POST['passwort'] ?? ''), $n['pw'])) {
+            if (!pw_stimmt(text($_POST, 'passwort'), $n['pw'])) {
                 zaehle($schl);
                 antwort(403, 'zugang');
             }
@@ -1858,19 +2042,21 @@ try {
             antwort(200, 'ok', meldungen_senden());
 
         case 'meldungen-aus':
-            // Link aus einer Meldungs-E-Mail: alle Meldungen des Kontos auf „nur im Bereich“ – ein Klick, ohne Anmeldung
-            if (!preg_match('/^(\d{1,10})\.([0-9a-f]{32})$/', (string)($_POST['token'] ?? ''), $t) || !hash_equals(meldung_kennung((int)$t[1]), $t[0])) {
+            // Link aus einer Meldungs-E-Mail: alle Meldungen des Kontos auf „nur im Bereich“ – ein Klick, ohne Anmeldung.
+            // Passt die Kennung zu keinem Konto (gelöscht, Nummer neu vergeben), 410 wie die anderen Ein-Klick-Links (T-103).
+            $id = link_kennung_pruefen('meldungen-aus', text($_POST, 'token'));
+            if ($id === null) {
                 antwort(410, 'link');
             }
             $db = db();
             $s = $db->prepare("SELECT schluessel, wert FROM ablage WHERE nutzer = ? AND art = 'meldung'");
-            $s->execute([(int)$t[1]]);
+            $s->execute([$id]);
             $sichern = $db->prepare("UPDATE ablage SET wert = ? WHERE nutzer = ? AND art = 'meldung' AND schluessel = ?");
             foreach ($s->fetchAll(PDO::FETCH_NUM) as $z) {
                 $w = json_decode((string)$z[1], true);
                 if (is_array($w) && !empty($w['m'])) {
                     $w['m'] = 0;
-                    $sichern->execute([json_encode($w, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), (int)$t[1], (string)$z[0]]);
+                    $sichern->execute([json_encode($w, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $id, (string)$z[0]]);
                 }
             }
             antwort(200, 'ok');
@@ -1888,10 +2074,10 @@ try {
             $db = db();
             if ($n['pw'] !== null) {   // Konten aus der Zeit der Link-Anmeldung haben noch kein Passwort
                 $schl = login_schluessel($n['email']);
-                if (gebremst(LOGIN_GRENZEN, $schl)) {
+                if (gebremst(LOGIN_GRENZEN_ANGEMELDET, $schl)) {   // ohne „lm“ (T-24, siehe passwort-aendern)
                     antwort(429, 'zuviel');
                 }
-                if (!pw_stimmt((string)($_POST['passwort'] ?? ''), $n['pw'])) {
+                if (!pw_stimmt(text($_POST, 'passwort'), $n['pw'])) {
                     zaehle($schl);
                     antwort(403, 'zugang');
                 }
