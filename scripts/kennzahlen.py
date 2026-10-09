@@ -35,6 +35,13 @@ Seit 04.10.2026 für grundlagen.html („Anleihen einfach erklärt“), beides a
          Schlüssel: paar-stand, paar-hoch-name/-kurs/-rendite, paar-tief-name/-kurs/-rendite. Findet sich kein Paar, bleibt der
          Rückfall-Text samt seinem Datum stehen.
 
+Seit 09.10.2026 für cds.html („Kreditausfallswap (CDS)“, Karte 4 – Beispiel Türkei), aus suchindex.json und zinskurve.json:
+    <span data-kz="tr-name">Türkei 6,875&nbsp;% 2036</span> usw.   eine USD-Staatsanleihe der Türkei, die Privatanleger kaufen können (Stückelung
+         höchstens 10.000), Restlaufzeit 7 bis 13 Jahre, davon die mit der Restlaufzeit am nächsten an 10 Jahren, mit Kurs und Rendite
+         der Suche (suchindex.json: Land TR, Art Staat, Währung USD); dazu die Rendite der 10-jährigen US-Staatsanleihe (zinskurve.json,
+         heute.US) und der Abstand in Prozentpunkten. Schlüssel: tr-stand, tr-name, tr-kupon, tr-faellig, tr-stueck, tr-kurs, tr-rendite,
+         us10-rendite, us10-stand, tr-aufschlag. Findet sich keine Anleihe, bleibt der Rückfall-Text samt seinem Datum stehen.
+
 Außerdem wird in Meta-/og-/JSON-LD-Texten die Wendung „Suche über rund NN.000 Anleihen“ auf die aktuelle Zahl gesetzt
 (nur diese Wendung – Zahlen wie „Börse Frankfurt rund 27.700 Anleihen“ bleiben unberührt).
 Seit 02.10.2026 ebenso, in Kopf und Text aller Seiten:
@@ -182,6 +189,39 @@ def anleihen_paar(site, heute=None):
             "paar-tief-name": name(b), "paar-tief-kurs": de(b["kurs"], 2) + "&nbsp;%", "paar-tief-rendite": de(b["rendite"], 2) + "&nbsp;%"}
 
 
+def tuerkei_beispiel(site, heute=None):
+    """cds.html (Karte 4): eine kaufbare USD-Staatsanleihe der Türkei mit Kurs und Rendite, die 10-jährige US-Staatsanleihe und der
+    Abstand – Regel siehe Kopf. Spalten von suchindex.json: 2 Art, 3 Währung, 4 Kupon, 5 Fälligkeit, 7 Stückelung, 11 Land, 15 Kurs,
+    16 Rendite, 17 Tag (Index in „tage“)."""
+    import datetime
+    heute = heute or datetime.date.today()
+    d = lade(site, "suchindex.json")
+    if not d or not isinstance(d.get("rows"), list):
+        return {}
+    def rest(r):
+        return (datetime.date.fromisoformat(r[5]) - heute).days / 365.25
+    rows = [r for r in d["rows"] if len(r) > 17 and r[11] == "TR" and r[2] == 0 and r[3] == "USD"
+            and isinstance(r[7], (int, float)) and 0 < r[7] <= 10000 and isinstance(r[4], (int, float))
+            and isinstance(r[15], (int, float)) and isinstance(r[16], (int, float)) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(r[5]))
+            and 7 <= rest(r) <= 13]
+    if not rows:
+        return {}
+    r = min(rows, key=lambda r: abs(rest(r) - 10))
+    kupon = de(r[4], 3).rstrip("0").rstrip(",")
+    w = {"tr-name": f"Türkei {kupon}&nbsp;% {r[5][:4]}", "tr-kupon": kupon, "tr-faellig": iso_de(r[5]),
+         "tr-stueck": f"{int(r[7]):,}".replace(",", ".") + "&nbsp;USD", "tr-kurs": de(r[15], 1), "tr-rendite": de(r[16], 1)}
+    tage = d.get("tage") or []
+    if isinstance(r[17], int) and 0 <= r[17] < len(tage) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(tage[r[17]])):
+        w["tr-stand"] = iso_de(tage[r[17]])
+    z = lade(site, "zinskurve.json")
+    us = ((z or {}).get("heute") or {}).get("US")
+    if isinstance(us, list) and len(us) >= 3 and isinstance(us[2], (int, float)) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(us[0])):
+        w["us10-rendite"] = de(us[2], 1)
+        w["us10-stand"] = iso_de(us[0])
+        w["tr-aufschlag"] = de(r[16] - us[2], 1)
+    return w
+
+
 def main():
     site = sys.argv[1] if len(sys.argv) > 1 else "_site"
     werte = {}
@@ -247,6 +287,10 @@ def main():
         werte.update(anleihen_paar(site))
     except Exception as e:
         print(f"::warning::kennzahlen.py: Anleihen-Paar nicht gesetzt ({type(e).__name__}: {e})")
+    try:   # Beispiel Türkei (cds.html, Karte 4)
+        werte.update(tuerkei_beispiel(site))
+    except Exception as e:
+        print(f"::warning::kennzahlen.py: Türkei-Beispiel nicht gesetzt ({type(e).__name__}: {e})")
     print("Kennzahlen:", {k: v for k, v in werte.items() if not k.startswith("zk-")}, f"+ {sum(k.startswith('zk-') for k in werte)} Werte der Zinskurve", datenstand)
 
     span_re = re.compile(r'(<span data-kz="([a-z0-9-]+)">)([^<]*)(</span>)')

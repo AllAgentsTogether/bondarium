@@ -76,6 +76,7 @@ AKADEMIE = ("Akademie", "wissen.html", [
         ("Rendite richtig lesen", "rendite-lesen.html"),
         ("Leiter, Hantel, Roll-down", "anleihenleiter.html"),
         ("Marktsignale lesen", "markttechnik.html"),
+        ("Kreditausfallswap (CDS)", "cds.html"),   # seit 09.10.2026 (Nutzerwunsch): CDS-Prämie als Marktpreis des Ausfallrisikos, Beispiel Türkei
     ]),
 ], ("Glossar", "begriffe.html", "Fachbegriffe von A bis Z"))
 # „Anleihen“: alles, was konkrete Anleihen zeigt – Suche und Ranglisten. Art zuerst („Staatsanleihen nach Laufzeit“), damit
