@@ -36,7 +36,7 @@
   .k-text .intro { font-size: 15.5px; line-height: 1.55; color: var(--text); margin-bottom: 14px; }
   .f { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
   .f label { display: block; font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; color: var(--text); margin-bottom: 4px; }
-  .f input, .f select { width: 100%; font: inherit; font-size: 16px; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.22); border-radius: 10px; padding: 10px 12px; font-variant-numeric: tabular-nums; }
+  .f input, .f select { width: 100%; font: inherit; font-size: 16px; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.55); border-radius: 10px; padding: 10px 12px; font-variant-numeric: tabular-nums; }   /* Rand 3,9:1 wie konto.html (seit 09.10.2026, Technik-Test T-117; vorher 0.22 = 1,6:1) */
   .f input:focus-visible, .f select:focus-visible { outline: 2px solid var(--green-text); outline-offset: 1px; border-color: var(--green-text); }
   .f .unit { position: relative; }
   .f .unit input { padding-right: 34px; }
@@ -66,11 +66,14 @@
   .k-bild .out.fehler { color: var(--down); font-weight: 600; }
   .f .tipp { display: block; font-size: 12.5px; line-height: 1.4; color: var(--text); margin-top: 4px; }
   @media (max-width: 600px) { .f { grid-template-columns: minmax(0, 1fr); } .k-bild .erg dd.big { font-size: 26px; } .zr { grid-template-columns: 82px minmax(0, 1fr) 64px; } }
+  /* Schmale Handys (seit 09.10.2026, Technik-Test T-30): Ergebnis unter die Bezeichnung statt daneben – bei 320 px überdeckte
+     „1.000,00 € am 15.08.2031“ die Bezeichnung „Rückzahlung“ (die auto-Spalte wuchs auf die volle Textbreite) */
+  @media (max-width: 420px) { .k-bild .erg { grid-template-columns: minmax(0, 1fr); } .k-bild .erg dd { text-align: left; white-space: normal; margin: 0 0 6px; } }
   /* Aus dem Steckbrief übernommen (seit 03.10.2026): welche Anleihe die Felder füllt – Titel wie überall (felder.js) und ISIN */
   .uebernommen { margin: 4px 0 12px; font-size: 14px; color: var(--text); }
   .uebernommen a { color: var(--ink); font-weight: 600; }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Anleihen-Rechner: Rendite, Stückzinsen, Netto nach Steuer, Zinsniveau","description":"Vier Rechner: Rendite aus Kurs und Kupon, Stückzinsen, Zinsen netto nach Steuer und der Kurs, wenn das allgemeine Zinsniveau steigt oder fällt.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-30","dateModified":"2026-10-02","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/rechner.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Anleihen-Rechner: Rendite, Stückzinsen, Netto nach Steuer, Zinsniveau","description":"Vier Rechner: Rendite aus Kurs und Kupon, Stückzinsen, Zinsen netto nach Steuer und der Kurs, wenn das allgemeine Zinsniveau steigt oder fällt.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-30","dateModified":"2026-10-09","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/rechner.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Kaufen","item":"https://www.bondarium.de/kaufen.html"},{"@type":"ListItem","position":3,"name":"Rechner","item":"https://www.bondarium.de/rechner.html"}]}</script>
 </head>
 <body>
@@ -265,6 +268,7 @@ window.MC = window.MC || { esc: function (s) { return String(s).replace(/[&<>"']
 // Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
 MC.navInit();
 </script>
+<script src="felder.js"></script>
 <script src="bond.js"></script>
 <script src="rechner.js"></script>
 </body>
