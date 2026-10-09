@@ -313,6 +313,13 @@
     #liste.table-scroll { overflow: visible; background: none; }
     .kto-t { min-width: 0; margin-top: 12px; }
     .kto-t thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+    /* Sortierknöpfe per Tab: sichtbar, solange einer den Fokus hat – als eine umbrechende Zeile über den Karten (seit 09.10.2026,
+       Technik-Test 08.10.2026 T-32 – vorher landete der Fokus auf sieben unsichtbaren Knöpfen). display: block hält den Kopf aus dem
+       Spaltenraster der Tabelle; als Tabellenzeile hätte er die Karten auf die Breite der ersten Spalte gedrückt. */
+    .kto-t thead:focus-within { position: static; display: block; width: auto; height: auto; overflow: visible; clip: auto; }
+    .kto-t thead:focus-within tr { display: flex; flex-wrap: wrap; gap: 4px 16px; padding: 2px 0 10px; }
+    .kto-t thead:focus-within th { display: block; padding: 0; border: 0; width: auto; }
+    .kto-t thead:focus-within th:not([data-col]), .kto-t thead:focus-within th small { display: none; }
     .kto-t tbody tr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 12px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); padding: 14px 14px 12px; margin-bottom: 12px; }
     .kto-t tbody tr:hover > :is(td, th) { background: none; }
     .kto-t tbody th, .kto-t tbody td { display: block; padding: 0; border: 0; text-align: left; white-space: normal; min-width: 0; width: auto; max-width: none; }
@@ -649,7 +656,7 @@
               <th scope="col" class="num" title="Zeit bis zur Fälligkeit, darunter der Fälligkeitstag.">Restlaufzeit<small>Fälligkeit</small></th>
               <th scope="col" class="num" title="Duration: durchschnittliche Kapitalbindung in Jahren, die Zahlungen nach ihrem Barwert gewichtet. Darunter die modifizierte Duration: Um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Prozentpunkt steigt.">Duration<small>mod. Duration</small></th>
               <th scope="col" class="num" title="In der Währung der Anleihe">Nennwert</th>
-              <th scope="col" class="num" title="Was der Kauf heute kosten würde, in Euro: Nennwert mal Schlusskurs plus Stückzinsen zum Valutatag (heute + 2 Börsentage), ohne Gebühren. Darunter der Schlusskurs in % des Nennwerts.">Kaufpreis<small>Kurs</small></th>
+              <th scope="col" class="num" title="Was der Kauf heute kosten würde, in Euro: Nennwert mal Schlusskurs plus Stückzinsen zum Valutatag (zwei Börsentage nach dem Handelstag), ohne Gebühren. Darunter der Schlusskurs in % des Nennwerts.">Kaufpreis<small>Kurs</small></th>
               <th scope="col" class="num" title="Gewicht der Anleihe im Musterdepot: ihr Kurswert geteilt durch den Kurswert aller Anleihen">Anteil</th>
               <th scope="col" class="num" title="Kupon mal Nennwert, in Euro, vor Steuern. Darunter der nächste Zinstermin.">Zinsen pro Jahr<small>nächster Zinstermin</small></th>
               <th scope="col"><span class="sr-only">Entfernen</span></th>
@@ -711,7 +718,7 @@
         <section class="mb-konto" id="konto" aria-labelledby="h-konto">
           <h2 class="mb-h2" id="h-konto">Konto</h2>
           <ul>
-            <li><div class="mb-kz"><div><b>E-Mail-Adresse</b><span id="mb-k-email"></span></div><button type="button" class="kto-textbtn" data-auf="f-email">Ändern</button></div>
+            <li><div class="mb-kz"><div><b>E-Mail-Adresse</b><span id="mb-k-email"></span></div><button type="button" class="kto-textbtn" data-auf="f-email" aria-expanded="false" aria-controls="f-email">Ändern</button></div>
               <form class="kf" id="f-email" action="konto.php" method="post" hidden>
                 <div><label for="em-neu">Neue E-Mail-Adresse</label><input id="em-neu" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" required></div>
                 <div><label for="em-pw">Passwort zur Bestätigung</label><div class="kto-pw"><input id="em-pw" name="passwort" type="password" autocomplete="current-password" maxlength="200" required><button type="button" class="kto-auge" aria-pressed="false" aria-controls="em-pw">anzeigen</button></div></div>
@@ -719,8 +726,8 @@
                 <p class="kf-status" role="status" aria-live="polite"></p>
                 <p class="kf-hinweis">Die neue Adresse gilt erst, wenn du den Link in der E-Mail anklickst. Danach sind alle anderen Geräte abgemeldet.</p>
               </form></li>
-            <li><div class="mb-kz"><div><b>Passwort</b><span>Danach sind alle anderen Geräte abgemeldet.</span></div><button type="button" class="kto-textbtn" data-auf="d-pw">Ändern</button></div>
-              <details id="d-pw"><summary class="sr-only">Passwort ändern</summary>
+            <li><div class="mb-kz"><div><b>Passwort</b><span>Danach sind alle anderen Geräte abgemeldet.</span></div><button type="button" class="kto-textbtn" data-auf="d-pw" aria-expanded="false" aria-controls="d-pw">Ändern</button></div>
+              <details id="d-pw"><summary class="sr-only" tabindex="-1">Passwort ändern</summary>
                 <form class="kf" id="f-aendern" action="konto.php" method="post">
                   <input class="sr-only" id="ae-email" name="email" type="email" autocomplete="username" tabindex="-1" aria-hidden="true" readonly>
                   <div><label for="ae-alt">Aktuelles Passwort</label><div class="kto-pw"><input id="ae-alt" name="alt" type="password" autocomplete="current-password" maxlength="200" required><button type="button" class="kto-auge" aria-pressed="false" aria-controls="ae-alt">anzeigen</button></div></div>
@@ -732,8 +739,8 @@
             <li><div class="mb-kz"><div><b>Angemeldete Geräte</b><span id="mb-k-geraete"></span></div><button type="button" class="kto-textbtn" id="mb-k-geraete-ab" hidden>Andere Geräte abmelden</button></div></li>
             <li><div class="mb-kz"><div><b id="mb-k-zuletzt-h">Zuletzt angesehen</b><span id="mb-k-zuletzt-t"></span></div><button type="button" class="mb-schalter" id="mb-k-zuletzt" role="switch" aria-checked="false" aria-labelledby="mb-k-zuletzt-h"></button></div></li>
             <li><div class="mb-kz"><div><b>Meine Daten</b><span>Alles, was zu deinem Konto gespeichert ist, als Datei</span></div><button type="button" class="kto-textbtn" id="mb-k-export">Herunterladen</button></div></li>
-            <li><div class="mb-kz"><div><b>Konto löschen</b><span>Konto, Merkliste, Notizen, Lernstand, Meldungen und Musterdepots – sofort gelöscht</span></div><button type="button" class="kto-textbtn rot" data-auf="d-weg">Löschen</button></div>
-              <details id="d-weg"><summary class="sr-only">Konto löschen</summary>
+            <li><div class="mb-kz"><div><b>Konto löschen</b><span>Konto, Merkliste, Notizen, Lernstand, Meldungen und Musterdepots – sofort gelöscht</span></div><button type="button" class="kto-textbtn rot" data-auf="d-weg" aria-expanded="false" aria-controls="d-weg">Löschen</button></div>
+              <details id="d-weg"><summary class="sr-only" tabindex="-1">Konto löschen</summary>
                 <p class="mb-kt">Dein Konto, deine E-Mail-Adresse, dein Passwort, deine Merkliste, deine Musterdepots und alles, was du in deinem Bereich abgelegt hast, werden sofort gelöscht. In unseren verschlüsselten Sicherungen bleibt alles noch höchstens zwölf Monate, danach ist es endgültig weg. Du kannst dich danach jederzeit neu registrieren – mit leerem Bereich.</p>
                 <form class="kf" id="f-loeschen" action="konto.php" method="post">
                   <input class="sr-only" id="lo-email" name="email" type="email" autocomplete="username" tabindex="-1" aria-hidden="true" readonly>
@@ -752,8 +759,8 @@
           <p><strong>Rendite.</strong> Rendite bis zur Fälligkeit in % pro Jahr, von uns aus Kurs, Kupon und Fälligkeit berechnet – nach denselben Regeln wie in der <a href="anleihen-suche.html">Anleihen-Suche</a>, wo unter „Datenquellen und Methodik“ alle Einzelheiten stehen.</p>
           <p><strong>Stammdaten.</strong> Kupon, Fälligkeit, Art, Währung, Volumen und Stückelung aus dem Register der europäischen Wertpapieraufsicht ESMA (FIRDS). Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage, beide in der Währung der Anleihe.</p>
           <p><strong>Steckbrief.</strong> Ein Klick auf Name oder ISIN öffnet den Steckbrief der Anleihe mit Kursverlauf und Handel.</p>
-          <p><strong>Musterdepots.</strong> Bis zu fünf, mit gedachten Beträgen, kein Bestand. Kaufpreis = Nennwert × Schlusskurs (Kurswert) plus Stückzinsen zum Valutatag (heute + 2 Börsentage), ohne Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Anteil = Kurswert der Anleihe geteilt durch den Kurswert aller Anleihen. Rendite = Rendite bis Fälligkeit wie in der Anleihen-Suche; laufende Verzinsung = Kupon ÷ Kurs. Duration = Macaulay-Duration, die durchschnittliche Kapitalbindung in Jahren; modifizierte Duration = Duration ÷ (1 + Rendite): Um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Prozentpunkt steigt (beides erklärt unter <a href="duration.html">Duration und Konvexität</a>). In der Summenzeile sind Rendite, Restlaufzeit und beide Durationen nach Kurswert gewichtet. Zinsen je Termin = Nennwert × Kupon ÷ Zahl der Zinstermine im Jahr; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Das Schaubild zeigt 30 Jahre einzeln, danach nur noch die Jahre mit einer Rückzahlung; die Jahre dazwischen stehen schraffiert in einer schmalen Spalte („je …“ = Zinsen in jedem dieser Jahre, „Ø“ = Durchschnitt), jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung zum Nennwert, ganz unten beides zusammen; in jedes Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Schaubild und Liste der Zinstermine zeigen dann nur die Auswahl. Die Liste nennt alle kommenden Zinstermine von heute bis zur letzten Fälligkeit, nach Jahren geordnet, ohne Rückzahlungen. Die Zinstermine stammen aus der Liste der Deutschen Börse „Alle handelbaren Instrumente“ (letzter und nächster Zinstermin je Anleihe); nennt sie für eine Anleihe keine, sind sie geschätzt – die Anleihe steht dann im Hinweis unter den Zinsterminen, die Regel im Steckbrief unter „Datenquellen und Methodik“. Maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
-          <p><strong>Fremdwährungen.</strong> Anleihen in anderer Währung trägst du mit dem Nennwert in dieser Währung ein. Kurswert, Zinsen und Rückzahlung rechnen wir zur Vereinfachung in Euro um; die Anleihe trägt in der Tabelle ein Sternchen (*). Umgerechnet wird mit dem jeweils neuesten Euro-Referenzkurs der Europäischen Zentralbank (sie veröffentlicht ihn an jedem Arbeitstag gegen 16 Uhr; das Datum steht im aufklappbaren Hinweis unter der Tabelle) – und dieser Kurs ist für die ganze Laufzeit als fest angenommen. Tatsächlich schwankt der Wechselkurs: Wie viel Euro eine Zahlung am Ende wert ist, steht erst am Zahltag fest (Wechselkursrisiko). Für Währungen ohne EZB-Referenzkurs gibt es keine Umrechnung – solche Anleihen fehlen im Schaubild.</p>
+          <p><strong>Musterdepots.</strong> Bis zu fünf, mit gedachten Beträgen, kein Bestand. Kaufpreis = Nennwert × Schlusskurs (Kurswert) plus Stückzinsen zum Valutatag (zwei Börsentage nach dem Handelstag), ohne Gebühren – als wäre heute der Kauftag; er ändert sich mit jedem Kurs. Anteil = Kurswert der Anleihe geteilt durch den Kurswert aller Anleihen. Rendite = Rendite bis Fälligkeit wie in der Anleihen-Suche; laufende Verzinsung = Kupon ÷ Kurs. Duration = Macaulay-Duration, die durchschnittliche Kapitalbindung in Jahren; modifizierte Duration = Duration ÷ (1 + Rendite): Um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Prozentpunkt steigt (beides erklärt unter <a href="duration.html">Duration und Konvexität</a>). In der Summenzeile sind Rendite, Restlaufzeit und beide Durationen nach Kurswert gewichtet. Zinsen je Termin = Nennwert × Kupon ÷ Zahl der Zinstermine im Jahr; Rückzahlung zum Nennwert (100 %) am Fälligkeitstag. Das Schaubild zeigt 30 Jahre einzeln, danach nur noch die Jahre mit einer Rückzahlung; die Jahre dazwischen stehen schraffiert in einer schmalen Spalte („je …“ = Zinsen in jedem dieser Jahre, „Ø“ = Durchschnitt), jede Anleihe in ihrer Farbe – oben die Zinsen, darunter die Rückzahlung zum Nennwert, ganz unten beides zusammen; in jedes Depot passen höchstens zehn Anleihen. Ein Klick auf eine Anleihe über dem Schaubild blendet sie aus oder wieder ein – Schaubild und Liste der Zinstermine zeigen dann nur die Auswahl. Die Liste nennt alle kommenden Zinstermine von heute bis zur letzten Fälligkeit, nach Jahren geordnet, ohne Rückzahlungen. Die Zinstermine stammen aus der Liste der Deutschen Börse „Alle handelbaren Instrumente“ (letzter und nächster Zinstermin je Anleihe); nennt sie für eine Anleihe keine, sind sie geschätzt – die Anleihe steht dann im Hinweis unter den Zinsterminen, die Regel im Steckbrief unter „Datenquellen und Methodik“. Maßgeblich sind die Anleihebedingungen. Alle Beträge vor Steuern und ohne Kosten; eine vorzeitige Kündigung ist nicht berücksichtigt. Nur Anleihen mit festem Kupon oder ohne Kupon.</p>
+          <p><strong>Fremdwährungen.</strong> Anleihen in anderer Währung trägst du mit dem Nennwert in dieser Währung ein. Kurswert, Zinsen und Rückzahlung rechnen wir zur Vereinfachung in Euro um; die Anleihe trägt in der Tabelle ein Sternchen (*). Umgerechnet wird mit dem jeweils neuesten Euro-Referenzkurs der Europäischen Zentralbank (sie veröffentlicht ihn an jedem Arbeitstag gegen 16 Uhr; das Datum steht im aufklappbaren Hinweis unter der Tabelle) – und dieser Kurs ist für die ganze Laufzeit als fest angenommen. Tatsächlich schwankt der Wechselkurs: Wie viel Euro eine Zahlung am Ende wert ist, steht erst am Zahltag fest (Wechselkursrisiko). Frühere Währungen des Euroraums (etwa D-Mark oder Lira) rechnen wir zum gesetzlich festen Umrechnungskurs in Euro um, zum Beispiel 1 Euro = 1,95583 D-Mark – ohne Wechselkursrisiko, deshalb ohne Sternchen. Für Währungen ohne EZB-Referenzkurs gibt es keine Umrechnung – solche Anleihen fehlen im Schaubild.</p>
           <p id="datastand"></p>
         </div>
       </details>
@@ -801,10 +808,16 @@ MC.navInit();
     email: "Bitte prüfe deine E-Mail-Adresse.",
     passwort: "Das Passwort braucht mindestens 10 Zeichen und darf nicht zu einfach sein (kein sehr häufiges Passwort, nicht nur ein paar wiederholte Zeichen, nicht deine E-Mail-Adresse).",
     zugang: "E-Mail-Adresse oder Passwort stimmen nicht.",
-    zuviel: "Zu viele Versuche. Bitte warte eine Viertelstunde und versuch es dann noch einmal.",
+    // Ohne feste Dauer und mit dem Ausweg (seit 09.10.2026, Technik-Test 08.10.2026 T-24): Die Sperre kann bis zu einem Tag dauern;
+    // „Passwort vergessen“ hebt die Sperre für die Adresse auf (konto.php, passwort-neu). Vorher: „Bitte warte eine Viertelstunde“.
+    zuviel: "Zu viele Versuche. Bitte versuch es später noch einmal. Wenn du dein Passwort nicht mehr weißt: Über „Passwort vergessen“ setzt du ein neues – damit ist die Sperre für deine Adresse aufgehoben.",
+    // Gesamtgrenze für E-Mails erreicht (konto.php „zuviel-gesamt“, seit 09.10.2026, T-25) – liegt nicht an dieser Adresse
+    "zuviel-gesamt": "Gerade werden sehr viele E-Mails angefordert. Bitte versuch es in einer Stunde noch einmal.",
     versand: "Die E-Mail ließ sich nicht verschicken. Bitte versuch es später noch einmal.",
     link: "Dieser Link ist abgelaufen oder wurde schon benutzt.",
     netz: "Keine Verbindung zum Server. Bitte prüfe deine Internetverbindung.",
+    // Datenbank gerade nicht nutzbar (konto.php 503 „speicher“) oder Störung beim Laden des Stands (konto.js bereit(), T-21)
+    speicher: "Mein Bondarium ist gerade nicht erreichbar. Bitte lade die Seite in ein paar Minuten neu.",
     fehler: "Das hat nicht geklappt. Bitte versuch es noch einmal.",
   };
   const ZUVIEL_MAIL = "Für diese Adresse wurden gerade schon mehrere E-Mails angefordert. Bitte sieh in dein Postfach oder versuch es später noch einmal.";
@@ -883,7 +896,9 @@ MC.navInit();
   const fmtVol = (v, w) => typeof v === "number" ? `${(v / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 })} Mrd.${w ? " " + w : ""}` : "–";   // wie anleihen-suche.html
   const fmtStk = v => typeof v === "number" ? v.toLocaleString("de-DE", { maximumFractionDigits: 3 }) : "–";
   const fmtCoupon = c => c === "var" ? "variabel" : typeof c === "number" ? `${fmt(c, Math.round(c * 1000) % 10 ? 3 : 2)} %` : "–";
-  const HEUTE = Date.now();
+  // „Heute“ ist der Berliner Kalendertag um 12:00 UTC (MC.heuteBerlin, seit 09.10.2026, Technik-Test 08.10.2026 T-51) – wie Steckbrief
+  // und Suche: am Fälligkeitstag ganztägig „fällig“, auch zwischen 0 und 2 Uhr und in anderen Zeitzonen (vorher gegen die Uhrzeit des Geräts)
+  const HEUTE = MC.heuteBerlin ? MC.heuteBerlin().getTime() : Date.now();
   const zwei = n => (n < 10 ? "0" : "") + n;
   const jahre = iso => iso ? (new Date(iso + "T12:00:00Z").getTime() - HEUTE) / (365.25 * 86400000) : Infinity;
   const NAMEN = (() => { try { return new Intl.DisplayNames(["de"], { type: "region" }); } catch (e) { return null; } })();
@@ -1104,6 +1119,9 @@ MC.navInit();
   }
   function zeige(stand) {
     if (stand.angemeldet) zeigeDepot(stand);
+    // Störung (seit 09.10.2026, Technik-Test 08.10.2026 T-21): angemeldet, aber konto.php antwortet nicht oder mit einem Serverfehler –
+    // ein Hinweis statt des Anmeldeformulars (vorher stand kommentarlos das Formular da)
+    else if (stand.stoerung) { lauf++; zeigeTeil(""); hinweis(MC.esc(TEXT.speicher), true); }
     else { lauf++; LISTE = []; mfDaten(null); MF_N = null; ZULETZT = ""; BESUCHT = false; DDATA = null; if (B) B.zurueck(); if (!["bestaetigen", "neu"].includes(MODUS)) modus("anmelden"); zeigeTeil("anmelden"); }
     zeigeGeteilt(stand); zeigeGeteiltM(stand);
   }
@@ -1163,6 +1181,8 @@ MC.navInit();
   // Wie bei der Merkliste geschieht nichts von selbst: Die Seite zeigt das Depot und fragt; erst der Klick legt es als neues
   // Musterdepot an (aktion=muster-uebernehmen). Bis zur Anmeldung bleibt es nur im Speicher dieser Seite, nirgends sonst.
   let GETEILT_M = null;   // { name, liste: [[isin, nennwert], …] }
+  // Steuer- (Cc) und Format-Zeichen (Cf) außer U+200D; ohne Unicode-Eigenschaften im Browser die Bereiche der Grundebene
+  const UNSICHTBAR = (() => { try { return new RegExp("\\p{Cc}|(?!\\u200D)\\p{Cf}", "gu"); } catch (e) { return /[\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0605\u061c\u06dd\u070f\u180e\u200b-\u200c\u200e\u200f\u202a-\u202e\u2060-\u2064\u2066-\u206f\ufeff\ufff9-\ufffb]/g; } })();
   function musterAusLink() {
     const m = /^#muster=([A-Za-z0-9~,]{14,800})(?:&n=([^&]{0,400}))?$/.exec(location.hash);
     if (!m) return false;
@@ -1171,7 +1191,9 @@ MC.navInit();
       const [i, n] = t.split("~"), z = parseInt(n, 10);
       if (ISIN_RE.test(i) && z >= 1 && z <= NENN_MAX && !liste.some(x => x[0] === i) && liste.length < DEPOT_MAX) liste.push([i, z]);
     });
-    let name = ""; try { name = decodeURIComponent(m[2] || "").replace(/[\u0000-\u001f\u007f]/g, "").replace(/\s+/g, " ").trim().slice(0, 40); } catch (e) { name = ""; }
+    // Name wie konto.php name_lesen (seit 09.10.2026, Technik-Test 08.10.2026 T-108): erst jeder Leerraum (Tabulator, Zeilenumbruch) zu
+    // einem Leerzeichen, dann Steuer- und Format-Zeichen weg (U+202E, U+200B …), U+200D bleibt (Emoji) – vorher wurde „Rente⇥2030“ zu „Rente2030“
+    let name = ""; try { name = decodeURIComponent(m[2] || "").replace(/\s+/g, " ").replace(UNSICHTBAR, "").replace(/ {2,}/g, " ").trim().slice(0, 40); } catch (e) { name = ""; }
     try { history.replaceState(null, "", location.pathname); } catch (e) {}
     GETEILT_M = liste.length ? { name: name || "Geteiltes Musterdepot", liste } : null;
     return !!GETEILT_M;
@@ -1230,12 +1252,23 @@ MC.navInit();
     const nimm = d => { if (!(d && d.kurse && d.stand)) throw new Error("leer"); FX = d; };
     return MC.json("wechselkurse.php").then(nimm).catch(() => MC.json("wechselkurse.json").then(nimm)).catch(() => { FX = null; });
   }
-  const fxKurs = cur => cur === "EUR" ? 1 : FX && typeof FX.kurse[cur] === "number" && FX.kurse[cur] > 0 ? FX.kurse[cur] : null;
+  // Frühere Währungen des Euroraums (DEM, ATS, ITL, NLG …) haben einen gesetzlich festen Umrechnungskurs (MC.EURO_FEST) – er gilt vor
+  // dem EZB-Kurs, ohne Wechselkursrisiko und ohne Sternchen (seit 09.10.2026, Technik-Test 08.10.2026 T-40; vorher „kein Wechselkurs
+  // für DEM“). „kein Wechselkurs“ bleibt nur für Währungen ohne EZB-Referenzkurs (z. B. COP, ETB).
+  const EURO_FEST = MC.EURO_FEST || {}, festKurs = cur => Object.prototype.hasOwnProperty.call(EURO_FEST, cur) && EURO_FEST[cur] > 0;
+  const fxKurs = cur => cur === "EUR" ? 1 : festKurs(cur) ? EURO_FEST[cur] : FX && typeof FX.kurse[cur] === "number" && FX.kurse[cur] > 0 ? FX.kurse[cur] : null;
   const fmtFx = v => v.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 4 });
   const fremdIn = liste => liste.some(p => p.fremd);   // Summe enthält umgerechnete Beträge → zwei Nachkommastellen
-  const HEUTE_ISO = (d => `${d.getFullYear()}-${zwei(d.getMonth() + 1)}-${zwei(d.getDate())}`)(new Date());
-  // Valutatag für Stückzinsen und Kaufpreis: Order heute, Erfüllung zwei Börsentage später (Mo–Fr, ohne Feiertage) – wie im Steckbrief
-  const VALUTA = (() => { const d = new Date(HEUTE_ISO + "T12:00:00Z"); for (let n = 0; n < 2;) { d.setUTCDate(d.getUTCDate() + 1); if (d.getUTCDay() % 6) n++; } return d.toISOString().slice(0, 10); })();
+  const HEUTE_ISO = new Date(HEUTE).toISOString().slice(0, 10);   // Berliner Kalendertag (seit 09.10.2026, T-51; vorher Ortsdatum des Geräts)
+  // Valutatag für Stückzinsen und Kaufpreis: Order am nächsten Handelstag (heute, am Wochenende und an Börsenfeiertagen der folgende),
+  // Erfüllung zwei Abwicklungstage später (ohne Wochenende und TARGET-Feiertage) – wie im Steckbrief (seit 09.10.2026, Technik-Test
+  // 08.10.2026 T-49: vorher ab dem Kalendertag gezählt, ohne Feiertage – am Samstag stand der Dienstag statt des Mittwochs da)
+  const VALUTA = (() => {
+    const h = new Date(HEUTE_ISO + "T12:00:00Z");
+    if (MC.plusAbwicklungstage && MC.handelstag) return MC.plusAbwicklungstage(MC.handelstag(h), 2).toISOString().slice(0, 10);
+    for (let n = 0; n < 2;) { h.setUTCDate(h.getUTCDate() + 1); if (h.getUTCDay() % 6) n++; }
+    return h.toISOString().slice(0, 10);
+  })();
   // Eine Farbe je Anleihe (Nutzerwunsch 01.10.2026), in der Reihenfolge des Hineinlegens – höchstens zehn. Seit 01.10.2026 abends
   // die Farben der Website (Nutzerwunsch: „passe die Farben an die Website an“): Tiefgrün, Tinte, Orange, danach Abstufungen aus
   // denselben Familien (Dunkelgrün, helles Grün, Grau, mittleres Grün, helles Orange, Braun, Hellgrün). Das Orange ist eine Spur
@@ -1265,6 +1298,35 @@ MC.navInit();
   let nennFokus = null;
   document.addEventListener("focusin", e => { if (e.target.matches && e.target.matches("#kd-nenn, [data-nenn]")) { e.target.select(); nennFokus = e.target; } });
   document.addEventListener("mouseup", e => { if (nennFokus && e.target === nennFokus) e.preventDefault(); nennFokus = null; });
+  // Neuemission im ersten Zinsabschnitt (seit 09.10.2026, Technik-Test 08.10.2026 T-16): erster Handelstag (Stammdaten, Feld 13 [1]) und
+  // Ausgabejahr laut Registername gehen als b.ab/b.ausgabe an MC.bond – Zinslauf ab dem ersten Handelstag, erste Zahlung anteilig, wie im
+  // Steckbrief (die Regel steht in bond.js; ob sie greift, entscheidet bond.js am Valutatag). Vorher rechneten Musterdepot und Merkliste
+  // Stückzinsen ab dem letzten rechnerischen Zinstermin – bei einer neuen Deutsche-Telekom-Anleihe 27,29 statt 1,32 EUR je 1.000.
+  // Ausgabejahr: dieselbe Regel wie ausgabeJahr() in anleihe.html – „v.2026(31)“, „Anl.v.2023 (2030)“, „IHS v.26(32)“, „EO-IHS 26(34)“
+  function ausgabeJahr(name) {
+    const mm = /\bv\.\s*(\d{4}|\d{2})\s*\(|(?:^|\s)(\d{4}|\d{2})\s*\(\s*\d{2}/.exec(String(name || ""));
+    if (!mm) return null;
+    const j = +(mm[1] || mm[2]);
+    return j >= 100 ? j : j < 70 ? 2000 + j : 1900 + j;
+  }
+  // { ab, ausgabe } aus einer Stammdaten-Zeile (anleihen/<teil>.json) oder null
+  function neuAngaben(s) {
+    const m = s && Array.isArray(s[12]) ? s[12] : null, ab = m && /^\d{4}-\d{2}-\d{2}$/.test(String(m[1] || "")) ? m[1] : "", j = ab ? ausgabeJahr(s[0]) : null;
+    return ab && j ? { ab, ausgabe: j } : null;
+  }
+  // Anleihe-Objekt für MC.bond mit Zinsterminen und – wenn bekannt – den Angaben der Neuemission
+  function bondB(kupon, faellig, freq, tage, neu) {
+    const b = { coupon: kupon, freq, maturity: faellig, days: tage };
+    if (neu) { b.ab = neu.ab; b.ausgabe = neu.ausgabe; }
+    return b;
+  }
+  // Erster Handelstag für den Rechner-Link („&ab=“), nur wenn die Neuemissions-Regel am Valutatag greift – wie im Steckbrief (neuAb)
+  function rechnerAb(o) {
+    const s = STAMM[o.isin], neu = neuAngaben(s), zt = s && Array.isArray(s[14]) ? s[14] : null;
+    if (!neu || !MC.bond || typeof o.kupon !== "number" || !o.faellig) return "";
+    try { const cd = MC.bond.couponDates(bondB(o.kupon, o.faellig, zt && zt[0] > 0 ? zt[0] : 1, zt && zt.length > 1 ? zt.slice(1) : null, neu), VALUTA); return cd.start !== cd.prev ? neu.ab : ""; }
+    catch (e) { return ""; }
+  }
   // Warum eine Anleihe nicht gerechnet werden kann ("" = sie kann)
   function grund(o) {
     if (!o.cur) return o.hinweis || "keine Daten";
@@ -1279,11 +1341,15 @@ MC.navInit();
   function position(isin, nenn, D) {
     const o = anleihe(isin, 0, D), p = { isin, nenn, o, warum: grund(o) };
     p.fx = o.cur ? fxKurs(o.cur) : null; p.fremd = !!p.fx && o.cur !== "EUR";   // fremd = wird umgerechnet
+    // festKurs: frühere Euro-Währung zum festen Kurs (T-40) – umgerechnet, aber ohne Wechselkursrisiko; stern: Sternchen und Hinweis
+    // „zur Vereinfachung umgerechnet“ nur bei echten Fremdwährungen
+    p.festKurs = p.fremd && festKurs(o.cur); p.stern = p.fremd && !p.festKurs;
     p.cur = o.cur && o.cur !== "EUR" ? o.cur : "";   // Währung des Nennwerts, wenn nicht Euro (auch ohne Wechselkurs)
     p.nennEur = p.fx ? nenn / p.fx : null;   // Nennwert in Euro, zum festen Kurs
     p.rechnet = !p.warum; p.fest = p.rechnet && o.kupon > 0;
     const zt = STAMM[isin] && Array.isArray(STAMM[isin][14]) ? STAMM[isin][14] : null;   // wie anleihe.html
     p.freq = zt && zt[0] > 0 ? zt[0] : 1; p.tage = zt && zt.length > 1 ? zt.slice(1) : null;   // tage null = Zinstermine geschätzt
+    p.neu = neuAngaben(STAMM[isin]);   // erster Handelstag und Ausgabejahr für die Neuemissions-Regel (T-16)
     p.zins = p.rechnet ? p.nennEur * o.kupon / 100 : null;
     // Kurswert = Nennwert × Schlusskurs (ohne Stückzinsen und Gebühren); diff = Rückzahlung zu 100 % minus Kurswert (angezeigt als „bis Fälligkeit +/−“) – alles in Euro
     p.kauf = typeof o.kurs === "number" && p.nennEur != null ? p.nennEur * o.kurs / 100 : null;
@@ -1296,7 +1362,7 @@ MC.navInit();
     p.sz = null; p.preis = p.kauf; p.mac = p.dur = null; p.zt = "";
     if (p.rechnet && MC.bond) {
       try {
-        const b = { coupon: o.kupon, freq: p.freq, maturity: o.faellig, days: p.tage };
+        const b = bondB(o.kupon, o.faellig, p.freq, p.tage, p.neu);
         if (p.kauf != null) { p.sz = p.fest ? p.nennEur * MC.bond.accrued(b, VALUTA) / 100 : 0; p.preis = p.kauf + p.sz; }
         if (p.rend != null) { const d = MC.bond.duration(b, p.rend / 100, VALUTA); p.mac = d.macaulay; p.dur = d.modified; }
         if (p.fest) { const cd = MC.bond.couponDates(b, HEUTE_ISO); if (cd.dates.length) p.zt = new Date(cd.dates[0]).toISOString().slice(0, 10); }
@@ -1309,8 +1375,10 @@ MC.navInit();
     const out = [];
     (liste || POS.filter(p => !AUS.has(p.isin))).filter(p => p.rechnet).forEach(p => {
       if (p.fest) {
-        const cd = MC.bond.couponDates({ coupon: p.o.kupon, freq: p.freq, maturity: p.o.faellig, days: p.tage }, HEUTE_ISO);
-        cd.dates.forEach((t, i) => { const a = i === cd.dates.length - 1 ? cd.last : 1;   // kurze letzte Zinsperiode: anteilig
+        const b = bondB(p.o.kupon, p.o.faellig, p.freq, p.tage, p.neu), cd = MC.bond.couponDates(b, HEUTE_ISO);
+        // Neuemission (T-16): erste Zahlung anteilig – bestimmt am Valutatag wie Stückzinsen und Kaufpreis
+        const cv = p.neu ? MC.bond.couponDates(b, VALUTA) : null, erst = cv && cv.first < 1 && cv.dates.length ? cv.dates[0] : null;
+        cd.dates.forEach((t, i) => { const a = (i === cd.dates.length - 1 ? cd.last : 1) * (t === erst ? cv.first : 1);   // kurze letzte Zinsperiode und erste Zahlung einer Neuemission: anteilig
           out.push({ tag: new Date(t).toISOString().slice(0, 10), p, art: "Zinsen", betrag: p.nennEur * p.o.kupon / p.freq / 100 * a, roh: p.nenn * p.o.kupon / p.freq / 100 * a }); });
       }
       out.push({ tag: p.o.faellig, p, art: "Rückzahlung", betrag: p.nennEur, roh: p.nenn, diff: p.diff });
@@ -1322,7 +1390,7 @@ MC.navInit();
   function depotZeile(p) {
     const o = p.o, steck = `anleihe.html?isin=${encodeURIComponent(p.isin)}`, stk = typeof o.stk === "number" ? o.stk : null;
     const warn = [p.warum ? p.warum + " – fehlt im Schaubild" : "", stk && p.nenn < stk ? `unter der Mindestanlage von ${fmtStk(stk)}` : stk >= 1 && Number.isInteger(stk) && p.nenn % stk ? `kein Vielfaches der Stückelung ${fmtStk(stk)}` : ""].filter(Boolean);
-    return `<tr><th scope="row">${p.rechnet && p.farbe ? `<i class="kd-f" style="background: ${p.farbe}"></i>` : ""}<a href="${steck}">${MC.esc(o.name)}</a>${p.fremd ? `<span class="kd-stern" title="Zur Vereinfachung in Euro umgerechnet – siehe Hinweis unter der Tabelle">*</span>` : ""}<small${o.reg ? ` title="${MC.esc("Registername: " + o.reg)}"` : ""}>${MC.esc([p.isin, ART_NAME[o.art] || "", o.cur || ""].filter(Boolean).join(" · "))}</small>${warn.map(w => `<small class="kd-warn">${MC.esc(w)}</small>`).join("")}</th>` +
+    return `<tr><th scope="row">${p.rechnet && p.farbe ? `<i class="kd-f" style="background: ${p.farbe}"></i>` : ""}<a href="${steck}">${MC.esc(o.name)}</a>${p.stern ? `<span class="kd-stern" title="Zur Vereinfachung in Euro umgerechnet – siehe Hinweis unter der Tabelle">*</span>` : ""}<small${o.reg ? ` title="${MC.esc("Registername: " + o.reg)}"` : ""}>${MC.esc([p.isin, ART_NAME[o.art] || "", o.cur || ""].filter(Boolean).join(" · "))}</small>${warn.map(w => `<small class="kd-warn">${MC.esc(w)}</small>`).join("")}</th>` +
       `<td class="num" data-l="Rendite">${p.rend != null ? MC.felder.pct(p.rend) : "–"}</td>` +
       `<td class="num" data-l="Kupon">${o.zinsart === 2 ? "Nullkupon" : fmtCoupon(o.kupon)}<small><span class="kd-m">lfd. Verzinsung </span>${p.lfd != null ? MC.felder.pct(p.lfd) : "–"}</small></td>` +
       `<td class="num" data-l="Restlaufzeit">${p.rest != null ? (p.rest > 0 ? MC.esc(MC.restlaufzeit(p.rest)) : "fällig") : "–"}<small><span class="kd-m">fällig </span>${o.faellig ? MC.datum(o.faellig) : "unbefristet"}</small></td>` +
@@ -1411,7 +1479,7 @@ MC.navInit();
       let y = y0, svg = "";
       teile.filter(t => wert(t) > 0).forEach(t => {
         const h = Math.max(1.5, hoehe * wert(t) / max);   // sehr kleine Anteile bleiben als feine Linie sichtbar, ohne den Stapel aufzublähen
-        svg += `<rect x="${(cx - b / 2).toFixed(1)}" y="${(y - h).toFixed(1)}" width="${b.toFixed(1)}" height="${(h > 6 ? h - 2 : h).toFixed(1)}" rx="${h > 6 ? 3 : 0.5}" fill="${t.p.farbe}"><title>${MC.esc(`${t.p.o.name} ${fmtCoupon(t.p.o.kupon)} ${t.p.o.faellig.slice(0, 4)}: ${was} ${eur(wert(t))}${t.p.fremd ? " (in Euro umgerechnet, Wechselkurs als fest angenommen)" : ""}`)}</title></rect>`;
+        svg += `<rect x="${(cx - b / 2).toFixed(1)}" y="${(y - h).toFixed(1)}" width="${b.toFixed(1)}" height="${(h > 6 ? h - 2 : h).toFixed(1)}" rx="${h > 6 ? 3 : 0.5}" fill="${t.p.farbe}"><title>${MC.esc(`${t.p.o.name} ${fmtCoupon(t.p.o.kupon)} ${t.p.o.faellig.slice(0, 4)}: ${was} ${eur(wert(t))}${t.p.stern ? " (in Euro umgerechnet, Wechselkurs als fest angenommen)" : t.p.fremd ? " (in Euro umgerechnet, fester Umrechnungskurs)" : ""}`)}</title></rect>`;
         y -= h;
       });
       return [svg, y];
@@ -1515,7 +1583,7 @@ MC.navInit();
   // Hinweis zum Sternchen: zugeklappt nur die Zeile „* Fremdwährungen werden zur Vereinfachung in Euro umgerechnet“; aufgeklappt
   // Kurs, Stichtag, „als fest angenommen“ und das Wechselkursrisiko
   function fxHinweis() {
-    const fremd = POS.filter(p => p.fremd), kurse = [...new Set(fremd.map(p => p.o.cur))].sort().map(c => `1 EUR = ${fmtFx(FX.kurse[c])} ${MC.esc(c)}`).join(", ");
+    const fremd = POS.filter(p => p.stern), kurse = [...new Set(fremd.map(p => p.o.cur))].sort().map(c => `1 EUR = ${fmtFx(FX.kurse[c])} ${MC.esc(c)}`).join(", ");
     $("kd-fx").hidden = !fremd.length;
     if (!fremd.length) return;
     $("kd-fx-t").innerHTML = `In Euro umgerechnet mit dem Euro-Referenzkurs der EZB vom ${MC.datum(FX.stand)}: ${kurse}. Dieser Wechselkurs ist hier als <b>fest</b> angenommen – für den Kurswert, alle Zinsen und die Rückzahlung bis zur Fälligkeit. Tatsächlich schwankt er (<b>Wechselkursrisiko</b>): Steigt der Euro gegenüber der Währung der Anleihe, sind Zinsen und Rückzahlung in Euro weniger wert; fällt er, sind sie mehr wert.`;
@@ -1661,7 +1729,9 @@ MC.navInit();
   }
   function reiterWahl(r, fokus) { reiter(r, fokus); try { history.replaceState(null, "", location.pathname + location.search + (ANSICHT === "start" ? "" : "#" + (ANSICHT === "planen" && (r === "depot" || r === "erinnerung") ? "depot" : ANSICHT))); } catch (e) {} }
   $("mb-tabs").addEventListener("click", e => { const b = e.target.closest("[role=tab]"); if (b) reiterWahl(b.dataset.ansicht); });
+  // Pfeiltasten wechseln den Reiter; Pos1/Ende wählen den ersten bzw. letzten (seit 09.10.2026, Technik-Test 08.10.2026 T-123)
   $("mb-tabs").addEventListener("keydown", e => {
+    if (e.key === "Home" || e.key === "End") { e.preventDefault(); reiterWahl(ANSICHTEN[e.key === "Home" ? 0 : ANSICHTEN.length - 1], true); return; }
     if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
     e.preventDefault();
     reiterWahl(ANSICHTEN[(ANSICHTEN.indexOf(ANSICHT) + (e.key === "ArrowRight" ? 1 : ANSICHTEN.length - 1)) % ANSICHTEN.length], true);
@@ -1755,10 +1825,12 @@ MC.navInit();
     // Seit 03.10.2026 dieselben Spalten in derselben Reihenfolge wie die Tabelle (Konzept „Einheitliche Anleihen-Angaben“): je Spalte oben
     // und darunter (t2); x = linker Rand, b = Breite; Zahlen rechtsbündig (r). Unter dem Namen stehen ISIN, Art und Währung.
     const SP = [], F = MC.felder, pt = t => String(t).replace(/\u00a0/g, " ");   // im PDF normales Leerzeichen
-    [["Anleihe", 176, 0, "ISIN · Art · Währung"], ["Rendite", 46, 1], ["Kupon", 48, 1], ["Restlaufzeit", 62, 1, "Fälligkeit"], ["Kurs", 56, 1, "zum Vortag"],
-      ["Seit dem Merken", 62, 1, "gemerkt am"], ["Nächster Zinstermin", 65, 1]]
+    // Breiten seit 09.10.2026 so, dass die Spaltenköpfe „SEIT DEM MERKEN“ (60,7 pt) und „NÄCHSTER ZINSTERMIN“ (77,6 pt) mit Abstand in
+    // ihre Spalte passen – vorher liefen sie ineinander (Technik-Test 08.10.2026); Anleihe, Rendite, Kupon, Restlaufzeit und Kurs etwas schmaler
+    [["Anleihe", 168, 0, "ISIN · Art · Währung"], ["Rendite", 42, 1], ["Kupon", 44, 1], ["Restlaufzeit", 58, 1, "Fälligkeit"], ["Kurs", 52, 1, "zum Vortag"],
+      ["Seit dem Merken", 67, 1, "gemerkt am"], ["Nächster Zinstermin", 84, 1]]
       .reduce((x, [t, b, r, t2]) => { SP.push({ t, t2, x, b, r: !!r }); return x + b; }, R);
-    const rx = i => SP[i].x + SP[i].b - 6, lx = i => SP[i].x + (i && SP[i - 1].r ? 8 : 0), NAME = 168, LINK = "https://www.bondarium.de/";
+    const rx = i => SP[i].x + SP[i].b - 6, lx = i => SP[i].x + (i && SP[i - 1].r ? 8 : 0), NAME = 160, LINK = "https://www.bondarium.de/";
     // Hinweise unten auf jeder Seite; ihre Höhe bestimmt, wie weit die Tabelle reicht
     const noten = [];
     if (liste.some(o => o.real)) noten.push("* Realrendite (inflationsindexierte Anleihe).");
@@ -1853,19 +1925,24 @@ MC.navInit();
     // Dateiname mit dem Namen des Depots, nur Buchstaben, Ziffern und Bindestriche
     const slug = name.replace(/[äÄ]/g, "ae").replace(/[öÖ]/g, "oe").replace(/[üÜ]/g, "ue").replace(/ß/g, "ss").normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 30);
     const pos = POS.slice().sort((a, b) => (a.o.faellig || "9999").localeCompare(b.o.faellig || "9999") || a.isin.localeCompare(b.isin));
-    const fremd = pos.filter(p => p.fremd), GRUEN_T = "#157C00", HELL = [0.957, 0.953, 0.937];
+    const fremd = pos.filter(p => p.stern), alt = pos.filter(p => p.festKurs), GRUEN_T = "#157C00", HELL = [0.957, 0.953, 0.937];
     // „€“ mitten im Text: macOS-Vorschau (PDFKit) kennt für die Standardschrift Helvetica keine Breite des Euro-Zeichens und zeichnet es
     // breiter – der folgende Text liefe hinein. Deshalb jedes Stück an seine Stelle setzen und hinter „€“ ein Viertel Geviert Luft lassen.
     const tx = (x, yy, s, o) => { let cx = x; const gr = (o && o.gr) || 10; s.split("€").forEach((t, i, a) => { if (t) cx += P.text(cx, yy, t, o); if (i < a.length - 1) cx += P.text(cx, yy, "€", o) + gr * 0.25; }); };
     const SP = [];
     // Spalten wie die Tabelle auf der Seite (Konzept B, seit 02.10.2026 abends): je Spalte zwei Angaben übereinander; Reihenfolge
     // seit 03.10.2026 wie die Tabelle (Nutzerwunsch): Rendite, Kupon/lfd. Verz., Restlaufzeit/Fälligkeit, Duration/mod. Duration, Rest
-    [["Anleihe", 130, 0, "ISIN · Art · Währung"], ["Rendite", 36, 1], ["Kupon", 42, 1, "lfd. Verz."], ["Restlaufzeit", 52, 1, "Fälligkeit"],
-      ["Duration", 48, 1, "mod. Duration"], ["Nennwert", 56, 1], ["Kaufpreis", 56, 1, "Kurs"], ["Anteil", 38, 1], ["Zinsen pro Jahr", 57, 1, "nächster Termin"]]
+    // Nennwert und Kaufpreis seit 09.10.2026 je 64 statt 56 pt breit: In der Summenzeile stießen die fetten Beträge aneinander
+    // („20.000 EUR9.411,18 EUR“, ebenso Duration und Nennwert; Technik-Test 08.10.2026) – jetzt mit Abstand bis „99.999,99 EUR“;
+    // dafür Anleihe, Rendite, Kupon, Duration und Anteil etwas schmaler (ISIN · Art · Währung passt weiter ganz)
+    [["Anleihe", 128, 0, "ISIN · Art · Währung"], ["Rendite", 34, 1], ["Kupon", 38, 1, "lfd. Verz."], ["Restlaufzeit", 52, 1, "Fälligkeit"],
+      ["Duration", 46, 1, "mod. Duration"], ["Nennwert", 64, 1], ["Kaufpreis", 64, 1, "Kurs"], ["Anteil", 32, 1], ["Zinsen pro Jahr", 57, 1, "nächster Termin"]]
       .reduce((x, [t, b, r, t2]) => { SP.push({ t, t2, x, b, r: !!r }); return x + b; }, R);
-    const rx = i => SP[i].x + SP[i].b - (i === SP.length - 1 ? 0 : 6), NAME = 122;
+    const rx = i => SP[i].x + SP[i].b - (i === SP.length - 1 ? 0 : 6), NAME = 120;
     const noten = [];
     if (fremd.length && FX) noten.push(`* Fremdwährung: zur Vereinfachung mit dem Euro-Referenzkurs der EZB vom ${MC.datum(FX.stand)} in Euro umgerechnet (${[...new Set(fremd.map(p => p.o.cur))].sort().map(c => `1 EUR = ${fmtFx(FX.kurse[c])} ${c}`).join(", ")}) und für die ganze Laufzeit als fest angenommen – tatsächlich schwankt er (Wechselkursrisiko).`);
+    // Frühere Euro-Währungen (T-40): fester Umrechnungskurs, kein Sternchen
+    if (alt.length) noten.push(`Frühere Währungen des Euroraums zum festen Umrechnungskurs in Euro umgerechnet (${[...new Set(alt.map(p => p.o.cur))].sort().map(c => `1 EUR = ${EURO_FEST[c].toLocaleString("de-DE", { maximumFractionDigits: 6 })} ${c}`).join(", ")}) – ohne Wechselkursrisiko.`);
     noten.push("Musterdepot: gedachte Nennwerte, kein Bestand und kein Kauf. Kurs: Schlusskurs in % des Nennwerts. Kaufpreis = Nennwert × Kurs plus Stückzinsen zum Valutatag, ohne Gebühren. Anteil: Kurswert der Anleihe am Kurswert des Depots. " +
       "Rendite: bis zur Fälligkeit, pro Jahr; laufende Verzinsung = Kupon ÷ Kurs. Duration: durchschnittliche Kapitalbindung in Jahren (Macaulay); mod. Duration = Duration ÷ (1 + Rendite) – um so viel Prozent fällt der Kurs ungefähr, wenn das Zinsniveau um einen Prozentpunkt steigt. Summe nach Kurswert gewichtet. " +
       "Zinsen und Rückzahlung vor Steuern und Kosten; Zinstermine laut Deutscher Börse, wo sie fehlen geschätzt; eine vorzeitige Kündigung ist nicht berücksichtigt. Maßgeblich sind die Anleihebedingungen.");
@@ -1903,8 +1980,8 @@ MC.navInit();
     y += 14; P.linie(R, y, B - R, y, INK, 0.8);
     pos.forEach(p => {
       const o = p.o, z1 = y + 14, z2 = y + 25;
-      const nw = P.text(R, z1, o.name, { gr: 9, fett: true, max: NAME - (p.fremd ? 6 : 0) });
-      if (p.fremd) P.text(R + nw + 1, z1, "*", { gr: 9, fett: true });
+      const nw = P.text(R, z1, o.name, { gr: 9, fett: true, max: NAME - (p.stern ? 6 : 0) });
+      if (p.stern) P.text(R + nw + 1, z1, "*", { gr: 9, fett: true });
       P.link(R, y + 4, Math.min(NAME, nw), 13, `${LINK}anleihe.html?isin=${encodeURIComponent(p.isin)}`);
       P.text(R, z2, [p.isin, p.warum, ART_NAME[o.art] || "", o.cur || ""].filter(Boolean).join(" · "), klein({ max: NAME }));
       P.text(rx(1), z1, p.rend != null ? `${fmt(p.rend, 2)} %` : "–", { gr: 8.5, fett: true, rechts: true });
@@ -1928,7 +2005,7 @@ MC.navInit();
     const S = depotSummen(pos);
     platz(40);
     P.linie(R, y, B - R, y, INK, 0.8);
-    P.text(R, y + 14, "Summe", { gr: 9, fett: true }); P.text(R, y + 25, `${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}${fremd.length ? ", in Euro" : ""}`, klein());
+    P.text(R, y + 14, "Summe", { gr: 9, fett: true }); P.text(R, y + 25, `${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}${fremdIn(pos) ? ", in Euro" : ""}`, klein());
     P.text(rx(1), y + 14, S.rend != null ? `${fmt(S.rend, 2)} %` : "–", { gr: 8.5, fett: true, rechts: true });
     P.text(rx(2), y + 14, "–", { gr: 8.5, fett: true, rechts: true });
     P.text(rx(2), y + 25, S.lfd != null ? `${fmt(S.lfd, 2)} %` : "–", klein({ rechts: true }));
@@ -2013,7 +2090,7 @@ MC.navInit();
         zj.forEach(x => {
           if (y + 16 > UNTEN) { seite(false); tKopf(true); }
           P.text(R, y + 11, MC.datum(x.tag), { gr: 8.5 });
-          P.text(R + 70, y + 11, kurz(x.p) + (x.p.fremd ? "*" : ""), { gr: 8.5, max: 330 });
+          P.text(R + 70, y + 11, kurz(x.p) + (x.p.stern ? "*" : ""), { gr: 8.5, max: 330 });
           P.text(B - R, y + 11, eur(x.betrag), { gr: 8.5, rechts: true });
           y += 16; P.linie(R, y, B - R, y, LINIE, 0.5);
         });
@@ -2098,6 +2175,8 @@ MC.navInit();
   // dieses Skript schon hat (Daten, Formatierer, Aktionen). Ohne bereich.js (Netzfehler) bleibt B null – Merkliste und Depot gehen weiter.
   let BESUCHT = false;
   const B = MC.bereich ? MC.bereich({ K, $, fmt, fmtCoupon, TEXT, hinweis, reiterWahl, heute: HEUTE_ISO, jahre, STAMM, anleihe, ladeDaten, ladeStamm,
+    // Valutatag (nächster Handelstag + 2 Abwicklungstage) und erster Handelstag einer Neuemission für den Rechner-Link (seit 09.10.2026, T-49/T-16)
+    valuta: VALUTA, rechnerAb,
     liste: () => LISTE, daten: () => DDATA, kstand: () => KSTAND, filter: () => MF,
     // Anleihen aller Musterdepots für die Termine auf Start (seit 03.10.2026, Nutzerwunsch; vorher die der Merkliste): je ISIN einmal,
     // mit dem nächsten Zinstermin wie in der Depot-Tabelle (position(): zt, gesch = Zinstermine geschätzt); null, solange die Kursdaten fehlen

@@ -13,6 +13,8 @@
                               depots: [[nummer, name, [[isin, nennwert, zeit], …]], …] } – fragt höchstens einmal.
                               Wer noch kein Musterdepot hat, bekommt [[0, "Musterdepot 1", []]] (angelegt beim ersten Hinzufügen).
                               Dazu erinnern: true, wenn die E-Mail vor jeder Fälligkeit eingeschaltet ist (seit 02.10.2026).
+                              Bei Störung (Merker gesetzt, aber Netzfehler oder Serverfehler ≥ 500): eine Kopie des Stands mit
+                              stoerung: true und status – der nächste Aufruf fragt neu (seit 09.10.2026).
      stand()                  derselbe Stand, sofort (vor bereit(): nicht angemeldet)
      hat(isin)                true, wenn die Anleihe in der Merkliste steht
      knopf(isin[, klasse])    HTML des Merken-Knopfs; Klick, Beschriftung und Zustand übernimmt dieses Skript –
@@ -82,10 +84,22 @@
     }).catch(function () { return { ok: false, code: 0, status: "netz" }; });
   }
 
+  // Störung (seit 09.10.2026, Technik-Test 08.10.2026 T-21): Ist der Merker gesetzt und kommt keine Antwort (Netz) oder ein
+  // Serverfehler (≥ 500, z. B. 503 „speicher“), gilt das nicht als „abgemeldet“ – vorher sahen Angemeldete dann kommentarlos das
+  // Anmeldeformular. Der Stand trägt stoerung: true; abfrage wird verworfen, ein späterer Aufruf fragt neu.
   function bereit() {
     if (!abfrage) {
       abfrage = markiert()
-        ? sende("GET", { aktion: "status" }).then(function (j) { return j.ok ? uebernimm(j) : st; })
+        ? sende("GET", { aktion: "status" }).then(function (j) {
+          if (j.ok) return uebernimm(j);
+          if (!j.code || j.code >= 500) {
+            abfrage = null;
+            var s = {}; Object.keys(st).forEach(function (k) { s[k] = st[k]; });
+            s.stoerung = true; s.status = j.status || "netz";
+            return s;
+          }
+          return st;
+        })
         : Promise.resolve(st);
     }
     return abfrage;
@@ -149,7 +163,11 @@
     var isin = b.getAttribute("data-merk");
     if (b.disabled) return;
     b.disabled = true;
-    bereit().then(function () {
+    bereit().then(function (s) {
+      if (s && s.stoerung) {   // Konto gerade nicht erreichbar (T-21): nicht „Zum Merken brauchst du ein Konto“ zeigen
+        var t = "Gerade nicht erreichbar"; b.querySelector("span").textContent = t; melde("Mein Bondarium ist gerade nicht erreichbar.");
+        setTimeout(function () { zeichne(b); }, 3000); return;
+      }
       if (!st.angemeldet) { anmeldeHinweis(b, isin); return; }
       var weg = !!menge[isin];
       return aendere(weg ? "entfernen" : "merken", isin).then(function () {

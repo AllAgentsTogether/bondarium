@@ -19,7 +19,8 @@
    Erklärseiten, keine Anleihen. Stile: bereich.css. Beschreibung: docs/KONTO.md, Abschnitt „Mein Bondarium“.
 
    Aufruf aus konto.html:  const B = MC.bereich(X)  – X ist die Brücke zum Seitenskript:
-     K, $, fmt, fmtCoupon, TEXT, hinweis(html, fehler), reiterWahl(ansicht), heute (ISO), jahre(iso), STAMM,
+     K, $, fmt, fmtCoupon, TEXT, hinweis(html, fehler), reiterWahl(ansicht), heute (ISO, Berliner Kalendertag), jahre(iso), STAMM,
+     valuta (ISO: nächster Handelstag + 2 Abwicklungstage), rechnerAb(o) → erster Handelstag einer Neuemission für den Rechner-Link oder "",
      liste() → gemerkte Anleihen (Objekte aus anleihe()), daten() → Suchindex oder null, kstand(), filter() → Filter der Merkliste,
      ladeDaten(), ladeStamm(isins), anleihe(isin, seit, D), zeichneListe(), entfernen(isin), insDepot(isin), teilen(nurSpeichern)
    Rückgabe: zeige(ansicht), neu(), ablageNeu(art), etfLaden(isins), istEtf(isin), sichtbar(o), zeile*-Helfer für die Tabelle. */
@@ -73,7 +74,7 @@
       if (!o.cur) return e;
       const j = o.faellig ? X.jahre(o.faellig) : null;
       if (j != null && j > 0 && j < 1) e.push(["faellig", `fällig in ${MC.restlaufzeit(j)}`, ""]);
-      if (o.cur !== "EUR") e.push(["fremd", `Fremdwährung ${o.cur}`, "o"]);
+      if (o.cur !== "EUR" && !(MC.EURO_FEST && Object.prototype.hasOwnProperty.call(MC.EURO_FEST, o.cur))) e.push(["fremd", `Fremdwährung ${o.cur}`, "o"]);   // DEM, ATS … sind Euro zum festen Kurs (T-40)
       if (o.kupon === 0) e.push(["null", "Nullkupon", ""]);
       if (o.kupon === "var" || o.zinsart === 1) e.push(["var", "variabel verzinst", ""]);
       const zt = X.STAMM[o.isin] && Array.isArray(X.STAMM[o.isin][14]) ? X.STAMM[o.isin][14] : null;
@@ -186,7 +187,7 @@
     function zeileNach(o) {
       if (OFFEN !== o.isin) return "";
       const m = meldungVon(o.isin), ls = listen(), in_ = ls.find(l => l.i.indexOf(o.isin) >= 0), n = wert("notiz", o.isin) || "";
-      const rech = typeof o.kurs === "number" && typeof o.kupon === "number" && o.faellig ? `rechner.html?kurs=${encodeURIComponent(fmt(o.kurs, 2))}&kupon=${encodeURIComponent(fmt(o.kupon, 3).replace(/0$/, ""))}&faellig=${encodeURIComponent(MC.datum(o.faellig))}&w=${encodeURIComponent(o.cur || "EUR")}&isin=${encodeURIComponent(o.isin)}&titel=${encodeURIComponent(titel(o))}#rendite` : "";
+      const rech = rechnerLink(o);
       return `<tr class="mb-form-z"><td colspan="9"><div class="mb-form" data-panel="${esc(o.isin)}">` +
         `<div class="mb-form-k"><h3>${esc(titel(o))}: Notiz, Liste, Meldung</h3><p>Alles hier siehst nur du. Die Notiz kommt nicht in das PDF zum Teilen.</p></div>` +
         `<div class="mb-felder"><label class="breit" for="mb-p-notiz">Notiz<input type="text" id="mb-p-notiz" maxlength="200" autocomplete="off" value="${esc(n)}"></label>` +
@@ -195,13 +196,35 @@
         `<label for="mb-p-w">Schwelle<input type="text" id="mb-p-w" inputmode="decimal" autocomplete="off" placeholder="z. B. 4,00" value="${m && typeof m.w.w === "number" ? fmt(m.w.w, 2) : ""}"></label>` +
         `<label for="mb-p-m">Nachricht<select id="mb-p-m"><option value="1"${m && !m.w.m ? "" : " selected"}>E-Mail</option><option value="0"${m && !m.w.m ? " selected" : ""}>nur im Bereich</option></select></label></div>` +
         `<ul class="mb-menue"><li><a href="anleihe.html?isin=${encodeURIComponent(o.isin)}">Steckbrief öffnen</a></li>` +
-        (rech ? `<li><a href="${rech}">Im Rechner öffnen</a></li>` : "") +
+        `<li id="mb-p-rech"${rech ? "" : " hidden"}>${rech ? `<a href="${esc(rech)}">Im Rechner öffnen</a>` : ""}</li>` +
         `<li><button type="button" data-p="depot">In ein Musterdepot legen</button></li>` +
         (termin(o) || o.faellig > HEUTE ? `<li><button type="button" data-p="ics">Termine in den Kalender</button></li>` : "") +
         `<li><button type="button" class="rot" data-p="weg">Von der Merkliste entfernen</button></li>` +
         `<li><small>${esc([o.isin, o.cur, typeof o.stk === "number" && F ? "Stückelung " + F.stueckelung(o.stk, o.cur) : "", typeof o.vol === "number" && F ? "Volumen " + F.volumen(o.vol, o.cur) : "", F && F.bonitaet(o.bon) ? "Bonität laut EZB " + F.bonitaet(o.bon) : ""].filter(Boolean).join(" · "))}</small></li></ul>` +
         `<div class="mb-form-a"><button type="button" class="go" data-p="speichern">Speichern</button><button type="button" class="kto-textbtn" data-p="zu">Abbrechen</button><p class="kf-status" id="mb-p-status" role="status" aria-live="polite"></p></div>` +
         `</div></td></tr>`;
+    }
+    // „Im Rechner öffnen“ (seit 09.10.2026, Technik-Test 08.10.2026 T-05/T-15): derselbe Link wie im Steckbrief (MC.felder.rechnerUrl) –
+    // mit Zinsrhythmus und Zinstagen aus den Stammdaten, Rendite und bei einer Neuemission dem ersten Handelstag; ohne Rendite kein Link.
+    // Dieselben Bedingungen wie im Steckbrief: fester Kupon, kein Stufenzins, kein Widerspruch im Register, Valuta vor der Fälligkeit.
+    // Vorher ohne Zinsrhythmus, Zinstage und Rendite – halbjährliche Anleihen rechnete der Rechner jährlich.
+    const STUFEN = /stufenz|step[ -]?up|step[ -]?down|\bstep\b/i;
+    function rechnerLink(o) {
+      if (!F || !F.rechnerUrl || o.zinsart !== 0 || typeof o.kupon !== "number" || !o.faellig || o.befund || STUFEN.test(o.reg || o.name)) return "";
+      if (X.valuta && o.faellig <= X.valuta) return "";
+      const s = X.STAMM[o.isin], zt = s && Array.isArray(s[14]) ? s[14] : null;
+      return F.rechnerUrl({ kurs: o.kurs, kupon: o.kupon, faellig: o.faellig, ccy: o.cur || "EUR", zt, rendite: o.rendite, isin: o.isin, ab: X.rechnerAb ? X.rechnerAb(o) : "" });
+    }
+    // Für reine Merkliste-Anleihen lädt konto.html keine Stammdaten (nur für Musterdepots und Anleihen ohne Kurs) – beim Öffnen des
+    // Menüs nachladen und den Link danach setzen (ohne die Zeile neu zu zeichnen: Eingaben im Menü bleiben stehen)
+    function rechnerNachladen(isin) {
+      if (isin in X.STAMM || !X.ladeStamm) return;
+      X.ladeStamm([isin]).then(() => {
+        const li = $("mb-p-rech"), o = X.liste().find(x => x.isin === isin);
+        if (OFFEN !== isin || !li || !o) return;
+        const url = rechnerLink(o);
+        li.innerHTML = url ? `<a href="${esc(url)}">Im Rechner öffnen</a>` : ""; li.hidden = !url;
+      }, () => {});
     }
     let SPEICHERT = false;
     function panelSpeichern(isin) {
@@ -221,7 +244,7 @@
     }
     function zeilenKlick(e) {
       const m = e.target.closest("[data-mehr]");
-      if (m) { OFFEN = OFFEN === m.dataset.mehr ? "" : m.dataset.mehr; X.zeichneListe(); const f = $("mb-p-notiz"); if (f) f.focus(); return; }
+      if (m) { OFFEN = OFFEN === m.dataset.mehr ? "" : m.dataset.mehr; X.zeichneListe(); const f = $("mb-p-notiz"); if (f) f.focus(); if (OFFEN) rechnerNachladen(OFFEN); return; }
       const p = e.target.closest("[data-p]"); if (!p) return;
       const isin = p.closest("[data-panel]").dataset.panel, o = X.liste().find(x => x.isin === isin), w = p.dataset.p;
       if (w === "zu") { OFFEN = ""; X.zeichneListe(); }
@@ -255,20 +278,33 @@
       etfListe().forEach(f => { const r = ETF.get(f[0]), k = ETFK && ETFK.kurse ? ETFK.kurse[f[0]] : null; zeilen.push([r[1], r[0], "ETF", r[9] || "", "", "", "", "", "", "", "", "", tagDe(f[1]), "", k && typeof k[0] === "number" ? n(k[0], 2) : ""]); });
       lade(`Bondarium-Merkliste-${HEUTE}.csv`, "﻿" + [kopf].concat(zeilen).map(r => r.map(z).join(";")).join("\r\n") + "\r\n", "text/csv;charset=utf-8");
     }
-    // Kalenderdatei (.ics): nächster Zinstermin und Fälligkeit je Anleihe als ganztägige Termine – entsteht im Browser
+    // Kalenderdatei (.ics): nächster Zinstermin und Fälligkeit je Anleihe als ganztägige Termine – entsteht im Browser.
+    // Zeilen höchstens 75 Byte (UTF-8), längere gefaltet: „\r\n “ und der Rest, nie mitten in einem Zeichen (RFC 5545, Abschnitt 3.1;
+    // seit 09.10.2026, Technik-Test 08.10.2026 T-110 – vorher bis 149 Byte lang)
+    const ENC = typeof TextEncoder === "function" ? new TextEncoder() : null;
+    const byteZahl = c => ENC ? ENC.encode(c).length : unescape(encodeURIComponent(c)).length;
+    function falte(zeile) {
+      let out = "", n = 0;
+      for (const c of zeile) {   // for … of geht Zeichen für Zeichen (Codepunkte) – ein Emoji wird nie geteilt
+        const b = byteZahl(c);
+        if (n + b > 75) { out += "\r\n "; n = 1; }
+        out += c; n += b;
+      }
+      return out;
+    }
     function kalender(liste) {
       const t = s => String(s).replace(/([\\;,])/g, "\\$1").replace(/\n/g, "\\n"), d = iso => iso.replace(/-/g, ""), morgen = iso => { const x = new Date(iso + "T12:00:00Z"); x.setUTCDate(x.getUTCDate() + 1); return x.toISOString().slice(0, 10).replace(/-/g, ""); };
       const jetzt = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, ""), ev = [];
       liste.forEach(o => {
         const zt = naechster(o), url = `https://www.bondarium.de/anleihe.html?isin=${o.isin}`;
         const eintrag = (art, tag, text) => ev.push(["BEGIN:VEVENT", `UID:${art}-${o.isin}-${d(tag)}@bondarium.de`, `DTSTAMP:${jetzt}`, `DTSTART;VALUE=DATE:${d(tag)}`, `DTEND;VALUE=DATE:${morgen(tag)}`,
-          `SUMMARY:${t(text)}`, `DESCRIPTION:${t(`${o.isin} – Termin laut Bondarium, maßgeblich sind die Anleihebedingungen. ${url}`)}`, `URL:${url}`, "TRANSP:TRANSPARENT", "END:VEVENT"].join("\r\n"));
+          `SUMMARY:${t(text)}`, `DESCRIPTION:${t(`${o.isin} – Termin laut Bondarium, maßgeblich sind die Anleihebedingungen. ${url}`)}`, `URL:${url}`, "TRANSP:TRANSPARENT", "END:VEVENT"].map(falte).join("\r\n"));
         if (zt && zt !== o.faellig) eintrag("zins", zt, `Zinstermin: ${titel(o)}`);
         if (o.faellig && o.faellig > HEUTE) eintrag("faellig", o.faellig, `Fälligkeit${zt === o.faellig ? " und letzter Zinstermin" : ""}: ${titel(o)}`);
       });
       if (!ev.length) { X.hinweis("Für diese Auswahl gibt es keinen kommenden Termin."); return; }
       lade(liste.length === 1 ? `Bondarium-Termine-${liste[0].isin}.ics` : `Bondarium-Termine-${HEUTE}.ics`,
-        ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Bondarium//Mein Bondarium//DE", "CALSCALE:GREGORIAN", "X-WR-CALNAME:Bondarium – Termine"].concat(ev, ["END:VCALENDAR"]).join("\r\n") + "\r\n", "text/calendar;charset=utf-8");
+        ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Bondarium//Mein Bondarium//DE", "CALSCALE:GREGORIAN", "X-WR-CALNAME:Bondarium – Termine"].map(falte).concat(ev, ["END:VCALENDAR"]).join("\r\n") + "\r\n", "text/calendar;charset=utf-8");
     }
     function einfuegen(e) {
       e.preventDefault();
@@ -306,7 +342,9 @@
       const zeile = (name, f) => `<tr><th scope="row">${name}</th>${ls.map(o => `<td>${f(o)}</td>`).join("")}</tr>`;
       const klein = t => t ? `<small style="display:block;color:var(--text);font-size:12.5px">${t}</small>` : "";
       const kue = o => { const k = kueVon(o); if (!k || !MC.kuendigungFeld) return "–"; const f = MC.kuendigungFeld(k, o.kurs); return esc(f.wert) + klein(f.klein); };
-      const valuta = (() => { const x = new Date(HEUTE + "T12:00:00Z"); let n = 2; while (n) { x.setUTCDate(x.getUTCDate() + 1); if (x.getUTCDay() % 6) n--; } return x.toISOString().slice(0, 10); })();
+      // Valuta wie Steckbrief und Musterdepots: nächster Handelstag + 2 Abwicklungstage (X.valuta aus konto.html, seit 09.10.2026,
+      // Technik-Test 08.10.2026 T-49 – vorher ab dem Kalendertag gezählt, ohne Feiertage)
+      const valuta = X.valuta || (() => { const x = new Date(HEUTE + "T12:00:00Z"); let n = 2; while (n) { x.setUTCDate(x.getUTCDate() + 1); if (x.getUTCDay() % 6) n--; } return x.toISOString().slice(0, 10); })();
       const kennz = o => {   // laufende Verzinsung, Duration (Macaulay), modifizierte Duration
         const fest = o.zinsart === 0 && typeof o.kupon === "number", out = { lfd: fest && o.kurs > 0 && !/infl/i.test(o.reg || "") ? o.kupon / o.kurs * 100 : null, mac: null, dur: null };
         const zt = VZT[o.isin];
@@ -488,14 +526,15 @@
       linie: '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l4-4 3 2.5L14 4"/></svg>',
     };
     const etikett = (ic, text, alarm) => `<span class="mb-her${alarm ? " alarm" : ""}" title="${esc(text)}">${ICON[ic]}<span>${esc(text)}</span></span>`;
-    // Beträge auf Start: Euro ganz, wenn glatt; umgerechnete Fremdwährung mit „≈“ und ganz
+    // Beträge auf Start: Euro ganz, wenn glatt; umgerechnete Fremdwährung mit „≈“ und ganz – frühere Euro-Währungen zum festen Kurs
+    // (DEM, ATS …; p.festKurs, seit 09.10.2026, T-40) ohne „≈“, „fester Kurs“ statt „EZB-Kurs“
     const euro = (v, ca) => (ca ? "≈ " : "") + fmt(v, ca || Math.abs(v - Math.round(v)) < 0.005 ? 0 : 2) + " €";
     const roh = (v, cur) => `${fmt(v, Math.abs(v - Math.round(v)) < 0.005 ? 0 : 2)} ${cur}`;
     const IN12 = (+HEUTE.slice(0, 4) + 1) + HEUTE.slice(4);
     function seitBesuch(D) {
       const st = K.stand(), seit = st.besuch ? isoVon(st.besuch) : "", zeilen = [];
       meldungenAktiv(D).forEach(m => { const s = meldungStand(m, D); zeilen.push([etikett("stern", "Merkliste", true), `<b>Meldung: ${esc(s.wer)}</b> – ${esc(s.was)}. ${s.stand.replace(/<\/?em>/g, "")}`, '<button type="button" data-zu="meldungen">Zur Meldung</button>']); });
-      termine(40).filter(t => tageBis(t.tag) <= 14).slice(0, 3).forEach(t => { const n = tageBis(t.tag), b = t.betrag != null ? euro(t.betrag, t.p.fremd) : "";
+      termine(40).filter(t => tageBis(t.tag) <= 14).slice(0, 3).forEach(t => { const n = tageBis(t.tag), b = t.betrag != null ? euro(t.betrag, t.p.stern) : "";
         const was = t.art === "Fälligkeit" ? `wird am ${esc(MC.tag(t.tag))} zurückgezahlt${b ? ` – ${b}` : ""}.` : t.art === "Zinstermin" ? `zahlt am ${esc(MC.tag(t.tag))} Zinsen${b ? ` – ${b}` : ""}.` : `zahlt am ${esc(MC.tag(t.tag))} Zinsen und den Nennwert zurück${b ? ` – ${b}` : ""}.`;
         zeilen.push([etikett("mappe", t.dep.name), `<b>${t.art === "Fälligkeit" ? "Fälligkeit" : "Zinstermin"} ${n <= 0 ? "heute" : n === 1 ? "morgen" : `in ${n} Tagen`}:</b> ${esc(titel(t.o))} ${was}`, `<button type="button" data-mdepot="${esc(t.dep.id)}">Zum Musterdepot</button>`]); });
       const ab = seit || (() => { const d = new Date(HEUTE + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() - 14); return d.toISOString().slice(0, 10); })();
@@ -530,7 +569,7 @@
       else if (!deps) inhalt = '<p class="mb-leer">Musterdepots werden geladen …</p>';
       else {
         const zeilen = deps.map(d => {
-          const nenn = d.pos.filter(p => p.nennEur != null), fremd = d.pos.some(p => p.fremd), z = X.zahlungen(d.pos).filter(x => x.art === "Zinsen" && x.tag < IN12);
+          const nenn = d.pos.filter(p => p.nennEur != null), fremd = d.pos.some(p => p.stern), z = X.zahlungen(d.pos).filter(x => x.art === "Zinsen" && x.tag < IN12);
           const ohne = d.pos.filter(p => !p.rechnet && !(p.o.faellig && p.o.faellig <= HEUTE)).length;
           return `<tr><th scope="row"><button type="button" class="mb-dlink" data-mdepot="${esc(d.id)}">${esc(d.name)}</button></th><td>${d.pos.length}</td>` +
             `<td>${nenn.length ? euro(nenn.reduce((a, p) => a + p.nennEur, 0), fremd) : "–"}</td>` +
@@ -541,7 +580,7 @@
           `<p class="mb-zk">Nächste Termine</p>` +
           (t.length ? `<ul class="mb-termine">${t.map(x => { const n = tageBis(x.tag);
             return `<li><span class="mb-tag"><b>${+x.tag.slice(8, 10)}</b>${MONATE[+x.tag.slice(5, 7) - 1]} ${x.tag.slice(2, 4)}</span><div><b>${esc(titel(x.o))}</b><span class="mb-dn">${esc(x.dep.name)}</span>${esc(x.art)}${n <= 30 ? ` · ${n <= 0 ? "heute" : n === 1 ? "morgen" : `in ${n} Tagen`}` : ""}</div>` +
-              `<p class="mb-betrag">${x.betrag != null ? euro(x.betrag, x.p.fremd) : ""}<span>${x.betrag == null ? "" : x.p.fremd ? `${roh(x.roh, x.p.o.cur)} · EZB-Kurs` : `auf ${fmt(x.p.nenn, 0)} €`}</span></p></li>`; }).join("")}</ul>`
+              `<p class="mb-betrag">${x.betrag != null ? euro(x.betrag, x.p.stern) : ""}<span>${x.betrag == null ? "" : x.p.fremd ? `${roh(x.roh, x.p.o.cur)} · ${x.p.festKurs ? "fester Kurs" : "EZB-Kurs"}` : `auf ${fmt(x.p.nenn, 0)} €`}</span></p></li>`; }).join("")}</ul>`
             : '<p class="mb-leer">Für die Anleihen in deinen Musterdepots ist kein kommender Termin bekannt.</p>');
         return `<section class="mb-karte">${kopf}${inhalt}<p class="mb-fuss"><span>Zinstermine laut Deutscher Börse${t.some(x => x.o.gesch && x.art !== "Fälligkeit") ? ", teils geschätzt" : ""}</span><span class="mb-fr">${t.length ? '<button type="button" class="kto-textbtn" data-ics="depot">Kalender (.ics)</button>' : ""}<button type="button" class="kto-textbtn" data-zu="depot">Zu den Musterdepots</button></span></p></section>`;
       }
@@ -612,9 +651,15 @@
       $("mb-k-zuletzt-t").textContent = an ? "Eingeschaltet: Dein Konto merkt sich die acht zuletzt geöffneten Steckbriefe und Akademie-Seiten und zeigt sie auf „Start“."
         : "Ausgeschaltet. Eingeschaltet merkt sich dein Konto die acht zuletzt geöffneten Steckbriefe und Akademie-Seiten.";
     }
+    // Knöpfe „Ändern“/„Löschen“ öffnen Formular bzw. Aufklapper; aria-expanded folgt dem Zustand (seit 09.10.2026, Technik-Test
+    // 08.10.2026 T-32 – die summary ist dafür nicht mehr per Tab erreichbar). aufAbgleich() stellt alle Knöpfe ein, auch wenn das Seitenskript
+    // einen Aufklapper schließt (nach „Passwort ändern“) oder das Formular nach dem Absenden verschwindet.
+    const offen = d => d.tagName === "DETAILS" ? d.open : !d.hidden;
+    function aufAbgleich() { document.querySelectorAll("#konto [data-auf]").forEach(b => { const d = $(b.dataset.auf); if (d) b.setAttribute("aria-expanded", String(offen(d))); }); }
+    ["d-pw", "d-weg"].forEach(id => { const d = $(id); if (d) d.addEventListener("toggle", aufAbgleich); });
     function kontoKlick(e) {
       const auf = e.target.closest("[data-auf]");
-      if (auf) { const d = $(auf.dataset.auf); if (d) { if (d.tagName === "DETAILS") d.open = !d.open; else d.hidden = !d.hidden; const f = d.querySelector("input:not([tabindex='-1'])"); if (f && (d.open || d.hidden === false)) f.focus(); } return; }
+      if (auf) { const d = $(auf.dataset.auf); if (d) { if (d.tagName === "DETAILS") d.open = !d.open; else d.hidden = !d.hidden; aufAbgleich(); const f = d.querySelector("input:not([tabindex='-1'])"); if (f && offen(d)) f.focus(); } return; }
       if (e.target.closest("#mb-k-geraete-ab")) {
         const b = e.target.closest("button"); b.disabled = true;
         K.geraeteAb().then(() => { b.disabled = false; X.hinweis("Alle anderen Geräte sind abgemeldet."); }, a => { b.disabled = false; if (a && a.status !== "anmelden") X.hinweis(esc(fehlerText(a)), true); });
@@ -644,9 +689,11 @@
         knopf.disabled = true; st.className = "kf-status"; st.textContent = "Einen Moment …";
         K.emailAendern(neu, f.passwort.value).then(a => {
           knopf.disabled = false;
-          if (a.ok) { f.reset(); f.hidden = true; st.textContent = ""; X.hinweis(`<b>Schau in das Postfach von ${esc(neu)}.</b> Dort liegt ein Link – erst wenn du ihn anklickst, gilt die neue Adresse. Er gilt ${a.stunden || 24} Stunden.`); return; }
+          if (a.ok) { f.reset(); f.hidden = true; aufAbgleich(); st.textContent = ""; X.hinweis(`<b>Schau in das Postfach von ${esc(neu)}.</b> Dort liegt ein Link – erst wenn du ihn anklickst, gilt die neue Adresse. Er gilt ${a.stunden || 24} Stunden.`); return; }
           st.className = "kf-status fehler";
-          st.textContent = a.status === "zugang" ? "Das Passwort stimmt nicht." : a.status === "gleich" ? "Das ist schon die Adresse deines Kontos." : a.status === "zuviel" ? "Für diese Adresse wurden gerade schon mehrere E-Mails angefordert. Bitte versuch es später noch einmal." : fehlerText(a);
+          // „zuviel“ und „zuviel-gesamt“ (seit 09.10.2026, Technik-Test 08.10.2026 T-24/T-25) mit den Texten des Seitenskripts (X.TEXT):
+          // ohne feste Dauer, mit dem Ausweg „Passwort vergessen“ bzw. mit der richtigen Ursache, wenn die Gesamtgrenze erreicht ist
+          st.textContent = a.status === "zugang" ? "Das Passwort stimmt nicht." : a.status === "gleich" ? "Das ist schon die Adresse deines Kontos." : fehlerText(a);
         });
       });
     }

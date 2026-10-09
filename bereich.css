@@ -45,7 +45,9 @@ a.mb-go, .mb-fuss a.mb-go { background: #39FF14; color: #1A1A19; text-decoration
 /* Seit 03.10.2026 abends (Vorschlag „Start neu sortiert“): vorne ein Etikett mit der Herkunft der Zeile – die drei Spalten (Etikett,
    Text, Link) stehen über alle Zeilen bündig (subgrid) */
 .mb-neu ul { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr) auto; column-gap: 14px; }
-.mb-neu li { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; gap: 4px 14px; align-items: baseline; padding: 9px 0; border-top: 1px solid rgba(26,26,25,0.12); font-size: 15px; line-height: 1.45; }
+/* Rückfall ohne subgrid (Chrome < 117, Safari < 16; seit 09.10.2026, Technik-Test 08.10.2026 T-141): dieselben drei Spalten je Zeile –
+   dann nur nicht über alle Zeilen bündig; vorher stand alles in einer Spalte untereinander */
+.mb-neu li { display: grid; grid-column: 1 / -1; grid-template-columns: max-content minmax(0, 1fr) auto; grid-template-columns: subgrid; gap: 4px 14px; align-items: baseline; padding: 9px 0; border-top: 1px solid rgba(26,26,25,0.12); font-size: 15px; line-height: 1.45; }
 .mb-her { justify-self: start; display: inline-flex; align-items: center; gap: 6px; max-width: 220px; font-size: 12.5px; font-weight: 600; line-height: 1; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.18); border-radius: 999px; padding: 5px 10px; white-space: nowrap; position: relative; top: -1px; }
 .mb-her > span { overflow: hidden; text-overflow: ellipsis; }
 .mb-her svg { width: 13px; height: 13px; flex: none; }
