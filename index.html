@@ -1013,6 +1013,21 @@
     .itab.atab tbody td, .itab.atab tbody td.num { text-align: left !important; white-space: normal; padding: 0; }   /* Karte: Werte linksbündig unter der Beschriftung */
     .itab.atab tbody td small { white-space: normal; }
   }
+  /* ============================================================================================================
+     Zinsstand-Zeile 11.10.2026 (Nutzerwunsch; Beispiel 4 „Standzeile unter der Kopfzeile“ nach Vorbild Yahoo/Bloomberg/Börse Frankfurt):
+     zwischen Kopfzeile und Hero, Schlusswerte mit Veränderung zum Vormonat in Prozentpunkten, keine Farben für steigend/fallend.
+     Handy: seitlich wischbar, ohne Veränderungen. Schriftgrößen nur aus --fs-*.
+     ============================================================================================================ */
+  .zs-band { border-bottom: 1px solid var(--rule); background: #fff; }
+  .zs-in { display: flex; align-items: center; justify-content: space-between; gap: 14px; max-width: 1180px; margin: 0 auto; padding: 9px 24px; overflow-x: auto; scrollbar-width: none; white-space: nowrap; font-size: var(--fs-meta); line-height: 1.3; }
+  .zs-in::-webkit-scrollbar { display: none; }
+  .zs-st { flex: none; padding-right: 14px; border-right: 1px solid var(--rule); font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--green-text); }
+  .zs-in a { flex: none; display: inline-flex; align-items: baseline; gap: 7px; color: var(--ink); text-decoration: none; font-variant-numeric: tabular-nums; }
+  .zs-in a:hover b { text-decoration: underline; text-underline-offset: 3px; }
+  .zs-in a:focus-visible { outline: 2px solid var(--green-text); outline-offset: 3px; border-radius: 4px; }
+  .zs-in a span { color: var(--text); } .zs-in a b { font-weight: 700; } .zs-in a i { font-style: normal; font-size: var(--fs-label); color: var(--text); }
+  @media (max-width: 1100px) { .zs-in { gap: 18px; } }
+  @media (max-width: 600px) { .zs-band { margin-bottom: 10px; } .zs-in { gap: 16px; padding: 8px 16px; } .zs-st { padding-right: 14px; } .zs-in a i { display: none; } }
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Anleihen verstehen und finden", "headline": "Anleihen verstehen und finden", "description": "Anleihen verstehen und finden: Wissen in kurzen Schritten, Renditen seit 1970, die meistgehandelten Anleihen und eine Suche über rund 33.000 Anleihen.", "inLanguage": "de", "isAccessibleForFree": true, "dateModified": "2026-10-02", "publisher": {"@type": "Organization", "name": "Bondarium", "url": "https://www.bondarium.de/"}, "mainEntityOfPage": "https://www.bondarium.de/"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Bondarium","alternateName":"bondarium.de","url":"https://www.bondarium.de/","description":"Anleihen in Perspektive: Staats- und Unternehmensanleihen weltweit, Langläufer, die meistgehandelten Anleihen je Land und Restlaufzeit und eine Suche über alle Anleihen an deutschen Börsen.","inLanguage":"de"}</script>
@@ -1116,6 +1131,9 @@
     </nav>
     <a class="kopfkonto" href="konto.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.2-4 4-5.5 7.5-5.5s6.3 1.5 7.5 5.5"/></svg><span>My Bondarium</span></a>
   </header>
+  <div class="zs-band" aria-label="Zinsstand: Schlusswerte und Veränderung zum Vormonat in Prozentpunkten" title="Schlusswerte; Veränderung zum Monatsdurchschnitt des Vormonats in Prozentpunkten. Quellen: Deutsche Bundesbank, Federal Reserve (H.15), EZB.">   <!-- Zinsstand-Zeile seit 11.10.2026 (Nutzerwunsch, Beispiel 4 aus tmp/Bondarium-Marktuebersicht-Umsetzungsbeispiele.pdf): Werte hier sind Rückfall, das Skript am Seitenende ersetzt sie aus zinskurve.json, ezb.json, langlaeufer.json -->
+    <div class="zs-in"><span class="zs-st" data-zs="stand">Stand 08.10.2026</span><a href="zinskurve.html" data-zs="bund2"><span>Bund 2 J.</span><b>3,08&nbsp;%</b><i>−0,16</i></a><a href="zinskurve.html" data-zs="bund10"><span>Bund 10 J.</span><b>3,57&nbsp;%</b><i>−0,07</i></a><a href="langlaeufer.html" data-zs="bund2050"><span>Bund 2050</span><b>3,88&nbsp;%</b><i>+0,03</i></a><a href="zinskurve.html" data-zs="us10"><span>USA 10 J.</span><b>5,28&nbsp;%</b><i>+0,29</i></a><a href="zinsniveau.html#ezb" data-zs="ezb"><span>EZB-Einlagesatz</span><b>2,50&nbsp;%</b></a></div>
+  </div>
   <main id="main">
 
     <section class="hero" aria-labelledby="h-hero">
@@ -1458,6 +1476,44 @@ MC.navInit();
 
 
 // Zinsatlas (seit 01.10.2026): ohne Skript – die Mini-Kurven und Spannen der alten Zinsen-Karten sind entfallen
+
+// Zinsstand-Zeile (11.10.2026) unter der Kopfzeile: Bund 2 und 10 Jahre und USA 10 Jahre aus zinskurve.json (jüngster Tageswert,
+// Veränderung zum Monatsdurchschnitt des Vormonats in Prozentpunkten), Bund 0 % 2050 aus langlaeufer.json (Veränderung zum Durchschnitt
+// der Wochenwerte des Vormonats), EZB-Einlagesatz aus ezb.json (ohne Veränderung). Die Werte im HTML sind Rückfall und werden je Datei
+// einzeln ersetzt; fällt eine Datei aus, bleibt ihr Rückfall stehen. Stand-Datum = Tag der Bundesbank-Kurve.
+(function () {
+  var band = document.querySelector(".zs-band");
+  if (!band || typeof MC.load !== "function") return;
+  function vormonat(iso) { var j = +iso.slice(0, 4), m = +iso.slice(5, 7) - 1; if (!m) { j--; m = 12; } return j + "-" + (m < 10 ? "0" : "") + m; }
+  function pkt(d) { var n = Math.round(d * 100) / 100; return (n > 0 ? "+" : n < 0 ? "\u2212" : "\u00b1") + MC.zahl(Math.abs(n), 2); }
+  function setz(key, wert, delta) {
+    var k = band.querySelector('[data-zs="' + key + '"]');
+    if (!k || typeof wert !== "number") return;
+    k.querySelector("b").textContent = MC.zahl(wert, 2) + "\u00a0%";
+    var i = k.querySelector("i");
+    if (i && typeof delta === "number") i.textContent = pkt(delta);
+  }
+  MC.load("zinskurve.json").then(function (z) {
+    ["DE", "US"].forEach(function (land) {
+      var h = z.heute && z.heute[land];
+      if (!h) return;
+      var vm = vormonat(h[0]), row = null;
+      (z.monate && z.monate[land] || []).forEach(function (r) { if (r[0] === vm) row = r; });
+      if (land === "DE") setz("bund2", h[1], row && h[1] - row[1]);
+      setz(land === "DE" ? "bund10" : "us10", h[2], row && h[2] - row[2]);
+    });
+    var st = band.querySelector('[data-zs="stand"]');
+    if (st && z.heute && z.heute.DE) st.textContent = "Stand " + MC.datum(z.heute.DE[0]);
+  }).catch(function () {});
+  MC.load("ezb.json").then(function (e) { if (e.aktuell) setz("ezb", e.aktuell[1]); }).catch(function () {});
+  MC.load("langlaeufer.json").then(function (l) {
+    var b = l.bonds && l.bonds.bund2050;
+    if (!b || !b.latest) return;
+    var vm = vormonat(b.latest.date), w = (b.weekly || []).filter(function (r) { return r[0].slice(0, 7) === vm; });
+    var avg = w.length ? w.reduce(function (s, r) { return s + r[2]; }, 0) / w.length : null;
+    setz("bund2050", b.latest.yield, avg != null ? b.latest.yield - avg : null);
+  }).catch(function () {});
+})();
 </script>
 </body>
 </html>
