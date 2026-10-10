@@ -129,10 +129,11 @@ MENU_RUBRIK = {"Anleihen": "anleihen", "Kaufen": "kaufen", "Zinsen": "zinsen"}
 MENU_EXTRA = {"Anleihen": ["anleihe.html"]}
 # Knopf „Mein Bondarium“ rechts außen, hinter dem Suchfeld (Benutzerbereich konto.html: Anmeldung, Merkliste und das Musterdepot „Mein Depot“). Bis 1000 px
 # steht er stattdessen als letzter Eintrag im Burger-Menü (Klasse nav-konto) – base.css zeigt jeweils nur eines von beiden.
-KONTO = ("Mein Bondarium", "konto.html")
+KONTO = ("My Bondarium", "konto.html")   # seit 10.10.2026 „My Bondarium“ (Nutzerwunsch); die Seite selbst heißt weiter „Mein Bondarium“
 KONTO_BILD = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" '
               'aria-hidden="true" focusable="false"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.2-4 4-5.5 7.5-5.5s6.3 1.5 7.5 5.5"/></svg>')
-# Suchfeld rechts außen (seit 26.09.2026, Nutzerwunsch „Feld ganz oben rechts … direkt in die Anleihensuche“):
+# Suchfeld rechts außen (26.09.2026 bis 10.10.2026, dann auf Nutzerwunsch „nimm die suche raus“ entfernt – SEARCH wird nicht mehr
+# ausgegeben, END_RE erkennt alte Kopfzeilen weiter; die Suche selbst bleibt unter Anleihen → Anleihen-Suche):
 # schickt q an die Anleihen-Suche; leer abgeschickt führt site.js direkt auf die Suchseite (Fokus ins Suchfeld).
 # Im DOM nach dem Menü (Tab-Reihenfolge Marke → Menü → Suche); der Lupen-Knopf steht per CSS links im Feld.
 SEARCH = ('    <form class="kopfsuche" action="{p}anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche">'
@@ -339,7 +340,6 @@ def render(page, absolute=False):
     c = " current" if page == KONTO[1] else ""
     out.append(f'      <a href="{p}{KONTO[1]}" class="nav-konto{c}">{KONTO[0]}</a>')   # nur im Burger-Menü sichtbar (base.css)
     out.append("    </nav>")
-    out.append(SEARCH.format(p=p))
     out.append(f'    <a class="kopfkonto{c}" href="{p}{KONTO[1]}"' + (' aria-current="page"' if c else "") + f'>{KONTO_BILD}<span>{KONTO[0]}</span></a>')
     out.append("  </header>")
     return "\n".join(out) + "\n"

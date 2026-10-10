@@ -277,15 +277,6 @@ html { scroll-padding-top: 100px; }   /* Sprungziele nicht unter der festen Kopf
    38 px hoch wie das Logo – links die Marke, rechts das Feld, beide bündig mit dem Seitenrand; dazwischen das Menü.
    Weiß mit tiefgrünem Rand (dieselbe Farbe wie die Kante unter dem Band), Lupe links im Feld. */
 .topbar .sitenav { flex: 0 0 auto; }
-.kopfsuche { flex: 1 1 132px; min-width: 0; max-width: 200px; margin-left: auto; display: flex; align-items: center; height: 38px; padding: 0 12px 0 3px; background: #fff; border: 2px solid var(--blue-dark); border-radius: 10px; transition: box-shadow .15s ease, border-color .15s ease; }
-.kopfsuche:focus-within { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(255,255,255,0.9); }
-.kopfsuche button { order: -1; flex: none; display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 7px; background: none; color: var(--green-text); cursor: pointer; }
-.kopfsuche button:hover { color: var(--ink); }
-.kopfsuche button:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
-.kopfsuche button svg { width: 18px; height: 18px; display: block; }
-.kopfsuche input { flex: 1 1 auto; width: 0; min-width: 0; height: 100%; margin: 0 0 0 3px; padding: 0; border: 0; outline: 0; background: none; font-family: var(--sans); font-size: 14.5px; color: var(--ink); }
-.kopfsuche input::placeholder { color: #6F6E68; opacity: 1; }   /* 5,1:1 auf Weiß (vorher #8E8D86 = 3,3:1, T-116) */
-.kopfsuche input::-webkit-search-cancel-button { -webkit-appearance: none; }
 /* Knopf „Mein Bondarium“ rechts neben dem Suchfeld (nav.py KONTO, seit 01.10.2026 abends – vorher ein Menüpunkt): gleiche Höhe
    und gleicher tiefgrüner Rand wie das Suchfeld, aber ohne weiße Fläche – das Feld bleibt das Auffälligste. Bis 1000 px steht
    stattdessen der Eintrag .nav-konto unten im Burger-Menü (Regeln am Dateiende). */
@@ -295,8 +286,8 @@ html { scroll-padding-top: 100px; }   /* Sprungziele nicht unter der festen Kopf
 .kopfkonto:hover { border-color: var(--ink); }
 .kopfkonto:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .topbar .sitenav > a.nav-konto { display: none; }
-.topbar { column-gap: 20px; }   /* 20 statt 24 px: Suchfeld und Knopf stehen als Paar */
-.kopfsuche + .kopfkonto { margin-left: -8px; }
+.topbar { column-gap: 20px; }
+.kopfkonto { margin-left: auto; }   /* rechts außen; bis 10.10.2026 stand davor das Suchfeld (entfernt, Nutzerwunsch) */
 @media (max-width: 1180px) { .topbar { column-gap: 16px; } .kopfkonto { padding: 0 9px; } .kopfkonto span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; } }   /* schmale Fenster: nur das Zeichen, der Name bleibt für Screenreader */
 
 /* Tabellenzeilen: ruhiges Hover als Lesehilfe (auch Zeilenköpfe <th scope="row">) */
@@ -338,10 +329,9 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
    die vier Menüs als Zeilen, die einzeln auf- und zuklappen (Klasse .open an .nav-group),
    ganz unten „Mein Bondarium“ (seit 01.10.2026 abends; „Über uns“ steht in der Fußzeile). Vier Aufklapper plus Knopf passen sonst nicht mehr in zwei Zeilen. */
 @media (max-width: 1000px) {
-  /* Suchfeld zwischen Marke und Burger-Knopf; das Menü klappt darunter in voller Breite auf */
+  /* Burger-Knopf rechts außen; das Menü klappt darunter in voller Breite auf */
   .topbar { column-gap: 12px; }
-  .kopfsuche { order: 1; flex: 1 1 150px; max-width: 240px; }
-  .topbar .nav-toggle { order: 2; margin-left: 0; }
+    .topbar .nav-toggle { order: 2; margin-left: auto; }
   .topbar .sitenav { order: 3; }
   .nav-toggle { display: inline-flex; align-items: center; justify-content: center; margin: -3px 0 -3px auto; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 8px; background: transparent; color: var(--ink); cursor: pointer; }
   .nav-toggle:hover { background: rgba(26,26,25,0.08); }
@@ -385,15 +375,7 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
   .topbar .sitenav { letter-spacing: 0.08em; max-height: calc(100vh - 58px); }
   .nav-toggle { margin-top: -7px; margin-bottom: -7px; }   /* Tippfläche 44 px, Kopfzeile bleibt 58 px hoch */
   .topbar .nav-group-btn { letter-spacing: 0.08em; }
-  /* Suchfeld am Handy nur als Lupe neben dem Burger (gleiche Tippfläche 44 px, gleiche Farbe) – ein Tipp öffnet die Anleihen-Suche */
-  .kopfsuche { flex: none; width: 44px; max-width: none; height: 44px; margin: -7px 0 -7px auto; padding: 0; background: none; border: 0; border-radius: 8px; }
-  .kopfsuche:focus-within { box-shadow: none; }
-  .kopfsuche input { display: none; }
-  .kopfsuche button { width: 44px; height: 44px; border-radius: 8px; color: var(--ink); }
-  .kopfsuche button:hover { background: rgba(26,26,25,0.08); }
-  .kopfsuche button svg { width: 21px; height: 21px; }
-  .topbar .nav-toggle { margin-left: -8px; }
-}
+            }
 
 /* Achsentitel (Regel seit 24.09.2026: jedes Diagramm beschriftet seine Achsen).
    SVG-Schaubilder: y-Titel links oben mit „↑“, x-Titel rechts unter der Achse mit „→“ (13 px, fett, #55544F).
