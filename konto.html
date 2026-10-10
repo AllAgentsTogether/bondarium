@@ -2229,8 +2229,8 @@ MC.navInit();
     ohneZusatz();
     K.newsletterAb(m[1]).then(a => {
       hinweis(a.ok ? "<b>Der Wochenbrief ist abbestellt.</b> Du bekommst keine weiteren Ausgaben. Dein Konto und deine Merkliste bleiben, wie sie sind."
-        : a.status === "link" ? "Dieser Abmelde-Link ist ungültig, oder das Konto gibt es nicht mehr. Bekommst du den Wochenbrief weiter, bestell ihn in „Mein Bondarium“ ab oder schreib an info@bondarium.com."
-        : "Das Abbestellen hat gerade nicht geklappt. Bitte versuch es später noch einmal oder schreib an info@bondarium.com.", !a.ok && a.status !== "link");
+        : a.status === "link" ? "Dieser Abmelde-Link ist ungültig, oder das Konto gibt es nicht mehr. Bekommst du den Wochenbrief weiter, bestell ihn in „Mein Bondarium“ ab oder nutz das Kontaktformular unter „Über uns“."
+        : "Das Abbestellen hat gerade nicht geklappt. Bitte versuch es später noch einmal oder nutz das Kontaktformular unter „Über uns“.", !a.ok && a.status !== "link");
       if (a.ok) $("nl-status").textContent = "";
     });
   }
