@@ -1019,15 +1019,17 @@
      Handy: seitlich wischbar, ohne Veränderungen. Schriftgrößen nur aus --fs-*.
      ============================================================================================================ */
   .zs-band { border-bottom: 1px solid var(--rule); background: #fff; }
-  .zs-in { display: flex; align-items: center; justify-content: space-between; gap: 14px; max-width: 1180px; margin: 0 auto; padding: 9px 24px; overflow-x: auto; scrollbar-width: none; white-space: nowrap; font-size: var(--fs-meta); line-height: 1.3; }
-  .zs-in::-webkit-scrollbar { display: none; }
-  .zs-st { flex: none; padding-right: 14px; border-right: 1px solid var(--rule); font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--green-text); }
+  .zs-in { max-width: 1180px; margin: 0 auto; padding: 9px 24px; overflow: hidden; white-space: nowrap; font-size: var(--fs-meta); line-height: 1.3; -webkit-mask-image: linear-gradient(90deg, transparent, #000 32px, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(90deg, transparent, #000 32px, #000 calc(100% - 32px), transparent); }
+  .zs-lauf { display: flex; width: max-content; animation: zs-lauf 48s linear infinite; }   /* Laufband: zwei gleiche Gruppen, Verschiebung um eine Gruppenbreite = nahtlose Schleife */
+  .zs-gruppe { display: flex; align-items: baseline; flex: none; padding-right: 40px; gap: 40px; }
+  @keyframes zs-lauf { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .zs-band:hover .zs-lauf, .zs-band:focus-within .zs-lauf { animation-play-state: paused; }
   .zs-in a { flex: none; display: inline-flex; align-items: baseline; gap: 7px; color: var(--ink); text-decoration: none; font-variant-numeric: tabular-nums; }
   .zs-in a:hover b { text-decoration: underline; text-underline-offset: 3px; }
   .zs-in a:focus-visible { outline: 2px solid var(--green-text); outline-offset: 3px; border-radius: 4px; }
   .zs-in a span { color: var(--text); } .zs-in a b { font-weight: 700; } .zs-in a i { font-style: normal; font-size: var(--fs-label); color: var(--text); }
-  @media (max-width: 1100px) { .zs-in { gap: 18px; } }
-  @media (max-width: 600px) { .zs-band { margin-bottom: 10px; } .zs-in { gap: 16px; padding: 8px 16px; } .zs-st { padding-right: 14px; } .zs-in a i { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .zs-lauf { animation: none; } .zs-in { overflow-x: auto; scrollbar-width: none; mask-image: none; -webkit-mask-image: none; } .zs-in::-webkit-scrollbar { display: none; } }
+  @media (max-width: 600px) { .zs-band { margin-bottom: 10px; } .zs-in { padding: 8px 16px; } .zs-gruppe { gap: 24px; padding-right: 24px; } .zs-lauf { animation-duration: 30s; } .zs-in a i { display: none; } }
   /* ============================================================================================================
      Zinsstand-Karten 11.10.2026 (Nutzerwunsch; Beispiel 1 „Kachelreihe mit Verlauf“ nach Vorbild Google Finance/Yahoo, ohne Halbsätze):
      fünf Karten über den Zinsatlas-Fenstern – Wert, Veränderung in Basispunkten, Verlauf zwölf Monate. Bausteine wie oben, --fs-* Raster,
@@ -1153,8 +1155,8 @@
     </nav>
     <a class="kopfkonto" href="konto.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.2-4 4-5.5 7.5-5.5s6.3 1.5 7.5 5.5"/></svg><span>My Bondarium</span></a>
   </header>
-  <div class="zs-band" aria-label="Zinsstand: Schlusswerte und Veränderung zum Vormonat in Prozentpunkten" title="Schlusswerte; Veränderung zum Monatsdurchschnitt des Vormonats in Prozentpunkten. Quellen: Deutsche Bundesbank, Federal Reserve (H.15), EZB.">   <!-- Zinsstand-Zeile seit 11.10.2026 (Nutzerwunsch, Beispiel 4 aus tmp/Bondarium-Marktuebersicht-Umsetzungsbeispiele.pdf): Werte hier sind Rückfall, das Skript am Seitenende ersetzt sie aus zinskurve.json, ezb.json, langlaeufer.json -->
-    <div class="zs-in"><span class="zs-st" data-zs="stand">Stand 08.10.2026</span><a href="zinskurve.html" data-zs="bund2"><span>Bund 2 J.</span><b>3,08&nbsp;%</b><i>−0,16</i></a><a href="zinskurve.html" data-zs="bund10"><span>Bund 10 J.</span><b>3,57&nbsp;%</b><i>−0,07</i></a><a href="langlaeufer.html" data-zs="bund2050"><span>Bund 2050</span><b>3,88&nbsp;%</b><i>+0,03</i></a><a href="zinskurve.html" data-zs="us10"><span>USA 10 J.</span><b>5,28&nbsp;%</b><i>+0,29</i></a><a href="zinsniveau.html#ezb" data-zs="ezb"><span>EZB-Einlagesatz</span><b>2,50&nbsp;%</b></a></div>
+  <div class="zs-band" aria-label="Zinsstand: Schlusswerte und Veränderung zum Vormonat in Prozentpunkten" title="Schlusswerte; Veränderung zum Monatsdurchschnitt des Vormonats in Prozentpunkten. Quellen: Deutsche Bundesbank, Federal Reserve (H.15), EZB.">   <!-- Zinsstand-Zeile seit 11.10.2026 (Nutzerwunsch, Beispiel 4 aus tmp/Bondarium-Marktuebersicht-Umsetzungsbeispiele.pdf); seit 11.10. abends als Laufband (Nutzerwunsch): zweite Gruppe ist die Kopie für die Endlosschleife, ohne Stand-Datum. Werte sind Rückfall, das Skript am Seitenende ersetzt sie in beiden Gruppen -->
+    <div class="zs-in"><div class="zs-lauf"><div class="zs-gruppe"><a href="zinskurve.html" data-zs="bund2"><span>Bund 2 J.</span><b>3,08&nbsp;%</b><i>−0,16</i></a><a href="zinskurve.html" data-zs="bund10"><span>Bund 10 J.</span><b>3,57&nbsp;%</b><i>−0,07</i></a><a href="langlaeufer.html" data-zs="bund2050"><span>Bund 2050</span><b>3,88&nbsp;%</b><i>+0,03</i></a><a href="zinskurve.html" data-zs="us10"><span>USA 10 J.</span><b>5,28&nbsp;%</b><i>+0,29</i></a><a href="zinsniveau.html#ezb" data-zs="ezb"><span>EZB-Einlagesatz</span><b>2,50&nbsp;%</b></a></div><div class="zs-gruppe" aria-hidden="true"><a href="zinskurve.html" data-zs="bund2"><span>Bund 2 J.</span><b>3,08&nbsp;%</b><i>−0,16</i></a><a href="zinskurve.html" data-zs="bund10"><span>Bund 10 J.</span><b>3,57&nbsp;%</b><i>−0,07</i></a><a href="langlaeufer.html" data-zs="bund2050"><span>Bund 2050</span><b>3,88&nbsp;%</b><i>+0,03</i></a><a href="zinskurve.html" data-zs="us10"><span>USA 10 J.</span><b>5,28&nbsp;%</b><i>+0,29</i></a><a href="zinsniveau.html#ezb" data-zs="ezb"><span>EZB-Einlagesatz</span><b>2,50&nbsp;%</b></a></div></div></div>
   </div>
   <main id="main">
 
@@ -1570,11 +1572,12 @@ MC.navInit();
   function vormonat(iso) { var j = +iso.slice(0, 4), m = +iso.slice(5, 7) - 1; if (!m) { j--; m = 12; } return j + "-" + (m < 10 ? "0" : "") + m; }
   function pkt(d) { var n = Math.round(d * 100) / 100; return (n > 0 ? "+" : n < 0 ? "\u2212" : "\u00b1") + MC.zahl(Math.abs(n), 2); }
   function setz(key, wert, delta) {
-    var k = band.querySelector('[data-zs="' + key + '"]');
-    if (!k || typeof wert !== "number") return;
-    k.querySelector("b").textContent = MC.zahl(wert, 2) + "\u00a0%";
-    var i = k.querySelector("i");
-    if (i && typeof delta === "number") i.textContent = pkt(delta);
+    if (typeof wert !== "number") return;
+    band.querySelectorAll('[data-zs="' + key + '"]').forEach(function (k) {
+      k.querySelector("b").textContent = MC.zahl(wert, 2) + "\u00a0%";
+      var i = k.querySelector("i");
+      if (i && typeof delta === "number") i.textContent = pkt(delta);
+    });
   }
   MC.load("zinskurve.json").then(function (z) {
     ["DE", "US"].forEach(function (land) {
@@ -1585,8 +1588,6 @@ MC.navInit();
       if (land === "DE") setz("bund2", h[1], row && h[1] - row[1]);
       setz(land === "DE" ? "bund10" : "us10", h[2], row && h[2] - row[2]);
     });
-    var st = band.querySelector('[data-zs="stand"]');
-    if (st && z.heute && z.heute.DE) st.textContent = "Stand " + MC.datum(z.heute.DE[0]);
   }).catch(function () {});
   MC.load("ezb.json").then(function (e) { if (e.aktuell) setz("ezb", e.aktuell[1]); }).catch(function () {});
   MC.load("langlaeufer.json").then(function (l) {
