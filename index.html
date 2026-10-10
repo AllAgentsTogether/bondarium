@@ -1013,6 +1013,35 @@
     .itab.atab tbody td, .itab.atab tbody td.num { text-align: left !important; white-space: normal; padding: 0; }   /* Karte: Werte linksbündig unter der Beschriftung */
     .itab.atab tbody td small { white-space: normal; }
   }
+  /* ============================================================================================================
+     Zinsstand 10.10.2026 (Nutzerwunsch): fünf aktuelle Zinsen als schmale Kartenzeile über den vier Zinsatlas-Fenstern –
+     EZB-Einlagesatz, Bund 2 und 10 Jahre, Bund bis 2050, USA 10 Jahre. Bausteine wie oben (Kartenrahmen, Ecke 16, ein Hover),
+     Schriftgrößen nur aus --fs-*. Keine Farben für steigend/fallend. Handy: eine Zeile je Zahl (Name links, Wert rechts).
+     ============================================================================================================ */
+  #bnd-zinsstand { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--luecke); margin: 0 0 12px; padding: 0; list-style: none; }
+  #bnd-zinsstand li { min-width: 0; display: flex; }
+  #bnd-zinsstand .zs-k { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; padding: 18px 20px 20px; border: 1px solid var(--rule); border-radius: var(--radius-karte); background: #fff; box-shadow: var(--schatten-karte); color: var(--ink); text-decoration: none; transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease; }
+  #bnd-zinsstand .zs-k:hover { border-color: var(--green-text); box-shadow: var(--schatten-hover); transform: translateY(-2px); }
+  #bnd-zinsstand .zs-k:focus-visible { outline: 3px solid var(--green-text); outline-offset: 3px; }
+  #bnd-zinsstand .zs-l { display: block; font-size: var(--fs-meta); font-weight: 600; line-height: 1.3; color: var(--text); }
+  #bnd-zinsstand .zs-v { display: block; margin-top: 8px; font-size: var(--fs-zahl); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  #bnd-zinsstand .zs-d { display: block; margin-top: 6px; font-size: var(--fs-meta); line-height: 1.3; color: var(--text); font-variant-numeric: tabular-nums; }
+  #bnd-zinsstand .zs-t { display: block; margin-top: auto; padding-top: 12px; font-size: var(--fs-klein); line-height: 1.4; color: var(--text); }
+  #bnd-zinsatlas .zs-hin { margin: 0 0 var(--abstand-kopf); font-size: var(--fs-meta); line-height: 1.5; color: var(--text); }
+  #bnd-zinsatlas .zs-hin summary { cursor: pointer; width: fit-content; }
+  #bnd-zinsatlas .zs-hin summary:hover { color: var(--ink); }
+  #bnd-zinsatlas .zs-hin p { margin: 8px 0 0; max-width: 78ch; }
+  #bnd-zinsatlas .zs-hin a { color: var(--green-text); }
+  @media (prefers-reduced-motion: reduce) { #bnd-zinsstand .zs-k { transition: none; } #bnd-zinsstand .zs-k:hover { transform: none; } }
+  @media (max-width: 1100px) { #bnd-zinsstand { grid-template-columns: repeat(3, minmax(0, 1fr)); } #bnd-zinsstand .zs-k { padding: 16px 16px 18px; } }
+  @media (max-width: 600px) {
+    #bnd-zinsstand { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+    #bnd-zinsstand .zs-k { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "l v" "t d"; column-gap: 14px; align-items: baseline; padding: 12px 14px; border-radius: 14px; }
+    #bnd-zinsstand .zs-l { grid-area: l; font-size: var(--fs-ui); color: var(--ink); }
+    #bnd-zinsstand .zs-v { grid-area: v; margin: 0; text-align: right; }
+    #bnd-zinsstand .zs-t { grid-area: t; margin: 0; padding-top: 2px; font-size: var(--fs-meta); }
+    #bnd-zinsstand .zs-d { grid-area: d; margin: 0; padding-top: 2px; text-align: right; white-space: nowrap; }
+  }
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Anleihen verstehen und finden", "headline": "Anleihen verstehen und finden", "description": "Anleihen verstehen und finden: Wissen in kurzen Schritten, Renditen seit 1970, die meistgehandelten Anleihen und eine Suche über rund 33.000 Anleihen.", "inLanguage": "de", "isAccessibleForFree": true, "dateModified": "2026-10-02", "publisher": {"@type": "Organization", "name": "Bondarium", "url": "https://www.bondarium.de/"}, "mainEntityOfPage": "https://www.bondarium.de/"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Bondarium","alternateName":"bondarium.de","url":"https://www.bondarium.de/","description":"Anleihen in Perspektive: Staats- und Unternehmensanleihen weltweit, Langläufer, die meistgehandelten Anleihen je Land und Restlaufzeit und eine Suche über alle Anleihen an deutschen Börsen.","inLanguage":"de"}</script>
@@ -1234,10 +1263,21 @@
         </div>
       </section>
 
-      <section id="bnd-zinsatlas" aria-labelledby="h-zatlas">   <!-- Zinsatlas: seit 02.10.2026 vier Themenfenster (Entwurf 01 des Nutzers) – je Zinsen-Seite eine Karte mit Motiv, ohne Marktkennzahlen -->
+      <section id="bnd-zinsatlas" aria-labelledby="h-zatlas">   <!-- Zinsatlas: seit 02.10.2026 vier Themenfenster (Entwurf 01 des Nutzers) – je Zinsen-Seite eine Karte mit Motiv; seit 10.10.2026 davor die Zinsstand-Zeile mit fünf Zahlen (Nutzerwunsch) -->
         <p class="za-dach">Zinsatlas</p>
         <h2 id="h-zatlas">Zinsen in Bewegung</h2>
-        <p class="za-sub">Vier Perspektiven auf den Anleihemarkt.</p>
+        <p class="za-sub">Fünf Zinsen auf einen Blick, vier Perspektiven dahinter.</p>
+        <ul class="zs" id="bnd-zinsstand" aria-label="Zinsstand: fünf aktuelle Zinsen">   <!-- Zinsstand seit 10.10.2026: fünf Zahlen vor den Themenfenstern; Werte hier sind Rückfall, das Skript am Seitenende ersetzt sie aus den Daten -->
+          <li><a class="zs-k" href="zinsniveau.html#ezb" data-zs="ezb"><span class="zs-l">EZB-Einlagesatz</span><b class="zs-v">2,50&nbsp;%</b><span class="zs-d">+25 Bp seit 16.09.2026</span><span class="zs-t">Messlatte für Tagesgeld</span></a></li>
+          <li><a class="zs-k" href="zinskurve.html" data-zs="bund2"><span class="zs-l">Bund 2 Jahre</span><b class="zs-v">3,08&nbsp;%</b><span class="zs-d">−16 Bp zum Vormonat</span><span class="zs-t">Sicherster Schuldner, kurze Bindung</span></a></li>
+          <li><a class="zs-k" href="zinskurve.html" data-zs="bund10"><span class="zs-l">Bund 10 Jahre</span><b class="zs-v">3,57&nbsp;%</b><span class="zs-d">−7 Bp zum Vormonat</span><span class="zs-t">Richtschnur für alle Euro-Anleihen</span></a></li>
+          <li><a class="zs-k" href="langlaeufer.html" data-zs="bund2050"><span class="zs-l">Bund bis 2050</span><b class="zs-v">3,88&nbsp;%</b><span class="zs-d">+3 Bp zum Vormonat</span><span class="zs-t">Lange Bindung, starke Kursschwankung</span></a></li>
+          <li><a class="zs-k" href="zinskurve.html" data-zs="us10"><span class="zs-l">USA 10 Jahre</span><b class="zs-v">5,28&nbsp;%</b><span class="zs-d">+29 Bp zum Vormonat</span><span class="zs-t">Zinsniveau in Dollar, Währungsrisiko extra</span></a></li>
+        </ul>
+        <details class="zs-hin">
+          <summary><span data-zs="stand">Stand 08.10.2026</span> · Schlusswerte, keine Echtzeitkurse · Herkunft und Rechenweg</summary>
+          <p>Bund 2 und 10 Jahre: Zinsstrukturkurve börsennotierter Bundeswertpapiere der Deutschen Bundesbank; USA 10 Jahre: Federal Reserve (H.15). Jeweils der jüngste Tageswert; die Veränderung gilt gegenüber dem Monatsdurchschnitt des Vormonats. Bund bis 2050: Rendite der Bundesanleihe 0&nbsp;% 2050 (DE0001102481) aus Bundesbank-Tageskursen, Veränderung gegenüber dem Durchschnitt der Wochenwerte des Vormonats. EZB-Einlagesatz: EZB Data Portal, Veränderung = letzter Zinsschritt. Ein <a href="begriffe.html#basispunkt">Basispunkt</a> (Bp) ist 0,01 Prozentpunkte. Bewusst ohne Grün und Rot: Steigende Renditen sind gut für Käufer und schlecht für Besitzer.</p>
+        </details>
         <div class="zf-reihe">
           <a class="zf zf-staat" href="renditen.html"><span class="zf-bild"><svg viewBox="0 0 200 130" aria-hidden="true" focusable="false"><circle cx="100" cy="64" r="54" fill="#39FF14"/><clipPath id="za-staat"><circle cx="100" cy="64" r="54"/></clipPath><path d="M24 92C36 86 46 62 56 46C62 36 66 31 72 33C84 37 96 57 110 71C122 83 134 93 146 93C156 93 164 84 172 76L172 106L24 106Z" fill="#fff" clip-path="url(#za-staat)"/><path d="M24 99C38 95 48 78 58 64C66 54 72 52 80 56C94 63 104 76 116 84C128 92 138 99 148 100C158 100 166 94 172 90" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-dasharray="0.1 5.5"/><path d="M20 106H180M40 106V112M72 106V112M104 106V112M136 106V112M168 106V112" fill="none" stroke="#1A1A19" stroke-width="2.4" stroke-linecap="round"/><path d="M24 92C36 86 46 62 56 46C62 36 66 31 72 33C84 37 96 57 110 71C122 83 134 93 146 93C156 93 164 84 172 76" fill="none" stroke="#1A1A19" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="172" cy="76" r="6" fill="#39FF14" stroke="#1A1A19" stroke-width="2.4"/></svg></span><span class="zf-t"><span class="zf-h">Staatsanleihen</span><span class="zf-d"><span class="zf-dl">Renditen im historischen Vergleich.</span><span class="zf-dk">Renditen im Wandel.</span></span></span><span class="zf-go"><span class="zf-gt">Historie ansehen</span><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10H17M12 5L17 10L12 15"/></svg></span></a>
           <a class="zf zf-kurve" href="zinskurve.html"><span class="zf-bild"><svg viewBox="0 0 200 130" aria-hidden="true" focusable="false"><circle cx="100" cy="64" r="54" fill="#39FF14"/><clipPath id="za-kurve"><circle cx="100" cy="64" r="54"/></clipPath><path d="M34 92C58 62 110 46 166 40L166 106L34 106Z" fill="#fff" clip-path="url(#za-kurve)"/><path d="M34 92H180" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-dasharray="0.1 5.5"/><path d="M20 106H180" fill="none" stroke="#1A1A19" stroke-width="2.4" stroke-linecap="round"/><path d="M182 40V92M176 40H188M176 92H188" fill="none" stroke="#1A1A19" stroke-width="2.2" stroke-linecap="round"/><path d="M34 92C58 62 110 46 166 40" fill="none" stroke="#1A1A19" stroke-width="3.4" stroke-linecap="round"/><circle cx="34.0" cy="92.0" r="3.8" fill="#fff" stroke="#1A1A19" stroke-width="2.2"/><circle cx="53.7" cy="74.2" r="3.8" fill="#fff" stroke="#1A1A19" stroke-width="2.2"/><circle cx="88.0" cy="57.0" r="3.8" fill="#fff" stroke="#1A1A19" stroke-width="2.2"/><circle cx="166" cy="40" r="6" fill="#39FF14" stroke="#1A1A19" stroke-width="2.4"/></svg></span><span class="zf-t"><span class="zf-h">Zinskurve</span><span class="zf-d"><span class="zf-dl">Was der Renditeabstand verrät.</span><span class="zf-dk">Der Renditeabstand.</span></span></span><span class="zf-go"><span class="zf-gt">Zinskurve ansehen</span><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10H17M12 5L17 10L12 15"/></svg></span></a>
@@ -1458,6 +1498,46 @@ MC.navInit();
 
 
 // Zinsatlas (seit 01.10.2026): ohne Skript – die Mini-Kurven und Spannen der alten Zinsen-Karten sind entfallen
+
+// Zinsstand (10.10.2026): fünf Zahlen über den Zinsatlas-Fenstern – EZB-Einlagesatz (ezb.json), Bund 2 und 10 Jahre und USA 10 Jahre
+// (zinskurve.json: jüngster Tageswert, Veränderung gegenüber dem Monatsdurchschnitt des Vormonats), Bund 0 % 2050 (langlaeufer.json:
+// Veränderung gegenüber dem Durchschnitt der Wochenwerte des Vormonats). Die Werte im HTML sind Rückfall und werden je Datei einzeln
+// ersetzt; fällt eine Datei aus, bleibt ihr Rückfall stehen. Das Stand-Datum ist der Tag der Bundesbank-Kurve.
+(function () {
+  var wrap = document.getElementById("bnd-zinsstand");
+  if (!wrap || typeof MC.load !== "function") return;
+  function vormonat(iso) { var j = +iso.slice(0, 4), m = +iso.slice(5, 7) - 1; if (!m) { j--; m = 12; } return j + "-" + (m < 10 ? "0" : "") + m; }
+  function bp(d) { var n = Math.round(d * 100); return (n > 0 ? "+" : n < 0 ? "\u2212" : "\u00b1") + Math.abs(n) + "\u00a0Bp"; }
+  function setz(key, wert, delta) {
+    var k = wrap.querySelector('[data-zs="' + key + '"]');
+    if (!k || typeof wert !== "number") return;
+    k.querySelector(".zs-v").textContent = MC.zahl(wert, 2) + "\u00a0%";
+    if (delta) k.querySelector(".zs-d").textContent = delta;
+  }
+  MC.load("zinskurve.json").then(function (z) {
+    ["DE", "US"].forEach(function (land) {
+      var h = z.heute && z.heute[land];
+      if (!h) return;
+      var vm = vormonat(h[0]), row = null;
+      (z.monate && z.monate[land] || []).forEach(function (r) { if (r[0] === vm) row = r; });
+      if (land === "DE") setz("bund2", h[1], row && bp(h[1] - row[1]) + " zum Vormonat");
+      setz(land === "DE" ? "bund10" : "us10", h[2], row && bp(h[2] - row[2]) + " zum Vormonat");
+    });
+    var st = document.querySelector('#bnd-zinsatlas [data-zs="stand"]');
+    if (st && z.heute && z.heute.DE) st.textContent = "Stand " + MC.datum(z.heute.DE[0]);
+  }).catch(function () {});
+  MC.load("ezb.json").then(function (e) {
+    var a = e.aktuell, st = e.stufen || [], vor = st.length > 1 ? st[st.length - 2][1] : null;
+    if (a) setz("ezb", a[1], (vor != null ? bp(a[1] - vor) + " " : "") + "seit " + MC.datum(a[0]));
+  }).catch(function () {});
+  MC.load("langlaeufer.json").then(function (l) {
+    var b = l.bonds && l.bonds.bund2050;
+    if (!b || !b.latest) return;
+    var vm = vormonat(b.latest.date), w = (b.weekly || []).filter(function (r) { return r[0].slice(0, 7) === vm; });
+    var avg = w.length ? w.reduce(function (s, r) { return s + r[2]; }, 0) / w.length : null;
+    setz("bund2050", b.latest.yield, avg != null && bp(b.latest.yield - avg) + " zum Vormonat");
+  }).catch(function () {});
+})();
 </script>
 </body>
 </html>
