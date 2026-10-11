@@ -171,7 +171,7 @@ RequestHeader edit "If-None-Match" '^"((.*)-gzip)"$' '"$1", "$2"'
   Header set X-Robots-Tag "noindex"
 </FilesMatch>
 # Such-Index anleihen-index.json (≈ 1 MB gzip, wöchentlich neu; seit 30.09.2026 nur noch Rückfall der Suche) und der
-# schlanke Suchindex suchindex.json (≈ 1,2 MB gzip, täglich neu; Suche und „Mein Bondarium“): Die Seiten laden beide
+# schlanke Suchindex suchindex.json (≈ 1,2 MB gzip, täglich neu; Suche und „My Bondarium“): Die Seiten laden beide
 # nur über eine Versions-URL (?v=<Hash>, gesetzt im Deploy) – deshalb dürfen sie lange im Browser bleiben (vorher hielt
 # suchindex.json nur 15 Minuten, danach kamen erneut 1,2 MB).
 <FilesMatch "^(anleihen-index|suchindex)\.json$">

@@ -1,7 +1,7 @@
 <?php
 /**
  * E-Mail vor jeder Fälligkeit (seit 02.10.2026, Nutzerentscheid nach PDF-Mockup; Dokumentation: docs/KONTO.md).
- * Wer in „Mein Bondarium“ den Schalter „E-Mail vor jeder Fälligkeit“ einschaltet (konto.php, aktion=erinnern), bekommt eine
+ * Wer in „My Bondarium“ den Schalter „E-Mail vor jeder Fälligkeit“ einschaltet (konto.php, aktion=erinnern), bekommt eine
  * kurze E-Mail, wenn eine Anleihe aus einem seiner Musterdepots in höchstens ERINNERUNG_TAGE Tagen fällig wird – je
  * Anleihe und Fälligkeit einmal, mehrere in einer E-Mail. Seit 02.10.2026 abends (Nutzerwunsch: „20 Tage bevor sie fällig
  * wird und dann nochmal zum Tag der Fälligkeit, damit man sein Konto überprüfen kann“) sind es 20 statt 30 Tage, und am
@@ -232,7 +232,7 @@ function erinnerung_text(array $posten, string $aus, bool $heute = false): array
     $text = $kopf . "\n\n" . implode("\n\n", $bloecke) . "\n\n" .
         ($heute ? "Hast du die Anleihe auch in deinem echten Depot? Dann sieh in den nächsten Tagen auf deinem Konto nach, ob die Rückzahlung angekommen ist.\n\n" : '') .
         ($depots ? "Deine Musterdepots ansehen:\nhttps://www.bondarium.de/konto.html#depot\n\n" : "Deine Merkliste ansehen:\nhttps://www.bondarium.de/konto.html#merkliste\n\n") .
-        "Du bekommst diese E-Mail, weil du in „Mein Bondarium“ unter „E-Mails an dich“ die E-Mail vor Fälligkeit eingeschaltet hast. Ausschalten kannst du sie mit einem Klick:\n" .
+        "Du bekommst diese E-Mail, weil du in „My Bondarium“ unter „E-Mails an dich“ die E-Mail vor Fälligkeit eingeschaltet hast. Ausschalten kannst du sie mit einem Klick:\n" .
         "https://www.bondarium.de/konto.html#$aus\n\n" .
         ($depots ? 'Musterdepots sind ein Planspiel – Bondarium kauft und verkauft nichts und kennt keine echten Bestände. ' : 'Bondarium kauft und verkauft nichts und kennt keine echten Bestände. ') . 'Keine Anlageberatung.';
     return [$betreff, $text];

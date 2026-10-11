@@ -1,7 +1,7 @@
-# Benutzerbereich „Mein Bondarium“
+# Benutzerbereich „My Bondarium“
 
 Stand 01.10.2026. Der Bereich hieß bis 01.10.2026 „Mein Depot“; seit dem Nutzerentscheid von diesem Tag heißt er
-„Mein Bondarium“ (Seite und Menü) und hat zwei Reiter nebeneinander: **Merkliste** und **Mein Depot**. Besucher
+„My Bondarium“ (Seite und Menü) und hat zwei Reiter nebeneinander: **Merkliste** und **Mein Depot**. Besucher
 registrieren sich mit E-Mail-Adresse und Passwort (seit 30.09.2026 abends, vorher Anmeldung per E-Mail-Link) und
 merken sich Anleihen. „Mein Depot“ ist ein Musterdepot: gemerkte Anleihen mit einem gedachten Nennwert, darunter
 die Zahlungen als Schaubild. Beides liegt auf dem Server und ist auf jedem Gerät da, auf dem man sich anmeldet. Es
@@ -28,15 +28,15 @@ Wochenbrief) entsprechend.
 
 | Datei | Aufgabe |
 | --- | --- |
-| `konto.html` | Seite „Mein Bondarium“: Anmelden, Registrieren, Passwort vergessen – oder, angemeldet, fünf Ansichten: Start, Merkliste, Lernen, Musterdepots (darin „Mein Depot“; bis 03.10.2026 „Rechnen und planen“), Meldungen und Konto (seit 02.10.2026 abends; vorher zwei Reiter „Merkliste“ und „Mein Depot“). Für alle gleich, `noindex`. |
+| `konto.html` | Seite „My Bondarium“: Anmelden, Registrieren, Passwort vergessen – oder, angemeldet, fünf Ansichten: Start, Merkliste, Lernen, Musterdepots (darin „Mein Depot“; bis 03.10.2026 „Rechnen und planen“), Meldungen und Konto (seit 02.10.2026 abends; vorher zwei Reiter „Merkliste“ und „Mein Depot“). Für alle gleich, `noindex`. |
 | `konto.js` | Spricht mit `konto.php` (`MC.konto`, darunter `depot(isin, nennwert)`), zeichnet den Merken-Knopf („Merken“ / „Gemerkt“). Geladen auf `konto.html`, `anleihe.html`, `anleihen-suche.html`. |
 | `konto.php` | Schnittstelle auf dem Server (PHP bei STRATO), Antwort immer JSON. |
 | `konto-daten/` | Entsteht nur auf dem Server: SQLite-Datei mit zufälligem Namen. Nicht im Repository, nicht im Bau. |
 | `pdf.js` | Kleiner PDF-Schreiber im Browser (`MC.pdf`: Helvetica, WinAnsi, Linien, Flächen, SVG-Pfade fürs Logo, Links; A4 hoch oder quer) für den Depot-Auszug. Nur auf `konto.html`. |
 | `base.css` | `.merkbtn` (Merken-Knopf, `.nur` = nur der Stern), `.ablbtn` und `.mb-seite` (Knöpfe der Ablage auf den Inhaltsseiten). |
-| `bereich.js`, `bereich.css` | Die fünf Ansichten von „Mein Bondarium“ (nur `konto.html`) – siehe „Mein Bondarium: fünf Ansichten“. |
-| `mein.js` | „Mein Bondarium“ auf den Inhaltsseiten: Leiste „Als gelesen markieren“/„Lesezeichen“, Abschnitts-Lesezeichen, Stern im Glossar, „In meinen Zins-Blick“, „Rechnung speichern“, Checkliste im Konto, „Zuletzt angesehen“. |
-| `scripts/nav.py` | Menüpunkt „Mein Bondarium“ (`LINKS`). |
+| `bereich.js`, `bereich.css` | Die fünf Ansichten von „My Bondarium“ (nur `konto.html`) – siehe „My Bondarium: fünf Ansichten“. |
+| `mein.js` | „My Bondarium“ auf den Inhaltsseiten: Leiste „Als gelesen markieren“/„Lesezeichen“, Abschnitts-Lesezeichen, Stern im Glossar, „In meinen Zins-Blick“, „Rechnung speichern“, Checkliste im Konto, „Zuletzt angesehen“. |
+| `scripts/nav.py` | Menüpunkt „My Bondarium“ (`LINKS`). |
 | `rechtliches.html#konto` | Abschnitt der Datenschutzerklärung. |
 
 ## Abläufe
@@ -370,9 +370,9 @@ Suchindex (`mfZeile`: aus `suchindex.json`, sonst aus den Stammdaten `anleihen/<
 speichern“ nehmen die ganze Merkliste. Die Auswahl gilt für den Seitenaufruf und wird nicht gespeichert (keine Adresse, kein
 Browser-Speicher). Mit gesetztem Filter heißt die Statuszeile „3 von 13 Anleihen auf deiner Merkliste passen zur Auswahl“.
 
-## Mein Bondarium: fünf Ansichten (seit 02.10.2026 abends)
+## My Bondarium: fünf Ansichten (seit 02.10.2026 abends)
 
-Nutzerauftrag vom 02.10.2026: das Mockup „Mein Bondarium“ vom 01.10.2026 (`tmp/Bondarium-Mein-Bondarium-Mockup.pdf`, 16 Funktionen)
+Nutzerauftrag vom 02.10.2026: das Mockup „My Bondarium“ vom 01.10.2026 (`tmp/Bondarium-Mein-Bondarium-Mockup.pdf`, 16 Funktionen)
 komplett umsetzen. Grundsatz: Der Bereich speichert nur, was der Nutzer selbst ablegt; nichts ist eine Empfehlung (Etiketten und
 Meldungen nennen Tatsachen aus den Daten, „Passend zu deiner Merkliste“ zeigt Erklärseiten, keine Anleihen); kein stilles Mitschreiben.
 

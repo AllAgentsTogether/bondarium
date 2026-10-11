@@ -14,7 +14,7 @@ site.js setzt daraus `aria-current`.
 
 Menü seit 01.10.2026 abends (Nutzerentscheid „Navigation neu“, Diagramm im Chat): vier Aufklapper in der Reihenfolge
 des Weges – Akademie (lernen), Anleihen (finden), Kaufen, Markt (beobachten; bis 11.10.2026 „Zinsen“) –, rechts das Suchfeld und der Knopf
-„Mein Bondarium“ (KONTO). „Über uns“ steht nur noch in der Fußzeile. Jede Seite steht genau einmal im Menü und ist
+„My Bondarium“ (KONTO). „Über uns“ steht nur noch in der Fußzeile. Jede Seite steht genau einmal im Menü und ist
 mit zwei Klicks erreichbar. Der Gruppenkopf ist ein Link auf die Übersichtsseite (wissen.html, anleihen.html,
 kaufen.html, beobachten.html).
   * Seit 11.10.2026 abends („Navigation einfach“, Vorbild zendepot.de): Jeder Aufklapper hat links höchstens sieben kurze Einträge
@@ -133,9 +133,9 @@ MENUS = [ANLEIHEN, KAUFEN, ZINSEN]
 ALLE = [AKADEMIE] + MENUS
 MENU_RUBRIK = {"Akademie": "verstehen", "Anleihen": "anleihen", "Kaufen": "kaufen", "Markt": "zinsen"}   # Rubrik-Schlüssel „zinsen“ bleibt (CSS/JS), seit 11.10.2026 heißt das Menü „Markt“
 MENU_EXTRA = {"Anleihen": ["anleihe.html"]}
-# Knopf „Mein Bondarium“ rechts außen, hinter dem Suchfeld (Benutzerbereich konto.html: Anmeldung, Merkliste und das Musterdepot „Mein Depot“). Bis 1000 px
+# Knopf „My Bondarium“ rechts außen, hinter dem Suchfeld (Benutzerbereich konto.html: Anmeldung, Merkliste und das Musterdepot „Mein Depot“). Bis 1000 px
 # steht er stattdessen als letzter Eintrag im Burger-Menü (Klasse nav-konto) – base.css zeigt jeweils nur eines von beiden.
-KONTO = ("My Bondarium", "konto.html")   # seit 10.10.2026 „My Bondarium“ (Nutzerwunsch); die Seite selbst heißt weiter „Mein Bondarium“
+KONTO = ("My Bondarium", "konto.html")   # seit 10.10.2026 „My Bondarium“ (Nutzerwunsch); seit 11.10.2026 heißt auch die Seite selbst so (vorher „Mein Bondarium“)
 KONTO_BILD = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" '
               'aria-hidden="true" focusable="false"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.2-4 4-5.5 7.5-5.5s6.3 1.5 7.5 5.5"/></svg>')
 # Suchfeld rechts außen (26.09.2026 bis 10.10.2026, dann auf Nutzerwunsch „nimm die suche raus“ entfernt – SEARCH wird nicht mehr
@@ -246,7 +246,7 @@ def akademie_seiten():
 
 def rubrik(page):
     """Rubrik der Seite (data-rubrik am <header>): verstehen (Akademie), anleihen, kaufen, zinsen (Menü „Markt“), ueber – sonst start
-    (Startseite, Mein Bondarium, Rechtliches, 404). Die Kennfarbe ist seit 26.09.2026 überall dasselbe Grün."""
+    (Startseite, My Bondarium, Rechtliches, 404). Die Kennfarbe ist seit 26.09.2026 überall dasselbe Grün."""
     if page in akademie_seiten():
         return "verstehen"
     for label, target, items in MENUS:

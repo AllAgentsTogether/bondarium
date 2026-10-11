@@ -29,7 +29,7 @@ Schreibt in den Ordner newsletter/ (konto.php liest ihn auf dem Server; per .hta
                   – Text und HTML mit den Platzhaltern {{MERKLISTE}} und {{ABMELDEN}}. Wird nicht committet.
   anleihen.json   {ISIN: [Feld 0 … 10]} für alle Anleihen mit aktuellem Kurs (suchindex.json). Die eine Quelle für Namen und Zahlen
                   der E-Mails (Wochenbrief-Merkliste und Meldungen in konto.php, Erinnerung vor der Fälligkeit in erinnerung.php)
-                  und für den nächsten Zinstermin in „Mein Bondarium“ (konto.php, aktion=besuch). Wird nicht committet (~5 MB).
+                  und für den nächsten Zinstermin in „My Bondarium“ (konto.php, aktion=besuch). Wird nicht committet (~5 MB).
                      0  Name          Kurzname wie auf der Website (_common.kurz_name: Staat → Land laut Katalog, sonst Emittent
                                       ohne Rechtsform)
                      1  Kupon-Text    „3,50 %“, „3,625 %“, „variabel“, „Nullkupon“ (_common.kupon_text)
@@ -428,7 +428,7 @@ def baue(heute):
             t += [x["titel"], x["text"], x["link"], ""]
     t += ["--", "Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse sind Schlusskurse, keine Echtzeitkurse.",
           "Quellen: Deutsche Bundesbank, Europäische Zentralbank, Federal Reserve, Deutsche Börse.", "",
-          "Du bekommst diese E-Mail, weil du den Wochenbrief in „Mein Bondarium“ bestellt hast.", "Abbestellen mit einem Klick: {{ABMELDEN}}", "",
+          "Du bekommst diese E-Mail, weil du den Wochenbrief in „My Bondarium“ bestellt hast.", "Abbestellen mit einem Klick: {{ABMELDEN}}", "",
           "Bondarium – ein Angebot der urbanelo GmbH, Heinrich-Baumann-Straße 38, 70190 Stuttgart", SEITE + "rechtliches.html#impressum"]
 
     # ---- HTML-Fassung ----
@@ -458,7 +458,7 @@ def baue(heute):
                         f'<span style="color:{TXT};">{e(x["text"])}</span></div>' for x in neu))]
     H += [f'<tr><td style="padding:18px 32px 24px;border-top:1px solid {LINIE};{F}font-size:12px;line-height:1.6;color:{TXT};">Keine Anlageberatung. Alle Angaben ohne Gewähr; '
           'Börsenkurse sind Schlusskurse, keine Echtzeitkurse. Quellen: Deutsche Bundesbank, Europäische Zentralbank, Federal Reserve, Deutsche Börse.<br><br>'
-          f'Du bekommst diese E-Mail, weil du den Wochenbrief in „Mein Bondarium“ bestellt hast. <a href="{{{{ABMELDEN}}}}" style="color:{TIEF};">Newsletter abbestellen</a> – ein Klick genügt.<br>'
+          f'Du bekommst diese E-Mail, weil du den Wochenbrief in „My Bondarium“ bestellt hast. <a href="{{{{ABMELDEN}}}}" style="color:{TIEF};">Newsletter abbestellen</a> – ein Klick genügt.<br>'
           f'Bondarium – ein Angebot der urbanelo GmbH, Heinrich-Baumann-Straße 38, 70190 Stuttgart · <a href="{SEITE}rechtliches.html#impressum" style="color:{TXT};">Impressum</a></td></tr>',
           "</table></td></tr></table></body></html>"]
     ausgabe = {**kopf, "betreff": f"Wochenbrief KW {kw}: Bundrendite {richtung}", "text": nur_text("\n".join(t) + "\n"), "html": "\n".join(H) + "\n",

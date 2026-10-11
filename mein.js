@@ -1,4 +1,4 @@
-/* mein.js – „Mein Bondarium“ auf den Inhaltsseiten (seit 02.10.2026 abends; Nutzerauftrag: Mockup „Mein Bondarium“ komplett umsetzen).
+/* mein.js – „My Bondarium“ auf den Inhaltsseiten (seit 02.10.2026 abends; Nutzerauftrag: Mockup „My Bondarium“ komplett umsetzen).
    Setzt die Knöpfe ein, mit denen ein angemeldeter Nutzer etwas in seinen Bereich legt – gespeichert wird in der Ablage des Kontos
    (konto.js: MC.konto.ablage, konto.php: aktion=ablage; docs/KONTO.md). Laden nach site.js und konto.js:
      <script src="site.js"></script><script src="konto.js"></script><script src="mein.js"></script>
@@ -43,7 +43,7 @@
   if (lern && !document.getElementById("mb-seite")) {
     var leiste = document.createElement("div");
     leiste.className = "mb-seite"; leiste.id = "mb-seite";
-    leiste.innerHTML = '<p><b>Mein Bondarium</b>Hak ab, was du gelesen hast – dein Lernstand steht in <a href="konto.html#lernen">deinem Bereich</a>.</p>' +
+    leiste.innerHTML = '<p><b>My Bondarium</b>Hak ab, was du gelesen hast – dein Lernstand steht in <a href="konto.html#lernen">deinem Bereich</a>.</p>' +
       K.ablKnopf("gelesen", seite, 1, ["Als gelesen markieren", "Gelesen"]) + K.ablKnopf("lesezeichen", seite, { t: titel }, ["Lesezeichen", "Lesezeichen gesetzt"]);
     var vor = main.querySelector("nav.crossnav") || main.querySelector("details.quellen");
     if (vor && vor.parentNode) vor.parentNode.insertBefore(leiste, vor); else main.appendChild(leiste);

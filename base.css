@@ -278,7 +278,7 @@ html { scroll-padding-top: 100px; }   /* Sprungziele nicht unter der festen Kopf
    38 px hoch wie das Logo – links die Marke, rechts das Feld, beide bündig mit dem Seitenrand; dazwischen das Menü.
    Weiß mit tiefgrünem Rand (dieselbe Farbe wie die Kante unter dem Band), Lupe links im Feld. */
 .topbar .sitenav { flex: 0 0 auto; }
-/* Knopf „Mein Bondarium“ rechts neben dem Suchfeld (nav.py KONTO, seit 01.10.2026 abends – vorher ein Menüpunkt): gleiche Höhe
+/* Knopf „My Bondarium“ rechts neben dem Suchfeld (nav.py KONTO, seit 01.10.2026 abends – vorher ein Menüpunkt): gleiche Höhe
    und gleicher tiefgrüner Rand wie das Suchfeld, aber ohne weiße Fläche – das Feld bleibt das Auffälligste. Bis 1000 px steht
    stattdessen der Eintrag .nav-konto unten im Burger-Menü (Regeln am Dateiende). */
 .kopfkonto { flex: none; display: inline-flex; align-items: center; gap: 7px; height: 38px; padding: 0 13px 0 10px; border: 2px solid var(--blue-dark); border-radius: 10px; font-family: var(--sans); font-size: 14.5px; font-weight: 500; text-decoration: none; color: var(--ink); white-space: nowrap; transition: background-color .15s ease, border-color .15s ease; }
@@ -466,7 +466,7 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 .merkbtn.nur { padding: 3px; margin-left: 6px; vertical-align: -4px; }
 .merkbtn.nur span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
 
-/* ---------- Mein Bondarium auf den Inhaltsseiten (seit 02.10.2026 abends; konto.js zeichnet die Knöpfe, mein.js setzt sie ein) ----------
+/* ---------- My Bondarium auf den Inhaltsseiten (seit 02.10.2026 abends; konto.js zeichnet die Knöpfe, mein.js setzt sie ein) ----------
    .ablbtn: Umschalt-Knopf für einen Eintrag der persönlichen Ablage („Als gelesen markieren“ / „Gelesen“, Lesezeichen, Begriff merken,
    Kennzahl anheften). .mb-seite: Leiste am Ende einer Akademie-Seite. */
 .ablbtn { font: inherit; font-size: 14px; font-weight: 600; line-height: 1.2; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.25); border-radius: 6px; padding: 8px 14px; display: inline-flex; align-items: center; gap: 7px; cursor: pointer; white-space: nowrap; }

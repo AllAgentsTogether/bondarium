@@ -377,7 +377,7 @@ jobs:
           cp -r anleihen _site/anleihen   # Stammdaten je ISIN für den Steckbrief anleihe.html (256 Teildateien)
           # Wochenbrief (seit 02.10.2026): Ausgabe und Daten je Anleihe für konto.php – per .htaccess nie abrufbar
           if [ -f newsletter/ausgabe.json ]; then mkdir -p _site/newsletter && cp newsletter/ausgabe.json newsletter/anleihen.json _site/newsletter/; fi
-          # seiten.json (Datei → erster Tag, von newsletter.py fortgeführt): „Neu auf Bondarium“ in „Mein Bondarium“ (konto.php, aktion=besuch)
+          # seiten.json (Datei → erster Tag, von newsletter.py fortgeführt): „Neu auf Bondarium“ in „My Bondarium“ (konto.php, aktion=besuch)
           if [ -f newsletter/seiten.json ]; then mkdir -p _site/newsletter && cp newsletter/seiten.json _site/newsletter/; fi
           ls -la _site
 
@@ -775,7 +775,7 @@ jobs:
             sleep 20
           done
 
-      # Meldungen aus „Mein Bondarium“ (seit 02.10.2026 abends): konto.php prüft nach dem Datenlauf die Meldungen aller Konten
+      # Meldungen aus „My Bondarium“ (seit 02.10.2026 abends): konto.php prüft nach dem Datenlauf die Meldungen aller Konten
       # gegen newsletter/anleihen.json (Rendite, Kurs, nächster Zinstermin, Fälligkeit) und schickt je Konto höchstens eine
       # E-Mail mit den neu ausgelösten – nur für Meldungen, bei denen der Nutzer „E-Mail“ gewählt hat. Eine ausgelöste Meldung
       # kommt erst wieder, wenn ihre Bedingung zwischendurch nicht mehr galt. Die Antwort nennt Zahlen, keine Adressen.

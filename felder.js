@@ -17,7 +17,7 @@
      kurzName(emittent, art, land, reg)   Staat (art 0, Land ≠ INT): Ländername; sonst Emittent ohne Rechtsform; ohne Emittent: Registername
      titel(o)                   „Italien 3,50 % 2030“ (Kurzname, Kupon, Fälligkeitsjahr) – Legenden, Listen, Kalender, Auswahlfelder
      Formate: pct, kupon(o), kurs, pkt, datum, tag, restlaufzeit(iso|Jahre), volumen, stueckelung, betrag, bonitaet, jahre(iso)
-     rechnerUrl(o)              Link „Im Rechner öffnen“ für Steckbrief und Mein Bondarium – "" ohne Rendite (siehe unten)
+     rechnerUrl(o)              Link „Im Rechner öffnen“ für Steckbrief und My Bondarium – "" ohne Rendite (siehe unten)
      simulatorUrl(o)            Link „Im Simulator ansehen“ (anleihen-simulator.html?isin=…) für Steckbrief, Merkliste und Musterdepot –
                                 "" ohne Kurs oder Rendite, bei variablem Kupon, Stufenzins, Registerwiderspruch oder unter 8 Monaten Restlaufzeit
      spalten, tabelle(spaltenIds, zeilen, opt), sortiere(zeilen, sort, spaltenIds, opt), sortierbar(table, sort, neu)
@@ -109,7 +109,7 @@
   function titel(o) { return [o.kurz || o.reg || o.isin, kupon(o), o.faellig ? String(o.faellig).slice(0, 4) : "unbefristet"].join(" "); }
 
   // ---------- Link „Im Rechner öffnen“ (seit 09.10.2026, Technik-Test 08.10.2026 T-05/T-15) ----------
-  // Eine Stelle für Steckbrief und Mein Bondarium – vorher baute jede Seite den Link selbst: aus der Merkliste ohne Zinsrhythmus,
+  // Eine Stelle für Steckbrief und My Bondarium – vorher baute jede Seite den Link selbst: aus der Merkliste ohne Zinsrhythmus,
   // Zinstage und Rendite (halbjährliche Anleihen rechnete der Rechner jährlich), aus dem Steckbrief auch dort, wo er bewusst keine
   // Rendite rechnet (Floater, Wandelanleihen, Tilgung, Inflationsindex, Plausibilitätsregel …).
   // o = { kurs, kupon, faellig (ISO), ccy, zt ([Zahlungen je Jahr, "MM-TT", …] laut Börsenliste oder null), rendite (in %, Zahl oder null),

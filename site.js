@@ -434,7 +434,7 @@ window.MC = (function () {
     // iPhone/iPad: Ein Fingertipp auf Inhalt ohne eigenen Klick (Text, Überschrift) löst dort kein click am document aus – Menü blieb
     // offen. Deshalb dieselbe Regel schon beim Aufsetzen des Fingers (seit 09.10.2026, Technik-Test 08.10.2026 T-144; wie die Schaubilder
     // unten) – nur in der breiten Ansicht, wo das Menü über dem Inhalt liegt. Im Handy-Akkordeon (bis 1000 px) schiebt das Zuklappen die
-    // Seite, bevor der Klick ankommt: Der Tipp auf „Mein Bondarium“ im offenen Menü traf dann etwas anderes. Dort bleibt es beim click.
+    // Seite, bevor der Klick ankommt: Der Tipp auf „My Bondarium“ im offenen Menü traf dann etwas anderes. Dort bleibt es beim click.
     document.addEventListener("pointerdown", function (e) { if (e.pointerType === "touch" && !mobile()) daneben(e); });
     // Escape blendet auch das per Maus geöffnete Menü aus (WCAG 1.4.13, seit 09.10.2026, T-124): Klasse nav-esc am <html> bis zur
     // nächsten Mausbewegung – die CSS-Regel dazu (html.nav-esc blendet das Hover-Menü aus) gehört nach base.css; die

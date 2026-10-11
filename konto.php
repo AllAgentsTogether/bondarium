@@ -38,7 +38,7 @@
  *                  bestellt nichts ab, er leitet nur auf konto.html#nl-ab=<Kennung> um);
  *                  aktion=newsletter-senden (Kopf X-Trigger-Key, ruft der Workflow nach dem Datenlauf) verschickt die
  *                  Ausgabe aus newsletter/ausgabe.json an alle Abonnenten, die diese Kalenderwoche noch keine haben.
- *   Mein Bondarium (seit 02.10.2026 abends, Nutzerauftrag „Mockup komplett umsetzen“; docs/KONTO.md, Abschnitt „Mein Bondarium“):
+ *   My Bondarium (seit 02.10.2026 abends, Nutzerauftrag „Mockup komplett umsetzen“; docs/KONTO.md, Abschnitt „My Bondarium“):
  *                  ablage (art, schluessel, wert als JSON; wert leer = löschen): die persönliche Ablage – Notizen, Listen,
  *                  gelesene Seiten, Lesezeichen, Begriffe, angeheftete Kennzahlen, Einstellung „Zuletzt angesehen“, Meldungen, Checkliste,
  *                  „Zuletzt angesehen“ (ABLAGE nennt Arten und Grenzen)
@@ -425,7 +425,7 @@ function db(): PDO
             $db->exec('COMMIT');
         }
         if ($fassung < 7) {
-            // Fassung 7 (02.10.2026 abends): „Mein Bondarium“ – persönliche Ablage, Rendite am Tag des Merkens, Beginn des
+            // Fassung 7 (02.10.2026 abends): „My Bondarium“ – persönliche Ablage, Rendite am Tag des Merkens, Beginn des
             // laufenden und des vorigen Besuchs, Gerätebezeichnung je Anmeldung, Links zum Ändern der E-Mail-Adresse
             $db->exec('BEGIN IMMEDIATE');
             $db->exec('CREATE TABLE IF NOT EXISTS ablage (nutzer INTEGER NOT NULL REFERENCES nutzer(id) ON DELETE CASCADE, art TEXT NOT NULL, schluessel TEXT NOT NULL, wert TEXT NOT NULL, zeit INTEGER NOT NULL, PRIMARY KEY (nutzer, art, schluessel))');
@@ -1244,7 +1244,7 @@ function nl_senden(): array
     return ['gesendet' => $gesendet, 'offen' => $fehler > 0 && $gesendet === 0 ? 0 : $offen, 'fehler' => $fehler, 'kw' => $kw];
 }
 
-// ---------- Mein Bondarium: Ablage und Meldungen (seit 02.10.2026 abends) ----------
+// ---------- My Bondarium: Ablage und Meldungen (seit 02.10.2026 abends) ----------
 
 /** Wert für die Ablage säubern: Steuerzeichen aus Texten entfernen, höchstens vier Ebenen tief, nur einfache Werte */
 function ablage_sauber($w, int $tiefe = 0)
@@ -1372,7 +1372,7 @@ function meldungen_senden(): array
         if ($zeilen && $gesendet < MELDUNG_MAILS) {
             $n = count($zeilen);
             $ok = mail_senden($k['email'], $n === 1 ? 'Bondarium: eine Meldung aus deinem Bereich' : "Bondarium: $n Meldungen aus deinem Bereich",
-                "du hast in „Mein Bondarium“ Meldungen eingerichtet. Nach den Schlusskursen vom letzten Börsentag gilt:\n\n- " . implode("\n- ", $zeilen)
+                "du hast in „My Bondarium“ Meldungen eingerichtet. Nach den Schlusskursen vom letzten Börsentag gilt:\n\n- " . implode("\n- ", $zeilen)
                 . "\n\nAlle Meldungen ansehen oder ändern:\n" . SEITE . "/konto.html#meldungen\n\n"
                 . "Keine E-Mails mehr zu Meldungen (sie stehen dann nur noch in deinem Bereich) – ein Klick:\n" . SEITE . '/konto.html#meldungen-aus=' . link_kennung('meldungen-aus', $id, $k['erstellt']) . "\n\n"
                 . 'Das sind Tatsachen aus den Kursdaten, keine Empfehlung zum Kauf oder Verkauf. Keine Anlageberatung.');
@@ -1460,7 +1460,7 @@ try {
                 $ok = mail_senden($mail, 'Bestätige deine E-Mail-Adresse für Bondarium', "bitte bestätige deine E-Mail-Adresse, damit dein Konto bei Bondarium entsteht:\n\n"
                     . ursprung() . '/konto.html#bestaetigen=' . $t . "\n\n"
                     . 'Der Link gilt ' . BESTAETIGEN_STUNDEN . " Stunden. Auf der Seite gibst du dein Passwort noch einmal ein.\n\n"
-                    . ($nl ? "Du hast den Wochenbrief angekreuzt: Mit dem Bestätigen bestellst du auch ihn – einmal pro Woche per E-Mail. Abbestellen kannst du ihn jederzeit – über den Link in jeder Ausgabe oder in „Mein Bondarium“.\n\n" : '')
+                    . ($nl ? "Du hast den Wochenbrief angekreuzt: Mit dem Bestätigen bestellst du auch ihn – einmal pro Woche per E-Mail. Abbestellen kannst du ihn jederzeit – über den Link in jeder Ausgabe oder in „My Bondarium“.\n\n" : '')
                     . "Du hast dich nicht registriert? Dann hat jemand deine Adresse eingegeben. Du musst nichts tun:\n"
                     . 'Ohne den Link und das Passwort entsteht kein Konto, und die Angaben werden nach Ablauf gelöscht.');
                 if (!$ok) {

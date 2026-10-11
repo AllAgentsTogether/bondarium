@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mein Bondarium – Merkliste, Lernstand und Musterdepot</title>
+<title>My Bondarium – Merkliste, Lernstand und Musterdepot</title>
 <meta name="description" content="Dein privater Bereich bei Bondarium: Anleihen und ETFs merken, Lernstand, Meldungen und Musterdepots.">
 <link rel="canonical" href="https://www.bondarium.de/konto.html">
 <meta name="robots" content="noindex, follow">
@@ -19,7 +19,7 @@
 <link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
  <style>
-  /* Benutzerbereich „Mein Bondarium“ (seit 30.09.2026, bis 01.10.2026 „Mein Depot“): Anmeldung mit E-Mail und Passwort, Merkliste und
+  /* Benutzerbereich „My Bondarium“ (seit 30.09.2026, bis 01.10.2026 „Mein Depot“): Anmeldung mit E-Mail und Passwort, Merkliste und
      – seit 01.10.2026 – „Mein Depot“ (Musterdepot mit Nennwert und Zahlungen, Stile .kd-*). Schnittstelle konto.php, Skript konto.js,
      Beschreibung docs/KONTO.md. Die Seite ist für alle gleich (kein Inhalt vom Server im HTML) und steht nicht im Suchindex (noindex).
      Farbvariablen, .go, .sortbtn, .table-scroll und .sr-only kommen aus base.css. */
@@ -101,7 +101,7 @@
   #mf-box { margin-top: 20px; }
   #mf-box[hidden] { display: none; }
   .kto-t td.mf-leer { padding: 18px 12px; text-align: left; font-size: 14px; color: var(--text); white-space: normal; }
-  .kto-t { width: 100%; min-width: 940px; border-collapse: collapse; margin-top: 10px; font-size: 13.5px; }   /* seit 02.10.2026 abends die Spalten des Mockups „Mein Bondarium“ (vorher alle Spalten der Suche); schmaler Bildschirm: querwischen */
+  .kto-t { width: 100%; min-width: 940px; border-collapse: collapse; margin-top: 10px; font-size: 13.5px; }   /* seit 02.10.2026 abends die Spalten des Mockups „My Bondarium“ (vorher alle Spalten der Suche); schmaler Bildschirm: querwischen */
   .kto-t th, .kto-t td { padding: 13px 9px 13px 0; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
   .kto-t thead th { font-size: 13px; font-weight: 500; color: var(--text); border-bottom: 1px solid rgba(26,26,25,0.35); white-space: nowrap; padding-top: 8px; padding-bottom: 8px; vertical-align: bottom; }
   .kto-t .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -369,7 +369,7 @@
     .kto-x span { display: inline; }
   }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Mein Bondarium","item":"https://www.bondarium.de/konto.html"}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"My Bondarium","item":"https://www.bondarium.de/konto.html"}]}</script>
 </head>
 <body>
 <a class="skip-link" href="#main">Zum Inhalt springen</a>
@@ -484,11 +484,11 @@
     </nav>
     <a class="kopfkonto current" href="konto.html" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.2-4 4-5.5 7.5-5.5s6.3 1.5 7.5 5.5"/></svg><span>My Bondarium</span></a>
   </header>
-  <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><span aria-current="page">Mein Bondarium</span></li></ol></nav>
+  <nav class="krumen" aria-label="Brotkrumen"><ol><li><a href="index.html">Start</a></li><li><span aria-current="page">My Bondarium</span></li></ol></nav>
   <main id="main">
     <div class="b2-kopf">
       <div>
-        <h1>Mein Bondarium</h1>
+        <h1>My Bondarium</h1>
         <p class="sub">Dein privater Bereich: was du dir gemerkt hast, wo du in der Akademie stehst – und was sich seit deinem letzten Besuch getan hat.</p>
       </div>
       <div class="b2-spot"><img src="spot-konto.svg" alt="" width="232" height="160"></div>
@@ -581,7 +581,7 @@
       <div class="kto-kopf"><p>Angemeldet als <b id="wer"></b></p><button type="button" class="kto-leise" id="abmelden">Abmelden</button></div>
       <!-- Fünf Ansichten (seit 02.10.2026 abends, Nutzerauftrag „Mockup komplett umsetzen“): Start, Merkliste, Lernen, Musterdepots
            (darin „Mein Depot“; bis 03.10.2026 „Rechnen und planen“), Meldungen und Konto. Reiter: Seitenskript (reiter()); Inhalte: bereich.js, Stile bereich.css -->
-      <div class="mb-tabs" id="mb-tabs" role="tablist" aria-label="Bereiche von Mein Bondarium">
+      <div class="mb-tabs" id="mb-tabs" role="tablist" aria-label="Bereiche von My Bondarium">
         <button type="button" role="tab" id="t-start" data-ansicht="start" aria-controls="a-start" aria-selected="true">Start</button>
         <button type="button" role="tab" id="t-merkliste" data-ansicht="merkliste" aria-controls="a-merkliste" aria-selected="false" tabindex="-1">Merkliste<i id="r-merk-n"></i></button>
         <button type="button" role="tab" id="t-planen" data-ansicht="planen" aria-controls="a-planen" aria-selected="false" tabindex="-1">Musterdepots<i id="r-depot-n" hidden></i></button>
@@ -838,7 +838,7 @@ MC.navInit();
     link: "Dieser Link ist abgelaufen oder wurde schon benutzt.",
     netz: "Keine Verbindung zum Server. Bitte prüfe deine Internetverbindung.",
     // Datenbank gerade nicht nutzbar (konto.php 503 „speicher“) oder Störung beim Laden des Stands (konto.js bereit(), T-21)
-    speicher: "Mein Bondarium ist gerade nicht erreichbar. Bitte lade die Seite in ein paar Minuten neu.",
+    speicher: "My Bondarium ist gerade nicht erreichbar. Bitte lade die Seite in ein paar Minuten neu.",
     fehler: "Das hat nicht geklappt. Bitte versuch es noch einmal.",
   };
   const ZUVIEL_MAIL = "Für diese Adresse wurden gerade schon mehrere E-Mails angefordert. Bitte sieh in dein Postfach oder versuch es später noch einmal.";
@@ -972,7 +972,7 @@ MC.navInit();
     rest: o => o.faellig || null, art: o => o.art, isin: o => o.isin, cur: o => o.cur || null, vol: o => typeof o.vol === "number" ? o.vol : null,
     stk: o => typeof o.stk === "number" ? o.stk : null, seit: o => o.seit, delta: o => B ? B.delta(o) : null, zt: o => (B && B.termin(o)) || null };
   let LISTE = [], KSTAND = "", ZULETZT = "";   // ZULETZT: eben entfernte ISIN (für „Rückgängig“)
-  // Zeile der Merkliste – seit 02.10.2026 abends mit den Spalten des Mockups „Mein Bondarium“: Ankreuzfeld zum Vergleichen, Name mit
+  // Zeile der Merkliste – seit 02.10.2026 abends mit den Spalten des Mockups „My Bondarium“: Ankreuzfeld zum Vergleichen, Name mit
   // ISIN, Art, Etiketten und Notiz, Rendite, Kurs mit Veränderung zum Vortag, Kupon, Fälligkeit mit Restlaufzeit, Veränderung der
   // Rendite seit dem Merken, nächster Zinstermin, „+“ (Musterdepot) und „…“ (Notiz, Liste, Meldung, Entfernen). Die Zusätze zeichnet
   // bereich.js (B). Währung, Volumen und Stückelung stehen im Menü „…“ und im Vergleich, alle Angaben weiter im PDF.
@@ -2218,7 +2218,7 @@ MC.navInit();
     { zugang: "Das Passwort stimmt nicht." });
   $("d-weg").addEventListener("toggle", wegZurueck);
 
-  // ---------- Mein Bondarium: die fünf Ansichten (bereich.js) ----------
+  // ---------- My Bondarium: die fünf Ansichten (bereich.js) ----------
   // B zeichnet Start, Lernen, die Zusätze der Merkliste, Rechnungen/Voreinstellungen und Meldungen/Konto; die Brücke gibt ihm, was
   // dieses Skript schon hat (Daten, Formatierer, Aktionen). Ohne bereich.js (Netzfehler) bleibt B null – Merkliste und Depot gehen weiter.
   let BESUCHT = false;
@@ -2277,7 +2277,7 @@ MC.navInit();
     ohneZusatz();
     K.newsletterAb(m[1]).then(a => {
       hinweis(a.ok ? "<b>Der Wochenbrief ist abbestellt.</b> Du bekommst keine weiteren Ausgaben. Dein Konto und deine Merkliste bleiben, wie sie sind."
-        : a.status === "link" ? "Dieser Abmelde-Link ist ungültig, oder das Konto gibt es nicht mehr. Bekommst du den Wochenbrief weiter, bestell ihn in „Mein Bondarium“ ab oder nutz das Kontaktformular unter „Über uns“."
+        : a.status === "link" ? "Dieser Abmelde-Link ist ungültig, oder das Konto gibt es nicht mehr. Bekommst du den Wochenbrief weiter, bestell ihn in „My Bondarium“ ab oder nutz das Kontaktformular unter „Über uns“."
         : "Das Abbestellen hat gerade nicht geklappt. Bitte versuch es später noch einmal oder nutz das Kontaktformular unter „Über uns“.", !a.ok && a.status !== "link");
       if (a.ok) $("nl-status").textContent = "";
     });

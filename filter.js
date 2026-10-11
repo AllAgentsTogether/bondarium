@@ -1,5 +1,5 @@
 /* filter.js – Filterstandard für Anleihen-Listen (seit 02.10.2026): Grundfilter-Schalter und Filterleiste an einer Stelle.
-   Genutzt von der Anleihen-Suche (anleihen-suche.html) und der Merkliste in „Mein Bondarium“ (konto.html) – beide zeigen
+   Genutzt von der Anleihen-Suche (anleihen-suche.html) und der Merkliste in „My Bondarium“ (konto.html) – beide zeigen
    dieselben Filter mit denselben Stufen, Texten und Regeln. Bis 02.10.2026 stand dieser Code in anleihen-suche.html.
    Stile: filter.css. Laden NACH site.js (MC.esc, MC.datum, MC.kuendigung).
 

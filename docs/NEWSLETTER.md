@@ -55,7 +55,7 @@ Die E-Mail hat eine Text- und eine HTML-Fassung, keine Bilder, keine Zählpixel,
 ## Einwilligung und Abbestellen
 
 - **Bestellen:** Häkchen bei der Registrierung (gilt erst, wenn der Link in der Bestätigungs-E-Mail geöffnet und das Konto
-  angelegt ist) oder der Schalter „Wochenbrief per E-Mail“ in „Mein Bondarium“. Bestehende Konten haben ihn nicht.
+  angelegt ist) oder der Schalter „Wochenbrief per E-Mail“ in „My Bondarium“. Bestehende Konten haben ihn nicht.
 - **Abbestellen:** Link in jeder Ausgabe (`konto.html#nl-ab=<Kontonummer>.<Hashwert>` – ein Klick, ohne Anmeldung; der Teil
   hinter „#“ steht in keinem Server-Log, die Seite schickt ihn per POST), der Knopf des E-Mail-Programms
   (POST auf `konto.php?nl=<Kennung>`; ein GET dorthin bestellt nichts ab, er leitet auf den Link der Seite um) oder der Schalter. Konto löschen beendet ihn ebenfalls.
@@ -87,7 +87,7 @@ den Starter mit `from __future__ import annotations`.
 ## Datensatz `newsletter/anleihen.json` (seit 03.10.2026)
 
 `{ISIN: [Name, Kupon-Text, Fälligkeit, Kurs, Rendite, Veränderung zur Vorwoche, nächster Zinstermin, Zinsart, geschätzt]}` – gebaut in
-`scripts/newsletter.py` (`anleihen_daten`), gelesen von `konto.php` (Meldungen, Wochenbrief-Merkliste, Termine in „Mein Bondarium“) und
+`scripts/newsletter.py` (`anleihen_daten`), gelesen von `konto.php` (Meldungen, Wochenbrief-Merkliste, Termine in „My Bondarium“) und
 `erinnerung.php` (Titel der E-Mail vor Fälligkeit). Name = Kurzname nach der Regel der Website (`_common.kurz_name`), Kupon-Text
 „3,50 %“ · „variabel“ · „Nullkupon“; der nächste Zinstermin ist laut Deutscher Börse oder – Feld 8 = 1 – geschätzt (dieselbe Rechnung
 wie der Steckbrief). Titel („Deutschland 2,60 % 2033“) und Restlaufzeit werden beim Versand aus den Feldern 0–2 gebildet

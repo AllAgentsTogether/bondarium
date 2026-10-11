@@ -40,7 +40,7 @@
      Bei ok nach bestaetigen, anmelden und passwortNeu ist man angemeldet (der Stand ist übernommen).
      beiAenderung(fn)         fn(stand) nach jeder Änderung des Stands
 
-   Mein Bondarium (seit 02.10.2026 abends, docs/KONTO.md): die persönliche Ablage – Notizen, Listen, gespeicherte Suchen,
+   My Bondarium (seit 02.10.2026 abends, docs/KONTO.md): die persönliche Ablage – Notizen, Listen, gespeicherte Suchen,
    gelesene Seiten, Lesezeichen, Begriffe, Kennzahlen, Einstellung „Zuletzt angesehen“, Meldungen, Checkliste.
      stand().ablage           { art: { schluessel: [wert, zeit] } } – nur, was der Nutzer selbst abgelegt hat
      abl(art)                 die Einträge einer Art ({} wenn keine); wert(art, schluessel) → Wert oder undefined
@@ -165,7 +165,7 @@
     b.disabled = true;
     bereit().then(function (s) {
       if (s && s.stoerung) {   // Konto gerade nicht erreichbar (T-21): nicht „Zum Merken brauchst du ein Konto“ zeigen
-        var t = "Gerade nicht erreichbar"; b.querySelector("span").textContent = t; melde("Mein Bondarium ist gerade nicht erreichbar.");
+        var t = "Gerade nicht erreichbar"; b.querySelector("span").textContent = t; melde("My Bondarium ist gerade nicht erreichbar.");
         setTimeout(function () { zeichne(b); }, 3000); return;
       }
       if (!st.angemeldet) { anmeldeHinweis(b, isin); return; }
@@ -228,7 +228,7 @@
       var an = abl(art)[k] !== undefined;
       try { wert = JSON.parse(b.getAttribute("data-wert") || "1"); } catch (e) { wert = 1; }
       return ablage(art, k, an ? null : wert).then(function () {
-        melde(an ? "Entfernt" : "In Mein Bondarium gespeichert");
+        melde(an ? "Entfernt" : "In My Bondarium gespeichert");
       }, function (j) {
         if (j && j.status === "anmelden") { location.href = SEITE; return; }
         var text = j && j.status === "voll" ? "Kein Platz mehr (" + (j.max || "") + ")" : "Hat nicht geklappt";

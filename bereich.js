@@ -1,4 +1,4 @@
-/* bereich.js – „Mein Bondarium“ in fünf Ansichten (konto.html, seit 02.10.2026 abends; Nutzerauftrag: Mockup vom 01.10.2026 komplett
+/* bereich.js – „My Bondarium“ in fünf Ansichten (konto.html, seit 02.10.2026 abends; Nutzerauftrag: Mockup vom 01.10.2026 komplett
    umsetzen – 16 Funktionen). Das Seitenskript von konto.html bleibt zuständig für Anmeldung, Merklisten-Tabelle, Filter, Musterdepots
    und PDF; dieses Skript baut darauf auf und zeichnet alles Neue:
      Start                Seit deinem letzten Besuch · „Deine Anleihen“: Merkliste und Musterdepots · „Markt“: Mein Zins-Blick ·
@@ -16,7 +16,7 @@
    Freistellungsauftrag, Startfilter der Suche) – nicht neu einbauen.
    Gespeichert wird nur, was der Nutzer selbst ablegt – in der Ablage des Kontos (konto.php, aktion=ablage; konto.js: MC.konto.ablage).
    Nichts davon ist eine Empfehlung: Etiketten und Meldungen nennen Tatsachen aus den Daten, „Passend zu deiner Merkliste“ zeigt
-   Erklärseiten, keine Anleihen. Stile: bereich.css. Beschreibung: docs/KONTO.md, Abschnitt „Mein Bondarium“.
+   Erklärseiten, keine Anleihen. Stile: bereich.css. Beschreibung: docs/KONTO.md, Abschnitt „My Bondarium“.
 
    Aufruf aus konto.html:  const B = MC.bereich(X)  – X ist die Brücke zum Seitenskript:
      K, $, fmt, fmtCoupon, TEXT, hinweis(html, fehler), reiterWahl(ansicht), heute (ISO, Berliner Kalendertag), jahre(iso), STAMM,
@@ -305,7 +305,7 @@
       });
       if (!ev.length) { X.hinweis("Für diese Auswahl gibt es keinen kommenden Termin."); return; }
       lade(liste.length === 1 ? `Bondarium-Termine-${liste[0].isin}.ics` : `Bondarium-Termine-${HEUTE}.ics`,
-        ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Bondarium//Mein Bondarium//DE", "CALSCALE:GREGORIAN", "X-WR-CALNAME:Bondarium – Termine"].map(falte).concat(ev, ["END:VCALENDAR"]).join("\r\n") + "\r\n", "text/calendar;charset=utf-8");
+        ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Bondarium//My Bondarium//DE", "CALSCALE:GREGORIAN", "X-WR-CALNAME:Bondarium – Termine"].map(falte).concat(ev, ["END:VCALENDAR"]).join("\r\n") + "\r\n", "text/calendar;charset=utf-8");
     }
     function einfuegen(e) {
       e.preventDefault();

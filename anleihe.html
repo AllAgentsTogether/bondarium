@@ -128,7 +128,7 @@
   .leer { max-width: 620px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; padding: 18px 20px; font-size: 15px; line-height: 1.6; }
   .leer a { color: var(--green-text); }
   .nix-suche { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-  /* Feldrand rgba(26,26,25,0.55) wie in Mein Bondarium, 3,9:1 (seit 09.10.2026, Technik-Test 08.10.2026 T-117; vorher 1,6:1) */
+  /* Feldrand rgba(26,26,25,0.55) wie in My Bondarium, 3,9:1 (seit 09.10.2026, Technik-Test 08.10.2026 T-117; vorher 1,6:1) */
   .nix-suche input { flex: 1 1 200px; font: inherit; font-size: 16px; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.55); border-radius: 6px; padding: 10px 16px; }
   .nix-suche button { font: inherit; font-size: 15px; font-weight: 600; color: var(--ink); background: var(--green); border: 0; border-radius: 6px; padding: 10px 18px; cursor: pointer; }
   .nix-suche input:focus-visible, .nix-suche button:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
@@ -738,7 +738,7 @@ function zeige(r, k, meta, kf) {
   // Server-Steckbrief (steckbrief/<ISIN>.html, seit 03.10.2026): Titel mit Art und ISIN steht schon im HTML – nicht überschreiben
   const serverSeite = document.documentElement.hasAttribute("data-steckbrief");
   if (!serverSeite) document.title = `${seitentitel} – Bondarium`;
-  if (MC.mein && MC.konto) MC.konto.bereit().then(() => MC.mein.angesehen(ISIN, seitentitel));   // „Zuletzt angesehen“ – nur wenn in Mein Bondarium eingeschaltet
+  if (MC.mein && MC.konto) MC.konto.bereit().then(() => MC.mein.angesehen(ISIN, seitentitel));   // „Zuletzt angesehen“ – nur wenn in My Bondarium eingeschaltet
   // Kanonische Adresse, og:url und og:title für diese ISIN (geteilte Links zeigen die Anleihe, nicht den allgemeinen Titel)
   const url = `https://www.bondarium.de/anleihe.html?isin=${encodeURIComponent(ISIN)}`;
   const setze = (sel, attr, wert) => { const el = document.querySelector(sel); if (el) el.setAttribute(attr, wert); };
@@ -935,7 +935,7 @@ function zeige(r, k, meta, kf) {
     (simUrl ? `<li><a href="${simUrl}" id="zum-simulator"><span>Im Simulator ansehen<small>Restlaufzeit ${MC.esc(RL(jahre(faellig)))} durchspielen: Kurs bei steigendem oder fallendem Zinsniveau</small></span><span class="pf" aria-hidden="true">→</span></a></li>` : "") +
     `<li><a href="erste-anleihe.html"><span>So kaufst du diese Anleihe<small>Depot, Order mit Limit, Kosten im Broker-Vergleich</small></span><span class="pf" aria-hidden="true">→</span></a></li>` +
     `<li><a href="${suche}"><span>Anleihen mit gleichen Merkmalen<small>${MC.esc([T.art[art], ccy, T.zinsChip[zinsart]].join(" · "))}</small></span><span class="pf" aria-hidden="true">→</span></a></li>` +
-    (MC.konto ? `<li><a href="konto.html"><span>Mein Bondarium<small>Merkliste und Musterdepots ansehen</small></span><span class="pf" aria-hidden="true">→</span></a></li>` : "");
+    (MC.konto ? `<li><a href="konto.html"><span>My Bondarium<small>Merkliste und Musterdepots ansehen</small></span><span class="pf" aria-hidden="true">→</span></a></li>` : "");
 
   // --- Kursverlauf ---
   const el = document.getElementById("kv");
