@@ -31,8 +31,8 @@ WEITER = {
     "grundlagen.html": ["anleihe-arten.html", ("anlageziele.html#fuer-wen", "Für wen Anleihen passen"), "anleihe-festgeld-tagesgeld.html"],
     "anleihe-arten.html": ["zinsniveau.html", "anlageziele.html", ("anleihen-suche.html", "Anleihen durchsuchen")],
     "zinsniveau.html": ["laufzeit.html", "anleihen-simulator.html", "zinskurve.html"],
-    "laufzeit.html": ["anleihen-simulator.html", "duration.html", ("staatsanleihen-laufzeit.html", "Top 10 nach Laufzeit")],
-    "anleihen-simulator.html": ["rendite-lesen.html", "duration.html", ("anleihen-suche.html", "Eine echte Anleihe suchen")],
+    "laufzeit.html": ["rendite-lesen.html", "anleihen-simulator.html", ("staatsanleihen-laufzeit.html", "Top 10 nach Laufzeit")],
+    "anleihen-simulator.html": ["beobachten.html", "duration.html", ("anleihen-suche.html", "Eine echte Anleihe suchen")],   # seit 11.10.2026 abends letzter Eintrag unter Kaufen
     "rendite-lesen.html": ["risiko.html", ("rechner.html", "Rendite selbst rechnen"), "kuendbare-anleihen.html"],
     # Akademie – Risiken
     "risiko.html": ["bonitaet.html", "zahlungsausfall.html", "langlaeufer.html"],
@@ -59,7 +59,7 @@ WEITER = {
     "anleihe-nicht-kaufbar.html": ["nach-dem-kauf.html", "broker-vergleich.html", "etf-oder-anleihe.html"],
     "nach-dem-kauf.html": ["steuern-handelskosten.html", "rechner.html", ("konto.html", "Termine in My Bondarium")],
     "steuern-handelskosten.html": [("rechner.html#netto", "Rechner: Zinsen netto nach Steuer"), "broker-vergleich.html", "nach-dem-kauf.html"],
-    "rechner.html": ["anleihen-suche.html", "erste-anleihe.html", "duration.html"],
+    "rechner.html": ["anleihen-simulator.html", "anleihen-suche.html", "erste-anleihe.html"],
     # Anleihen (Listen und Steckbrief) → Kaufen
     "staatsanleihen-laufzeit.html": [("erste-anleihe.html", "So kaufst du sie"), "anleihen-laender.html", "anleihen-suche.html"],
     "anleihen-laender.html": [("erste-anleihe.html", "So kaufst du sie"), "staatsanleihen-laufzeit.html", "anleihen-suche.html"],
