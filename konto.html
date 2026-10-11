@@ -637,7 +637,7 @@
         <div id="kd-inhalt">
         <form class="kd-neu" id="f-depot" action="konto.php" method="post">
           <div><label for="kd-isin">Anleihe von deiner Merkliste</label><select id="kd-isin" name="isin" required></select></div>
-          <div><label for="kd-nenn">Nennwert</label><div class="kd-eur" id="kd-nenn-box"><input id="kd-nenn" name="nennwert" type="text" inputmode="numeric" autocomplete="off" maxlength="11" value="1.000" required><span id="kd-nenn-w">€</span></div></div>
+          <div><label for="kd-nenn">Nennwert</label><div class="kd-eur w3" id="kd-nenn-box"><input id="kd-nenn" name="nennwert" type="text" inputmode="numeric" autocomplete="off" maxlength="11" value="1.000" required><span id="kd-nenn-w">EUR</span></div></div>
           <button type="submit" class="go">Zum Musterdepot hinzufügen</button>
           <p class="kf-status" id="kd-status" role="status" aria-live="polite"></p>
         </form>
@@ -1621,7 +1621,7 @@ MC.navInit();
   // Währung hinter dem Nennwert-Feld: die der gewählten Anleihe
   function nennWaehrung() {
     const cur = (($("kd-isin").selectedOptions[0] || {}).dataset || {}).cur || "", fremd = !!cur && cur !== "EUR";
-    $("kd-nenn-w").textContent = fremd ? cur : "EUR"; $("kd-nenn-box").classList.toggle("w3", fremd);
+    $("kd-nenn-w").textContent = fremd ? cur : "EUR"; $("kd-nenn-box").classList.add("w3");   // immer drei Zeichen (EUR, USD …), sonst überlappt die Zahl
     return fremd ? cur : "";
   }
   $("kd-leg").addEventListener("click", e => {
