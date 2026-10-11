@@ -640,6 +640,17 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 .more summary::-webkit-details-marker { display: none; }
 .more summary::before { content: ''; width: 8px; height: 8px; border-right: 1.5px solid var(--muted); border-bottom: 1.5px solid var(--muted); transform: rotate(-45deg); transition: transform .15s; }
 .more[open] summary::before { transform: rotate(45deg); }
+.more.leise summary { font-size: 15px; font-weight: 600; }   /* Aufklapper im Fließtext (seit 11.10.2026 abends, Gesamtprüfung Punkt 13) */
+/* Weg-Zeile auf den vier Übersichten (seit 11.10.2026 abends, Gesamtprüfung Punkt 12; scripts/hubs.py): die Bereiche in der
+   Reihenfolge des Weges, der aktuelle markiert */
+.weg { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 14px 0 22px; }
+.weg a { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px 6px 7px; border: 1px solid var(--rule); border-radius: 10px; background: #fff; font-size: 14px; font-weight: 500; color: var(--ink); text-decoration: none; }
+.weg a .n { width: 22px; height: 22px; border-radius: 50%; background: var(--soft); color: var(--green-text); display: grid; place-items: center; font-size: 12.5px; font-weight: 600; }
+.weg a:hover { border-color: var(--green-text); }
+.weg a.current { border-color: var(--green-text); background: #DCFBD3; }
+.weg a.current .n { background: var(--green); color: var(--ink); }
+.weg-pf { color: var(--muted); font-size: 14px; }
+@media (max-width: 600px) { .weg a { padding: 5px 9px 5px 5px; font-size: 13px; } .weg-pf { display: none; } }
 .more summary:hover { color: var(--line); }
 .more summary:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 3px; }
 .more .prose { font-size: 15px; margin-top: 16px; }
