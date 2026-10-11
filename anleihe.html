@@ -924,11 +924,16 @@ function zeige(r, k, meta, kf) {
   // ohne Titel in der Adresse (den Namen holt der Rechner aus den Daten)
   const rechnerUrl = kurs != null && zinsart === 0 && typeof kupon === "number" && faellig && !nachFaellig && !befund && !stufen && MC.felder
     ? MC.felder.rechnerUrl({ kurs, kupon, faellig, ccy, zt: Array.isArray(zt) ? zt : null, rendite: rend, isin: ISIN, ab: neuAb }) : "";
+  // „Im Simulator ansehen“ (seit 11.10.2026 abends, Nutzerwunsch): Restlaufzeit durchspielen – fester Kupon oder Nullkupon, Kurs und
+  // Rendite vorhanden (dieselben Ausschlüsse wie der Rechner), mindestens 8 Monate Restlaufzeit; der Simulator lädt die Daten selbst (?isin=)
+  const simUrl = kurs != null && rend != null && (zinsart === 0 || zinsart === 2) && typeof kupon === "number" && faellig && !nachFaellig && !befund && !stufen && jahre(faellig) >= 8 / 12
+    ? `anleihen-simulator.html?isin=${encodeURIComponent(ISIN)}` : "";
   const suche = `anleihen-suche.html?art=${art}&w=${encodeURIComponent(ccy)}&zins=${zinsart}`;
   document.getElementById("werkz").innerHTML =
     `<li><button type="button" class="kopie-w" data-isin="${MC.esc(ISIN)}"><span>ISIN kopieren<small>${MC.esc(ISIN)}</small></span><span class="pf" aria-hidden="true">⧉</span></button></li>` +
     `<li><button type="button" class="link-w"><span>Link kopieren<small>zum Teilen, z. B. im Messenger</small></span><span class="pf" aria-hidden="true">⧉</span></button></li>` +
     (rechnerUrl ? `<li><a href="${rechnerUrl}" id="zum-rechner"><span>Im Rechner öffnen<small>Kurs, Kupon und Fälligkeit übernommen</small></span><span class="pf" aria-hidden="true">→</span></a></li>` : "") +
+    (simUrl ? `<li><a href="${simUrl}" id="zum-simulator"><span>Im Simulator ansehen<small>Restlaufzeit ${MC.esc(RL(jahre(faellig)))} durchspielen: Kurs bei steigendem oder fallendem Zinsniveau</small></span><span class="pf" aria-hidden="true">→</span></a></li>` : "") +
     `<li><a href="erste-anleihe.html"><span>So kaufst du diese Anleihe<small>Depot, Order mit Limit, Kosten im Broker-Vergleich</small></span><span class="pf" aria-hidden="true">→</span></a></li>` +
     `<li><a href="${suche}"><span>Anleihen mit gleichen Merkmalen<small>${MC.esc([T.art[art], ccy, T.zinsChip[zinsart]].join(" · "))}</small></span><span class="pf" aria-hidden="true">→</span></a></li>` +
     (MC.konto ? `<li><a href="konto.html"><span>Mein Bondarium<small>Merkliste und Musterdepots ansehen</small></span><span class="pf" aria-hidden="true">→</span></a></li>` : "");
