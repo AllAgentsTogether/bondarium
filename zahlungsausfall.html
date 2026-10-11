@@ -28,13 +28,13 @@
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
-<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Wenn der Schuldner nicht zahlt – neu 04.10.2026 (SEO-Runde 2, Themenlücke 3; Menü Akademie, Spalte Grundlagen): sechs Karten zu Ausfall,
      Insolvenz, Erlösquoten, Bankanleihen, Staaten und Depot/Steuer. Zahlen mit Quelle im Aufklapper; Rechtslage Deutschland, Stand Oktober 2026.
      Bausteine (Stand-Pille, Balken, Tabellen, Schritte, Prüfliste) wie anleihen-fuer-unternehmen.html. Grundregeln in base.css. */
-  .stand { display: inline-flex; align-items: center; gap: 8px; margin: -8px 0 22px; padding: 7px 12px; border-radius: 999px; background: #fff; border: 1px solid rgba(26,26,25,0.14); font-size: 13px; color: var(--text); }
+  .stand { display: inline-flex; align-items: center; gap: 8px; margin: -8px 0 22px; padding: 7px 12px; border-radius: 6px; background: #fff; border: 1px solid rgba(26,26,25,0.14); font-size: 13px; color: var(--text); }
   .stand b { font-weight: 600; color: var(--ink); }
   .balken .hb { display: grid; grid-template-columns: 172px minmax(0, 1fr); align-items: center; gap: 10px; }
   .balken .hb + .hb { margin-top: 7px; }
@@ -46,7 +46,7 @@
   /* Tabellen in den Schaubild-Kästen */
   .tab { border-collapse: collapse; width: 100%; font-size: 14.5px; }
   .tab th, .tab td { text-align: left; padding: 8px 8px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
-  .tab thead th { font-size: 12px; font-weight: 600; color: var(--text); letter-spacing: 0.08em; text-transform: uppercase; vertical-align: bottom; }
+  .tab thead th { font-size: 13px; font-weight: 500; color: var(--text); vertical-align: bottom; }
   .tab tbody th { font-weight: 600; color: var(--ink); }
   .tab td.z, .tab th.z { text-align: right; padding-left: 10px; padding-right: 0; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .tab td.m { color: var(--down); font-weight: 600; } .tab td.p { color: var(--up); font-weight: 600; }
@@ -61,7 +61,7 @@
   .pruef li { position: relative; padding-left: 30px; font-size: 14.5px; line-height: 1.45; color: var(--ink); }
   .pruef li::before { content: ""; position: absolute; left: 0; top: 1px; width: 18px; height: 18px; border-radius: 5px; border: 2px solid #1A1A19; background: #fff; box-sizing: border-box; }
   .pruef li::after { content: ""; position: absolute; left: 6px; top: 3px; width: 5px; height: 10px; border: solid #157C00; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); }
-  .zw { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--rub-text); margin: 16px 0 8px; }
+  .zw { font-size: 13px; font-weight: 500; color: var(--rub-text); margin: 16px 0 8px; }
   .sb-f strong { font-weight: 600; }
   @media (max-width: 600px) {
     .balken .hb { grid-template-columns: 118px minmax(0, 1fr); } .hb-l { font-size: 12.5px; }

@@ -30,13 +30,13 @@
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
 <link rel="stylesheet" href="filter.css">
-<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Tabelle (wie Kennzahlen-Tabelle der Langläufer-Seite) */
   table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
   th, td { text-align: left; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
-  thead th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  thead th { font-size: 13px; color: var(--muted); font-weight: 500; }
   td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   /* .kpis Grundregeln (min-width 1000 px, 13 px, td.isin/txt/art): base.css */
   .kpis thead th:first-child { width: 25%; }   /* Anleihename darf umbrechen, die übrigen Spalten nicht */
@@ -58,7 +58,7 @@
   /* Suchfeld mit Lupe (UX 29.09.2026) */
   .suche { position: relative; max-width: 760px; margin: 4px 0 0; scroll-margin-top: calc(var(--kopf, 90px) + 16px); }
   .suche svg { position: absolute; left: 18px; top: 50%; width: 19px; height: 19px; transform: translateY(-50%); color: var(--green-text); pointer-events: none; }
-  .suche input[type=search] { width: 100%; font-family: var(--sans); font-size: 17px; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.55); border-radius: 999px; padding: 14px 20px 14px 48px; box-shadow: 0 1px 2px rgba(26,26,25,0.04); transition: border-color .15s, box-shadow .15s; }
+  .suche input[type=search] { width: 100%; font-family: var(--sans); font-size: 17px; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.55); border-radius: 6px; padding: 14px 20px 14px 48px; box-shadow: 0 1px 2px rgba(26,26,25,0.04); transition: border-color .15s, box-shadow .15s; }
   .suche input[type=search]::placeholder { color: #6F6E68; opacity: 1; }   /* Rand 3,9:1 und Platzhalter 5,1:1 (seit 09.10.2026, T-116/T-117; vorher 1,6:1 und 3,3:1) */
   .suche input[type=search]:hover { border-color: rgba(26,26,25,0.8); }
   .suche input[type=search]:focus-visible { outline: 0; border-color: var(--green-text); box-shadow: 0 0 0 3px var(--green-tint-2); }
@@ -69,9 +69,9 @@
   @keyframes dreh { to { transform: rotate(360deg); } }
   /* Beispiele als Schnellstart-Chips (vorher Fließtext im Hinweiskasten) */
   .bsp { margin-top: 20px; background: none; border: 0; border-radius: 0; padding: 0; }   /* ohne den orangen Hinweiskasten aus base.css – es ist kein Warnhinweis */
-  .bsp-t { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-bottom: 8px; }
+  .bsp-t { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 8px; }
   .bsp-l { display: flex; flex-wrap: wrap; gap: 8px; }
-  .bsp-l a { font-size: 13.5px; line-height: 1.2; color: var(--green-text); background: var(--green-tint); border: 1px solid transparent; border-radius: 999px; padding: 8px 13px; text-decoration: none; }
+  .bsp-l a { font-size: 13.5px; line-height: 1.2; color: var(--green-text); background: var(--green-tint); border: 1px solid transparent; border-radius: 6px; padding: 8px 13px; text-decoration: none; }
   .bsp-l a:hover { border-color: var(--green-text); color: var(--ink); }
   .bsp-l a:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   .themen { margin-top: 14px; }   /* „Passende Themen“: Lernseiten und Glossar zum Suchbegriff (seit 03.10.2026) */
@@ -86,7 +86,7 @@
   /* Unter der Liste: Trefferhinweis wiederholen, Rückweg zu Suche und Filtern */
   .status-unten { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin-top: 14px; font-size: 14px; color: var(--text); }
   .status-unten[hidden] { display: none; }
-  .status-unten .mehr-z { font: inherit; font-weight: 600; color: var(--ink); background: #fff; border: 1px solid var(--green-text); border-radius: 999px; padding: 7px 14px; cursor: pointer; }   /* „Weitere 200 anzeigen“ (seit 03.10.2026) */
+  .status-unten .mehr-z { font: inherit; font-weight: 600; color: var(--ink); background: #fff; border: 1px solid var(--green-text); border-radius: 6px; padding: 7px 14px; cursor: pointer; }   /* „Weitere 200 anzeigen“ (seit 03.10.2026) */
   .status-unten .mehr-z:hover { background: var(--green-tint-2); }
   .status-unten .mehr-z:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }   /* sonst stand nach dem Leeren des Suchfelds die alte Trefferzahl weiter da (Nutzertest 03.10.2026) */
   .status-unten a { font-weight: 600; color: var(--green-text); text-decoration: none; white-space: nowrap; }
@@ -148,10 +148,10 @@
     #treffer.table-scroll::before { content: none; }
     #treffer table.kpis { display: block; min-width: 0; width: 100%; margin-top: 12px; font-size: 14px; }
     .kpis thead { display: block; margin-bottom: 12px; }
-    .kpis thead::before { content: "Sortieren nach"; display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-bottom: 6px; }
+    .kpis thead::before { content: "Sortieren nach"; display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
     .kpis thead tr { display: flex; flex-wrap: wrap; gap: 6px; }
     .kpis thead th, .kpis thead th[data-col="name"] { display: block; position: static; width: auto; max-width: none; padding: 0; border: 0; background: none; box-shadow: none; }
-    .kpis thead th .sortbtn { padding: 7px 11px; border: 1px solid rgba(26,26,25,0.16); border-radius: 999px; background: #fff; font-size: 13px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--text); }
+    .kpis thead th .sortbtn { padding: 7px 11px; border: 1px solid rgba(26,26,25,0.16); border-radius: 6px; background: #fff; font-size: 13px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--text); }
     .kpis thead th:not([aria-sort]) .sortbtn::after { display: none; }
     .kpis thead th[data-col="vol"], .kpis thead th[data-col="stk"], .kpis thead th.aktion, .kpis thead th small { display: none; }   /* am Handy nur die sechs sinnvollen Sortierungen */
     .kpis thead th[aria-sort] .sortbtn { border-color: var(--green-text); background: var(--green-tint); color: var(--ink); }

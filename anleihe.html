@@ -28,8 +28,8 @@
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
-<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Steckbrief einer Anleihe (seit 26.09.2026; Fassung „nur Fakten“ seit 29.09.2026): eine Seite je ISIN, Adresse anleihe.html?isin=…
      Daten aus den Teildateien anleihen/<hh>.json (Stammdaten, ESMA-Register) und kurse/<Jahr>/<hh>.json (Kurse, Verlauf).
@@ -41,7 +41,7 @@
      08.10.2026 T-83: CLS bis 0,09 bei langsamer Verbindung); ohne Steckbrief entfernt das Seitenskript beide (ohneKopf) */
   .chips:empty { height: 26.5px; }   /* eine Chipzeile; am Handy zwei (gemessen: bis rund 500 px Breite fast immer zwei Zeilen) */
   @media (max-width: 500px) { .chips:empty { height: 59px; } }
-  .chips li { font-size: 12.5px; font-weight: 600; line-height: 1; padding: 6px 10px; border-radius: 999px; background: #fff; border: 1px solid rgba(26,26,25,0.16); color: var(--ink); white-space: nowrap; }
+  .chips li { font-size: 12.5px; font-weight: 600; line-height: 1; padding: 6px 10px; border-radius: 6px; background: #fff; border: 1px solid rgba(26,26,25,0.16); color: var(--ink); white-space: nowrap; }
   h1 { font-size: 34px; line-height: 1.15; margin-bottom: 8px; max-width: 900px; overflow-wrap: anywhere; }
   h1 .fa { color: var(--text); }
   .reg { font-size: 14px; color: var(--text); margin-bottom: 8px; overflow-wrap: anywhere; }
@@ -55,7 +55,7 @@
   /* Datenhinweis: neutral grau, nur Tatsachen und Rechenregeln */
   .hinw { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start; background: #F1F0EC; border: 1px solid rgba(26,26,25,0.14); border-radius: 14px; padding: 12px 16px; margin-bottom: 20px; font-size: 15px; line-height: 1.5; }
   .hinw[hidden] { display: none; }
-  .hinw .ic { width: 28px; height: 28px; border-radius: 50%; background: #fff; border: 1px solid rgba(26,26,25,0.25); display: grid; place-items: center; font-weight: 700; font-size: 14px; color: var(--ink); }
+  .hinw .ic { width: 28px; height: 28px; border-radius: 50%; background: #fff; border: 1px solid rgba(26,26,25,0.25); display: grid; place-items: center; font-weight: 600; font-size: 14px; color: var(--ink); }
   .hinw p + p { margin-top: 4px; }
   .hinw b { font-weight: 600; }
   /* Raster: Inhalt links, Werkzeuge rechts (mitlaufend; bis 03.10.2026 darüber das Rechenbeispiel); am Handy eine Spalte in DOM-Reihenfolge */
@@ -65,9 +65,9 @@
   /* Kopfzahlen */
   .kacheln { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
   .kachel { background: #fff; border: 1px solid var(--rule); border-radius: 14px; padding: 13px 14px 12px; box-shadow: var(--shadow); min-width: 0; }
-  .kachel .k { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-bottom: 4px; }
+  .kachel .k { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
   .kachel .u .ber { margin-right: 2px; }
-  .kachel .w { font-size: 23px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; color: var(--ink); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .kachel .w { font-size: 23px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; color: var(--ink); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
   .kachel .w.leise { font-size: 18px; color: var(--text); padding: 3px 0 2px; }
   .kachel .u { font-size: 12.5px; color: var(--text); margin-top: 4px; line-height: 1.4; }
   .ber { font-size: 12px; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--text); border: 1px solid rgba(26,26,25,0.18); border-radius: 5px; padding: 0 5px; line-height: 1.45; white-space: nowrap; }
@@ -81,14 +81,14 @@
   /* Merkmale in drei Gruppen */
   .gruppen { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
   .gr { background: #fff; border: 1px solid var(--rule); border-radius: 14px; padding: 12px 14px 6px; box-shadow: var(--shadow); min-width: 0; }
-  .gr h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--rub-text, var(--ink)); margin-bottom: 4px; }
+  .gr h3 { font-size: 13px; font-weight: 500; color: var(--rub-text, var(--ink)); margin-bottom: 4px; }
   .gr dl { margin: 0; }
   .gr dl div { padding: 7px 0; border-bottom: 1px solid var(--rule); }
   .gr dl div:last-child { border-bottom: 0; }
   .gr dt { font-size: 12.5px; color: var(--text); }
   .gr dd { margin: 0; font-size: 14.5px; font-weight: 600; line-height: 1.35; color: var(--ink); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
   .gr dd small { display: block; font-size: 12.5px; font-weight: 400; color: var(--text); margin-top: 1px; }
-  a.hilf { display: inline-grid; place-items: center; width: 18px; height: 18px; margin-left: 5px; border-radius: 50%; border: 1px solid rgba(26,26,25,0.3); font-size: 11px; font-weight: 700; line-height: 1; color: var(--text); text-decoration: none; vertical-align: 0; }
+  a.hilf { display: inline-grid; place-items: center; width: 18px; height: 18px; margin-left: 5px; border-radius: 50%; border: 1px solid rgba(26,26,25,0.3); font-size: 11px; font-weight: 600; line-height: 1; color: var(--text); text-decoration: none; vertical-align: 0; }
   a.hilf:hover { border-color: var(--ink); color: var(--ink); }
   a.hilf:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   /* Tippfläche am Touch-Gerät: unsichtbar auf 44 × 44 px vergrößert, das Layout bleibt gleich (seit 30.09.2026) */
@@ -109,28 +109,28 @@
   .strip { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); }
   .strip > div { padding: 11px 14px; border-right: 1px solid var(--rule); min-width: 0; }
   .strip > div:last-child { border-right: 0; }
-  .strip .k { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); margin-bottom: 3px; }
-  .strip .w { font-size: 16.5px; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .strip .k { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 3px; }
+  .strip .w { font-size: 16.5px; font-weight: 600; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
   .meta { font-size: 13.5px; color: var(--text); margin-top: 8px; line-height: 1.5; }
   .meta b { color: var(--ink); font-weight: 600; }
   /* rechte Spalte */
   .karte { background: #fff; border: 1px solid var(--rule); border-radius: 16px; box-shadow: var(--shadow); padding: 15px 16px 14px; }
-  .karte h2 { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 8px; }
-  .karte h3 { font-size: 15px; font-weight: 700; margin: 14px 0 4px; }
+  .karte h2 { font-size: 17px; font-weight: 500; letter-spacing: -0.005em; margin-bottom: 8px; }
+  .karte h3 { font-size: 15px; font-weight: 600; margin: 14px 0 4px; }
   .werkz { list-style: none; display: grid; gap: 8px; margin: 0; padding: 0; }
   .werkz a, .werkz button { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 8px; font: inherit; font-size: 14.5px; font-weight: 600; color: var(--ink); text-decoration: none; text-align: left; border: 1px solid rgba(44,44,42,0.2); border-radius: 12px; padding: 9px 12px; background: #fff; cursor: pointer; }
   .werkz a:hover, .werkz button:hover { border-color: var(--ink); }
   .werkz a:focus-visible, .werkz button:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   .werkz small { display: block; font-size: 12.5px; font-weight: 400; color: var(--text); }
-  .werkz .pf { color: var(--green-text); font-weight: 700; }
+  .werkz .pf { color: var(--green-text); font-weight: 600; }
   /* feste Leiste am Handy */
   .leiste { display: none; }
   .leer { max-width: 620px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; padding: 18px 20px; font-size: 15px; line-height: 1.6; }
   .leer a { color: var(--green-text); }
   .nix-suche { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
   /* Feldrand rgba(26,26,25,0.55) wie in Mein Bondarium, 3,9:1 (seit 09.10.2026, Technik-Test 08.10.2026 T-117; vorher 1,6:1) */
-  .nix-suche input { flex: 1 1 200px; font: inherit; font-size: 16px; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.55); border-radius: 999px; padding: 10px 16px; }
-  .nix-suche button { font: inherit; font-size: 15px; font-weight: 600; color: var(--ink); background: var(--green); border: 0; border-radius: 999px; padding: 10px 18px; cursor: pointer; }
+  .nix-suche input { flex: 1 1 200px; font: inherit; font-size: 16px; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.55); border-radius: 6px; padding: 10px 16px; }
+  .nix-suche button { font: inherit; font-size: 15px; font-weight: 600; color: var(--ink); background: var(--green); border: 0; border-radius: 6px; padding: 10px 18px; cursor: pointer; }
   .nix-suche input:focus-visible, .nix-suche button:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   @media (max-width: 940px) {
     .stb { grid-template-columns: minmax(0, 1fr); }
@@ -144,7 +144,7 @@
     html.mit-leiste { scroll-padding-bottom: 96px; }   /* Tastaturfokus nicht unter der festen Leiste (seit 09.10.2026, T-31) */
     .leiste { display: grid; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; grid-template-columns: 1fr; gap: 8px; padding: 10px 14px calc(12px + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.97); border-top: 1px solid var(--rule); box-shadow: 0 -6px 20px rgba(26,26,25,0.08); }
     .leiste[hidden] { display: none; }
-    .leiste a, .leiste button { font: inherit; font-size: 15px; font-weight: 600; text-align: center; border-radius: 999px; padding: 11px 10px; text-decoration: none; color: var(--ink); border: 1px solid rgba(44,44,42,0.25); background: #fff; cursor: pointer; }
+    .leiste a, .leiste button { font: inherit; font-size: 15px; font-weight: 600; text-align: center; border-radius: 6px; padding: 11px 10px; text-decoration: none; color: var(--ink); border: 1px solid rgba(44,44,42,0.25); background: #fff; cursor: pointer; }
   }
   /* Wenig Höhe (Zoom 200/400 %, Handy quer): Leiste am Ende des Inhalts statt fest – vorher belegten Kopf und Leiste 36 bzw. 50 % der
      Höhe (seit 09.10.2026, Technik-Test 08.10.2026 T-112); die Kopfzeile bleibt, wie sie ist */
@@ -183,7 +183,7 @@
   .dep-pop { position: absolute; top: calc(100% + 8px); z-index: 30; width: 340px; background: #fff; border: 1px solid rgba(26,26,25,0.18); border-radius: 14px; box-shadow: 0 2px 4px rgba(26,26,25,0.06), 0 18px 40px -12px rgba(26,26,25,0.28); padding: 14px 16px; color: var(--ink); font-size: 14px; }
   .dep-pop[hidden] { display: none; }
   .dep-pop::before { content: ""; position: absolute; top: -7px; left: var(--pfeil, 26px); width: 12px; height: 12px; background: #fff; border-left: 1px solid rgba(26,26,25,0.18); border-top: 1px solid rgba(26,26,25,0.18); transform: rotate(45deg); }
-  .dep-pop-t { font-size: 15.5px; font-weight: 700; margin: 0 0 10px; }
+  .dep-pop-t { font-size: 15.5px; font-weight: 600; margin: 0 0 10px; }
   .dep-pop label { display: block; font-size: 13px; font-weight: 600; margin: 0 0 4px; }
   .dep-pop select, .dep-eur input { width: 100%; font: inherit; font-size: 15px; color: var(--ink); background: #fff; border: 1.5px solid rgba(26,26,25,0.55); border-radius: 10px; padding: 8px 11px; }
   .dep-pop select { appearance: none; -webkit-appearance: none; margin-bottom: 10px; padding-right: 32px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1.5 1.5L6 6l4.5-4.5' fill='none' stroke='%231A1A19' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right 12px center / 11px no-repeat; }

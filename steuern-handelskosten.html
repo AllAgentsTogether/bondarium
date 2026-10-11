@@ -28,13 +28,13 @@
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
-<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Steuern und Handelskosten – neu 27.09.2026 (Menü Verstehen, Profi): sieben Karten im Look von „Laufzeit“ und „Duration“.
      Allgemeine Information mit Stand-Datum, keine Steuerberatung (Hinweis oben und im Aufklapper). Schaubilder als HTML-Balken. Grundregeln in base.css. */
 
-  .stand { display: inline-flex; align-items: center; gap: 8px; margin: -8px 0 22px; padding: 7px 12px; border-radius: 999px; background: #fff; border: 1px solid rgba(26,26,25,0.14); font-size: 13px; color: var(--text); }
+  .stand { display: inline-flex; align-items: center; gap: 8px; margin: -8px 0 22px; padding: 7px 12px; border-radius: 6px; background: #fff; border: 1px solid rgba(26,26,25,0.14); font-size: 13px; color: var(--text); }
   .stand b { font-weight: 600; color: var(--ink); }
 
   /* Balken (1, 2, 5) */
@@ -66,7 +66,7 @@
   .zs .ev::after { content: ""; position: absolute; left: 50%; top: 52px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: #1A1A19; border: 3px solid #fff; box-shadow: 0 0 0 1.5px rgba(26,26,25,0.25); }
   .zs .ev.plus::after { background: #157C00; } .zs .ev.minus::after { background: var(--down); }
   .zs .ev .u { position: absolute; left: 0; right: 0; top: 74px; font-size: 12px; color: var(--text); }
-  .zs .jahr { position: absolute; top: 112px; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); }
+  .zs .jahr { position: absolute; top: 112px; font-size: 13px; font-weight: 500; color: var(--green-text); }
 
   /* Stückelung (6) */
   .stk { display: flex; height: 40px; border-radius: 8px; overflow: hidden; }
@@ -86,7 +86,7 @@
   }
   .tab { border-collapse: collapse; width: 100%; font-size: 13.5px; }
   .tab th, .tab td { text-align: left; padding: 7px 8px 7px 0; border-bottom: 1px solid rgba(26,26,25,0.10); vertical-align: top; }
-  .tab thead th { font-size: 11.5px; font-weight: 600; color: var(--text); letter-spacing: 0.06em; text-transform: uppercase; vertical-align: bottom; }
+  .tab thead th { font-size: 13px; font-weight: 500; color: var(--text); vertical-align: bottom; }
   .tab tbody th { font-weight: 600; color: var(--ink); }
   .tab td.z, .tab th.z { text-align: right; padding-left: 10px; padding-right: 0; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .tab tbody tr:last-child th, .tab tbody tr:last-child td { border-bottom: 0; }

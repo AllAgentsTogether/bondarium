@@ -28,8 +28,8 @@
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
-<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Handelsplätze verstehen – neu 28.09.2026 (Menü Verstehen, Fortgeschrittene): drei Karten im Look von „Markttechnik“
      und dazwischen die Tabelle der Handelsplätze als breite weiße Fläche (wie „Fünf Agenturen, eine Skala: die Noten im Vergleich“ auf bonitaet.html).
@@ -39,7 +39,7 @@
   .welten { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .welt { display: flex; flex-direction: column; gap: 8px; border-radius: 12px; padding: 12px 12px 14px; background: var(--ap-soft); }
   .welt.du { background: #fff; border: 1.5px solid var(--green-line); }
-  .welt-k { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); }
+  .welt-k { font-size: 13px; font-weight: 500; color: var(--text); }
   .welt-z { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--ink); }
   .welt-z small { display: block; font-size: 12.5px; font-weight: 400; letter-spacing: 0; color: var(--text); margin-top: 2px; }
   .welt ul { list-style: none; margin: 2px 0 0; padding: 0; display: grid; gap: 4px; font-size: 13.5px; line-height: 1.35; color: var(--ink); }
@@ -54,9 +54,9 @@
   .qz .qn { font-size: 14px; font-weight: 600; line-height: 1.25; }
   .qz .qn small { display: block; font-size: 12px; font-weight: 400; color: var(--text); }
   .qz .qp { text-align: center; font-variant-numeric: tabular-nums; }
-  .qz .qp span { display: block; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
+  .qz .qp span { display: block; font-size: 13px; color: var(--text); }
   .qz .qp b { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
-  .qz .qs { text-align: center; padding: 6px 10px; border-radius: 999px; background: #fff; border: 1.5px solid var(--green-line); font-size: 13px; font-weight: 600; color: var(--green-text); white-space: nowrap; }
+  .qz .qs { text-align: center; padding: 6px 10px; border-radius: 6px; background: #fff; border: 1.5px solid var(--green-line); font-size: 13px; font-weight: 600; color: var(--green-text); white-space: nowrap; }
   .qz.weit .qs { border-color: rgba(207,116,48,0.6); color: var(--orange-text); }
   .quote .zeit { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 13px; color: var(--text); padding: 4px 2px 0; }
   .quote .zeit b { color: var(--ink); font-weight: 600; }
@@ -66,14 +66,14 @@
   .hp h2 { margin-bottom: 8px; }
   .hp-in { font-size: 16px; line-height: 1.55; color: var(--text); max-width: 760px; margin-bottom: 16px; }
   .hp-t { width: 100%; border-collapse: collapse; font-size: 14.5px; line-height: 1.35; }
-  .hp-t thead th { font-size: 12px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text); text-align: left; padding: 0 10px 10px 0; border-bottom: 1px solid rgba(26,26,25,0.16); vertical-align: bottom; }
+  .hp-t thead th { font-size: 13px; font-weight: 500; color: var(--text); text-align: left; padding: 0 10px 10px 0; border-bottom: 1px solid rgba(26,26,25,0.16); vertical-align: bottom; }
   .hp-t tbody th, .hp-t tbody td { padding: 10px 10px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; text-align: left; }
   .hp-t tbody tr:last-child > * { border-bottom: 0; }
   .hp-t tbody th { font-weight: 600; color: var(--ink); width: 36%; }
   .hp-t tbody th small { display: block; font-size: 13px; font-weight: 400; color: var(--text); line-height: 1.4; margin-top: 2px; }
   .hp-t td.n { white-space: nowrap; font-variant-numeric: tabular-nums; }
   .hp-t td.b { white-space: nowrap; }
-  .hp-t .bd { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+  .hp-t .bd { display: inline-block; padding: 2px 9px; border-radius: 6px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
   .hp-t .bd.s { background: #DCFBD3; color: var(--green-text); }
   .hp-t .bd.g { background: rgba(31,122,94,0.12); color: #1A1A19; }
   .hp-t .bd.m { background: rgba(29,95,160,0.10); color: var(--blue); }
@@ -102,7 +102,7 @@
     .hp-t tbody tr:last-child { border-bottom: 0; }
     .hp-t tbody th { display: block; width: auto; padding: 0 0 8px; border: 0; }
     .hp-t tbody td { display: inline-grid; grid-template-columns: auto; gap: 1px; padding: 0 18px 0 0; border: 0; font-size: 13.5px; }
-    .hp-t tbody td::before { content: attr(data-l); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
+    .hp-t tbody td::before { content: attr(data-l); font-size: 13px; color: var(--text); }
     .hp-t td.n, .hp-t td.b { white-space: normal; }
   }
   @media (max-width: 600px) {

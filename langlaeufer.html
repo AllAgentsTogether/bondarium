@@ -28,15 +28,15 @@
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
-<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   .sub a, .note a, .prose a { color: var(--line); }
   /* Kennzahlen-Kacheln, je Anleihe eine Zeile */
-  .kpi-head { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin: 6px 0 12px; display: flex; align-items: center; gap: 8px; }
+  .kpi-head { font-size: 13px; color: var(--muted); margin: 6px 0 12px; display: flex; align-items: center; gap: 8px; }
   .kpi-head .tag { margin-right: 0; }
   .fitrow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px 26px; margin: 0 0 26px; }
-  .fititem .k { display: block; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .fititem .k { display: block; font-size: 13px; color: var(--muted); margin-bottom: 4px; }
   .fititem .v { display: block; font-size: 26px; line-height: 1.2; margin-bottom: 5px; font-variant-numeric: tabular-nums; }
   .fititem .d { display: block; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
   /* Chart */
@@ -50,7 +50,7 @@
   table { width: 100%; border-collapse: collapse; margin-top: 24px; font-size: 14px; }
   caption { text-align: left; font-size: 19px; font-weight: 600; margin-bottom: 12px; }
   th, td { text-align: left; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
-  thead th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  thead th { font-size: 13px; color: var(--muted); font-weight: 500; }
   tbody th { font-weight: 400; white-space: nowrap; }
   td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   .facts { min-width: 900px; font-size: 13px; }
@@ -287,7 +287,7 @@ const T = {
   chartAria: "Kursverlauf von sieben Langläufern seit 2019: Bund 0\u00A0% 2050, Bund 4,75\u00A0% 2040, BTP 2,15\u00A0% 2072, Frankreich 0,5\u00A0% 2072, Österreich 0,85\u00A0% 2120, US-Treasury 1,25\u00A0% 2050 und Microsoft 2,675\u00A0% 2060, Wochenschlusskurse in Prozent des Nennwerts",
   chartTitle: "Kurse von sieben Langläufern seit 2019 – Wochenschlusskurse in Prozent des Nennwerts",
   axisY: "↑ Kurs in % des Nennwerts", axisX: "Jahr →",
-  chartHintBase: "KURS IN % DES NENNWERTS", chartHintHover: "LINIE MIT DER MAUS ÜBERFAHREN", chartHintTouch: "LINIE ANTIPPEN",
+  chartHintBase: "Kurs in % des Nennwerts", chartHintHover: "Linie mit der Maus überfahren", chartHintTouch: "Linie antippen",
   bund: "Bund 0\u00A0% 2050", bund2: "Bund 4,75\u00A0% 2040", btp: "BTP 2,15\u00A0% 2072", fr: "Frankreich 0,5\u00A0% 2072", at: "Österreich 0,85\u00A0% 2120", us: "US-Treasury 1,25\u00A0% 2050", ms: "Microsoft 2,675\u00A0% 2060", tipYield: "Rendite", eyebrow: "Langläufer · Sieben Anleihen aus fünf Ländern", asOf: "Stand:", dataAsOf: "Daten-Stand:", outdated: "veraltet",
   mEmission: "Emission", mHoch: "Allzeithoch", mTief: "Allzeittief",
   years: "Jahre", sinceHigh: "seit Hoch"

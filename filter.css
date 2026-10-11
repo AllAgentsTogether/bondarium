@@ -3,7 +3,7 @@
    Bis 02.10.2026 standen diese Regeln im Stilblock der Anleihen-Suche. */
 .filter { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; max-width: 1000px; position: relative; }
 .fgrp { position: relative; }
-.fbtn { font: inherit; font-size: 13px; line-height: 1; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.18); border-radius: 999px; padding: 8px 12px 8px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.fbtn { font: inherit; font-size: 13px; line-height: 1; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.18); border-radius: 6px; padding: 8px 12px 8px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .fbtn::after { content: ""; width: 7px; height: 4px; background: currentColor; clip-path: polygon(0 0, 100% 0, 50% 100%); opacity: 0.55; transition: transform .15s; }
 .fbtn:hover:not(:disabled), .fgrp.offen .fbtn { border-color: var(--green-text); color: var(--green-text); }
 .fgrp.offen .fbtn::after { transform: rotate(180deg); }
@@ -20,14 +20,14 @@
 /* Weitere Filter (UX 29.09.2026): die sechs wichtigsten Filter immer sichtbar, fünf seltener gebrauchte hinter einem Schalter –
    gleiche Filter, gleiche Wirkung; aktive Filter aus der Adresse öffnen den Bereich von selbst */
 .filter:not(.alle) .fgrp.neben { display: none; }
-.fmehr { font: inherit; font-size: 13px; line-height: 1; color: var(--text); background: none; border: 1px dashed rgba(44,44,42,0.32); border-radius: 999px; padding: 8px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.fmehr { font: inherit; font-size: 13px; line-height: 1; color: var(--text); background: none; border: 1px dashed rgba(44,44,42,0.32); border-radius: 6px; padding: 8px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
 .fmehr::before { content: "+"; font-size: 15px; line-height: 0; font-weight: 600; }
 .filter.alle .fmehr::before { content: "−"; }
 .fmehr:hover:not(:disabled) { border-color: var(--green-text); color: var(--green-text); }
 .fmehr:disabled { opacity: 0.5; cursor: default; }
 .fmehr:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
 .fmehr .fanz:empty, .filter.alle .fmehr .fanz { display: none; }   /* aufgeklappt ist kein Filter versteckt – die Zahl stünde sonst neben Filtern, die gar nicht gewählt sind (30.09.2026) */
-.fmehr .fanz { min-width: 18px; padding: 2px 5px; border-radius: 999px; background: var(--green); color: var(--ink); font-size: 12px; font-weight: 600; text-align: center; }
+.fmehr .fanz { min-width: 18px; padding: 2px 5px; border-radius: 6px; background: var(--green); color: var(--ink); font-size: 12px; font-weight: 600; text-align: center; }
 .fpanel { position: absolute; top: calc(100% + 6px); left: 0; z-index: 40; min-width: 240px; width: max-content; max-width: 330px; background: #fff; border: 1px solid var(--rule); border-radius: 8px; box-shadow: 0 6px 24px rgba(44,44,42,0.13); padding: 6px 0 0; font-size: 14px; }
 .fpanel.rechts { left: auto; right: 0; }
 .fpanel fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
@@ -69,7 +69,7 @@
   .fber input { min-height: 44px; font-size: 16px; }   /* 16 px: iOS vergrößert sonst beim Antippen */
 }
 .solide { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 14px; max-width: 1000px; }
-.sol-btn { font: inherit; font-size: 13px; line-height: 1.2; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.18); border-radius: 999px; padding: 7px 14px 7px 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 9px; }
+.sol-btn { font: inherit; font-size: 13px; line-height: 1.2; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.18); border-radius: 6px; padding: 7px 14px 7px 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 9px; }
 .sol-btn { text-align: left; }
 .sol-btn:hover { border-color: var(--green-text); }
 .fclear[hidden] { display: none; }   /* am Touch-Gerät überschrieb display: inline-flex das hidden-Attribut (Knopf stand ohne aktiven Filter da) */

@@ -16,8 +16,8 @@
 <link rel="stylesheet" href="bildwelt2.css">
 <link rel="stylesheet" href="filter.css">
 <link rel="stylesheet" href="bereich.css">
-<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
  <style>
   /* Benutzerbereich „Mein Bondarium“ (seit 30.09.2026, bis 01.10.2026 „Mein Depot“): Anmeldung mit E-Mail und Passwort, Merkliste und
      – seit 01.10.2026 – „Mein Depot“ (Musterdepot mit Nennwert und Zahlungen, Stile .kd-*). Schnittstelle konto.php, Skript konto.js,
@@ -28,7 +28,7 @@
   .kto-lade { font-size: 15px; color: var(--text); min-height: 320px; }
   .kto-hinweis { display: grid; grid-template-columns: 26px 1fr; gap: 10px; align-items: start; max-width: 720px; background: var(--green-tint); border: 1px solid var(--green-line); border-radius: 12px; padding: 11px 14px; margin-bottom: 18px; font-size: 15px; line-height: 1.5; }
   .kto-hinweis[hidden] { display: none; }
-  .kto-hinweis::before { content: "✓"; width: 24px; height: 24px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 700; color: var(--green-text); }
+  .kto-hinweis::before { content: "✓"; width: 24px; height: 24px; border-radius: 50%; background: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 600; color: var(--green-text); }
   .kto-hinweis.fehler { background: #FBE8D8; border-color: rgba(153,60,29,0.35); }
   .kto-hinweis.fehler::before { content: "!"; color: var(--down); }
   .kto-hinweis .merkbtn { margin-left: 6px; vertical-align: 1px; }
@@ -69,11 +69,11 @@
   .kf-status:empty { display: none; }
   .kf-status.fehler { color: var(--down); }
   .kto-post { font-size: 16.5px; line-height: 1.55; margin-bottom: 10px; }
-  .kto-post b { font-weight: 700; overflow-wrap: anywhere; }
+  .kto-post b { font-weight: 600; overflow-wrap: anywhere; }
   .kto-schritte { list-style: none; counter-reset: s; display: grid; gap: 16px; margin: 6px 0 0; padding: 0; }
   .kto-schritte li { counter-increment: s; display: grid; grid-template-columns: 34px 1fr; gap: 2px 14px; font-size: 15.5px; line-height: 1.55; color: var(--text); }
-  .kto-schritte li::before { content: counter(s); grid-row: 1 / span 2; width: 34px; height: 34px; border-radius: 50%; background: var(--green); color: var(--ink); border: 2px solid #1A1A19; box-sizing: border-box; font-weight: 700; font-size: 15px; display: grid; place-items: center; }
-  .kto-schritte b { display: block; font-size: 17px; font-weight: 700; color: var(--ink); }
+  .kto-schritte li::before { content: counter(s); grid-row: 1 / span 2; width: 34px; height: 34px; border-radius: 50%; background: var(--green); color: var(--ink); border: 2px solid #1A1A19; box-sizing: border-box; font-weight: 600; font-size: 15px; display: grid; place-items: center; }
+  .kto-schritte b { display: block; font-size: 17px; font-weight: 600; color: var(--ink); }
   .kto-schritte span { grid-column: 2; }
   .kto-klein { font-size: 13.5px; line-height: 1.6; color: var(--text); margin-top: 20px; padding-top: 14px; border-top: 1px solid var(--rule); }
 
@@ -81,7 +81,7 @@
   .kto-kopf { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 18px; padding: 12px 16px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); font-size: 15px; }
   .kto-kopf p { margin: 0; min-width: 0; overflow-wrap: anywhere; color: var(--text); }
   .kto-kopf b { color: var(--ink); font-weight: 600; }
-  .kto-leise { font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.25); border-radius: 999px; padding: 7px 15px; cursor: pointer; }
+  .kto-leise { font: inherit; font-size: 14px; font-weight: 600; color: var(--ink); background: #fff; border: 1px solid rgba(44,44,42,0.25); border-radius: 6px; padding: 7px 15px; cursor: pointer; }
   .kto-leise:hover { border-color: var(--ink); }
   .kto-leise[disabled] { opacity: 0.6; cursor: default; }
   .kto-status { margin: 18px 0 0; font-size: 14px; color: var(--text); min-height: 1.6em; }
@@ -103,7 +103,7 @@
   .kto-t td.mf-leer { padding: 18px 12px; text-align: left; font-size: 14px; color: var(--text); white-space: normal; }
   .kto-t { width: 100%; min-width: 940px; border-collapse: collapse; margin-top: 10px; font-size: 13.5px; }   /* seit 02.10.2026 abends die Spalten des Mockups „Mein Bondarium“ (vorher alle Spalten der Suche); schmaler Bildschirm: querwischen */
   .kto-t th, .kto-t td { padding: 13px 9px 13px 0; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
-  .kto-t thead th { font-size: 11px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; color: var(--text); border-bottom: 1px solid rgba(26,26,25,0.35); white-space: nowrap; padding-top: 8px; padding-bottom: 8px; vertical-align: bottom; }
+  .kto-t thead th { font-size: 13px; font-weight: 500; color: var(--text); border-bottom: 1px solid rgba(26,26,25,0.35); white-space: nowrap; padding-top: 8px; padding-bottom: 8px; vertical-align: bottom; }
   .kto-t .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .kto-t thead .num .sortbtn { flex-direction: row-reverse; }
   .kto-t tbody th { font-weight: 400; line-height: 1.4; min-width: 230px; max-width: 340px; }
@@ -122,14 +122,14 @@
   .kto-t td.leise { color: var(--text); }
   .kto-t .fraglich { color: var(--text); border-bottom: 1px dotted currentColor; cursor: help; }
   .kto-t td:last-child, .kto-t th:last-child { padding-right: 0; text-align: right; width: 1%; }
-  .kto-x { font: inherit; font-size: 13px; line-height: 1; color: var(--text); background: none; border: 1px solid rgba(44,44,42,0.22); border-radius: 999px; width: 28px; height: 28px; padding: 0; cursor: pointer; display: inline-grid; place-items: center; }
+  .kto-x { font: inherit; font-size: 13px; line-height: 1; color: var(--text); background: none; border: 1px solid rgba(44,44,42,0.22); border-radius: 50%; width: 28px; height: 28px; padding: 0; cursor: pointer; display: inline-grid; place-items: center; }
   .kto-x span { display: none; }
   .kto-x:hover { color: var(--down); border-color: var(--down); }
   .kto-x[disabled] { opacity: 0.5; cursor: default; }
   .kto-t td:last-child { white-space: nowrap; }
   /* Knopf „Zu meinem Depot hinzufügen“ (seit 01.10.2026): rund wie das ×, damit die Tabelle so breit bleibt wie bisher – dafür ist
      die Namensspalte 26 px schmaler und der Spaltenabstand 1 px kleiner. Am Handy steht der Knopf ausgeschrieben in der Karte. */
-  .kto-dep { font: inherit; font-size: 16px; font-weight: 600; line-height: 1; color: var(--green-text); background: none; border: 1px solid currentColor; border-radius: 999px; width: 28px; height: 28px; padding: 0; margin-right: 4px; cursor: pointer; white-space: nowrap; display: inline-grid; place-items: center; vertical-align: top; }
+  .kto-dep { font: inherit; font-size: 16px; font-weight: 600; line-height: 1; color: var(--green-text); background: none; border: 1px solid currentColor; border-radius: 50%; width: 28px; height: 28px; padding: 0; margin-right: 4px; cursor: pointer; white-space: nowrap; display: inline-grid; place-items: center; vertical-align: top; }
   .kto-dep:hover { background: var(--green-tint-2); }
   .kto-dep:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   .kto-dep .l { display: none; }
@@ -147,7 +147,7 @@
   .kto-konto summary { cursor: pointer; font-weight: 600; color: var(--ink); width: max-content; max-width: 100%; }
   .kto-konto summary:focus-visible { outline: 2px solid var(--line); outline-offset: 3px; border-radius: 3px; }
   .kto-konto p { max-width: 640px; line-height: 1.6; margin-top: 10px; }
-  .kto-weg { font: inherit; font-size: 14px; font-weight: 600; color: #fff; background: var(--down); border: 1px solid var(--down); border-radius: 999px; padding: 8px 16px; cursor: pointer; }
+  .kto-weg { font: inherit; font-size: 14px; font-weight: 600; color: #fff; background: var(--down); border: 1px solid var(--down); border-radius: 6px; padding: 8px 16px; cursor: pointer; }
   .kto-weg:hover { background: #A2561C; }
   .kto-weg:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
   .kto-weg[disabled] { opacity: 0.6; cursor: default; }
@@ -170,7 +170,7 @@
   .kto-reiter button:hover { color: var(--ink); }
   .kto-reiter button[aria-selected="true"] { color: var(--ink); background: #fff; border-bottom-color: #1A1A19; }
   .kto-reiter button:focus-visible { outline: 2px solid var(--line); outline-offset: -2px; }
-  .kto-reiter i { font-style: normal; font-size: 12.5px; font-weight: 700; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: #F0EFEA; color: var(--ink); display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; }
+  .kto-reiter i { font-style: normal; font-size: 12.5px; font-weight: 600; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: #F0EFEA; color: var(--ink); display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; }
   .kto-reiter i:empty { display: none; }
   .kto-reiter button[aria-selected="true"] i { background: var(--green); }
   .kd[hidden] { display: none; }
@@ -189,21 +189,21 @@
   /* Mehrere Musterdepots (seit 02.10.2026): Pillen wie die Anleihen-Schalter über dem Schaubild, das offene dunkel */
   .kd-wahlleiste { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 18px; margin: 14px 0 0; }
   .kd-depots { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-  .kd-dw { font: inherit; font-size: 15px; font-weight: 600; line-height: 1.2; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.25); border-radius: 999px; padding: 8px 10px 8px 15px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; white-space: nowrap; max-width: 100%; }
+  .kd-dw { font: inherit; font-size: 15px; font-weight: 600; line-height: 1.2; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.25); border-radius: 6px; padding: 8px 10px 8px 15px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; white-space: nowrap; max-width: 100%; }
   .kd-dw > span { overflow: hidden; text-overflow: ellipsis; }
   .kd-dw:hover { border-color: var(--ink); }
   .kd-dw:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
-  .kd-dw i { font-style: normal; font-size: 12.5px; font-weight: 700; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: #F0EFEA; color: var(--ink); display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; flex: none; }
+  .kd-dw i { font-style: normal; font-size: 12.5px; font-weight: 600; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: #F0EFEA; color: var(--ink); display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; flex: none; }
   .kd-dw[aria-current="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
   .kd-dw[aria-current="true"] i { background: var(--green); color: var(--ink); }
   .kd-dw.neu { color: var(--green-text); border-style: dashed; border-color: var(--green-text); padding: 8px 15px; background: none; }
   .kd-dw.neu:hover { background: var(--green-tint); }
   .kd-dw-akt { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; font-size: 14px; }
   .kd-dw-akt .kto-textbtn { font-size: 14px; }
-  .kd-dw-akt .kto-weg { font: inherit; font-size: 14px; font-weight: 600; color: #fff; background: var(--down); border: 0; border-radius: 999px; padding: 8px 15px; cursor: pointer; }
-  .kd-dw-form { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--green-text); border-radius: 999px; padding: 4px 6px; max-width: 100%; }
+  .kd-dw-akt .kto-weg { font: inherit; font-size: 14px; font-weight: 600; color: #fff; background: var(--down); border: 0; border-radius: 6px; padding: 8px 15px; cursor: pointer; }
+  .kd-dw-form { display: inline-flex; align-items: center; gap: 8px; background: #fff; border: 1px solid var(--green-text); border-radius: 6px; padding: 4px 6px; max-width: 100%; }
   .kd-dw-form input { font: inherit; font-size: 15px; border: 0; outline: 0; padding: 5px 10px; width: 220px; min-width: 0; background: none; color: var(--ink); }
-  .kd-dw-form .go { border: 0; padding: 7px 14px; font-size: 14px; box-shadow: none; border-radius: 999px; cursor: pointer; font-family: inherit; }
+  .kd-dw-form .go { border: 0; padding: 7px 14px; font-size: 14px; box-shadow: none; border-radius: 6px; cursor: pointer; font-family: inherit; }
   .kd-dw-form .kto-textbtn { font-size: 14px; margin-right: 10px; }
   .kd-wahl-status { margin: 8px 0 0; }
   .kd-wahl-status:empty { display: none; }
@@ -230,7 +230,7 @@
   .kd-teilleiste[hidden] { display: none; }
   .kd-teilleiste ~ .table-scroll .kd-t { margin-top: 8px; }
   .kd-t th, .kd-t td { padding: 11px 14px 11px 0; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: middle; }
-  .kd-t thead th { font-size: 11px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; color: var(--text); border-bottom: 1px solid rgba(26,26,25,0.35); white-space: nowrap; }
+  .kd-t thead th { font-size: 13px; font-weight: 500; color: var(--text); border-bottom: 1px solid rgba(26,26,25,0.35); white-space: nowrap; }
   .kd-t .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .kd-t tbody th, .kd-t tfoot th { font-weight: 400; line-height: 1.4; }
   .kd-t tbody th a { font-weight: 600; color: var(--ink); text-decoration: none; }
@@ -258,16 +258,16 @@
   .kd-fx b { color: var(--ink); font-weight: 600; }
   .kd-stern { font-weight: 600; color: var(--ink); margin-left: 1px; cursor: help; }
   .kd-fx[hidden] { display: none; }
-  .kd-t tfoot th, .kd-t tfoot td { font-weight: 700; border-bottom: 0; border-top: 1px solid rgba(26,26,25,0.35); padding-top: 12px; }
+  .kd-t tfoot th, .kd-t tfoot td { font-weight: 600; border-bottom: 0; border-top: 1px solid rgba(26,26,25,0.35); padding-top: 12px; }
   .kd-t tfoot small { font-weight: 400; }
   .kd-t td:last-child, .kd-t th:last-child { padding-right: 0; text-align: right; width: 1%; }
-  h2.kd-h3 { font-size: 22px; font-weight: 700; line-height: 1.25; letter-spacing: -0.015em; margin: 34px 0 6px; }   /* seit 02.10.2026 Ebene 2 (vorher h3), Aussehen unverändert */
+  h2.kd-h3 { font-size: 22px; font-weight: 500; line-height: 1.25; letter-spacing: -0.005em; margin: 34px 0 6px; }   /* seit 02.10.2026 Ebene 2 (vorher h3), Aussehen unverändert */
   .kd-zsum { font-size: 16px; line-height: 1.6; color: var(--text); max-width: 760px; margin: 0; }
   .kd-zsum:empty { display: none; }
   .kd-zsum b { color: var(--ink); font-weight: 600; white-space: nowrap; }
   .kd-karte { --scroll-bg: #fff; background: #fff; border: 1px solid #E4E3DF; border-radius: 16px; box-shadow: var(--shadow); padding: 16px 20px 14px; margin: 16px 0 0; }
   .kd-karte figcaption { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 16px; margin-bottom: 10px; }
-  .kd-karte figcaption b { font-size: 18px; font-weight: 700; }
+  .kd-karte figcaption b { font-size: 18px; font-weight: 600; }
   .kd-karte figcaption span { font-size: 13.5px; color: var(--text); }
   .kd-svg { display: block; max-width: none; }
   .kd-svg text { font-family: var(--sans); }
@@ -275,7 +275,7 @@
   .kd-svg .kd-a { font-size: 13px; font-weight: 500; fill: #1A1A19; }
   .kd-svg .kd-b { font-size: 12px; fill: #55544F; }
   .kd-svg.eng .kd-a { font-size: 12px; }
-  .kd-svg .kd-r { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; fill: #55544F; }
+  .kd-svg .kd-r { font-size: 13px; font-weight: 500; fill: #55544F; }
   .kd-svg .kd-p { font-size: 12px; font-weight: 600; fill: #157C00; }
   .kd-svg .kd-m { font-size: 12px; font-weight: 600; fill: #A2561C; }
   .kd-leg { list-style: none; display: flex; flex-wrap: wrap; gap: 5px 18px; margin: 0 0 14px; padding: 0; font-size: 13px; color: var(--text); }
@@ -283,7 +283,7 @@
   .kd-leg { gap: 6px 8px; }
   .kd-leg-h { font-size: 12.5px; line-height: 1.5; color: var(--text); margin: 0 0 8px; }
   .kd-leg-h[hidden] { display: none; }
-  .kd-wahl { font: inherit; font-size: 13px; line-height: 1.3; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.25); border-radius: 999px; padding: 5px 12px 5px 9px; display: inline-flex; align-items: center; gap: 7px; text-align: left; cursor: pointer; }
+  .kd-wahl { font: inherit; font-size: 13px; line-height: 1.3; color: var(--ink); background: #fff; border: 1px solid rgba(26,26,25,0.25); border-radius: 6px; padding: 5px 12px 5px 9px; display: inline-flex; align-items: center; gap: 7px; text-align: left; cursor: pointer; }
   .kd-wahl:hover { border-color: var(--ink); }
   .kd-wahl:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   .kd-wahl[aria-pressed="false"] { color: var(--text); background: none; border-style: dashed; text-decoration: line-through; }
@@ -295,11 +295,11 @@
   .kd-einzeln { margin-top: 18px; }
   .kd-z { width: 100%; max-width: 760px; border-collapse: collapse; margin-top: 10px; font-size: 14.5px; }
   .kd-z th, .kd-z td { padding: 9px 14px 9px 0; border-bottom: 1px solid var(--rule); text-align: left; font-variant-numeric: tabular-nums; }
-  .kd-z thead th { font-size: 11px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; color: var(--text); border-bottom: 1px solid rgba(26,26,25,0.35); }
+  .kd-z thead th { font-size: 13px; font-weight: 500; color: var(--text); border-bottom: 1px solid rgba(26,26,25,0.35); }
   .kd-z tbody th { font-weight: 600; }
   .kd-z .num { text-align: right; white-space: nowrap; padding-right: 0; }
   .kd-z tfoot td { font-weight: 600; border-bottom: 0; }
-  .kd-z tr.kd-jz > * { background: #F3F2EE; font-weight: 700; border-bottom: 0; }
+  .kd-z tr.kd-jz > * { background: #F3F2EE; font-weight: 600; border-bottom: 0; }
   .kd-z tr.rz > :first-child { padding-left: 8px; }
   .kd-z tr.rz > :last-child { padding-right: 8px; }
   .kd-hinweis { font-size: 13px; line-height: 1.6; color: var(--text); max-width: 820px; margin: 14px 0 0; }
@@ -324,7 +324,7 @@
     .kto-t tbody tr:hover > :is(td, th) { background: none; }
     .kto-t tbody th, .kto-t tbody td { display: block; padding: 0; border: 0; text-align: left; white-space: normal; min-width: 0; width: auto; max-width: none; }
     .kto-t tbody th { grid-column: 1 / -1; font-size: 15.5px; }
-    .kto-t tbody td[data-l]::before { content: attr(data-l); display: block; font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); }
+    .kto-t tbody td[data-l]::before { content: attr(data-l); display: block; font-size: 13px; font-weight: 500; color: var(--text); }
     .kto-t tbody td[data-l] { font-size: 15px; font-weight: 600; text-align: left; }
     .kto-t tbody td small { font-weight: 400; }
     .kto-t tbody td small[data-p]::before { content: attr(data-p) "\00a0"; }   /* Vorsatz der zweiten Zeile auf der Karte (seit 03.10.2026) */
@@ -344,7 +344,7 @@
     .kd-t tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 12px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); padding: 14px 14px 12px; margin-bottom: 12px; }
     .kd-t tbody th, .kd-t tbody td, .kd-t tfoot th, .kd-t tfoot td { display: block; padding: 0; border: 0; text-align: left; white-space: normal; width: auto; }
     .kd-t tbody th, .kd-t tfoot th { grid-column: 1 / -1; font-size: 15.5px; }
-    .kd-t td[data-l]::before { content: attr(data-l); display: block; font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); margin-bottom: 2px; }
+    .kd-t td[data-l]::before { content: attr(data-l); display: block; font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
     .kd-t td[data-l] { font-size: 15px; font-weight: 600; }
     .kd-t td:empty { display: none; }
     .kd-t td[data-l="Nennwert"] { grid-column: 1 / -1; }

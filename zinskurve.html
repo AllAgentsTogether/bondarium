@@ -28,8 +28,8 @@
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
-<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Zinskurve seit 1972 (neu 25.09.2026, Menü „Zinsen“ (bis 29.09.2026 „Einordnen“)): Heute-Kacheln, Chart 10 J. − 2 J. (Deutschland, USA),
      drei Erklärkarten im Look von „Risiko kennen“. Grundregeln in base.css. */
@@ -37,11 +37,11 @@
   /* Heute: zwei Kacheln mit dem aktuellen Abstand */
   .heute { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 26px 0 30px; }
   .hk { background: #fff; border: 1px solid rgba(26,26,25,0.08); border-radius: 14px; padding: 18px 20px 16px; box-shadow: var(--shadow); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 18px; align-items: center; }
-  .hk-l { grid-column: 1 / -1; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .hk-l { grid-column: 1 / -1; font-size: 13px; font-weight: 500; color: var(--text); display: flex; align-items: center; gap: 8px; }
   .hk-l .sw { width: 14px; height: 4px; border-radius: 2px; background: var(--c); }
   .hk-v { font-size: 40px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink); }
   .hk-v small { font-size: 14px; font-weight: 600; letter-spacing: 0; color: var(--text); margin-left: 6px; }
-  .hk-s { justify-self: end; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; background: rgba(26,26,25,0.07); color: var(--ink); }
+  .hk-s { justify-self: end; font-size: 13px; font-weight: 500; padding: 6px 10px; border-radius: 6px; background: rgba(26,26,25,0.07); color: var(--ink); }
   .hk-s.steil { background: rgba(31,122,94,0.14); color: var(--up); }
   .hk-s.invers { background: rgba(153,60,29,0.12); color: var(--down); }
   .hk-d { grid-column: 1 / -1; font-size: 13px; color: var(--text); margin-top: 6px; }
@@ -72,14 +72,14 @@
   /* Karte 2: drei Zeilen steil / flach / invers */
   .wz { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 10px 14px; align-items: start; padding: 11px 14px; border-radius: 10px; background: rgba(26,26,25,0.045); font-size: 14px; line-height: 1.4; }
   .wz + .wz { margin-top: 8px; }
-  .wz .w1 { font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; font-size: 12.5px; padding-top: 2px; }
+  .wz .w1 { font-weight: 500; font-size: 13px; padding-top: 2px; }
   .wz.steil .w1 { color: var(--up); } .wz.flach .w1 { color: var(--text); } .wz.invers .w1 { color: var(--down); }
   .wz .w2 { color: var(--ink); } .wz .w2 b { font-weight: 600; }
 
   /* Karte 3: Tabelle invers → Rezession */
   .rz { width: 100%; border-collapse: collapse; font-size: 14px; }
   .rz th, .rz td { text-align: left; padding: 7px 8px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
-  .rz th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .rz th { font-size: 13px; color: var(--muted); font-weight: 500; }
   .rz td:first-child { font-variant-numeric: tabular-nums; white-space: nowrap; }
   .rz td.ja { color: var(--down); font-weight: 600; } .rz td.nein { color: var(--up); font-weight: 600; }
   @media (max-width: 600px) { .wz { grid-template-columns: 1fr; gap: 4px; } .rz { font-size: 13px; } }

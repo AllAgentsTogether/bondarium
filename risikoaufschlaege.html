@@ -28,8 +28,8 @@
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
-<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Risikoaufschläge (neu 26.09.2026, Menü „Zinsen“ (bis 29.09.2026 „Einordnen“)): vier Heute-Kacheln, zwei Charts
      (Euro-Staaten gegen Bund seit 1991; US-Unternehmen hoher Bonität gegen US-Staatsanleihe seit 1984 – bis 30.09.2026 Moody's Aaa/Baa seit 1953, entfallen),
@@ -39,7 +39,7 @@
   /* Heute: vier Kacheln (Muster realzins.html) */
   .heute { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 26px 0 30px; }
   .hk { background: #fff; border: 1px solid rgba(26,26,25,0.08); border-radius: 14px; padding: 16px 18px 14px; box-shadow: var(--shadow); display: grid; gap: 4px; align-content: start; min-width: 0; }
-  .hk-l { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .hk-l { font-size: 13px; font-weight: 500; color: var(--text); display: flex; align-items: center; gap: 8px; }
   .hk-l .sw { width: 14px; height: 4px; border-radius: 2px; background: var(--c); flex: none; }
   .hk-v { font-size: 34px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--ink); }
   .hk-v small { font-size: 13px; font-weight: 600; letter-spacing: 0; color: var(--text); margin-left: 5px; }
@@ -80,7 +80,7 @@
   /* Tabellen in den Karten (Muster realzins.html) */
   .rt { width: 100%; border-collapse: collapse; font-size: 14px; }
   .rt th, .rt td { text-align: left; padding: 7px 8px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
-  .rt th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .rt th { font-size: 13px; color: var(--muted); font-weight: 500; }
   .rt td.num, .rt th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .rt td.plus { color: var(--up); font-weight: 600; } .rt td.minus { color: var(--down); font-weight: 600; }
   .rt td small { display: block; font-size: 12px; color: var(--text); font-weight: 400; }

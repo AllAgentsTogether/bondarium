@@ -28,8 +28,8 @@
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
-<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Deine erste Anleihe (24.09.2026; seit 29.09.2026 neun Schritte + Checkliste): Erklärkarten nach dem Gestaltungssystem (base.css); hier nur die eigenen Bausteine. */
   .sb-f strong { color: var(--ink); font-weight: 600; }
@@ -62,14 +62,14 @@
   .q-n small { display: block; font-size: 12px; font-weight: 400; color: var(--text); margin-top: 2px; }
   .q-k { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
   .q-k span { background: #fff; border-radius: 8px; padding: 6px 8px; font-size: 16px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .q-k small { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); }
+  .q-k small { display: block; font-size: 13px; font-weight: 500; color: var(--text); }
   .q-s { font-size: 12.5px; color: var(--text); line-height: 1.4; margin-top: auto; }
   .q-s b { display: block; font-size: 14px; font-weight: 600; }
   .q-gut .q-s b { color: var(--up); } .q-schlecht .q-s b { color: var(--down); }
   /* 5: Ordermaske */
   .order { background: #fff; border: 1px solid rgba(26,26,25,0.12); border-radius: 12px; padding: 14px 14px 16px; box-shadow: 0 4px 14px rgba(30,45,80,0.06); }
   .or-h { display: flex; justify-content: space-between; align-items: baseline; font-size: 15px; font-weight: 600; color: var(--ink); padding-bottom: 10px; border-bottom: 1px solid var(--rule); margin-bottom: 4px; }
-  .or-h span, .abr-h span { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); }
+  .or-h span, .abr-h span { font-size: 13px; font-weight: 500; color: var(--text); }
   .or-r { display: grid; grid-template-columns: 116px minmax(0, 1fr); align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(26,26,25,0.06); }
   .or-l { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text); }
   .or-l i { width: 20px; height: 20px; border-radius: 50%; background: var(--green); color: var(--ink); font-style: normal; font-size: 12px; font-weight: 600; display: grid; place-items: center; flex: none; }
@@ -100,7 +100,7 @@
   .fl-stand { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; font-size: 14px; color: var(--text); }
   .fl-stand b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
   .fl-stand[hidden], .fl-ok { display: none; }
-  .fl-btn { font: inherit; font-size: 13px; font-weight: 600; color: var(--blue); background: #fff; border: 1px solid rgba(29,163,0,0.45); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+  .fl-btn { font: inherit; font-size: 13px; font-weight: 600; color: var(--blue); background: #fff; border: 1px solid rgba(29,163,0,0.45); border-radius: 6px; padding: 5px 12px; cursor: pointer; }
   @media (pointer: coarse) { .fl-btn { min-height: 44px; padding: 0 16px; } .k-text .sb-bon { display: inline-flex; align-items: center; min-height: 44px; margin-top: 0; } }
   .fl-btn:hover { background: #FFFFFF; }
   .fl-btn:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }

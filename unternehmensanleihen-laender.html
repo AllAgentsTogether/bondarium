@@ -28,8 +28,8 @@
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
-<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Länderseite (Top 10 je Land). Gemeinsamer Code: top10-tabellen.js (Tabelle, Karte, Knöpfe) – seit 30.09.2026 auch für
      anleihen-laender.html/unternehmensanleihen-laender.html; Knöpfe button.lbtn, .kpis, .sortbtn, .more: base.css. */
@@ -51,7 +51,7 @@
   .map svg.zoom .hit { stroke-width: 2.5; }
   .maptip { position: absolute; pointer-events: none; font-size: 12px; line-height: 1.4; padding: 3px 8px; border-radius: 5px; background: var(--ink); color: #fff; white-space: nowrap; transform: translate(-50%, calc(-100% - 10px)); z-index: 2; }
   .maptip[hidden] { display: none; }
-  .maphint { position: absolute; left: 0; bottom: 4px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); pointer-events: none; }
+  .maphint { position: absolute; left: 0; bottom: 4px; font-size: 13px; color: var(--muted); pointer-events: none; }
   .maphint .hint-touch { display: none; }
   @media (hover: none) {  .maphint .hint-hover { display: none; }  .maphint .hint-touch { display: inline; } }
   .map:not(.geladen) .maphint { display: none; }
@@ -62,7 +62,7 @@
   #land-titel { scroll-margin-top: 16px; }
   table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
   th, td { text-align: left; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
-  thead th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  thead th { font-size: 13px; color: var(--muted); font-weight: 500; }
   td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
   #kpis thead th:nth-child(2) { width: 18.5%; }   /* feste Breite: Spalten springen beim Länderwechsel nicht */
   .kpis th[scope=row] { font-weight: 400; white-space: nowrap; }

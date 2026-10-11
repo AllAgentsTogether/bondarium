@@ -28,15 +28,15 @@
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
-<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* ETF oder Anleihe (25.09.2026, Korrekturen 26.09.2026): vier Erklärkarten nach dem Gestaltungssystem (base.css); hier nur die eigenen Bausteine (.sb-go seit 30.09.2026 zentral in base.css). */
   /* Gegenüberstellung in zwei Spalten */
   .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .vs > div { border-radius: 12px; padding: 12px 14px; background: var(--ap-soft); }
   .vs > div.e { background: #FBE8D8; }
-  .vs .vk { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; color: var(--green-text); }
+  .vs .vk { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; color: var(--green-text); }
   .vs .e .vk { color: var(--orange-text); }
   .vs p { font-size: 14px; line-height: 1.45; color: var(--ap-ink); }
   .vs p + p { margin-top: 6px; }
@@ -63,11 +63,11 @@
   /* Entscheidungstabelle */
   .wahl { border-collapse: collapse; width: 100%; font-size: 15px; }
   .wahl th, .wahl td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
-  .wahl thead th { font-size: 12.5px; font-weight: 600; color: var(--text); letter-spacing: 0.08em; text-transform: uppercase; }
+  .wahl thead th { font-size: 13px; font-weight: 500; color: var(--text); }
   .wahl thead th:last-child { white-space: nowrap; }
   .wahl tbody th { font-weight: 600; color: var(--ink); }
   .wahl tbody tr:last-child th, .wahl tbody tr:last-child td { border-bottom: 0; }
-  .pick { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+  .pick { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 13px; font-weight: 600; white-space: nowrap; }
   .pick.anleihe { background: var(--green-tint-2); color: var(--ink); }
   .pick.etf { background: #FBE8D8; color: var(--orange-text); }
   .pick.beides { background: rgba(26,26,25,0.07); color: var(--ink); }
@@ -85,7 +85,7 @@
   #nachteile .pi { color: var(--orange-text); }
   /* 1 – Korb */
   .korb { border: 2px solid var(--green-text); border-radius: 14px; padding: 12px; background: var(--soft); }
-  .korb-k { font-size: 13px; font-weight: 600; color: var(--green-text); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+  .korb-k { font-size: 13px; font-weight: 500; color: var(--green-text); margin-bottom: 10px; }
   .korb-t { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
   .korb-t span { display: block; background: #fff; border-radius: 8px; padding: 8px 6px; font-size: 12.5px; font-weight: 600; text-align: center; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .korb-t .mehr { grid-column: 1 / -1; background: var(--green); color: var(--ink); }
@@ -100,7 +100,7 @@
   .dp-bar span { color: #fff; font-size: 14px; font-weight: 600; white-space: nowrap; }
   /* 5 – Steckbrief */
   .pass { background: var(--soft); border-radius: 12px; padding: 14px 18px 12px; }
-  .pass-k { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); margin-bottom: 6px; display: flex; justify-content: space-between; }
+  .pass-k { font-size: 13px; font-weight: 500; color: var(--green-text); margin-bottom: 6px; display: flex; justify-content: space-between; }
   .pass-k span { color: var(--text); letter-spacing: 0.04em; font-weight: 600; }
   .pass dl div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--green-line); }
   .pass dt { font-size: 14px; color: var(--text); }

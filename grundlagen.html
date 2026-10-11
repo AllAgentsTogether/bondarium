@@ -28,8 +28,8 @@
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
-<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Grundlagen – neu 24.09.2026, neu gefasst 04.10.2026: „Anleihen einfach erklärt“. Sprungleiste, Karten (.kap), Merksatz und
      Schaubild-Kasten kommen aus base.css/bildwelt2.css; hier nur, was diese Seite braucht. */
@@ -44,7 +44,7 @@
   .kap > .k-text { grid-area: text; }
   .kap > .merk { grid-area: merk; margin-top: 0; }
   .kap > details.mehr-k { grid-area: mehr; }
-  figure.k-bild figcaption { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #157C00; margin-bottom: 12px; }
+  figure.k-bild figcaption { font-size: 13px; font-weight: 500; color: #157C00; margin-bottom: 12px; }
   svg.sb { display: block; width: 100%; max-width: 440px; height: auto; overflow: visible; }
   svg.sb text { font-variant-numeric: tabular-nums; }
   svg.sb.klein { max-width: 380px; margin: 4px 0 12px; }
@@ -55,7 +55,7 @@
   .sb-bsp { font-size: 14px; line-height: 1.4; color: var(--text); margin: 0 0 8px; max-width: 440px; }
   .nw { white-space: nowrap; }
   /* i-Kreis zum Glossar (wie anleihe.html) */
-  a.hilf { display: inline-grid; place-items: center; position: relative; width: 18px; height: 18px; margin-left: 5px; border-radius: 50%; border: 1px solid rgba(26,26,25,0.3); font-size: 11px; font-weight: 700; line-height: 1; color: var(--text); text-decoration: none; vertical-align: 1px; }
+  a.hilf { display: inline-grid; place-items: center; position: relative; width: 18px; height: 18px; margin-left: 5px; border-radius: 50%; border: 1px solid rgba(26,26,25,0.3); font-size: 11px; font-weight: 600; line-height: 1; color: var(--text); text-decoration: none; vertical-align: 1px; }
   a.hilf:hover { border-color: var(--ink); color: var(--ink); }
   a.hilf:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   a.hilf::after { content: ""; position: absolute; inset: -4px; }
@@ -81,7 +81,7 @@
   .sb2 dd { margin: 0; font-size: 16px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 10px; text-align: right; }
   .sb2 dd.zwei { flex-direction: column; align-items: flex-end; gap: 0; padding: 6px 0; }
   .sb2 dd small { font-size: 13px; font-weight: 400; color: var(--text); }
-  .sb2 dd.gr { color: #157C00; font-weight: 700; }
+  .sb2 dd.gr { color: #157C00; font-weight: 600; }
   .sb2 .spark { width: 64px; height: 22px; flex: none; }
   /* 3 – Kaufkurs ausprobieren (nur mit Skript sichtbar) */
   .kaufkurs { margin: 14px 0 6px; padding: 14px 16px; border-radius: 12px; background: var(--bg, #FBFAF7); border: 1px solid #E4E3DF; max-width: 440px; }
@@ -128,7 +128,7 @@
     .vgl3 thead { display: none; }
     .vgl3 tr { padding: 8px 0; border-bottom: 1px solid rgba(44,44,42,0.10); }
     .vgl3 th, .vgl3 td { border: 0; padding: 2px 0; }
-    .vgl3 tbody th { width: auto; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+    .vgl3 tbody th { width: auto; font-size: 13px; margin-bottom: 4px; }
     .vgl3 td { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 8px; }
     .vgl3 td::before { content: attr(data-l); font-weight: 600; color: var(--text); }
     .vgl3 td:nth-child(3) { background: none; } .vgl3 td:nth-child(3)::before { color: #157C00; }

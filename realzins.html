@@ -28,8 +28,8 @@
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
-<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Realzins seit 1970 (neu 26.09.2026, Menü „Zinsen“ (bis 29.09.2026 „Einordnen“)): vier Heute-Kacheln, zwei Charts (Zins und Inflation;
      Realzins), Schalter Jahre/Monate, vier Erklärkarten im Look von „Zinskurve seit 1972“. Grundregeln in base.css.
@@ -38,7 +38,7 @@
   /* Heute: vier Kacheln */
   .heute { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin: 26px 0 30px; }
   .hk { background: #fff; border: 1px solid rgba(26,26,25,0.08); border-radius: 14px; padding: 16px 18px 14px; box-shadow: var(--shadow); display: grid; gap: 4px; align-content: start; min-width: 0; }
-  .hk-l { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .hk-l { font-size: 13px; font-weight: 500; color: var(--text); display: flex; align-items: center; gap: 8px; }
   .hk-l .sw { width: 14px; height: 4px; border-radius: 2px; background: var(--c); flex: none; }
   .hk-l .sw.gestr { background: repeating-linear-gradient(90deg, var(--c) 0 4px, transparent 4px 7px); }
   .hk-v { font-size: 34px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--ink); }
@@ -59,7 +59,7 @@
   .sw-line { width: 20px; height: 3px; border-radius: 2px; background: var(--c, var(--line)); }
   .sw-area { width: 20px; height: 12px; border-radius: 2px; background: var(--c); border: 1px solid var(--r, transparent); box-sizing: border-box; }
   .zeit { display: inline-flex; gap: 6px; margin-left: auto; flex: none; }
-  .zeit button { font: inherit; font-size: 12.5px; font-weight: 600; min-height: 32px; padding: 5px 13px; border-radius: 999px; border: 1px solid rgba(26,26,25,0.25); background: #fff; color: var(--ink); cursor: pointer; }
+  .zeit button { font: inherit; font-size: 12.5px; font-weight: 600; min-height: 32px; padding: 5px 13px; border-radius: 6px; border: 1px solid rgba(26,26,25,0.25); background: #fff; color: var(--ink); cursor: pointer; }
   .zeit button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: #fff; }
   .zeit button:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   svg { width: 100%; height: auto; display: block; }
@@ -76,7 +76,7 @@
   /* Rechnungen und Tabellen in den Karten */
   .rt { width: 100%; border-collapse: collapse; font-size: 14px; }
   .rt th, .rt td { text-align: left; padding: 7px 8px 7px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
-  .rt th { font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .rt th { font-size: 13px; color: var(--muted); font-weight: 500; }
   .rt td.num, .rt th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .rt td.plus { color: var(--up); font-weight: 600; } .rt td.minus { color: var(--down); font-weight: 600; }
   .rt tr.sum td { font-weight: 600; border-bottom: 0; padding-top: 10px; }

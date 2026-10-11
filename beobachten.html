@@ -28,8 +28,8 @@
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
 <link rel="stylesheet" href="bildwelt2.css">
-<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
 <style>
   /* Zinsen (Übersicht): Kacheln (.hub/.hub-card), Aufklapper und Balken stehen seit 30.09.2026 zentral in base.css.
      Schrift der Kachel-Schaubilder per CSS statt je <text>-Attribut. */
@@ -52,17 +52,17 @@
   .hub-card > *:not(.hub-img) { margin-left: 18px; margin-right: 18px; }
   .hub-card { --bild: 132px; background: linear-gradient(to bottom, #F3F2EC var(--bild), var(--rule) var(--bild) calc(var(--bild) + 1px), #fff calc(var(--bild) + 1px)); }
   .hub-img { width: 100%; height: var(--bild); margin: 0 0 17px; padding: 16px 0 8px; }
-  .hub-card h2 { font-size: 18px; font-weight: 650; line-height: 1.3; letter-spacing: -0.01em; }
+  .hub-card h2 { font-size: 18px; font-weight: 500; line-height: 1.3; letter-spacing: -0.005em; }
   .hub-card .desc { margin-top: 6px; font-size: 14px; line-height: 1.5; color: var(--text); }
   /* Pfeil-Knopf oben rechts im Bildfeld: weiß, beim Überfahren Neon */
-  .hub-card::after { content: "→" / ""; position: absolute; top: 12px; right: 12px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1px solid var(--rule); color: var(--green-text); font-size: 16px; font-weight: 700; line-height: 1; transition: background-color .15s ease, color .15s ease, transform .15s ease; }
+  .hub-card::after { content: "→" / ""; position: absolute; top: 12px; right: 12px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1px solid var(--rule); color: var(--green-text); font-size: 16px; font-weight: 600; line-height: 1; transition: background-color .15s ease, color .15s ease, transform .15s ease; }
   .hub-card:hover::after { background: var(--green); border-color: var(--green); color: var(--ink); transform: translateX(2px); }
 
   /* Breite Hauptkachel (.next): Bild links, Text Mitte, großer Pfeil rechts */
   .hub-card.next { margin-top: 10px; padding: 26px 88px 26px 0; grid-template-columns: 210px minmax(0, 1fr); column-gap: 28px; row-gap: 6px; border-color: var(--rule); background: linear-gradient(to right, #F3F2EC 210px, var(--rule) 210px 211px, #fff 211px); }
   .hub-card.next > *:not(.hub-img) { margin: 0; }
   .hub-card.next .hub-img { grid-row: 1 / 3; width: 210px; height: 96px; padding: 0 30px; }
-  .hub-card.next h2 { font-size: 21px; letter-spacing: -0.02em; }
+  .hub-card.next h2 { font-size: 21px; letter-spacing: -0.005em; }
   .hub-card.next .desc { margin-top: 0; font-size: 15px; }
   .hub-card.next > div .desc { margin-top: 6px; }
   .hub-card.next::after { top: 50%; right: 26px; width: 44px; height: 44px; margin-top: -22px; font-size: 20px; }
@@ -70,10 +70,10 @@
 
   /* --- „Weiter“ / „Akademie“ als Abschnitt mit echtem Kopf ----------------------------------- */
   .crossnav { margin-top: 72px; padding-top: 0; border-top: 0; }
-  .crossnav-t { margin: 0 0 12px; font-size: 24px; font-weight: 700; line-height: 1.2; letter-spacing: -0.02em; text-transform: none; color: var(--ink); }
+  .crossnav-t { margin: 0 0 12px; font-size: 24px; font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; text-transform: none; color: var(--ink); }
   .crossnav-l li { border-bottom-color: var(--rule); }
   .crossnav .crossnav-l a { padding: 13px 2px 13px 0; font-size: 15.5px; }
-  .crossnav-gt { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--green-text); border-bottom-color: rgba(26,26,25,0.22); padding-bottom: 8px; }
+  .crossnav-gt { font-size: 13px; font-weight: 500; color: var(--green-text); border-bottom-color: rgba(26,26,25,0.22); padding-bottom: 8px; }
 
   footer.fuss { margin-top: 88px; padding-top: 30px; border-top: 1px solid var(--rule); }
 
@@ -141,7 +141,7 @@
   @media (max-width: 600px) { :root { --spalte: 132px; } .hub-card:not(.next) .hub-img { height: 90px; padding: 4px 2px; } }
   .hub-card.next:hover { border-color: var(--green-text); }
   /* Etiketten wie auf der Anleihen-Übersicht (seit 11.10.2026: „Renditen“ und „Renditeabstände“ – dieselben Wörter wie die Chips im Menü) */
-  .hub-tag { display: inline-block; justify-self: start; margin-bottom: 10px; padding: 4px 10px; border-radius: 999px; background: #E8FFE3; color: var(--green-text); font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+  .hub-tag { display: inline-block; justify-self: start; margin-bottom: 10px; padding: 4px 10px; border-radius: 6px; background: #E8FFE3; color: var(--green-text); font-size: 13px; font-weight: 500; }
   @media (max-width: 600px) { .hub-tag { margin: 0 0 6px; padding: 3px 8px; font-size: 10px; letter-spacing: 0.05em; } }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","headline":"Markt – Renditen von Staatsanleihen seit 1970 und Unternehmensanleihen seit 1984, Realzins, Zinskurve und Risikoaufschläge","description":"Der Anleihenmarkt in Zahlen: Renditen von Staatsanleihen seit 1970 und Unternehmensanleihen seit 1984, Realzins, Zinskurve und Risikoaufschläge.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-11","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/beobachten.html"}</script>

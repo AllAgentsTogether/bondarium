@@ -27,8 +27,8 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4">
 <meta name="theme-color" content="#39FF14">
 <link rel="stylesheet" href="base.css">
-<link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="image" href="startseite-hero.webp?v=5" media="(min-width: 761px)">
 <style>
   /* Startseite (neu 24.09.2026 spät nach Entwurf des Nutzers): Hero mit Foto, weiße Fläche mit Tageszahlen, Bund-Kurve,
@@ -39,8 +39,8 @@
      rechts wieder das Foto (startseite-hero.webp) statt der Beton-Kacheln vom Nachmittag (Nutzerwunsch). */
   .hero { --g: 24px; position: relative; min-height: 440px; margin: 0 calc(-1 * var(--g)); padding: 26px var(--g) 70px; overflow: hidden; }   /* Anschnitt bis an den Rand, ohne seitliches Scrollen */
   .hero-t { position: relative; z-index: 2; max-width: 560px; }
-  .hero h1 { font-size: 56px; letter-spacing: -0.04em; line-height: 1.02; margin-bottom: 20px; }
-  .hero h1 em { font-style: normal; color: var(--green-text); }
+  .hero h1 { font-size: 52px; letter-spacing: -0.005em; line-height: 1.02; margin-bottom: 20px; }
+  .hero h1 em { font-style: normal; color: inherit; }
   .hero .sub { font-size: 19px; line-height: 1.5; max-width: 500px; margin-bottom: 0; }
   .hero-img { position: absolute; right: 0; top: -6px; width: 600px; height: calc(100% + 6px); object-fit: cover; object-position: 74% 30%; z-index: 0;
     -webkit-mask-image: linear-gradient(to right, transparent 0, #000 34%, #000 94%, transparent 100%), linear-gradient(to bottom, transparent 0, #000 9%, #000 calc(100% - 44px), transparent 100%);
@@ -54,7 +54,7 @@
   a.box { text-decoration: none; color: var(--ink); transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease; }
   a.box:hover { border-color: var(--green-line); transform: translateY(-2px); }
   a.box:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
-  .kicker { display: block; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); }
+  .kicker { display: block; font-size: 13px; font-weight: 500; color: var(--green-text); }
   .rund { display: inline-grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; }
   .rund svg { width: 16px; height: 16px; }
   /* Beispiel-Leiste */
@@ -71,7 +71,7 @@
   .suche .go { flex: none; padding: 11px 20px; border: 0; cursor: pointer; font: inherit; font-size: 14.5px; font-weight: 600; }
   .bsp-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 16px; font-size: 14px; color: rgba(255,255,255,0.72); }
   .bsp-bar .bb-k { margin-right: 2px; }
-  .bsp-bar a { display: inline-flex; align-items: center; gap: 9px; color: #fff; text-decoration: none; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.26); border-radius: 999px; padding: 7px 16px 7px 12px; font-size: 14.5px; line-height: 1.2; }
+  .bsp-bar a { display: inline-flex; align-items: center; gap: 9px; color: #fff; text-decoration: none; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.26); border-radius: 6px; padding: 7px 16px 7px 12px; font-size: 14.5px; line-height: 1.2; }
   .bsp-bar a svg { width: 18px; height: 18px; flex: none; color: var(--green); }
   .bsp-bar a:hover { background: var(--green); border-color: var(--green); color: var(--ink); }
   .bsp-bar a:hover svg { color: var(--ink); }
@@ -88,7 +88,7 @@
   .itab th, .itab td { text-align: left; padding: 13px 14px; border-bottom: 1px solid var(--rule); vertical-align: middle; white-space: nowrap; }
   .itab th:first-child, .itab td:first-child { padding-left: 2px; }
   .itab th:last-child, .itab td:last-child { padding-right: 2px; }
-  .itab thead th { padding-top: 6px; padding-bottom: 9px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); font-weight: 600; border-bottom: 1.5px solid rgba(26,26,25,0.22); }
+  .itab thead th { padding-top: 6px; padding-bottom: 9px; font-size: 13px; color: var(--text); font-weight: 500; border-bottom: 1.5px solid rgba(26,26,25,0.22); }
   .itab td.num, .itab th.num { text-align: right; font-variant-numeric: tabular-nums; }
   .itab td.c, .itab th.c { text-align: center; }
   .itab td.ren { font-weight: 600; color: var(--ink); }   /* Farbe/Stärke seit 29.09.2026 weiter unten */
@@ -104,7 +104,7 @@
   @media (max-width: 600px) { .itab td.nm small.nm-f { display: block; } }
   .itab .art { display: inline-block; font-size: 12px; font-weight: 600; line-height: 1.3; border-radius: 6px; padding: 3px 8px; background: #E8F0FF; color: #1E4FA8; }
   .itab .art.u { background: #FFF1E0; color: #A2561C; }
-  .itab td.ren { color: var(--green-text); font-weight: 700; }
+  .itab td.ren { color: var(--green-text); font-weight: 600; }
   .itab .isin-sp { display: none; font-size: 13px; color: var(--text); letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
   /* Großer Bildschirm (30.09.2026, Nutzerwunsch): ISIN in eigener Spalte statt unter dem Namen – Zeilen einzeilig und niedriger. */
   @media (min-width: 941px) { .itab th, .itab td { padding-left: 9px; padding-right: 9px; } .itab td.nm { width: 26%; } }   /* neun Spalten passen ohne Wischen in die Fläche */
@@ -144,7 +144,7 @@
   .vk .desc { display: block; font-size: 13.5px; line-height: 1.4; color: var(--text); margin-top: 4px; }
   .vk:hover b { color: var(--green-text); }
   .vt { grid-column: 1 / -1; padding: 14px 14px 14px; background: var(--green-tint); border: 1px solid var(--green-line); border-radius: 14px; }   /* seit 30.09.2026 eigene Zeile unter den zwei Karten: Links mit Kurzbeschreibung statt Pillen */
-  .vt .vt-k { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); margin: 0 0 10px 2px; }
+  .vt .vt-k { font-size: 13px; font-weight: 500; color: var(--green-text); margin: 0 0 10px 2px; }
   .vt-l { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
   .vt a { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; min-height: 44px; padding: 11px 12px; background: #fff; border-radius: 10px; color: var(--ink); text-decoration: none; transition: box-shadow 0.15s ease; }
   .vt-t { min-width: 0; }
@@ -240,7 +240,7 @@
      Titel mit Pfeil führt zu den Anleitungen, darin die vier Personen (vorher eigener Abschnitt „Was willst du erreichen?“) */
   .beispiele { margin-top: 32px; padding: 22px 22px 18px; border-radius: 18px; background: #FFF1E0; border: 1px solid #F5D5B0; overflow: hidden; }
   .bsp-kopf { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px; margin: 0 0 16px; }
-  .bsp-kopf h2 { font-size: 26px; line-height: 1.2; letter-spacing: -0.02em; margin: 0; }
+  .bsp-kopf h2 { font-size: 26px; line-height: 1.2; letter-spacing: -0.005em; margin: 0; }
   .bsp-kopf h2 a { display: inline-flex; align-items: center; gap: 6px; color: var(--ink); text-decoration: none; }
   .bsp-kopf h2 a:hover { color: #A2561C; }
   .bsp-kopf h2 a:focus-visible { outline: 2px solid #D9740A; outline-offset: 3px; border-radius: 4px; }
@@ -250,7 +250,7 @@
   @media (max-width: 600px) {
     .beispiele { margin-top: 30px; padding: 18px 16px 14px; border-radius: 16px; }
     .bsp-kopf { margin-bottom: 12px; }
-    .bsp-kopf h2 { font-size: 18.5px; letter-spacing: -0.03em; }
+    .bsp-kopf h2 { font-size: 18.5px; letter-spacing: -0.005em; }
     .bsp-kopf .chev { width: 22px; height: 22px; }
     .bsp-kopf h2 a { display: flex; justify-content: space-between; width: 100%; }
     .bsp-kopf p { flex-basis: 100%; font-size: 15px; }
@@ -264,7 +264,7 @@
   @media (min-width: 601px) { .tueren.pfad a { padding-top: 20px; padding-bottom: 20px; } }
   .tueren.pfad a:first-child { border-radius: 15px 0 0 15px; }
   .tueren.pfad a:last-child { border-radius: 0 15px 15px 0; }
-  .tueren.pfad .nr { display: inline-grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--green); color: var(--ink); font-size: 15px; font-weight: 700; line-height: 1; }
+  .tueren.pfad .nr { display: inline-grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--green); color: var(--ink); font-size: 15px; font-weight: 600; line-height: 1; }
   .tueren.pfad .mehr { font-size: 13px; line-height: 1.4; color: var(--text); margin-top: 4px; }
   .tueren.pfad a + a::after { content: ""; position: absolute; z-index: 2; left: -13px; top: 50%; width: 26px; height: 26px; margin-top: -13px; border-radius: 50%; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23157C00' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h13M13 6.5l5.5 5.5-5.5 5.5'/%3E%3C/svg%3E") center / 14px no-repeat; box-shadow: 0 0 0 1px var(--rule); }
   @media (max-width: 600px) {
@@ -285,7 +285,7 @@
   .kw .kicker { font-size: 12px; letter-spacing: 0.08em; }
   .kc b { display: block; font-size: 16px; font-weight: 600; line-height: 1.25; margin-top: 4px; letter-spacing: -0.01em; }
   .kw b { display: block; font-size: 17px; font-weight: 600; line-height: 1.3; margin-top: 0; letter-spacing: -0.01em; }   /* seit 30.09.2026 beschreibender Titel ohne Kicker (Nutzerwunsch) */
-  .kz { display: flex; flex-direction: column; gap: 3px; margin-top: auto; padding-top: 12px; font-size: 24px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .kz { display: flex; flex-direction: column; gap: 3px; margin-top: auto; padding-top: 12px; font-size: 24px; font-weight: 600; line-height: 1; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
   .kz small { font-size: 12.5px; font-weight: 500; color: var(--text); letter-spacing: 0; }
   .kc .kimg { position: absolute; right: 10px; bottom: 12px; width: 52px; height: 44px; }
   .kc:hover b, .kw:hover b { color: var(--green-text); }
@@ -302,7 +302,7 @@
   @media (max-width: 520px) { .k5, .k2 { grid-template-columns: minmax(0, 1fr); gap: 8px; } .kc { min-height: 0; } .kc .kicker { font-size: 11.5px; } }
 
   /* UX-Review 30.09.2026 */
-  .kwv { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 8px; margin-top: 10px; font-size: 26px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .kwv { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 8px; margin-top: 10px; font-size: 26px; font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
   .kwv small { font-size: 12.5px; font-weight: 500; line-height: 1.3; color: var(--text); letter-spacing: 0; }
   .kc .kz { padding-right: 56px; font-size: 21px; }
   .kc .kz > span { white-space: nowrap; }   /* Spanne „3,0–5,0 %“ nie umbrechen */   /* Platz für das Symbol unten rechts (.kimg), damit der Text es nicht überdeckt */
@@ -341,7 +341,7 @@
 
   /* Ein Abschnittskopf für alle vier Abschnitte */
   .bt, .bsp-kopf { margin: 0 0 22px; }
-  .bt h2, .bsp-kopf h2 { font-size: 30px; line-height: 1.15; letter-spacing: -0.025em; }
+  .bt h2, .bsp-kopf h2 { font-size: 30px; line-height: 1.15; letter-spacing: -0.005em; }
   .bt .bsub, .bsp-kopf p { font-size: 16px; line-height: 1.5; color: var(--text); margin: 8px 0 0; }
   .bt .more { font-size: 15px; }
 
@@ -399,7 +399,7 @@
   .vt a:hover { box-shadow: none; background: #F1FFEE; }
 
   /* --- 5 · Beliebte Anleihen: eigene Fläche, Zahlen rechtsbündig, ruhige Art-Marken ----------- */
-  .itab .art { border-radius: 999px; padding: 3px 10px; background: #E8FFE3; color: var(--green-text); }
+  .itab .art { border-radius: 6px; padding: 3px 10px; background: #E8FFE3; color: var(--green-text); }
   .itab .art.u { background: #F0EEE8; color: #4A4943; }
   .itab thead th { border-bottom: 1px solid rgba(26,26,25,0.2); }
   @media (min-width: 601px) {
@@ -449,7 +449,7 @@
     .sheet > section + section { margin-top: 56px; }
     .sheet > .suchband + section { margin-top: 44px; }
     .bt, .bsp-kopf { margin-bottom: 16px; }
-    .bt h2, .bsp-kopf h2 { font-size: 25px; letter-spacing: -0.025em; }
+    .bt h2, .bsp-kopf h2 { font-size: 25px; letter-spacing: -0.005em; }
     .bt .bsub, .bsp-kopf p { font-size: 15.5px; }
     .suchband { padding: 14px 14px 14px; border-radius: 16px; }
     .suche .go { padding: 11px 16px; font-size: 14.5px; }
@@ -508,9 +508,9 @@
   .hk-kopf { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; line-height: 1.2; }
   .hk-kopf b { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
   .hero-karte:hover .hk-kopf b { color: var(--green-text); }
-  .hk-art { flex: none; border-radius: 999px; padding: 3px 9px; background: #E8FFE3; color: var(--green-text); font-size: 12px; font-weight: 600; }
+  .hk-art { flex: none; border-radius: 6px; padding: 3px 9px; background: #E8FFE3; color: var(--green-text); font-size: 12px; font-weight: 600; }
   .hk-rend { display: flex; align-items: baseline; gap: 8px; font-size: 13px; color: var(--text); }
-  .hk-z { font-size: 26px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; color: var(--green-text); font-variant-numeric: tabular-nums; }
+  .hk-z { font-size: 26px; font-weight: 600; line-height: 1; letter-spacing: -0.02em; color: var(--green-text); font-variant-numeric: tabular-nums; }
   /* Laufzeit-Achse mit festem, gleichmäßigem Maßstab wie die Laufzeit-Ringe (01.10.2026, Nutzerwahl „gleichmäßig, 30 Jahre“): links heute, rechts 30 Jahre,
      Lage x = Jahre / 30; --x je Punkt und --p (Rückzahlung) setzt das Skript. Großer Punkt = Rückzahlung, kleine Punkte = Skala alle 6 Jahre.
      Grün = verbleibende Laufzeit, grau = Rest bis 30 Jahre. */
@@ -537,17 +537,17 @@
      Überschreibt die älteren .kw/.kwv/.spk-Regeln darüber.
      ========================================================================================== */
   .k2 { gap: 16px; }
-  .k-lab:has(+ .k2) { margin: 0 0 18px; font-size: 30px; font-weight: 700; line-height: 1.15; letter-spacing: -0.025em; }
+  .k-lab:has(+ .k2) { margin: 0 0 18px; font-size: 30px; font-weight: 600; line-height: 1.15; letter-spacing: -0.025em; }
   .k-lab:has(+ .k2) small { display: block; margin-top: 8px; font-size: 16px; font-weight: 400; letter-spacing: 0; color: var(--text); }
   .kw { position: relative; display: flex; flex-direction: column; align-items: stretch; padding: 22px 24px 20px; border-radius: 16px; transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease; }
   .kw b { padding-right: 48px; font-size: 17px; font-weight: 600; line-height: 1.35; }
   .kw:hover b { color: var(--ink); }
-  .kwv { display: block; margin-top: 16px; font-size: 34px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; color: var(--ink); text-align: left; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .kwv { display: block; margin-top: 16px; font-size: 34px; font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; color: var(--ink); text-align: left; white-space: nowrap; font-variant-numeric: tabular-nums; }
   .kwv .kw-bis, .kwv .kw-e { font-size: 15px; font-weight: 500; letter-spacing: 0; color: var(--text); }
   .kwv .kw-bis { margin: 0 3px; }
   .kw .kwz { display: block; margin-top: 14px; }
   .spk { display: block; width: 100%; height: 88px; overflow: visible; }
-  .kw::after { content: "→" / ""; position: absolute; top: 18px; right: 18px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1px solid var(--rule); color: var(--green-text); font-size: 16px; font-weight: 700; line-height: 1; transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
+  .kw::after { content: "→" / ""; position: absolute; top: 18px; right: 18px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1px solid var(--rule); color: var(--green-text); font-size: 16px; font-weight: 600; line-height: 1; transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
   a.kw.box:hover { transform: translateY(-2px); border-color: var(--green-text); box-shadow: 0 1px 2px rgba(26,26,25,0.04), 0 14px 30px -12px rgba(26,26,25,0.22); }
   .kw:hover::after { background: var(--green); border-color: var(--green); color: var(--ink); }
   .kw:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
@@ -573,24 +573,24 @@
      Ohne Skript und ohne Bilddateien; mit #bnd-broker gekapselt. Die Anbieterzahl setzt der Deploy aus broker.json (data-kz).
      ========================================================================================== */
   #bnd-broker { display: grid; grid-template-columns: minmax(0, 1fr) 300px; align-items: center; gap: 28px 56px; padding: 32px 48px 34px 42px; border-radius: 18px; background: var(--ink); color: #fff; }
-  #bnd-broker .bc-k { display: flex; align-items: center; gap: 9px; margin: 0 0 18px; font-size: var(--fs-label); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #fff; }
+  #bnd-broker .bc-k { display: flex; align-items: center; gap: 9px; margin: 0 0 18px; font-size: var(--fs-label); font-weight: 500; color: #fff; }
   #bnd-broker .bc-k::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
-  #bnd-broker h2 { margin: 0; font-size: var(--fs-h2); line-height: 1.2; letter-spacing: -0.015em; color: #fff; }
-  #bnd-broker h2 em { display: block; font-style: normal; color: var(--green); }
+  #bnd-broker h2 { margin: 0; font-size: var(--fs-h2); line-height: 1.2; letter-spacing: -0.005em; color: #fff; }
+  #bnd-broker h2 em { display: block; font-style: normal; color: inherit; }
   #bnd-broker .bc-sub { max-width: 430px; margin: 14px 0 0; font-size: var(--fs-text); line-height: 1.55; color: rgba(255,255,255,0.8); }
-  #bnd-broker .bc-go { display: inline-flex; align-items: center; justify-content: space-between; gap: 28px; min-width: 230px; min-height: 48px; margin-top: 24px; padding: 12px 18px 12px 20px; border-radius: 9px; background: var(--green); color: var(--ink); font-size: var(--fs-ui); font-weight: 700; text-decoration: none; transition: background 0.15s ease; }
+  #bnd-broker .bc-go { display: inline-flex; align-items: center; justify-content: space-between; gap: 28px; min-width: 230px; min-height: 48px; margin-top: 24px; padding: 12px 18px 12px 20px; border-radius: 9px; background: var(--green); color: var(--ink); font-size: var(--fs-ui); font-weight: 600; text-decoration: none; transition: background 0.15s ease; }
   #bnd-broker .bc-go svg { flex: none; width: 18px; height: 18px; transition: transform 0.15s ease; }
   #bnd-broker .bc-go:hover { background: var(--green-hover); }
   #bnd-broker .bc-go:hover svg { transform: translateX(3px); }
   #bnd-broker .bc-go:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
   #bnd-broker .bc-meta { margin: 12px 0 0; font-size: var(--fs-meta); color: rgba(255,255,255,0.72); }
   #bnd-broker .bc-karte { padding: 20px 18px 14px 20px; border-radius: 12px; background: #fff; color: var(--ink); box-shadow: 7px 9px 0 rgba(0,0,0,0.55); transform: rotate(-3deg); }
-  #bnd-broker .bc-kk { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0; font-size: var(--fs-label); font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text); }
+  #bnd-broker .bc-kk { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0; font-size: var(--fs-label); font-weight: 500; color: var(--text); }
   #bnd-broker .bc-kk svg { flex: none; width: 20px; height: 20px; color: var(--green-text); }
-  #bnd-broker .bc-kt { margin: 12px 0 8px; font-size: var(--fs-h3); font-weight: 700; line-height: 1.25; letter-spacing: -0.015em; color: var(--ink); }
+  #bnd-broker .bc-kt { margin: 12px 0 8px; font-size: var(--fs-h3); font-weight: 600; line-height: 1.25; letter-spacing: -0.015em; color: var(--ink); }
   #bnd-broker ul { list-style: none; margin: 0; padding: 0; }
   #bnd-broker li { margin: 0; padding: 0; }
-  #bnd-broker li a { display: flex; align-items: center; gap: 12px; min-height: 40px; margin: 0 -8px; padding: 6px 8px; border-radius: 8px; color: var(--ink); font-size: var(--fs-ui); font-weight: 700; text-decoration: none; transition: background 0.15s ease; }
+  #bnd-broker li a { display: flex; align-items: center; gap: 12px; min-height: 40px; margin: 0 -8px; padding: 6px 8px; border-radius: 8px; color: var(--ink); font-size: var(--fs-ui); font-weight: 600; text-decoration: none; transition: background 0.15s ease; }
   #bnd-broker li a svg { flex: none; width: 20px; height: 20px; color: var(--green-text); }
   #bnd-broker li a .bc-pf { width: 16px; height: 16px; margin-left: auto; transition: transform 0.15s ease; }
   #bnd-broker li a:hover { background: var(--green-tint); }
@@ -610,8 +610,8 @@
      Zinsatlas: Kopf (Dachzeile, Titel, Unterzeile); die vier Karten darunter seit 02.10.2026 als Themenfenster (.zf-*).
      Vom 01.10. bis 02.10.2026 standen hier vier Flächen mit Jahreszahl, Ländern, Ratings und Zieljahr (Entwurf 02).
      ========================================================================================== */
-  #bnd-zinsatlas .za-dach { margin: 0 0 8px; font-size: var(--fs-label); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--green-text); }
-  #bnd-zinsatlas h2 { margin: 0; font-size: var(--fs-h2); line-height: 1.15; letter-spacing: -0.015em; }
+  #bnd-zinsatlas .za-dach { margin: 0 0 8px; font-size: var(--fs-label); font-weight: 500; color: var(--green-text); }
+  #bnd-zinsatlas h2 { margin: 0; font-size: var(--fs-h2); line-height: 1.15; letter-spacing: -0.005em; }
   #bnd-zinsatlas .za-sub { margin: 6px 0 28px; font-size: var(--fs-text); color: var(--text); }
   /* Vier Themenfenster (02.10.2026, Entwurf 01 aus bondarium-zinsatlas-drei-designentwuerfe-ohne-zahlen.pdf): ersetzt die vier
      Flächen mit Jahreszahl, Ländern, Ratings und Zieljahr. Je Thema ein Motiv ohne Marktkennzahlen, ein Satz, ein Link; die ganze
@@ -621,10 +621,10 @@
   #bnd-zinsatlas .zf-bild { display: grid; place-items: center; height: 160px; border-radius: 12px; background: #EEF7E8; }
   #bnd-zinsatlas .zf-bild svg { width: 100%; max-width: 240px; height: 146px; font-family: var(--sans); }
   #bnd-zinsatlas .zf-t { display: block; padding: 22px 14px 0; }
-  #bnd-zinsatlas .zf-h { display: block; font-size: var(--fs-zahl); font-weight: 700; line-height: 1.2; letter-spacing: -0.015em; }
+  #bnd-zinsatlas .zf-h { display: block; font-size: var(--fs-zahl); font-weight: 600; line-height: 1.2; letter-spacing: -0.015em; }
   #bnd-zinsatlas .zf-d { display: block; margin-top: 12px; font-size: var(--fs-text); line-height: 1.55; color: var(--text); }
   #bnd-zinsatlas .zf-dk { display: none; }
-  #bnd-zinsatlas .zf-go { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding: 22px 14px 0; font-size: var(--fs-ui); font-weight: 700; color: var(--green-text); }
+  #bnd-zinsatlas .zf-go { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: auto; padding: 22px 14px 0; font-size: var(--fs-ui); font-weight: 600; color: var(--green-text); }
   #bnd-zinsatlas .zf-go svg { width: 22px; height: 22px; flex: none; transition: transform 0.15s ease; }
   #bnd-zinsatlas .zf:hover { transform: translateY(-2px); border-color: var(--green-text); box-shadow: 0 1px 2px rgba(26,26,25,0.04), 0 14px 30px -18px rgba(26,26,25,0.35); }
   #bnd-zinsatlas .zf:hover .zf-go svg { transform: translateX(3px); }
@@ -657,8 +657,8 @@
      Label 12 · Meta 13 · Klein 14 · Bedienung 15 · Text 16 · Kartentitel 17 · Zwischentitel 21 · Kennzahl 24 · Überschrift 30.
      Hero-Titel und -Unterzeile bleiben. Steht am Ende und überschreibt nur Schriftgrößen der Blöcke darüber.
      ========================================================================================== */
-  :root { --fs-label: 12px; --fs-meta: 13px; --fs-klein: 14px; --fs-ui: 15px; --fs-text: 16px; --fs-karte: 17px; --fs-h3: 21px; --fs-zahl: 24px; --fs-h2: 30px; }
-  @media (max-width: 600px) { :root { --fs-text: 15px; --fs-karte: 16px; --fs-h3: 19px; --fs-zahl: 21px; --fs-h2: 25px; } }
+  :root { --fs-label: 13px; --fs-meta: 14px; --fs-klein: 15px; --fs-ui: 16px; --fs-text: 17px; --fs-karte: 18px; --fs-h3: 21px; --fs-zahl: 24px; --fs-h2: 30px; }
+  @media (max-width: 600px) { :root { --fs-text: 16px; --fs-karte: 17px; --fs-h3: 19px; --fs-zahl: 21px; --fs-h2: 25px; } }
   /* Label: Dachzeilen, Tabellenkopf, Marken, ISIN, Zahlen-Unterzeilen */
   .kicker, .vt .vt-k, .itab thead th, .itab .art, .itab td.nm small, .kc .kz small, .hk-dach, .hk-art, .hk-fuss { font-size: var(--fs-label); }
   /* Meta: Ergebnis unter dem Namen, dritte Zeile im Lernpfad, Kurzbeschreibungen, Hinweise, Kategorie der Top-10-Karten */
@@ -675,7 +675,7 @@
   .vk b, .kc b, .kw b { font-size: var(--fs-karte); }
   /* Zwischentitel: Lernpfad-Schritte und beide Unterköpfe unter „Märkte und Top-10-Listen“ (vorher 18 und 30 px) */
   .tueren .verb, .k-lab { font-size: var(--fs-h3); line-height: 1.2; letter-spacing: -0.015em; }
-  .k-lab { margin: 0 0 14px; font-weight: 700; }
+  .k-lab { margin: 0 0 14px; font-weight: 600; }
   .k-lab:has(+ .k2) small { display: inline; margin-top: 0; font-weight: 500; }
   /* Kennzahlen */
   /* 01.10.2026 (Nutzerhinweis „bei Zinsen viel größer als bei Top 10“): Top-10- und Zinsen-Karten zeigen dieselbe Art Zahl (Renditespanne)
@@ -736,8 +736,8 @@
   /* Idee 2 – Zinstermin als Kalendertag: Kalenderblatt in der Hero-Karte, Zinstermin unter dem Kupon in der Tabelle */
   .hk-fuss { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 5px; line-height: 1.3; white-space: normal; }
   .hk-zt { display: flex; align-items: center; gap: 7px; padding-top: 7px; border-top: 1px solid var(--rule); }
-  .hk-blatt { flex: none; display: grid; place-items: center; align-content: start; width: 26px; height: 31px; border: 1.5px solid var(--ink); border-radius: 7px; overflow: hidden; background: #fff; font-size: 13px; font-weight: 700; line-height: 14px; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .hk-blatt i { display: block; width: 100%; padding: 1px 0; background: var(--green); border-bottom: 1.5px solid var(--ink); font-size: 9px; font-style: normal; font-weight: 700; line-height: 1.15; letter-spacing: 0.04em; text-transform: uppercase; text-align: center; }
+  .hk-blatt { flex: none; display: grid; place-items: center; align-content: start; width: 26px; height: 31px; border: 1.5px solid var(--ink); border-radius: 7px; overflow: hidden; background: #fff; font-size: 13px; font-weight: 600; line-height: 14px; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .hk-blatt i { display: block; width: 100%; padding: 1px 0; background: var(--green); border-bottom: 1.5px solid var(--ink); font-size: 13px; font-style: normal; font-weight: 500; line-height: 1.15; text-align: center; }
   .hk-ztt { display: block; min-width: 0; }
   .hk-ztt b, .hk-ztt span { display: block; }
   /* 02.10.2026 (Nutzerwunsch „das muss kleiner werden, damit die Frau besser zu sehen ist“): mit dem Kalenderblatt war die Karte 194 px hoch geworden –
@@ -767,10 +767,10 @@
   #bnd-einstieg .be-bild img { position: absolute; left: 20px; bottom: 0; display: block; width: 228px; height: 240px; border-radius: 0 0 0 18px; }
   #bnd-einstieg .be-karte { position: relative; grid-column: 2 / 4; grid-row: 1; align-self: stretch; display: flex; flex-direction: column; justify-content: center; margin: 28px 0; padding: 20px 230px 20px 30px; border-radius: 16px; background: #fff; }
   #bnd-einstieg .be-karte::before { content: ""; position: absolute; left: -15px; top: 50%; width: 18px; height: 22px; background: #fff; clip-path: polygon(100% 0, 0 100%, 100% 100%); }   /* Spitze der Sprechblase zum Porträt */
-  #bnd-einstieg h2 { margin: 0; font-size: var(--fs-h2); line-height: 1.2; letter-spacing: -0.015em; }
-  #bnd-einstieg h2 em { font-style: normal; color: var(--green-text); }
+  #bnd-einstieg h2 { margin: 0; font-size: var(--fs-h2); line-height: 1.2; letter-spacing: -0.005em; }
+  #bnd-einstieg h2 em { font-style: normal; color: inherit; }
   #bnd-einstieg p { margin: 10px 0 0; font-size: var(--fs-text); line-height: 1.45; color: var(--text); }
-  #bnd-einstieg .be-knopf { grid-column: 3; grid-row: 1; z-index: 1; display: inline-flex; align-items: center; gap: 12px; margin-right: 24px; padding: 14px 20px; border-radius: 10px; background: var(--green); color: var(--ink); font-size: var(--fs-ui); font-weight: 700; line-height: 1.2; text-decoration: none; white-space: nowrap; transition: background-color .15s; }
+  #bnd-einstieg .be-knopf { grid-column: 3; grid-row: 1; z-index: 1; display: inline-flex; align-items: center; gap: 12px; margin-right: 24px; padding: 14px 20px; border-radius: 10px; background: var(--green); color: var(--ink); font-size: var(--fs-ui); font-weight: 600; line-height: 1.2; text-decoration: none; white-space: nowrap; transition: background-color .15s; }
   #bnd-einstieg .be-knopf::after { content: ""; position: absolute; inset: 0; border-radius: 18px; }
   #bnd-einstieg .be-knopf svg { display: block; width: 20px; height: 20px; }
   #bnd-einstieg:hover .be-knopf { background: var(--green-hover); }
@@ -807,22 +807,22 @@
   #bnd-top10 .tp-k { position: relative; display: flex; flex-direction: column; min-height: 300px; padding: 26px 26px 22px; border: 1px solid rgba(26,26,25,0.12); border-radius: 18px; background: #fff; color: var(--ink); }
   #bnd-top10 .tp-staat { background: #EEF7E8; border-color: rgba(21,124,0,0.16); }
   #bnd-top10 .tp-etf { background: #1B2F23; border-color: #1B2F23; color: #fff; }
-  #bnd-top10 .tp-n { position: absolute; top: 34px; right: 22px; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--green); color: var(--ink); font-size: var(--fs-karte); font-weight: 700; font-variant-numeric: tabular-nums; }
+  #bnd-top10 .tp-n { position: absolute; top: 34px; right: 22px; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--green); color: var(--ink); font-size: var(--fs-karte); font-weight: 600; font-variant-numeric: tabular-nums; }
   #bnd-top10 .tp-unt .tp-n { background: #EEF7E8; color: var(--green-text); }
   #bnd-top10 .tp-etf .tp-n { background: rgba(255,255,255,0.1); color: var(--green); }
   #bnd-top10 .tp-bild { display: grid; place-items: center; width: 104px; height: 104px; border-radius: 50%; background: var(--green); color: #1A1A19; }
   #bnd-top10 .tp-bild svg { width: 66px; height: 66px; }
   #bnd-top10 .tp-staat .tp-bild svg { color: #157C00; }
   #bnd-top10 .tp-unt .tp-bild { background: #EEF7E8; }
-  #bnd-top10 h4 { margin: 26px 0 0; font-size: var(--fs-zahl); font-weight: 700; line-height: 1.25; letter-spacing: -0.015em; color: inherit; }
+  #bnd-top10 h4 { margin: 26px 0 0; font-size: var(--fs-zahl); font-weight: 600; line-height: 1.25; letter-spacing: -0.015em; color: inherit; }
   #bnd-top10 .tp-go { display: flex; align-items: center; gap: 16px; margin-top: auto; padding-top: 26px; }
   #bnd-top10 .tp-pf { width: 18px; height: 18px; flex: none; }
-  #bnd-top10 .tp-btn { display: inline-flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; padding: 12px 16px; border-radius: 9px; background: var(--green); color: var(--ink); font-size: var(--fs-ui); font-weight: 700; text-decoration: none; white-space: nowrap; transition: background 0.15s ease; }
+  #bnd-top10 .tp-btn { display: inline-flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; padding: 12px 16px; border-radius: 9px; background: var(--green); color: var(--ink); font-size: var(--fs-ui); font-weight: 600; text-decoration: none; white-space: nowrap; transition: background 0.15s ease; }
   #bnd-top10 .tp-btn:hover { background: var(--green-hover); }
   #bnd-top10 .tp-unt .tp-btn { background: #EEF7E8; }
   #bnd-top10 .tp-unt .tp-btn:hover { background: #DCFBD3; }
   #bnd-top10 .tp-etf .tp-btn { flex: 1 1 auto; }
-  #bnd-top10 .tp-lnk { flex: 1 1 auto; display: inline-flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; border-bottom: 1px solid rgba(26,26,25,0.18); color: var(--ink); font-size: var(--fs-ui); font-weight: 700; text-decoration: none; }
+  #bnd-top10 .tp-lnk { flex: 1 1 auto; display: inline-flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 48px; border-bottom: 1px solid rgba(26,26,25,0.18); color: var(--ink); font-size: var(--fs-ui); font-weight: 600; text-decoration: none; }
   #bnd-top10 .tp-lnk:hover { color: var(--green-text); border-bottom-color: var(--green-text); }
   #bnd-top10 a:focus-visible { outline: 2px solid var(--line); outline-offset: 3px; }
   #bnd-top10 .tp-etf a:focus-visible { outline-color: var(--green); }
@@ -877,12 +877,12 @@
   footer.fuss { margin-top: var(--abstand-abschnitt); }
 
   /* --- 2 · Ein Abschnittskopf: Dachzeile mit Kupon-Punkt, Überschrift, Unterzeile ----------------------------------- */
-  .kicker.dach, #bnd-zinsatlas .za-dach, #bnd-broker .bc-k { display: flex; align-items: center; gap: 9px; margin: 0 0 10px; font-size: var(--fs-label); font-weight: 600; line-height: 1.3; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); }
+  .kicker.dach, #bnd-zinsatlas .za-dach, #bnd-broker .bc-k { display: flex; align-items: center; gap: 9px; margin: 0 0 10px; font-size: var(--fs-label); font-weight: 500; line-height: 1.3; color: var(--green-text); }
   .kicker.dach::before, #bnd-zinsatlas .za-dach::before, #bnd-broker .bc-k::before { content: ""; flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: inset 0 0 0 1.5px var(--ink); }
   #bnd-broker .bc-k { color: #fff; }
   #bnd-broker .bc-k::before { box-shadow: none; }   /* auf Tinte wie im Logo: Neon ohne Ring */
-  .bt h2, .bsp-kopf h2, #bnd-zinsatlas h2, #bnd-broker h2 { margin: 0; font-size: var(--fs-h2); font-weight: 700; line-height: 1.15; letter-spacing: -0.025em; }
-  #bnd-einstieg h2 { letter-spacing: -0.025em; }
+  .bt h2, .bsp-kopf h2, #bnd-zinsatlas h2, #bnd-broker h2 { margin: 0; font-size: var(--fs-h2); font-weight: 500; line-height: 1.15; letter-spacing: -0.005em; }
+  #bnd-einstieg h2 { letter-spacing: -0.005em; }
   .bt .bsub, .bsp-kopf p:not(.kicker), #bnd-zinsatlas .za-sub, #bnd-broker .bc-sub { margin: 10px 0 0; font-size: var(--fs-text); line-height: 1.5; color: var(--text); }
   #bnd-broker .bc-sub { color: rgba(255,255,255,0.78); }
   .bt, .bsp-kopf { margin: 0 0 var(--abstand-kopf); }
@@ -1027,7 +1027,7 @@
   .zs-in a { flex: none; display: inline-flex; align-items: baseline; gap: 7px; color: var(--ink); text-decoration: none; font-variant-numeric: tabular-nums; }
   .zs-in a:hover b { text-decoration: underline; text-underline-offset: 3px; }
   .zs-in a:focus-visible { outline: 2px solid var(--green-text); outline-offset: 3px; border-radius: 4px; }
-  .zs-in a span { color: var(--text); } .zs-in a b { font-weight: 700; } .zs-in a i { font-style: normal; font-size: var(--fs-label); color: var(--text); }
+  .zs-in a span { color: var(--text); } .zs-in a b { font-weight: 600; } .zs-in a i { font-style: normal; font-size: var(--fs-label); color: var(--text); }
   @media (prefers-reduced-motion: reduce) { .zs-lauf { animation: none; } .zs-in { overflow-x: auto; scrollbar-width: none; mask-image: none; -webkit-mask-image: none; } .zs-in::-webkit-scrollbar { display: none; } }
   @media (max-width: 600px) { .zs-band { margin-bottom: 10px; } .zs-in { padding: 8px 16px; } .zs-gruppe { gap: 24px; padding-right: 24px; } .zs-lauf { animation-duration: 30s; } .zs-in a i { display: none; } }
   /* ============================================================================================================
@@ -1041,7 +1041,7 @@
   #bnd-zinsstand .zk-k:hover { border-color: var(--green-text); box-shadow: var(--schatten-hover); transform: translateY(-2px); }
   #bnd-zinsstand .zk-k:focus-visible { outline: 3px solid var(--green-text); outline-offset: 3px; }
   #bnd-zinsstand .zk-l { display: block; font-size: var(--fs-meta); font-weight: 600; line-height: 1.3; color: var(--text); }
-  #bnd-zinsstand .zk-v { display: block; margin-top: 8px; font-size: var(--fs-zahl); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  #bnd-zinsstand .zk-v { display: block; margin-top: 8px; font-size: var(--fs-zahl); font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
   #bnd-zinsstand .zk-d { display: block; margin-top: 6px; font-size: var(--fs-meta); line-height: 1.3; color: var(--text); font-variant-numeric: tabular-nums; }
   #bnd-zinsstand .zk-sp { display: block; width: 100%; height: 36px; margin-top: 14px; }
   #bnd-zinsatlas .zk-hin { margin: 0 0 var(--abstand-kopf); font-size: var(--fs-meta); line-height: 1.5; color: var(--text); }
