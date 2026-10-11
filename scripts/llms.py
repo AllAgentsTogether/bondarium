@@ -603,8 +603,7 @@ def lade(site, name):
 LAND = {"us": "USA", "cn": "China", "de": "Deutschland", "in": "Indien", "jp": "Japan", "gb": "Großbritannien",
         "fr": "Frankreich", "it": "Italien"}
 # Seiten, deren Tageswerte im Abschnitt „Aktuelle Zahlen“ stehen – der Verweis für alte Rückfallwerte zeigt dorthin
-ZAHLEN_SEITEN = {"renditen.html", "zinskurve.html", "realzins.html", "risikoaufschlaege.html", "zinsniveau.html",
-                 "fortgeschrittene.html"}
+ZAHLEN_SEITEN = {"renditen.html", "zinskurve.html", "realzins.html", "risikoaufschlaege.html", "zinsniveau.html"}
 TOP10 = {"staatsanleihen-laufzeit.html": "top10-staatsanleihen-laufzeit.json",
          "unternehmensanleihen-laufzeit.html": "top10-unternehmensanleihen-laufzeit.json",
          "anleihen-laender.html": "top10-staatsanleihen-laender.json",
@@ -707,7 +706,6 @@ def staende(site):
         h = lade(site, "zinskurve.json")["heute"]
         setze("zinskurve.html", *(v[0] for v in h.values()))
         setze("zinsniveau.html", h["DE"][0])
-        setze("fortgeschrittene.html", h["DE"][0])   # Kasten „Bund, Stand …“ im Schritt Zinskurve
 
     def realzins():
         h = lade(site, "realzins.json")["heute"]

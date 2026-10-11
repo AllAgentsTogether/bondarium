@@ -27,7 +27,6 @@ Repository bleiben unverändert.
                                Textzahlen, Kopfzeile, Daten-Stand
   zinsniveau.html            ← zinskurve.json, realzins.json, ezb.json: Kacheln „Zinsniveau heute“, ihre Stand-Zeile,
                                EZB-Einlagesatz, Daten-Stand (seit 04.10.2026)
-  fortgeschrittene.html      ← zinskurve.json: Kasten „Bund heute“ in Schritt 1, Daten-Stand (seit 04.10.2026)
   markttechnik.html          ← ezb.json: Einlagesatz mit Stand unter dem Schaubild „Was der Markt einpreist“ (seit 09.10.2026)
   risiko.html                ← langlaeufer.json: Verlust der Bundesanleihe 0 % 2050 seit 2019 und ihr Stand (seit 09.10.2026)
 
@@ -1529,35 +1528,6 @@ def zinsniveau(site, s):
     return st
 
 
-# ---------- fortgeschrittene.html (seit 04.10.2026) ----------
-ANKER_FORTGESCHRITTENE = [
-    'function pct(v) { return MC.zahl(v, 2) + "\\u00a0%"; }',
-    'var h = z && z.heute && z.heute.DE;',
-    'if (!h || h[1] == null || h[2] == null) return;',
-    'var d = h[2] - h[1];',
-    'set("fk-2", pct(h[1])); set("fk-10", pct(h[2]));',
-    'set("fk-d", (d >= 0 ? "+" : "") + MC.zahl(d, 2));',
-    'set("fk-s", d < 0 ? "invers" : d < 0.3 ? "flach" : d <= 1 ? "normal" : "steil");',
-    'if (MC.tag) { set("fk-t", MC.tag(h[0])); set("datastand", "Daten-Stand: Renditen " + MC.datum(h[0])); }',
-]
-
-
-def fortgeschrittene(site, s):
-    """Kasten „Bund heute“ in Schritt 1: 2- und 10-jährige Bundesanleihe, Abstand, Form der Zinskurve, Tag und „Daten-Stand“."""
-    s.anker(ANKER_FORTGESCHRITTENE)
-    h = (lade(site, "zinskurve.json").get("heute") or {}).get("DE")
-    if not h or not ist_zahl(h[1]) or not ist_zahl(h[2]):
-        raise ValueError("zinskurve.json heute.DE fehlt")
-    d = h[2] - h[1]
-    s.text("#fk-2", f"{zahl(h[1], 2)}{NBSP}%")
-    s.text("#fk-10", f"{zahl(h[2], 2)}{NBSP}%")
-    s.text("#fk-d", ("+" if d >= 0 else "") + zahl(d, 2))
-    s.text("#fk-s", "invers" if d < 0 else "flach" if d < 0.3 else "normal" if d <= 1 else "steil")
-    s.text("#fk-t", datum(h[0])[:6])
-    s.text("#datastand", "Daten-Stand: Renditen " + datum(h[0]))
-    return f"Renditen {datum(h[0])}"
-
-
 # ---------- markttechnik.html (seit 09.10.2026, Technik-Test T-38) ----------
 ANKER_MARKTTECHNIK = [
     'if (window.MC && MC.load) MC.load("ezb.json").then(function (d) {',
@@ -1600,7 +1570,7 @@ def risiko(site, s):
 
 SEITEN = (("renditen.html", renditen), ("unternehmensanleihen.html", unternehmensanleihen), ("zinskurve.html", zinskurve),
           ("realzins.html", realzins), ("risikoaufschlaege.html", risikoaufschlaege), ("langlaeufer.html", langlaeufer),
-          ("zinsniveau.html", zinsniveau), ("fortgeschrittene.html", fortgeschrittene), ("markttechnik.html", markttechnik),
+          ("zinsniveau.html", zinsniveau), ("markttechnik.html", markttechnik),
           ("risiko.html", risiko))
 
 

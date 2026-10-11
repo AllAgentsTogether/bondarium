@@ -162,7 +162,6 @@ DATENSTAND = {
     # seit 04.10.2026 (rueckfallwerte.py): zeigen nur den deutschen Stand – ohne Gegenprobe, sonst meldete der jüngere US-Stand in
     # zinskurve.json jeden Tag eine „veraltete“ Seite
     "zinsniveau.html": (),
-    "fortgeschrittene.html": (),
     "bundeswertpapiere.html": (),                             # seit 04.10.2026 (statische_tabellen.py, Kurse der Bundesbank)
     "staatsanleihen-laufzeit.html": ("top10-staatsanleihen-laufzeit.json", _TOP10),
     "unternehmensanleihen-laufzeit.html": ("top10-unternehmensanleihen-laufzeit.json", _TOP10),
