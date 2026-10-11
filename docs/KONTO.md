@@ -1,7 +1,9 @@
 # Benutzerbereich „My Bondarium“
 
-Stand 01.10.2026. Der Bereich hieß bis 01.10.2026 „Mein Depot“; seit dem Nutzerentscheid von diesem Tag heißt er
-„My Bondarium“ (Seite und Menü) und hat zwei Reiter nebeneinander: **Merkliste** und **Mein Depot**. Besucher
+Stand 11.10.2026. Der Bereich hieß bis 01.10.2026 „Mein Depot“, dann „Mein Bondarium“, seit 10./11.10.2026 „My Bondarium“
+(Menüknopf und Seite). Er hat fünf Ansichten (bereich.js, seit 02.10.2026 abends): **Start**, **Merkliste**, **Planen** (die
+Musterdepots), **Meldungen** (darin auch die E-Mails) und **Lernen** (Lernstand der Akademie- und Kaufen-Seiten aus dem Menü).
+Ursprünglich (01.10.2026) waren es zwei Reiter nebeneinander: **Merkliste** und **Mein Depot**. Besucher
 registrieren sich mit E-Mail-Adresse und Passwort (seit 30.09.2026 abends, vorher Anmeldung per E-Mail-Link) und
 merken sich Anleihen. „Mein Depot“ ist ein Musterdepot: gemerkte Anleihen mit einem gedachten Nennwert, darunter
 die Zahlungen als Schaubild. Beides liegt auf dem Server und ist auf jedem Gerät da, auf dem man sich anmeldet. Es

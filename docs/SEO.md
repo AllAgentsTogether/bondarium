@@ -114,7 +114,7 @@ Eine Seite steht von selbst in Sitemap, llms.txt und llms-full.txt, wenn ihr Kop
 2. `<meta name="description">` mit 70 bis 160 Zeichen; derselbe Text in `og:description` und `twitter:description`.
 3. `<link rel="canonical" href="https://www.bondarium.de/<datei>.html">` und `<meta name="robots" content="index, follow">`.
 4. Ein JSON-LD-Block `Article` (oder `WebPage`/`CollectionPage`) mit `headline`, `description`, `datePublished`, `dateModified` und
-   ein Block `BreadcrumbList`. Die zweite Brotkrume (Verstehen, Entscheiden, Kaufen, Anleihen, Zinsen) bestimmt
+   ein Block `BreadcrumbList`. Die zweite Brotkrume (Akademie, Anleihen, Kaufen, Markt) bestimmt
    den Abschnitt in llms.txt. Herausgeber, Autor, Bild und Website ergänzt `seo.py`; auf Seiten ohne `Article` auch
    `name` (aus `<title>`) und `description` (aus der meta description).
 5. Genau eine `<h1>`; der Inhalt in `<main>`.
