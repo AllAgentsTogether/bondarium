@@ -73,6 +73,8 @@ RewriteRule ^(en/)?steuer\.html$ https://www.bondarium.de/steuern-handelskosten.
 # 11.10.2026 abends (Gesamtprüfung Punkt 3): fortgeschrittene.html aufgelöst – Zinskurve, Duration, Spreads, Leiter hatten eigene Seiten,
 # Währungsabsicherung steht jetzt in risiko.html#waehrung, die vier Handelsregeln in handelsplaetze.html#regeln
 RewriteRule ^(en/)?fortgeschrittene\.html$ https://www.bondarium.de/wissen.html#fortgeschrittene [R=301,NE,QSD,L]
+# 11.10.2026 abends (Gesamtprüfung Punkt 4): anlegerprofile.html in anlageziele.html eingebettet (Abschnitt „Für wen Anleihen passen“)
+RewriteRule ^(en/)?anlegerprofile\.html$ https://www.bondarium.de/anlageziele.html#fuer-wen [R=301,NE,QSD,L]
 # Frühere englische Kopien (/en/…) sonst dauerhaft auf die deutsche Seite gleichen Namens
 RewriteRule ^en/?$ https://www.bondarium.de/ [R=301,L]
 RewriteRule ^en/(.+)$ https://www.bondarium.de/$1 [R=301,L]
