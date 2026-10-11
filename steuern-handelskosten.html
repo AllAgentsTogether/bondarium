@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Steuern und Handelskosten bei Anleihen – Bondarium</title>
-<meta name="description" content="Abgeltungsteuer, Stückzinsen, Nullkupon, Fremdwährung, Ordergebühr, Geld-Brief-Spanne und Stückelung: was bei Anleihen zwischen brutto und netto liegt.">
+<meta name="description" content="Abgeltungsteuer, Stückzinsen, Nullkupon, Fremdwährung, Vorabpauschale beim Anleihen-ETF, Quellensteuer im Ausland, Ordergebühr, Spanne und Stückelung: was zwischen brutto und netto liegt.">
 <link rel="canonical" href="https://www.bondarium.de/steuern-handelskosten.html">
 <meta name="robots" content="index, follow">
 <meta name="author" content="Bondarium">
@@ -13,14 +13,14 @@
 <meta property="og:locale" content="de_DE">
 <meta property="og:url" content="https://www.bondarium.de/steuern-handelskosten.html">
 <meta property="og:title" content="Steuern und Handelskosten bei Anleihen – Bondarium">
-<meta property="og:description" content="Abgeltungsteuer, Stückzinsen, Nullkupon, Fremdwährung, Ordergebühr, Geld-Brief-Spanne und Stückelung: was bei Anleihen zwischen brutto und netto liegt.">
+<meta property="og:description" content="Abgeltungsteuer, Stückzinsen, Nullkupon, Fremdwährung, Vorabpauschale beim Anleihen-ETF, Quellensteuer im Ausland, Ordergebühr, Spanne und Stückelung: was zwischen brutto und netto liegt.">
 <meta property="og:image" content="https://www.bondarium.de/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Bondarium: Finde Anleihen, die zu deinem Leben passen">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Steuern und Handelskosten bei Anleihen – Bondarium">
-<meta name="twitter:description" content="Abgeltungsteuer, Stückzinsen, Nullkupon, Fremdwährung, Ordergebühr, Geld-Brief-Spanne und Stückelung: was bei Anleihen zwischen brutto und netto liegt.">
+<meta name="twitter:description" content="Abgeltungsteuer, Stückzinsen, Nullkupon, Fremdwährung, Vorabpauschale beim Anleihen-ETF, Quellensteuer im Ausland, Ordergebühr, Spanne und Stückelung: was zwischen brutto und netto liegt.">
 <meta name="twitter:image" content="https://www.bondarium.de/og-image.png">
 <link rel="icon" href="favicon.svg?v=4" type="image/svg+xml">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=4">
@@ -84,8 +84,18 @@
     .stk-leg { grid-template-columns: 1fr; }
     .sb-go { align-self: stretch; text-align: center; }
   }
+  .tab { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+  .tab th, .tab td { text-align: left; padding: 7px 8px 7px 0; border-bottom: 1px solid rgba(26,26,25,0.10); vertical-align: top; }
+  .tab thead th { font-size: 11.5px; font-weight: 600; color: var(--text); letter-spacing: 0.06em; text-transform: uppercase; vertical-align: bottom; }
+  .tab tbody th { font-weight: 600; color: var(--ink); }
+  .tab td.z, .tab th.z { text-align: right; padding-left: 10px; padding-right: 0; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .tab tbody tr:last-child th, .tab tbody tr:last-child td { border-bottom: 0; }
+  .tab thead th.z { white-space: normal; }
+  .tab small { display: block; font-size: 11px; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--text); }
+  .tab-wrap { overflow-x: auto; }
+  @media (max-width: 600px) { .tab { font-size: 12.5px; } .tab th, .tab td { overflow-wrap: anywhere; hyphens: auto; padding-right: 6px; } .tab td.z, .tab th.z { padding-left: 4px; } }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Steuern und Handelskosten bei Anleihen: Was von der Rendite bleibt","description":"Abgeltungsteuer, Stückzinsen, Nullkupon, Fremdwährung, Ordergebühr, Geld-Brief-Spanne und Stückelung: was bei Anleihen zwischen brutto und netto liegt.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-30","dateModified":"2026-10-04","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/steuern-handelskosten.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Steuern und Handelskosten bei Anleihen: Was von der Rendite bleibt","description":"Abgeltungsteuer, Stückzinsen, Nullkupon, Fremdwährung, Vorabpauschale beim Anleihen-ETF, Quellensteuer im Ausland, Ordergebühr, Spanne und Stückelung: was zwischen brutto und netto liegt.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-30","dateModified":"2026-10-11","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/steuern-handelskosten.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Kaufen","item":"https://www.bondarium.de/kaufen.html"},{"@type":"ListItem","position":3,"name":"Steuern und Handelskosten","item":"https://www.bondarium.de/steuern-handelskosten.html"}]}</script>
 </head>
 <body>
@@ -191,19 +201,21 @@
     <div class="b2-kopf">
       <div>
         <h1>Steuern und Handelskosten: Was von der Rendite bleibt</h1>
-        <p class="sub">Zinsen und Kursgewinne aus Anleihen versteuerst du mit der Abgeltungsteuer: 25&nbsp;% plus Solidaritätszuschlag, zusammen 26,375&nbsp;%, auf alles über dem Sparerpauschbetrag von 1.000&nbsp;€ im Jahr. Dazu kommen Ordergebühr und Geld-Brief-Spanne – wer sie kennt, holt bei gleicher Anleihe mehr heraus. Lesezeit: etwa 6 Minuten.</p>
+        <p class="sub">Zinsen und Kursgewinne aus Anleihen – auch aus Anleihen-ETFs und Auslandsanleihen – versteuerst du mit der Abgeltungsteuer: 25&nbsp;% plus Solidaritätszuschlag, zusammen 26,375&nbsp;%, auf alles über dem Sparerpauschbetrag von 1.000&nbsp;€ im Jahr. Dazu kommen Ordergebühr und Geld-Brief-Spanne – wer sie kennt, holt bei gleicher Anleihe mehr heraus. Lesezeit: etwa 8 Minuten.</p>
       </div>
       <div class="b2-spot"><img src="spot-steuern-handelskosten.svg" alt="" width="232" height="160"></div>
     </div>
-    <p class="stand"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg><span><b>Keine Steuerberatung.</b> Regeln für Privatanleger mit Wohnsitz in Deutschland, Stand September 2026.</span></p>
+    <p class="stand"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg><span><b>Keine Steuerberatung.</b> Regeln für Privatanleger mit Wohnsitz in Deutschland, Stand Oktober 2026.</span></p>
     <nav class="lands" aria-label="Zum Thema springen">
       <a class="lbtn" href="#zins"><span class="n">1</span>Steuer auf Zinsen</a>
       <a class="lbtn" href="#kursgewinn"><span class="n">2</span>Kursgewinn</a>
       <a class="lbtn" href="#verlusttoepfe"><span class="n">3</span>Verlusttöpfe</a>
       <a class="lbtn" href="#stueckzinsen"><span class="n">4</span>Stückzinsen</a>
       <a class="lbtn" href="#nullkupon"><span class="n">5</span>Nullkupon, Währung</a>
-      <a class="lbtn" href="#kosten"><span class="n">6</span>Handelskosten</a>
-      <a class="lbtn" href="#stueckelung"><span class="n">7</span>Stückelung</a>
+      <a class="lbtn" href="#etf"><span class="n">6</span>Anleihen-ETF</a>
+      <a class="lbtn" href="#quellensteuer"><span class="n">7</span>Quellensteuer</a>
+      <a class="lbtn" href="#kosten"><span class="n">8</span>Handelskosten</a>
+      <a class="lbtn" href="#stueckelung"><span class="n">9</span>Stückelung</a>
     </nav>
 
     <section class="kap" id="zins" aria-labelledby="h-zins">
@@ -256,9 +268,29 @@
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Nullkupon = Steuer erst am Ende, Zinseszins auf brutto. Fremdwährung = auch der Wechselkurs wird versteuert.</span></p>
     </section>
 
-    <section class="kap kap-b" id="kosten" aria-labelledby="h-kosten">
+    <section class="kap kap-b" id="etf" aria-labelledby="h-etf">
       <div class="k-text">
         <span class="knr" aria-hidden="true">6</span>
+        <h2 id="h-etf">Anleihen-ETF: Vorabpauschale statt Zins, keine Teilfreistellung</h2>
+        <p>Ein <a href="anleihen-etf.html">Anleihen-ETF</a> zahlt dir keine Zinsen, sondern Ausschüttungen – oder er behält die Zinsen im Fondsvermögen (thesaurierend). <strong>Versteuert wird trotzdem jedes Jahr: über die <a href="begriffe.html#vorabpauschale">Vorabpauschale</a>.</strong> Sie ist eine Mindestbesteuerung: Wert des ETF am Jahresanfang × 70&nbsp;% des Basiszinses, den das Bundesfinanzministerium jedes Jahr festlegt – 2026 sind das 3,20&nbsp;%, also <span data-kz="basisertrag-2026">2,24</span>&nbsp;% vom Wert. Höchstens aber die Wertsteigerung des Jahres, und Ausschüttungen werden abgezogen. Die Steuer darauf bucht der Broker Anfang Januar vom Verrechnungskonto ab; beim Verkauf zieht er die schon versteuerten Pauschalen vom Gewinn ab.</p><p>Den Nachlass, den Aktien-ETFs bekommen, gibt es hier nicht: <strong>Die Teilfreistellung beträgt bei Anleihen-ETFs 0&nbsp;%</strong> (Aktienfonds 30&nbsp;%, Mischfonds mit mindestens 25&nbsp;% Aktien 15&nbsp;%). Ausschüttungen, Vorabpauschale und Verkaufsgewinn sind also voll steuerpflichtig – wie bei der Anleihe selbst.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">10.000&nbsp;€ Anleihen-ETF, Steuerjahr 2026 (Basiszins <span data-kz="basiszins-2026">3,20</span>&nbsp;%)</p><div class="balken" role="img" aria-label="Thesaurierender ETF, Wert steigt um 500 Euro: Vorabpauschale 224 Euro, Steuer 59 Euro. Wert steigt nur um 100 Euro: Vorabpauschale 100 Euro, Steuer 26 Euro. Ausschüttender ETF mit 300 Euro Ausschüttung: Vorabpauschale 0, Steuer auf die Ausschüttung 79 Euro."><div class="hb"><span class="hb-l">Thesaurierend, Wert +500&nbsp;€<small>Vorabpauschale 224&nbsp;€ (2,24&nbsp;%)</small></span><span class="hb-bar" style="--w:75%"><b>59&nbsp;€ Steuer</b></span></div><div class="hb"><span class="hb-l">Thesaurierend, Wert +100&nbsp;€<small>Pauschale höchstens die Wertsteigerung: 100&nbsp;€</small></span><span class="hb-bar" style="--w:33%"><b>26&nbsp;€ Steuer</b></span></div><div class="hb"><span class="hb-l">Ausschüttend, 300&nbsp;€ ausgezahlt<small>Vorabpauschale 0&nbsp;€, Steuer auf die Ausschüttung</small></span><span class="hb-bar o" style="--w:100%"><b>79&nbsp;€ Steuer</b></span></div></div><p class="sb-f">26,375&nbsp;% ohne Pauschbetrag. Die Steuer auf die Vorabpauschale 2026 bucht der Broker am 4.&nbsp;Januar 2027 ab – auch wenn der ETF nichts ausgezahlt hat. Beim späteren Verkauf wird der Gewinn um die 224&nbsp;€ gekürzt.</p><a class="go sb-go" href="etf-oder-anleihe.html">ETF oder Anleihe: drei Unterschiede →</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Anleihen-ETF = voll steuerpflichtig, keine Teilfreistellung. Thesaurierend heißt nicht steuerfrei – die Vorabpauschale holt jedes Jahr einen Teil.</span></p>
+    </section>
+
+    <section class="kap" id="quellensteuer" aria-labelledby="h-quellensteuer">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">7</span>
+        <h2 id="h-quellensteuer">Auslandsanleihen: Quellensteuer im Land des Schuldners</h2>
+        <p>Auf Zinsen deutscher Anleihen fällt nur die Abgeltungsteuer an. Bei einer Auslandsanleihe kann zusätzlich der Staat des Schuldners zugreifen: <strong>die <a href="begriffe.html#quellensteuer">Quellensteuer</a>, abgezogen, bevor der Zins bei dir ankommt.</strong> Viele Staaten verzichten bei Zinsen an ausländische Anleger darauf oder befreien ihre Staatsanleihen: Die USA behandeln Zinsen aus registrierten Anleihen als „Portfolio-Zinsen“ ohne Abzug, Frankreich, Österreich, Spanien, Finnland oder Schweden erheben auf Anleihezinsen keine Quellensteuer. Italien, Polen, Portugal oder die Türkei haben eine, aber mit Befreiungen für viele Anleihen.</p><p>Wird doch etwas einbehalten, rechnet dein deutscher Broker es bis zum Satz des Doppelbesteuerungsabkommens – bei Zinsen meist 0 bis 15&nbsp;% – automatisch auf die Abgeltungsteuer an. <strong>Was der Quellenstaat darüber hinaus einbehält, holst du nur per Antrag dort zurück</strong>; bei kleinen Beträgen bleibt es meist beim Verlust. Bei einem Auslandsbroker trägst du beides in der Anlage KAP ein.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Quellensteuer auf Anleihezinsen – Beispiele</p><div class="tab-wrap"><table class="tab"><thead><tr><th scope="col">Schuldnerland</th><th scope="col">Quellensteuer auf Zinsen</th><th scope="col" class="z">Anrechenbar<small>bis DBA-Satz</small></th></tr></thead><tbody><tr><th scope="row">Deutschland</th><td>keine, nur Abgeltungsteuer</td><td class="z">–</td></tr><tr><th scope="row">USA</th><td>keine bei registrierten Anleihen (Portfolio-Zinsen), sonst 30&nbsp;%</td><td class="z">0&nbsp;%</td></tr><tr><th scope="row">Frankreich, Österreich, Spanien, Finnland, Schweden</th><td>keine</td><td class="z">0&nbsp;%</td></tr><tr><th scope="row">Niederlande, Großbritannien</th><td>keine bei gewöhnlichen Anleihen (sonst 15 bzw. 20&nbsp;%)</td><td class="z">0&nbsp;%</td></tr><tr><th scope="row">Italien</th><td>26&nbsp;%, frei bei Verwahrung über eine zugelassene Bank</td><td class="z">10&nbsp;%</td></tr><tr><th scope="row">Polen</th><td>20&nbsp;%, Staats- und viele Unternehmensanleihen frei</td><td class="z">5&nbsp;%</td></tr><tr><th scope="row">Türkei</th><td>0 bis 15&nbsp;% je nach Papier, viele Staatsanleihen frei</td><td class="z">10&nbsp;%</td></tr><tr><th scope="row">Portugal</th><td>28&nbsp;%, viele Anleihen frei</td><td class="z">15&nbsp;%</td></tr><tr><th scope="row">Griechenland</th><td>15&nbsp;%, Staatsanleihen und börsennotierte Unternehmensanleihen frei</td><td class="z">10&nbsp;%</td></tr></tbody></table></div><p class="sb-f">Nach der Übersicht des Bundeszentralamts für Steuern, Stand 1.&nbsp;Januar 2026: nationaler Satz auf Zinsen und Höchstsatz nach Abkommen. Was tatsächlich einbehalten wurde, steht in deiner Zinsabrechnung.</p><a class="go sb-go" href="anleihen-laender.html">Staatsanleihen nach Ländern →</a></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Deutschland und die meisten großen Schuldnerländer ziehen von Anleihezinsen nichts ab. Wo doch, rechnet der Broker bis zum Abkommenssatz an – den Rest gibt es nur per Antrag im Ausland.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="kosten" aria-labelledby="h-kosten">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">8</span>
         <h2 id="h-kosten">Handelskosten: die zweite Steuer</h2>
         <p>Beim Kauf zahlst du zweimal: die <strong>Ordergebühr</strong> des Brokers (für 5.000&nbsp;€ je nach Anbieter <span data-kz="broker-spanne">0 bis rund 18&nbsp;€</span>, siehe <a href="broker-vergleich.html">Broker-Vergleich</a>) und die <a href="begriffe.html#geld-brief-spanne">Geld-Brief-Spanne</a> der Börse – bei Bundesanleihen 0,05&nbsp;%, bei kleinen Unternehmensanleihen auch 1&nbsp;% und mehr. Beim Kauf zahlst du die halbe Spanne, denn der Briefkurs liegt so weit über der Mitte. Bei 5.000&nbsp;€ und 0,6&nbsp;% Spanne sind 10&nbsp;€ Gebühr plus 0,3&nbsp;% halbe Spanne (15&nbsp;€) zusammen 25&nbsp;€, also 0,5&nbsp;%.</p><p>Entscheidend ist die Haltedauer: <strong>Einmalkosten verteilen sich auf die Jahre.</strong> Bei einem Jahr fressen die 0,5&nbsp;% ein Achtel der Rendite, bei zehn Jahren fast nichts. Immer mit <a href="begriffe.html#limit">Limit</a> ordern und den Handelsplatz mit der engsten Spanne wählen – das spart oft mehr als die Brokerwahl.</p>
       </div>
@@ -268,7 +300,7 @@
 
     <section class="kap" id="stueckelung" aria-labelledby="h-stueckelung">
       <div class="k-text">
-        <span class="knr" aria-hidden="true">7</span>
+        <span class="knr" aria-hidden="true">9</span>
         <h2 id="h-stueckelung">Stückelung: Was du überhaupt kaufen kannst</h2>
         <p>Die <a href="begriffe.html#stueckelung">Stückelung</a> ist der kleinste handelbare Betrag. <strong>Fast die Hälfte der Euro-Unternehmensanleihen ist nur in 100.000-€-Stücken zu haben</strong> – die Emittenten sparen sich so den Prospekt für Privatanleger. Staatsanleihen sind fast alle ab 1.000&nbsp;€ oder sogar 0,01&nbsp;€ (Bund) erhältlich.</p><p>Für dich heißt das: Die schöne Rendite auf dem Kurszettel gibt es oft nur ab 100.000&nbsp;€ – oder gar nicht. Filtere in der Suche nach Mindestanlage, oder sieh dir für diese Segmente einen <a href="anleihen-etf.html">Anleihen-ETF</a> an, der die großen Stücke bündelt.</p>
       </div>
@@ -281,7 +313,7 @@
       <a class="go leise" href="broker-vergleich.html">Broker im Vergleich →</a>
       <a class="go leise" href="erste-anleihe.html">Deine erste Anleihe: Order und Limit →</a>
     </div>
-    <p class="klein">Allgemeine Information zu Steuern und Kosten, Stand September 2026, für Privatanleger mit Wohnsitz in Deutschland. Keine Steuer- und keine Anlageberatung – im Einzelfall hilft ein Steuerberater. Die Zahlen sind gerundet.</p>
+    <p class="klein">Allgemeine Information zu Steuern und Kosten, Stand Oktober 2026, für Privatanleger mit Wohnsitz in Deutschland. Keine Steuer- und keine Anlageberatung – im Einzelfall hilft ein Steuerberater. Die Zahlen sind gerundet.</p>
 
     <nav class="crossnav" aria-label="Weiter">
       <p class="crossnav-t">Weiter</p>
@@ -295,9 +327,11 @@
     <details class="quellen" id="quellen">
       <summary>Datenquellen und Methodik</summary>
       <div class="quellen-body">
-        <p><strong>Steuern (Stand September 2026).</strong> Kapitalerträge nach § 20 EStG: Zinsen, Stückzinsen und Veräußerungs- bzw. Einlösungsgewinne von Anleihen; Abgeltungsteuer 25&nbsp;% (§ 32d EStG) plus Solidaritätszuschlag 5,5&nbsp;% = 26,375&nbsp;%, mit Kirchensteuer 8&nbsp;% 27,82&nbsp;%, 9&nbsp;% 27,99&nbsp;%. Sparerpauschbetrag 1.000&nbsp;€ / 2.000&nbsp;€ (§ 20 Abs. 9 EStG). Verlusttöpfe (Karte 3): § 20 Abs. 6 EStG – Verluste aus Anleihen, Fonds, ETFs und Zertifikaten sowie gezahlte Stückzinsen im allgemeinen Topf, verrechenbar mit allen Kapitalerträgen; Verluste aus Aktienveräußerungen nur mit Aktiengewinnen (Satz 4); Ausfall einer Kapitalforderung bis 20.000&nbsp;€ je Jahr (Satz 6, seit 2020). Vorlage des BFH an das Bundesverfassungsgericht zum Aktientopf: Beschluss vom 17.11.2020, VIII R 11/18, dort Az. 2 BvL 3/21, nach unserem Stand noch nicht entschieden. Fremdwährung: Anschaffung und Rückzahlung werden zum jeweiligen Euro-Kurs bewertet, die Differenz ist Teil des Gewinns oder Verlusts. Günstigerprüfung, Kirchensteuer-Abzugsverfahren und Besonderheiten (Altbestände vor 2009, Verlustbescheinigung, Auslandsbroker) sind vereinfacht dargestellt. Allgemeine Information, keine Steuerberatung.</p>
-        <p><strong>Rechnungen.</strong> Netto = brutto × (1 − 0,26375). Nullkupon (Karte 5): 10.000&nbsp;€ × 1,03¹⁰ = 13.439&nbsp;€, Steuer 26,375&nbsp;% auf 3.439&nbsp;€ Gewinn = 907&nbsp;€, netto 12.532&nbsp;€; Kuponanleihe: 10.000&nbsp;€ × (1 + 0,03 × 0,73625)¹⁰ = 12.442&nbsp;€, ohne Pauschbetrag und Kosten. Handelskosten (Karte 6): 10&nbsp;€ Ordergebühr + 0,3&nbsp;% halbe Spanne (Spanne 0,6&nbsp;%) auf 5.000&nbsp;€ = 15&nbsp;€, zusammen 25&nbsp;€ = 0,5&nbsp;%, geteilt durch die Haltedauer in Jahren.</p>
-        <p><strong>Stückelung (Karte 7).</strong> Auswertung des Registers der Anleihen-Suche (ESMA FIRDS, Stand 26.09.2026): 21.658 Unternehmensanleihen in Euro, davon 21.657 mit Angabe zur Stückelung: 8.055 bis 1.000&nbsp;€ (37&nbsp;%), 3.012 zwischen 1.001 und 99.999&nbsp;€ (14&nbsp;%), 10.590 ab 100.000&nbsp;€ (49&nbsp;%); 1.175 Euro-Staatsanleihen, davon 975 bis 1.000&nbsp;€ (83&nbsp;%, 9 ohne Angabe).</p>
+        <p><strong>Steuern (Stand Oktober 2026).</strong> Kapitalerträge nach § 20 EStG: Zinsen, Stückzinsen und Veräußerungs- bzw. Einlösungsgewinne von Anleihen; Abgeltungsteuer 25&nbsp;% (§ 32d EStG) plus Solidaritätszuschlag 5,5&nbsp;% = 26,375&nbsp;%, mit Kirchensteuer 8&nbsp;% 27,82&nbsp;%, 9&nbsp;% 27,99&nbsp;%. Sparerpauschbetrag 1.000&nbsp;€ / 2.000&nbsp;€ (§ 20 Abs. 9 EStG). Verlusttöpfe (Karte 3): § 20 Abs. 6 EStG – Verluste aus Anleihen, Fonds, ETFs und Zertifikaten sowie gezahlte Stückzinsen im allgemeinen Topf, verrechenbar mit allen Kapitalerträgen; Verluste aus Aktienveräußerungen nur mit Aktiengewinnen (Satz 4); Ausfall einer Kapitalforderung bis 20.000&nbsp;€ je Jahr (Satz 6, seit 2020). Vorlage des BFH an das Bundesverfassungsgericht zum Aktientopf: Beschluss vom 17.11.2020, VIII R 11/18, dort Az. 2 BvL 3/21, nach unserem Stand noch nicht entschieden. Fremdwährung: Anschaffung und Rückzahlung werden zum jeweiligen Euro-Kurs bewertet, die Differenz ist Teil des Gewinns oder Verlusts. Günstigerprüfung, Kirchensteuer-Abzugsverfahren und Besonderheiten (Altbestände vor 2009, Verlustbescheinigung, Auslandsbroker) sind vereinfacht dargestellt. Allgemeine Information, keine Steuerberatung.</p>
+        <p><strong>Rechnungen.</strong> Netto = brutto × (1 − 0,26375). Nullkupon (Karte 5): 10.000&nbsp;€ × 1,03¹⁰ = 13.439&nbsp;€, Steuer 26,375&nbsp;% auf 3.439&nbsp;€ Gewinn = 907&nbsp;€, netto 12.532&nbsp;€; Kuponanleihe: 10.000&nbsp;€ × (1 + 0,03 × 0,73625)¹⁰ = 12.442&nbsp;€, ohne Pauschbetrag und Kosten. Handelskosten (Karte 8): 10&nbsp;€ Ordergebühr + 0,3&nbsp;% halbe Spanne (Spanne 0,6&nbsp;%) auf 5.000&nbsp;€ = 15&nbsp;€, zusammen 25&nbsp;€ = 0,5&nbsp;%, geteilt durch die Haltedauer in Jahren.</p>
+<p><strong>Anleihen-ETF (Karte 6).</strong> Vorabpauschale § 18 InvStG: Basisertrag = Rücknahmepreis zu Jahresbeginn × 70&nbsp;% des Basiszinses, höchstens die Wertsteigerung des Jahres zuzüglich Ausschüttungen; Ausschüttungen werden abgezogen; Zufluss am ersten Werktag des Folgejahres; im Kaufjahr für jeden vollen Monat vor dem Kauf ein Zwölftel weniger. Basiszins 2026: 3,20&nbsp;% (BMF-Schreiben vom 13.&nbsp;Januar 2026, IV C 1 - S 1980/00230/012/001), 2025: 2,53&nbsp;% (BMF-Schreiben vom 10.&nbsp;Januar 2025). Teilfreistellung § 20 InvStG: Aktienfonds (fortlaufend mehr als 50&nbsp;% Kapitalbeteiligungen, § 2 Abs. 6) 30&nbsp;%, Mischfonds (mindestens 25&nbsp;%, § 2 Abs. 7) 15&nbsp;%, Renten- und Geldmarktfonds ohne. Beim Verkauf werden die angesetzten Vorabpauschalen vom Gewinn abgezogen (§ 19 Abs. 1 InvStG). Rechnung: 10.000&nbsp;€ × 3,20&nbsp;% × 0,7 = 224&nbsp;€, Steuer 26,375&nbsp;% = 59,08&nbsp;€; bei nur 100&nbsp;€ Wertsteigerung ist die Pauschale 100&nbsp;€ (26,38&nbsp;€); bei 300&nbsp;€ Ausschüttung ist sie 0&nbsp;€, versteuert wird die Ausschüttung (79,13&nbsp;€). Der Basiszins wird jedes Jahr im Januar neu festgelegt.</p>
+        <p><strong>Quellensteuer (Karte 7).</strong> Anrechnung nach § 32d Abs. 5 EStG: festgesetzte und gezahlte ausländische Steuer, höchstens 25&nbsp;% je Kapitalertrag und nicht mehr als die deutsche Steuer darauf, bei Abkommen bis zu dessen Höchstsatz; die auszahlende Stelle rechnet an (§ 43a Abs. 3 EStG). Sätze je Land aus der Übersicht des Bundeszentralamts für Steuern <a href="https://www.bzst.de/DE/Service/SteuerlichesInfocenter/AuslaendischeQuellensteuer/ausl_quellensteuer.html" rel="noopener">„Anrechenbarkeit der Quellensteuer auf Dividenden und Zinsen“</a>, Stand 1.&nbsp;Januar 2026 (Spalte B: nationale Quellensteuer auf Zinsen und Höchstsatz nach Abkommen, Spalte E: Befreiungen); die Tabelle nennt Beispiele, keine vollständige Liste. USA: <a href="https://www.irs.gov/publications/p515" rel="noopener">IRS Publication 515</a>, „Portfolio interest exempt from chapter 3 withholding“ – Zinsen auf Anleihen in registrierter Form an ausländische Empfänger mit Nachweis (Formular W-8BEN beim Broker). Befreiungen hängen oft von Papier, Verwahrung und Nachweis ab; maßgeblich ist die Abrechnung des Brokers.</p>
+        <p><strong>Stückelung (Karte 9).</strong> Auswertung des Registers der Anleihen-Suche (ESMA FIRDS, Stand 26.09.2026): 21.658 Unternehmensanleihen in Euro, davon 21.657 mit Angabe zur Stückelung: 8.055 bis 1.000&nbsp;€ (37&nbsp;%), 3.012 zwischen 1.001 und 99.999&nbsp;€ (14&nbsp;%), 10.590 ab 100.000&nbsp;€ (49&nbsp;%); 1.175 Euro-Staatsanleihen, davon 975 bis 1.000&nbsp;€ (83&nbsp;%, 9 ohne Angabe).</p>
       </div>
     </details>
   </main>
