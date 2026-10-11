@@ -257,7 +257,7 @@
         <div class="kd-t"><div class="kd-l">Rendite bei Kauf</div><div class="kd-v" id="k-rk">4,00 %</div><div class="kd-z">bleibt bis Fälligkeit</div></div>
         <div class="kd-t"><div class="kd-l">Zinsniveau jetzt</div><div class="kd-v" id="k-mr">3,00 %</div><div class="kd-z">Rendite sicherer Anleihen gleicher Laufzeit</div></div>
         <div class="kd-t"><div class="kd-l">Rendite der Anleihe</div><div class="kd-v" id="k-ar">4,00 %</div><div class="kd-z" id="k-ar-z">Zinsniveau + 1,0 Pkt.</div></div>
-        <div class="kd-t"><div class="kd-l">Restlaufzeit</div><div class="kd-v" id="k-rl">30,0 J.</div><div class="kd-z" id="k-rl-z">mod. Duration 17,3</div></div>
+        <div class="kd-t"><div class="kd-l">Restlaufzeit</div><div class="kd-v" id="k-rl">30,0 J.</div><div class="kd-z" id="k-rl-z">Hebel 17,3 (mod. Duration)</div></div>
         <div class="kd-t"><div class="kd-l">Laufende Verz.</div><div class="kd-v" id="k-lv">4,00 %</div><div class="kd-z">Kupon ÷ Kurs</div></div>
         <div class="kd-t"><div class="kd-l">Kursgewinn</div><div class="kd-v" id="k-kg">±0 €</div><div class="kd-z" id="k-kg-z">seit Kauf · ±0,0 %</div></div>
         <div class="kd-t"><div class="kd-l">Zinsen erhalten</div><div class="kd-v" id="k-zi">0 €</div><div class="kd-z" id="k-zi-z">Gesamt ±0 €</div></div>
@@ -494,7 +494,7 @@
     $('k-ar').textContent = fmt(ar, 2) + ' %';
     $('k-ar-z').textContent = (AUFSCHLAG ? 'Zinsniveau + ' + fmt(AUFSCHLAG, 1) + ' Pkt.' : 'wie Zinsniveau') + ' · ' + (ar - kaufrendite > 0.05 ? 'über' : ar - kaufrendite < -0.05 ? 'unter' : 'wie') + ' Kaufrendite';
     $('k-rl').textContent = fmt(rest, 1) + ' J.';
-    $('k-rl-z').textContent = 'mod. Duration ' + fmt(modDur(kupon, ar, rest), 1);
+    $('k-rl-z').textContent = 'Hebel ' + fmt(modDur(kupon, ar, rest), 1) + ' (mod. Duration)';
     $('k-lv').textContent = fmt(kupon / p * 100, 2) + ' %';
     var kgEl = $('k-kg'); kgEl.textContent = sigEur(kg * f); kgEl.className = 'kd-v ' + (kg > 0.004 ? 'plus' : kg < -0.004 ? 'minus' : '');
     $('k-kg-z').textContent = 'seit Kauf zu ' + fmt(kaufkurs, 2) + ' · ' + sig(kg / kaufkurs * 100, 1) + ' %';
