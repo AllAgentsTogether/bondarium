@@ -68,7 +68,6 @@ AKADEMIE = ("Akademie", "wissen.html", [
         E("Anleihe-Arten", "anleihe-arten.html", "spot-anleihe-arten.svg", "Anleihe-Arten", "Staat, Pfandbrief, Floater & Co.", "13 Anleihe-Arten einfach erklärt – von Staatsanleihe, Pfandbrief und Nachranganleihe bis Floater und Nullkupon. Je Art: Zins, Risiko und für wen sie passt."),
         E("Zinsniveau", "zinsniveau.html", "spot-zinsniveau.svg", "Zinsniveau", "Warum es steigt und fällt", "Was das allgemeine Zinsniveau ist, wie EZB, Inflation und Markt es bewegen – und was steigendes oder fallendes Zinsniveau für deine Anleihe heißt."),
         E("Laufzeit", "laufzeit.html", "spot-laufzeit.svg", "Laufzeit", "Kurz oder lang – Risiko und Chance", "Laufzeit einfach erklärt: was kurz, mittel und lang bedeutet, warum lange Anleihen bei steigendem Zinsniveau fallen – und wo die Chance liegt."),
-        E("Simulator", "anleihen-simulator.html", "spot-anleihen-simulator.svg", "Anleihen-Simulator", "30 Jahre Kurs in 30 Sekunden", "Sieh, wie der Kurs einer Anleihe mit dem Zinsniveau schwankt und am Ende zum Nennwert zurückkehrt: 30 Jahre in 30 Sekunden, Zeitpunkt mit der Maus ziehen."),   # seit 11.10.2026 (Nutzerwunsch)
         E("Rendite lesen", "rendite-lesen.html", "spot-rendite-lesen.svg", "Rendite richtig lesen", "Kupon, Yield to Worst, netto – welche Zahl zählt", "Kupon, laufende Verzinsung, Rendite bis Fälligkeit, Yield to Worst, Rendite nach Steuern: was jede Zahl bedeutet, woher sie kommt und welche für dich zählt.")
     ]),
     B("Risiken", "wissen.html#risiken", "spot-risiko.svg", "Risiken", "Was schiefgehen kann – und woran du es vor dem Kauf erkennst.", [
@@ -117,6 +116,7 @@ KAUFEN = ("Kaufen", "kaufen.html", [
     E("Nach dem Kauf", "nach-dem-kauf.html", "spot-nach-dem-kauf.svg", "Nach dem Kauf", "Zinsen, Verkauf, Rückzahlung und Depotwechsel", "Was nach dem Anleihekauf passiert: Zinsen am Zinstermin, Verkauf vor Fälligkeit, Rückzahlung zum Nennwert, Post von der Bank und Depotwechsel."),
     E("Steuern und Kosten", "steuern-handelskosten.html", "spot-steuern-handelskosten.svg", "Steuern und Handelskosten", "Was zwischen brutto und netto liegt", "Abgeltungsteuer, Stückzinsen, Nullkupon, Fremdwährung, Vorabpauschale beim Anleihen-ETF, Quellensteuer im Ausland, Ordergebühr, Spanne und Stückelung: was zwischen brutto und netto liegt."),
     E("Rechner", "rechner.html", "spot-rechner.svg", "Rechner", "Rendite, Stückzinsen, Netto, Zinsniveau", "Vier Rechner: Rendite aus Kurs und Kupon, Stückzinsen, Zinsen netto nach Steuer und der Kurs, wenn das allgemeine Zinsniveau steigt oder fällt."),
+    E("Simulator", "anleihen-simulator.html", "spot-anleihen-simulator.svg", "Anleihen-Simulator", "30 Jahre Kurs in 30 Sekunden", "Sieh, wie der Kurs einer Anleihe mit dem Zinsniveau schwankt und am Ende zum Nennwert zurückkehrt: 30 Jahre in 30 Sekunden, Zeitpunkt mit der Maus ziehen."),   # seit 11.10.2026 abends im Menü „Kaufen“ (Nutzerwunsch; vorher Akademie › Grundlagen)
 ])
 MARKT = ("Markt", "beobachten.html", [   # bis 11.10.2026 abends ZINSEN/„zinsen“ (Menüname „Zinsen“ bis 11.10.2026)
     E("Renditen Staat", "renditen.html", "spot-renditen.svg?v=2", "Renditen von Staatsanleihen seit 1970", "Acht Länder im Vergleich", "Renditen 10-jähriger Staatsanleihen der acht größten Volkswirtschaften seit 1970: USA, China, Deutschland, Indien, Japan, UK, Frankreich und Italien."),
@@ -179,7 +179,7 @@ FOOTER = [
                            ("Anleihen nach Kupon", "anleihen-kupon.html"), ("Anleihen-ETFs", "anleihen-etf.html")]),
     ("Kaufen", "f-kauf", [("Deine erste Anleihe", "erste-anleihe.html"), ("Broker im Vergleich", "broker-vergleich.html"),
                           ("Steuern und Handelskosten", "steuern-handelskosten.html"), ("Nach dem Kauf", "nach-dem-kauf.html"),
-                          ("Rechner", "rechner.html")]),
+                          ("Rechner", "rechner.html"), ("Simulator", "anleihen-simulator.html")]),
     ("Markt", "f-zins", [("Renditen Staatsanleihen", "renditen.html"), ("Realzins", "realzins.html"), ("Zinskurve", "zinskurve.html"),
                          ("Risikoaufschläge", "risikoaufschlaege.html")]),
     ("Bondarium", "f-bond", [("Über uns", "ueber-uns.html"), ("Haftung und Datenquellen", "haftung.html"),
