@@ -51,7 +51,7 @@ def menue_namen(ordner):
     namen = {}
     bereiche = re.findall(r'<nav class="sitenav".*?</nav>', s, re.S) + re.findall(r"<footer.*?</footer>", s, re.S)
     for b in bereiche:
-        # nur Links ohne Sprungmarke: „Haftung und Datenquellen“ (rechtliches.html#haftung) ist kein Name für die ganze Seite;
+        # nur Links ohne Sprungmarke: „Haftung und Datenquellen“ (haftung.html) ist kein Name für die ganze Seite;
         # Zusätze wie <small>Fachbegriffe von A bis Z</small> gehören nicht zum Namen
         for href, inhalt in re.findall(r'<a href="([^"#?]+\.html)"[^>]*>(.*?)</a>', b, re.S):
             name = text(re.sub(r"<small>.*?</small>", "", inhalt, flags=re.S))

@@ -61,7 +61,7 @@ Die E-Mail hat eine Text- und eine HTML-Fassung, keine Bilder, keine Zählpixel,
   (POST auf `konto.php?nl=<Kennung>`; ein GET dorthin bestellt nichts ab, er leitet auf den Link der Seite um) oder der Schalter. Konto löschen beendet ihn ebenfalls.
 - **Gespeichert:** am Konto `newsletter` (ja/nein), `newsletter_seit`, `newsletter_kw` (zuletzt erhaltene Ausgabe); in
   `newsletter_log` An- und Abmeldungen als Zeitpunkt und Art, ohne Kontobezug, 25 Monate. Datenschutztext:
-  `rechtliches.html#newsletter`.
+  `datenschutz.html#newsletter`.
 
 ## Lokal testen
 

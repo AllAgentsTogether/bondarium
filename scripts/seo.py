@@ -69,7 +69,7 @@ SITE_ID = BASE + "#website"
 BILD = {"@type": "ImageObject", "url": BASE + "og-image.png", "width": 1200, "height": 630}
 WD = "https://www.wikidata.org/wiki/"
 
-# Angaben wie im Impressum (rechtliches.html). Ändert sich dort etwas, hier nachziehen – das Skript warnt,
+# Angaben wie im Impressum (impressum.html, bis 11.10.2026 rechtliches.html). Ändert sich dort etwas, hier nachziehen – das Skript warnt,
 # wenn Firmenname, Straße, E-Mail oder Registernummer im Impressum nicht mehr vorkommen.
 # Bewusst (noch) ohne description, publishingPrinciples und sameAs – erst, wenn Entitätssatz und Grundsätze-Seite stehen.
 ORGANISATION = {
@@ -524,7 +524,7 @@ def datensatz(site, fname, url, beschreibung, html_, datum, stand):
               "mainEntityOfPage": {"@id": url + "#seite"},
               # Search Console 03.10.2026: „Feld license fehlt“ – keine offene Lizenz (die Reihen stammen aus Drittquellen),
               # sondern der Verweis auf die geltenden Bedingungen: Datenquellen, Urheberrecht, Angaben ohne Gewähr
-              "license": BASE + "rechtliches.html#haftung"}
+              "license": BASE + "haftung.html"}
     if c["laender"]:
         knoten["spatialCoverage"] = c["laender"]
     if stand or datum:
@@ -780,7 +780,7 @@ def main():
     print(f"seo.py: {len(seiten)} Seiten mit verknüpften strukturierten Daten")
     if seiten:
         sitemap(site, seiten, behalten)
-    impressum = os.path.join(site, "rechtliches.html")
+    impressum = os.path.join(site, "impressum.html")   # seit 11.10.2026 eigene Seite (vorher Abschnitt in rechtliches.html)
     if os.path.isfile(impressum):
         text = open(impressum, encoding="utf-8").read()
         for angabe in (ORGANISATION["legalName"], ORGANISATION["address"]["streetAddress"],

@@ -25,7 +25,7 @@
  *
  * Nicht gezählt: Robots und automatisierte Browser (Browser-Kennung), Browser mit „Global Privacy Control“ oder
  * „Do Not Track“ (prüft site.js), Seiten, die es nicht gibt, fremde Ursprünge.
- * Ändert sich hier etwas an den verarbeiteten Daten, muss die Datenschutzerklärung (rechtliches.html#statistik) mit –
+ * Ändert sich hier etwas an den verarbeiteten Daten, muss die Datenschutzerklärung (datenschutz.html#statistik) mit –
  * und der Betreiber vorher gefragt werden.
  *
  * Testmail: POST aktion=testmail mit Kopf X-Trigger-Key (Workflow „Statistik – Testmail“) – Bericht über den laufenden Tag;

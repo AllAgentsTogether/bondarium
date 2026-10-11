@@ -6,7 +6,7 @@ Speicherung im Browser und ohne fremden Dienst. Jeden Morgen geht ein PDF-Berich
 
 Vom Betreiber gewählt (01.10.2026): eigener Zähler statt Cloudflare, Plausible oder Matomo; die Zahlen kommen nur per
 E-Mail, es gibt keine eigene Statistik-Seite; der Bericht kommt täglich. Ändert sich etwas an den verarbeiteten Daten,
-muss die Datenschutzerklärung (`rechtliches.html#statistik`) mit, und der Betreiber wird vorher gefragt.
+muss die Datenschutzerklärung (`datenschutz.html#statistik`) mit, und der Betreiber wird vorher gefragt.
 
 ## Dateien
 

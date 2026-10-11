@@ -429,7 +429,7 @@ def baue(heute):
     t += ["--", "Keine Anlageberatung. Alle Angaben ohne Gewähr; Börsenkurse sind Schlusskurse, keine Echtzeitkurse.",
           "Quellen: Deutsche Bundesbank, Europäische Zentralbank, Federal Reserve, Deutsche Börse.", "",
           "Du bekommst diese E-Mail, weil du den Wochenbrief in „My Bondarium“ bestellt hast.", "Abbestellen mit einem Klick: {{ABMELDEN}}", "",
-          "Bondarium – ein Angebot der urbanelo GmbH, Heinrich-Baumann-Straße 38, 70190 Stuttgart", SEITE + "rechtliches.html#impressum"]
+          "Bondarium – ein Angebot der urbanelo GmbH, Heinrich-Baumann-Straße 38, 70190 Stuttgart", SEITE + "impressum.html"]
 
     # ---- HTML-Fassung ----
     H = [f'<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Bondarium Wochenbrief {e(tag_text)}</title></head>',
@@ -459,7 +459,7 @@ def baue(heute):
     H += [f'<tr><td style="padding:18px 32px 24px;border-top:1px solid {LINIE};{F}font-size:12px;line-height:1.6;color:{TXT};">Keine Anlageberatung. Alle Angaben ohne Gewähr; '
           'Börsenkurse sind Schlusskurse, keine Echtzeitkurse. Quellen: Deutsche Bundesbank, Europäische Zentralbank, Federal Reserve, Deutsche Börse.<br><br>'
           f'Du bekommst diese E-Mail, weil du den Wochenbrief in „My Bondarium“ bestellt hast. <a href="{{{{ABMELDEN}}}}" style="color:{TIEF};">Newsletter abbestellen</a> – ein Klick genügt.<br>'
-          f'Bondarium – ein Angebot der urbanelo GmbH, Heinrich-Baumann-Straße 38, 70190 Stuttgart · <a href="{SEITE}rechtliches.html#impressum" style="color:{TXT};">Impressum</a></td></tr>',
+          f'Bondarium – ein Angebot der urbanelo GmbH, Heinrich-Baumann-Straße 38, 70190 Stuttgart · <a href="{SEITE}impressum.html" style="color:{TXT};">Impressum</a></td></tr>',
           "</table></td></tr></table></body></html>"]
     ausgabe = {**kopf, "betreff": f"Wochenbrief KW {kw}: Bundrendite {richtung}", "text": nur_text("\n".join(t) + "\n"), "html": "\n".join(H) + "\n",
                "merk": MERK, "muster": [firma[0]["isin"], staat[1]["isin"], firma[2]["isin"]]}

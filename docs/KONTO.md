@@ -37,7 +37,7 @@ Wochenbrief) entsprechend.
 | `bereich.js`, `bereich.css` | Die fünf Ansichten von „My Bondarium“ (nur `konto.html`) – siehe „My Bondarium: fünf Ansichten“. |
 | `mein.js` | „My Bondarium“ auf den Inhaltsseiten: Leiste „Als gelesen markieren“/„Lesezeichen“, Abschnitts-Lesezeichen, Stern im Glossar, „In meinen Zins-Blick“, „Rechnung speichern“, Checkliste im Konto, „Zuletzt angesehen“. |
 | `scripts/nav.py` | Menüpunkt „My Bondarium“ (`LINKS`). |
-| `rechtliches.html#konto` | Abschnitt der Datenschutzerklärung. |
+| `datenschutz.html#konto` | Abschnitt der Datenschutzerklärung. |
 
 ## Abläufe
 
@@ -87,7 +87,7 @@ Begriffe (seit 01.10.2026 abends, Nutzerwunsch: „überprüfe, ob die Begriffli
 die Fachwörter der übrigen Website – „Kurswert“ statt „Kaufbetrag heute“, „Kursgewinn“/„Kursverlust“ statt „Rückzahlung +/−“
 unter dem Kurswert, „Zinsen pro Jahr“, „Rückzahlung zum Nennwert (100 %)“, „Fremdwährungen“; bei den Knöpfen „hinzufügen“ und
 „entfernen“ statt „hineinlegen“ und „herausnehmen“. Auf Rückfrage vom Nutzer bestätigt („ja“): „Musterdepot“ statt
-„Beispieldepot“ – auch im Datenschutztext (`rechtliches.html#konto`) – und die Sternchen-Zeile
+„Beispieldepot“ – auch im Datenschutztext (`datenschutz.html#konto`) – und die Sternchen-Zeile
 „* Fremdwährungen werden zur Vereinfachung in Euro umgerechnet“ statt „* Andere Währungen … in EUR …“.
 
 Kurs und Kurswert (Nutzerwunsch 01.10.2026: „in der Anleihe muss auch der aktuelle Kurs stehen. Bei der Rückzahlung
@@ -320,7 +320,7 @@ bei der Nach-Deploy-Prüfung des Workflows, also mindestens einmal je Werktag.
 Konten aus der ersten Fassung (Anmeldung per Link, 30.09.2026 nachmittags) haben kein Passwort; „Passwort vergessen“
 setzt eines.
 
-Ändert sich etwas an diesen Daten oder an den Cookies: erst den Betreiber fragen, dann `rechtliches.html#konto` mitziehen.
+Ändert sich etwas an diesen Daten oder an den Cookies: erst den Betreiber fragen, dann `datenschutz.html#konto` mitziehen.
 
 ## Schutz
 

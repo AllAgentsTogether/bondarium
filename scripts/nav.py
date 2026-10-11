@@ -184,8 +184,8 @@ FOOTER = [
                           ("Rechner", "rechner.html")]),
     ("Markt", "f-zins", [("Renditen Staatsanleihen", "renditen.html"), ("Realzins", "realzins.html"), ("Zinskurve", "zinskurve.html"),
                          ("Risikoaufschläge", "risikoaufschlaege.html")]),
-    ("Bondarium", "f-bond", [("Über uns", "ueber-uns.html"), ("Haftung und Datenquellen", "rechtliches.html#haftung"),
-                             ("Impressum", "rechtliches.html#impressum"), ("Datenschutz", "rechtliches.html#datenschutz")]),
+    ("Bondarium", "f-bond", [("Über uns", "ueber-uns.html"), ("Haftung und Datenquellen", "haftung.html"),
+                             ("Impressum", "impressum.html"), ("Datenschutz", "datenschutz.html")]),
 ]
 # Seit 03.10.2026 (Nutzertest): „Börsenkurse bis zu 15 Minuten verzögert“ beschrieb die Quelle (MiFIR), nicht das, was die Seiten zeigen –
 # gezeigt werden Schlusskurse mit Datum, kein laufender Kurs.

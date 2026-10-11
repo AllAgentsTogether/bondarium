@@ -50,7 +50,7 @@ HINWEISE = """Zur Einordnung:
   Börse Frankfurt, Xetra, Tradegate; Bundeswertpapiere: Deutsche Bundesbank), Renditen und Zeitreihen von
   Zentralbanken, Finanzministerien und der OECD. Jede Datenseite nennt ihren Stand und ihre Quellen.
 - Bondarium gibt keine Anlageberatung und empfiehlt keine einzelnen Wertpapiere. Beispiele zeigen, wie man vorgeht.
-- Herausgeber: urbanelo GmbH, Stuttgart – Impressum: {base}rechtliches.html, Kontakt: {base}ueber-uns.html#kontakt.
+- Herausgeber: urbanelo GmbH, Stuttgart – Impressum: {base}impressum.html, Kontakt: {base}ueber-uns.html#kontakt.
 - Zitate und Zusammenfassungen sind willkommen – bitte mit Link auf die Seite und dem dort genannten Datenstand.
 - Volltext aller Seiten mit den aktuellen Zahlen: {base}llms-full.txt
 """
@@ -59,8 +59,8 @@ HINWEISE = """Zur Einordnung:
 # Vor den Rubriken: „Start“ (Startseite) und „Über Bondarium“ (Herausgeber und Kontakt – geht beim Kürzen nicht verloren).
 ABSCHNITTE = ["Akademie", "Anleihen", "Kaufen", "Markt"]   # „Markt“ hieß bis 11.10.2026 „Zinsen“
 UEBER = {"ueber-uns.html"}
-OPTIONAL = {"rechtliches.html"}
-OHNE_VOLLTEXT = {"rechtliches.html"}   # Impressum und Datenschutz: nur verlinkt
+OPTIONAL = {"rechtliches.html", "impressum.html", "datenschutz.html", "haftung.html"}
+OHNE_VOLLTEXT = {"rechtliches.html", "impressum.html", "datenschutz.html", "haftung.html"}   # Impressum, Datenschutz, Haftung: nur verlinkt (seit 11.10.2026 drei Seiten)
 
 LEER = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
 AUSLASSEN = {"script", "style", "svg", "nav", "button", "select", "form", "noscript", "template", "canvas", "input",
