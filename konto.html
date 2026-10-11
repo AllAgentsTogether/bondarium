@@ -133,6 +133,11 @@
   .kto-dep:hover { background: var(--green-tint-2); }
   .kto-dep:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   .kto-dep .l { display: none; }
+  /* „Im Simulator ansehen“ (seit 11.10.2026 abends, Nutzerwunsch): runder Knopf wie „+“ und „×“, in Merkliste und Musterdepot */
+  .kto-sim { font-size: 11px; line-height: 1; color: var(--text); background: none; border: 1px solid rgba(44,44,42,0.22); border-radius: 50%; width: 28px; height: 28px; padding: 0 0 0 2px; margin-right: 6px; display: inline-grid; place-items: center; text-decoration: none; vertical-align: middle; }
+  .kto-sim:hover { color: var(--ink); border-color: var(--ink); background: var(--green-tint); }
+  .kto-sim:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
+  .kto-sim .l { display: none; }
   .kto-dep.drin { font-size: 13px; color: var(--ink); background: var(--green-tint-2); border-color: var(--green-text); }
   .kto-dep[disabled] { color: var(--text); opacity: 0.45; cursor: default; background: none; }
   .kto-leer { max-width: 640px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; box-shadow: var(--shadow); padding: 20px 22px; margin-top: 14px; font-size: 16px; line-height: 1.6; }
@@ -989,11 +994,16 @@ MC.navInit();
       `<td class="num" data-l="Kurs"${o.kurs != null ? ` title="${MC.esc(`Schlusskurs vom ${MC.datum(o.datum)}${o.boerse ? ", " + o.boerse : ""}`)}"` : ""}>${kurs}</td>` +
       `<td class="num" data-l="Seit dem Merken">${B ? B.zeileSeit(o) : ""}</td>` +
       `<td class="num" data-l="Nächster Zinstermin">${B ? B.zeileTermin(o) : "–"}</td>` +
-      `<td>${depotKnopf(o)}${B ? B.zeileKnopf(o) : ""}</td></tr>` + (B ? B.zeileNach(o) : "");
+      `<td>${depotKnopf(o)}${simKnopf(o)}${B ? B.zeileKnopf(o) : ""}</td></tr>` + (B ? B.zeileNach(o) : "");
   }
   // Knopf „Zu meinem Depot hinzufügen“ in jeder Zeile der Merkliste (seit 01.10.2026, Nutzerwunsch). Liegt die Anleihe schon im
   // Depot, führt er dorthin; lässt sie sich nicht rechnen (grund()), ist er gesperrt und nennt den Grund.
   // Seit 02.10.2026 mit mehreren Musterdepots: Der Knopf bezieht sich auf das gerade offene (AKTIV).
+  // Knopf „▶ Im Simulator ansehen“ in Merkliste und Musterdepot (seit 11.10.2026 abends, Nutzerwunsch): Regel in felder.js (simulatorUrl)
+  function simKnopf(o) {
+    const u = MC.felder && MC.felder.simulatorUrl ? MC.felder.simulatorUrl(o) : "";
+    return u ? `<a class="kto-sim" href="${u}" title="Im Simulator ansehen: Restlaufzeit durchspielen" aria-label="${MC.esc(o.name)} im Simulator ansehen">▶<span class="l">Im Simulator ansehen</span></a>` : "";
+  }
   function depotKnopf(o) {
     const n = MC.esc(aktName());
     if (POS.some(p => p.isin === o.isin)) return `<button type="button" class="kto-dep drin" data-zum-depot title="Liegt in „${n}“ – Musterdepots öffnen" aria-label="${MC.esc(o.name)} liegt in „${n}“ – Musterdepots öffnen">✓<span class="l">Im Musterdepot</span></button>`;
@@ -1436,7 +1446,7 @@ MC.navInit();
       `<td class="num" data-l="Kaufpreis"${p.kauf != null ? ` title="${MC.esc(`Kurswert ${eur(p.kauf)}${p.sz != null ? ` + Stückzinsen ${eur(p.sz)} (Valuta ${MC.datum(VALUTA)})` : ""} · Schlusskurs vom ${MC.datum(o.datum)}${o.boerse ? ", " + o.boerse : ""}`)}"` : ""}>${p.preis != null ? `<b>${eur(p.preis)}</b>` : "–"}<small><span class="kd-m">Kurs </span>${o.kurs != null ? MC.felder.kurs(o.kurs) + (o.datum && o.datum !== KSTAND ? ` · vom ${MC.esc(MC.tag(o.datum))}` : "") : "–"}</small></td>` +
       `<td class="num" data-l="Anteil">${p.anteil != null ? `<span class="kd-ant" aria-hidden="true"><i style="width: ${Math.min(100, p.anteil).toFixed(1)}%"></i></span>${fmt(p.anteil, 1)} %` : "–"}</td>` +
       `<td class="num" data-l="Zinsen pro Jahr">${p.zins != null ? eur(p.zins) : "–"}<small><span class="kd-m">nächster Zinstermin </span>${p.zt ? MC.datum(p.zt) : p.rechnet && !p.fest ? "kein Kupon" : "–"}</small></td>` +
-      `<td><button type="button" class="kto-x" data-raus="${MC.esc(p.isin)}" aria-label="${MC.esc(o.name)} aus dem Musterdepot entfernen" title="Aus dem Musterdepot entfernen">×<span> Entfernen</span></button></td></tr>`;
+      `<td>${simKnopf(o)}<button type="button" class="kto-x" data-raus="${MC.esc(p.isin)}" aria-label="${MC.esc(o.name)} aus dem Musterdepot entfernen" title="Aus dem Musterdepot entfernen">×<span> Entfernen</span></button></td></tr>`;
   }
   // Summenzeile für Tabelle und PDF. Gewicht ist der Kurswert (Nennwert × Kurs): Anteil je Anleihe (wird an p.anteil gesetzt), Rendite,
   // Restlaufzeit und beide Durationen gewichtet; laufende Verzinsung = Zinsen ÷ Kurswert. Anleihen ohne Kurs zählen in die Kennzahlen nicht mit.

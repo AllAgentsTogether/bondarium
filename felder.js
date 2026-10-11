@@ -18,6 +18,8 @@
      titel(o)                   „Italien 3,50 % 2030“ (Kurzname, Kupon, Fälligkeitsjahr) – Legenden, Listen, Kalender, Auswahlfelder
      Formate: pct, kupon(o), kurs, pkt, datum, tag, restlaufzeit(iso|Jahre), volumen, stueckelung, betrag, bonitaet, jahre(iso)
      rechnerUrl(o)              Link „Im Rechner öffnen“ für Steckbrief und Mein Bondarium – "" ohne Rendite (siehe unten)
+     simulatorUrl(o)            Link „Im Simulator ansehen“ (anleihen-simulator.html?isin=…) für Steckbrief, Merkliste und Musterdepot –
+                                "" ohne Kurs oder Rendite, bei variablem Kupon, Stufenzins, Registerwiderspruch oder unter 8 Monaten Restlaufzeit
      spalten, tabelle(spaltenIds, zeilen, opt), sortiere(zeilen, sort, spaltenIds, opt), sortierbar(table, sort, neu)
 
    Zeilenobjekt der Standardtabelle (Felder, die eine Spalte braucht; fehlende = „–“):
@@ -120,6 +122,20 @@
       "&freq=" + (zt && zt[0] > 0 ? zt[0] : 1) + "&w=" + q(o.ccy || "EUR") + (zt && zt.length > 1 ? "&zt=" + q(zt.slice(1).join(",")) : "") +
       "&rendite=" + q(zahl(o.rendite, 2)) + (o.isin ? "&isin=" + q(o.isin) : "") + (ISO.test(String(o.ab || "")) ? "&ab=" + String(o.ab).slice(0, 10) : "") +
       "#rendite";
+  }
+
+  // ---------- Link „Im Simulator ansehen“ (seit 11.10.2026 abends, Nutzerwunsch) ----------
+  // Eine Regel für Steckbrief, Merkliste und Musterdepot: fester Kupon oder Nullkupon, Kurs und Rendite vorhanden (dieselben Ausschlüsse
+  // wie der Rechner: kein Stufenzins, kein Registerwiderspruch), mindestens 8 Monate Restlaufzeit. Der Simulator lädt die Daten selbst.
+  // o = { isin, kurs, kupon, zinsart (0 fest · 2 Nullkupon), faellig (ISO), rendite (in %), befund (Registerwiderspruch), name }
+  var STUFEN_RE = /stufenz|step[ -]?up|step[ -]?down|\bstep\b/i;
+  function simulatorUrl(o) {
+    var zahlOk = function (x) { return typeof x === "number" && isFinite(x); };
+    if (!o || !o.isin || !zahlOk(o.kurs) || !zahlOk(o.rendite) || !zahlOk(o.kupon) || !(o.zinsart === 0 || o.zinsart === 2) || o.befund) return "";
+    if (!/^\d{4}-\d{2}-\d{2}/.test(String(o.faellig || "")) || STUFEN_RE.test(o.name || "")) return "";
+    var j = jahre(o.faellig);
+    if (j == null || j < 8 / 12) return "";
+    return "anleihen-simulator.html?isin=" + encodeURIComponent(o.isin);
   }
 
   // ---------- Standardtabelle (Kapitel 5 des Konzepts) ----------
@@ -240,7 +256,7 @@
   }
 
   MC.felder = {
-    K: K, F: F, ART: ART, BOERSE: BOERSE, lesbar: lesbar, kurzName: kurzName, landName: landName, titel: titel, jahre: jahre, rechnerUrl: rechnerUrl,
+    K: K, F: F, ART: ART, BOERSE: BOERSE, lesbar: lesbar, kurzName: kurzName, landName: landName, titel: titel, jahre: jahre, rechnerUrl: rechnerUrl, simulatorUrl: simulatorUrl,
     pct: pct, kupon: kupon, kuponZahl: kuponZahl, kurs: kurs, pkt: pkt, datum: datum, tag: tag, restlaufzeit: restlaufzeit,
     volumen: volumen, stueckelung: stueckelung, betrag: betrag, bonitaet: bonitaet,
     SPALTEN: SPALTEN, REIHE: REIHE, spalten: spalten, tabelle: tabelle, sortiere: sortiere, sortierbar: sortierbar

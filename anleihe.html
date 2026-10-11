@@ -924,10 +924,9 @@ function zeige(r, k, meta, kf) {
   // ohne Titel in der Adresse (den Namen holt der Rechner aus den Daten)
   const rechnerUrl = kurs != null && zinsart === 0 && typeof kupon === "number" && faellig && !nachFaellig && !befund && !stufen && MC.felder
     ? MC.felder.rechnerUrl({ kurs, kupon, faellig, ccy, zt: Array.isArray(zt) ? zt : null, rendite: rend, isin: ISIN, ab: neuAb }) : "";
-  // „Im Simulator ansehen“ (seit 11.10.2026 abends, Nutzerwunsch): Restlaufzeit durchspielen – fester Kupon oder Nullkupon, Kurs und
-  // Rendite vorhanden (dieselben Ausschlüsse wie der Rechner), mindestens 8 Monate Restlaufzeit; der Simulator lädt die Daten selbst (?isin=)
-  const simUrl = kurs != null && rend != null && (zinsart === 0 || zinsart === 2) && typeof kupon === "number" && faellig && !nachFaellig && !befund && !stufen && jahre(faellig) >= 8 / 12
-    ? `anleihen-simulator.html?isin=${encodeURIComponent(ISIN)}` : "";
+  // „Im Simulator ansehen“ (seit 11.10.2026 abends, Nutzerwunsch): Restlaufzeit durchspielen – Regel in felder.js (MC.felder.simulatorUrl,
+  // auch Merkliste und Musterdepot): fester Kupon oder Nullkupon, Kurs und Rendite, mindestens 8 Monate Restlaufzeit; der Simulator lädt selbst
+  const simUrl = MC.felder && MC.felder.simulatorUrl && !nachFaellig ? MC.felder.simulatorUrl({ isin: ISIN, kurs, kupon, zinsart, faellig, rendite: rend, befund, name }) : "";
   const suche = `anleihen-suche.html?art=${art}&w=${encodeURIComponent(ccy)}&zins=${zinsart}`;
   document.getElementById("werkz").innerHTML =
     `<li><button type="button" class="kopie-w" data-isin="${MC.esc(ISIN)}"><span>ISIN kopieren<small>${MC.esc(ISIN)}</small></span><span class="pf" aria-hidden="true">⧉</span></button></li>` +

@@ -196,6 +196,7 @@
         `<label for="mb-p-w">Schwelle<input type="text" id="mb-p-w" inputmode="decimal" autocomplete="off" placeholder="z. B. 4,00" value="${m && typeof m.w.w === "number" ? fmt(m.w.w, 2) : ""}"></label>` +
         `<label for="mb-p-m">Nachricht<select id="mb-p-m"><option value="1"${m && !m.w.m ? "" : " selected"}>E-Mail</option><option value="0"${m && !m.w.m ? " selected" : ""}>nur im Bereich</option></select></label></div>` +
         `<ul class="mb-menue"><li><a href="anleihe.html?isin=${encodeURIComponent(o.isin)}">Steckbrief öffnen</a></li>` +
+        (F && F.simulatorUrl && F.simulatorUrl(o) ? `<li><a href="${esc(F.simulatorUrl(o))}">Im Simulator ansehen</a></li>` : "") +   // seit 11.10.2026 abends, Regel in felder.js
         `<li id="mb-p-rech"${rech ? "" : " hidden"}>${rech ? `<a href="${esc(rech)}">Im Rechner öffnen</a>` : ""}</li>` +
         `<li><button type="button" data-p="depot">In ein Musterdepot legen</button></li>` +
         (termin(o) || o.faellig > HEUTE ? `<li><button type="button" data-p="ics">Termine in den Kalender</button></li>` : "") +
