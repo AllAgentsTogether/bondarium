@@ -123,7 +123,7 @@ MARKT = ("Markt", "beobachten.html", [   # bis 11.10.2026 abends ZINSEN/„zinse
     E("Renditen Unternehmen", "unternehmensanleihen.html", "spot-unternehmensanleihen.svg?v=2", "Renditen von Unternehmensanleihen seit 1984", "Sechs Segmente nach Bonität, je 10 Jahre", "Renditen 10-jähriger Unternehmensanleihen seit 1984 nach Bonität und Land: USA, Japan, China und Australien – Jahresmittel, Spannen, aktueller Stand."),
     E("Realzins", "realzins.html", "spot-realzins.svg?v=2", "Realzins seit 1970", "Was nach der Inflation übrig bleibt", "Zins minus Inflation: Realzins der 10-jährigen Bundesanleihe seit 1970, heute und nach Steuern – plus die Inflationserwartung des Markts bis 2046."),
     E("Zinskurve", "zinskurve.html", "spot-zinskurve.svg?v=2", "Zinskurve seit 1972", "Bringt lange Bindung mehr Zins?", "Steil, flach oder invers? Der Abstand zwischen 10- und 2-jährigen Staatsanleihen – Deutschland seit 1972, USA seit 1976, börsentäglich aktualisiert."),
-    E("Risikoaufschläge", "risikoaufschlaege.html", "spot-risikoaufschlaege.svg?v=2", "Risikoaufschläge seit 1984", "Das Angstbarometer: Euro-Staaten und Unternehmen", "Risikoaufschläge seit 1984: Wie viel mehr Zins Italien, Frankreich und US-Unternehmen zahlen als Schuldner bester Bonität – das Angstbarometer."),
+    E("Risikoaufschläge", "risikoaufschlaege.html", "spot-risikoaufschlaege.svg?v=2", "Risikoaufschläge: Euro-Staaten und USA", "Das Angstbarometer: Euro-Staaten und Unternehmen", "Risikoaufschläge seit 1984: Wie viel mehr Zins Italien, Frankreich und US-Unternehmen zahlen als Schuldner bester Bonität – das Angstbarometer."),
 ])
 
 # Die Aufklapper neben der Akademie, in dieser Reihenfolge; Rubrik-Schlüssel je Menü; Zusatzseiten, die zu einem Menü zählen
