@@ -940,6 +940,37 @@
   #bnd-konto .bt { margin: 0; }
   #bnd-konto .kt-go { white-space: nowrap; }
   @media (max-width: 700px) { #bnd-konto { grid-template-columns: 1fr; } }
+
+  /* ===== Handy: eine Zeile je Anleihe 11.10.2026 ===== (Nutzerwunsch, Foto vom Handy: die Karten der sechs Beispiele waren „viel zu hoch“)
+     Nur die Startseite: bis 640 px je Anleihe eine Zeile – Name, Rendite, Kupon, Restlaufzeit, Merken; Kopfzeile mit denselben vier
+     Spalten; ISIN, Zinstermin, Fälligkeitstag, Kurs, Bonität und Stückelung stehen im Steckbrief (Klick auf den Namen). Überschreibt die
+     Handy-Karten aus base.css (table.atab bis 640 px). */
+  @media (max-width: 640px) {
+    .interessant table.atab > thead { display: block; }
+    .interessant table.atab > thead > tr, .interessant table.atab > tbody > tr { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto 28px; gap: 0 12px; align-items: center; position: static; padding: 9px 0; margin: 0; border: 0; border-bottom: 1px solid var(--rule); border-radius: 0; background: none; box-shadow: none; }
+    .interessant table.atab > thead > tr { padding: 0 0 6px; border-bottom-color: rgba(26,26,25,0.2); }
+    .interessant table.atab > tbody > tr:last-child { border-bottom: 0; }
+    .interessant table.atab > tbody > tr.gr-ende { border-bottom: 2px solid rgba(26,26,25,0.2); }
+    .interessant table.atab > tbody > tr.gr-ende > :is(td, th) { border-bottom: 0 !important; }
+    .interessant table.atab > thead > tr > th { display: block; padding: 0; border: 0 !important; box-shadow: none; min-width: 0; font-size: 11.5px; font-weight: 600; letter-spacing: 0.03em; color: var(--muted); text-align: left; white-space: nowrap; }
+    .interessant table.atab > thead > tr > th.num { text-align: right; }
+    .interessant table.atab > thead > tr > th small, .interessant table.atab > thead > tr > th[data-col="kurs"], .interessant table.atab > thead > tr > th[data-col="bonitaet"], .interessant table.atab > thead > tr > th[data-col="stueckelung"] { display: none; }
+    .interessant table.atab > thead > tr > th .sortbtn { padding: 0; min-height: 0; font: inherit; color: inherit; letter-spacing: inherit; }
+    .interessant table.atab > tbody > tr > th[scope=row] { grid-column: auto; min-width: 0; padding: 0; font-size: var(--fs-klein); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .interessant table.atab > tbody > tr > th[scope=row] small { display: none; }
+    .interessant table.atab > tbody > tr > th[scope=row] a.name-link { display: block; overflow: hidden; text-overflow: ellipsis; text-decoration: none; }
+    .interessant table.atab > tbody > tr > td { display: block; padding: 0; }
+    .interessant table.atab > tbody > tr > td::before { content: none; }
+    .interessant table.atab > tbody > tr > td.gross { font-size: var(--fs-klein); font-weight: 600; color: var(--ink); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .interessant table.atab > tbody > tr > td.gross small { display: none; }
+    .interessant table.atab > tbody > tr > td[data-l="Kurs"], .interessant table.atab > tbody > tr > td[data-l="Bonität"], .interessant table.atab > tbody > tr > td[data-l="Stückelung"] { display: none; }
+    .interessant table.atab > tbody > tr > td.merkspalte { position: static; width: auto; text-align: right; }
+    .interessant table.atab > tbody > tr > td.merkspalte .merkbtn.nur { min-width: 28px; min-height: 28px; width: 28px; height: 28px; padding: 0; }
+    .interessant table.atab > tbody > tr > td.merkspalte .merkbtn.nur svg { width: 16px; height: 16px; }
+    .interessant .itab-note { display: none; }
+    .interessant .itab-note-handy { display: block; }
+  }
+  @media (min-width: 641px) { .interessant .itab-note-handy { display: none; } }
 </style>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Anleihen verstehen und finden", "headline": "Anleihen verstehen und finden", "description": "Anleihen verstehen und finden: Wissen in kurzen Schritten, Renditen seit 1970, die meistgehandelten Anleihen und eine Suche über rund 33.000 Anleihen.", "inLanguage": "de", "isAccessibleForFree": true, "dateModified": "2026-10-02", "publisher": {"@type": "Organization", "name": "Bondarium", "url": "https://www.bondarium.de/"}, "mainEntityOfPage": "https://www.bondarium.de/"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Bondarium","alternateName":"bondarium.de","url":"https://www.bondarium.de/","description":"Anleihen in Perspektive: Staats- und Unternehmensanleihen weltweit, Langläufer, die meistgehandelten Anleihen je Land und Restlaufzeit und eine Suche über alle Anleihen an deutschen Börsen.","inLanguage":"de"}</script>
@@ -1130,6 +1161,7 @@
           </table>
         </div>
         <p class="itab-note">Rendite = Rendite bis Fälligkeit pro Jahr beim Kauf zum Schlusskurs. Unter dem Kupon steht der Zinstermin (laut Deutscher Börse), unter der Restlaufzeit der Fälligkeitstag. Stückelung = kleinster handelbarer Nennwert (Mindestanlage). Bonität laut EZB. <a href="begriffe.html#rendite">Mehr im Glossar →</a></p>
+        <p class="itab-note itab-note-handy">Rendite bis Fälligkeit pro Jahr. ISIN, Zinstermin, Kurs, Bonität und Stückelung stehen im Steckbrief – tippe auf den Namen. <a href="begriffe.html#rendite">Mehr im Glossar →</a></p>   <!-- nur bis 640 px (eine Zeile je Anleihe), die lange Fußnote darüber nur ab 641 px -->
         <!-- seit 11.10.2026 abends (Straffen): die drei Top-10-Karten stehen hier unter der Tabelle; der eigene Abschnitt „Märkte und Top-10-Listen / Was der Markt derzeit zahlt“ ist entfallen -->
         <!-- Top-10-Listen als drei Themenportale (02.10.2026, Entwurf 01 des Nutzers aus bondarium-top10-drei-designentwuerfe.pdf):
              ersetzt die fünf Kacheln mit Renditespanne – bewusst ohne Marktkennzahlen, fünf Links zu den fünf Listen-Seiten -->

@@ -50,7 +50,7 @@ Volumen, Handelstage, Seit Hoch, Seit dem Merken, Nächster Zinstermin, Merken. 
 - **Fett** ist nur die Spalte, nach der sortiert oder gerankt ist.
 - **PDF = Tabelle**: gleiche Spalten, gleiche Reihenfolge (Merkliste, Musterdepot). **CSV**: Spalten der Tabelle in Langform mit Einheit
   („Rendite bis Fälligkeit in %“), dazu ISIN, Art, Währung, Fälligkeit.
-- **Handy**: Karten – Name oben, darunter groß Rendite · Kupon · Restlaufzeit, dann die übrigen Werte; zweite Zeilen mit Vorsatz
+- **Handy**: Karten – Name oben, darunter groß Rendite · Kupon · Restlaufzeit, dann die übrigen Werte; zweite Zeilen mit Vorsatz Ausnahme Startseite (seit 11.10.2026 abends, Nutzerwunsch „nur eine Zeile mit geringer Höhe“): die sechs Beispiele stehen bis 640 px je Anleihe in EINER Zeile – Name (mit Auslassung), Rendite, Kupon, Restlaufzeit, Merken – mit Kopfzeile; ISIN, Zinstermin, Fälligkeitstag, Kurs, Bonität und Stückelung nur im Steckbrief, dazu die kurze Fußnote `.itab-note-handy`. CSS-Block „Handy: eine Zeile je Anleihe“ am Stilende von index.html; überschreibt die Karten aus base.css nur dort.
   („fällig 15.08.2033“, „zum Vortag +0,12 Pkt.“). Die Suche behält ihre „Sortieren nach“-Chips.
 - **E-Mails**: erste Zeile Titel, zweite Zeile „Rendite 3,85 % · Restlaufzeit 4,2 Jahre (fällig 15.08.2033) · Kurs 98,50 %“.
 
