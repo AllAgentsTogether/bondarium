@@ -226,10 +226,12 @@ window.MC = (function () {
 
   // Nav-Dropdowns (seit 11.10.2026: Akademie, Anleihen, Kaufen, Markt – je Liste links, Vorschau rechts):
   // Hover, per Tastatur Pfeil runter/Leertaste, auf Touch-Geräten erster Tipp; Escape und Außenklick schließen,
-  // Öffnen einer Gruppe schließt die anderen. Bis 760 px (Handy): Burger-Knopf
-  // .nav-toggle öffnet das Menü (Klasse nav-open am <header>), die Gruppenköpfe
-  // klappen als Akkordeon auf und zu statt zu navigieren (die Übersichtsseite
-  // steht dort als Eintrag „Übersicht“, nav.py).
+  // Öffnen einer Gruppe schließt die anderen. Bis 1000 px (Handy, seit 11.10.2026 abends ein Blatt in zwei Stufen,
+  // Mockup tmp/mobile-nav): Burger-Knopf .nav-toggle öffnet das Blatt (Klasse nav-open am <header>, Bildlauf der Seite
+  // gesperrt, ein History-Eintrag, damit die Zurück-Taste das Blatt schließt). Ein Tipp auf einen Bereichskopf zeigt nur
+  // diesen Bereich (nav-tief am <header>, .open an der Gruppe, zweiter History-Eintrag), „Zurück“ führt zur ersten Stufe;
+  // Gruppen im Bereich (Grundlagen, Top 10 …) klappen per Tipp (.auf am Eintrag). Die Übersichtsseite steht als Eintrag
+  // „Übersicht …“ (nav.py).
   // Setzt außerdem aria-current="page" auf den aktiven Nav-Link.
   function navInit() {
     document.querySelectorAll(".sitenav a.current, .sitenav .nav-group-btn.current")
@@ -265,18 +267,63 @@ window.MC = (function () {
     var mq = window.matchMedia ? window.matchMedia("(max-width: 1000px)") : { matches: false };
     var mobile = function () { return !!mq.matches; };
     var toggle = bar ? bar.querySelector(".nav-toggle") : null;
-    var setOpen = function (open) {
+    var nav = bar ? bar.querySelector(".sitenav") : null;
+    // Tiefe des Blatts laut History: 0 zu, 1 erste Stufe, 2 ein Bereich
+    var tiefe = function () { return (history.state && history.state.mnav) || 0; };
+    var merken = function (t) { try { history.pushState({ mnav: t }, ""); } catch (e) {} };
+    var setOpen = function (open, vonHistory) {
       if (!bar || !toggle) return;
+      var war = bar.classList.contains("nav-open");
       bar.classList.toggle("nav-open", open);
+      bar.classList.remove("nav-tief");
+      document.body.classList.toggle("nav-lock", open);
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
       toggle.setAttribute("aria-label", open ? "Menü schließen" : "Menü öffnen");
       closeAll(null);
-      if (open) {   // die Stufe der aktuellen Seite gleich aufklappen, damit man sieht, wo man ist
-        var cur = bar.querySelector(".nav-group-btn.current");
-        if (cur) { cur.parentNode.classList.add("open"); cur.setAttribute("aria-expanded", "true"); }
+      if (open) {   // Blatt beginnt unter der Kopfzeile und immer auf der ersten Stufe
+        bar.style.setProperty("--mnav-top", Math.round(bar.getBoundingClientRect().bottom) + "px");
+        if (nav) { nav.scrollTop = 0; nav.focus({ preventScroll: true }); }
+        if (!vonHistory && !tiefe()) merken(1);
+      } else if (war) {
+        bar.style.removeProperty("--mnav-top");
+        if (!vonHistory && tiefe()) history.go(-tiefe());   // History-Einträge des Blatts wieder abräumen
       }
     };
+    // Stufe 2: nur diesen Bereich zeigen; die Gruppe der aktuellen Seite ist aufgeklappt
+    var hinein = function (grp, vonHistory) {
+      closeAll(null);
+      grp.classList.add("open");
+      grp.querySelector(".nav-group-btn").setAttribute("aria-expanded", "true");
+      bar.classList.add("nav-tief");
+      Array.prototype.forEach.call(grp.querySelectorAll(".np-item.hat-sub"), function (a) {
+        var auf = a.classList.contains("current");
+        a.classList.toggle("auf", auf); a.setAttribute("aria-expanded", auf ? "true" : "false");
+      });
+      if (nav) nav.scrollTop = 0;
+      var back = grp.querySelector(".nav-back");
+      if (back) back.focus({ preventScroll: true });
+      if (!vonHistory && tiefe() < 2) merken(2);
+    };
+    var zurueck = function (vonHistory) {
+      var g = bar.querySelector(".nav-group.open");
+      bar.classList.remove("nav-tief");
+      closeAll(null);
+      if (nav) nav.scrollTop = 0;
+      if (g) g.querySelector(".nav-group-btn").focus({ preventScroll: true });
+      if (!vonHistory && tiefe() === 2) history.back();
+    };
     if (toggle) toggle.addEventListener("click", function () { setOpen(!bar.classList.contains("nav-open")); });
+    // Zurück-Taste (Android, Browser): eine Stufe zurück bzw. Blatt zu – Vorwärts-Einträge öffnen nichts
+    window.addEventListener("popstate", function () {
+      if (!bar || !mobile() || !bar.classList.contains("nav-open")) return;
+      var t = tiefe();
+      if (t === 1 && bar.classList.contains("nav-tief")) zurueck(true);
+      else if (t === 0) setOpen(false, true);
+    });
+    if (bar) bar.addEventListener("click", function (e) {
+      var b = e.target.closest ? e.target.closest(".nav-back") : null;
+      if (b) { e.preventDefault(); zurueck(); }
+    });
     // Wechsel Handy ↔ Desktop (Drehen, Fenster ändern): alles zu
     var onChange = function () { setOpen(false); };
     if (mq.addEventListener) mq.addEventListener("change", onChange); else if (mq.addListener) mq.addListener(onChange);
@@ -305,6 +352,13 @@ window.MC = (function () {
         a.addEventListener("mouseenter", function () { clearTimeout(t); t = setTimeout(zeigen, 90); });
         a.addEventListener("mouseleave", function () { clearTimeout(t); });
         a.addEventListener("focus", zeigen);
+        // Handy-Blatt: ein Bereich (Grundlagen, Top 10 …) klappt per Tipp seine Unterseiten auf, statt zu navigieren
+        if (a.classList.contains("hat-sub")) a.addEventListener("click", function (e) {
+          if (!mobile()) return;
+          e.preventDefault();
+          var auf = !a.classList.contains("auf");
+          a.classList.toggle("auf", auf); a.setAttribute("aria-expanded", auf ? "true" : "false");
+        });
       });
       // Ragt das Menü rechts aus dem Fenster (schmale Bildschirme: Marke und
       // Menü stehen seit 23.09.2026 in einer Zeile), wird es so weit nach links
@@ -356,12 +410,9 @@ window.MC = (function () {
         if (first) first.focus();
       });
       btn.addEventListener("click", function (e) {
-        if (mobile()) {   // Akkordeon: Kopf klappt auf und zu, navigiert nicht
+        if (mobile()) {   // Handy-Blatt: Kopf führt in die zweite Stufe, navigiert nicht
           e.preventDefault();
-          var open = !grp.classList.contains("open");
-          closeAll(null);
-          grp.classList.toggle("open", open);
-          btn.setAttribute("aria-expanded", open ? "true" : "false");
+          hinein(grp);
           return;
         }
         if (!touch) return;
@@ -393,7 +444,10 @@ window.MC = (function () {
       if (e.key !== "Escape") return;
       document.documentElement.classList.add("nav-esc");
       document.addEventListener("pointermove", escAus);
-      if (bar && bar.classList.contains("nav-open")) { setOpen(false); if (toggle) toggle.focus(); return; }
+      if (bar && bar.classList.contains("nav-open")) {   // Handy-Blatt: erst eine Stufe zurück, dann zu
+        if (bar.classList.contains("nav-tief")) zurueck(); else { setOpen(false); if (toggle) toggle.focus(); }
+        return;
+      }
       closeAll(null);
       // Steckt der Fokus in einem Menü-Link, zurück auf den Gruppen-Button; das
       // Menü bleibt dort per :focus-visible sichtbar – aria-expanded entsprechend.

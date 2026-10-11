@@ -158,6 +158,14 @@ BRAND = ('<a class="brand" href="{home}" aria-label="bondarium – Startseite">'
          '<svg class="brand-w" viewBox="0 0 1303 210" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">'
          '<path fill="currentColor" d="' + BRAND_WORT + '"/><circle class="brand-i" cx="899.3" cy="28.6" r="27"/></svg></a>')
 
+# Handy-Blatt (seit 11.10.2026 abends, Mockup tmp/mobile-nav): bis 1000 px öffnet der Burger ein Vollbild-Blatt in zwei Stufen.
+# Stufe 1: drei Schnell-Knöpfe, die vier Bereiche als Karten (Kurzinhalt aus den ersten vier Einträgen, „Du bist hier“ am
+# Bereich der Seite), „My Bondarium“, Über uns/Rechtliches. Stufe 2: ein Bereich mit „Zurück“, Titel, „Übersicht“ und den Einträgen
+# wie am Desktop (Bild, Kurztitel, Unterzeile); Gruppen klappen einzeln. Alles aus demselben Markup wie der Desktop-Aufklapper –
+# die Zusatzteile (.nav-schnell, .nav-kurz, .nav-back, .nav-mtitel, .np-n, .np-kd, .np-mob, .nav-klein) blendet base.css ab 1001 px aus.
+SCHNELL = [("Anleihen-Suche", "anleihen-suche.html"), ("Top-10-Listen", "anleihen.html"), ("Rechner", "rechner.html")]
+KLEIN = [("Über uns", "ueber-uns.html"), ("Rechtliches", "rechtliches.html")]
+
 START_RE = re.compile(r'  <(?:header|div) class="topbar"(?: data-rubrik="[a-z]+")?>\n')
 # Ende der Kopfzeile, samt einer schon geschriebenen Brotkrumen-Zeile (idempotent)
 END_RE = re.compile(r'    </nav>\n(?:    <form class="kopfsuche"[^\n]*\n)?(?:    <a class="kopfkonto[^\n]*\n)?  </(?:header|div)>\n(?:  <nav class="krumen"[^\n]*\n)?')
@@ -269,7 +277,7 @@ def vorschau(it, p):
 def panel(key, items, page, p):
     """Aufklapper (seit 11.10.2026): links kurze Einträge mit kleinem Bild, rechts die Vorschau des gewählten Eintrags
     (site.js wechselt sie beim Überfahren). Vorgewählt ist der Eintrag der aktuellen Seite, sonst der erste.
-    Im Handy-Akkordeon (base.css bis 1000 px) entfallen Bilder und Vorschau; Bereiche zeigen ihre Unterseiten (.np-mob)."""
+    Im Handy-Blatt (base.css bis 1000 px) entfällt die Vorschau; Bereiche klappen ihre Unterseiten auf (.np-mob, mit Bild und Unterzeile)."""
     nr = [i for i, it in enumerate(items) if isinstance(it, dict)]
     aktiv = next((i for i in nr if page in ([u["h"] for u in items[i].get("sub", [])] + [items[i]["h"]])), nr[0])
     liste, prev = [], []
@@ -279,12 +287,19 @@ def panel(key, items, page, p):
             continue
         cur = page in [u["h"] for u in it.get("sub", [])] or it["h"] == page
         cls = "np-item" + (" hat-sub" if "sub" in it else "") + (" on" if i == aktiv else "") + (" current" if cur else "")
+        # Handy-Blatt: Gruppen tragen die Anzahl (.np-n), Seiten ihre Unterzeile (.np-kd) – ab 1001 px ausgeblendet
+        if "sub" in it:
+            zusatz = f'<span class="np-n">{len(it["sub"])} {"Themen" if len(it["sub"]) > 2 else "Listen"}</span>'
+        else:
+            zusatz = f'<small class="np-kd">{esc(it["kd"])}</small>'
         liste.append(f'            <a href="{p}{it["h"]}" class="{cls}" data-np="{key}-{i}"><span class="np-ic">'
                      f'<img src="{p}{it["img"]}" alt="" width="38" height="27" loading="lazy" decoding="async"></span>'
-                     f'<span class="np-t">{esc(it["k"])}</span><span class="np-pf" aria-hidden="true"></span></a>')
+                     f'<span class="np-t">{esc(it["k"])}</span>{zusatz}<span class="np-pf" aria-hidden="true"></span></a>')
         if "sub" in it:
             liste.append('            <div class="np-mob">' + "".join(
-                f'<a href="{p}{u["h"]}"' + (' class="current"' if u["h"] == page else "") + f'>{esc(u["k"])}</a>' for u in it["sub"]) + '</div>')
+                f'<a href="{p}{u["h"]}"' + (' class="current"' if u["h"] == page else "") + f'>'
+                f'<img src="{p}{u["img"]}" alt="" width="38" height="27" loading="lazy" decoding="async">'
+                f'<span><b>{esc(u["k"])}</b><small>{esc(u["kd"])}</small></span></a>' for u in it["sub"]) + '</div>')
         prev.append(f'            <div class="np-pv-wrap" data-np="{key}-{i}"' + ("" if i == aktiv else " hidden") + f'>{vorschau(it, p)}</div>')
     return (['          <div class="np-list">'] + liste + ['          </div>', '          <div class="np-prev">'] + prev + ['          </div>'])
 
@@ -345,7 +360,10 @@ def render(page, absolute=False):
            # Burger-Knopf: nur am Handy sichtbar (base.css), klappt das Menü auf (site.js)
            '    <button type="button" class="nav-toggle" aria-expanded="false" aria-controls="sitenav" aria-label="Menü öffnen">'
            '<span class="nav-toggle-i" aria-hidden="true"></span></button>',
-           '    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">']
+           '    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation" tabindex="-1">',
+           # Stufe 1 des Handy-Blatts (ab 1001 px ausgeblendet): Schnell-Knöpfe und das Etikett über den Bereichen
+           '      <div class="nav-schnell"><p class="nav-k">Schnell hin</p>' + "".join(f'<a href="{p}{z}">{t}</a>' for t, z in SCHNELL) + '</div>',
+           '      <p class="nav-k nav-k-b">Bereiche</p>']
     rub = rubrik(page)
     # Aufklapper Akademie, Anleihen, Kaufen, Markt: Kopf (Link auf die Übersicht), „Übersicht“ (nur Handy), Liste und Vorschau.
     # Der Kopf ist „current“, wenn die Seite zu diesem Menü gehört (Rubrik).
@@ -354,15 +372,19 @@ def render(page, absolute=False):
         out.append(f'      <div class="nav-group nav-{"akademie" if key == "verstehen" else key}">')
         c_kopf = " current" if rub == key else ""
         c_ov = " current" if page == a_target else ""
+        kurz = " · ".join([it["k"] for it in a_items if isinstance(it, dict)][:4]) + " …"   # Kurzinhalt der Karte (Handy-Blatt)
         out.append(f'        <a href="{p}{a_target}" class="nav-group-btn{c_kopf}" aria-expanded="false">'
-                   f'<span>{a_label}</span><span class="nav-caret" aria-hidden="true"></span></a>')
+                   f'<span>{a_label}</span><small class="nav-kurz">{esc(kurz)}</small><span class="nav-caret" aria-hidden="true"></span></a>')
         out.append('        <div class="nav-group-menu nav-panel">')
-        out.append(f'          <a href="{p}{a_target}" class="nav-ov{c_ov}">Übersicht</a>')
+        # Stufe 2 des Handy-Blatts: „Zurück“ und Titel (ab 1001 px ausgeblendet); „Übersicht“ nennt den Bereich
+        out.append(f'          <button type="button" class="nav-back">Zurück</button><p class="nav-mtitel">{a_label}</p>')
+        out.append(f'          <a href="{p}{a_target}" class="nav-ov{c_ov}">Übersicht {a_label}</a>')
         out += panel(key, a_items, page, p)
         out.append("        </div>")
         out.append("      </div>")
     c = " current" if page == KONTO[1] else ""
-    out.append(f'      <a href="{p}{KONTO[1]}" class="nav-konto{c}">{KONTO[0]}</a>')   # nur im Burger-Menü sichtbar (base.css)
+    out.append(f'      <a href="{p}{KONTO[1]}" class="nav-konto{c}">{KONTO_BILD}<span>{KONTO[0]}</span></a>')   # nur im Handy-Blatt sichtbar (base.css)
+    out.append('      <p class="nav-klein">' + "".join(f'<a href="{p}{z}">{t}</a>' for t, z in KLEIN) + '</p>')
     out.append("    </nav>")
     out.append(f'    <a class="kopfkonto{c}" href="{p}{KONTO[1]}"' + (' aria-current="page"' if c else "") + f'>{KONTO_BILD}<span>{KONTO[0]}</span></a>')
     out.append("  </header>")
