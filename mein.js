@@ -8,7 +8,7 @@
        alle sichtbar; wer nicht angemeldet ist, landet beim Klick auf konto.html. Angemeldet dazu ein kleines Lesezeichen an jeder
        Zwischenüberschrift (Abschnitt).
      Glossar (begriffe.html): angemeldet ein Stern an jedem Begriff („Gemerkte Begriffe“).
-     Zinsen-Seiten: angemeldet die Knöpfe „In meinen Zins-Blick“ für die Kennzahlen der Seite (KENNZAHL – dieselben Kennungen wie in
+     Markt-Seiten (bis 11.10.2026 „Zinsen“): angemeldet die Knöpfe „In meinen Zins-Blick“ für die Kennzahlen der Seite (KENNZAHL – dieselben Kennungen wie in
        bereich.js, das die Werte zeigt).
      Deine erste Anleihe: angemeldet liegt der Stand der Checkliste im Konto – auf jedem Gerät derselbe.
      „Zuletzt angesehen“: nur wenn der Nutzer es in „Meldungen und Konto“ eingeschaltet hat, merkt die Seite ihren Aufruf (höchstens
@@ -24,8 +24,10 @@
   var h1 = main.querySelector("h1"), titel = (h1 ? h1.textContent : document.title).replace(/\s+/g, " ").trim().slice(0, 110);
   var datei = seite + ".html";
   function imMenue(sel) { var a = document.querySelector('#sitenav ' + sel + ' a[href="' + datei + '"]'); return !!a && !a.classList.contains("nav-ov"); }
-  var lern = imMenue(".nav-akademie .nav-spalte") || (imMenue(".nav-kaufen .nav-group-menu") && seite !== "rechner");
-  var zinsen = imMenue(".nav-zinsen .nav-group-menu") || seite === "beobachten";
+  // Menü seit 11.10.2026 abends („Navigation einfach“): Akademie-Seiten stehen als Unterseiten ihres Bereichs in .np-mob (Handy-Liste,
+  // im selben Markup) oder als eigener Eintrag .np-item; Kaufen und Markt sind flache Listen. Vorher .nav-spalte/.nav-group-menu.
+  var lern = (imMenue(".nav-akademie") && seite !== "begriffe") || (imMenue(".nav-kaufen") && seite !== "rechner");
+  var zinsen = imMenue(".nav-zinsen") || seite === "beobachten";
 
   // Kennzahlen für „Mein Zins-Blick“ je Seite: [Kennung, Beschriftung] – Werte und Quellen stehen in bereich.js (KZ)
   var KENNZAHL = {

@@ -53,19 +53,22 @@
     // ---------- Seiten der Akademie: aus dem Menü der Seite (scripts/nav.py) – keine zweite Liste ----------
     const slug = a => (a.getAttribute("href") || "").replace(/^.*\//, "").replace(/\.html.*$/, "");
     const SEITEN_TITEL = {};
-    document.querySelectorAll("#sitenav a[href]").forEach(a => { const s = slug(a); if (s && !a.classList.contains("nav-ov") && !a.classList.contains("nav-group-btn") && !SEITEN_TITEL[s]) SEITEN_TITEL[s] = (a.firstChild && a.firstChild.nodeType === 3 ? a.firstChild.textContent : a.textContent).trim(); });
+    // Beschriftung: der kurze Name des Eintrags (.np-t, in der Handy-Liste <b>), nicht die Unterzeile – Menü seit 11.10.2026 abends
+    const navName = a => { const t = a.querySelector(".np-t, b"); return (t ? t.textContent : (a.firstChild && a.firstChild.nodeType === 3 ? a.firstChild.textContent : a.textContent)).trim(); };
+    document.querySelectorAll("#sitenav a[href]").forEach(a => { const s = slug(a); if (s && !a.classList.contains("nav-ov") && !a.classList.contains("nav-group-btn") && !SEITEN_TITEL[s]) SEITEN_TITEL[s] = navName(a); });
     const GRUPPEN = (() => {
       const g = [];
-      document.querySelectorAll("#sitenav .nav-akademie .nav-spalte").forEach(sp => {
-        const cap = sp.querySelector(".nav-cap");
-        g.push({ name: cap ? cap.textContent.trim() : "", seiten: [...sp.querySelectorAll("a")].map(a => [slug(a), a.textContent.trim()]) });
+      // Menü seit 11.10.2026 abends: Bereiche sind .np-item.hat-sub, ihre Seiten stehen im folgenden .np-mob (vorher .nav-spalte/.nav-cap)
+      document.querySelectorAll("#sitenav .nav-akademie .np-item.hat-sub").forEach(it => {
+        const mob = it.nextElementSibling && it.nextElementSibling.classList.contains("np-mob") ? it.nextElementSibling : null;
+        if (mob) g.push({ name: navName(it), seiten: [...mob.querySelectorAll("a[href]")].map(a => [slug(a), navName(a)]) });
       });
-      const kauf = [...document.querySelectorAll("#sitenav .nav-kaufen .nav-group-menu a")].filter(a => !a.classList.contains("nav-ov") && slug(a) !== "rechner").map(a => [slug(a), a.textContent.trim()]);
+      const kauf = [...document.querySelectorAll("#sitenav .nav-kaufen .np-item")].filter(a => !a.classList.contains("nav-ov") && slug(a) !== "rechner").map(a => [slug(a), navName(a)]);
       if (kauf.length) g.splice(Math.min(2, g.length), 0, { name: "Kaufen", seiten: kauf });
       return g;
     })();
     const ALLE_SEITEN = [].concat(...GRUPPEN.map(g => g.seiten));
-    const gruppeVon = s => { const g = GRUPPEN.find(x => x.seiten.some(p => p[0] === s)); return g ? g.name : document.querySelector(`#sitenav .nav-zinsen a[href^="${s}.html"]`) ? "Zinsen" : ""; };
+    const gruppeVon = s => { const g = GRUPPEN.find(x => x.seiten.some(p => p[0] === s)); return g ? g.name : document.querySelector(`#sitenav .nav-zinsen a[href^="${s}.html"]`) ? "Markt" : ""; };   // Menüname seit 11.10.2026 „Markt“
 
     // ---------- Etiketten: Tatsachen aus den vorhandenen Daten, keine Wertung ----------
     const kueVon = o => o.r && MC.kuendigung ? MC.kuendigung(o.r[1], typeof o.r[13] === "string" && o.r[13] ? o.r[13][0] : "-", o.r[5], typeof o.r[13] === "string" ? o.r[13].slice(1) : "") : null;
