@@ -55,8 +55,6 @@
   a.box:hover { border-color: var(--green-line); transform: translateY(-2px); }
   a.box:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
   .kicker { display: block; font-size: 13px; font-weight: 500; color: var(--green-text); }
-  .rund { display: inline-grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; }
-  .rund svg { width: 16px; height: 16px; }
   /* Beispiel-Leiste */
   /* Suchfeld über die volle Breite (25.09.2026, Nutzerwunsch) – schickt q an die Anleihen-Suche; darunter Beispiel-Suchen als Pillen */
   /* Suche als dunkles Band (25.09.2026 spät, Nutzerwunsch „muss viel besser herausstechen“): Tinte-Fläche, Neon-Knopf, Beispiele als helle Chips */
@@ -90,28 +88,13 @@
   .itab th:last-child, .itab td:last-child { padding-right: 2px; }
   .itab thead th { padding-top: 6px; padding-bottom: 9px; font-size: 13px; color: var(--text); font-weight: 500; border-bottom: 1.5px solid rgba(26,26,25,0.22); }
   .itab td.num, .itab th.num { text-align: right; font-variant-numeric: tabular-nums; }
-  .itab td.c, .itab th.c { text-align: center; }
-  .itab td.ren { font-weight: 600; color: var(--ink); }   /* Farbe/Stärke seit 29.09.2026 weiter unten */
   /* Sortierknöpfe im Tabellenkopf: .sortbtn aus base.css (seit 30.09.2026 zentral, inkl. Tippfläche ≥ 44 px bei Touch) */
   .itab tbody tr:last-child td { border-bottom: 0; }
-  .itab td.nm { width: 30%; }
-  @media (max-width: 600px) { .itab td.nm, .itab th[data-col="name"] { position: sticky; left: 0; z-index: 1; background: var(--bg); white-space: normal; min-width: 128px; max-width: 150px; box-shadow: 6px 0 8px -8px rgba(26,26,25,0.35); } .itab td.nm a { line-height: 1.3; } }   /* Handy: Name bleibt stehen, Kupon und Rendite sofort sichtbar */
-  .itab td.nm a { font-weight: 600; color: var(--ink); text-decoration: none; }
-  .itab td.nm a:hover { color: var(--green-text); text-decoration: underline; text-underline-offset: 3px; }
+  @media (max-width: 600px) { .itab td.nm, .itab th[data-col="name"] { position: sticky; left: 0; z-index: 1; background: var(--bg); white-space: normal; min-width: 128px; max-width: 150px; box-shadow: 6px 0 8px -8px rgba(26,26,25,0.35); }  }   /* Handy: Name bleibt stehen, Kupon und Rendite sofort sichtbar */
   /* seit 29.09.2026 (UX-Review Nr. 9): ISIN klein unter dem Namen statt eigener Spalte, Art als Badge (bei den Stammdaten vor der Währung, damit am Handy die Rendite gleich neben dem Namen bleibt), Rendite grün, Pfeil am Zeilenende */
-  .itab td.nm small { display: block; margin-top: 2px; font-size: 12px; font-weight: 500; color: #8E8D86; letter-spacing: 0.02em; }
-  .itab td.nm small.nm-f { display: none; margin-top: 1px; color: var(--text); letter-spacing: 0; }   /* Handy (30.09.2026): Fälligkeit unter dem Namen – die Spalte liegt dort außerhalb des Bildes */
-  @media (max-width: 600px) { .itab td.nm small.nm-f { display: block; } }
-  .itab .art { display: inline-block; font-size: 12px; font-weight: 600; line-height: 1.3; border-radius: 6px; padding: 3px 8px; background: #E8F0FF; color: #1E4FA8; }
-  .itab .art.u { background: #FFF1E0; color: #A2561C; }
-  .itab td.ren { color: var(--green-text); font-weight: 600; }
-  .itab .isin-sp { display: none; font-size: 13px; color: var(--text); letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
   /* Großer Bildschirm (30.09.2026, Nutzerwunsch): ISIN in eigener Spalte statt unter dem Namen – Zeilen einzeilig und niedriger. */
-  @media (min-width: 941px) { .itab th, .itab td { padding-left: 9px; padding-right: 9px; } .itab td.nm { width: 26%; } }   /* neun Spalten passen ohne Wischen in die Fläche */
-  @media (min-width: 1100px) { .itab th, .itab td { padding: 11px 7px; } .itab thead th { letter-spacing: 0.05em; } .itab td.nm { width: auto; } .itab .isin-sp { display: table-cell; } .itab td.nm small.nm-i { display: none; } .itab .go-z { display: none; } }   /* ab hier ist Platz für die ISIN-Spalte; der Pfeil entfällt, die ganze Zeile ist klickbar */
-  .itab td.go-z { width: 24px; text-align: right; padding-left: 4px; }
-  .itab td.go-z a { display: inline-grid; place-items: center; color: var(--green-text); }
-  .itab td.go-z svg { width: 16px; height: 16px; }
+  @media (min-width: 941px) { .itab th, .itab td { padding-left: 9px; padding-right: 9px; }  }   /* neun Spalten passen ohne Wischen in die Fläche */
+  @media (min-width: 1100px) { .itab th, .itab td { padding: 11px 7px; } .itab thead th { letter-spacing: 0.05em; }     }   /* ab hier ist Platz für die ISIN-Spalte; der Pfeil entfällt, die ganze Zeile ist klickbar */
   /* 30.09.2026 (Nutzerwunsch): alle Spalten außer dem Namen zentriert – Überschrift und Werte stehen genau untereinander.
      Der Sortierpfeil hängt außerhalb des Textflusses, damit er die Überschrift nicht aus der Mitte schiebt. */
   .itab th:not(:first-child):not(.go-z), .itab td:not(:first-child):not(.go-z) { text-align: center; }
@@ -129,7 +112,6 @@
   /* Risiko nur auf Nachfrage (25.09.2026, Nutzerwunsch): kleines i neben dem Namen, Text als Hinweisfeld bei Maus, Tastatur-Fokus oder Tipp */
   @media (max-width: 940px) {
     .itab { min-width: 820px; }
-    .itab td.nm { width: auto; }
     .itab th:first-child, .itab td:first-child { position: sticky; left: 0; z-index: 1; background: #fff; box-shadow: 1px 0 0 var(--rule); }   /* Name bleibt beim Wischen stehen */
     .itab tbody tr:hover > td:first-child { background-image: linear-gradient(rgba(57,255,20,0.10), rgba(57,255,20,0.10)); }
   }
@@ -137,12 +119,6 @@
   /* Vertiefen (29.09.2026, UX-Review Nr. 11): „Lerne alles über Anleihen“ ist in die Akademie gewandert – unter dem Lernpfad
      zwei kompakte Karten (Bild links, Titel rechts) und die weiteren Themen als Pillen. Ersetzt .row2/.c2/.dazu. */
   .vertiefen { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
-  .vk { display: flex; align-items: center; gap: 14px; padding: 10px 16px 10px 10px; min-width: 0; overflow: hidden; }
-  .vk .vk-ill { flex: none; width: 108px; height: 86px; display: block; overflow: visible; }
-  .vk .vk-t { flex: 1; min-width: 0; }
-  .vk b { display: block; font-size: 16.5px; font-weight: 600; line-height: 1.25; margin-top: 4px; letter-spacing: -0.01em; }
-  .vk .desc { display: block; font-size: 13.5px; line-height: 1.4; color: var(--text); margin-top: 4px; }
-  .vk:hover b { color: var(--green-text); }
   .vt { grid-column: 1 / -1; padding: 14px 14px 14px; background: var(--green-tint); border: 1px solid var(--green-line); border-radius: 14px; }   /* seit 30.09.2026 eigene Zeile unter den zwei Karten: Links mit Kurzbeschreibung statt Pillen */
   .vt .vt-k { font-size: 13px; font-weight: 500; color: var(--green-text); margin: 0 0 10px 2px; }
   .vt-l { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
@@ -156,7 +132,7 @@
   .vt a:hover svg { transform: translateX(2px); }
   .vt a:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
   @media (max-width: 940px) { .vt-l { grid-template-columns: repeat(6, minmax(0, 1fr)); } .vt-l a { grid-column: span 2; } .vt-l a:nth-child(n+4) { grid-column: span 3; } }   /* 3 oben, 2 breitere unten – keine Lücke */
-  @media (max-width: 600px) { .vertiefen { grid-template-columns: minmax(0, 1fr); } .vk .vk-ill { width: 92px; height: 74px; } .vt-l { grid-template-columns: repeat(2, minmax(0, 1fr)); } .vt-l a, .vt-l a:nth-child(n+4) { grid-column: auto; } .vt-l a:last-child { grid-column: 1 / -1; } }
+  @media (max-width: 600px) { .vertiefen { grid-template-columns: minmax(0, 1fr); }  .vt-l { grid-template-columns: repeat(2, minmax(0, 1fr)); } .vt-l a, .vt-l a:nth-child(n+4) { grid-column: auto; } .vt-l a:last-child { grid-column: 1 / -1; } }
   /* Finden: sechs Datenkarten */
   /* Wer bist du? – seit 28.09.2026 vier Menschen aus den Anleitungen (vorher sechs) (seit 25.09.2026 abends, aus Startseiten-Konzept A „Das Herz der Seite“):
      Sprechblase in Handschrift mit dem Ziel in einem Satz, Foto im Farbring, Name; Klick führt zur Person im Guide. */
@@ -241,20 +217,14 @@
   .beispiele { margin-top: 32px; padding: 22px 22px 18px; border-radius: 18px; background: #FFF1E0; border: 1px solid #F5D5B0; overflow: hidden; }
   .bsp-kopf { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px; margin: 0 0 16px; }
   .bsp-kopf h2 { font-size: 26px; line-height: 1.2; letter-spacing: -0.005em; margin: 0; }
-  .bsp-kopf h2 a { display: inline-flex; align-items: center; gap: 6px; color: var(--ink); text-decoration: none; }
-  .bsp-kopf h2 a:hover { color: #A2561C; }
-  .bsp-kopf h2 a:focus-visible { outline: 2px solid #D9740A; outline-offset: 3px; border-radius: 4px; }
   .bsp-kopf .chev { width: 24px; height: 24px; color: #1A1A19; flex: none; }
   .bsp-kopf p { margin: 0; font-size: 15px; color: #6B4A22; }
-  .bsp-kopf p b { color: var(--ink); font-weight: 600; }   /* 29.09.2026: die Frage aus dem früheren Abschnittstitel leitet die Personen ein */
   @media (max-width: 600px) {
     .beispiele { margin-top: 30px; padding: 18px 16px 14px; border-radius: 16px; }
     .bsp-kopf { margin-bottom: 12px; }
     .bsp-kopf h2 { font-size: 18.5px; letter-spacing: -0.005em; }
     .bsp-kopf .chev { width: 22px; height: 22px; }
-    .bsp-kopf h2 a { display: flex; justify-content: space-between; width: 100%; }
     .bsp-kopf p { flex-basis: 100%; font-size: 15px; }
-    .bsp-kopf .bsp-lang { display: none; }   /* am Handy nur die Frage unter dem Titel */
   }
   /* Kacheln der Stufen (.tueren, seit 29.09.2026 drei): Regeln in base.css – sie stehen auch oben auf den drei Übersichten */
   /* Lernpfad (29.09.2026, UX-Review Nr. 10): nur hier auf der Startseite (.pfad) – Schrittnummer vor dem Verb, eine Zeile Inhalt,
@@ -272,57 +242,19 @@
     .tueren.pfad a + a::after { display: none; }   /* untereinander zeigen die Nummern die Reihenfolge */
   }
   /* "Und jetzt konkret": zwei Regale (Finden / Beobachten) mit echten Zahlen; JS unten überschreibt Werte und Kurven aus den JSON-Dateien */
-  .konkret { margin-top: 30px; }
   /* seit 29.09.2026 (UX-Review Nr. 12): eine Überschrift, darunter schlichte Zwischentitel statt Pille + Spaltentitel;
      die fünf Top-10-Listen als eine Reihe gleich großer Kacheln (Dachzeile, Titel, Zahl unten links, Bild unten rechts) */
   .k-lab { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; font-size: 17px; font-weight: 600; color: var(--ink); letter-spacing: -0.005em; margin: 0 0 10px; }
   .k-lab small { font-size: 14px; font-weight: 500; color: var(--text); letter-spacing: 0; }
-  .kgrid { display: grid; gap: 12px; }
-  .k5 { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin: 0 0 28px; }
-  .k2 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .kc { position: relative; display: flex; flex-direction: column; min-height: 132px; padding: 14px 12px 14px 14px; min-width: 0; }
-  .kc .kicker { font-size: 10.5px; letter-spacing: 0.07em; }
-  .kw .kicker { font-size: 12px; letter-spacing: 0.08em; }
-  .kc b { display: block; font-size: 16px; font-weight: 600; line-height: 1.25; margin-top: 4px; letter-spacing: -0.01em; }
-  .kw b { display: block; font-size: 17px; font-weight: 600; line-height: 1.3; margin-top: 0; letter-spacing: -0.01em; }   /* seit 30.09.2026 beschreibender Titel ohne Kicker (Nutzerwunsch) */
-  .kz { display: flex; flex-direction: column; gap: 3px; margin-top: auto; padding-top: 12px; font-size: 24px; font-weight: 600; line-height: 1; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .kz small { font-size: 12.5px; font-weight: 500; color: var(--text); letter-spacing: 0; }
-  .kc .kimg { position: absolute; right: 10px; bottom: 12px; width: 52px; height: 44px; }
-  .kc:hover b, .kw:hover b { color: var(--green-text); }
   /* 30.09.2026 (Nutzerwunsch): wie bei den Beispielen im Guide – Anleihen grün umrandet, ETFs orange */
-  .kc.box { border: 2px solid var(--green-line); }
-  a.kc.box:hover { border-color: var(--green); }
-  .kw { display: flex; flex-direction: column; padding: 16px 16px 14px 18px; min-width: 0; }
-  .kwz { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; margin-top: 4px; }
   /* seit 29.09.2026 ohne Zahl: die Mini-Kurve füllt die Kachelbreite (Seitenverhältnis bleibt) */
-  .kw .kwz { display: block; margin-top: 12px; }
-  .spk { display: block; width: 100%; height: 48px; }
-  @media (max-width: 1000px) { .k2 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .k5 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  @media (max-width: 760px) { .k5 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-  @media (max-width: 520px) { .k5, .k2 { grid-template-columns: minmax(0, 1fr); gap: 8px; } .kc { min-height: 0; } .kc .kicker { font-size: 11.5px; } }
 
   /* UX-Review 30.09.2026 */
-  .kwv { display: flex; align-items: baseline; flex-wrap: wrap; gap: 2px 8px; margin-top: 10px; font-size: 26px; font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .kwv small { font-size: 12.5px; font-weight: 500; line-height: 1.3; color: var(--text); letter-spacing: 0; }
-  .kc .kz { padding-right: 56px; font-size: 21px; }
-  .kc .kz > span { white-space: nowrap; }   /* Spanne „3,0–5,0 %“ nie umbrechen */   /* Platz für das Symbol unten rechts (.kimg), damit der Text es nicht überdeckt */
   .itab tbody tr[data-isin] { cursor: pointer; }
   .beispiele .alle a, .itab-note a, .interessant .more { padding: 12px 0; margin: -12px 0; }   /* größere Tippfläche ohne Layout-Verschiebung */
   @media (max-width: 600px) {
     .bsp-bar a { min-height: 44px; padding-top: 0; padding-bottom: 0; }   /* Tippflächen mindestens 44 px */
     .itab tbody tr[data-isin]:active > td { background-color: rgba(57,255,20,0.10); }
-  }
-  @media (max-width: 520px) {
-    .k5 { grid-template-columns: repeat(2, minmax(0, 1fr)); }   /* Top-10-Karten zweispaltig statt fünf hohe Karten untereinander */
-    .k5 .kc:last-child { grid-column: 1 / -1; }
-    .kc .kimg { display: none; }
-    .kc .kz { padding-right: 0; }
-    .k2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .kw { padding: 14px 12px 12px 14px; }
-    .kw b { font-size: 15px; }
-    .kwv { font-size: 21px; }
-    .kw .kwz { margin-top: 10px; }
-    .spk { height: 36px; }
   }
 
   /* Design-Optimierung 30.09.2026 (Nutzerwunsch nach Mockup, „setze das um“): reine Gestaltungsschicht – Text, Links und HTML bleiben unverändert.
@@ -366,7 +298,6 @@
   .beispiele { padding: 0; background: none; border: 0; border-radius: 0; overflow: visible; }
   .bsp-kopf { display: block; }
   .bsp-kopf .chev { width: 26px; height: 26px; color: var(--green-text); }
-  .bsp-kopf h2 a:hover { color: var(--green-text); }
   .bsp-kopf p { color: var(--text); }
   .ppl { gap: 14px; }
   .ppl a { display: grid; grid-template-columns: 56px minmax(0, 1fr); grid-template-areas: "bub bub" "img name" "img res" "cta cta"; column-gap: 12px; align-items: center; text-align: left; padding: 12px 12px 0; overflow: hidden; }
@@ -386,10 +317,6 @@
   .tueren .sub { font-size: 14.5px; }
   .tueren.pfad .mehr { font-size: 13.5px; }
   .vertiefen { gap: 14px; margin-top: 14px; }
-  .vk { padding: 12px 18px 12px 12px; gap: 16px; }
-  .vk .vk-ill { width: 124px; height: 92px; }
-  .vk b { font-size: 17px; }
-  .vk .desc { font-size: 14px; }
   .vt { padding: 0; background: #fff; border-color: var(--rule); border-radius: 16px; overflow: hidden; box-shadow: 0 1px 2px rgba(26,26,25,0.04); }
   .vt .vt-k { margin: 0; padding: 14px 20px 12px; }
   .vt-l { gap: 0; border-top: 1px solid var(--rule); }
@@ -399,8 +326,6 @@
   .vt a:hover { box-shadow: none; background: #F1FFEE; }
 
   /* --- 5 · Beliebte Anleihen: eigene Fläche, Zahlen rechtsbündig, ruhige Art-Marken ----------- */
-  .itab .art { border-radius: 6px; padding: 3px 10px; background: #E8FFE3; color: var(--green-text); }
-  .itab .art.u { background: #F0EEE8; color: #4A4943; }
   .itab thead th { border-bottom: 1px solid rgba(26,26,25,0.2); }
   @media (min-width: 601px) {
     .interessant .table-scroll { --scroll-bg: #fff; background-color: #fff; border: 1px solid var(--rule); border-radius: 16px; padding: 8px 20px 6px; box-shadow: 0 1px 2px rgba(26,26,25,0.04); }
@@ -416,23 +341,6 @@
 
   /* --- 6 · Märkte: Top-10-Karten ohne Neonrahmen, Zinsen als 2 × 2 mit breiter Kurve ---------- */
   .k-lab { font-size: 18px; margin: 0 0 12px; }
-  .k5 { gap: 10px; margin-bottom: 40px; }
-  .kc.box { border: 1px solid var(--rule); }
-  a.kc.box:hover { border-color: var(--green-text); }
-  .kc { min-height: 0; padding: 16px 12px 16px 13px; }
-  .kc .kt { display: flex; flex-direction: column; flex: 1 1 auto; }
-  .kc .kimg { position: static; order: -1; width: 42px; height: 42px; margin: 0 0 12px -3px; }
-  .kc .kicker { font-size: 13px; letter-spacing: 0; text-transform: none; line-height: 1.3; }
-  .kc b { font-size: 17px; margin-top: 1px; }
-  .kc .kz { padding: 16px 0 0; font-size: 24px; gap: 5px; }
-  .kc .kz small { font-size: 12px; line-height: 1.35; white-space: nowrap; }
-  .k2 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-  .kw { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "t v" "s s"; column-gap: 20px; align-items: start; padding: 18px 20px 16px; }
-  .kw b { grid-area: t; font-size: 16.5px; line-height: 1.35; }
-  .kwv { grid-area: v; flex-direction: column; flex-wrap: nowrap; align-items: flex-end; gap: 5px; margin-top: 0; text-align: right; }
-  .kwv small { white-space: nowrap; }
-  .kw .kwz { grid-area: s; margin-top: 14px; }
-  .spk { height: 56px; }
 
   /* --- 7 · Fußzeile mit Luft -------------------------------------------------------------- */
   footer.fuss { margin-top: 88px; padding-top: 30px; border-top: 1px solid var(--rule); }
@@ -466,22 +374,10 @@
     .ppl .cta svg { display: block; width: 15px; height: 15px; }
     .ppl a:hover .cta { background: none; color: var(--green-text); }
     .tueren.pfad a { padding: 16px 8px 16px 4px; }
-    .vk .vk-ill { width: 96px; height: 76px; }
     .vt-l { grid-template-columns: minmax(0, 1fr); }
     .vt-l a, .vt-l a:nth-child(n+4), .vt-l a:last-child { grid-column: auto; border-left: 0; border-top: 1px solid var(--rule); padding: 13px 14px 14px 16px; }
     .vt-l a:first-child { border-top: 0; }
     .vt .vt-k { padding: 12px 16px 10px; }
-    .k5 { gap: 10px; margin-bottom: 32px; }
-    .kc { padding: 14px 12px 14px 14px; }
-    .kc .kicker { font-size: 12px; }
-    .kc .kz { margin-top: 0; font-size: 21px; padding-top: 12px; }
-    .kc .kz small { white-space: normal; }
-    .k2 { grid-template-columns: minmax(0, 1fr); gap: 10px; }
-    .kw { grid-template-columns: minmax(0, 1fr); grid-template-areas: "t" "v" "s"; padding: 14px 16px 12px; }
-    .kw b { font-size: 15.5px; }
-    .kwv { flex-direction: row; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; margin-top: 6px; font-size: 22px; text-align: left; }
-    .kw .kwz { margin-top: 8px; }
-    .spk { height: 44px; }
     footer.fuss { margin-top: 56px; }
   }
   /* Bildwelt 2.0 (30.09.2026, Mockup des Nutzers „Bildwelt 2.0 · Vorschlag Startseite“, „setz das so um“): alle Bilder führen auf den
@@ -536,36 +432,14 @@
      Tiefgrün, letzter Wert als Kupon-Punkt (Skript kurve()); Pfeil-Knopf, Hover hebt an, Fokus-Rahmen.
      Überschreibt die älteren .kw/.kwv/.spk-Regeln darüber.
      ========================================================================================== */
-  .k2 { gap: 16px; }
   .k-lab:has(+ .k2) { margin: 0 0 18px; font-size: 30px; font-weight: 600; line-height: 1.15; letter-spacing: -0.025em; }
   .k-lab:has(+ .k2) small { display: block; margin-top: 8px; font-size: 16px; font-weight: 400; letter-spacing: 0; color: var(--text); }
-  .kw { position: relative; display: flex; flex-direction: column; align-items: stretch; padding: 22px 24px 20px; border-radius: 16px; transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease; }
-  .kw b { padding-right: 48px; font-size: 17px; font-weight: 600; line-height: 1.35; }
-  .kw:hover b { color: var(--ink); }
-  .kwv { display: block; margin-top: 16px; font-size: 34px; font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; color: var(--ink); text-align: left; white-space: nowrap; font-variant-numeric: tabular-nums; }
-  .kwv .kw-bis, .kwv .kw-e { font-size: 15px; font-weight: 500; letter-spacing: 0; color: var(--text); }
-  .kwv .kw-bis { margin: 0 3px; }
-  .kw .kwz { display: block; margin-top: 14px; }
-  .spk { display: block; width: 100%; height: 88px; overflow: visible; }
-  .kw::after { content: "→" / ""; position: absolute; top: 18px; right: 18px; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 1px solid var(--rule); color: var(--green-text); font-size: 16px; font-weight: 600; line-height: 1; transition: background-color .15s ease, color .15s ease, border-color .15s ease; }
-  a.kw.box:hover { transform: translateY(-2px); border-color: var(--green-text); box-shadow: 0 1px 2px rgba(26,26,25,0.04), 0 14px 30px -12px rgba(26,26,25,0.22); }
-  .kw:hover::after { background: var(--green); border-color: var(--green); color: var(--ink); }
-  .kw:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
-  @media (prefers-reduced-motion: reduce) { .kw { transition: none; } a.kw.box:hover { transform: none; } }
   @media (max-width: 760px) {
-    .k2 { grid-template-columns: minmax(0, 1fr); gap: 10px; }
     .k-lab:has(+ .k2) { font-size: 25px; }
     .k-lab:has(+ .k2) small { font-size: 15px; }
-    .kw { padding: 18px 18px 16px; }
-    .kw b { font-size: 15.5px; padding-right: 44px; }
-    .kw::after { top: 14px; right: 14px; }
-    .kwv { margin-top: 12px; font-size: 29px; }
-    .kwv .kw-bis, .kwv .kw-e { font-size: 14px; }
-    .spk { height: 72px; }
   }
   /* 01.10.2026 (Nutzerwunsch): Sechs Beispiele stündlich aus den Top 10 – drei Staats-, drei Unternehmensanleihen, dazwischen ein etwas kräftigerer Strich (entfällt beim Sortieren) */
   .itab tbody:not(.sortiert) tr.gr-ende > td { border-bottom: 2px solid rgba(26,26,25,0.2); }
-  @media (min-width: 601px) { .itab td.nm a { display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; vertical-align: bottom; } }   /* lange Emittentennamen mit Auslassung */
   /* ==========================================================================================
      Depot-Check 01.10.2026 (Entwurf des Nutzers, tmp/bondarium-broker-anleitung-und-mockup.pdf): eigener Auftritt für den
      Broker-Vergleich zwischen Akademie und „Sechs Beispiele“. Dunkle Bühne über die ganze Inhaltsbreite, links Text und Hauptknopf,
@@ -672,7 +546,6 @@
   .bt .bsub, .bsp-kopf p, .ppl .bub, .ppl a:nth-child(2n) .bub { font-size: var(--fs-text); }
   .suche input { font-size: 16px; }
   /* Kartentitel */
-  .vk b, .kc b, .kw b { font-size: var(--fs-karte); }
   /* Zwischentitel: Lernpfad-Schritte und beide Unterköpfe unter „Märkte und Top-10-Listen“ (vorher 18 und 30 px) */
   .tueren .verb, .k-lab { font-size: var(--fs-h3); line-height: 1.2; letter-spacing: -0.015em; }
   .k-lab { margin: 0 0 14px; font-weight: 600; }
@@ -752,7 +625,7 @@
     .hero-karte .hk-achse { margin-top: 0; }
   }
   .itab td.kup small.zt { display: block; margin-top: 1px; font-size: var(--fs-label); font-weight: 500; color: var(--text); letter-spacing: 0; }
-  @media (min-width: 1100px) { .itab td.nm a { max-width: 150px; } .itab th, .itab td { padding-left: 6px; padding-right: 6px; } }   /* Platz für den Zinstermin, ohne dass die Tabelle wischt */
+  @media (min-width: 1100px) {  .itab th, .itab td { padding-left: 6px; padding-right: 6px; } }   /* Platz für den Zinstermin, ohne dass die Tabelle wischt */
   /* ============================================================================================================
      Anfänger-Einstieg 02.10.2026 (Entwurf des Nutzers „Kompakter Anfängerbereich“, Variante 01 „Persönliche Einladung“):
      direkt unter dem Suchband – Porträt vor grünem Kreis, weiße Sprechblase mit Titel, Knopf zu grundlagen.html.
@@ -888,9 +761,6 @@
   .bt, .bsp-kopf { margin: 0 0 var(--abstand-kopf); }
   #bnd-zinsatlas .za-sub { margin-bottom: var(--abstand-kopf); }
   /* „Top-10-Listen: …“ war Zwischentitel aus der Zeit, als hier auch die Zinsen standen – jetzt Unterzeile wie in jedem Abschnitt */
-  .konkret .bt { margin-bottom: 0; }
-  .konkret .k-lab { display: block; margin: 10px 0 var(--abstand-kopf); font-size: var(--fs-text); font-weight: 600; line-height: 1.5; letter-spacing: 0; color: var(--ink); }
-  .konkret .k-lab small { font-size: inherit; font-weight: 400; color: var(--text); }
 
   /* --- 3 · Bühnen (Suchband, Einstieg, Broker): Ecke 20, Tinte oder Hellgrün ----------------------------------------- */
   .suchband { border-radius: var(--radius-buehne); box-shadow: var(--schatten-schwebend); }
