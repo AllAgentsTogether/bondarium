@@ -524,28 +524,56 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 .tueren.stufen-kopf { margin-bottom: 30px; background: #fff; }
 @media (max-width: 600px) { .tueren.stufen-kopf { margin-bottom: 22px; } .tueren a[aria-current="page"] { box-shadow: inset 4px 0 0 var(--green); } }
 
-/* Menü „Akademie“ (seit 01.10.2026 abends, nav.py AKADEMIE): alle Themen direkt im Aufklapper, seit 11.10.2026 in vier Spalten
-   (Grundlagen, Risiken, Auswählen, Für Fortgeschrittene) mit feiner Linie dazwischen; darunter über die ganze Breite das Glossar.
-   Vorher (seit 28.09.2026): vier Stufen als Einträge, die Themen erst auf den Übersichtsseiten. Bis 1000 px stehen die
-   Spalten im Akkordeon untereinander (Regeln am Dateiende). */
-.nav-group-menu.nav-mega { max-width: none; padding: 8px 0 0; }
-.nav-spalten { display: grid; grid-template-columns: repeat(4, minmax(0, 196px)); }   /* seit 11.10.2026 vier Spalten (Risiken neu); feste Breite,
-   lange Titel brechen um – sonst ragt der Aufklapper bei 1001–1280 px über den Fensterrand (gemessen: 983 px breit ab x = 303) */
-@media (min-width: 1240px) { .nav-spalten { grid-template-columns: repeat(4, minmax(0, 232px)); } }
-.nav-spalte { padding: 0 4px 8px; min-width: 0; }
-.nav-spalte + .nav-spalte { border-left: 1px solid var(--rule); }
-.sitenav .nav-group-menu a.nav-fuss { display: flex; align-items: baseline; gap: 10px; padding: 12px 20px; border-top: 1px solid var(--rule); border-radius: 0 0 7px 7px; background: #F7F7F4; font-weight: 600; }
-.sitenav .nav-group-menu a.nav-fuss:hover { background: #EFEFEA; }
-.nav-fuss small { font-size: 13px; font-weight: 500; color: var(--text); }
-@media (max-width: 1000px) {   /* Handy-Akkordeon: die drei Spalten untereinander, das Glossar als gewöhnlicher Eintrag */
-  .nav-group-menu.nav-mega { padding: 0 0 10px; }
-  .nav-spalten { display: block; }
-  .nav-spalte { padding: 0; }
-  .nav-spalte + .nav-spalte { border-left: 0; }
-  .nav-spalte .nav-cap:first-child { margin-top: 10px; }
-  .sitenav .nav-group-menu a.nav-fuss { margin-top: 6px; padding: 9px 4px 9px 16px; border-top: 0; border-radius: 0; background: transparent; }
-  .sitenav .nav-group-menu a.nav-fuss:hover { background: rgba(26,26,25,0.06); }
-  .nav-fuss small { color: rgba(26,26,25,0.7); }
+/* Aufklapper „Navigation einfach“ (seit 11.10.2026 abends, nach dem Vorbild zendepot.de; nav.py panel(), Mockup tmp/nav-zen-mockup):
+   links höchstens sieben kurze Einträge mit kleinem Bild, rechts die Vorschau des gewählten Eintrags (site.js wechselt sie beim
+   Überfahren und beim Fokus). Akademie und Top 10 zeigen rechts die Unterseiten. Keine grünen Chips mehr (.nav-cap bleibt unbenutzt).
+   Vorher: vier Spalten Akademie (.nav-mega/.nav-spalten) und Listen mit Chips. Bis 1000 px Akkordeon ohne Bilder und Vorschau. */
+.nav-group-menu.nav-panel { width: 720px; max-width: calc(100vw - 16px); padding: 0; display: none; grid-template-columns: 238px minmax(0, 1fr); border-radius: 16px; box-shadow: 0 24px 48px -18px rgba(26,26,25,0.30), 0 2px 6px rgba(26,26,25,0.05); overflow: hidden; text-transform: none; letter-spacing: 0; }
+.nav-group.open .nav-group-menu.nav-panel, .nav-group.kb .nav-group-menu.nav-panel { display: grid; }
+@media (hover: hover) and (min-width: 1001px) { .nav-group:hover .nav-group-menu.nav-panel { display: grid; } }
+.nav-esc .nav-group:hover .nav-group-menu.nav-panel { display: none; }
+@media (min-width: 1001px) { .nav-group-menu.nav-panel { max-height: none; overflow: hidden; } }
+.nav-panel > a.nav-ov { display: none; }
+.np-list { padding: 10px 8px; display: flex; flex-direction: column; gap: 2px; border-right: 1px solid var(--rule); }
+.sitenav .nav-panel a.np-item { display: grid; grid-template-columns: 38px minmax(0, 1fr) 12px; align-items: center; gap: 10px; padding: 7px 10px; margin: 0; border-radius: 10px; font-size: 15px; font-weight: 600; line-height: 1.25; color: var(--ink); transition: background-color .12s ease; }
+.np-ic { width: 38px; height: 27px; display: grid; place-items: center; }
+.np-ic img { width: 38px; height: 27px; object-fit: contain; }
+.np-pf { width: 7px; height: 7px; border-right: 2px solid currentColor; border-top: 2px solid currentColor; transform: rotate(45deg); opacity: 0; }
+.np-item.hat-sub .np-pf { opacity: 0.45; }
+.np-item.hat-sub.on .np-pf { opacity: 1; }
+.sitenav .nav-panel a.np-item:hover, .sitenav .nav-panel a.np-item.on { background: #DCFBD3; }
+.sitenav .nav-panel a.np-item.current .np-t { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
+.np-sep { height: 1px; background: var(--rule); margin: 6px 10px; }
+.np-mob { display: none; }
+.np-prev { background: #F7F6F1; padding: 20px 22px 18px; min-height: 300px; display: flex; }
+.np-pv-wrap { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
+.np-pv-wrap[hidden] { display: none; }
+.np-pv { display: grid; grid-template-columns: minmax(0, 1fr) 140px; gap: 16px; align-items: start; }
+.np-pv img { width: 140px; height: 96px; }
+.np-k { font-size: 11.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); margin: 0 0 4px; }
+.np-h { font-size: 19px; font-weight: 650; line-height: 1.25; letter-spacing: -0.01em; margin: 0 0 6px; color: var(--ink); }
+.np-d { font-size: 14.5px; font-weight: 500; line-height: 1.5; color: var(--text); margin: 0; }
+.sitenav .nav-panel a.np-more { display: inline-block; align-self: flex-start; margin: auto 0 0; padding: 14px 0 0; font-size: 14px; font-weight: 600; color: var(--green-text); }
+.sitenav .nav-panel a.np-more:hover { background: none; text-decoration: underline; }
+.np-subs { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2px 10px; margin: 14px -6px 0; }
+.np-subs.eins { grid-template-columns: minmax(0, 1fr); }
+.sitenav .nav-panel .np-subs a { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 9px; align-items: center; padding: 6px; margin: 0; border-radius: 9px; color: var(--ink); }
+.sitenav .nav-panel .np-subs a:hover { background: #fff; }
+.np-subs img { width: 34px; height: 24px; object-fit: contain; }
+.np-subs b { display: block; font-size: 14.5px; font-weight: 600; line-height: 1.25; }
+.np-subs small { display: block; font-size: 12.5px; font-weight: 500; line-height: 1.35; color: var(--text); }
+@media (prefers-reduced-motion: reduce) { .sitenav .nav-panel a.np-item { transition: none; } }
+@media (max-width: 1000px) {   /* Handy-Akkordeon: kurze Einträge untereinander, Bereiche mit ihren Unterseiten, keine Bilder und keine Vorschau */
+  .nav-group-menu.nav-panel { width: auto; max-width: none; display: none; box-shadow: none; border-radius: 0; overflow: visible; }
+  .nav-group.open .nav-group-menu.nav-panel { display: block; }
+  .nav-panel > a.nav-ov { display: block; }
+  .np-list { padding: 0 0 10px; border-right: 0; gap: 0; }
+  .np-prev, .np-ic, .np-pf, .np-sep { display: none; }
+  .sitenav .nav-panel a.np-item { display: block; padding: 9px 4px 9px 16px; border-radius: 0; font-size: 14.5px; background: transparent; }
+  .sitenav .nav-panel a.np-item.on { background: transparent; }
+  .sitenav .nav-panel a.np-item:hover { background: rgba(26,26,25,0.06); }
+  .np-mob { display: block; padding: 0 0 4px 16px; }
+  .sitenav .nav-panel .np-mob a { display: block; padding: 7px 4px 7px 16px; margin: 0; font-size: 14px; font-weight: 500; }
 }
 #akademie { scroll-margin-top: 90px; }
 

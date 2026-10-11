@@ -224,7 +224,7 @@ window.MC = (function () {
     return v;
   }
 
-  // Nav-Dropdowns (die vier Stufen Verstehen, Entscheiden, Kaufen, Einordnen):
+  // Nav-Dropdowns (seit 11.10.2026: Akademie, Anleihen, Kaufen, Markt – je Liste links, Vorschau rechts):
   // Hover, per Tastatur Pfeil runter/Leertaste, auf Touch-Geräten erster Tipp; Escape und Außenklick schließen,
   // Öffnen einer Gruppe schließt die anderen. Bis 760 px (Handy): Burger-Knopf
   // .nav-toggle öffnet das Menü (Klasse nav-open am <header>), die Gruppenköpfe
@@ -292,6 +292,20 @@ window.MC = (function () {
     groups.forEach(function (grp) {
       var btn = grp.querySelector(".nav-group-btn");
       var menu = grp.querySelector(".nav-group-menu");
+      // Vorschau (seit 11.10.2026, nav.py panel()): Überfahren oder Fokus auf einen Eintrag zeigt rechts seine Vorschau
+      // (Titel, Text, Bild bzw. die Unterseiten eines Bereichs). Im Handy-Akkordeon gibt es keine Vorschau.
+      if (menu) Array.prototype.forEach.call(menu.querySelectorAll(".np-item"), function (a) {
+        var zeigen = function () {
+          if (mobile()) return;
+          Array.prototype.forEach.call(menu.querySelectorAll(".np-item"), function (x) { x.classList.toggle("on", x === a); });
+          Array.prototype.forEach.call(menu.querySelectorAll(".np-pv-wrap"), function (v) { v.hidden = v.getAttribute("data-np") !== a.getAttribute("data-np"); });
+        };
+        // Maus: erst nach kurzem Verweilen umschalten – wer schräg zur Vorschau fährt, streift sonst andere Einträge
+        var t = null;
+        a.addEventListener("mouseenter", function () { clearTimeout(t); t = setTimeout(zeigen, 90); });
+        a.addEventListener("mouseleave", function () { clearTimeout(t); });
+        a.addEventListener("focus", zeigen);
+      });
       // Ragt das Menü rechts aus dem Fenster (schmale Bildschirme: Marke und
       // Menü stehen seit 23.09.2026 in einer Zeile), wird es so weit nach links
       // geschoben, dass es passt – höchstens bis 8 px vor den linken Rand.

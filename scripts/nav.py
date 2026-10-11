@@ -17,13 +17,11 @@ des Weges – Akademie (lernen), Anleihen (finden), Kaufen, Markt (beobachten; b
 „Mein Bondarium“ (KONTO). „Über uns“ steht nur noch in der Fußzeile. Jede Seite steht genau einmal im Menü und ist
 mit zwei Klicks erreichbar. Der Gruppenkopf ist ein Link auf die Übersichtsseite (wissen.html, anleihen.html,
 kaufen.html, beobachten.html).
-  * AKADEMIE: vier Spalten (Grundlagen, Risiken, Auswählen, Für Fortgeschrittene – seit 11.10.2026, vorher drei) mit allen Themen
-    direkt im Aufklapper, darunter über die ganze Breite das Glossar. Die Übersicht wissen.html trägt dieselben vier Abschnitte
+  * Seit 11.10.2026 abends („Navigation einfach“, Vorbild zendepot.de): Jeder Aufklapper hat links höchstens sieben kurze Einträge
+    mit kleinem Bild und rechts eine Vorschau (Titel, Text, Bild der Seite); Akademie-Bereiche und Top-10-Listen zeigen rechts ihre
+    Unterseiten. Daten: AKADEMIE, ANLEIHEN, KAUFEN, ZINSEN mit E(…) und B(…) (Erklärung über den Daten), HTML: panel(),
+    Umschalten der Vorschau: site.js navInit. Keine grünen Chips mehr. Die Übersicht wissen.html trägt die vier Bereiche
     (#grundlagen, #risiken, #auswaehlen, #fortgeschrittene); die früheren Übersichten entscheiden.html und vertiefen.html leiten dorthin (.htaccess).
-  * MENUS (ANLEIHEN, KAUFEN, ZINSEN – das Menü ZINSEN heißt seit 11.10.2026 „Markt“): einfache Listen. Einträge:
-  ("Beschriftung", "datei.html")  Menüeintrag
-  ("Beschriftung", "datei.html", "klasse")  Menüeintrag mit CSS-Klasse (nav-hl = dezenter Rahmen, für die Anleihen-Suche)
-  "Beschriftung"                  Gruppenüberschrift im Aufklapper (grüner Chip)
 Jeder Aufklapper bekommt zusätzlich den Eintrag „Übersicht“ mit der Klasse nav-ov – base.css zeigt ihn nur im
 Handy-Akkordeon, wo der Kopf nicht navigiert, sondern auf- und zuklappt.
 Vorher (25.09.–01.10.2026): „Der Weg“ mit den Stufen Verstehen, Entscheiden, Kaufen, Vertiefen unter „Akademie“.
@@ -45,94 +43,94 @@ import os
 import re
 import sys
 
-# Akademie: (Beschriftung, Übersichtsseite, Spalten, Fußeintrag). Spalte = (Überschrift, Sprungmarke auf der Übersicht, Einträge).
-# Seit 11.10.2026 (Nutzerentscheid „mache die umfassendste Änderung“ nach der Inhaltsprüfung) vier Spalten statt drei:
-#   Grundlagen = wie eine Anleihe funktioniert (bis 11.10.2026 mit allen Risiko-Themen; „Rendite richtig lesen“ kam aus
-#   „Für Fortgeschrittene“, weil die Rendite in jeder Liste und jedem Steckbrief steht),
-#   Risiken = was schiefgehen kann (neu; Kündbare Anleihen und die Eisenbahn-Blase als Fallbeispiel kamen aus Grundlagen),
-#   Auswählen = passt das zu mir und was (seit 11.10.2026 ohne Doppelungen: „Anleihen-Beispiele nach Ziel“ steckt in „Welche Anleihe
-#   wozu passt?“, „Anleihen-ETF: Vor- und Nachteile“ in „ETF oder Anleihe?“ – 301 in .htaccess),
-#   Für Fortgeschrittene = Werkzeuge für das eigene Depot.
-# Bis 01.10.2026 hießen die Spalten „Verstehen“, „Entscheiden“, „Vertiefen“ – nicht wieder einführen.
+# Menüs seit 11.10.2026 abends („Navigation einfach“ nach dem Vorbild zendepot.de; Mockup tmp/nav-zen-mockup, Nutzer: „super. setze das
+# so um“): je Menü höchstens sieben kurze Einträge (höchstens drei Wörter) links, rechts eine Vorschau mit Titel, Text und Bild der
+# Seite. Keine grünen Chips mehr. Die Akademie und die Top-10-Listen sind zweistufig: links der Bereich, rechts dessen Seiten.
+# Einträge:
+#   E(kurz, datei, bild, titel, kurztext, text)   eine Seite: kurz = Menüname, titel = Seitenname (Überschrift), kurztext = eine
+#                                                 Zeile (in Bereichs-Vorschauen), text = Vorschau-Text (die meta description der Seite)
+#   B(kurz, ziel, bild, titel, text, [E, …])      ein Bereich mit Unterseiten; ziel = Sprungmarke auf der Übersicht oder erste Liste
+#   "-"                                           Trennlinie
+# Seitenname, Brotkrumen und Überschrift bleiben lang; nur der Menüeintrag ist kurz. Ändert sich die Beschreibung einer Seite,
+# hier den Text nachziehen (sonst zeigt die Vorschau den alten). Vorher (01.–11.10.2026): Spalten bzw. Listen mit grünen Chips
+# und vollen Seitennamen; die Bezeichnungen Verstehen, Entscheiden, Vertiefen (bis 01.10.2026) nicht wieder einführen.
+def E(kurz, datei, bild, titel, kurztext, text):
+    return {"k": kurz, "h": datei, "img": bild, "t": titel, "kd": kurztext, "d": text}
+
+
+def B(kurz, ziel, bild, titel, text, unter):
+    return {"k": kurz, "h": ziel, "img": bild, "t": titel, "d": text, "sub": unter}
+
+
 AKADEMIE = ("Akademie", "wissen.html", [
-    ("Grundlagen", "grundlagen", [
-        ("Anleihen einfach erklärt", "grundlagen.html"),
-        ("Anleihe-Arten", "anleihe-arten.html"),
-        ("Zinsniveau", "zinsniveau.html"),   # erklärt, was das Zinsniveau bewegt – vor „Laufzeit“, die zeigt, was es mit der Anleihe macht
-        ("Laufzeit", "laufzeit.html"),
-        ("Rendite richtig lesen", "rendite-lesen.html"),
+    B("Grundlagen", "wissen.html#grundlagen", "spot-grundlagen.svg?v=2", "Grundlagen", "Wie eine Anleihe funktioniert – bis zur Zahl, auf die es ankommt: die Rendite.", [
+        E("Anleihen erklärt", "grundlagen.html", "spot-grundlagen.svg?v=2", "Anleihen einfach erklärt", "Sechs Fragen, sechs Schaubilder, ein Beispiel", "Anleihen einfach erklärt an einem Beispiel: Kupon und Rendite, warum der Kurs fällt, wenn das Zinsniveau steigt, Ausfallrisiko und der Vergleich mit Festgeld."),
+        E("Anleihe-Arten", "anleihe-arten.html", "spot-anleihe-arten.svg", "Anleihe-Arten", "Staat, Pfandbrief, Floater & Co.", "13 Anleihe-Arten einfach erklärt – von Staatsanleihe, Pfandbrief und Nachranganleihe bis Floater und Nullkupon. Je Art: Zins, Risiko und für wen sie passt."),
+        E("Zinsniveau", "zinsniveau.html", "spot-zinsniveau.svg", "Zinsniveau", "Warum es steigt und fällt", "Was das allgemeine Zinsniveau ist, wie EZB, Inflation und Markt es bewegen – und was steigendes oder fallendes Zinsniveau für deine Anleihe heißt."),
+        E("Laufzeit", "laufzeit.html", "spot-laufzeit.svg", "Laufzeit", "Kurz oder lang – Risiko und Chance", "Laufzeit einfach erklärt: was kurz, mittel und lang bedeutet, warum lange Anleihen bei steigendem Zinsniveau fallen – und wo die Chance liegt."),
+        E("Rendite lesen", "rendite-lesen.html", "spot-rendite-lesen.svg", "Rendite richtig lesen", "Kupon, Yield to Worst, netto – welche Zahl zählt", "Kupon, laufende Verzinsung, Rendite bis Fälligkeit, Yield to Worst, Rendite nach Steuern: was jede Zahl bedeutet, woher sie kommt und welche für dich zählt.")
     ]),
-    ("Risiken", "risiken", [
-        ("Risiko kennen", "risiko.html"),   # Überblick über alle sieben Risiken – die Einträge darunter vertiefen einzelne
-        ("Bonität und Ratings", "bonitaet.html"),
-        ("Wenn der Schuldner nicht zahlt", "zahlungsausfall.html"),   # seit 04.10.2026 (SEO-Runde 2, Themenlücke 3): Insolvenz, Umschuldung, Bail-in
-        ("Kündbare Anleihen", "kuendbare-anleihen.html"),
-        ("Eisenbahn-Blase 1873", "eisenbahn-blase-1873.html"),   # seit 08.10.2026 (Nutzerwunsch): Fallbeispiel zum Zahlungsausfall
+    B("Risiken", "wissen.html#risiken", "spot-risiko.svg", "Risiken", "Was schiefgehen kann – und woran du es vor dem Kauf erkennst.", [
+        E("Risiko kennen", "risiko.html", "spot-risiko.svg", "Risiko kennen", "Sieben Risiken im Überblick", "Sieben Risiken von Anleihen: Pleite des Schuldners, Anstieg des allgemeinen Zinsniveaus, Inflation, Fremdwährung, fehlende Käufer, Kündigung, Nachrang."),
+        E("Bonität", "bonitaet.html", "spot-bonitaet.svg", "Bonität und Ratings", "Wie sicher ist dein Geld?", "Bonität und Ratings erklärt: die Skala von AAA bis D, Investment Grade und Hochzins, Ausfälle je Note und warum schlechtere Noten mehr Zins zahlen."),
+        E("Zahlungsausfall", "zahlungsausfall.html", "spot-zahlungsausfall.svg", "Wenn der Schuldner nicht zahlt", "Insolvenz, Umschuldung und was zurückkommt", "Was passiert, wenn der Emittent einer Anleihe nicht zahlt: Insolvenzverfahren, Rangfolge, Erlösquoten, Bail-in bei Banken, Umschuldung bei Staaten, Steuer."),
+        E("Kündbare Anleihen", "kuendbare-anleihen.html", "spot-kuendbare-anleihen.svg", "Kündbare Anleihen", "Sechs Kündigungsarten und ihre Folgen", "Make-Whole, fester Termin, Put: Welche Kündigung einer Anleihe harmlos ist, welche dich Zinsen kostet – und wie du sie am Namen erkennst."),
+        E("Eisenbahn-Blase 1873", "eisenbahn-blase-1873.html", "spot-eisenbahn-blase-1873.svg", "Eisenbahn-Blase 1873", "Fallbeispiel: wie die Blase der Bahnanleihen platzte", "Die Eisenbahn-Blase der frühen 1870er einfach erklärt: wie Bahnanleihen mit hohen Kupons 1873 ausfielen, was Anleger verloren und was das für dich heißt.")
     ]),
-    ("Auswählen", "auswaehlen", [
-        ("Sind Anleihen etwas für dich?", "anlegerprofile.html"),
-        ("Wie viel Anleihen ins Depot?", "anleihen-anteil.html"),   # seit 01.10.2026: Anleihen neben Aktien – Mischung, Faustregeln, Nachjustieren
-        ("Welche Anleihe wozu passt?", "anlageziele.html"),   # seit 11.10.2026 mit den vier Beispielen (Nadine, Tobias, Michael, Jonas) der früheren guide.html
-        ("Anleihe, Festgeld oder Tagesgeld?", "anleihe-festgeld-tagesgeld.html"),   # seit 04.10.2026 (SEO-Runde 2, Themenlücke 2), mit Geldmarkt-ETF
-        ("ETF oder Anleihe?", "etf-oder-anleihe.html"),   # seit 11.10.2026 mit Vor- und Nachteilen des Anleihen-ETF (früher anleihen-etf-erklaert.html)
-        ("Anleihen für Unternehmen", "anleihen-fuer-unternehmen.html"),   # seit 01.10.2026: Depot, LEI, Steuern, Bilanz – Hausbegriff „Unternehmen“ (nicht „Firmen“)
+    B("Auswählen", "wissen.html#auswaehlen", "spot-anlageziele.svg", "Auswählen", "Sind Anleihen etwas für dich – und welche, wie viel davon?", [
+        E("Passt das zu mir?", "anlegerprofile.html", "spot-anlegerprofile.svg", "Sind Anleihen etwas für dich?", "Zwei typische Anleger und ihre Gründe", "Warum eine Unternehmerin und ein Privatanleger Anleihen kaufen: Liquidität planen, Ertrag festschreiben, Risiko streuen – und für wen sie nicht passen."),
+        E("Wie viel ins Depot?", "anleihen-anteil.html", "spot-anleihen-anteil.svg", "Wie viel Anleihen ins Depot?", "Anleihen neben Aktien – Mischung, Faustregeln, Nachjustieren", "Wie viel Anleihen neben Aktien? Was die Mischung bewirkt, warum der Puffer 2022 fehlte, drei Faustregeln und wie du nachjustierst – mit Zahlen und Quellen."),
+        E("Welche wozu?", "anlageziele.html", "spot-anlageziele.svg", "Welche Anleihe wozu passt?", "Sechs Ziele, vier Beispiele – bis in die Suche", "Sechs Anlageziele und die passende Anleihe: Geld parken, langfristig anlegen, Zinseinkommen, Zins sichern, große Beträge – mit vier Beispielen."),
+        E("Festgeld oder Anleihe?", "anleihe-festgeld-tagesgeld.html", "spot-anleihe-festgeld-tagesgeld.svg", "Anleihe, Festgeld oder Tagesgeld?", "Zins, Verfügbarkeit und Schutz im Vergleich", "Anleihe, Festgeld, Tagesgeld und Geldmarkt-ETF im Vergleich: Zins, Verfügbarkeit, Schutz durch Einlagensicherung oder Bonität, Steuern und Kosten."),
+        E("ETF oder Anleihe?", "etf-oder-anleihe.html", "spot-etf-oder-anleihe.svg", "ETF oder Anleihe?", "Vor- und Nachteile, drei Unterschiede, eine Entscheidungstabelle", "Anleihen-ETF oder einzelne Anleihe? Vor- und Nachteile des ETF, drei Unterschiede und eine Entscheidungstabelle – mit Schaubildern erklärt."),
+        E("Für Unternehmen", "anleihen-fuer-unternehmen.html", "spot-anleihen-fuer-unternehmen.svg", "Anleihen für Unternehmen", "Rücklagen der GmbH anlegen – Depot, LEI, Steuern, Bilanz", "Rücklagen des Unternehmens in Anleihen anlegen: Depot und LEI, rund 30 % Steuer bei der GmbH, Abschreibung in der Bilanz und was vorher zu klären ist.")
     ]),
-    ("Für Fortgeschrittene", "fortgeschrittene", [
-        ("Mehr aus Anleihen herausholen", "fortgeschrittene.html"),
-        ("Duration und Konvexität", "duration.html"),
-        ("Leiter, Hantel, Roll-down", "anleihenleiter.html"),
-        ("Marktsignale lesen", "markttechnik.html"),
-        ("Kreditausfallswap (CDS)", "cds.html"),   # seit 09.10.2026 (Nutzerwunsch): CDS-Prämie als Marktpreis des Ausfallrisikos, Beispiel Türkei
+    B("Fortgeschrittene", "wissen.html#fortgeschrittene", "spot-fortgeschrittene.svg", "Für Fortgeschrittene", "Kursrisiko rechnen, ein Depot planen, den Markt deuten.", [
+        E("Mehr herausholen", "fortgeschrittene.html", "spot-fortgeschrittene.svg", "Mehr aus Anleihen herausholen", "Der Überblick für Fortgeschrittene – Spreads, Kleingedrucktes, Fremdwährung", "Anleihen für Fortgeschrittene: Zinskurve lesen, Duration nutzen, Risikoaufschläge verstehen, Kleingedrucktes prüfen, Leiter bauen, Handelskosten."),
+        E("Duration", "duration.html", "spot-duration.svg", "Duration und Konvexität", "Den Hebel berechnen – für Anleihe und Depot", "Duration berechnen, den Kursverlust bei steigendem Zinsniveau abschätzen, Konvexität verstehen und die Duration des Depots bestimmen – mit Beispielen."),
+        E("Leiter und Hantel", "anleihenleiter.html", "spot-anleihenleiter.svg", "Leiter, Hantel, Roll-down", "Depot-Strategien für jede Zinskurve", "Anleihenleiter bauen und pflegen, die Hantel als Alternative und der Roll-down-Effekt: welche Strategie zu welcher Zinskurve passt – mit Rechenbeispielen."),
+        E("Marktsignale", "markttechnik.html", "spot-markttechnik.svg", "Marktsignale lesen", "Auktionen, EZB, Swap-Spread, Breakeven", "Auktionen, Leitzins-Erwartungen, Zentralbankbilanz, Swap-Spread und Breakeven-Inflation: fünf Signale, mit denen Profis den Anleihenmarkt lesen."),
+        E("CDS", "cds.html", "spot-cds.svg", "Kreditausfallswap (CDS)", "Der Preis des Ausfallrisikos – am Beispiel Türkei", "Was ein Credit Default Swap ist, was seine Prämie über das Ausfallrisiko sagt und wie du sie als Signal nutzt – am Beispiel der Türkei 2018 bis 2026.")
     ]),
-], ("Glossar", "begriffe.html", "Fachbegriffe von A bis Z"))
-# „Anleihen“: alles, was konkrete Anleihen zeigt – Suche und Listen. Art zuerst („Staatsanleihen nach Laufzeit“), damit
-# man die Liste beim Überfliegen findet. „Top 10“ muss direkt draufstehen (Nutzerwunsch 29.09.2026).
-# Seit 11.10.2026 ein Chip „Weitere Listen“ statt der Ein-Eintrag-Chips „Top 30“ und „Vom Bund“; dazu die Langläufer (vorher im
-# Menü „Zinsen“ – sie zeigen sieben einzelne Anleihen mit Kursverlauf, keine Renditereihe).
+    "-",
+    E("Glossar", "begriffe.html", "spot-begriffe.svg", "Glossar", "Alle Fachbegriffe von A bis Z, jeder in wenigen Sätzen erklärt", "69 Fachbegriffe rund um Anleihen kurz erklärt – von Kupon, Kurs und Rendite über Duration und Spread bis Abgeltungsteuer."),
+])
 ANLEIHEN = ("Anleihen", "anleihen.html", [
-    ("Anleihen-Suche", "anleihen-suche.html", "nav-hl"),
-    "Top 10 meistgehandelt",
-    ("Staatsanleihen nach Laufzeit", "staatsanleihen-laufzeit.html"),
-    ("Staatsanleihen nach Ländern", "anleihen-laender.html"),
-    ("Unternehmensanleihen nach Laufzeit", "unternehmensanleihen-laufzeit.html"),
-    ("Unternehmensanleihen nach Ländern", "unternehmensanleihen-laender.html"),
-    ("Anleihen-ETFs", "anleihen-etf.html"),
-    "Weitere Listen",
-    ("Anleihen nach Kupon", "anleihen-kupon.html"),   # höchster Kupon unter den Anleihen der EZB-Liste – drei Top 30 auf einer Seite: Staat, Öffentlich, Unternehmen
-    ("Bundeswertpapiere", "bundeswertpapiere.html"),   # seit 04.10.2026 (SEO-Runde 2, Themenlücke 4): alle laufenden Bundeswertpapiere mit Kurs und Rendite
-    ("Langläufer", "langlaeufer.html"),
+    E("Anleihen-Suche", "anleihen-suche.html", "spot-anleihen-suche.svg", "Anleihen-Suche", "Rund 33.000 Anleihen an deutschen Börsen – Filter nach Land, Währung, Laufzeit und Rendite.", "Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen: Suche nach Name, ISIN oder WKN, Filter nach Land, Währung, Laufzeit."),
+    B("Top 10 Staat", "staatsanleihen-laufzeit.html", "spot-staatsanleihen-laufzeit.svg", "Top 10 Staatsanleihen", "Die zehn meistgehandelten Staatsanleihen – je Laufzeit oder je Land.", [
+        E("nach Laufzeit", "staatsanleihen-laufzeit.html", "spot-staatsanleihen-laufzeit.svg", "Staatsanleihen nach Laufzeit", "Fünf Laufzeitbereiche – von „bis 1 Jahr“ bis „über 30 Jahre“", "Die meistgehandelten Staatsanleihen in fünf Laufzeitgruppen, von unter 1 bis über 30 Jahre – mit ISIN, Kurs, Kupon, Rendite und Volumen."),
+        E("nach Ländern", "anleihen-laender.html", "spot-anleihen-laender.svg", "Staatsanleihen nach Ländern", "20 Länder auf der Karte", "Weltkarte zum Anklicken: je zehn meistgehandelte Staatsanleihen aus 20 Ländern – mit ISIN, Kurs, Kupon, Rendite, Restlaufzeit und Stückelung.")
+    ]),
+    B("Top 10 Unternehmen", "unternehmensanleihen-laufzeit.html", "spot-unternehmensanleihen-laufzeit.svg", "Top 10 Unternehmensanleihen", "Die zehn meistgehandelten Unternehmensanleihen – je Laufzeit oder je Land.", [
+        E("nach Laufzeit", "unternehmensanleihen-laufzeit.html", "spot-unternehmensanleihen-laufzeit.svg", "Unternehmensanleihen nach Laufzeit", "Fünf Laufzeitbereiche – von „bis 1 Jahr“ bis „über 30 Jahre“", "Die meistgehandelten Unternehmensanleihen in fünf Laufzeitgruppen, von unter 1 bis über 30 Jahre – mit Emittent, ISIN, Kurs, Kupon und Rendite."),
+        E("nach Ländern", "unternehmensanleihen-laender.html", "spot-unternehmensanleihen-laender.svg", "Unternehmensanleihen nach Ländern", "Deutschland, USA, Frankreich und weitere Länder auf der Karte", "Weltkarte zum Anklicken: je zehn meistgehandelte Unternehmensanleihen aus sechs Ländern – mit ISIN, Kurs, Kupon, Rendite, Restlaufzeit und Stückelung.")
+    ]),
+    E("Anleihen-ETFs", "anleihen-etf.html", "spot-anleihen-etf.svg", "Anleihen-ETFs", "Sieben Kategorien, von ruhig bis riskant", "Die zehn meistgehandelten Anleihen-ETFs in sieben Kategorien, von ruhig bis riskant – mit Kurs, Kosten, Laufzeit, Größe und Ausschüttung. Täglich aktuell."),
+    E("Höchste Kupons", "anleihen-kupon.html", "spot-anleihen-kupon.svg", "Anleihen nach Kupon", "Auf der EZB-Liste: Staaten, öffentliche Emittenten und Unternehmen", "Die 30 höchsten Kupons je Art: Staatsanleihen, öffentliche Emittenten und Unternehmen – von der EZB-Liste notenbankfähiger Sicherheiten, ab zwei Jahren."),
+    E("Bundeswertpapiere", "bundeswertpapiere.html", "spot-bundeswertpapiere.svg", "Bundeswertpapiere", "Alle laufenden Anleihen des Bundes mit Kurs und Rendite", "Alle Bundeswertpapiere mit Kurs und Rendite der Bundesbank: Bundesanleihen, Bundesobligationen, Schatzanweisungen – und wie du sie kaufst."),
+    E("Langläufer", "langlaeufer.html", "spot-langlaeufer.svg?v=2", "Langläufer", "Sieben Anleihen mit 30 bis 100 Jahren Laufzeit – Kursverlauf seit 2019", "Wenn Anleihen 30, 50 oder 100 Jahre laufen: Kursverlauf von sieben Langläufern seit 2019, von Bund 2040 bis Österreich 2120 – mit Kennzahlen."),
 ])
-# „Kaufen“ (seit 01.10.2026 eigener Hauptpunkt): alles, was man beim Kauf braucht – Anleitung, Broker, Handelsplätze,
-# Steuern und Kosten, Rechner. Seit 02.10.2026 mit zwei grünen Chips: erst der Weg zum Kauf, dann was er kostet und bringt.
-# Seit 11.10.2026 endet der Weg nicht mehr beim Kauf: „Nach dem Kauf“ (Themenlücke 8) – Zinsen, Verkauf, Rückzahlung, Depotwechsel.
 KAUFEN = ("Kaufen", "kaufen.html", [
-    "Schritt für Schritt",
-    ("Deine erste Anleihe", "erste-anleihe.html"),
-    ("Broker im Vergleich", "broker-vergleich.html"),
-    ("Handelsplätze", "handelsplaetze.html"),
-    ("Warum kann ich diese Anleihe nicht kaufen?", "anleihe-nicht-kaufbar.html"),   # seit 04.10.2026 (SEO-Runde 2, Themenlücke 1)
-    ("Nach dem Kauf", "nach-dem-kauf.html"),
-    "Kosten und Rendite",
-    ("Steuern und Handelskosten", "steuern-handelskosten.html"),
-    ("Rechner", "rechner.html"),
+    E("Erste Anleihe", "erste-anleihe.html", "spot-erste-anleihe.svg", "Deine erste Anleihe", "Neun Schritte vom Termin bis zur Rückzahlung", "Deine erste Anleihe in neun Schritten: vom Termin über Bonität, Depot und Order bis zu den Stückzinsen – mit durchgerechnetem Beispiel und Checkliste."),
+    E("Broker-Vergleich", "broker-vergleich.html", "spot-broker-vergleich.svg", "Broker im Vergleich", "18 Anbieter: Angebot, Börsen, Kosten – nur Angaben der Anbieter selbst.", "Wo kannst du Anleihen kaufen? 18 Anbieter im Vergleich: Kosten für Käufe von 1.000 bis 100.000 € offen vorgerechnet – mit Rechenweg und Quelle."),
+    E("Handelsplätze", "handelsplaetze.html", "spot-handelsplaetze.svg", "Handelsplätze", "Frankfurt, Stuttgart, gettex & Co. – wer den Kurs stellt", "Profimarkt oder Börse, wer den Kurs stellt und elf Handelsplätze für Anleihen im Vergleich: Frankfurt, Stuttgart, gettex, Tradegate, Direkthandel und mehr."),
+    E("Nicht kaufbar?", "anleihe-nicht-kaufbar.html", "spot-anleihe-nicht-kaufbar.svg", "Warum kann ich diese Anleihe nicht kaufen?", "Stückelung, Zielmarkt, Handelsplatz – und was du tun kannst", "Stückelung ab 100.000 €, fehlendes Basisinformationsblatt, nur für Profis, Handelsplatz: die häufigsten Gründe für eine Kaufsperre – und was du tun kannst."),
+    E("Nach dem Kauf", "nach-dem-kauf.html", "spot-nach-dem-kauf.svg", "Nach dem Kauf", "Zinsen, Verkauf, Rückzahlung und Depotwechsel", "Was nach dem Anleihekauf passiert: Zinsen am Zinstermin, Verkauf vor Fälligkeit, Rückzahlung zum Nennwert, Post von der Bank und Depotwechsel."),
+    E("Steuern und Kosten", "steuern-handelskosten.html", "spot-steuern-handelskosten.svg", "Steuern und Handelskosten", "Was zwischen brutto und netto liegt", "Abgeltungsteuer, Stückzinsen, Nullkupon, Fremdwährung, Vorabpauschale beim Anleihen-ETF, Quellensteuer im Ausland, Ordergebühr, Spanne und Stückelung: was zwischen brutto und netto liegt."),
+    E("Rechner", "rechner.html", "spot-rechner.svg", "Rechner", "Rendite, Stückzinsen, Netto, Zinsniveau", "Vier Rechner: Rendite aus Kurs und Kupon, Stückzinsen, Zinsen netto nach Steuer und der Kurs, wenn das allgemeine Zinsniveau steigt oder fällt."),
 ])
-# „Markt“ (bis 11.10.2026 „Zinsen“ – laut Hauswortschatz sind „Zinsen“ die Zahlung, hier stehen aber Renditen, Kurve und Aufschläge;
-# die Startseite nennt den Bereich ebenfalls „Markt“): Marktdaten, täglich aktuell. Kopf = Übersicht beobachten.html (Dateiname
-# bleibt, damit alle Links gelten). Chips seit 11.10.2026 nach Art der Zahl: Renditen (Höhe) und Renditeabstände (Zinskurve =
-# lang minus kurz, Risikoaufschläge = Land minus Bund). Die Risikoaufschläge standen bis dahin unter „Unternehmensanleihen“, zeigen
-# aber vor allem Euro-Staaten gegen den Bund.
 ZINSEN = ("Markt", "beobachten.html", [
-    "Renditen",
-    ("Renditen von Staatsanleihen seit 1970", "renditen.html"),
-    ("Renditen von Unternehmensanleihen seit 1984", "unternehmensanleihen.html"),
-    ("Realzins seit 1970", "realzins.html"),
-    "Renditeabstände",
-    ("Zinskurve seit 1972", "zinskurve.html"),
-    ("Risikoaufschläge seit 1984", "risikoaufschlaege.html"),
+    E("Renditen Staat", "renditen.html", "spot-renditen.svg?v=2", "Renditen von Staatsanleihen seit 1970", "Acht Länder im Vergleich", "Renditen 10-jähriger Staatsanleihen der acht größten Volkswirtschaften seit 1970: USA, China, Deutschland, Indien, Japan, UK, Frankreich und Italien."),
+    E("Renditen Unternehmen", "unternehmensanleihen.html", "spot-unternehmensanleihen.svg?v=2", "Renditen von Unternehmensanleihen seit 1984", "Sechs Segmente nach Bonität, je 10 Jahre", "Renditen 10-jähriger Unternehmensanleihen seit 1984 nach Bonität und Land: USA, Japan, China und Australien – Jahresmittel, Spannen, aktueller Stand."),
+    E("Realzins", "realzins.html", "spot-realzins.svg?v=2", "Realzins seit 1970", "Was nach der Inflation übrig bleibt", "Zins minus Inflation: Realzins der 10-jährigen Bundesanleihe seit 1970, heute und nach Steuern – plus die Inflationserwartung des Markts bis 2046."),
+    E("Zinskurve", "zinskurve.html", "spot-zinskurve.svg?v=2", "Zinskurve seit 1972", "Bringt lange Bindung mehr Zins?", "Steil, flach oder invers? Der Abstand zwischen 10- und 2-jährigen Staatsanleihen – Deutschland seit 1972, USA seit 1976, börsentäglich aktualisiert."),
+    E("Risikoaufschläge", "risikoaufschlaege.html", "spot-risikoaufschlaege.svg?v=2", "Risikoaufschläge seit 1984", "Das Angstbarometer: Euro-Staaten und Unternehmen", "Risikoaufschläge seit 1984: Wie viel mehr Zins Italien, Frankreich und US-Unternehmen zahlen als Schuldner bester Bonität – das Angstbarometer."),
 ])
+
 # Die Aufklapper neben der Akademie, in dieser Reihenfolge; Rubrik-Schlüssel je Menü; Zusatzseiten, die zu einem Menü zählen
 MENUS = [ANLEIHEN, KAUFEN, ZINSEN]
-MENU_RUBRIK = {"Anleihen": "anleihen", "Kaufen": "kaufen", "Markt": "zinsen"}   # Rubrik-Schlüssel „zinsen“ bleibt (CSS/JS), seit 11.10.2026 heißt das Menü „Markt“
+ALLE = [AKADEMIE] + MENUS
+MENU_RUBRIK = {"Akademie": "verstehen", "Anleihen": "anleihen", "Kaufen": "kaufen", "Markt": "zinsen"}   # Rubrik-Schlüssel „zinsen“ bleibt (CSS/JS), seit 11.10.2026 heißt das Menü „Markt“
 MENU_EXTRA = {"Anleihen": ["anleihe.html"]}
 # Knopf „Mein Bondarium“ rechts außen, hinter dem Suchfeld (Benutzerbereich konto.html: Anmeldung, Merkliste und das Musterdepot „Mein Depot“). Bis 1000 px
 # steht er stattdessen als letzter Eintrag im Burger-Menü (Klasse nav-konto) – base.css zeigt jeweils nur eines von beiden.
@@ -223,37 +221,71 @@ ICONS_RE = re.compile(r'<link rel="icon" href="/?favicon\.svg(?:\?v=\w+)?" type=
 RUBRIK_EXTRA = {"ueber-uns.html": "ueber"}
 
 
-def links(items):
-    """Nur die Einträge (Beschriftung, Datei) einer Gruppe – ohne Überschriften."""
-    return [i for i in items if isinstance(i, tuple)]
+def seiten(items):
+    """Alle Dateien eines Menüs (Einträge und Unterseiten, ohne Sprungmarken)."""
+    out = []
+    for it in items:
+        if isinstance(it, dict):
+            out += [u["h"] for u in it["sub"]] if "sub" in it else [it["h"].split("#")[0]]
+    return out
 
 
 def akademie_seiten():
-    """Alle Seiten der Akademie: Übersicht, Themen der vier Spalten, Glossar."""
-    return [AKADEMIE[1]] + [e[1] for _, _, eintraege in AKADEMIE[2] for e in eintraege] + [AKADEMIE[3][1]]
+    """Alle Seiten der Akademie: Übersicht, Themen der vier Bereiche, Glossar."""
+    return [AKADEMIE[1]] + seiten(AKADEMIE[2])
 
 
 def rubrik(page):
-    """Rubrik der Seite (data-rubrik am <header>): verstehen (Akademie), anleihen, kaufen, zinsen, ueber – sonst start
+    """Rubrik der Seite (data-rubrik am <header>): verstehen (Akademie), anleihen, kaufen, zinsen (Menü „Markt“), ueber – sonst start
     (Startseite, Mein Bondarium, Rechtliches, 404). Die Kennfarbe ist seit 26.09.2026 überall dasselbe Grün."""
     if page in akademie_seiten():
         return "verstehen"
     for label, target, items in MENUS:
-        if page == target or page in MENU_EXTRA.get(label, []) or any(i[1] == page for i in links(items)):
+        if page == target or page in MENU_EXTRA.get(label, []) or page in seiten(items):
             return MENU_RUBRIK[label]
     return RUBRIK_EXTRA.get(page, "start")
 
 
-def menu_items(items, page, p):
-    """Zeilen eines Aufklappers: Chips (Zeichenkette) und Einträge (Beschriftung, Datei[, Klasse])."""
-    out = []
-    for it in items:
-        if isinstance(it, str):
-            out.append(f'          <span class="nav-cap">{html.escape(it, quote=False)}</span>')
-        else:
-            cls = " ".join(x for x in ((it[2] if len(it) > 2 else ""), "current" if it[1] == page else "") if x)
-            out.append(f'          <a href="{p}{it[1]}"' + (f' class="{cls}"' if cls else "") + f'>{html.escape(it[0], quote=False)}</a>')
-    return out
+def esc(t):
+    return html.escape(t, quote=False)
+
+
+def vorschau(it, p):
+    """Rechte Seite eines Aufklappers für einen Eintrag: Seite (Titel, Text, Bild, Öffnen) oder Bereich (Titel, Text, Unterseiten)."""
+    if "sub" in it:
+        k = f"{len(it['sub'])} Themen" if len(it["sub"]) > 2 else "Top 10"
+        subs = "".join(f'<a href="{p}{u["h"]}"><img src="{p}{u["img"]}" alt="" width="34" height="24" loading="lazy" decoding="async">'
+                       f'<span><b>{esc(u["k"])}</b><small>{esc(u["kd"])}</small></span></a>' for u in it["sub"])
+        mehr = "Alle Themen im Überblick" if len(it["sub"]) > 2 else "Zur Liste"
+        return (f'<p class="np-k">{k}</p><p class="np-h">{esc(it["t"])}</p><p class="np-d">{esc(it["d"])}</p>'
+                f'<div class="np-subs{" eins" if len(it["sub"]) <= 2 else ""}">{subs}</div>'
+                f'<a class="np-more" href="{p}{it["h"]}">{mehr}&nbsp;→</a>')
+    return (f'<div class="np-pv"><div><p class="np-h">{esc(it["t"])}</p><p class="np-d">{esc(it["d"])}</p></div>'
+            f'<img src="{p}{it["img"]}" alt="" width="140" height="96" loading="lazy" decoding="async"></div>'
+            f'<a class="np-more" href="{p}{it["h"]}">Öffnen&nbsp;→</a>')
+
+
+def panel(key, items, page, p):
+    """Aufklapper (seit 11.10.2026): links kurze Einträge mit kleinem Bild, rechts die Vorschau des gewählten Eintrags
+    (site.js wechselt sie beim Überfahren). Vorgewählt ist der Eintrag der aktuellen Seite, sonst der erste.
+    Im Handy-Akkordeon (base.css bis 1000 px) entfallen Bilder und Vorschau; Bereiche zeigen ihre Unterseiten (.np-mob)."""
+    nr = [i for i, it in enumerate(items) if isinstance(it, dict)]
+    aktiv = next((i for i in nr if page in ([u["h"] for u in items[i].get("sub", [])] + [items[i]["h"]])), nr[0])
+    liste, prev = [], []
+    for i, it in enumerate(items):
+        if it == "-":
+            liste.append('            <span class="np-sep" aria-hidden="true"></span>')
+            continue
+        cur = page in [u["h"] for u in it.get("sub", [])] or it["h"] == page
+        cls = "np-item" + (" hat-sub" if "sub" in it else "") + (" on" if i == aktiv else "") + (" current" if cur else "")
+        liste.append(f'            <a href="{p}{it["h"]}" class="{cls}" data-np="{key}-{i}"><span class="np-ic">'
+                     f'<img src="{p}{it["img"]}" alt="" width="38" height="27" loading="lazy" decoding="async"></span>'
+                     f'<span class="np-t">{esc(it["k"])}</span><span class="np-pf" aria-hidden="true"></span></a>')
+        if "sub" in it:
+            liste.append('            <div class="np-mob">' + "".join(
+                f'<a href="{p}{u["h"]}"' + (' class="current"' if u["h"] == page else "") + f'>{esc(u["k"])}</a>' for u in it["sub"]) + '</div>')
+        prev.append(f'            <div class="np-pv-wrap" data-np="{key}-{i}"' + ("" if i == aktiv else " hidden") + f'>{vorschau(it, p)}</div>')
+    return (['          <div class="np-list">'] + liste + ['          </div>', '          <div class="np-prev">'] + prev + ['          </div>'])
 
 
 def krumen(page, s, absolute=False):
@@ -314,35 +346,18 @@ def render(page, absolute=False):
            '<span class="nav-toggle-i" aria-hidden="true"></span></button>',
            '    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">']
     rub = rubrik(page)
-    # Aufklapper „Akademie“: vier Spalten mit allen Themen, darunter das Glossar über die ganze Breite
-    a_label, a_target, spalten, fuss = AKADEMIE
-    cur = " current" if rub == "verstehen" else ""
-    out.append('      <div class="nav-group nav-akademie">')
-    out.append(f'        <a href="{p}{a_target}" class="nav-group-btn{cur}" aria-expanded="false">'
-               f'<span>{a_label}</span><span class="nav-caret" aria-hidden="true"></span></a>')
-    out.append('        <div class="nav-group-menu nav-mega">')
-    out.append(f'          <a href="{p}{a_target}" class="nav-ov{" current" if page == a_target else ""}">Übersicht</a>')
-    out.append('          <div class="nav-spalten">')
-    for titel, _, eintraege in spalten:
-        out.append('          <div class="nav-spalte">')
-        out += menu_items([titel] + eintraege, page, p)
-        out.append('          </div>')
-    out.append('          </div>')
-    c = " current" if page == fuss[1] else ""
-    out.append(f'          <a href="{p}{fuss[1]}" class="nav-fuss{c}">{fuss[0]}<small>{fuss[2]}</small></a>')
-    out.append("        </div>")
-    out.append("      </div>")
-    # Aufklapper „Anleihen“, „Kaufen“ und „Markt“: Übersicht (nur Handy), Chips, Einträge.
+    # Aufklapper Akademie, Anleihen, Kaufen, Markt: Kopf (Link auf die Übersicht), „Übersicht“ (nur Handy), Liste und Vorschau.
     # Der Kopf ist „current“, wenn die Seite zu diesem Menü gehört (Rubrik).
-    for a_label, a_target, a_items in MENUS:
-        out.append(f'      <div class="nav-group nav-{MENU_RUBRIK[a_label]}">')
-        c_kopf = " current" if rub == MENU_RUBRIK[a_label] else ""
+    for a_label, a_target, a_items in ALLE:
+        key = MENU_RUBRIK[a_label]
+        out.append(f'      <div class="nav-group nav-{"akademie" if key == "verstehen" else key}">')
+        c_kopf = " current" if rub == key else ""
         c_ov = " current" if page == a_target else ""
         out.append(f'        <a href="{p}{a_target}" class="nav-group-btn{c_kopf}" aria-expanded="false">'
                    f'<span>{a_label}</span><span class="nav-caret" aria-hidden="true"></span></a>')
-        out.append('        <div class="nav-group-menu">')
+        out.append('        <div class="nav-group-menu nav-panel">')
         out.append(f'          <a href="{p}{a_target}" class="nav-ov{c_ov}">Übersicht</a>')
-        out += menu_items(a_items, page, p)
+        out += panel(key, a_items, page, p)
         out.append("        </div>")
         out.append("      </div>")
     c = " current" if page == KONTO[1] else ""
