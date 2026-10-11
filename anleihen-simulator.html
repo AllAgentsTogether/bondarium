@@ -63,6 +63,9 @@
   .kd-z { font-size: 12px; color: var(--text); margin-top: 3px; font-variant-numeric: tabular-nums; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .kd-t.haupt .kd-z { color: rgba(255,255,255,0.72); }
   .kd-v.plus, .kd-z.plus { color: var(--up); } .kd-v.minus, .kd-z.minus { color: var(--down); }
+  /* ± x % seit Kauf groß neben dem Kurs (Nutzerwunsch 11.10.2026) – auf der dunklen Kachel: Plus hellgrün, Minus hellorange */
+  .kd-pz { display: inline-block; margin-left: 12px; font-size: 17px; font-weight: 600; letter-spacing: 0; vertical-align: 4px; color: rgba(255,255,255,0.72); }
+  .kd-pz.plus { color: #9CFF85; } .kd-pz.minus { color: #FFB38A; }
 
   /* Schaubild */
   .sim-chart { position: relative; margin-top: 14px; }
@@ -94,7 +97,7 @@
   .sim-lies div { background: var(--ap-soft); border-radius: 12px; padding: 12px 14px; font-size: 14px; line-height: 1.45; }
   .sim-lies b { display: block; font-size: 14.5px; margin-bottom: 3px; }
 
-  @media (max-width: 1100px) { .kd { grid-template-columns: repeat(4, minmax(0, 1fr)); } .kd-t.haupt { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 14px; } .kd-t.haupt .kd-v { margin-top: 0; } .kd-t.haupt .kd-z { margin-top: 0; } }
+  @media (max-width: 1100px) { .kd { grid-template-columns: repeat(4, minmax(0, 1fr)); } .kd-t.haupt { grid-column: 1 / -1; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; } .kd-t.haupt .kd-v { margin-top: 0; } .kd-t.haupt .kd-z { margin-top: 0; } }
   @media (max-width: 600px) {
     .sim { padding: 14px 12px 12px; }
     .kd { grid-template-columns: repeat(2, minmax(0, 1fr)); } .kd-v { font-size: 19px; }
@@ -250,7 +253,7 @@
       </form>
 
       <div class="kd" aria-live="off">
-        <div class="kd-t haupt"><div class="kd-l">Kurs</div><div class="kd-v" id="k-kurs">100,00</div><div class="kd-z" id="k-kurs-z">Kurswert 10.000 € · ±0,0 % seit Kauf · Jahr 0</div></div>
+        <div class="kd-t haupt"><div class="kd-l">Kurs</div><div class="kd-v"><span id="k-kurs">100,00</span><span class="kd-pz" id="k-kurs-p" title="Veränderung seit Kauf">±0,0 %</span></div><div class="kd-z" id="k-kurs-z">Kurswert 10.000 € · Jahr 0</div></div>
         <div class="kd-t"><div class="kd-l">Rendite bei Kauf</div><div class="kd-v" id="k-rk">4,00 %</div><div class="kd-z">bleibt bis Fälligkeit</div></div>
         <div class="kd-t"><div class="kd-l">Marktrendite jetzt</div><div class="kd-v" id="k-mr">3,00 %</div><div class="kd-z">allgemeines Zinsniveau</div></div>
         <div class="kd-t"><div class="kd-l">Rendite der Anleihe</div><div class="kd-v" id="k-ar">4,00 %</div><div class="kd-z" id="k-ar-z">Marktrendite + 1,0 Pkt.</div></div>
@@ -463,7 +466,8 @@
     var p = pAt(t), mr = yAt(t), rest = T - t, zinsen = zinsenBis(t), kg = p - kaufkurs, ges = kg + zinsen;
     $('k-kurs').textContent = fmt(p, 2);
     var f = ANLAGE / 100;
-    $('k-kurs-z').textContent = (rest <= 0.001 ? 'Rückzahlung ' + eur(ANLAGE) : 'Kurswert ' + eur(p * f)) + ' · ' + sig(kg / kaufkurs * 100, 1) + ' % seit Kauf · ' + (rest <= 0.001 ? 'Fälligkeit' : zeitText(t));
+    var kp = $('k-kurs-p'); kp.textContent = sig(kg / kaufkurs * 100, 1) + ' %'; kp.className = 'kd-pz ' + (kg > 0.004 ? 'plus' : kg < -0.004 ? 'minus' : '');
+    $('k-kurs-z').textContent = (rest <= 0.001 ? 'Rückzahlung ' + eur(ANLAGE) + ' · Fälligkeit' : 'Kurswert ' + eur(p * f) + ' · ' + zeitText(t));
     $('k-rk').textContent = fmt(kaufrendite, 2) + ' %';
     var ar = mr + AUFSCHLAG;
     $('k-mr').textContent = fmt(mr, 2) + ' %';
