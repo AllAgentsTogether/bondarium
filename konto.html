@@ -134,7 +134,8 @@
   .kto-dep:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   .kto-dep .l { display: none; }
   /* „Im Simulator ansehen“ (seit 11.10.2026 abends, Nutzerwunsch): runder Knopf wie „+“ und „×“, in Merkliste und Musterdepot */
-  .kto-sim { font-size: 11px; line-height: 1; color: var(--text); background: none; border: 1px solid rgba(44,44,42,0.22); border-radius: 50%; width: 28px; height: 28px; padding: 0 0 0 2px; margin-right: 6px; display: inline-grid; place-items: center; text-decoration: none; vertical-align: middle; }
+  .kto-sim { line-height: 1; color: var(--text); background: none; border: 1px solid rgba(44,44,42,0.22); border-radius: 50%; width: 28px; height: 28px; padding: 0; margin-right: 6px; display: inline-grid; place-items: center; text-decoration: none; vertical-align: middle; }
+  .kto-sim svg { display: block; }   /* Kurswelle mit Punkt wie die Titel-Illustration des Simulators (statt „▶“, Nutzerentscheid 11.10.2026) */
   .kto-sim:hover { color: var(--ink); border-color: var(--ink); background: var(--green-tint); }
   .kto-sim:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   .kto-sim .l { display: none; }
@@ -265,7 +266,7 @@
   .kd-fx[hidden] { display: none; }
   .kd-t tfoot th, .kd-t tfoot td { font-weight: 600; border-bottom: 0; border-top: 1px solid rgba(26,26,25,0.35); padding-top: 12px; }
   .kd-t tfoot small { font-weight: 400; }
-  .kd-t td:last-child, .kd-t th:last-child { padding-right: 0; text-align: right; width: 1%; }
+  .kd-t td:last-child, .kd-t th:last-child { padding-right: 0; text-align: right; width: 1%; white-space: nowrap; }   /* Simulator-Knopf und „×“ nebeneinander */
   h2.kd-h3 { font-size: 22px; font-weight: 500; line-height: 1.25; letter-spacing: -0.005em; margin: 34px 0 6px; }   /* seit 02.10.2026 Ebene 2 (vorher h3), Aussehen unverändert */
   .kd-zsum { font-size: 16px; line-height: 1.6; color: var(--text); max-width: 760px; margin: 0; }
   .kd-zsum:empty { display: none; }
@@ -1002,7 +1003,7 @@ MC.navInit();
   // Knopf „▶ Im Simulator ansehen“ in Merkliste und Musterdepot (seit 11.10.2026 abends, Nutzerwunsch): Regel in felder.js (simulatorUrl)
   function simKnopf(o) {
     const u = MC.felder && MC.felder.simulatorUrl ? MC.felder.simulatorUrl(o) : "";
-    return u ? `<a class="kto-sim" href="${u}" title="Im Simulator ansehen: Restlaufzeit durchspielen" aria-label="${MC.esc(o.name)} im Simulator ansehen">▶<span class="l">Im Simulator ansehen</span></a>` : "";
+    return u ? `<a class="kto-sim" href="${u}" title="Im Simulator ansehen: Restlaufzeit durchspielen" aria-label="${MC.esc(o.name)} im Simulator ansehen"><svg viewBox="0 0 24 18" width="16" height="12" aria-hidden="true" focusable="false"><path d="M2 13c3-9 6-9 9-3s5 6 9-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="10" r="2.8" fill="#39FF14" stroke="currentColor" stroke-width="1.5"/></svg><span class="l">Im Simulator ansehen</span></a>` : "";
   }
   function depotKnopf(o) {
     const n = MC.esc(aktName());
