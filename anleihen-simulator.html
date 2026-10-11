@@ -214,7 +214,7 @@
 
     <section class="sim" aria-label="Anleihen-Simulator">
       <div class="sim-kopf">
-        <div class="sim-name">Beispielanleihe 3,0 % bis 2056 <small>Nennwert 100, Zinszahlung jährlich</small></div>
+        <div class="sim-name">Beispielanleihe 3,0 % bis 2056 <small>Anlage 10.000 €, Zinszahlung jährlich</small></div>
         <div class="sim-szen" role="group" aria-label="Verlauf des Zinsniveaus wählen">
           <span>Zinsniveau:</span>
           <button type="button" data-szen="welle" aria-pressed="true">Auf und ab</button>
@@ -226,13 +226,13 @@
       </div>
 
       <div class="kd" aria-live="off">
-        <div class="kd-t haupt"><div class="kd-l">Kurs</div><div class="kd-v" id="k-kurs">100,00</div><div class="kd-z" id="k-kurs-z">Jahr 0 · Kauf zu 100,00</div></div>
+        <div class="kd-t haupt"><div class="kd-l">Kurs</div><div class="kd-v" id="k-kurs">100,00</div><div class="kd-z" id="k-kurs-z">Kurswert 10.000 € · Jahr 0</div></div>
         <div class="kd-t"><div class="kd-l">Rendite bei Kauf</div><div class="kd-v" id="k-rk">3,00 %</div><div class="kd-z">bleibt bis Fälligkeit</div></div>
         <div class="kd-t"><div class="kd-l">Marktrendite jetzt</div><div class="kd-v" id="k-mr">3,00 %</div><div class="kd-z" id="k-mr-z">Rendite für neue Käufer</div></div>
         <div class="kd-t"><div class="kd-l">Restlaufzeit</div><div class="kd-v" id="k-rl">30,0 J.</div><div class="kd-z" id="k-rl-z">mod. Duration 19,6</div></div>
         <div class="kd-t"><div class="kd-l">Laufende Verz.</div><div class="kd-v" id="k-lv">3,00 %</div><div class="kd-z">Kupon ÷ Kurs</div></div>
-        <div class="kd-t"><div class="kd-l">Kursgewinn</div><div class="kd-v" id="k-kg">±0,00</div><div class="kd-z" id="k-kg-z">seit Kauf, je 100</div></div>
-        <div class="kd-t"><div class="kd-l">Zinsen erhalten</div><div class="kd-v" id="k-zi">0,00</div><div class="kd-z" id="k-zi-z">Gesamt ±0,00 je 100</div></div>
+        <div class="kd-t"><div class="kd-l">Kursgewinn</div><div class="kd-v" id="k-kg">±0 €</div><div class="kd-z" id="k-kg-z">seit Kauf zu 100,00</div></div>
+        <div class="kd-t"><div class="kd-l">Zinsen erhalten</div><div class="kd-v" id="k-zi">0 €</div><div class="kd-z" id="k-zi-z">Gesamt ±0 €</div></div>
       </div>
 
       <div class="sim-chart">
@@ -278,7 +278,7 @@
       <div class="quellen-body">
         <p><strong>Kurs.</strong> Der Kurs ist der Barwert aller noch ausstehenden Zahlungen (jährlicher Kupon, am Ende der Nennwert 100), abgezinst mit der gezeigten Marktrendite; Stückzinsen sind abgezogen (Clean-Kurs). Je kürzer die Restlaufzeit, desto weniger wirkt das Zinsniveau – am Fälligkeitstag ist der Kurs immer 100.</p>
         <p><strong>Marktrendite.</strong> Die Rendite, die ein neuer Käufer dieser Anleihe heute verlangt – das allgemeine <a href="zinsniveau.html">Zinsniveau</a> plus den Aufschlag für diesen Schuldner. Am Kauftag ist sie gleich der Kaufrendite. Die fünf Verläufe sind erfunden (Grenzen 0,2 bis 15&nbsp;%). Ziehen im Schaubild verschiebt nur den Zeitpunkt; der Verlauf ändert sich nur über die Knöpfe.</p>
-        <p><strong>Kenndaten.</strong> Rendite bei Kauf = Kupon (Kauf zu 100). Laufende Verzinsung = Kupon ÷ Kurs. Zinsen erhalten = Kupon × volle Jahre seit Kauf. Gesamt = Kursgewinn + Zinsen, je 100 Nennwert, ohne Kosten, Steuern und Wiederanlage. Modifizierte <a href="begriffe.html#duration">Duration</a> numerisch aus der Kursänderung bei ±0,05 Prozentpunkten.</p>
+        <p><strong>Kenndaten.</strong> Rendite bei Kauf = Kupon (Kauf zu 100). Laufende Verzinsung = Kupon ÷ Kurs. Zinsen erhalten = Kupon × volle Jahre seit Kauf. Gesamt = Kursgewinn + Zinsen. Euro-Beträge für eine Anlage von 10.000&nbsp;€ Nennwert zum Kurs 100, ohne Kosten, Steuern und Wiederanlage. Modifizierte <a href="begriffe.html#duration">Duration</a> numerisch aus der Kursänderung bei ±0,05 Prozentpunkten.</p>
       </div>
     </details>
   </main>
@@ -286,7 +286,7 @@
 (function () {
   'use strict';
   var N = 121, T = 30, DT = T / (N - 1);                // Viertel­jahres­raster
-  var kupon = 3, kaufrendite = 3, kaufkurs = 100;
+  var kupon = 3, kaufrendite = 3, kaufkurs = 100, ANLAGE = 10000;   // Anlage 10.000 € Nennwert, Kauf zu 100
   var ys = new Array(N);                               // Marktrendite je Rasterpunkt in %
   var t = 0, playing = false, last = 0, dragging = false, wasPlaying = false, szen = 'welle', zeigMR = true;
   var $ = function (id) { return document.getElementById(id); };
@@ -328,6 +328,8 @@
 
   function fmt(v, d) { return v.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d }); }
   function sig(v, d) { return (v > 0.004 ? '+' : v < -0.004 ? '−' : '±') + fmt(Math.abs(v), d); }
+  function eur(v) { return fmt(v, 0) + '\u00a0€'; }
+  function sigEur(v) { return (v > 0.5 ? '+' : v < -0.5 ? '−' : '±') + eur(Math.abs(v)); }
   function yAt(tt) { var i = Math.min(N - 2, Math.floor(tt / DT)), f = tt / DT - i; return ys[i] + (ys[i + 1] - ys[i]) * f; }
   function pAt(tt) { return preis(kupon, yAt(tt), T - tt); }
 
@@ -410,17 +412,18 @@
   function kenndaten() {
     var p = pAt(t), mr = yAt(t), rest = T - t, zinsen = Math.floor(Math.round(t * 10) / 10 + 1e-9) * kupon, kg = p - kaufkurs, ges = kg + zinsen;
     $('k-kurs').textContent = fmt(p, 2);
-    $('k-kurs-z').textContent = rest <= 0.001 ? 'Fälligkeit · Rückzahlung 100,00' : 'Jahr ' + fmt(t, 1) + ' · Kauf zu ' + fmt(kaufkurs, 2);
+    var f = ANLAGE / 100;
+    $('k-kurs-z').textContent = rest <= 0.001 ? 'Rückzahlung ' + eur(ANLAGE) + ' · Fälligkeit' : 'Kurswert ' + eur(p * f) + ' · Jahr ' + fmt(t, 1);
     $('k-rk').textContent = fmt(kaufrendite, 2) + ' %';
     $('k-mr').textContent = fmt(mr, 2) + ' %';
     $('k-mr-z').textContent = (mr - kaufrendite > 0.05 ? 'über' : mr - kaufrendite < -0.05 ? 'unter' : 'wie') + ' Kaufrendite';
     $('k-rl').textContent = fmt(rest, 1) + ' J.';
     $('k-rl-z').textContent = 'mod. Duration ' + fmt(modDur(kupon, mr, rest), 1);
     $('k-lv').textContent = fmt(kupon / p * 100, 2) + ' %';
-    var kgEl = $('k-kg'); kgEl.textContent = sig(kg, 2); kgEl.className = 'kd-v ' + (kg > 0.004 ? 'plus' : kg < -0.004 ? 'minus' : '');
+    var kgEl = $('k-kg'); kgEl.textContent = sigEur(kg * f); kgEl.className = 'kd-v ' + (kg > 0.004 ? 'plus' : kg < -0.004 ? 'minus' : '');
     $('k-kg-z').textContent = 'seit Kauf · ' + sig(kg / kaufkurs * 100, 1) + ' %';
-    $('k-zi').textContent = fmt(zinsen, 2);
-    var gz = $('k-zi-z'); gz.textContent = 'Gesamt ' + sig(ges, 2) + ' je 100'; gz.className = 'kd-z ' + (ges > 0.004 ? 'plus' : ges < -0.004 ? 'minus' : '');
+    $('k-zi').textContent = eur(zinsen * f);
+    var gz = $('k-zi-z'); gz.textContent = 'Gesamt ' + sigEur(ges * f) + ' · ' + sig(ges / ANLAGE * 100 * f, 1) + ' %'; gz.className = 'kd-z ' + (ges > 0.004 ? 'plus' : ges < -0.004 ? 'minus' : '');
     $('zeit').value = t; $('zeit-t').textContent = rest <= 0.001 ? 'Fällig' : 'Jahr ' + fmt(t, 1);
   }
 
