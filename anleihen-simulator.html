@@ -306,8 +306,8 @@
       <div class="quellen-body">
         <p><strong>Kurs.</strong> Der Kurs ist der Barwert aller noch ausstehenden Zahlungen (jährlicher Kupon, am Ende der Nennwert 100), abgezinst mit der Rendite der Anleihe; Stückzinsen sind abgezogen (Clean-Kurs). Je kürzer die Restlaufzeit, desto weniger wirkt das Zinsniveau – am Fälligkeitstag ist der Kurs immer 100.</p>
         <p><strong>Marktrendite und Rendite der Anleihe.</strong> Die Marktrendite ist das allgemeine <a href="zinsniveau.html">Zinsniveau</a>, etwa die Rendite sicherer Staatsanleihen gleicher Laufzeit. Die Rendite dieser Anleihe liegt um einen festen <a href="begriffe.html#spread">Risikoaufschlag</a> von 1,0 Prozentpunkten darüber – das ist die Rendite, die ein neuer Käufer verlangt, und mit ihr wird der Kurs abgezinst. Am Kauftag: Marktrendite 3,0&nbsp;%, Rendite der Anleihe 4,0&nbsp;% = Kaufrendite. Die fünf Verläufe sind erfunden (Grenzen 0,2 bis 15&nbsp;%). Ziehen im Schaubild verschiebt nur den Zeitpunkt; der Verlauf ändert sich nur über die Knöpfe.</p>
-        <p><strong>Echte Anleihen</strong> (seit 11.10.2026): Name, Kupon, Zinsrhythmus und Fälligkeit stammen aus den Stammdaten wie im <a href="anleihe.html">Steckbrief</a>, der Kaufkurs ist der letzte Schlusskurs, die Kaufrendite die Rendite des Steckbriefs (nennt er keine – Taxe außerhalb der Plausibilität, Stufenzins, Zinsformel –, gibt es keine Simulation). Der Risikoaufschlag ist der des Steckbriefs (gegen Bundesanleihen gleicher Laufzeit); fehlt er, gelten 1,0 Prozentpunkte; Bundeswertpapiere haben keinen (sie sind der Maßstab). Die fünf Verläufe der Marktrendite sind dieselben erfundenen Muster wie bei der Beispielanleihe, auf die Restlaufzeit gerafft – kurze Anleihen sehen also dieselbe Welle in kürzerer Zeit; wie stark der Kurs darauf reagiert, ergibt sich allein aus der Restlaufzeit. Angeboten für Anleihen mit festem Kupon oder Nullkupon und mindestens 8 Monaten Restlaufzeit; Zinszahlungen je Rhythmus, Stückzinsen linear.</p>
-        <p><strong>Kenndaten.</strong> Rendite bei Kauf = Kupon (Kauf zu 100), bei echten Anleihen die Rendite zum Kaufkurs. Laufende Verzinsung = Kupon ÷ Kurs. Zinsen erhalten = Kupon × volle Jahre seit Kauf. Gesamt = Kursgewinn + Zinsen. Beträge für eine Anlage von 10.000 Nennwert in der Währung der Anleihe (Beispiel: Euro zum Kurs 100, echte Anleihe: zum Kaufkurs), ohne Kosten, Steuern und Wiederanlage. Modifizierte <a href="begriffe.html#duration">Duration</a> numerisch aus der Kursänderung bei ±0,05 Prozentpunkten.</p>
+        <p><strong>Echte Anleihen</strong> (seit 11.10.2026): Name, Kupon, Zinsrhythmus und Fälligkeit stammen aus den Stammdaten wie im <a href="anleihe.html">Steckbrief</a>, der Kaufkurs ist der letzte Schlusskurs (Clean-Kurs), dazu kommen die bis zum Kauf aufgelaufenen Stückzinsen. Die Kaufrendite ist die Rendite, bei der der Barwert nach der Rechnung dieser Seite genau den Schlusskurs ergibt; sie weicht von der Rendite des Steckbriefs (taggenau mit Zinstagen und Valuta) höchstens um Hundertstel ab. Nennt der Steckbrief keine Rendite (Taxe außerhalb der Plausibilität, Stufenzins, Zinsformel), gibt es keine Simulation. Der Risikoaufschlag ist der des Steckbriefs (gegen Bundesanleihen gleicher Laufzeit); fehlt er, gelten 1,0 Prozentpunkte; Bundeswertpapiere haben keinen (sie sind der Maßstab). Die fünf Verläufe der Marktrendite sind dieselben erfundenen Muster wie bei der Beispielanleihe, auf die Restlaufzeit gerafft – kurze Anleihen sehen also dieselbe Welle in kürzerer Zeit; wie stark der Kurs darauf reagiert, ergibt sich allein aus der Restlaufzeit. Angeboten für Anleihen mit festem Kupon oder Nullkupon und mindestens 8 Monaten Restlaufzeit; Zinszahlungen je Rhythmus, Stückzinsen linear.</p>
+        <p><strong>Kenndaten.</strong> Rendite bei Kauf = Kupon (Kauf zu 100), bei echten Anleihen die Rendite zum Kaufkurs. Laufende Verzinsung = Kupon ÷ Kurs. Zinsen erhalten = seit dem Kauf gezahlte Kupons. Gesamt = Kursgewinn + gezahlte Kupons + jetzt aufgelaufene Stückzinsen − beim Kauf gezahlte Stückzinsen, in Prozent vom Kaufpreis (Kurs + Stückzinsen); so stimmt der Ertrag auch zwischen zwei Zinsterminen. Der Clean-Kurs liegt zwischen zwei Zinsterminen rechnerisch um bis zu 0,02 Punkte unter dem Wert am Termin, auch bei unveränderter Rendite (jährliche Verzinsung, lineare Stückzinsen – wie Steckbrief und Rechner). Beträge für eine Anlage von 10.000 Nennwert in der Währung der Anleihe (Beispiel: Euro zum Kurs 100, echte Anleihe: zum Kaufkurs), ohne Kosten, Steuern und Wiederanlage. Modifizierte <a href="begriffe.html#duration">Duration</a> numerisch aus der Kursänderung bei ±0,05 Prozentpunkten.</p>
       </div>
     </details>
   </main>
@@ -334,6 +334,18 @@
     pv += 100 / Math.pow(q, (n - frac) / freq);
     return pv - cp * frac;                             // Stückzinsen abziehen: Clean-Kurs
   }
+  function renditeAusKurs(c, p, rest) {                // Rendite, bei der preis() den Kaufkurs ergibt: Newton, Rückfall Halbierung (−2 … 30 %)
+    var y = c > 0 ? c : 2, i;
+    for (i = 0; i < 40; i++) { var f = preis(c, y, rest) - p, d = (preis(c, y + 0.01, rest) - preis(c, y - 0.01, rest)) / 0.02; if (!d) break; var y2 = y - f / d; if (!isFinite(y2)) break; if (Math.abs(y2 - y) < 1e-9) return y2; y = y2; }
+    var lo = -2, hi = 30; for (i = 0; i < 100; i++) { var mid = (lo + hi) / 2; if (preis(c, mid, rest) > p) lo = mid; else hi = mid; }
+    return (lo + hi) / 2;
+  }
+  function stueckzinsen(tt) {                          // aufgelaufene Stückzinsen je 100 zum Zeitpunkt tt (linear in der Zinsperiode)
+    var rest = T - tt; if (rest <= 0 || kupon <= 0) return 0;
+    var m = rest * freq, n = Math.ceil(m - 1e-9);
+    return kupon / freq * (n - m);
+  }
+  var STZ0 = 0;                                        // beim Kauf gezahlte Stückzinsen je 100 (Beispielanleihe: Kauf am Zinstermin, 0)
   function modDur(c, y, rest) {
     if (rest <= 0.01) return 0;
     var p0 = preis(c, y, rest), dp = (preis(c, y + 0.05, rest) - preis(c, y - 0.05, rest)) / 0.1;
@@ -463,7 +475,9 @@
   }
 
   function kenndaten() {
-    var p = pAt(t), mr = yAt(t), rest = T - t, zinsen = zinsenBis(t), kg = p - kaufkurs, ges = kg + zinsen;
+    // Gesamt = Kursgewinn (Clean) + erhaltene Kupons + jetzt aufgelaufene Stückzinsen − beim Kauf gezahlte Stückzinsen;
+    // in Prozent vom Kaufpreis (Kurs + Stückzinsen). So stimmt der Ertrag auch zwischen zwei Zinsterminen (vorher fehlten die Stückzinsen).
+    var p = pAt(t), mr = yAt(t), rest = T - t, zinsen = zinsenBis(t), kg = p - kaufkurs, stz = stueckzinsen(t), ges = kg + zinsen + stz - STZ0, basis = kaufkurs + STZ0;
     $('k-kurs').textContent = fmt(p, 2);
     var f = ANLAGE / 100;
     var kp = $('k-kurs-p'); kp.textContent = sig(kg / kaufkurs * 100, 1) + ' %'; kp.className = 'kd-pz ' + (kg > 0.004 ? 'plus' : kg < -0.004 ? 'minus' : '');
@@ -479,7 +493,8 @@
     var kgEl = $('k-kg'); kgEl.textContent = sigEur(kg * f); kgEl.className = 'kd-v ' + (kg > 0.004 ? 'plus' : kg < -0.004 ? 'minus' : '');
     $('k-kg-z').textContent = 'seit Kauf zu ' + fmt(kaufkurs, 2) + ' · ' + sig(kg / kaufkurs * 100, 1) + ' %';
     $('k-zi').textContent = eur(zinsen * f);
-    var gz = $('k-zi-z'); gz.textContent = 'Gesamt ' + sigEur(ges * f) + ' · ' + sig(ges / kaufkurs * 100, 1) + ' %'; gz.className = 'kd-z ' + (ges > 0.004 ? 'plus' : ges < -0.004 ? 'minus' : '');
+    var gz = $('k-zi-z'); gz.textContent = 'Gesamt ' + sigEur(ges * f) + ' · ' + sig(ges / basis * 100, 1) + ' %'; gz.className = 'kd-z ' + (ges > 0.004 ? 'plus' : ges < -0.004 ? 'minus' : '');
+    gz.title = 'Kursgewinn ' + sigEur(kg * f) + ' + Kupons ' + eur(zinsen * f) + ' + Stückzinsen jetzt ' + eur(stz * f) + (STZ0 ? ' − Stückzinsen beim Kauf ' + eur(STZ0 * f) : '') + ' · in Prozent vom Kaufpreis ' + eur(basis * f);
     $('zeit').value = t; $('zeit-t').textContent = rest <= 0.001 ? 'Fällig' : zeitText(t);
   }
 
@@ -516,9 +531,10 @@
     $('zeit').max = T; $('zeit').step = T / 600;
     $('zeit-s').textContent = ECHT ? 'von ' + restText(T) + ' · in ' + Math.round(sek) + ' Sekunden' : 'von 30 · 1 Jahr je Sekunde';
     $('kupon-wahl').style.display = ECHT ? 'none' : '';
+    if (!ECHT) STZ0 = 0;
     if (ECHT) {
       $('sim-name').innerHTML = esc(ECHT.name) + ' <small>' + (kupon > 0 ? fmt(kupon, Math.round(kupon * 1000) % 10 ? 3 : 2) + '\u00a0% ' + RHYTHMUS[freq] : 'Nullkupon') + ' · fällig ' + datum(ECHT.faellig) +
-        ' · Kauf zu ' + fmt(kaufkurs, 2) + (ECHT.kdatum ? ' (Schlusskurs ' + datum(ECHT.kdatum) + ')' : '') + ' · Anlage ' + eur(ANLAGE) + ' Nennwert · <a href="anleihe.html?isin=' + encodeURIComponent(ECHT.isin) + '">Steckbrief</a></small>';
+        ' · Kauf zu ' + fmt(kaufkurs, 2) + (ECHT.kdatum ? ' (Schlusskurs ' + datum(ECHT.kdatum) + ')' : '') + (STZ0 > 0.0005 ? ' + ' + fmt(STZ0, 2) + ' Stückzinsen' : '') + ' · Anlage ' + eur(ANLAGE) + ' Nennwert · <a href="anleihe.html?isin=' + encodeURIComponent(ECHT.isin) + '">Steckbrief</a></small>';
       $('sim-h1').textContent = 'Anleihen-Simulator: ' + restText(T) + ' in ' + Math.round(sek) + ' Sekunden';
       $('sim-sub').innerHTML = 'So könnte der Kurs von <b>' + esc(ECHT.name) + '</b> bis zur Fälligkeit am ' + datum(ECHT.faellig) + ' laufen – bei steigendem, fallendem oder schwankendem Zinsniveau. Die Verläufe sind erfunden, Kupon, Kurs und Fälligkeit sind echt. Zieh den Punkt mit der Maus durch die Zeit.';
       $('sim-klein').textContent = 'Kupon, Zinsrhythmus, Fälligkeit, Schlusskurs und Rendite wie im Steckbrief; die Verläufe der Marktrendite sind erfunden, die Kurse Rechenwerte. Diese Seite erklärt, sie empfiehlt keine Anlage.';
@@ -549,7 +565,9 @@
       if (typeof k[1] !== 'number' || /stufenz|step[ -]?up|step[ -]?down|\bstep\b/i.test(r[0])) { meld(esc(r[0]) + ': der Steckbrief nennt keine Rendite (Taxe, Stufenzins oder Zinsformel) – ohne Kaufrendite keine Simulation. <a href="anleihe.html?isin=' + encodeURIComponent(isin) + '">Steckbrief →</a>'); return; }
       ECHT = { isin: isin, name: r[0], faellig: faellig, kdatum: k[2] || '' };
       kupon = zinsart === 2 ? 0 : c; freq = Array.isArray(zt) && zt[0] > 0 ? zt[0] : 1; T = rest; kaufkurs = k[0]; CCY = r[2] || 'EUR';
-      kaufrendite = k[1];
+      // Kaufrendite so, dass der Barwert nach der Rechnung des Simulators genau den Schlusskurs ergibt (Kursgewinn am Kauftag ±0);
+      // die Rendite des Steckbriefs (k[1], taggenau mit Zinstagen und Valuta) weicht davon höchstens um Hundertstel ab
+      kaufrendite = renditeAusKurs(kupon, kaufkurs, T); STZ0 = stueckzinsen(0);
       AUFSCHLAG = r[1] === 0 && r[10] === 'DE' ? 0 : typeof k[7] === 'number' && k[7] >= 0 ? k[7] : 1.0;   // Bundeswertpapier: kein Aufschlag (ist selbst der Maßstab)
       $('sim-isin').value = isin; meld('');
       t = 0; setPlay(false); einrichten(); build(); szenario(szen); redraw(); setPlay(true);
