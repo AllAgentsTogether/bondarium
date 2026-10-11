@@ -20,6 +20,7 @@
        bereit: () => …,     true, sobald die Daten geladen sind
        laden: () => Promise Daten bei Bedarf holen (optional – die Suche lädt erst beim ersten Klick)
        onChange: () => …    nach jeder Änderung an Filtern oder Grundfilter
+       solideStandard: false  true = Grundfilter ist die Voreinstellung (an beim Start und nach „Zurücksetzen“; die Suche seit 11.10.2026)
      });
    Rückgabe:
      F.FILTER             die Filter [{ k, i, label, key(r), … }] – i ist die Stelle im Schlüssel-Array einer Zeile
@@ -213,7 +214,9 @@
     const leiste = opt.box.querySelector(".filter"), sol = opt.box.querySelector(".sol-btn"), fmehr = leiste.querySelector(".fmehr"), fclear = leiste.querySelector(".fclear");
     sol.id = pre + "solide";
     const grp = k => leiste.querySelector(`.fgrp[data-f="${k}"]`);
-    let solide = false, offen = null;
+    const SOL_STD = !!opt.solideStandard;   // Voreinstellung des Grundfilters (Suche: an, Merkliste: aus)
+    let solide = SOL_STD, offen = null;
+    sol.setAttribute("aria-pressed", String(solide));
 
     function panelBauen(f, KEYS) {
       const p = grp(f.k).querySelector(".fpanel");
@@ -271,7 +274,7 @@
         const stufen = s.size === 1 ? ((f.kurz || (v => (f.namen && f.namen.get(v)) || v))([...s][0])) : s.size > 1 ? `${s.size} gewählt` : "";   // „Kupon · 2“ las sich wie 2 % (Nutzertest 03.10.2026)
         val.textContent = [ber, stufen].filter(Boolean).join(" · ");
       }
-      fclear.hidden = !aktiv().length && !solide && !bereichIrgend();
+      fclear.hidden = !aktiv().length && solide === SOL_STD && !bereichIrgend();
       // Schalter „Weitere Filter“: Zahl der aktiven Filter im ausgeblendeten Teil
       const nNeben = FILTER.filter(f => sel[f.k].size && grp(f.k).classList.contains("neben")).length;
       fmehr.querySelector(".fanz").textContent = nNeben ? String(nNeben) : "";
@@ -296,7 +299,7 @@
       if (!auf && offen && grp(offen).classList.contains("neben")) panel(offen, false);
     }
     function setSolide(v) { solide = !!v; sol.setAttribute("aria-pressed", String(solide)); }
-    function zuruecksetzen() { FILTER.forEach(f => sel[f.k].clear()); Object.keys(bereich).forEach(bereichLeeren); setSolide(false); if (offen) panel(offen, false); }
+    function zuruecksetzen() { FILTER.forEach(f => sel[f.k].clear()); Object.keys(bereich).forEach(bereichLeeren); setSolide(SOL_STD); if (offen) panel(offen, false); }
     const holen = () => opt.laden ? opt.laden() : Promise.resolve();
 
     // ---------- Bedienung ----------
@@ -346,7 +349,7 @@
 
     return {
       FILTER, sel, keys: r => FILTER.map(f => f.key(r)).concat([r[5] || "", rendite(r)]), solideRegel, daten, auswerten, zeigen, aktiv, mehr, zuruecksetzen,
-      gesetzt: () => aktiv().length > 0 || solide || bereichIrgend(),
+      gesetzt: () => aktiv().length > 0 || solide !== SOL_STD || bereichIrgend(),
       bereichLesen: (k, von, bis) => { if (!bereich[k]) return; bereichSetzen(k, "von", von || ""); bereichSetzen(k, "bis", bis || ""); },
       bereichTexte: k => bereich[k] ? [bereich[k].von !== "" ? bereich[k].tv : "", bereich[k].bis !== "" ? bereich[k].tb : ""] : ["", ""],
       spanneVerkehrt: () => Object.keys(bereich).filter(verkehrt),
