@@ -1042,6 +1042,27 @@ MC.navInit();
     if (MF_DA) MF.daten(MF_KEYS); else MF.zuruecksetzen();
     $("mf-box").hidden = !MF_DA;
   }
+
+  // „Seit dem Merken“ ohne gespeicherte Rendite (gemerkt vor Fassung 7 am 02.10.2026 oder am Merktag ohne Kurs): die Rendite vom
+  // Merktag aus dem Kursverlauf (kurse/, erster Börsentag ab dem Merktag, höchstens sieben Tage später) mit bond.js nachrechnen –
+  // nur bei festem Kupon mit Fälligkeit. Danach die Liste neu zeichnen. (Nutzerhinweis 11.10.2026: viele Zeilen zeigten „–“.)
+  function seitNachrechnen(liste, D) {
+    if (!MC.bond || !MC.verlauf) return;
+    const offen = liste.filter(o => o.rseit == null && typeof o.rendite === "number" && typeof o.kupon === "number" && o.faellig && o.zinsart !== 1 && o.seit);
+    if (!offen.length) return;
+    const tagPlus = (iso, n) => { const d = new Date(iso + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+    Promise.all(offen.map(o => {
+      const ab = (d => `${d.getFullYear()}-${zwei(d.getMonth() + 1)}-${zwei(d.getDate())}`)(new Date(o.seit * 1000)), bis = tagPlus(ab, 7), r = D.idx.get(o.isin);
+      return MC.verlauf(o.isin, !!r && r[18] === "B", { ab }).then(v => {
+        const i = v && v.t ? v.t.findIndex(t => t >= ab && t <= bis) : -1;
+        if (i < 0 || typeof v.k[i] !== "number" || v.t[i] >= HEUTE_ISO) return;
+        const zt = STAMM[o.isin] && Array.isArray(STAMM[o.isin][14]) ? STAMM[o.isin][14] : null;
+        const b = { coupon: o.kupon, freq: zt && zt[0] > 0 ? zt[0] : 1, maturity: o.faellig, days: zt && zt.length > 1 ? zt.slice(1) : null };
+        const y = MC.bond.yieldFromPrice(b, v.k[i], v.t[i]) * 100;
+        if (isFinite(y) && y > -2 && y < 30) o.rseit = Math.round(y * 1000) / 1000;
+      }).catch(() => {});
+    })).then(() => { if (offen.some(o => o.rseit != null) && $("liste") && !$("liste").hidden) zeichne(); });
+  }
   function zeichne() {
     let liste = sortiert(); MF_N = null;
     if (B) liste = liste.filter(B.sichtbar);   // eigene Listen der Merkliste (bereich.js)
@@ -1099,6 +1120,7 @@ MC.navInit();
       mfDaten(LISTE.length ? D : null);
       POS = dep.map(d => position(d[0], d[1], D)); POS.forEach((p, i) => { p.farbe = FARBEN[i % FARBEN.length]; });   // vor zeichne(): der Depot-Knopf der Merkliste braucht den Depot-Inhalt
       if (fav.length) { $("liste").hidden = !LISTE.length; $("teilen-box").hidden = !LISTE.length; zeichne(); }
+      seitNachrechnen(LISTE, D);
       statusText();
       zeichneDepot();
       if (B) B.neu();
