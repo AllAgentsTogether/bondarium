@@ -80,10 +80,9 @@ ORGANISATION = {
     "legalName": "urbanelo GmbH",
     "url": BASE,
     "logo": {"@type": "ImageObject", "url": BASE + "apple-touch-icon.png", "width": 180, "height": 180},
-    "email": "info@bondarium.com",
     "address": {"@type": "PostalAddress", "streetAddress": "Heinrich-Baumann-Straße 38", "postalCode": "70190",
                 "addressLocality": "Stuttgart", "addressCountry": "DE"},
-    "contactPoint": {"@type": "ContactPoint", "contactType": "customer service", "email": "info@bondarium.com",
+    "contactPoint": {"@type": "ContactPoint", "contactType": "customer service",
                      "url": BASE + "ueber-uns.html#kontakt", "availableLanguage": "de"},
     "identifier": {"@type": "PropertyValue", "propertyID": "Handelsregister Amtsgericht Stuttgart", "value": "HRB 800184"},
     "areaServed": "DE",
@@ -784,7 +783,7 @@ def main():
     impressum = os.path.join(site, "rechtliches.html")
     if os.path.isfile(impressum):
         text = open(impressum, encoding="utf-8").read()
-        for angabe in (ORGANISATION["legalName"], ORGANISATION["address"]["streetAddress"], ORGANISATION["email"],
+        for angabe in (ORGANISATION["legalName"], ORGANISATION["address"]["streetAddress"],
                        ORGANISATION["identifier"]["value"]):
             if angabe not in text:
                 warn(f"„{angabe}“ steht nicht (mehr) im Impressum – ORGANISATION in scripts/seo.py anpassen")

@@ -15,7 +15,7 @@ import datetime
 import os
 import sys
 
-KONTAKT = "mailto:info@bondarium.com"
+KONTAKT = "https://www.bondarium.de/ueber-uns.html#kontakt"
 ADRESSE = "https://www.bondarium.de/.well-known/security.txt"
 WEITERE_ADRESSEN = ("https://bondarium.com/.well-known/security.txt", "https://www.bondarium.com/.well-known/security.txt")
 

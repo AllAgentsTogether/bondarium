@@ -50,7 +50,7 @@ HINWEISE = """Zur Einordnung:
   Börse Frankfurt, Xetra, Tradegate; Bundeswertpapiere: Deutsche Bundesbank), Renditen und Zeitreihen von
   Zentralbanken, Finanzministerien und der OECD. Jede Datenseite nennt ihren Stand und ihre Quellen.
 - Bondarium gibt keine Anlageberatung und empfiehlt keine einzelnen Wertpapiere. Beispiele zeigen, wie man vorgeht.
-- Herausgeber: urbanelo GmbH, Stuttgart – Impressum: {base}rechtliches.html, Kontakt: info@bondarium.com.
+- Herausgeber: urbanelo GmbH, Stuttgart – Impressum: {base}rechtliches.html, Kontakt: {base}ueber-uns.html#kontakt.
 - Zitate und Zusammenfassungen sind willkommen – bitte mit Link auf die Seite und dem dort genannten Datenstand.
 - Volltext aller Seiten mit den aktuellen Zahlen: {base}llms-full.txt
 """
