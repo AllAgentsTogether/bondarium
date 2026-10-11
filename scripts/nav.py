@@ -19,14 +19,14 @@ mit zwei Klicks erreichbar. Der Gruppenkopf ist ein Link auf die Übersichtsseit
 kaufen.html, beobachten.html).
   * Seit 11.10.2026 abends („Navigation einfach“, Vorbild zendepot.de): Jeder Aufklapper hat links höchstens sieben kurze Einträge
     mit kleinem Bild und rechts eine Vorschau (Titel, Text, Bild der Seite); Akademie-Bereiche und Top-10-Listen zeigen rechts ihre
-    Unterseiten. Daten: AKADEMIE, ANLEIHEN, KAUFEN, ZINSEN mit E(…) und B(…) (Erklärung über den Daten), HTML: panel(),
+    Unterseiten. Daten: AKADEMIE, ANLEIHEN, KAUFEN, MARKT mit E(…) und B(…) (Erklärung über den Daten), HTML: panel(),
     Umschalten der Vorschau: site.js navInit. Keine grünen Chips mehr. Die Übersicht wissen.html trägt die vier Bereiche
     (#grundlagen, #risiken, #auswaehlen, #fortgeschrittene); die früheren Übersichten entscheiden.html und vertiefen.html leiten dorthin (.htaccess).
 Jeder Aufklapper bekommt zusätzlich den Eintrag „Übersicht“ mit der Klasse nav-ov – base.css zeigt ihn nur im
 Handy-Akkordeon, wo der Kopf nicht navigiert, sondern auf- und zuklappt.
 Vorher (25.09.–01.10.2026): „Der Weg“ mit den Stufen Verstehen, Entscheiden, Kaufen, Vertiefen unter „Akademie“.
 
-Menü ändern: nur AKADEMIE, ANLEIHEN, KAUFEN, ZINSEN, KONTO, FOOTER anpassen und das Skript laufen lassen.
+Menü ändern: nur AKADEMIE, ANLEIHEN, KAUFEN, MARKT, KONTO, FOOTER anpassen und das Skript laufen lassen.
 
 Seit 30.09.2026 schreibt das Skript außerdem (alles idempotent, --check meldet Abweichungen):
   * die Brotkrumen-Zeile <nav class="krumen"> direkt unter der Kopfzeile – erzeugt aus dem JSON-LD
@@ -120,7 +120,7 @@ KAUFEN = ("Kaufen", "kaufen.html", [
     E("Steuern und Kosten", "steuern-handelskosten.html", "spot-steuern-handelskosten.svg", "Steuern und Handelskosten", "Was zwischen brutto und netto liegt", "Abgeltungsteuer, Stückzinsen, Nullkupon, Fremdwährung, Vorabpauschale beim Anleihen-ETF, Quellensteuer im Ausland, Ordergebühr, Spanne und Stückelung: was zwischen brutto und netto liegt."),
     E("Rechner", "rechner.html", "spot-rechner.svg", "Rechner", "Rendite, Stückzinsen, Netto, Zinsniveau", "Vier Rechner: Rendite aus Kurs und Kupon, Stückzinsen, Zinsen netto nach Steuer und der Kurs, wenn das allgemeine Zinsniveau steigt oder fällt."),
 ])
-ZINSEN = ("Markt", "beobachten.html", [
+MARKT = ("Markt", "beobachten.html", [   # bis 11.10.2026 abends ZINSEN/„zinsen“ (Menüname „Zinsen“ bis 11.10.2026)
     E("Renditen Staat", "renditen.html", "spot-renditen.svg?v=2", "Renditen von Staatsanleihen seit 1970", "Acht Länder im Vergleich", "Renditen 10-jähriger Staatsanleihen der acht größten Volkswirtschaften seit 1970: USA, China, Deutschland, Indien, Japan, UK, Frankreich und Italien."),
     E("Renditen Unternehmen", "unternehmensanleihen.html", "spot-unternehmensanleihen.svg?v=2", "Renditen von Unternehmensanleihen seit 1984", "Sechs Segmente nach Bonität, je 10 Jahre", "Renditen 10-jähriger Unternehmensanleihen seit 1984 nach Bonität und Land: USA, Japan, China und Australien – Jahresmittel, Spannen, aktueller Stand."),
     E("Realzins", "realzins.html", "spot-realzins.svg?v=2", "Realzins seit 1970", "Was nach der Inflation übrig bleibt", "Zins minus Inflation: Realzins der 10-jährigen Bundesanleihe seit 1970, heute und nach Steuern – plus die Inflationserwartung des Markts bis 2046."),
@@ -129,11 +129,11 @@ ZINSEN = ("Markt", "beobachten.html", [
 ])
 
 # Die Aufklapper neben der Akademie, in dieser Reihenfolge; Rubrik-Schlüssel je Menü; Zusatzseiten, die zu einem Menü zählen
-MENUS = [ANLEIHEN, KAUFEN, ZINSEN]
+MENUS = [ANLEIHEN, KAUFEN, MARKT]
 ALLE = [AKADEMIE] + MENUS
-MENU_RUBRIK = {"Akademie": "verstehen", "Anleihen": "anleihen", "Kaufen": "kaufen", "Markt": "zinsen"}   # Rubrik-Schlüssel „zinsen“ bleibt (CSS/JS), seit 11.10.2026 heißt das Menü „Markt“
+MENU_RUBRIK = {"Akademie": "verstehen", "Anleihen": "anleihen", "Kaufen": "kaufen", "Markt": "markt"}   # Rubrik-Schlüssel „markt“ seit 11.10.2026 abends (vorher „zinsen“; mein.js und bereich.js lesen .nav-markt)
 MENU_EXTRA = {"Anleihen": ["anleihe.html"]}
-# Knopf „My Bondarium“ rechts außen, hinter dem Suchfeld (Benutzerbereich konto.html: Anmeldung, Merkliste und das Musterdepot „Mein Depot“). Bis 1000 px
+# Knopf „My Bondarium“ rechts außen, hinter dem Suchfeld (Benutzerbereich konto.html: Anmeldung, Merkliste und Musterdepots). Bis 1000 px
 # steht er stattdessen als letzter Eintrag im Burger-Menü (Klasse nav-konto) – base.css zeigt jeweils nur eines von beiden.
 KONTO = ("My Bondarium", "konto.html")   # seit 10.10.2026 „My Bondarium“ (Nutzerwunsch); seit 11.10.2026 heißt auch die Seite selbst so (vorher „Mein Bondarium“)
 KONTO_BILD = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" '
@@ -245,7 +245,7 @@ def akademie_seiten():
 
 
 def rubrik(page):
-    """Rubrik der Seite (data-rubrik am <header>): verstehen (Akademie), anleihen, kaufen, zinsen (Menü „Markt“), ueber – sonst start
+    """Rubrik der Seite (data-rubrik am <header>): verstehen (Akademie), anleihen, kaufen, markt, ueber – sonst start
     (Startseite, My Bondarium, Rechtliches, 404). Die Kennfarbe ist seit 26.09.2026 überall dasselbe Grün."""
     if page in akademie_seiten():
         return "verstehen"

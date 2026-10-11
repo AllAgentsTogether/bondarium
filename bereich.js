@@ -68,7 +68,7 @@
       return g;
     })();
     const ALLE_SEITEN = [].concat(...GRUPPEN.map(g => g.seiten));
-    const gruppeVon = s => { const g = GRUPPEN.find(x => x.seiten.some(p => p[0] === s)); return g ? g.name : document.querySelector(`#sitenav .nav-zinsen a[href^="${s}.html"]`) ? "Markt" : ""; };   // Menüname seit 11.10.2026 „Markt“
+    const gruppeVon = s => { const g = GRUPPEN.find(x => x.seiten.some(p => p[0] === s)); return g ? g.name : document.querySelector(`#sitenav .nav-markt a[href^="${s}.html"]`) ? "Markt" : ""; };   // Menüname seit 11.10.2026 „Markt“
 
     // ---------- Etiketten: Tatsachen aus den vorhandenen Daten, keine Wertung ----------
     const kueVon = o => o.r && MC.kuendigung ? MC.kuendigung(o.r[1], typeof o.r[13] === "string" && o.r[13] ? o.r[13][0] : "-", o.r[5], typeof o.r[13] === "string" ? o.r[13].slice(1) : "") : null;
@@ -394,7 +394,7 @@
       });
     }
 
-    // ---------- Mein Zins-Blick: angeheftete Kennzahlen (Knopf auf den Zinsen-Seiten, mein.js – dieselben Kennungen) ----------
+    // ---------- Mein Zins-Blick: angeheftete Kennzahlen (Knopf auf den Markt-Seiten, mein.js – dieselben Kennungen) ----------
     const pct = v => fmt(v, 2) + " %", KZ = {
       bund10: { t: "Bundesanleihe 10 Jahre", s: "renditen.html", f: "renditen.json", w: d => { const l = d.countries.de.latest; return [pct(l.yield), "Stand " + MC.datum(l.date)]; } },
       us10: { t: "US-Staatsanleihe 10 Jahre", s: "renditen.html", f: "renditen.json", w: d => { const l = d.countries.us.latest; return [pct(l.yield), "Stand " + MC.datum(l.date)]; } },

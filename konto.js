@@ -1,7 +1,7 @@
 /* konto.js – Benutzerbereich im Browser (seit 30.09.2026): Anmeldung mit E-Mail und Passwort, Merkliste und – seit
    01.10.2026 – Musterdepots „Mein Depot“ (Anleihen mit gedachtem Nennwert; seit 02.10.2026 bis zu fünf mit eigenem Namen).
-   Spricht mit konto.php (Beschreibung dort und in docs/KONTO.md). Geladen auf konto.html, anleihe.html und
-   anleihen-suche.html – nach site.js:
+   Spricht mit konto.php (Beschreibung dort und in docs/KONTO.md). Geladen auf allen Seiten mit Konto-Funktionen (Steckbrief, Suche, Listen,
+   Akademie, Kaufen, Markt, konto.html; nicht auf Übersichten, Über uns, Rechtliches, 404) – nach site.js:
      <script src="site.js"></script><script src="konto.js"></script>
 
    Wer nicht angemeldet ist, löst keine Anfrage an den Server aus: konto.php setzt beim Anmelden neben dem eigentlichen

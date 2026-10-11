@@ -27,7 +27,7 @@
   // Menü seit 11.10.2026 abends („Navigation einfach“): Akademie-Seiten stehen als Unterseiten ihres Bereichs in .np-mob (Handy-Liste,
   // im selben Markup) oder als eigener Eintrag .np-item; Kaufen und Markt sind flache Listen. Vorher .nav-spalte/.nav-group-menu.
   var lern = (imMenue(".nav-akademie") && seite !== "begriffe") || (imMenue(".nav-kaufen") && seite !== "rechner");
-  var zinsen = imMenue(".nav-zinsen") || seite === "beobachten";
+  var zinsen = imMenue(".nav-markt") || seite === "beobachten";
 
   // Kennzahlen für „Mein Zins-Blick“ je Seite: [Kennung, Beschriftung] – Werte und Quellen stehen in bereich.js (KZ)
   var KENNZAHL = {
