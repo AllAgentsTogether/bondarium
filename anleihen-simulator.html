@@ -228,7 +228,7 @@
       <div class="kd" aria-live="off">
         <div class="kd-t haupt"><div class="kd-l">Kurs</div><div class="kd-v" id="k-kurs">100,00</div><div class="kd-z" id="k-kurs-z">Jahr 0 · Kauf zu 100,00</div></div>
         <div class="kd-t"><div class="kd-l">Rendite bei Kauf</div><div class="kd-v" id="k-rk">3,00 %</div><div class="kd-z">bleibt bis Fälligkeit</div></div>
-        <div class="kd-t"><div class="kd-l">Zinsniveau jetzt</div><div class="kd-v" id="k-mr">3,00 %</div><div class="kd-z" id="k-mr-z">Rendite für neue Käufer</div></div>
+        <div class="kd-t"><div class="kd-l">Marktrendite jetzt</div><div class="kd-v" id="k-mr">3,00 %</div><div class="kd-z" id="k-mr-z">Rendite für neue Käufer</div></div>
         <div class="kd-t"><div class="kd-l">Restlaufzeit</div><div class="kd-v" id="k-rl">30,0 J.</div><div class="kd-z" id="k-rl-z">mod. Duration 19,6</div></div>
         <div class="kd-t"><div class="kd-l">Laufende Verz.</div><div class="kd-v" id="k-lv">3,00 %</div><div class="kd-z">Kupon ÷ Kurs</div></div>
         <div class="kd-t"><div class="kd-l">Kursgewinn</div><div class="kd-v" id="k-kg">±0,00</div><div class="kd-z" id="k-kg-z">seit Kauf, je 100</div></div>
@@ -248,19 +248,19 @@
       </div>
       <div class="sim-opt">
         <label>Kupon <select id="kupon"><option>1,0 %</option><option>2,0 %</option><option selected>3,0 %</option><option>4,0 %</option><option>5,0 %</option><option>6,0 %</option></select></label>
-        <label><input type="checkbox" id="zeig-mr" checked> Zinsniveau einblenden</label>
+        <label><input type="checkbox" id="zeig-mr" checked> Marktrendite einblenden</label>
         <span class="lg"><i></i> Kurs</span>
-        <span class="lg"><i class="o"></i> Zinsniveau (rechte Skala)</span>
+        <span class="lg"><i class="o"></i> Marktrendite (rechte Skala)</span>
       </div>
 
       <div class="sim-lies">
-        <div><b>Zinsniveau rauf, Kurs runter</b>Steigt das Zinsniveau, fällt der Kurs – und umgekehrt. Je länger die Restlaufzeit, desto stärker der Ausschlag.</div>
+        <div><b>Zinsniveau rauf, Kurs runter</b>Steigt das Zinsniveau, steigt die Marktrendite – und der Kurs fällt. Umgekehrt genauso. Je länger die Restlaufzeit, desto stärker der Ausschlag.</div>
         <div><b>Der Sog zum Nennwert</b>Egal wie wild der Kurs schwankt: Mit jedem Jahr wird der Hebel kleiner, am Ende zahlt der Schuldner 100 zurück.</div>
         <div><b>Deine Rendite steht fest</b>Wer bis zur Fälligkeit hält, bekommt die Rendite vom Kauftag – die Kurse dazwischen sind nur Momentaufnahmen.</div>
       </div>
     </section>
 
-    <p class="klein">Die Beispielanleihe ist erfunden; Kurse und Zinsniveau sind Rechenwerte, keine Börsendaten. Diese Seite erklärt, sie empfiehlt keine Anlage.</p>
+    <p class="klein">Die Beispielanleihe ist erfunden; Kurse und Marktrendite sind Rechenwerte, keine Börsendaten. Diese Seite erklärt, sie empfiehlt keine Anlage.</p>
 
     <nav class="crossnav" aria-label="Weiter">
       <p class="crossnav-t">Weiter</p>
@@ -276,8 +276,8 @@
     <details class="quellen" id="quellen">
       <summary>Methodik</summary>
       <div class="quellen-body">
-        <p><strong>Kurs.</strong> Der Kurs ist der Barwert aller noch ausstehenden Zahlungen (jährlicher Kupon, am Ende der Nennwert 100), abgezinst mit dem gezeigten Zinsniveau; Stückzinsen sind abgezogen (Clean-Kurs). Je kürzer die Restlaufzeit, desto weniger wirkt das Zinsniveau – am Fälligkeitstag ist der Kurs immer 100.</p>
-        <p><strong>Zinsniveau.</strong> Die Rendite, die ein neuer Käufer dieser Anleihe heute verlangt. Die fünf Verläufe sind erfunden (Grenzen 0,2 bis 15&nbsp;%). Ziehen im Schaubild verschiebt nur den Zeitpunkt; der Verlauf ändert sich nur über die Knöpfe.</p>
+        <p><strong>Kurs.</strong> Der Kurs ist der Barwert aller noch ausstehenden Zahlungen (jährlicher Kupon, am Ende der Nennwert 100), abgezinst mit der gezeigten Marktrendite; Stückzinsen sind abgezogen (Clean-Kurs). Je kürzer die Restlaufzeit, desto weniger wirkt das Zinsniveau – am Fälligkeitstag ist der Kurs immer 100.</p>
+        <p><strong>Marktrendite.</strong> Die Rendite, die ein neuer Käufer dieser Anleihe heute verlangt – das allgemeine <a href="zinsniveau.html">Zinsniveau</a> plus den Aufschlag für diesen Schuldner. Am Kauftag ist sie gleich der Kaufrendite. Die fünf Verläufe sind erfunden (Grenzen 0,2 bis 15&nbsp;%). Ziehen im Schaubild verschiebt nur den Zeitpunkt; der Verlauf ändert sich nur über die Knöpfe.</p>
         <p><strong>Kenndaten.</strong> Rendite bei Kauf = Kupon (Kauf zu 100). Laufende Verzinsung = Kupon ÷ Kurs. Zinsen erhalten = Kupon × volle Jahre seit Kauf. Gesamt = Kursgewinn + Zinsen, je 100 Nennwert, ohne Kosten, Steuern und Wiederanlage. Modifizierte <a href="begriffe.html#duration">Duration</a> numerisch aus der Kursänderung bei ±0,05 Prozentpunkten.</p>
       </div>
     </details>
@@ -351,7 +351,7 @@
     el.lbl = mk('text', { fill: '#fff', 'font-size': 13, 'font-weight': 600, 'dominant-baseline': 'middle', 'font-family': 'inherit' });
     el.axes = mk('g', {});
     mk('text', { x: L - 6, y: TOP - 4, class: 'axt', 'text-anchor': 'end' }, el.axes).textContent = 'Kurs';
-    el.axR = mk('text', { x: W - R + 6, y: TOP - 4, class: 'axt r' }, el.axes); el.axR.textContent = 'Zinsniveau';
+    el.axR = mk('text', { x: W - R + 6, y: TOP - 4, class: 'axt r' }, el.axes); el.axR.textContent = 'Marktrendite';
     mk('text', { x: W - R, y: H - 4, class: 'axt', 'text-anchor': 'end' }, el.axes).textContent = 'Jahre nach Kauf';
     el.ticksY = mk('g', {}); el.ticksR = mk('g', {}); el.ticksX = mk('g', {});
     for (var j = 0; j <= 30; j += 5) { var x = L + (W - L - R) * j / 30; var tx = mk('text', { x: x, y: H - B + 16, class: 'tick', 'text-anchor': 'middle' }, el.ticksX); tx.textContent = j === 0 ? 'Kauf' : (j === 30 ? 'Fällig' : j); }
