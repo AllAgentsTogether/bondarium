@@ -13,14 +13,14 @@ Die aktive Seite erhält `class="current"` am Gruppenkopf und am Eintrag;
 site.js setzt daraus `aria-current`.
 
 Menü seit 01.10.2026 abends (Nutzerentscheid „Navigation neu“, Diagramm im Chat): vier Aufklapper in der Reihenfolge
-des Weges – Akademie (lernen), Anleihen (finden), Kaufen, Zinsen (beobachten) –, rechts das Suchfeld und der Knopf
+des Weges – Akademie (lernen), Anleihen (finden), Kaufen, Markt (beobachten; bis 11.10.2026 „Zinsen“) –, rechts das Suchfeld und der Knopf
 „Mein Bondarium“ (KONTO). „Über uns“ steht nur noch in der Fußzeile. Jede Seite steht genau einmal im Menü und ist
 mit zwei Klicks erreichbar. Der Gruppenkopf ist ein Link auf die Übersichtsseite (wissen.html, anleihen.html,
 kaufen.html, beobachten.html).
-  * AKADEMIE: drei Spalten (Grundlagen, Auswählen, Für Fortgeschrittene) mit allen Themen direkt im Aufklapper, darunter
-    über die ganze Breite das Glossar. Die Übersicht wissen.html trägt dieselben drei Abschnitte (#grundlagen,
-    #auswaehlen, #fortgeschrittene); die früheren Übersichten entscheiden.html und vertiefen.html leiten dorthin (.htaccess).
-  * MENUS (ANLEIHEN, KAUFEN, ZINSEN): einfache Listen. Einträge:
+  * AKADEMIE: vier Spalten (Grundlagen, Risiken, Auswählen, Für Fortgeschrittene – seit 11.10.2026, vorher drei) mit allen Themen
+    direkt im Aufklapper, darunter über die ganze Breite das Glossar. Die Übersicht wissen.html trägt dieselben vier Abschnitte
+    (#grundlagen, #risiken, #auswaehlen, #fortgeschrittene); die früheren Übersichten entscheiden.html und vertiefen.html leiten dorthin (.htaccess).
+  * MENUS (ANLEIHEN, KAUFEN, ZINSEN – das Menü ZINSEN heißt seit 11.10.2026 „Markt“): einfache Listen. Einträge:
   ("Beschriftung", "datei.html")  Menüeintrag
   ("Beschriftung", "datei.html", "klasse")  Menüeintrag mit CSS-Klasse (nav-hl = dezenter Rahmen, für die Anleihen-Suche)
   "Beschriftung"                  Gruppenüberschrift im Aufklapper (grüner Chip)
@@ -46,41 +46,49 @@ import re
 import sys
 
 # Akademie: (Beschriftung, Übersichtsseite, Spalten, Fußeintrag). Spalte = (Überschrift, Sprungmarke auf der Übersicht, Einträge).
-# Grundlagen = was man vor dem ersten Kauf wissen sollte (bis 01.10.2026 „Verstehen“); Auswählen = passt das zu mir und was
-# (bis 01.10.2026 „Entscheiden“, dazu die vier Beispiele nach Ziel und der ETF-Artikel); Für Fortgeschrittene = bis 01.10.2026 „Vertiefen“.
+# Seit 11.10.2026 (Nutzerentscheid „mache die umfassendste Änderung“ nach der Inhaltsprüfung) vier Spalten statt drei:
+#   Grundlagen = wie eine Anleihe funktioniert (bis 11.10.2026 mit allen Risiko-Themen; „Rendite richtig lesen“ kam aus
+#   „Für Fortgeschrittene“, weil die Rendite in jeder Liste und jedem Steckbrief steht),
+#   Risiken = was schiefgehen kann (neu; Kündbare Anleihen und die Eisenbahn-Blase als Fallbeispiel kamen aus Grundlagen),
+#   Auswählen = passt das zu mir und was (seit 11.10.2026 ohne Doppelungen: „Anleihen-Beispiele nach Ziel“ steckt in „Welche Anleihe
+#   wozu passt?“, „Anleihen-ETF: Vor- und Nachteile“ in „ETF oder Anleihe?“ – 301 in .htaccess),
+#   Für Fortgeschrittene = Werkzeuge für das eigene Depot.
+# Bis 01.10.2026 hießen die Spalten „Verstehen“, „Entscheiden“, „Vertiefen“ – nicht wieder einführen.
 AKADEMIE = ("Akademie", "wissen.html", [
     ("Grundlagen", "grundlagen", [
         ("Anleihen einfach erklärt", "grundlagen.html"),
         ("Anleihe-Arten", "anleihe-arten.html"),
         ("Zinsniveau", "zinsniveau.html"),   # erklärt, was das Zinsniveau bewegt – vor „Laufzeit“, die zeigt, was es mit der Anleihe macht
         ("Laufzeit", "laufzeit.html"),
+        ("Rendite richtig lesen", "rendite-lesen.html"),
+    ]),
+    ("Risiken", "risiken", [
+        ("Risiko kennen", "risiko.html"),   # Überblick über alle sieben Risiken – die Einträge darunter vertiefen einzelne
         ("Bonität und Ratings", "bonitaet.html"),
-        ("Risiko kennen", "risiko.html"),
         ("Wenn der Schuldner nicht zahlt", "zahlungsausfall.html"),   # seit 04.10.2026 (SEO-Runde 2, Themenlücke 3): Insolvenz, Umschuldung, Bail-in
-        ("Eisenbahn-Blase 1873", "eisenbahn-blase-1873.html"),   # seit 08.10.2026 (Nutzerwunsch): Geschichte der Bahnanleihen-Blase, Fallbeispiel zum Zahlungsausfall
         ("Kündbare Anleihen", "kuendbare-anleihen.html"),
+        ("Eisenbahn-Blase 1873", "eisenbahn-blase-1873.html"),   # seit 08.10.2026 (Nutzerwunsch): Fallbeispiel zum Zahlungsausfall
     ]),
     ("Auswählen", "auswaehlen", [
         ("Sind Anleihen etwas für dich?", "anlegerprofile.html"),
-        ("Welche Anleihe wozu passt?", "anlageziele.html"),
         ("Wie viel Anleihen ins Depot?", "anleihen-anteil.html"),   # seit 01.10.2026: Anleihen neben Aktien – Mischung, Faustregeln, Nachjustieren
-        ("Anleihen-Beispiele nach Ziel", "guide.html"),   # Anleitungen, keine Liste – bis 01.10.2026 im Menü „Anleihen“
+        ("Welche Anleihe wozu passt?", "anlageziele.html"),   # seit 11.10.2026 mit den vier Beispielen (Nadine, Tobias, Michael, Jonas) der früheren guide.html
         ("Anleihe, Festgeld oder Tagesgeld?", "anleihe-festgeld-tagesgeld.html"),   # seit 04.10.2026 (SEO-Runde 2, Themenlücke 2), mit Geldmarkt-ETF
-        ("ETF oder Anleihe?", "etf-oder-anleihe.html"),
-        ("Anleihen-ETF: Vor- und Nachteile", "anleihen-etf-erklaert.html"),
-        ("Anleihen für Unternehmen", "anleihen-fuer-unternehmen.html"),   # seit 01.10.2026: Depot, LEI, Steuern, Bilanz – Hausbegriff „Unternehmen“ (nicht „Firmen“); die Listen im Menü „Anleihen“ heißen „Unternehmensanleihen …“
+        ("ETF oder Anleihe?", "etf-oder-anleihe.html"),   # seit 11.10.2026 mit Vor- und Nachteilen des Anleihen-ETF (früher anleihen-etf-erklaert.html)
+        ("Anleihen für Unternehmen", "anleihen-fuer-unternehmen.html"),   # seit 01.10.2026: Depot, LEI, Steuern, Bilanz – Hausbegriff „Unternehmen“ (nicht „Firmen“)
     ]),
     ("Für Fortgeschrittene", "fortgeschrittene", [
         ("Mehr aus Anleihen herausholen", "fortgeschrittene.html"),
         ("Duration und Konvexität", "duration.html"),
-        ("Rendite richtig lesen", "rendite-lesen.html"),
         ("Leiter, Hantel, Roll-down", "anleihenleiter.html"),
         ("Marktsignale lesen", "markttechnik.html"),
         ("Kreditausfallswap (CDS)", "cds.html"),   # seit 09.10.2026 (Nutzerwunsch): CDS-Prämie als Marktpreis des Ausfallrisikos, Beispiel Türkei
     ]),
 ], ("Glossar", "begriffe.html", "Fachbegriffe von A bis Z"))
-# „Anleihen“: alles, was konkrete Anleihen zeigt – Suche und Ranglisten. Art zuerst („Staatsanleihen nach Laufzeit“), damit
+# „Anleihen“: alles, was konkrete Anleihen zeigt – Suche und Listen. Art zuerst („Staatsanleihen nach Laufzeit“), damit
 # man die Liste beim Überfliegen findet. „Top 10“ muss direkt draufstehen (Nutzerwunsch 29.09.2026).
+# Seit 11.10.2026 ein Chip „Weitere Listen“ statt der Ein-Eintrag-Chips „Top 30“ und „Vom Bund“; dazu die Langläufer (vorher im
+# Menü „Zinsen“ – sie zeigen sieben einzelne Anleihen mit Kursverlauf, keine Renditereihe).
 ANLEIHEN = ("Anleihen", "anleihen.html", [
     ("Anleihen-Suche", "anleihen-suche.html", "nav-hl"),
     "Top 10 meistgehandelt",
@@ -89,43 +97,42 @@ ANLEIHEN = ("Anleihen", "anleihen.html", [
     ("Unternehmensanleihen nach Laufzeit", "unternehmensanleihen-laufzeit.html"),
     ("Unternehmensanleihen nach Ländern", "unternehmensanleihen-laender.html"),
     ("Anleihen-ETFs", "anleihen-etf.html"),
-    "Top 30",   # höchster Kupon unter den Anleihen der EZB-Liste – drei Top 30 auf einer Seite: Staat, Öffentlich, Unternehmen
-    ("Anleihen nach Kupon", "anleihen-kupon.html"),
-    "Vom Bund",   # seit 04.10.2026 (SEO-Runde 2, Themenlücke 4): alle laufenden Bundeswertpapiere mit Kurs und Rendite der Bundesbank
-    ("Bundeswertpapiere", "bundeswertpapiere.html"),
+    "Weitere Listen",
+    ("Anleihen nach Kupon", "anleihen-kupon.html"),   # höchster Kupon unter den Anleihen der EZB-Liste – drei Top 30 auf einer Seite: Staat, Öffentlich, Unternehmen
+    ("Bundeswertpapiere", "bundeswertpapiere.html"),   # seit 04.10.2026 (SEO-Runde 2, Themenlücke 4): alle laufenden Bundeswertpapiere mit Kurs und Rendite
+    ("Langläufer", "langlaeufer.html"),
 ])
 # „Kaufen“ (seit 01.10.2026 eigener Hauptpunkt): alles, was man beim Kauf braucht – Anleitung, Broker, Handelsplätze,
-# Steuern und Kosten, Rechner (der Rechner stand vorher doppelt: unter Entscheiden und unter „Werkzeuge“).
-# Seit 02.10.2026 mit zwei grünen Chips wie in Akademie und Anleihen (Nutzerwunsch: „bei Kaufen und Zinsen steht nirgendwo der grüne
-# Kasten“): erst der Weg zum Kauf, dann was er kostet und bringt.
+# Steuern und Kosten, Rechner. Seit 02.10.2026 mit zwei grünen Chips: erst der Weg zum Kauf, dann was er kostet und bringt.
+# Seit 11.10.2026 endet der Weg nicht mehr beim Kauf: „Nach dem Kauf“ (Themenlücke 8) – Zinsen, Verkauf, Rückzahlung, Depotwechsel.
 KAUFEN = ("Kaufen", "kaufen.html", [
     "Schritt für Schritt",
     ("Deine erste Anleihe", "erste-anleihe.html"),
     ("Broker im Vergleich", "broker-vergleich.html"),
     ("Handelsplätze", "handelsplaetze.html"),
     ("Warum kann ich diese Anleihe nicht kaufen?", "anleihe-nicht-kaufbar.html"),   # seit 04.10.2026 (SEO-Runde 2, Themenlücke 1)
+    ("Nach dem Kauf", "nach-dem-kauf.html"),
     "Kosten und Rendite",
     ("Steuern und Handelskosten", "steuern-handelskosten.html"),
     ("Rechner", "rechner.html"),
 ])
-# „Zinsen“: Marktdaten, täglich aktuell. Kopf = Übersicht beobachten.html (Dateiname bleibt, damit alle Links gelten).
-# „Renditen“ steht vor Staats- und Unternehmensanleihen, damit die Einträge nicht wie die Listen im Menü „Anleihen“ klingen.
-# Seit 02.10.2026 mit grünen Chips (Nutzerwunsch wie bei Kaufen): Staatsanleihen, Unternehmensanleihen und – eigener Chip, weil sie
-# Kursverläufe einzelner Anleihen zeigen statt Renditen (Nutzer: „Langläufer passt nicht ganz in der Zuordnung“) – Lange Laufzeiten.
-ZINSEN = ("Zinsen", "beobachten.html", [
-    "Staatsanleihen",
+# „Markt“ (bis 11.10.2026 „Zinsen“ – laut Hauswortschatz sind „Zinsen“ die Zahlung, hier stehen aber Renditen, Kurve und Aufschläge;
+# die Startseite nennt den Bereich ebenfalls „Markt“): Marktdaten, täglich aktuell. Kopf = Übersicht beobachten.html (Dateiname
+# bleibt, damit alle Links gelten). Chips seit 11.10.2026 nach Art der Zahl: Renditen (Höhe) und Renditeabstände (Zinskurve =
+# lang minus kurz, Risikoaufschläge = Land minus Bund). Die Risikoaufschläge standen bis dahin unter „Unternehmensanleihen“, zeigen
+# aber vor allem Euro-Staaten gegen den Bund.
+ZINSEN = ("Markt", "beobachten.html", [
+    "Renditen",
     ("Renditen von Staatsanleihen seit 1970", "renditen.html"),
-    ("Zinskurve seit 1972", "zinskurve.html"),
-    ("Realzins seit 1970", "realzins.html"),
-    "Unternehmensanleihen",
     ("Renditen von Unternehmensanleihen seit 1984", "unternehmensanleihen.html"),
+    ("Realzins seit 1970", "realzins.html"),
+    "Renditeabstände",
+    ("Zinskurve seit 1972", "zinskurve.html"),
     ("Risikoaufschläge seit 1984", "risikoaufschlaege.html"),
-    "Lange Laufzeiten",
-    ("Langläufer", "langlaeufer.html"),
 ])
 # Die Aufklapper neben der Akademie, in dieser Reihenfolge; Rubrik-Schlüssel je Menü; Zusatzseiten, die zu einem Menü zählen
 MENUS = [ANLEIHEN, KAUFEN, ZINSEN]
-MENU_RUBRIK = {"Anleihen": "anleihen", "Kaufen": "kaufen", "Zinsen": "zinsen"}
+MENU_RUBRIK = {"Anleihen": "anleihen", "Kaufen": "kaufen", "Markt": "zinsen"}   # Rubrik-Schlüssel „zinsen“ bleibt (CSS/JS), seit 11.10.2026 heißt das Menü „Markt“
 MENU_EXTRA = {"Anleihen": ["anleihe.html"]}
 # Knopf „Mein Bondarium“ rechts außen, hinter dem Suchfeld (Benutzerbereich konto.html: Anmeldung, Merkliste und das Musterdepot „Mein Depot“). Bis 1000 px
 # steht er stattdessen als letzter Eintrag im Burger-Menü (Klasse nav-konto) – base.css zeigt jeweils nur eines von beiden.
@@ -161,14 +168,15 @@ SITE = "https://www.bondarium.de/"
 
 # Fußzeile aller Seiten (seit 30.09.2026; seit 01.10.2026 fünf Spalten in der Reihenfolge des Menüs). Spalten: (Überschrift, id, Links)
 FOOTER = [
-    ("Akademie", "f-akad", [("Grundlagen", "wissen.html#grundlagen"), ("Auswählen", "wissen.html#auswaehlen"),
+    ("Akademie", "f-akad", [("Grundlagen", "wissen.html#grundlagen"), ("Risiken", "wissen.html#risiken"), ("Auswählen", "wissen.html#auswaehlen"),
                             ("Für Fortgeschrittene", "wissen.html#fortgeschrittene"), ("Glossar", "begriffe.html")]),
     ("Anleihen", "f-anl", [("Anleihen-Suche", "anleihen-suche.html"), ("Top-10-Listen", "anleihen.html"),
                            ("Anleihen nach Kupon", "anleihen-kupon.html"), ("Anleihen-ETFs", "anleihen-etf.html")]),
     ("Kaufen", "f-kauf", [("Deine erste Anleihe", "erste-anleihe.html"), ("Broker im Vergleich", "broker-vergleich.html"),
-                          ("Steuern und Handelskosten", "steuern-handelskosten.html"), ("Rechner", "rechner.html")]),
-    ("Zinsen", "f-zins", [("Renditen Staatsanleihen", "renditen.html"), ("Zinskurve", "zinskurve.html"),
-                          ("Risikoaufschläge", "risikoaufschlaege.html"), ("Langläufer", "langlaeufer.html")]),
+                          ("Steuern und Handelskosten", "steuern-handelskosten.html"), ("Nach dem Kauf", "nach-dem-kauf.html"),
+                          ("Rechner", "rechner.html")]),
+    ("Markt", "f-zins", [("Renditen Staatsanleihen", "renditen.html"), ("Realzins", "realzins.html"), ("Zinskurve", "zinskurve.html"),
+                         ("Risikoaufschläge", "risikoaufschlaege.html")]),
     ("Bondarium", "f-bond", [("Über uns", "ueber-uns.html"), ("Haftung und Datenquellen", "rechtliches.html#haftung"),
                              ("Impressum", "rechtliches.html#impressum"), ("Datenschutz", "rechtliches.html#datenschutz")]),
 ]
@@ -221,7 +229,7 @@ def links(items):
 
 
 def akademie_seiten():
-    """Alle Seiten der Akademie: Übersicht, Themen der drei Spalten, Glossar."""
+    """Alle Seiten der Akademie: Übersicht, Themen der vier Spalten, Glossar."""
     return [AKADEMIE[1]] + [e[1] for _, _, eintraege in AKADEMIE[2] for e in eintraege] + [AKADEMIE[3][1]]
 
 
@@ -306,7 +314,7 @@ def render(page, absolute=False):
            '<span class="nav-toggle-i" aria-hidden="true"></span></button>',
            '    <nav class="sitenav" id="sitenav" aria-label="Hauptnavigation">']
     rub = rubrik(page)
-    # Aufklapper „Akademie“: drei Spalten mit allen Themen, darunter das Glossar über die ganze Breite
+    # Aufklapper „Akademie“: vier Spalten mit allen Themen, darunter das Glossar über die ganze Breite
     a_label, a_target, spalten, fuss = AKADEMIE
     cur = " current" if rub == "verstehen" else ""
     out.append('      <div class="nav-group nav-akademie">')
@@ -324,7 +332,7 @@ def render(page, absolute=False):
     out.append(f'          <a href="{p}{fuss[1]}" class="nav-fuss{c}">{fuss[0]}<small>{fuss[2]}</small></a>')
     out.append("        </div>")
     out.append("      </div>")
-    # Aufklapper „Anleihen“, „Kaufen“ und „Zinsen“: Übersicht (nur Handy), Chips, Einträge.
+    # Aufklapper „Anleihen“, „Kaufen“ und „Markt“: Übersicht (nur Handy), Chips, Einträge.
     # Der Kopf ist „current“, wenn die Seite zu diesem Menü gehört (Rubrik).
     for a_label, a_target, a_items in MENUS:
         out.append(f'      <div class="nav-group nav-{MENU_RUBRIK[a_label]}">')

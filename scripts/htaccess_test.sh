@@ -367,6 +367,8 @@ pruefe "Entscheiden (alt) mit Abfrage" https $W "/entscheiden.html?a=1" 301 "$D/
 pruefe "Laufzeit-Einzelseite (alt, englisch) mit Abfrage, http" http bondarium.de "/en/anleihen-langfristig.html?gclid=1" 301 \
   "$D/staatsanleihen-laufzeit.html#langfristig"
 pruefe "Vertiefen (alt)" https bondarium.com /vertiefen.html 301 "$D/wissen.html#fortgeschrittene"
+pruefe "Anleihen-Beispiele (alt)" https $W /guide.html 301 "$D/anlageziele.html"
+pruefe "Anleihen-ETF Vor- und Nachteile (alt)" https $W /anleihen-etf-erklaert.html 301 "$D/etf-oder-anleihe.html"
 pruefe "Unternehmensanleihen nach Kupon (alt)" https $W /unternehmensanleihen-kupon.html 301 "$D/anleihen-kupon.html"
 pruefe "Zinsen (alt) → Zinsen-Übersicht" http bondarium.de /zinsen.html 301 "$D/beobachten.html"
 pruefe "Zinsen (alt, englisch)" https $W /en/zinsen.html 301 "$D/beobachten.html"

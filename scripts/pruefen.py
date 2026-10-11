@@ -407,14 +407,14 @@ LADEN = re.compile(r"\b(?:wird|werden)\s+geladen\b|\blädt\s*(?:…|\.\.\.)|\bLa
 
 def menuenamen():
     """Zulässige zweite Brotkrume: die Menüs aus scripts/nav.py (nur Konstanten, nav.py schreibt beim Import nichts),
-    dazu „Über uns“ und „Rechtliches“ (Fußzeile). Rückfall: die Namen vom 01.10.2026."""
+    dazu „Über uns“ und „Rechtliches“ (Fußzeile). Rückfall: die Namen vom 11.10.2026."""
     namen = {"Über uns", "Rechtliches"}
     try:
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         import nav
         return namen | {nav.AKADEMIE[0], nav.KONTO[0]} | {m[0] for m in nav.MENUS}
     except Exception:
-        return namen | {"Akademie", "Anleihen", "Kaufen", "Zinsen", "Mein Bondarium"}
+        return namen | {"Akademie", "Anleihen", "Kaufen", "Markt", "My Bondarium"}
 
 
 MENUE = menuenamen()

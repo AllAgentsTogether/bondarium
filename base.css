@@ -523,12 +523,14 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 .tueren.stufen-kopf { margin-bottom: 30px; background: #fff; }
 @media (max-width: 600px) { .tueren.stufen-kopf { margin-bottom: 22px; } .tueren a[aria-current="page"] { box-shadow: inset 4px 0 0 var(--green); } }
 
-/* Menü „Akademie“ (seit 01.10.2026 abends, nav.py AKADEMIE): alle Themen direkt im Aufklapper, in drei Spalten
-   (Grundlagen, Auswählen, Für Fortgeschrittene) mit feiner Linie dazwischen; darunter über die ganze Breite das Glossar.
+/* Menü „Akademie“ (seit 01.10.2026 abends, nav.py AKADEMIE): alle Themen direkt im Aufklapper, seit 11.10.2026 in vier Spalten
+   (Grundlagen, Risiken, Auswählen, Für Fortgeschrittene) mit feiner Linie dazwischen; darunter über die ganze Breite das Glossar.
    Vorher (seit 28.09.2026): vier Stufen als Einträge, die Themen erst auf den Übersichtsseiten. Bis 1000 px stehen die
    Spalten im Akkordeon untereinander (Regeln am Dateiende). */
 .nav-group-menu.nav-mega { max-width: none; padding: 8px 0 0; }
-.nav-spalten { display: grid; grid-template-columns: repeat(3, auto); }
+.nav-spalten { display: grid; grid-template-columns: repeat(4, minmax(0, 196px)); }   /* seit 11.10.2026 vier Spalten (Risiken neu); feste Breite,
+   lange Titel brechen um – sonst ragt der Aufklapper bei 1001–1280 px über den Fensterrand (gemessen: 983 px breit ab x = 303) */
+@media (min-width: 1240px) { .nav-spalten { grid-template-columns: repeat(4, minmax(0, 232px)); } }
 .nav-spalte { padding: 0 4px 8px; min-width: 0; }
 .nav-spalte + .nav-spalte { border-left: 1px solid var(--rule); }
 .sitenav .nav-group-menu a.nav-fuss { display: flex; align-items: baseline; gap: 10px; padding: 12px 20px; border-top: 1px solid var(--rule); border-radius: 0 0 7px 7px; background: #F7F7F4; font-weight: 600; }
@@ -799,4 +801,13 @@ footer.fuss { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); g
   a { color: inherit; }
   .merkbtn, #depbtn, .kopie, .kopie-w, .link-w, .kv-zeit, .fbtn, #fmehr { display: none !important; }   /* Bedienknöpfe nicht drucken (T-121); Rechner-Felder bleiben, sie tragen die Werte */
   th .sortbtn { display: contents; }   /* Chrome druckt Knopftext im wiederholten Tabellenkopf nicht – ab Seite 2 fehlten die Spaltentitel (T-121, anleihen-kupon) */
+}
+
+/* Sprungleiste der Akademie mit vier Bereichen (seit 11.10.2026: Grundlagen, Risiken, Auswählen, Für Fortgeschrittene) –
+   bis 880 px zwei mal zwei, bis 600 px untereinander (Regel .tueren oben). */
+.tueren.vier { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (min-width: 601px) and (max-width: 880px) {
+  .tueren.vier { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tueren.vier a:nth-child(3) { border-left: 0; }
+  .tueren.vier a:nth-child(n+3) { border-top: 1px solid var(--rule); }
 }

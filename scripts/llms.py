@@ -57,7 +57,7 @@ HINWEISE = """Zur Einordnung:
 
 # Reihenfolge der Abschnitte (Name der zweiten Brotkrume); alles Übrige folgt alphabetisch, „Optional“ am Ende.
 # Vor den Rubriken: „Start“ (Startseite) und „Über Bondarium“ (Herausgeber und Kontakt – geht beim Kürzen nicht verloren).
-ABSCHNITTE = ["Akademie", "Anleihen", "Kaufen", "Zinsen"]
+ABSCHNITTE = ["Akademie", "Anleihen", "Kaufen", "Markt"]   # „Markt“ hieß bis 11.10.2026 „Zinsen“
 UEBER = {"ueber-uns.html"}
 OPTIONAL = {"rechtliches.html"}
 OHNE_VOLLTEXT = {"rechtliches.html"}   # Impressum und Datenschutz: nur verlinkt
