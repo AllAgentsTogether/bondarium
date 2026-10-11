@@ -947,8 +947,17 @@
      Handy-Karten aus base.css (table.atab bis 640 px). */
   @media (max-width: 640px) {
     .interessant table.atab > thead { display: block; }
-    .interessant table.atab > thead > tr, .interessant table.atab > tbody > tr { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto 28px; gap: 0 12px; align-items: center; position: static; padding: 9px 0; margin: 0; border: 0; border-bottom: 1px solid var(--rule); border-radius: 0; background: none; box-shadow: none; }
-    .interessant table.atab > thead > tr { padding: 0 0 6px; border-bottom-color: rgba(26,26,25,0.2); }
+    .interessant table.atab > thead > tr, .interessant table.atab > tbody > tr { display: grid; grid-template-columns: minmax(0, 1fr) 60px 62px 74px 28px; gap: 0 4px; align-items: stretch; position: static; padding: 4px 0; margin: 0; border: 0; border-bottom: 1px solid var(--rule); border-radius: 0; background: none; box-shadow: none; }
+    .interessant table.atab > thead > tr { padding: 0; border-bottom-color: rgba(26,26,25,0.2); }
+    /* Spalten abgesetzt: Rendite, Kupon, Restlaufzeit je als ganz leicht giftgrün schattierte Spalte (Nutzerwunsch 11.10.2026) */
+    .interessant table.atab > thead > tr > th.num, .interessant table.atab > tbody > tr > td.gross { background: rgba(57,255,20,0.09); padding: 7px 6px; }
+    .interessant table.atab > tbody > tr > th[scope=row] { padding: 7px 6px 7px 0 !important; }
+    .interessant table.atab > thead > tr > th[data-col="anleihe"] { padding: 7px 6px 7px 0 !important; }
+    .interessant table.atab > thead > tr > th { display: flex; align-items: center; justify-content: flex-start; }
+    .interessant table.atab > thead > tr > th.num { justify-content: flex-end; }
+    .interessant table.atab > tbody > tr > td.merkspalte { display: flex; align-items: center; justify-content: flex-end; }
+    .interessant table.atab > tbody > tr > th[scope=row], .interessant table.atab > tbody > tr > td.gross { display: flex; align-items: center; }
+    .interessant table.atab > tbody > tr > td.gross { justify-content: flex-end; }
     .interessant table.atab > tbody > tr:last-child { border-bottom: 0; }
     .interessant table.atab > tbody > tr.gr-ende { border-bottom: 2px solid rgba(26,26,25,0.2); }
     .interessant table.atab > tbody > tr.gr-ende > :is(td, th) { border-bottom: 0 !important; }
