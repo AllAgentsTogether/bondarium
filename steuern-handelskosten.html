@@ -31,7 +31,7 @@
 <link rel="preload" href="manrope-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="manrope-700.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  /* Steuern und Handelskosten – neu 27.09.2026 (Menü Verstehen, Profi): sechs Karten im Look von „Laufzeit“ und „Duration“.
+  /* Steuern und Handelskosten – neu 27.09.2026 (Menü Verstehen, Profi): sieben Karten im Look von „Laufzeit“ und „Duration“.
      Allgemeine Information mit Stand-Datum, keine Steuerberatung (Hinweis oben und im Aufklapper). Schaubilder als HTML-Balken. Grundregeln in base.css. */
 
   .stand { display: inline-flex; align-items: center; gap: 8px; margin: -8px 0 22px; padding: 7px 12px; border-radius: 999px; background: #fff; border: 1px solid rgba(26,26,25,0.14); font-size: 13px; color: var(--text); }
@@ -199,10 +199,11 @@
     <nav class="lands" aria-label="Zum Thema springen">
       <a class="lbtn" href="#zins"><span class="n">1</span>Steuer auf Zinsen</a>
       <a class="lbtn" href="#kursgewinn"><span class="n">2</span>Kursgewinn</a>
-      <a class="lbtn" href="#stueckzinsen"><span class="n">3</span>Stückzinsen</a>
-      <a class="lbtn" href="#nullkupon"><span class="n">4</span>Nullkupon, Währung</a>
-      <a class="lbtn" href="#kosten"><span class="n">5</span>Handelskosten</a>
-      <a class="lbtn" href="#stueckelung"><span class="n">6</span>Stückelung</a>
+      <a class="lbtn" href="#verlusttoepfe"><span class="n">3</span>Verlusttöpfe</a>
+      <a class="lbtn" href="#stueckzinsen"><span class="n">4</span>Stückzinsen</a>
+      <a class="lbtn" href="#nullkupon"><span class="n">5</span>Nullkupon, Währung</a>
+      <a class="lbtn" href="#kosten"><span class="n">6</span>Handelskosten</a>
+      <a class="lbtn" href="#stueckelung"><span class="n">7</span>Stückelung</a>
     </nav>
 
     <section class="kap" id="zins" aria-labelledby="h-zins">
@@ -225,9 +226,19 @@
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Die ganze Rendite ist steuerpflichtig – der Kursgewinn erst am Ende. Kursverluste aus Käufen über 100 senken die Steuer auf andere Erträge.</span></p>
     </section>
 
-    <section class="kap" id="stueckzinsen" aria-labelledby="h-stueckzinsen">
+    <section class="kap" id="verlusttoepfe" aria-labelledby="h-verlusttoepfe">
       <div class="k-text">
         <span class="knr" aria-hidden="true">3</span>
+        <h2 id="h-verlusttoepfe">Zwei Verlusttöpfe: Anleihen zählen nicht wie Aktien</h2>
+        <p>Dein Broker führt zwei Töpfe. <strong>Verluste aus Anleihen landen im allgemeinen Topf</strong> – zusammen mit Verlusten aus ETFs, Fonds, Zertifikaten und gezahlten Stückzinsen. Dieser Topf wird mit allen Kapitalerträgen verrechnet: Zinsen, Dividenden, Kursgewinne aus Anleihen und auch aus Aktien.</p><p>Der <strong>Aktientopf</strong> nimmt nur Verluste aus dem Verkauf einzelner Aktien auf, und die dürfen nur Aktiengewinne mindern – keine Kupons, keine Anleihengewinne. Ein Anleihenverlust ist steuerlich also flexibler als ein Aktienverlust. Sonderfall: Zahlt ein Schuldner gar nicht zurück, zählt der Ausfall seit 2020 als Verlust, aber nur bis 20.000&nbsp;€ je Jahr; wer vorher mit Kursverlust verkauft, hat diese Grenze nicht.</p>
+      </div>
+      <div class="k-bild"><p class="sb-k">Welcher Verlust mindert welchen Gewinn?</p><div class="zwei" role="img" aria-label="Allgemeiner Topf: Verluste aus Anleihen, ETFs, Fonds, Zertifikaten und gezahlte Stückzinsen, verrechenbar mit allen Kapitalerträgen. Aktientopf: Verluste aus dem Verkauf einzelner Aktien, verrechenbar nur mit Aktiengewinnen."><div class="zf"><span class="zf-k">Allgemeiner Topf</span><span class="zf-z">Anleihen, ETFs, Fonds, Zertifikate, Stückzinsen</span><span class="zf-r plus">mit allem</span><span class="zf-w">Zinsen, Dividenden, Kursgewinne aus Anleihen und Aktien – im selben Depot automatisch.</span></div><div class="zf"><span class="zf-k">Aktientopf</span><span class="zf-z">Verkauf einzelner Aktien</span><span class="zf-r minus">nur Aktien</span><span class="zf-w">Nur mit Gewinnen aus Aktienverkäufen. Nicht mit Zinsen, Kupons oder Anleihengewinnen.</span></div></div><p class="sb-f">Die Trennung hält der Bundesfinanzhof für verfassungswidrig; das Bundesverfassungsgericht prüft noch (2 BvL 3/21). Bis dahin gilt sie, Steuerbescheide ergehen in diesem Punkt vorläufig.</p></div>
+      <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Anleihenverluste liegen im allgemeinen Topf und mindern alle Kapitalerträge. Aktienverluste bleiben unter sich.</span></p>
+    </section>
+
+    <section class="kap kap-b" id="stueckzinsen" aria-labelledby="h-stueckzinsen">
+      <div class="k-text">
+        <span class="knr" aria-hidden="true">4</span>
         <h2 id="h-stueckzinsen">Stückzinsen: Steuer verschieben</h2>
         <p>Kaufst du zwischen zwei Zinsterminen, zahlst du dem Verkäufer die aufgelaufenen <a href="begriffe.html#stueckzinsen">Stückzinsen</a>. <strong>Steuerlich sind sie negative Einnahmen:</strong> Der Broker bucht sie in den Verlusttopf, sie mindern sofort deine steuerpflichtigen Erträge. Den vollen Kupon versteuerst du später.</p><p>Das ist kein Geschenk, sondern eine Verschiebung – aber eine nützliche: <strong>Kauf im Dezember, Zinstermin im Januar</strong> drückt die Steuer im alten Jahr und schiebt den Ertrag ins neue. Wer den Pauschbetrag in einem Jahr nicht ausschöpft, kann ihn so besser nutzen.</p>
       </div>
@@ -235,9 +246,9 @@
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Gezahlte Stückzinsen senken die Steuer sofort, der Kupon kommt später dran. Über den Jahreswechsel ein Hebel für den Pauschbetrag.</span></p>
     </section>
 
-    <section class="kap kap-b" id="nullkupon" aria-labelledby="h-nullkupon">
+    <section class="kap" id="nullkupon" aria-labelledby="h-nullkupon">
       <div class="k-text">
-        <span class="knr" aria-hidden="true">4</span>
+        <span class="knr" aria-hidden="true">5</span>
         <h2 id="h-nullkupon">Nullkupon und Fremdwährung: zwei Sonderfälle bei der Steuer</h2>
         <p>Ein <a href="begriffe.html#nullkupon">Nullkupon</a> zahlt keinen Zins, sondern wird unter 100 gekauft und zu 100 zurückgezahlt. <strong>Die Steuer fällt erst am Ende an</strong> – bis dahin verzinst sich der volle Betrag, nicht nur der Nettozins. Über zehn Jahre bringt das bei 3&nbsp;% rund 0,7&nbsp;% mehr als eine Kuponanleihe. Sinnvoll für Geld mit festem Termin, nicht für laufendes Einkommen.</p><p>Bei <a href="begriffe.html#fremdwaehrungsanleihe">Fremdwährungsanleihen</a> rechnet das Finanzamt in Euro: <strong>Der Wechselkursgewinn zwischen Kauf und Rückzahlung ist Teil des steuerpflichtigen Kursgewinns</strong> – ein Verlust mindert entsprechend. Bei der Dollar-Anleihe zu 5&nbsp;% versteuerst du in Euro also mehr oder weniger als 5&nbsp;%.</p>
       </div>
@@ -245,9 +256,9 @@
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Nullkupon = Steuer erst am Ende, Zinseszins auf brutto. Fremdwährung = auch der Wechselkurs wird versteuert.</span></p>
     </section>
 
-    <section class="kap" id="kosten" aria-labelledby="h-kosten">
+    <section class="kap kap-b" id="kosten" aria-labelledby="h-kosten">
       <div class="k-text">
-        <span class="knr" aria-hidden="true">5</span>
+        <span class="knr" aria-hidden="true">6</span>
         <h2 id="h-kosten">Handelskosten: die zweite Steuer</h2>
         <p>Beim Kauf zahlst du zweimal: die <strong>Ordergebühr</strong> des Brokers (für 5.000&nbsp;€ je nach Anbieter <span data-kz="broker-spanne">0 bis rund 18&nbsp;€</span>, siehe <a href="broker-vergleich.html">Broker-Vergleich</a>) und die <a href="begriffe.html#geld-brief-spanne">Geld-Brief-Spanne</a> der Börse – bei Bundesanleihen 0,05&nbsp;%, bei kleinen Unternehmensanleihen auch 1&nbsp;% und mehr. Beim Kauf zahlst du die halbe Spanne, denn der Briefkurs liegt so weit über der Mitte. Bei 5.000&nbsp;€ und 0,6&nbsp;% Spanne sind 10&nbsp;€ Gebühr plus 0,3&nbsp;% halbe Spanne (15&nbsp;€) zusammen 25&nbsp;€, also 0,5&nbsp;%.</p><p>Entscheidend ist die Haltedauer: <strong>Einmalkosten verteilen sich auf die Jahre.</strong> Bei einem Jahr fressen die 0,5&nbsp;% ein Achtel der Rendite, bei zehn Jahren fast nichts. Immer mit <a href="begriffe.html#limit">Limit</a> ordern und den Handelsplatz mit der engsten Spanne wählen – das spart oft mehr als die Brokerwahl.</p>
       </div>
@@ -255,9 +266,9 @@
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Gebühr plus Spanne sind Einmalkosten – kurze Haltedauer macht sie teuer. Limit setzen, Spannen vergleichen, bis zur Fälligkeit halten.</span></p>
     </section>
 
-    <section class="kap kap-b" id="stueckelung" aria-labelledby="h-stueckelung">
+    <section class="kap" id="stueckelung" aria-labelledby="h-stueckelung">
       <div class="k-text">
-        <span class="knr" aria-hidden="true">6</span>
+        <span class="knr" aria-hidden="true">7</span>
         <h2 id="h-stueckelung">Stückelung: Was du überhaupt kaufen kannst</h2>
         <p>Die <a href="begriffe.html#stueckelung">Stückelung</a> ist der kleinste handelbare Betrag. <strong>Fast die Hälfte der Euro-Unternehmensanleihen ist nur in 100.000-€-Stücken zu haben</strong> – die Emittenten sparen sich so den Prospekt für Privatanleger. Staatsanleihen sind fast alle ab 1.000&nbsp;€ oder sogar 0,01&nbsp;€ (Bund) erhältlich.</p><p>Für dich heißt das: Die schöne Rendite auf dem Kurszettel gibt es oft nur ab 100.000&nbsp;€ – oder gar nicht. Filtere in der Suche nach Mindestanlage, oder sieh dir für diese Segmente einen <a href="anleihen-etf.html">Anleihen-ETF</a> an, der die großen Stücke bündelt.</p>
       </div>
@@ -284,9 +295,9 @@
     <details class="quellen" id="quellen">
       <summary>Datenquellen und Methodik</summary>
       <div class="quellen-body">
-        <p><strong>Steuern (Stand September 2026).</strong> Kapitalerträge nach § 20 EStG: Zinsen, Stückzinsen und Veräußerungs- bzw. Einlösungsgewinne von Anleihen; Abgeltungsteuer 25&nbsp;% (§ 32d EStG) plus Solidaritätszuschlag 5,5&nbsp;% = 26,375&nbsp;%, mit Kirchensteuer 8&nbsp;% 27,82&nbsp;%, 9&nbsp;% 27,99&nbsp;%. Sparerpauschbetrag 1.000&nbsp;€ / 2.000&nbsp;€ (§ 20 Abs. 9 EStG). Gezahlte Stückzinsen sind negative Einnahmen im allgemeinen Verlusttopf; Verluste aus Anleihen sind mit allen Kapitalerträgen verrechenbar (Aktienverluste dagegen nur mit Aktiengewinnen). Fremdwährung: Anschaffung und Rückzahlung werden zum jeweiligen Euro-Kurs bewertet, die Differenz ist Teil des Gewinns oder Verlusts. Günstigerprüfung, Kirchensteuer-Abzugsverfahren und Besonderheiten (Altbestände vor 2009, Verlustbescheinigung, Auslandsbroker) sind vereinfacht dargestellt. Allgemeine Information, keine Steuerberatung.</p>
-        <p><strong>Rechnungen.</strong> Netto = brutto × (1 − 0,26375). Nullkupon (Karte 4): 10.000&nbsp;€ × 1,03¹⁰ = 13.439&nbsp;€, Steuer 26,375&nbsp;% auf 3.439&nbsp;€ Gewinn = 907&nbsp;€, netto 12.532&nbsp;€; Kuponanleihe: 10.000&nbsp;€ × (1 + 0,03 × 0,73625)¹⁰ = 12.442&nbsp;€, ohne Pauschbetrag und Kosten. Handelskosten (Karte 5): 10&nbsp;€ Ordergebühr + 0,3&nbsp;% halbe Spanne (Spanne 0,6&nbsp;%) auf 5.000&nbsp;€ = 15&nbsp;€, zusammen 25&nbsp;€ = 0,5&nbsp;%, geteilt durch die Haltedauer in Jahren.</p>
-        <p><strong>Stückelung (Karte 6).</strong> Auswertung des Registers der Anleihen-Suche (ESMA FIRDS, Stand 26.09.2026): 21.658 Unternehmensanleihen in Euro, davon 21.657 mit Angabe zur Stückelung: 8.055 bis 1.000&nbsp;€ (37&nbsp;%), 3.012 zwischen 1.001 und 99.999&nbsp;€ (14&nbsp;%), 10.590 ab 100.000&nbsp;€ (49&nbsp;%); 1.175 Euro-Staatsanleihen, davon 975 bis 1.000&nbsp;€ (83&nbsp;%, 9 ohne Angabe).</p>
+        <p><strong>Steuern (Stand September 2026).</strong> Kapitalerträge nach § 20 EStG: Zinsen, Stückzinsen und Veräußerungs- bzw. Einlösungsgewinne von Anleihen; Abgeltungsteuer 25&nbsp;% (§ 32d EStG) plus Solidaritätszuschlag 5,5&nbsp;% = 26,375&nbsp;%, mit Kirchensteuer 8&nbsp;% 27,82&nbsp;%, 9&nbsp;% 27,99&nbsp;%. Sparerpauschbetrag 1.000&nbsp;€ / 2.000&nbsp;€ (§ 20 Abs. 9 EStG). Verlusttöpfe (Karte 3): § 20 Abs. 6 EStG – Verluste aus Anleihen, Fonds, ETFs und Zertifikaten sowie gezahlte Stückzinsen im allgemeinen Topf, verrechenbar mit allen Kapitalerträgen; Verluste aus Aktienveräußerungen nur mit Aktiengewinnen (Satz 4); Ausfall einer Kapitalforderung bis 20.000&nbsp;€ je Jahr (Satz 6, seit 2020). Vorlage des BFH an das Bundesverfassungsgericht zum Aktientopf: Beschluss vom 17.11.2020, VIII R 11/18, dort Az. 2 BvL 3/21, nach unserem Stand noch nicht entschieden. Fremdwährung: Anschaffung und Rückzahlung werden zum jeweiligen Euro-Kurs bewertet, die Differenz ist Teil des Gewinns oder Verlusts. Günstigerprüfung, Kirchensteuer-Abzugsverfahren und Besonderheiten (Altbestände vor 2009, Verlustbescheinigung, Auslandsbroker) sind vereinfacht dargestellt. Allgemeine Information, keine Steuerberatung.</p>
+        <p><strong>Rechnungen.</strong> Netto = brutto × (1 − 0,26375). Nullkupon (Karte 5): 10.000&nbsp;€ × 1,03¹⁰ = 13.439&nbsp;€, Steuer 26,375&nbsp;% auf 3.439&nbsp;€ Gewinn = 907&nbsp;€, netto 12.532&nbsp;€; Kuponanleihe: 10.000&nbsp;€ × (1 + 0,03 × 0,73625)¹⁰ = 12.442&nbsp;€, ohne Pauschbetrag und Kosten. Handelskosten (Karte 6): 10&nbsp;€ Ordergebühr + 0,3&nbsp;% halbe Spanne (Spanne 0,6&nbsp;%) auf 5.000&nbsp;€ = 15&nbsp;€, zusammen 25&nbsp;€ = 0,5&nbsp;%, geteilt durch die Haltedauer in Jahren.</p>
+        <p><strong>Stückelung (Karte 7).</strong> Auswertung des Registers der Anleihen-Suche (ESMA FIRDS, Stand 26.09.2026): 21.658 Unternehmensanleihen in Euro, davon 21.657 mit Angabe zur Stückelung: 8.055 bis 1.000&nbsp;€ (37&nbsp;%), 3.012 zwischen 1.001 und 99.999&nbsp;€ (14&nbsp;%), 10.590 ab 100.000&nbsp;€ (49&nbsp;%); 1.175 Euro-Staatsanleihen, davon 975 bis 1.000&nbsp;€ (83&nbsp;%, 9 ohne Angabe).</p>
       </div>
     </details>
   </main>
