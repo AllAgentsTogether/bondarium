@@ -214,7 +214,7 @@
 
     <section class="sim" aria-label="Anleihen-Simulator">
       <div class="sim-kopf">
-        <div class="sim-name">Beispielanleihe 3,0 % bis 2056 <small>Anlage 10.000 €, Zinszahlung jährlich</small></div>
+        <div class="sim-name">Beispielanleihe <span id="sim-kupon">4,0</span> % bis 2056 <small>Anlage 10.000 €, Zinszahlung jährlich</small></div>
         <div class="sim-szen" role="group" aria-label="Verlauf des Zinsniveaus wählen">
           <span>Zinsniveau:</span>
           <button type="button" data-szen="welle" aria-pressed="true">Auf und ab</button>
@@ -227,10 +227,10 @@
 
       <div class="kd" aria-live="off">
         <div class="kd-t haupt"><div class="kd-l">Kurs</div><div class="kd-v" id="k-kurs">100,00</div><div class="kd-z" id="k-kurs-z">Kurswert 10.000 € · Jahr 0</div></div>
-        <div class="kd-t"><div class="kd-l">Rendite bei Kauf</div><div class="kd-v" id="k-rk">3,00 %</div><div class="kd-z">bleibt bis Fälligkeit</div></div>
-        <div class="kd-t"><div class="kd-l">Marktrendite jetzt</div><div class="kd-v" id="k-mr">3,00 %</div><div class="kd-z" id="k-mr-z">Rendite für neue Käufer</div></div>
-        <div class="kd-t"><div class="kd-l">Restlaufzeit</div><div class="kd-v" id="k-rl">30,0 J.</div><div class="kd-z" id="k-rl-z">mod. Duration 19,6</div></div>
-        <div class="kd-t"><div class="kd-l">Laufende Verz.</div><div class="kd-v" id="k-lv">3,00 %</div><div class="kd-z">Kupon ÷ Kurs</div></div>
+        <div class="kd-t"><div class="kd-l">Rendite bei Kauf</div><div class="kd-v" id="k-rk">4,00 %</div><div class="kd-z">bleibt bis Fälligkeit</div></div>
+        <div class="kd-t"><div class="kd-l">Marktrendite jetzt</div><div class="kd-v" id="k-mr">4,00 %</div><div class="kd-z" id="k-mr-z">Rendite für neue Käufer</div></div>
+        <div class="kd-t"><div class="kd-l">Restlaufzeit</div><div class="kd-v" id="k-rl">30,0 J.</div><div class="kd-z" id="k-rl-z">mod. Duration 17,3</div></div>
+        <div class="kd-t"><div class="kd-l">Laufende Verz.</div><div class="kd-v" id="k-lv">4,00 %</div><div class="kd-z">Kupon ÷ Kurs</div></div>
         <div class="kd-t"><div class="kd-l">Kursgewinn</div><div class="kd-v" id="k-kg">±0 €</div><div class="kd-z" id="k-kg-z">seit Kauf zu 100,00</div></div>
         <div class="kd-t"><div class="kd-l">Zinsen erhalten</div><div class="kd-v" id="k-zi">0 €</div><div class="kd-z" id="k-zi-z">Gesamt ±0 €</div></div>
       </div>
@@ -247,7 +247,7 @@
         <div class="zeit"><span id="zeit-t">Jahr 0,0</span> <small>von 30 · 1 Jahr je Sekunde</small></div>
       </div>
       <div class="sim-opt">
-        <label>Kupon <select id="kupon"><option>1,0 %</option><option>2,0 %</option><option selected>3,0 %</option><option>4,0 %</option><option>5,0 %</option><option>6,0 %</option></select></label>
+        <label>Kupon <select id="kupon"><option>1,0 %</option><option>2,0 %</option><option>3,0 %</option><option selected>4,0 %</option><option>5,0 %</option><option>6,0 %</option></select></label>
         <label><input type="checkbox" id="zeig-mr" checked> Marktrendite einblenden</label>
         <span class="lg"><i></i> Kurs</span>
         <span class="lg"><i class="o"></i> Marktrendite (rechte Skala)</span>
@@ -286,7 +286,7 @@
 (function () {
   'use strict';
   var N = 121, T = 30, DT = T / (N - 1);                // Viertel­jahres­raster
-  var kupon = 3, kaufrendite = 3, kaufkurs = 100, ANLAGE = 10000;   // Anlage 10.000 € Nennwert, Kauf zu 100
+  var kupon = 4, kaufrendite = 4, kaufkurs = 100, ANLAGE = 10000;   // Anlage 10.000 € Nennwert, Kauf zu 100
   var ys = new Array(N);                               // Marktrendite je Rasterpunkt in %
   var t = 0, playing = false, last = 0, dragging = false, wasPlaying = false, szen = 'welle', zeigMR = true;
   var $ = function (id) { return document.getElementById(id); };
@@ -447,7 +447,7 @@
   $('play').addEventListener('click', function () { setPlay(!playing); });
   $('neu').addEventListener('click', function () { t = 0; szenario(szen); setPlay(false); redraw(); setPlay(true); });
   $('zeit').addEventListener('input', function () { var v = parseFloat(this.value); if (!isFinite(v)) return; t = v; drawCursor(); kenndaten(); });
-  $('kupon').addEventListener('change', function () { kupon = parseFloat(this.value.replace(',', '.')); kaufrendite = kupon; kaufkurs = 100; szenario(szen); redraw(); });
+  $('kupon').addEventListener('change', function () { kupon = parseFloat(this.value.replace(',', '.')); kaufrendite = kupon; kaufkurs = 100; $('sim-kupon').textContent = fmt(kupon, 1); szenario(szen); redraw(); });
   $('zeig-mr').addEventListener('change', function () { zeigMR = this.checked; redraw(); });
   Array.prototype.forEach.call(document.querySelectorAll('.sim-szen button'), function (b) {
     b.addEventListener('click', function () {
