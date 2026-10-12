@@ -580,37 +580,40 @@
     </div>
 
     <div id="depot" hidden>
-      <div class="kto-kopf"><p>Angemeldet als <b id="wer"></b></p><button type="button" class="kto-leise" id="abmelden">Abmelden</button></div>
+      <div class="kto-kopf"><p>Angemeldet als <b id="wer"></b></p><div class="kto-kopf-r"><button type="button" class="kto-textbtn kto-konto" id="zum-konto" aria-controls="a-konto" aria-expanded="false">Konto</button><button type="button" class="kto-leise" id="abmelden">Abmelden</button></div></div>   <!-- seit 12.10.2026 (Konzept „Gliederung“): Konto ist ein Link, kein Reiter -->
       <!-- Fünf Ansichten (seit 02.10.2026 abends, Nutzerauftrag „Mockup komplett umsetzen“): Start, Merkliste, Lernen, Musterdepots
-           (darin „Mein Depot“; bis 03.10.2026 „Rechnen und planen“), Meldungen und Konto. Reiter: Seitenskript (reiter()); Inhalte: bereich.js, Stile bereich.css -->
+           (darin „Mein Depot“; bis 03.10.2026 „Rechnen und planen“), Meldungen (bis 12.10.2026 „Meldungen und Konto“ – seitdem ist das Konto ein Link in der Kopfzeile mit eigenem Panel #a-konto). Reiter: Seitenskript (reiter()); Inhalte: bereich.js, Stile bereich.css -->
       <div class="mb-tabs" id="mb-tabs" role="tablist" aria-label="Bereiche von My Bondarium">
         <button type="button" role="tab" id="t-start" data-ansicht="start" aria-controls="a-start" aria-selected="true">Start</button>
         <button type="button" role="tab" id="t-merkliste" data-ansicht="merkliste" aria-controls="a-merkliste" aria-selected="false" tabindex="-1">Merkliste<i id="r-merk-n"></i></button>
         <button type="button" role="tab" id="t-planen" data-ansicht="planen" aria-controls="a-planen" aria-selected="false" tabindex="-1">Musterdepots<i id="r-depot-n" hidden></i></button>
-        <button type="button" role="tab" id="t-meldungen" data-ansicht="meldungen" aria-controls="a-meldungen" aria-selected="false" tabindex="-1">Meldungen und Konto<i id="t-meld-n"></i></button>
+        <button type="button" role="tab" id="t-meldungen" data-ansicht="meldungen" aria-controls="a-meldungen" aria-selected="false" tabindex="-1">Meldungen<i id="t-meld-n"></i></button>
         <button type="button" role="tab" id="t-lernen" data-ansicht="lernen" aria-controls="a-lernen" aria-selected="false" tabindex="-1">Lernen</button>
       </div>
       <div id="a-start" role="tabpanel" aria-labelledby="t-start"></div>
       <div id="a-merkliste" role="tabpanel" aria-labelledby="t-merkliste" hidden>
-      <div class="mb-leiste"><div class="mb-listen" id="mb-listen" role="group" aria-label="Listen deiner Merkliste"></div></div>
-      <div class="mb-leiste"><div class="mb-akt">
+      <div class="mb-kopfz">   <!-- seit 12.10.2026 (Konzept „Gliederung“): Listen links, Teilen/PDF/CSV rechts; Werkzeuge darunter zugeklappt, Tabelle direkt danach -->
+        <div class="mb-listen" id="mb-listen" role="group" aria-label="Listen deiner Merkliste"></div>
+        <div class="kto-teilen" id="teilen-box" hidden>
+        <button type="button" class="kto-leise kto-teilen-btn" id="teilen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12"/><path d="M7.5 7.5 12 3l4.5 4.5"/><path d="M5 11.5V19a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7.5"/></svg>Merkliste teilen</button>
+        <button type="button" class="kto-textbtn" id="als-pdf">PDF</button>
+        <button type="button" class="kto-textbtn" id="mb-csv">CSV</button>
+        </div>
+      </div>
+      <details class="mb-werk" id="mb-werk">   <!-- zugeklappt; öffnet sich mit Hinweis, sobald ein Filter gesetzt oder etwas zum Vergleichen angekreuzt ist (werkzeuge() im Seitenskript) -->
+        <summary>Werkzeuge<span class="mb-werk-hin" id="mb-werk-hin"></span></summary>
+        <div class="mb-akt">
         <button type="button" class="kto-leise" id="mb-vgl-btn">Vergleichen (0)</button>
         <button type="button" class="kto-leise" id="mb-einf-btn" aria-controls="mb-einf">ISINs einfügen</button>
-      </div></div>
+        </div>
       <div class="mb-einf" id="mb-einf" hidden><form id="mb-einf-form">
         <label for="mb-einf-t">ISINs einfügen – mehrere auf einmal, getrennt durch Leerzeichen, Komma oder Zeilenumbruch</label>
         <textarea id="mb-einf-t" spellcheck="false" autocomplete="off" placeholder="DE0001102424 XS2630112014 …"></textarea>
         <p><button type="submit" class="go">Auf die Merkliste setzen</button><button type="button" class="kto-textbtn" id="mb-einf-zu">Abbrechen</button><span id="mb-einf-status" role="status" aria-live="polite"></span></p>
       </form></div>
       <div id="mf-box" hidden></div>   <!-- Grundfilter und Filterleiste wie in der Anleihen-Suche: filter.js (MC.anleihenFilter), Stile filter.css -->
-      <div class="kto-leiste">
-        <p class="kto-status" id="status" role="status" aria-live="polite"></p>
-        <div class="kto-teilen" id="teilen-box" hidden>
-          <button type="button" class="kto-leise kto-teilen-btn" id="teilen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12"/><path d="M7.5 7.5 12 3l4.5 4.5"/><path d="M5 11.5V19a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7.5"/></svg>Merkliste teilen</button>
-          <button type="button" class="kto-textbtn" id="als-pdf">PDF</button>
-          <button type="button" class="kto-textbtn" id="mb-csv">CSV</button>
-        </div>
-      </div>
+      </details>
+      <div class="kto-leiste"><p class="kto-status" id="status" role="status" aria-live="polite"></p></div>
       <p class="kto-teilen-status" id="teilen-status" role="status" aria-live="polite"></p>
       <div class="table-scroll" id="liste" hidden>
         <table class="kto-t">
@@ -661,6 +664,7 @@
           <div class="kto-teilen">
             <button type="button" class="kto-leise kto-teilen-btn" id="kd-teilen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12"/><path d="M7.5 7.5 12 3l4.5 4.5"/><path d="M5 11.5V19a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7.5"/></svg>Musterdepot teilen</button>
             <button type="button" class="kto-textbtn" id="kd-als-pdf">Als PDF speichern</button>
+            <button type="button" class="kto-textbtn" data-ics="depot" title="Nächster Zinstermin und Fälligkeit je Anleihe des Musterdepots als Kalenderdatei (.ics), entsteht im Browser">Termine als Kalenderdatei</button>
           </div>
         </div>
         <p class="kto-teilen-status" id="kd-teilen-status" role="status" aria-live="polite"></p>
@@ -689,7 +693,7 @@
           </table>
         </div>
         <details class="kd-fx" id="kd-fx" hidden><summary>* Fremdwährungen werden zur Vereinfachung in Euro umgerechnet</summary><p id="kd-fx-t"></p></details>
-        <p class="kd-er-zeile" id="erinnerung" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.8 7l8.2 6 8.2-6"/></svg><span id="kd-er-zeile-t">E-Mail vor Fälligkeit: aus</span> · <a href="#meldungen" data-zu="meldungen">ändern unter „Meldungen und Konto“</a></p>   <!-- seit 03.10.2026: der Schalter steht in der Karte „E-Mails an dich“ -->
+        <p class="kd-er-zeile" id="erinnerung" hidden><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.8 7l8.2 6 8.2-6"/></svg><span id="kd-er-zeile-t">E-Mail vor Fälligkeit: aus</span> · <a href="#meldungen" data-zu="meldungen">ändern unter „Meldungen“</a></p>   <!-- seit 03.10.2026: der Schalter steht in der Karte „E-Mails an dich“ -->
         <div class="kto-leer" id="kd-leer" hidden><p><b>Dieses Musterdepot ist noch leer.</b> Wähl oben eine Anleihe von deiner Merkliste, trag einen Nennwert ein – zum Beispiel 5.000 € – und füg sie hinzu. Im Steckbrief jeder Anleihe geht das auch mit „Zum Musterdepot hinzufügen“.</p></div>
         <div id="kd-zahlungen" hidden>
           <h2 class="kd-h3" id="h-zahl">Zahlungen aus deinem Musterdepot</h2>
@@ -728,18 +732,12 @@
               <p class="kf-status" id="nl-status" role="status" aria-live="polite"></p>
               <p class="mb-klein" id="em-fuss"></p>
             </section>
-            <section class="mb-karte" aria-labelledby="h-mit">
-              <div class="mb-kh"><h2 class="mb-h2" id="h-mit">Mitnehmen</h2></div>
-              <ul class="mb-lz">
-                <li><div><a href="#merkliste" data-zu="merkliste">Merkliste als PDF oder CSV</a><span>entsteht im Browser, ohne Persönliches</span></div><span class="mb-r"><button type="button" class="kto-textbtn" id="mb-mit-pdf">PDF</button><button type="button" class="kto-textbtn" id="mb-mit-csv">CSV</button></span></li>
-                <li><div><a href="#merkliste" data-zu="merkliste">Termine als Kalenderdatei</a><span>Zinstermine und Fälligkeiten (.ics)</span></div><span class="mb-r"><button type="button" class="kto-textbtn" id="mb-mit-ics">Speichern</button></span></li>
-              </ul>
-              <p class="kto-teilen-status" id="mb-mit-status" role="status" aria-live="polite"></p>
-            </section>
           </div>
         </div>
+      </div>
+      <div id="a-konto" role="region" aria-labelledby="h-konto" hidden>   <!-- seit 12.10.2026: Konto über den Link in der Kopfzeile (konto.html#konto), kein Reiter; Inhalt wie vorher im Reiter „Meldungen und Konto“ -->
         <section class="mb-konto" id="konto" aria-labelledby="h-konto">
-          <h2 class="mb-h2" id="h-konto">Konto</h2>
+          <div class="mb-konto-kopf"><h2 class="mb-h2" id="h-konto" tabindex="-1">Konto</h2><button type="button" class="kto-textbtn" data-zu="start">← Zurück zu Start</button></div>
           <ul>
             <li><div class="mb-kz"><div><b>E-Mail-Adresse</b><span id="mb-k-email"></span></div><button type="button" class="kto-textbtn" data-auf="f-email" aria-expanded="false" aria-controls="f-email">Ändern</button></div>
               <form class="kf" id="f-email" action="konto.php" method="post" hidden>
@@ -1104,7 +1102,17 @@ MC.navInit();
     if (B && !liste.length && MF_N == null && LISTE.length) $("zeilen").innerHTML = '<tr><td class="mf-leer" colspan="9">In dieser Liste steht noch keine Anleihe. Über „…“ in der Zeile einer Anleihe ordnest du sie einer Liste zu.</td></tr>';
     document.querySelectorAll(".kto-t thead th[data-col]").forEach(th => { if (th.dataset.col === S.col) th.setAttribute("aria-sort", S.dir > 0 ? "ascending" : "descending"); else th.removeAttribute("aria-sort"); });
     if (B) B.nachListe();
+    werkzeuge();
     if (MC.wischPruefen) MC.wischPruefen();
+  }
+  // Werkzeuge der Merkliste (seit 12.10.2026): zugeklappt; sobald ein Filter gesetzt oder etwas zum Vergleichen angekreuzt ist, steht
+  // das neben „Werkzeuge“ und der Aufklapper öffnet sich – schließen geht dann weiter von Hand
+  function werkzeuge() {
+    const d = $("mb-werk"), hin = $("mb-werk-hin"); if (!d || !hin) return;
+    const f = !!(MF && MF_DA && MF.gesetzt()), v = B ? B.vglZahl() : 0;
+    const t = [f ? "Filter aktiv" : "", v ? `${v} zum Vergleichen` : ""].filter(Boolean).join(" · ");
+    hin.textContent = t ? " · " + t : "";
+    if (t && !d.open) d.open = true;
   }
   function statusText() {
     const n = LISTE.length, ne = B ? B.etfZahl() : 0;
@@ -1121,7 +1129,7 @@ MC.navInit();
     zeichneWahl();
     $("wer").textContent = stand.email; $("ae-email").value = $("lo-email").value = stand.email;
     document.querySelectorAll("#anmelden form").forEach(f => { if (f.email && !f.email.readOnly) f.email.value = ""; });   // angemeldet: keine Adresse im Anmeldefeld lassen – nach Abmelden oder Löschen stand sie sonst noch da (Nutzertest 03.10.2026)
-    // Wochenbrief (seit 02.10.2026): Stand und Schalter – seit 02.10.2026 abends in der Ansicht „Meldungen und Konto“
+    // Wochenbrief (seit 02.10.2026): Stand und Schalter – seit 02.10.2026 abends in der Ansicht „Meldungen“ (bis 12.10.2026 „Meldungen und Konto“)
     $("nl-text").textContent = stand.newsletter
       ? "Bestellt – freitags Zinsen der Woche, meistgehandelte Anleihen und deine Merkliste."
       : "Freitags: Zinsen der Woche, meistgehandelte Anleihen und deine Merkliste.";
@@ -1706,7 +1714,7 @@ MC.navInit();
   // ---------- E-Mail vor jeder Fälligkeit (seit 02.10.2026, Nutzerentscheid nach PDF-Mockup) ----------
   // Ein Schalter für alle Musterdepots (konto.php, aktion=erinnern), anfangs aus. Verschickt werden die E-Mails von erinnerung.php –
   // 20 Tage vor jeder Fälligkeit und am Tag der Fälligkeit, angestoßen vom ersten Seitenaufruf ab 7 Uhr. Daneben steht die nächste Fälligkeit und wann die
-  // E-Mail dazu käme. konto.html#erinnerung öffnet „Meldungen und Konto“ und zeigt den Schalter (Link aus der Test-E-Mail).
+  // E-Mail dazu käme. konto.html#erinnerung öffnet „Meldungen“ und zeigt den Schalter (Link aus der Test-E-Mail).
   // Seit 03.10.2026 (Nutzerentscheid „E-Mails an einer Stelle“): Schalter „Vor Fälligkeit“ in der Karte „E-Mails an dich“, gilt für
   // Merkliste und Musterdepots; im Reiter „Musterdepots“ steht nur noch der Stand mit Link.
   const ERINNERUNG_TAGE = 20;   // seit 02.10.2026 abends 20 statt 30 Tage, dazu eine zweite E-Mail am Tag der Fälligkeit (Nutzerwunsch; erinnerung.php)
@@ -1753,8 +1761,8 @@ MC.navInit();
     try { history.replaceState(null, "", location.pathname); } catch (e) {}
     const t = $("er-aus-text"); $("er-aus").hidden = false; t.textContent = "Die Erinnerung wird ausgeschaltet …"; $("kd-er-status").textContent = "";
     K.erinnerungAus(m[1]).then(a => {
-      t.innerHTML = a.ok ? "<b>Die Erinnerung ist ausgeschaltet.</b> Du bekommst keine E-Mails mehr vor Fälligkeiten. Wieder einschalten kannst du sie jederzeit – unter „Meldungen und Konto“, Karte „E-Mails an dich“."
-        : a.status === "link" ? "Dieser Link gilt nicht mehr – vielleicht ist das Konto gelöscht. Wenn du angemeldet bist, findest du den Schalter unter „Meldungen und Konto“, Karte „E-Mails an dich“."
+      t.innerHTML = a.ok ? "<b>Die Erinnerung ist ausgeschaltet.</b> Du bekommst keine E-Mails mehr vor Fälligkeiten. Wieder einschalten kannst du sie jederzeit – unter „Meldungen“, Karte „E-Mails an dich“."
+        : a.status === "link" ? "Dieser Link gilt nicht mehr – vielleicht ist das Konto gelöscht. Wenn du angemeldet bist, findest du den Schalter unter „Meldungen“, Karte „E-Mails an dich“."
         : MC.esc(TEXT[a.status] || TEXT.fehler);
     });
   }
@@ -1763,30 +1771,34 @@ MC.navInit();
   erinnerungAusLink();
 
   // Fünf Ansichten (seit 02.10.2026 abends; vorher zwei Reiter „Merkliste“ und „Mein Depot“): Start, Merkliste, Lernen, Musterdepots
-  // (darin „Mein Depot“; bis 03.10.2026 „Rechnen und planen“), Meldungen und Konto – eine ist offen. konto.html#merkliste, #lernen, #planen, #meldungen öffnen die Ansicht;
-  // die älteren Adressen #depot und #erinnerung (Links in E-Mails) führen zu „Musterdepots“.
-  const ANSICHTEN = ["start", "merkliste", "planen", "meldungen", "lernen"], ALIAS = { merk: "merkliste", depot: "planen", erinnerung: "meldungen" };
+  // (darin „Mein Depot“; bis 03.10.2026 „Rechnen und planen“), Meldungen (bis 12.10.2026 „Meldungen und Konto“) – eine ist offen. konto.html#merkliste, #lernen, #planen, #meldungen öffnen die Ansicht;
+  // die älteren Adressen #depot und #erinnerung (Links in E-Mails) führen zu „Musterdepots“ bzw. „Meldungen“. Seit 12.10.2026 (Konzept „Gliederung“) ist das
+  // Konto kein Reiter mehr: der Link „Konto“ in der Kopfzeile (und konto.html#konto) öffnet das Panel #a-konto, dann ist kein Reiter gewählt.
+  const ANSICHTEN = ["start", "merkliste", "planen", "meldungen", "lernen"], OHNE_REITER = ["konto"], ALIAS = { merk: "merkliste", depot: "planen", erinnerung: "meldungen" };
   let ANSICHT = "start";
   function reiter(r, fokus) {
-    r = ALIAS[r] || r; if (!ANSICHTEN.includes(r)) r = "start";
+    r = ALIAS[r] || r; if (!ANSICHTEN.includes(r) && !OHNE_REITER.includes(r)) r = "start";
     if (ANSICHT && ANSICHT !== r && $("a-" + ANSICHT)) $("a-" + ANSICHT).querySelectorAll(".kf-status").forEach(el => { el.textContent = ""; el.classList.remove("fehler", "ok"); });   // alte Meldungen nicht stehen lassen (Nutzertest 03.10.2026)
     ANSICHT = r;
-    ANSICHTEN.forEach(a => { const an = a === r, t = $("t-" + a); t.setAttribute("aria-selected", String(an)); t.tabIndex = an ? 0 : -1; $("a-" + a).hidden = !an; });
-    if (fokus) $("t-" + r).focus();
+    ANSICHTEN.forEach(a => { const an = a === r, t = $("t-" + a); t.setAttribute("aria-selected", String(an)); t.tabIndex = an || (r === "konto" && a === "start") ? 0 : -1; $("a-" + a).hidden = !an; });
+    OHNE_REITER.forEach(a => { $("a-" + a).hidden = a !== r; });
+    $("zum-konto").setAttribute("aria-expanded", String(r === "konto"));
+    if (fokus) (r === "konto" ? $("h-konto") : $("t-" + r)).focus();
     if (r === "planen") zeichneZahlungen();
     if (B) B.zeige(r);
     if (MC.wischPruefen) MC.wischPruefen();
   }
   function reiterWahl(r, fokus) { reiter(r, fokus); try { history.replaceState(null, "", location.pathname + location.search + (ANSICHT === "start" ? "" : "#" + (ANSICHT === "planen" && (r === "depot" || r === "erinnerung") ? "depot" : ANSICHT))); } catch (e) {} }
   $("mb-tabs").addEventListener("click", e => { const b = e.target.closest("[role=tab]"); if (b) reiterWahl(b.dataset.ansicht); });
+  $("zum-konto").addEventListener("click", () => { reiterWahl("konto", true); });
   // Pfeiltasten wechseln den Reiter; Pos1/Ende wählen den ersten bzw. letzten (seit 09.10.2026, Technik-Test 08.10.2026 T-123)
   $("mb-tabs").addEventListener("keydown", e => {
     if (e.key === "Home" || e.key === "End") { e.preventDefault(); reiterWahl(ANSICHTEN[e.key === "Home" ? 0 : ANSICHTEN.length - 1], true); return; }
     if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
     e.preventDefault();
-    reiterWahl(ANSICHTEN[(ANSICHTEN.indexOf(ANSICHT) + (e.key === "ArrowRight" ? 1 : ANSICHTEN.length - 1)) % ANSICHTEN.length], true);
+    reiterWahl(ANSICHTEN[(Math.max(0, ANSICHTEN.indexOf(ANSICHT)) + (e.key === "ArrowRight" ? 1 : ANSICHTEN.length - 1)) % ANSICHTEN.length], true);   // aus „Konto“ (kein Reiter) wie von Start
   });
-  const ausHash = () => { const h = location.hash.slice(1); return ANSICHTEN.includes(h) || ALIAS[h] ? h : ""; };
+  const ausHash = () => { const h = location.hash.slice(1); return ANSICHTEN.includes(h) || OHNE_REITER.includes(h) || ALIAS[h] ? h : ""; };
   window.addEventListener("hashchange", () => { const h = ausHash(); if (h) reiter(h); });
 
   // Hinzufügen, Nennwert ändern, Entfernen
@@ -2170,8 +2182,6 @@ MC.navInit();
   const TEILEN = {
     merkliste: { bau: depotPdf, status: "teilen-status", titel: "Merkliste – Bondarium", fertig: "Deine Merkliste ist geteilt." },
     depot: { bau: musterPdf, status: "kd-teilen-status", titel: "Musterdepot – Bondarium", fertig: "Dein Musterdepot ist geteilt." },
-    // „Mitnehmen → PDF“ (Reiter „Meldungen und Konto“): Statuszeile in der Karte – #teilen-status ist dort ausgeblendet
-    mitnehmen: { bau: depotPdf, status: "mb-mit-status", titel: "Merkliste – Bondarium", fertig: "Deine Merkliste ist geteilt." },
   };
   function teilenStatus(text, fehler, id) { const el = $(id || "teilen-status"); el.className = "kto-teilen-status" + (fehler ? " fehler" : ""); el.textContent = text; }
   function speichere(d, stattTeilen, id) {
@@ -2224,7 +2234,7 @@ MC.navInit();
   // B zeichnet Start, Lernen, die Zusätze der Merkliste, Rechnungen/Voreinstellungen und Meldungen/Konto; die Brücke gibt ihm, was
   // dieses Skript schon hat (Daten, Formatierer, Aktionen). Ohne bereich.js (Netzfehler) bleibt B null – Merkliste und Depot gehen weiter.
   let BESUCHT = false;
-  const B = MC.bereich ? MC.bereich({ K, $, fmt, fmtCoupon, TEXT, hinweis, reiterWahl, heute: HEUTE_ISO, jahre, STAMM, anleihe, ladeDaten, ladeStamm,
+  const B = MC.bereich ? MC.bereich({ K, $, fmt, fmtCoupon, TEXT, hinweis, reiterWahl, werkzeuge, heute: HEUTE_ISO, jahre, STAMM, anleihe, ladeDaten, ladeStamm,
     // Valutatag (nächster Handelstag + 2 Abwicklungstage) und erster Handelstag einer Neuemission für den Rechner-Link (seit 09.10.2026, T-49/T-16)
     valuta: VALUTA, rechnerAb,
     liste: () => LISTE, daten: () => DDATA, kstand: () => KSTAND, filter: () => MF,

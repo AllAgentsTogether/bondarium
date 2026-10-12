@@ -383,7 +383,8 @@ Meldungen nennen Tatsachen aus den Daten, „Passend zu deiner Merkliste“ zeig
 | Start (`konto.html`) | Seit 03.10.2026 abends nach Herkunft sortiert (Nutzerentscheid zum Vorschlag „Start neu sortiert“: erst deins, dann der Markt): „Seit deinem letzten Besuch“ (ausgelöste Meldungen, Termine der nächsten 14 Tage, neue Seiten) – jede Zeile mit einem Etikett davor: „Merkliste“ (Meldung, dunkel), Name des Musterdepots (Termin, mit Betrag) oder „Neu auf Bondarium“, der Link in der Zeile; Zwischenzeile „Deine Anleihen“ mit den Karten **Merkliste** (bis zu vier Anleihen: größte Änderung der Rendite seit dem Merken zuerst, aufgefüllt mit den zuletzt gemerkten; „gemerkt heute“ statt 0,00 Pkt.; „und … weitere“) und **Musterdepots** (je Depot Anleihen, Nennwert und Zinsen der nächsten zwölf Monate in Euro, Klick auf den Namen öffnet das Depot; darunter die nächsten drei Termine mit Depotname und Betrag, Fremdwährung zum EZB-Kurs mit „≈“; .ics) – sie ersetzt die Karte „Nächste Termine“; Zwischenzeile „Markt“ mit **Mein Zins-Blick** in voller Breite (alle Kacheln gleich hell, keine schwarze erste Kachel mehr); „Zuletzt angesehen“ (nur wenn eingeschaltet). Die Termine kommen seit 03.10.2026 aus allen Musterdepots (Nutzerwunsch; vorher aus der Merkliste), berechnet wie in der Depot-Tabelle (Brücke `depots()`, `zahlungen(liste)`, `oeffneDepot(id)` in konto.html); die Meldung „Zinstermin steht an“ prüft weiter die Merkliste |
 | Merkliste (`#merkliste`) | Pillen Alle / Anleihen / ETFs / eigene Listen; Vergleichen (bis vier, mit Kursverlauf), ISINs einfügen, Filter (filter.js), Teilen/PDF/CSV; Tabelle: Ankreuzfeld, Name mit Notiz, Rendite, Kurs mit Vortag, Kupon, Fälligkeit, „Seit dem Merken“, nächster Zinstermin, „+“ (Musterdepot), „…“ (Notiz, Liste, Meldung, Rechner, Kalender, Entfernen); darunter die gemerkten ETFs |
 | Musterdepots (`#planen`, auch `#depot`, `#erinnerung`) | „Mein Depot“ (Musterdepots); Reiter seit 03.10.2026 „Musterdepots“ (Nutzerwunsch, vorher „Rechnen und planen“); die Voreinstellungen darunter am 02.10.2026 auf Nutzerwunsch entfernt – nicht neu einbauen |
-| Meldungen und Konto (`#meldungen`) | Meldungen, Wochenbrief-Schalter, Mitnehmen (PDF, CSV, .ics), Konto: E-Mail ändern, Passwort ändern, angemeldete Geräte, „Zuletzt angesehen“, Daten herunterladen, Konto löschen |
+| Meldungen (`#meldungen`; bis 12.10.2026 „Meldungen und Konto“) | Meldungen (Liste, Neue Meldung) und die Karte „E-Mails an dich“ (Vor Fälligkeit, Meldungen, Wochenbrief). Die Karte „Mitnehmen“ ist seit 12.10.2026 weg: PDF/CSV stehen in der Merkliste, PDF und „Termine als Kalenderdatei“ (.ics, `data-ics="depot"`) bei den Musterdepots |
+| Konto (`#konto`, Link „Konto“ in der Kopfzeile, kein Reiter; seit 12.10.2026, Konzept tmp/Bondarium-My-Bondarium-Gliederung.pdf) | Panel `#a-konto` (Ansicht `konto` in `OHNE_REITER`; kein Reiter gewählt, `aria-expanded` am Link): E-Mail ändern, Passwort ändern, angemeldete Geräte, „Zuletzt angesehen“, Daten herunterladen, Konto löschen; „← Zurück zu Start“ |
 | Lernen (`#lernen`) | Lernstand je Menügruppe (Grundlagen, Auswählen, Kaufen, Für Fortgeschrittene – aus dem Menü der Seite gelesen), „Passend zu deiner Merkliste“, Lesezeichen, gemerkte Begriffe |
 
 **Ablage** (`konto.php`, `aktion=ablage`; `MC.konto.ablage(art, schluessel, wert)`): eine Tabelle für alles Abgelegte. Arten:
@@ -453,3 +454,14 @@ php -S 127.0.0.1:8090
 
 Unter dem PHP-eigenen Server gilt der lokale Ursprung, die Cookies kommen ohne „Secure“, und die E-Mail landet in
 `konto-daten/lokal-mail.txt` statt im Versand. Der Ordner `konto-daten/` ist git-ignoriert.
+
+## Gliederung seit 12.10.2026 (Konzept „My Bondarium: Gliederung“)
+
+Nutzerentscheid („Entscheide alles nach deinem Ermessen, setze direkt um“) nach dem Konzept `tmp/Bondarium-My-Bondarium-Gliederung.pdf`
+(Mockups in `tmp/mb-gliederung`, Umbau durch `anwenden.py`): Reiterzeile Start · Merkliste · Musterdepots · **Meldungen** · Lernen;
+**Konto** ist ein Link in der Kopfzeile neben „Abmelden“ (Panel `#a-konto`, Adresse `konto.html#konto`, kein Reiter gewählt, Rücksprung
+„← Zurück zu Start“ über `data-zu="start"`). Die Karte „Mitnehmen“ ist entfallen (PDF/CSV in der Merkliste, PDF und Kalenderdatei bei den
+Musterdepots). Die Merkliste beginnt mit einer Kopfzeile (Listen-Pillen links, Teilen/PDF/CSV rechts), darunter `<details class="mb-werk">`
+„Werkzeuge“ mit Vergleichen, ISINs einfügen und der Filterleiste; `werkzeuge()` im Seitenskript öffnet den Aufklapper und schreibt den
+Hinweis („Filter aktiv“, „2 zum Vergleichen“), sobald ein Filter gesetzt (`MF.gesetzt()`) oder etwas angekreuzt ist (`B.vglZahl()`).
+Entschieden: Reitername „Meldungen“ (nicht „Nachrichten“), Werkzeuge zugeklappt, .ics nur bei den Musterdepots, „Zuletzt angesehen“ bleibt im Konto.

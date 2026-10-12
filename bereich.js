@@ -9,7 +9,8 @@
                           ersetzt „Nächste Termine“, der Zins-Blick steht in voller Breite darunter
      Merkliste            eigene Listen, Notiz, Menü je Anleihe („…“), Vergleichen, ISINs einfügen, CSV, ETFs
      Musterdepots         nichts mehr – die Musterdepots zeichnet das Seitenskript von konto.html
-     Meldungen und Konto  Meldungen (Regeln je Anleihe oder für alle gemerkten), Mitnehmen (PDF, CSV, Kalenderdatei), Konto
+     Meldungen            Meldungen (Regeln je Anleihe oder für alle gemerkten), „E-Mails an dich“ (bis 12.10.2026 „Meldungen und Konto“
+                          mit „Mitnehmen“ und Konto; seitdem Konto über den Link in der Kopfzeile, Panel #a-konto, Ansicht „konto“)
      Lernen               Lernstand zum Abhaken, Passend zu deiner Merkliste, Lesezeichen, gemerkte Begriffe
    Am 02.10.2026 abends auf Nutzerwunsch wieder entfernt: die Karten „Weiterlernen“ und „Gespeicherte Suchen“ auf Start (damit auch
    „Suche speichern“ und die Meldung „Neue Treffer“), die Etiketten in der Merkliste und „Gespeicherte Rechnungen“; ebenso „Meine Voreinstellungen“ (Ordergebühr, Anlagebetrag,
@@ -262,6 +263,7 @@
       if (c.checked) { if (VGL.size >= 4) { c.checked = false; X.hinweis("Vergleichen lassen sich höchstens vier Anleihen."); return; } VGL.add(c.dataset.vgl); } else VGL.delete(c.dataset.vgl);
       const tr = c.closest("tr"); if (tr) tr.classList.toggle("gew", c.checked);
       zeichneVergleich(); zeichneAkt();
+      if (X.werkzeuge) X.werkzeuge();
     }
 
     // ---------- Merkliste: Aktionen (Vergleichen, ISINs einfügen, CSV) ----------
@@ -643,7 +645,7 @@
       el.innerHTML = kopf + stufen + `<div class="mb-zwei e"><section class="mb-karte"><div class="mb-kh"><h2 class="mb-h2">Passend zu deiner Merkliste</h2><p>aus dem, was du gemerkt hast</p></div>${passend()}</section><div class="mb-sp">${lesez}${begr}</div></div>`;
     }
 
-    // ---------- Ansicht „Meldungen und Konto“: Konto-Zeilen (Markup in konto.html) ----------
+    // ---------- Ansicht „Konto“ (Link in der Kopfzeile, #a-konto): Konto-Zeilen (Markup in konto.html) ----------
     function zeichneKonto() {
       const st = K.stand(); if (!$("mb-k-email")) return;
       $("mb-k-email").textContent = st.email;
@@ -708,14 +710,14 @@
       if (m) {
         try { history.replaceState(null, "", location.pathname); } catch (e) {}
         K.emailBestaetigen(m[1]).then(a => X.hinweis(a.ok ? `<b>Deine E-Mail-Adresse ist geändert.</b> ${a.email ? "" : "Melde dich ab jetzt mit der neuen Adresse an. "}Alle anderen Geräte sind abgemeldet.`
-          : a.status === "link" ? "Dieser Link ist abgelaufen oder wurde schon benutzt. Fordere die Änderung in „Meldungen und Konto“ noch einmal an." : esc(fehlerText(a)), !a.ok));
+          : a.status === "link" ? "Dieser Link ist abgelaufen oder wurde schon benutzt. Fordere die Änderung unter „Konto“ noch einmal an." : esc(fehlerText(a)), !a.ok));
         return;
       }
       m = /^#meldungen-aus=(\d{1,10}\.[0-9a-f]{32})$/.exec(location.hash);
       if (m) {
         try { history.replaceState(null, "", location.pathname); } catch (e) {}
         K.meldungenAus(m[1]).then(a => X.hinweis(a.ok ? "<b>Du bekommst keine E-Mails mehr zu Meldungen.</b> Die Meldungen bleiben und stehen weiter in deinem Bereich – dort kannst du sie auch wieder auf „E-Mail“ stellen."
-          : a.status === "link" ? "Dieser Link gilt nicht mehr – vielleicht ist das Konto gelöscht. Angemeldet findest du die Meldungen unter „Meldungen und Konto“." : esc(fehlerText(a)), !a.ok));
+          : a.status === "link" ? "Dieser Link gilt nicht mehr – vielleicht ist das Konto gelöscht. Angemeldet findest du die Meldungen unter „Meldungen“." : esc(fehlerText(a)), !a.ok));
       }
     }
 
@@ -743,7 +745,8 @@
       if (ANSICHT === "start") zeichneStart();
       else if (ANSICHT === "merkliste") X.zeichneListe();
       else if (ANSICHT === "lernen") zeichneLernen();
-      else if (ANSICHT === "meldungen") { zeichneMeldungen(); zeichneKonto(); }
+      else if (ANSICHT === "meldungen") zeichneMeldungen();
+      else if (ANSICHT === "konto") zeichneKonto();
     }
     function zeige(a) { ANSICHT = a; const d = $("depot"); if (d) d.dataset.ansicht = a; alles(); }
     // Meldungen brauchen den Suchindex – auch wenn die Merkliste leer ist
@@ -764,9 +767,6 @@
       if (e.target.closest("#mb-einf-btn")) { const b = $("mb-einf"); b.hidden = !b.hidden; if (!b.hidden) $("mb-einf-t").focus(); return; }
       if (e.target.closest("#mb-einf-zu")) { $("mb-einf").hidden = true; return; }
       if (e.target.closest("#mb-csv")) { csv(); return; }
-      if (e.target.closest("#mb-mit-pdf")) { X.teilen(true); return; }
-      if (e.target.closest("#mb-mit-csv")) { csv(); return; }
-      if (e.target.closest("#mb-mit-ics")) { kalender(X.liste()); return; }
       if (e.target.closest("#mb-listen")) { listenKlick(e); return; }
       if (e.target.closest("#mb-meld")) { meldungKlick(e); return; }
       if (e.target.closest("#konto")) kontoKlick(e);
@@ -789,7 +789,7 @@
     return {
       zeige, neu: () => { alles(); datenFuerSuchen(); }, ablageNeu: () => alles(), etfLaden, istEtf, sichtbar, klasse, zeileKopf, zeileUnter, zeileSeit, zeileTermin, zeileKnopf, zeileNach,
       nachListe: zeichneMerkliste, delta, termin: o => termin(o) || "", etfZahl: () => etfListe().length, ansicht: () => ANSICHT,
-      zurueck: () => { VGL.clear(); OFFEN = ""; AKT = "alle"; LEDIT = ""; },
+      zurueck: () => { VGL.clear(); OFFEN = ""; AKT = "alle"; LEDIT = ""; }, vglZahl: () => VGL.size,
     };
   };
 })(window.MC);
