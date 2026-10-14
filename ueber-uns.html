@@ -31,18 +31,10 @@
 <link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
  <style>
-  /* Farbvariablen und .kap/.k-bild/.merk kommen aus base.css. Seiteneigene Bausteine: Schaubild-Legende, Gründe, Zielgruppen-Karten, dunkles Band */
+  /* Farbvariablen und .kap/.merk kommen aus base.css. Seiteneigene Bausteine: Zielgruppen-Karten, dunkles Band (seit 14.10.2026 ohne Schaubild und Gründe) */
   .hero { max-width: none; }   /* Bildwelt 2.0: volle Breite für Titel + Illustration (.b2-kopf); die Textbreite begrenzt .sub */
   .hero .sub { margin-bottom: 0; }
   .kap { margin-top: 30px; }
-  .k-bild svg .axt { font-size: 13px; font-weight: 600; fill: #55544F; }
-  .lg { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12.5px; font-weight: 600; color: var(--text); margin: -2px 0 6px; }
-  .lg span::before { content: ""; display: inline-block; vertical-align: middle; margin: 0 6px 2px 0; }
-  .lg .lg-a::before { width: 18px; height: 4px; border-radius: 2px; background: #157C00; }
-  .lg .lg-z::before { width: 9px; height: 9px; border-radius: 50%; background: #39FF14; box-shadow: inset 0 0 0 1.6px #157C00; }
-  .lg .lg-t::before { width: 18px; height: 2px; border-radius: 1px; background: rgba(26,26,25,0.7); }
-  .lg .lg-w::before { width: 9px; height: 9px; border-radius: 50%; background: #CF7430; }
-  .gruende { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
   .grund { display: flex; gap: 16px; align-items: flex-start; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 22px 22px 20px; box-shadow: var(--shadow); }
   .grund .gi { flex: none; width: 46px; height: 46px; border-radius: 12px; background: var(--green-tint); color: var(--green-text); display: grid; place-items: center; }
   .grund .gi svg { width: 24px; height: 24px; }
@@ -97,10 +89,9 @@
   .kontakt .kf-status { font-size: 15px; font-weight: 600; min-height: 1.5em; margin: 0; }
   .kf-status.ok { color: var(--green-text); }
   .kf-status.fehler { color: var(--down); }
-  @media (max-width: 860px) { .gruende, .wer { grid-template-columns: 1fr; } }
+  @media (max-width: 860px) { .wer { grid-template-columns: 1fr; } }
   @media (max-width: 600px) {
     .kap { margin-top: 24px; }
-    .k-bild svg .tk { font-size: 16px; } .k-bild svg .an { font-size: 17px; } .k-bild svg .axt { font-size: 17px; }
     .grund { padding: 18px 16px; gap: 14px; }
     .grund .gi { width: 40px; height: 40px; }
     .karte { padding: 20px 16px 20px; }
@@ -253,60 +244,12 @@
     </div>
   </section>
 
-  <section class="kap" aria-labelledby="h-bild">
-    <div class="k-text">
-      <h2 id="h-bild">Tagesgeld oder Anleihe: der Unterschied in einem Bild</h2>
-      <p><strong>Beim Tagesgeld wandert der Zins.</strong> Den guten Zins gibt es oft nur als Lockangebot für ein paar Monate. Danach heißt es: neue Bank suchen, Konto eröffnen, Geld übertragen. Und sinkt das Zinsniveau, sinkt der Tagesgeldzins mit.</p>
-      <p><strong>Bei der Anleihe steht der Zins fest.</strong> Er wird beim Kauf vereinbart und gilt bis zur Fälligkeit. Jedes Jahr kommt die Zinszahlung, am Ende das Geld zurück – sofern der Schuldner zahlen kann.</p>
-    </div>
-    <div class="k-bild"><p class="sb-k">Tagesgeld und Anleihe über die Jahre</p><p class="lg" aria-hidden="true"><span class="lg-a">Anleihe</span><span class="lg-z">Zinszahlung</span><span class="lg-t">Tagesgeld</span><span class="lg-w">Bankwechsel</span></p><svg class="sb" viewBox="0 0 460 244" role="img" aria-labelledby="sbt" font-family="Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif"><title id="sbt">Schematisch: Der Zins einer Anleihe bleibt vom Kauf bis zur Fälligkeit gleich, jedes Jahr gibt es eine Zinszahlung, am Ende das Geld zurück. Der Tagesgeldzins startet als Lockangebot höher, fällt nach einigen Monaten, steigt nur nach einem Bankwechsel wieder und sinkt mit dem Zinsniveau.</title>
-      <text class="axt" x="4" y="16">↑ Zins</text>
-      <line x1="40" y1="200" x2="444" y2="200" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/>
-      <line x1="40" y1="30" x2="40" y2="200" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/>
-      <line x1="410" y1="100" x2="410" y2="200" stroke="#1A1A19" stroke-opacity="0.3" stroke-width="1.2" stroke-dasharray="4 4"/>
-      <text x="40" y="218" class="tk" font-size="12" fill="#55544F">Kauf</text>
-      <text x="410" y="218" text-anchor="middle" class="tk" font-size="12" fill="#55544F">Fälligkeit</text>
-      <path d="M40 62 H95 V128 H150 V84 H205 V148 H265 V114 H315 V166 L444 184" fill="none" stroke="#1A1A19" stroke-opacity="0.7" stroke-width="2.2" stroke-linejoin="round"/>
-      <circle cx="150" cy="128" r="5" fill="#CF7430"/><circle cx="265" cy="148" r="5" fill="#CF7430"/>
-      <line x1="40" y1="100" x2="410" y2="100" stroke="#157C00" stroke-width="4" stroke-linecap="round"/>
-      <g fill="#39FF14" stroke="#157C00" stroke-width="1.6"><circle cx="101.7" cy="100" r="5"/><circle cx="163.3" cy="100" r="5"/><circle cx="225" cy="100" r="5"/><circle cx="286.7" cy="100" r="5"/><circle cx="348.3" cy="100" r="5"/><circle cx="410" cy="100" r="5"/></g>
-      <text x="46" y="52" class="an" font-size="13" font-weight="600" fill="#55544F">Lockangebot</text>
-      <text x="364" y="88" text-anchor="middle" class="an" font-size="13" font-weight="600" fill="#157C00">fester Zins</text>
-      <text x="444" y="160" text-anchor="end" class="an" font-size="13" font-weight="600" fill="#55544F">Tagesgeld</text>
-      <text class="axt" x="456" y="240" text-anchor="end">Zeit →</text>
-    </svg><p class="sb-f">Schematisch. Steigt das Zinsniveau, steigt auch der Tagesgeldzins – die Anleihe bleibt beim vereinbarten Zins. Dafür weißt du von Anfang an, woran du bist.</p></div>
-    <div class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><p><strong>Kurz gesagt:</strong> Zinsen festhalten statt hinterherlaufen.</p></div>
-  </section>
-
-  <section class="section" aria-labelledby="h-gruende">
-    <h2 id="h-gruende">Was dir eine Anleihe bringt</h2>
-    <div class="gruende">
-      <div class="grund">
-        <span class="gi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M9 15.5l2 2 4-4"/></svg></span>
-        <div><h3>Zinsen an festen Terminen</h3><p>Jedes Jahr kommt die vereinbarte Zinszahlung aufs Konto – bis zur Fälligkeit. Dann bekommst du dein Geld zurück.</p></div>
-      </div>
-      <div class="grund">
-        <span class="gi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
-        <div><h3>Den Zins festhalten</h3><p>Gibt es gerade gute Zinsen, sicherst du sie dir für Jahre. Sinkt das Zinsniveau später, zahlt deine Anleihe trotzdem weiter wie vereinbart.</p></div>
-      </div>
-      <div class="grund">
-        <span class="gi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><circle cx="12" cy="5" r="2"/><path d="M12 7v14M5 13a7 7 0 0 0 14 0M8.5 11h7"/></svg></span>
-        <div><h3>Kein Wechsel von Bank zu Bank</h3><p>Keine Lockangebote im Blick behalten, keine neuen Konten eröffnen, kein Geld hin- und herschieben. Du kaufst einmal und kannst bis zur Fälligkeit halten.</p></div>
-      </div>
-      <div class="grund">
-        <span class="gi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
-        <div><h3>Planen mit festem Datum</h3><p>Wer weiß, was wann zurückkommen soll, kann planen – für die Wohnung, das Auto oder den Ruhestand. Ganz ohne Bankaktionen.</p></div>
-      </div>
-    </div>
-    <p class="risiko-hw"><strong>Auch Anleihen haben Risiken.</strong> Zins und Rückzahlung gibt es nur, wenn der Schuldner zahlen kann – fällt er aus, kannst du viel bis alles verlieren. Verkaufst du vor der Fälligkeit, gilt der Kurs an diesem Tag, und der kann unter deinem Kaufkurs liegen. Mehr dazu unter <a href="risiko.html">Risiko kennen</a> und <a href="bonitaet.html">Bonität</a>.</p>
-  </section>
-
   <section class="section" aria-labelledby="h-wer">
     <h2 id="h-wer">Für wen wir das machen</h2>
     <div class="wer">
       <div class="karte">
         <div class="kopf"><span class="b2-por"><img src="anlegerprofil-privatanleger-180.webp" width="76" height="76" alt="" loading="lazy" decoding="async"></span><div><p class="kicker">Privatpersonen</p><h3>Für dein Erspartes</h3></div></div>
-        <p>Du willst, dass dein Geld regelmäßig Zinsen bringt – ohne jedes Jahr die Bank zu wechseln. Dafür können Anleihen passen.</p>
+        <p>Für dein Erspartes, wenn es planbar Zinsen bringen soll:</p>
         <ul>
           <li>Ein regelmäßiges Einkommen aus Zinsen</li>
           <li>Sparziele mit festem Datum – Auto, Wohnung, Ruhestand</li>
@@ -317,7 +260,7 @@
       </div>
       <div class="karte">
         <div class="kopf"><span class="b2-por"><img src="anlegerprofil-unternehmerin-180.webp" width="76" height="76" alt="" loading="lazy" decoding="async"></span><div><p class="kicker">Unternehmerinnen und Unternehmer</p><h3>Für die Rücklagen deines Unternehmens</h3></div></div>
-        <p>Alle Gründe gelten auch hier – und einer kommt dazu:</p>
+        <p>Dieselben Gründe – und einer kommt dazu:</p>
         <p class="plus"><span aria-hidden="true">+</span>Für Unternehmen gibt es deutlich weniger Tagesgeld-Angebote. Viele Zinsaktionen gelten nur für Privatkunden.</p>
         <ul>
           <li>Rücklagen bis zu einem festen Datum anlegen – für Steuer, Investition oder Tilgung</li>
@@ -329,11 +272,11 @@
     </div>
   </section>
 
-  <section class="band" aria-labelledby="h-warum">
+  <section class="band" aria-labelledby="h-was">   <!-- seit 14.10.2026 (Nutzerentscheid): „Was wir tun – und was nicht“ statt „Anleihen für alle – nicht nur für Profis“ (dessen Inhalt steht jetzt unter „Warum es Bondarium gibt“) -->
     <svg class="band-deko" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" fill="none" stroke="#39FF14" stroke-width="4" stroke-linejoin="round"/></svg>
-    <h2 id="h-warum">Anleihen für alle –<br><span>nicht nur für Profis</span></h2>
-    <p>Der Anleihemarkt gehört zu den größten Märkten der Welt. Trotzdem gelten Anleihen oft als Thema für Fachleute: viele Fachbegriffe, verstreute Daten, wenig verständliche Erklärungen. So bleibt Geld auf dem Konto liegen, statt regelmäßig Zinsen zu bringen.</p>
-    <p><strong>Das wollen wir ändern.</strong> Wir erklären Anleihen so, dass jeder sie versteht, und zeigen täglich aktuelle Daten, mit denen du selbst entscheiden kannst.</p>
+    <h2 id="h-was">Was wir tun –<br><span>und was nicht</span></h2>
+    <p><strong>Wir tun:</strong> Anleihen in kurzen Schritten erklären, vom ersten Begriff bis zur Order. Jeden Börsentag Kurse, Renditen, Zinstermine und Bonität zeigen – mit Quelle und Rechenweg, damit du jede Zahl nachvollziehen kannst. Broker nach ihren eigenen Preisverzeichnissen vergleichen, sortiert nur nach dem Preis.</p>
+    <p><strong>Wir tun nicht:</strong> keine Empfehlung, keine Anlage- oder Steuerberatung, keine Werbung, kein Geld von Brokern, Banken oder Emittenten für Links oder Platzierungen. Was wir zeigen, sind Daten und Rechenwege – die Entscheidung bleibt bei dir. Mehr dazu unter <a href="haftung.html">Haftung und Datenquellen</a>.</p>
     <div class="weiter">
       <a class="go" href="grundlagen.html">Anleihen einfach erklärt →</a>
       <a class="go leise" href="anleihen-suche.html">Zur Anleihen-Suche →</a>
