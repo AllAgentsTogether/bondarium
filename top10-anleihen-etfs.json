@@ -1,14 +1,14 @@
 {
- "stand": "2026-10-13",
- "updated": "2026-10-13",
- "updatedAt": "2026-10-13T08:04:35Z",
+ "stand": "2026-10-14",
+ "updated": "2026-10-14",
+ "updatedAt": "2026-10-14T08:02:58Z",
  "quelle": "Deutsche Börse: Liste der handelbaren ETFs & ETPs (Stammdaten, Kosten) und Monatsstatistik ETFs & ETPs (Umsatz im Xetra-Orderbuch, Fondsvermögen der Anteilsklasse, XLM); Kategorie, Laufzeit und Absicherung aus Name und Index abgeleitet",
  "statistik": "2026-09",
  "umsatz": {
   "von": "2025-10",
   "bis": "2026-09"
  },
- "anzahl": 910,
+ "anzahl": 911,
  "gruppen": {
   "kurze-laufzeiten": {
    "anzahl": 86,
@@ -1033,7 +1033,7 @@
    ]
   },
   "staatsanleihen-weltweit": {
-   "anzahl": 151,
+   "anzahl": 152,
    "etfs": [
     {
      "isin": "IE00BGPP6697",

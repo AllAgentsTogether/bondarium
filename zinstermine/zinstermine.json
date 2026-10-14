@@ -1,4 +1,4 @@
-{"stand": "2026-10-13", "quelle": "Deutsche Börse, T7 (Frankfurt) – Alle handelbaren Instrumente: letzter und nächster Zinstermin", "felder": ["zahlungen_je_jahr", "zinstage MM-TT …"], "anzahl": 29783, "updatedAt": "2026-10-13T08:04:24Z", "termine": {
+{"stand": "2026-10-14", "quelle": "Deutsche Börse, T7 (Frankfurt) – Alle handelbaren Instrumente: letzter und nächster Zinstermin", "felder": ["zahlungen_je_jahr", "zinstage MM-TT …"], "anzahl": 29783, "updatedAt": "2026-10-14T08:02:47Z", "termine": {
 "AR0963787574": [2,"05-30","11-30"],
 "ARPCDB320099": [4,"01-27","04-27","07-27","10-27"],
 "AT0000272505": [1,"07-15"],
@@ -28245,7 +28245,7 @@
 "XS3045496026": [1,"04-08"],
 "XS3045497347": [2,"04-15","10-15"],
 "XS3045728683": [1,"05-21"],
-"XS3045733840": [2,"05-07","11-09"],
+"XS3045733840": [2,"05-07","11-07"],
 "XS3046302488": [1,"05-15"],
 "XS3046352319": [2,"04-27","10-27"],
 "XS3046403914": [1,"04-09"],
