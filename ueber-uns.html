@@ -34,6 +34,7 @@
   /* Farbvariablen und .kap/.merk kommen aus base.css. Seiteneigene Bausteine: drei Karten „Wer dahintersteht“, dunkles Band (seit 14.10.2026 ohne Schaubild und Gründe) */
   .hero { max-width: none; }   /* Bildwelt 2.0: volle Breite für Titel + Illustration (.b2-kopf); die Textbreite begrenzt .sub */
   .hero .sub { margin-bottom: 0; }
+  .b2-kopf-ohne { grid-template-columns: minmax(0, 1fr); }
   .kap { margin-top: 30px; }
   .intro { max-width: 76ch; margin-bottom: 22px; }
   .intro a { color: var(--green-text); }
@@ -208,12 +209,11 @@
   <main id="main">
 
   <div class="hero">
-    <div class="b2-kopf">
+    <div class="b2-kopf b2-kopf-ohne">   <!-- seit 14.10.2026 (Nutzerwunsch): ohne Logo-Motiv, das Logo steht schon in der Kopfzeile -->
       <div>
         <h1>Über Bondarium</h1>
         <p class="sub">Wir machen Anleihen verständlich – damit Privatpersonen und Unternehmen selbst entscheiden können, wie sie ihr Geld verzinsen.</p>   <!-- Mission seit 14.10.2026 (Nutzerentscheid); vorher „Zinsen, die bleiben: …“. Ohne sichtbaren Stand (Nutzerentscheid 14.10.2026): Die Seite altert nicht; dateModified bleibt im JSON-LD -->
       </div>
-      <div class="b2-spot"><img src="spot-ueber-uns.svg" alt="" width="232" height="160"></div>
     </div>
   </div>
 
