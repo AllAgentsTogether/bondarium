@@ -31,33 +31,18 @@
 <link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
  <style>
-  /* Farbvariablen und .kap/.merk kommen aus base.css. Seiteneigene Bausteine: Zielgruppen-Karten, dunkles Band (seit 14.10.2026 ohne Schaubild und Gründe) */
+  /* Farbvariablen und .kap/.merk kommen aus base.css. Seiteneigene Bausteine: drei Karten „Wer dahintersteht“, dunkles Band (seit 14.10.2026 ohne Schaubild und Gründe) */
   .hero { max-width: none; }   /* Bildwelt 2.0: volle Breite für Titel + Illustration (.b2-kopf); die Textbreite begrenzt .sub */
   .hero .sub { margin-bottom: 0; }
   .kap { margin-top: 30px; }
-  .grund { display: flex; gap: 16px; align-items: flex-start; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 22px 22px 20px; box-shadow: var(--shadow); }
-  .grund .gi { flex: none; width: 46px; height: 46px; border-radius: 12px; background: var(--green-tint); color: var(--green-text); display: grid; place-items: center; }
-  .grund .gi svg { width: 24px; height: 24px; }
-  .grund h3 { margin-bottom: 6px; }
-  .grund p { font-size: 15px; line-height: 1.6; color: var(--text); }
-  .klein a { color: var(--green-text); }
-  .wer { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .intro { max-width: 76ch; margin-bottom: 22px; }
+  .intro a { color: var(--green-text); }
+  .wer { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
   .karte { display: flex; flex-direction: column; gap: 12px; background: #fff; border: 1px solid var(--rule); border-radius: var(--radius); padding: 24px 24px 22px; box-shadow: var(--shadow); }
-  .karte .kopf { display: flex; align-items: center; gap: 16px; margin-bottom: 2px; }
-  .karte .kopf img { flex: none; display: block; width: 76px; height: 76px; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px #fff, 0 0 0 5px #157C00; }
-  /* Bildwelt 2.0 (30.09.2026): Porträt-Rahmen mit Kupon-Punkt */
-  .b2-por { position: relative; flex: none; display: block; }
-  .b2-por::after { content: ""; position: absolute; right: -3px; top: -3px; width: 16px; height: 16px; border-radius: 50%; background: #39FF14; border: 2px solid #1A1A19; box-sizing: border-box; }
-  .karte .kicker { font-size: 13px; font-weight: 500; color: var(--green-text); margin-bottom: 4px; }
-  .karte h3 { margin-bottom: 0; }
+  .karte h3 { margin-bottom: 0; padding-left: 20px; position: relative; }
+  .karte h3::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 10px; height: 10px; border-radius: 50%; background: var(--green); }   /* Kupon-Punkt wie in den Listen der Website */
   .karte > p { font-size: 15.5px; line-height: 1.6; color: var(--ink); }
-  .karte .plus { display: flex; gap: 12px; align-items: flex-start; background: var(--green-tint); border-radius: 12px; padding: 12px 14px; font-size: 15px; line-height: 1.5; }
-  .karte .plus span { flex: none; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--green); color: var(--ink); font-weight: 600; font-size: 17px; line-height: 1; }
-  .karte ul { list-style: none; display: grid; gap: 6px; flex: 1; align-content: start; }
-  .karte li { font-size: 15px; line-height: 1.5; color: var(--ink); padding-left: 22px; position: relative; }
-  .karte li::before { content: ""; position: absolute; left: 0; top: 7px; width: 10px; height: 10px; border-radius: 50%; background: var(--green); }
-  .karte > a { display: inline-flex; align-items: center; align-self: flex-start; min-height: 44px; font-size: 15px; font-weight: 600; color: var(--green-text); text-decoration: none; margin-top: 0; }
-  .karte > a:hover { text-decoration: underline; }
+  .karte > p a { color: var(--green-text); }
   .band { position: relative; overflow: hidden; margin-top: 56px; background: var(--ink); color: #fff; border-radius: var(--radius); padding: 44px 44px 42px; }
   .band-deko { position: absolute; right: -40px; bottom: -60px; width: 360px; height: 360px; opacity: 0.22; pointer-events: none; }
   .band h2, .band p, .band .weiter { position: relative; }
@@ -89,13 +74,10 @@
   .kontakt .kf-status { font-size: 15px; font-weight: 600; min-height: 1.5em; margin: 0; }
   .kf-status.ok { color: var(--green-text); }
   .kf-status.fehler { color: var(--down); }
-  @media (max-width: 860px) { .wer { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { .wer { grid-template-columns: 1fr; } }
   @media (max-width: 600px) {
     .kap { margin-top: 24px; }
-    .grund { padding: 18px 16px; gap: 14px; }
-    .grund .gi { width: 40px; height: 40px; }
     .karte { padding: 20px 16px 20px; }
-    .karte .kopf img { width: 60px; height: 60px; }
     .band { margin-top: 44px; padding: 30px 18px 30px; border-radius: 12px; }
     .band h2 { font-size: 26px; }
     .band p { font-size: 16px; }
@@ -105,7 +87,7 @@
   .kap.kap-eins .k-text { max-width: 76ch; }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Über uns","item":"https://www.bondarium.de/ueber-uns.html"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"Über uns","headline":"Wir machen Anleihen verständlich.","description":"Wir machen Anleihen verständlich – damit Privatpersonen und Unternehmen selbst entscheiden können, wie sie ihr Geld verzinsen. Warum Anleihen in Vergessenheit geraten sind und was Bondarium dagegen tut: Wissen und tägliche Daten, keine Beratung.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-14","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/ueber-uns.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"Über uns","headline":"Wir machen Anleihen verständlich.","description":"Wir machen Anleihen verständlich – damit Privatpersonen und Unternehmen selbst entscheiden können, wie sie ihr Geld verzinsen. Warum Anleihen in Vergessenheit geraten sind und was Bondarium dagegen tut: Wissen und tägliche Daten, keine Beratung.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-14","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/","address":{"@type":"PostalAddress","addressLocality":"Stuttgart","addressCountry":"DE"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","url":"https://www.bondarium.de/ueber-uns.html#kontakt","availableLanguage":"de"}},"mainEntityOfPage":"https://www.bondarium.de/ueber-uns.html"}</script>
 </head>
 <body>
 <a class="skip-link" href="#main">Zum Inhalt springen</a>
@@ -244,30 +226,21 @@
     </div>
   </section>
 
-  <section class="section" aria-labelledby="h-wer">
-    <h2 id="h-wer">Für wen wir das machen</h2>
+  <section class="section" aria-labelledby="h-wer">   <!-- seit 14.10.2026 (Nutzerentscheid): „Wer dahintersteht“ ohne Namen und ohne Porträts; vorher „Für wen wir das machen“ (Dublette zu anlageziele.html#fuer-wen) -->
+    <h2 id="h-wer">Wer dahintersteht</h2>
+    <p class="intro">Bondarium kommt aus Stuttgart und gehört zu keiner Bank, keinem Broker und keinem Emittenten. Wer die Seite rechtlich verantwortet, steht im <a href="impressum.html">Impressum</a>. Drei Dinge sagen mehr über uns als Namen:</p>
     <div class="wer">
       <div class="karte">
-        <div class="kopf"><span class="b2-por"><img src="anlegerprofil-privatanleger-180.webp" width="76" height="76" alt="" loading="lazy" decoding="async"></span><div><p class="kicker">Privatpersonen</p><h3>Für dein Erspartes</h3></div></div>
-        <p>Für dein Erspartes, wenn es planbar Zinsen bringen soll:</p>
-        <ul>
-          <li>Ein regelmäßiges Einkommen aus Zinsen</li>
-          <li>Sparziele mit festem Datum – Auto, Wohnung, Ruhestand</li>
-          <li>Ein ruhiger Baustein neben Aktien und Tagesgeld</li>
-          <li>Einstieg ohne Vorwissen – alles Schritt für Schritt erklärt</li>
-        </ul>
-        <a href="anlageziele.html#fuer-wen">Für wen Anleihen passen →</a>
+        <h3>Jeden Börsentag neu</h3>
+        <p>Unsere Programme holen jeden Börsentag die Kurse der Deutschen Börse, die Renditen der Bundesbank und die Sicherheitenliste der EZB. Daraus entstehen Suche, Steckbriefe und Top-10-Listen – mit Stand und Quelle an jeder Zahl.</p>
       </div>
       <div class="karte">
-        <div class="kopf"><span class="b2-por"><img src="anlegerprofil-unternehmerin-180.webp" width="76" height="76" alt="" loading="lazy" decoding="async"></span><div><p class="kicker">Unternehmerinnen und Unternehmer</p><h3>Für die Rücklagen deines Unternehmens</h3></div></div>
-        <p>Dieselben Gründe – und einer kommt dazu:</p>
-        <p class="plus"><span aria-hidden="true">+</span>Für Unternehmen gibt es deutlich weniger Tagesgeld-Angebote. Viele Zinsaktionen gelten nur für Privatkunden.</p>
-        <ul>
-          <li>Rücklagen bis zu einem festen Datum anlegen – für Steuer, Investition oder Tilgung</li>
-          <li>Beträge über der Einlagensicherung breit verteilen</li>
-          <li>Flexibel bleiben – Anleihen sind börsentäglich handelbar, zum jeweiligen Kurs</li>
-        </ul>
-        <a href="anlageziele.html">Welche Anleihe wozu passt →</a>
+        <h3>Selbst gerechnet, offengelegt</h3>
+        <p>Rendite, Duration, Handelskosten: Wir rechnen selbst und zeigen den Rechenweg, damit du jede Zahl prüfen kannst. Findest du einen Fehler, schreib uns – wir sehen uns jede Meldung an.</p>
+      </div>
+      <div class="karte">
+        <h3>Deine Nachricht erreicht uns direkt</h3>
+        <p>Was du über das <a href="#kontakt">Kontaktformular</a> schreibst, landet ohne Umweg in unserem Postfach. Lob, Kritik und Wünsche fließen in die nächsten Seiten ein.</p>
       </div>
     </div>
   </section>
@@ -275,7 +248,7 @@
   <section class="band" aria-labelledby="h-was">   <!-- seit 14.10.2026 (Nutzerentscheid): „Was wir tun – und was nicht“ statt „Anleihen für alle – nicht nur für Profis“ (dessen Inhalt steht jetzt unter „Warum es Bondarium gibt“) -->
     <svg class="band-deko" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><path d="M-4 86 L30 54 L46 66 L70 36 L80 44 L106 14" fill="none" stroke="#39FF14" stroke-width="4" stroke-linejoin="round"/></svg>
     <h2 id="h-was">Was wir tun –<br><span>und was nicht</span></h2>
-    <p><strong>Wir tun:</strong> Anleihen in kurzen Schritten erklären, vom ersten Begriff bis zur Order. Jeden Börsentag Kurse, Renditen, Zinstermine und Bonität zeigen – mit Quelle und Rechenweg, damit du jede Zahl nachvollziehen kannst. Broker nach ihren eigenen Preisverzeichnissen vergleichen, sortiert nur nach dem Preis.</p>
+    <p><strong>Wir tun:</strong> Anleihen in kurzen Schritten erklären, vom ersten Begriff bis zur Order. Jeden Börsentag Kurse, Renditen, Zinstermine und Bonität von <span data-kz="anleihen-kurs">rund 33.000</span> Anleihen zeigen – mit Quelle und Rechenweg, damit du jede Zahl nachvollziehen kannst. <span data-kz="broker-anzahl">18</span> Broker nach ihren eigenen Preisverzeichnissen vergleichen, sortiert nur nach dem Preis.</p>
     <p><strong>Wir tun nicht:</strong> keine Empfehlung, keine Anlage- oder Steuerberatung, keine Werbung, kein Geld von Brokern, Banken oder Emittenten für Links oder Platzierungen. Was wir zeigen, sind Daten und Rechenwege – die Entscheidung bleibt bei dir. Mehr dazu unter <a href="haftung.html">Haftung und Datenquellen</a>.</p>
     <div class="weiter">
       <a class="go" href="grundlagen.html">Anleihen einfach erklärt →</a>
