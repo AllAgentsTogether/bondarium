@@ -190,8 +190,8 @@
       <a class="lbtn" href="#langfristig">Langfristig <span class="rng">7–30 J.</span></a>
       <a class="lbtn" href="#sehr-langfristig">Sehr langfristig <span class="rng">über 30 J.</span></a>
     </nav>
-    <p class="note lznote" id="lznote">Kurs in Prozent des Nennwerts; Rendite bis Fälligkeit in der Währung der Anleihe; Volumen: umlaufender Betrag; Stückelung: kleinster Nennwert (zugleich Mindestanlage). Klick auf einen Spaltentitel sortiert die jeweilige Tabelle.</p>
-    <p class="note uebergang" id="uebergang">Übergangsweise zeigen die Tabellen eine Auswahl vom 22.09.2026. Ab etwa Ende Oktober 2026 wird sie jeden Börsentag neu aus dem Handel der letzten drei Monate berechnet. Kurs und Rendite sind schon heute tagesaktuell.</p>
+    <p class="note lznote" id="lznote">Kurs in Prozent des Nennwerts; Rendite bis Fälligkeit in der Währung der Anleihe; Volumen: <span id="lz-vol">umlaufender Betrag</span>; Stückelung: kleinster Nennwert (zugleich Mindestanlage). Klick auf einen Spaltentitel sortiert die jeweilige Tabelle.</p>
+    <p class="note uebergang nur-hand" id="uebergang">Übergangsweise zeigen die Tabellen eine Auswahl vom 22.09.2026. Ab etwa Ende Oktober 2026 wird sie jeden Börsentag neu aus dem Handel der letzten drei Monate berechnet. Kurs und Rendite sind schon heute tagesaktuell.</p>
 
     <section class="lzsec" id="sehr-kurzfristig" aria-labelledby="h-sehr-kurzfristig">
       <h2 id="h-sehr-kurzfristig">Sehr kurzfristig: bis 1 Jahr Restlaufzeit</h2>
@@ -202,7 +202,7 @@
         <tbody></tbody>
       </table>
       </div>
-      <p class="note">Sieben der zehn kommen vom Bund – vier Bundesschatzanweisungen, zwei Bundesanleihen und eine Bundesobligation; dazu eine US-Treasury-Note, eine belgische und eine norwegische Anleihe in Kronen.</p>
+      <p class="note nur-hand">Sieben der zehn kommen vom Bund – vier Bundesschatzanweisungen, zwei Bundesanleihen und eine Bundesobligation; dazu eine US-Treasury-Note, eine belgische und eine norwegische Anleihe in Kronen.</p>
     </section>
 
     <section class="lzsec" id="kurzfristig" aria-labelledby="h-kurzfristig">
@@ -214,7 +214,7 @@
         <tbody></tbody>
       </table>
       </div>
-      <p class="note">Vorn liegt eine Anleihe Frankreichs; dazu zwei österreichische, je eine spanische, irische und belgische, drei Bundeswertpapiere und eine norwegische Anleihe in Kronen.</p>
+      <p class="note nur-hand">Vorn liegt eine Anleihe Frankreichs; dazu zwei österreichische, je eine spanische, irische und belgische, drei Bundeswertpapiere und eine norwegische Anleihe in Kronen.</p>
     </section>
 
     <section class="lzsec" id="mittelfristig" aria-labelledby="h-mittelfristig">
@@ -226,7 +226,7 @@
         <tbody></tbody>
       </table>
       </div>
-      <p class="note">Fünf Bundeswertpapiere, zwei US-Treasury-Notes, zwei spanische und eine österreichische Anleihe – alle an fast jedem Börsentag gehandelt.</p>
+      <p class="note nur-hand">Fünf Bundeswertpapiere, zwei US-Treasury-Notes, zwei spanische und eine österreichische Anleihe – alle an fast jedem Börsentag gehandelt.</p>
     </section>
 
     <section class="lzsec" id="langfristig" aria-labelledby="h-langfristig">
@@ -238,7 +238,7 @@
         <tbody></tbody>
       </table>
       </div>
-      <p class="note">Sieben Bundesanleihen mit Fälligkeiten von 2034 bis 2056, dazu Frankreich, Spanien und eine Euro-Anleihe Polens.</p>
+      <p class="note nur-hand">Sieben Bundesanleihen mit Fälligkeiten von 2034 bis 2056, dazu Frankreich, Spanien und eine Euro-Anleihe Polens.</p>
     </section>
 
     <section class="lzsec" id="sehr-langfristig" aria-labelledby="h-sehr-langfristig">
@@ -250,7 +250,7 @@
         <tbody></tbody>
       </table>
       </div>
-      <p class="note">Sehr lange Laufzeiten werden in Deutschland selten gehandelt: nur Österreichs Anleihe von 2117 an den meisten Börsentagen, ab Rang 4 an rund 50 Börsentagen im Jahr oder weniger – die Kurse sind hier meist Geldkurse ohne Umsatz. Nur neun Anleihen: Tschechiens Kronen-Anleihe 2057 hat an deutschen Börsen keinen Kurs und fehlt deshalb.</p>
+      <p class="note nur-hand">Sehr lange Laufzeiten werden in Deutschland selten gehandelt: nur Österreichs Anleihe von 2117 an den meisten Börsentagen, ab Rang 4 an rund 50 Börsentagen im Jahr oder weniger – die Kurse sind hier meist Geldkurse ohne Umsatz. Nur neun Anleihen: Tschechiens Kronen-Anleihe 2057 hat an deutschen Börsen keinen Kurs und fehlt deshalb.</p>
     </section>
 
 
@@ -372,17 +372,22 @@ const ANLEIHEN = {
 
 // Automatische Top 10 (seit 26.09.2026, scripts/update_top10.py): Ist die Datei „aktiv“ (mindestens 20 Börsentage erfasst),
 // ersetzt sie die Handauswahl oben (top10-tabellen.js) und TOP10_AKTIV passt die Texte an.
+// Texte bei automatischer Rangliste („aktiv“) – an EINER Stelle (seit 15.10.2026, Gesamtprüfung B05-01): TOP10_AKTIV setzt sie im
+// Browser, scripts/statische_tabellen.py schreibt sie beim Bau ins ausgelieferte HTML (Crawler und KI lesen sonst die Texte zur
+// Handauswahl neben der automatischen Liste). Schlüssel = id des Elements, dessen Inhalt ersetzt wird; {zeit} = Zeitraum der
+// Rangliste. Gültiges JSON: Schlüssel und Texte in doppelten Anführungszeichen. Elemente mit der Klasse „nur-hand“ beschreiben die
+// Handauswahl (Übergangshinweis, Notizen unter den Tabellen) und entfallen mit der automatischen Liste.
+const AKTIV_TEXTE = {
+  "m-rang": "<strong>Meistgehandelt</strong> heißt: an den meisten Börsentagen umgesetzt. Gezählt wird der Handel an der Börse Frankfurt und bei Tradegate {zeit}; bei Gleichstand zählt der höhere Umsatz. Die Listen werden jeden Börsentag neu berechnet – eine Gruppe hat weniger als zehn Anleihen, wenn nicht mehr gehandelt wurden. Durchsucht werden alle Staatsanleihen der Zentralstaaten aller Länder mit festem Kupon oder Nullkupon und aktuellem Kurs; nicht berücksichtigt sind inflationsindexierte und variabel verzinste Anleihen, Strips sowie Anleihen von Bundesländern, Kommunen, Förderbanken und supranationalen Einrichtungen.",
+  "m-vol": "<strong>Volumen und Stückelung</strong> aus dem ESMA-Register (FIRDS), wöchentlich aktualisiert. Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage. Ratings zeigt die Seite nicht, weil sie sich nicht automatisch aktuell halten lassen – wie du die Bonität eines Staates einschätzt, steht unter <a href=\"bonitaet.html\">Bonität und Ratings</a>.",
+  "lz-vol": "ausgegebener Nennbetrag"
+};
 function TOP10_AKTIV(d) {
   const f = d.fenster;
   // Zeitraum relativ statt mit Datum (Nutzerwunsch 01.10.2026): volles Fenster (60 Börsentage) = rund drei Monate
-  const zeit = f.tage >= f.soll ? "in den letzten drei Monaten" : `in den letzten ${f.tage} Börsentagen`;
-  const set = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
-  set("m-rang", `<strong>Meistgehandelt</strong> heißt: an den meisten Börsentagen umgesetzt. Gezählt wird der Handel an der Börse Frankfurt und bei Tradegate ${zeit}; bei Gleichstand zählt der höhere Umsatz. Die Listen werden jeden Börsentag neu berechnet – eine Gruppe hat weniger als zehn Anleihen, wenn nicht mehr gehandelt wurden. Durchsucht werden alle Staatsanleihen der Zentralstaaten aller Länder mit festem Kupon oder Nullkupon und aktuellem Kurs; nicht berücksichtigt sind inflationsindexierte und variabel verzinste Anleihen, Strips sowie Anleihen von Bundesländern, Kommunen, Förderbanken und supranationalen Einrichtungen.`);
-  // Übergangshinweis und die Notizen unter den Tabellen beschreiben die Handauswahl – mit der automatischen Liste ausblenden
-  const ue = document.getElementById("uebergang"); if (ue) ue.hidden = true;
-  document.querySelectorAll(".lzsec > p.note").forEach(p => { p.hidden = true; });
-  set("m-vol", `<strong>Volumen und Stückelung</strong> aus dem ESMA-Register (FIRDS), wöchentlich aktualisiert. Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert und damit die Mindestanlage. Ratings zeigt die Seite nicht, weil sie sich nicht automatisch aktuell halten lassen – wie du die Bonität eines Staates einschätzt, steht unter <a href="bonitaet.html">Bonität und Ratings</a>.`);
-  const n = document.getElementById("lznote"); if (n) n.textContent = n.textContent.replace(/Volumen: [^;]+;/, "Volumen: ausgegebener Nennbetrag;");
+  const w = { zeit: f.tage >= f.soll ? "in den letzten drei Monaten" : `in den letzten ${f.tage} Börsentagen` };
+  Object.keys(AKTIV_TEXTE).forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = AKTIV_TEXTE[id].replace(/\{(\w+)\}/g, (m, k) => k in w ? w[k] : m); });
+  document.querySelectorAll(".nur-hand").forEach(el => el.remove());
 }
 // Tabellen: top10-tabellen.js (gemeinsamer Code der vier Top-10-Seiten). Die Daten lädt die Seite selbst – so erkennt
 // scripts/inline_data.py die Dateien am Aufruf und bettet sie beim Deploy ein.

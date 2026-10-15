@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anleihen-Suche für alle deutschen Börsen – Bondarium</title>
+<title>Anleihen-Suche: Name, ISIN, WKN und Rendite – Bondarium</title>
 <meta name="description" content="Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen: Suche nach Name, ISIN oder WKN, Filter nach Land, Währung, Laufzeit.">
 <link rel="canonical" href="https://www.bondarium.de/anleihen-suche.html">
 <meta name="robots" content="index, follow">
@@ -12,14 +12,14 @@
 <meta property="og:site_name" content="Bondarium">
 <meta property="og:locale" content="de_DE">
 <meta property="og:url" content="https://www.bondarium.de/anleihen-suche.html">
-<meta property="og:title" content="Anleihen-Suche für alle deutschen Börsen – Bondarium">
+<meta property="og:title" content="Anleihen-Suche: Name, ISIN, WKN und Rendite – Bondarium">
 <meta property="og:description" content="Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen: Suche nach Name, ISIN oder WKN, Filter nach Land, Währung, Laufzeit.">
 <meta property="og:image" content="https://www.bondarium.de/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Bondarium: Finde Anleihen, die zu deinem Leben passen">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Anleihen-Suche für alle deutschen Börsen – Bondarium">
+<meta name="twitter:title" content="Anleihen-Suche: Name, ISIN, WKN und Rendite – Bondarium">
 <meta name="twitter:description" content="Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen: Suche nach Name, ISIN oder WKN, Filter nach Land, Währung, Laufzeit.">
 <meta name="twitter:image" content="https://www.bondarium.de/og-image.png">
 <link rel="icon" href="favicon.svg?v=4" type="image/svg+xml">
@@ -170,6 +170,7 @@
     .kpis tbody tr.zeile { column-gap: 0 !important; position: relative; }
     .kpis tbody tr.zeile > td[data-l="Kurs"], .kpis tbody tr.zeile > td[data-l="Bonität"], .kpis tbody tr.zeile > td[data-l="Stückelung"] { border-top: 1px solid var(--rule); padding-top: 9px; }
     .kpis tbody tr.zeile > td.aktion { position: absolute; top: 8px; right: 8px; width: auto; padding: 0 !important; }
+    .kpis tbody tr.zeile > td.aktion .merkbtn.nur { min-width: 44px; justify-content: center; }   /* Tippfläche auch in der Breite (15.10.2026, B03-06; vorher 22 px) */
     /* Stern antippbar (seit 09.10.2026, Technik-Test 08.10.2026 T-14): der Name (z-index 1 aus der Tabellenansicht, wirkt im Raster weiter)
        lag über dem Stern, der Tipp öffnete die Kurzansicht. Der Konto-Hinweis zum Merken erscheint als Sprechblase unter dem Stern. */
     .kpis tbody tr.zeile > th { z-index: auto; }
@@ -182,7 +183,7 @@
   }
   /* Grundfilter (bis 01.10.2026 abends „Solide Auswahl“; Nutzerwunsch): ein Schalter über den Filtern, sechs Grundregeln für Privatanleger als Vorfilter */
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Anleihen-Suche","description":"Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen: Suche nach Name, ISIN oder WKN, Filter nach Land, Währung, Laufzeit.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-09","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihen-suche.html","isBasedOn":{"@type":"Dataset","name":"Financial Instruments Reference Data System (FIRDS)","creator":{"@type":"Organization","name":"European Securities and Markets Authority (ESMA)"},"url":"https://registers.esma.europa.eu/publication/searchRegister?core=esma_registers_firds"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Anleihen-Suche","description":"Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen: Suche nach Name, ISIN oder WKN, Filter nach Land, Währung, Laufzeit.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-15","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihen-suche.html","isBasedOn":{"@type":"Dataset","name":"Financial Instruments Reference Data System (FIRDS)","creator":{"@type":"Organization","name":"European Securities and Markets Authority (ESMA)"},"url":"https://registers.esma.europa.eu/publication/searchRegister?core=esma_registers_firds"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.bondarium.de/anleihen.html"},{"@type":"ListItem","position":3,"name":"Anleihen-Suche","item":"https://www.bondarium.de/anleihen-suche.html"}]}</script>
 </head>
 <body>
@@ -305,7 +306,7 @@
     <div class="b2-kopf">
       <div>
         <h1>Anleihen-Suche</h1>
-        <p class="sub">Alle Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen. Suche nach Name, Emittent, ISIN oder WKN – oder stöbere nur mit den Filtern.</p>
+        <p class="sub">Staats- und Unternehmensanleihen mit aktuellem Kurs an der Börse Frankfurt oder bei Tradegate. Suche nach Name, Emittent, ISIN oder WKN – oder stöbere nur mit den Filtern.</p>
       </div>
       <div class="b2-spot"><img src="spot-anleihen-suche.svg" alt="" width="232" height="160"></div>
     </div>
@@ -369,7 +370,7 @@
       <summary>Datenquellen und Methodik</summary>
       <div class="quellen-body">
         <p><strong>Quelle.</strong> ESMA, Financial Instruments Reference Data System (FIRDS) – für diese Seite auf Anleihen an deutschen Börsen gefiltert und aufbereitet, die Werte selbst unverändert (Datenprüfung: Kupon und Fälligkeit jeder Anleihe werden gegen den Kurznamen im Register und gegen ihren Namen geprüft; bei Abweichung steht „Daten?“ am Namen, der Widerspruch in der Kurzansicht, und es gibt keine Rendite); die ESMA steht in keiner Verbindung zu dieser Seite und prüft sie nicht. Art und Land nach dem LEI-Register (GLEIF). Kurse: Deutsche Börse (Börse Frankfurt, Tradegate) – die Nachhandelsdaten, die jeder Handelsplatz nach der EU-Finanzmarktverordnung MiFIR 15 Minuten verzögert kostenlos veröffentlichen muss; Bundeswertpapiere: Deutsche Bundesbank. Volumen ist der ausgegebene Nennbetrag, Stückelung der kleinste Nennwert – beide in der Währung der Anleihe. Der Filter „Volumen“ trennt bei 100 Mio.: Darunter stellt die Börse oft nur kleine Stückzahlen, ein Verkauf vor der Fälligkeit kann dauern – das Volumen ist ein Anhaltspunkt für die Handelbarkeit, keine Garantie.</p>
-        <p><strong>Alle Anleihen mit Kurs an deutschen Börsen.</strong> Grundlage ist das Register der europäischen Wertpapieraufsicht ESMA, in dem jeder Handelsplatz der EU seine Wertpapiere meldet. Aufgenommen ist jede Anleihe, die in Stuttgart, Frankfurt, auf Xetra, in München (auch gettex), Berlin, Düsseldorf, Hamburg, Hannover oder bei Tradegate gehandelt wird, weder fällig noch vom Handel genommen ist und in den letzten zwei Wochen einen Kurs hatte – Staatsanleihen, öffentliche Anleihen und Unternehmensanleihen einschließlich Medium-Term Notes. Nicht enthalten sind Zertifikate und andere strukturierte Produkte, Wandelanleihen, verbriefte Anleihen (ABS/MBS) und Geldmarktpapiere. Das Register wird wöchentlich übernommen.</p>
+        <p><strong>Anleihen mit Kurs an der Börse Frankfurt oder bei Tradegate.</strong> Grundlage ist das Register der europäischen Wertpapieraufsicht ESMA, in dem jeder Handelsplatz der EU seine Wertpapiere meldet. Aufgenommen ist jede Anleihe, die an einer deutschen Börse gelistet ist (Stuttgart, Frankfurt, Xetra, München mit gettex, Berlin, Düsseldorf, Hamburg, Hannover oder Tradegate), weder fällig noch vom Handel genommen ist und in den letzten zwei Wochen einen Kurs an der Börse Frankfurt oder bei Tradegate hatte (Bundeswertpapiere: Deutsche Bundesbank) – eine Anleihe, die nur in Stuttgart, München oder an einer anderen Börse einen Kurs hat, fehlt deshalb. Dazu zählen Staatsanleihen, öffentliche Anleihen und Unternehmensanleihen einschließlich Medium-Term Notes. Nicht enthalten sind Zertifikate und andere strukturierte Produkte, Wandelanleihen, verbriefte Anleihen (ABS/MBS) und Geldmarktpapiere. Das Register wird wöchentlich übernommen.</p>
         <p><strong>Suche und Filter.</strong> Jedes Wort muss im Namen, im Emittenten, in der ISIN, der Währung, im Kupon oder im Fälligkeitsjahr vorkommen – „Bund 2050“ findet die Bundesanleihen mit Fälligkeit 2050. Bei deutschen ISINs ist die WKN Teil der ISIN und damit ebenfalls suchbar. Innerhalb eines Filters gilt „oder“, zwischen den Filtern „und“; die Zahl neben jeder Auswahl zeigt, wie viele Anleihen sie mit den übrigen Einstellungen ergibt. Suchbegriff und Filter stehen in der Adresszeile – so lässt sich jede Auswahl als Link teilen. Angezeigt werden zuerst 200 Treffer, weitere über „Weitere … anzeigen“ am Ende der Liste.</p>
         <p><strong>Kündigung.</strong> Von uns eingeordnet aus dem Namen – die Klammer „Ausgabejahr(erstes Kündigungsjahr/Fälligkeitsjahr)“, „Und.“ für unbefristet – und der Rückzahlungsart im ESMA-Register; der Name hat Vorrang, weil das Register die Rückzahlungsart oft ungenau meldet. Kündigungsjahr gleich Ausgabejahr: Make-Whole (bei Fix-to-Float-Anleihen „FLR“ dagegen Termin unklar – der erste echte Kündigungstermin ist meist der erste Zinsanpassungstermin); im letzten Jahr vor der Fälligkeit: kurz vor Fälligkeit; früher: ab festem Termin; ohne Jahr im Namen, aber laut Register kündbar: Termin unklar. Hat der Anleger laut Register ein Kündigungsrecht, steht die Anleihe zusätzlich unter „du kannst kündigen“. Verbindlich sind nur die Anleihebedingungen; die Arten erklärt die Seite <a href="kuendbare-anleihen.html">Kündbare Anleihen</a>.</p>
         <p><strong>Art und Land.</strong> „Staat“ sind Anleihen eines Zentralstaats, „Öffentlich“ solche von Bundesländern, Regionen und Städten, Förderbanken wie der KfW, staatlich garantierten Emittenten und supranationalen Institutionen wie der Europäischen Investitionsbank; alle übrigen – auch Banken und Versicherer – sind „Unternehmen“. Das Land ist der Sitz des Konzerns laut LEI-Register der GLEIF: Anleihen einer Finanzierungstochter zählen zum Land der Konzernmutter – die Mercedes-Benz International Finance B.V. also zu Deutschland, nicht zu den Niederlanden. Supranationale Institutionen stehen unter „International“.</p>
@@ -410,6 +411,8 @@ const T = {
   mehr: n => `Weitere ${n.toLocaleString("de-DE")} anzeigen`,
   hoch: "↑ Zur Suche und den Filtern",
   capped: z => ` – angezeigt in Schritten von ${z.toLocaleString("de-DE")}, weitere am Ende der Liste.`,
+  // Suchbegriff ohne Buchstaben und Ziffern („€“, Zeichen, Emoji; seit 15.10.2026, B03-07): vorher stand der Starttext da
+  keinWort: "Im Suchbegriff steht kein Wort, nach dem sich suchen lässt – gib einen Namen, eine ISIN, eine WKN oder ein Jahr ein, z. B. „Bund 2030“.",
   none: "Keine Anleihe gefunden. Tipp: Emittent oder Land und Jahr eingeben, z. B. „Bund 2030“, „Siemens 2029“ oder „Italien 2035“ – oder weniger Wörter und Filter lockern.",
   noneThemen: "Keine Anleihe gefunden. Passende Themen findest du darunter.",
   // Von über Bis (seit 09.10.2026, T-91): statt des Tipps sagen, woran es liegt – die Felder sind markiert, getauscht wird nichts
@@ -738,7 +741,7 @@ function zeige() {
   document.getElementById("bsp").hidden = aus;
   const unten = document.getElementById("status2");
   if (!aus || !hits.length) platzWeg();
-  if (!aus) { box.hidden = true; unten.hidden = true; status.innerHTML = L("ready")(IDX.length.toLocaleString("de-DE")); return; }
+  if (!aus) { box.hidden = true; unten.hidden = true; status.innerHTML = S.q.trim() ? MC.esc(L("keinWort")) : L("ready")(IDX.length.toLocaleString("de-DE")); return; }
   box.hidden = hits.length === 0;
   // Sortierung: mit Suchbegriff nach Übereinstimmung, sonst längste Restlaufzeit zuerst – bis jemand eine Spalte wählt (S.eigen)
   if (!S.eigen) { S.col = suche ? "rel" : "rest"; S.dir = -1; }

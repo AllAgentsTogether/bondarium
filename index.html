@@ -417,12 +417,7 @@
      Tiefgrün, letzter Wert als Kupon-Punkt (Skript kurve()); Pfeil-Knopf, Hover hebt an, Fokus-Rahmen.
      Überschreibt die älteren .kw/.kwv/.spk-Regeln darüber.
      ========================================================================================== */
-  .k-lab:has(+ .k2) { margin: 0 0 18px; font-size: 30px; font-weight: 600; line-height: 1.15; letter-spacing: -0.025em; }
-  .k-lab:has(+ .k2) small { display: block; margin-top: 8px; font-size: 16px; font-weight: 400; letter-spacing: 0; color: var(--text); }
-  @media (max-width: 760px) {
-    .k-lab:has(+ .k2) { font-size: 25px; }
-    .k-lab:has(+ .k2) small { font-size: 15px; }
-  }
+  /* 15.10.2026 (Gesamtprüfung B01-11): die Regeln für .k-lab vor .k2 und die übrigen Reste der Zinsen-Kacheln (.kc, .kwv, .vk, .isin-sp) sind entfernt */
   /* 01.10.2026 (Nutzerwunsch): Sechs Beispiele stündlich aus den Top 10 – drei Staats-, drei Unternehmensanleihen, dazwischen ein etwas kräftigerer Strich (entfällt beim Sortieren) */
   .itab tbody:not(.sortiert) tr.gr-ende > td { border-bottom: 2px solid rgba(26,26,25,0.2); }
   /* ==========================================================================================
@@ -519,11 +514,11 @@
   :root { --fs-label: 13px; --fs-meta: 14px; --fs-klein: 15px; --fs-ui: 16px; --fs-text: 17px; --fs-karte: 18px; --fs-h3: 21px; --fs-zahl: 24px; --fs-h2: 30px; }
   @media (max-width: 600px) { :root { --fs-text: 16px; --fs-karte: 17px; --fs-h3: 19px; --fs-zahl: 21px; --fs-h2: 25px; } }
   /* Label: Dachzeilen, Tabellenkopf, Marken, ISIN, Zahlen-Unterzeilen */
-  .kicker, .vt .vt-k, .itab thead th, .itab .art, .itab td.nm small, .kc .kz small, .hk-dach, .hk-art, .hk-fuss { font-size: var(--fs-label); }
+  .kicker, .vt .vt-k, .itab thead th, .itab .art, .itab td.nm small, .hk-dach, .hk-art, .hk-fuss { font-size: var(--fs-label); }
   /* Meta: Ergebnis unter dem Namen, dritte Zeile im Lernpfad, Kurzbeschreibungen, Hinweise, Kategorie der Top-10-Karten */
-  .kc .kicker, .ppl .res, .tueren.pfad .mehr, .vt a .vt-t span, .itab-note, .itab .isin-sp, .hk-rend { font-size: var(--fs-meta); }
+  .ppl .res, .tueren.pfad .mehr, .vt a .vt-t span, .itab-note, .hk-rend { font-size: var(--fs-meta); }
   /* Klein: Beschreibungen in Karten, Titel der kompakten Linkleiste „Tiefer einsteigen“, Such-Chips, Einheiten neben Kennzahlen */
-  .vk .desc, .vt a b, .bsp-bar, .bsp-bar a, .kwv .kw-bis, .kwv .kw-e, .hk-kopf { font-size: var(--fs-klein); }
+  .vt a b, .bsp-bar, .bsp-bar a, .hk-kopf { font-size: var(--fs-klein); }
   @media (max-width: 600px) { .bsp-bar a { font-size: var(--fs-meta); } }
   /* Bedienung: Links, Knöpfe, Namen, Tabelle, Unterzeilen neben Zwischentiteln */
   .bt .more, .ppl .cta, .ppl b, .tueren .sub, .suche .go, .itab, .k-lab small { font-size: var(--fs-ui); }
@@ -534,11 +529,10 @@
   /* Zwischentitel: Lernpfad-Schritte und beide Unterköpfe unter „Märkte und Top-10-Listen“ (vorher 18 und 30 px) */
   .tueren .verb, .k-lab { font-size: var(--fs-h3); line-height: 1.2; letter-spacing: -0.015em; }
   .k-lab { margin: 0 0 14px; font-weight: 600; }
-  .k-lab:has(+ .k2) small { display: inline; margin-top: 0; font-weight: 500; }
   /* Kennzahlen */
   /* 01.10.2026 (Nutzerhinweis „bei Zinsen viel größer als bei Top 10“): Top-10- und Zinsen-Karten zeigen dieselbe Art Zahl (Renditespanne)
      im selben Abschnitt – also eine Größe, keine eigene „große Kennzahl“ mehr */
-  .kc .kz, .kwv, .hk-z { font-size: var(--fs-zahl); }
+  .hk-z { font-size: var(--fs-zahl); }
   .hk-fuss { flex-wrap: wrap; row-gap: 2px; }   /* lange Fälligkeit bricht in die nächste Zeile statt abgeschnitten zu werden */
   /* Abschnittsüberschriften */
   .bt h2 { font-size: var(--fs-h2); }
@@ -659,7 +653,7 @@
     #bnd-einstieg h2 { font-size: var(--fs-h3); }
   }
   /* Top-10-Listen als drei Themenportale (02.10.2026, Entwurf 01): Staat hellgrün, Unternehmen weiß, ETFs dunkelgrün.
-     Schriftgrößen aus dem Raster oben (--fs-*). Ersetzt die Kacheln .k5/.kc (Regeln dafür oben bleiben ungenutzt stehen). */
+     Schriftgrößen aus dem Raster oben (--fs-*). Ersetzt die Kacheln .k5/.kc (deren Regeln seit 15.10.2026 entfernt). */
   #bnd-top10 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin: 0 0 40px; }
   #bnd-top10 .tp-k { position: relative; display: flex; flex-direction: column; min-height: 300px; padding: 26px 26px 22px; border: 1px solid rgba(26,26,25,0.12); border-radius: 18px; background: #fff; color: var(--ink); }
   #bnd-top10 .tp-staat { background: #EEF7E8; border-color: rgba(21,124,0,0.16); }
@@ -877,13 +871,25 @@
   .zs-lauf { display: flex; width: max-content; animation: zs-lauf 48s linear infinite; }   /* Laufband: zwei gleiche Gruppen, Verschiebung um eine Gruppenbreite = nahtlose Schleife */
   .zs-gruppe { display: flex; align-items: baseline; flex: none; padding-right: 40px; gap: 40px; }
   @keyframes zs-lauf { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  .zs-band:hover .zs-lauf, .zs-band:focus-within .zs-lauf { animation-play-state: paused; }
+  .zs-in:hover .zs-lauf, .zs-in:focus-within .zs-lauf { animation-play-state: paused; }   /* nur über den Werten – der Pause-Knopf daneben soll sichtbar wirken (15.10.2026) */
   .zs-in a { flex: none; display: inline-flex; align-items: baseline; gap: 7px; color: var(--ink); text-decoration: none; font-variant-numeric: tabular-nums; }
   .zs-in a:hover b { text-decoration: underline; text-underline-offset: 3px; }
   .zs-in a:focus-visible { outline: 2px solid var(--green-text); outline-offset: 3px; border-radius: 4px; }
   .zs-in a span { color: var(--text); } .zs-in a b { font-weight: 600; } .zs-in a i { font-style: normal; font-size: var(--fs-label); color: var(--text); }
   @media (prefers-reduced-motion: reduce) { .zs-lauf { animation: none; } .zs-in { overflow-x: auto; scrollbar-width: none; mask-image: none; -webkit-mask-image: none; } .zs-in::-webkit-scrollbar { display: none; } }
   @media (max-width: 600px) { .zs-band { margin-bottom: 10px; } .zs-in { padding: 8px 16px; } .zs-gruppe { gap: 24px; padding-right: 24px; } .zs-lauf { animation-duration: 30s; } .zs-in a i { display: none; } }
+  /* Stand und Pause-Knopf (15.10.2026, Gesamtprüfung B01-01, B01-09): „Stand“ am Ende jeder Gruppe (Werte verschiedener Tage);
+     der Knopf liegt rechts über der ausgeblendeten Kante und hält das Band an (WCAG 2.2.2 – am Handy gibt es kein Überfahren) */
+  .zs-band { position: relative; }
+  .zs-in .zs-stand { flex: none; font-size: var(--fs-label); color: var(--text); }
+  .zs-band.steht .zs-lauf { animation-play-state: paused; }
+  .zs-pause { position: absolute; top: 50%; right: max(6px, calc((100% - 1180px) / 2 + 6px)); transform: translateY(-50%); display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; padding: 0; border: 1px solid var(--rule); border-radius: 50%; background: #fff; color: var(--ink); cursor: pointer; }
+  .zs-pause[hidden] { display: none; }
+  .zs-pause svg { width: 14px; height: 14px; }
+  .zs-pause .zs-p-lauf, .zs-pause[aria-pressed="true"] .zs-p-halt { display: none; }
+  .zs-pause[aria-pressed="true"] .zs-p-lauf { display: inline; }
+  .zs-pause:focus-visible { outline: 2px solid var(--green-text); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { .zs-pause { display: none; } }
 
   /* ===== Straffen 11.10.2026 ===== Mockup tmp/startseite-opt, Nutzerentscheid „setze 1 bis 4 um“ */
   /* 1 Akademie: Reihe „Tiefer einsteigen“ mit sechs Einträgen in voller Breite (ab 601 px drei bzw. sechs je Zeile, Handy zweispaltig) */
@@ -965,7 +971,7 @@
   }
   @media (min-width: 641px) { .interessant .itab-note-handy { display: none; } }
 </style>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Anleihen verstehen und finden", "headline": "Anleihen verstehen und finden", "description": "Anleihen verstehen und finden: Wissen in kurzen Schritten, Renditen seit 1970, die meistgehandelten Anleihen und eine Suche über rund 33.000 Anleihen.", "inLanguage": "de", "isAccessibleForFree": true, "dateModified": "2026-10-02", "publisher": {"@type": "Organization", "name": "Bondarium", "url": "https://www.bondarium.de/"}, "mainEntityOfPage": "https://www.bondarium.de/"}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "CollectionPage", "name": "Anleihen verstehen und finden", "headline": "Anleihen verstehen und finden", "description": "Anleihen verstehen und finden: Wissen in kurzen Schritten, Renditen seit 1970, die meistgehandelten Anleihen und eine Suche über rund 33.000 Anleihen.", "inLanguage": "de", "isAccessibleForFree": true, "dateModified": "2026-10-15", "publisher": {"@type": "Organization", "name": "Bondarium", "url": "https://www.bondarium.de/"}, "mainEntityOfPage": "https://www.bondarium.de/"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Bondarium","alternateName":"bondarium.de","url":"https://www.bondarium.de/","description":"Anleihen in Perspektive: Staats- und Unternehmensanleihen weltweit, Langläufer, die meistgehandelten Anleihen je Land und Restlaufzeit und eine Suche über alle Anleihen an deutschen Börsen.","inLanguage":"de"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Bondarium","alternateName":"bondarium.de","url":"https://www.bondarium.de/","logo":"https://www.bondarium.de/apple-touch-icon.png"}</script>
 </head>
@@ -1084,9 +1090,10 @@
     </nav>
     <a class="kopfkonto" href="konto.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.2-4 4-5.5 7.5-5.5s6.3 1.5 7.5 5.5"/></svg><span>My Bondarium</span></a>
   </header>
-  <div class="zs-band" aria-label="Zinsstand: Schlusswerte und Veränderung zum Vormonat in Prozentpunkten" title="Schlusswerte; Veränderung zum Monatsdurchschnitt des Vormonats in Prozentpunkten. Quellen: Deutsche Bundesbank, Federal Reserve (H.15), EZB.">   <!-- Zinsstand-Zeile seit 11.10.2026 (Nutzerwunsch, Beispiel 4 aus tmp/Bondarium-Marktuebersicht-Umsetzungsbeispiele.pdf); seit 11.10. abends als Laufband (Nutzerwunsch; die Kartenreihe mit denselben fünf Zinsen im Zinsatlas ist seit 11.10. abends entfallen, Feedback): zweite Gruppe ist die Kopie für die Endlosschleife, ohne Stand-Datum. Werte sind Rückfall, das Skript am Seitenende ersetzt sie in beiden Gruppen -->
-    <div class="zs-in"><div class="zs-lauf"><div class="zs-gruppe"><a href="zinskurve.html" data-zs="bund2"><span>Bund 2 J.</span><b>3,08&nbsp;%</b><i>−0,16</i></a><a href="renditen.html" data-zs="bund10"><span>Bund 10 J.</span><b>3,57&nbsp;%</b><i>−0,07</i></a><a href="langlaeufer.html" data-zs="bund2050"><span>Bund 2050</span><b>3,88&nbsp;%</b><i>+0,03</i></a><a href="renditen.html" data-zs="us10"><span>USA 10 J.</span><b>5,28&nbsp;%</b><i>+0,29</i></a><a href="zinsniveau.html#ezb" data-zs="ezb"><span>EZB-Einlagesatz</span><b>2,50&nbsp;%</b></a></div><div class="zs-gruppe" aria-hidden="true"><a href="zinskurve.html" data-zs="bund2"><span>Bund 2 J.</span><b>3,08&nbsp;%</b><i>−0,16</i></a><a href="renditen.html" data-zs="bund10"><span>Bund 10 J.</span><b>3,57&nbsp;%</b><i>−0,07</i></a><a href="langlaeufer.html" data-zs="bund2050"><span>Bund 2050</span><b>3,88&nbsp;%</b><i>+0,03</i></a><a href="renditen.html" data-zs="us10"><span>USA 10 J.</span><b>5,28&nbsp;%</b><i>+0,29</i></a><a href="zinsniveau.html#ezb" data-zs="ezb"><span>EZB-Einlagesatz</span><b>2,50&nbsp;%</b></a></div></div></div>
-  </div>
+  <section class="zs-band" aria-label="Zinsstand: Schlusswerte und Veränderung zum Vormonat in Prozentpunkten" title="Schlusswerte; Veränderung zum Monatsdurchschnitt des Vormonats in Prozentpunkten. Quellen: Deutsche Bundesbank, Federal Reserve (H.15), EZB.">   <!-- Zinsstand-Zeile seit 11.10.2026 (Nutzerwunsch, Beispiel 4 aus tmp/Bondarium-Marktuebersicht-Umsetzungsbeispiele.pdf); seit 11.10. abends als Laufband (Nutzerwunsch; die Kartenreihe mit denselben fünf Zinsen im Zinsatlas ist seit 11.10. abends entfallen, Feedback): zweite Gruppe ist die Kopie für die Endlosschleife (aria-hidden, Links mit tabindex="-1" – sonst landete die Tab-Taste auf Links, die Screenreader verschweigen; G03-01). Werte, Veränderungen und „Stand“ (B01-01: Tag der Bundesbank-Kurve, abweichende Tage je Wert) schreibt seit 15.10.2026 der Bau (scripts/statische_tabellen.py, zinsstand()); hier Rückfall. section mit aria-label = Landmarke (G03-01). -->
+    <div class="zs-in"><div class="zs-lauf"><div class="zs-gruppe"><a href="zinskurve.html" data-zs="bund2"><span>Bund 2 J.</span><b>3,10&nbsp;%</b><i>−0,14</i></a><a href="renditen.html" data-zs="bund10"><span>Bund 10 J.</span><b>3,49&nbsp;%</b><i>−0,15</i></a><a href="langlaeufer.html" data-zs="bund2050"><span>Bund 2050</span><b>3,79&nbsp;%</b><i>−0,06</i></a><a href="renditen.html" data-zs="us10"><span>USA 10 J.</span><b>5,24&nbsp;%</b><i>+0,25</i></a><a href="zinsniveau.html#ezb" data-zs="ezb"><span>EZB-Einlagesatz</span><b>2,50&nbsp;%</b></a><span class="zs-stand">Stand 13.10. · USA 09.10.</span></div><div class="zs-gruppe" aria-hidden="true"><a tabindex="-1" href="zinskurve.html" data-zs="bund2"><span>Bund 2 J.</span><b>3,10&nbsp;%</b><i>−0,14</i></a><a tabindex="-1" href="renditen.html" data-zs="bund10"><span>Bund 10 J.</span><b>3,49&nbsp;%</b><i>−0,15</i></a><a tabindex="-1" href="langlaeufer.html" data-zs="bund2050"><span>Bund 2050</span><b>3,79&nbsp;%</b><i>−0,06</i></a><a tabindex="-1" href="renditen.html" data-zs="us10"><span>USA 10 J.</span><b>5,24&nbsp;%</b><i>+0,25</i></a><a tabindex="-1" href="zinsniveau.html#ezb" data-zs="ezb"><span>EZB-Einlagesatz</span><b>2,50&nbsp;%</b></a><span class="zs-stand">Stand 13.10. · USA 09.10.</span></div></div></div>
+    <button type="button" class="zs-pause" aria-pressed="false" aria-label="Laufband anhalten" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="zs-p-halt" d="M8 6v12M16 6v12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path class="zs-p-lauf" d="M8.5 6.2v11.6L18 12z" fill="currentColor"/></svg></button>
+  </section>
   <main id="main">
 
     <section class="hero" aria-labelledby="h-hero">
@@ -1110,7 +1117,7 @@
       </section>
 
       <section id="bnd-einstieg" aria-labelledby="h-einstieg">   <!-- Anfänger-Einstieg 02.10.2026 (Entwurf des Nutzers, Variante 01 „Persönliche Einladung“): der ganze Block führt zu den Grundlagen -->
-        <span class="be-bild" aria-hidden="true"><img src="einstieg-portraet.webp?v=2" width="520" height="548" alt="" decoding="async"></span>
+        <span class="be-bild" aria-hidden="true"><img src="einstieg-portraet.webp?v=2" srcset="einstieg-portraet-240.webp 240w, einstieg-portraet.webp?v=2 520w" sizes="(max-width: 700px) 150px, (max-width: 860px) 194px, 228px" width="520" height="548" alt="" decoding="async"></span>
         <div class="be-karte"><h2 id="h-einstieg">Anleihen? <em>Fang hier an.</em></h2><p>Das Wichtigste in etwa 4&nbsp;Minuten.</p></div>
         <a class="be-knopf" href="grundlagen.html">Einfach erklärt<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 12h16M14 6l6 6-6 6"/></svg></a>
       </section>
@@ -1133,7 +1140,7 @@
           <a href="erste-anleihe.html" style="--c:#39FF14;--ci:#1A1A19;--ct:#157C00;--tint:#DFFFD9"><span class="txt"><span class="kopf"><span class="nr" aria-hidden="true">3</span><span class="verb">Kaufen</span></span><span class="sub"><b>Deine erste Anleihe in neun Schritten.</b></span><span class="mehr">Handelsplatz, Limit, Kosten – Schritt für Schritt.</span></span><svg class="ill" viewBox="0 0 48 48" aria-hidden="true" focusable="false" fill="none" stroke="#1A1A19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="5" width="25" height="32" rx="4" fill="#DCFBD3"/><path d="M14.5 13H28.5M14.5 19H28.5M14.5 25H21"/><circle cx="34" cy="33" r="7.5" fill="#39FF14"/><path d="M30.5 33.25L33 35.5L37.5 30.75"/></svg></a>
         </div>
         <div class="vertiefen">   <!-- seit 11.10.2026 abends (Straffen) nur noch die Reihe „Tiefer einsteigen“ mit sechs Einträgen; die Karten Anlageziele (Dublette zum Abschnitt darüber) und ETF-Frage sind entfallen -->
-          <nav class="vt" aria-labelledby="vt-k"><p class="vt-k" id="vt-k">Tiefer einsteigen</p><div class="vt-l"><a href="wissen.html#fortgeschrittene"><span class="vt-t"><b>Für Fortgeschrittene</b><span>Duration, Risikoaufschläge, Anleihenleiter</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="kaufen.html"><span class="vt-t"><b>Alles zum Kauf</b><span>Broker, Handelsplätze, Steuern, Rechner</span></span></a><a href="risiko.html"><span class="vt-t"><b>Risiko kennen</b><span>Die sieben Risiken von Anleihen</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="anlageziele.html#fuer-wen"><span class="vt-t"><b>Für wen Anleihen passen</b><span>Und für wen nicht</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="begriffe.html"><span class="vt-t"><b>Glossar</b><span>69 Begriffe von A bis Z</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="etf-oder-anleihe.html"><span class="vt-t"><b>ETF oder Anleihe?</b><span>Vor- und Nachteile im Vergleich</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></div></nav>
+          <nav class="vt" aria-labelledby="vt-k"><p class="vt-k" id="vt-k">Tiefer einsteigen</p><div class="vt-l"><a href="wissen.html#fortgeschrittene"><span class="vt-t"><b>Für Fortgeschrittene</b><span>Duration, Risikoaufschläge, Anleihenleiter</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="kaufen.html"><span class="vt-t"><b>Alles zum Kauf</b><span>Broker, Handelsplätze, Steuern, Rechner</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="risiko.html"><span class="vt-t"><b>Risiko kennen</b><span>Die sieben Risiken von Anleihen</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="anlageziele.html#fuer-wen"><span class="vt-t"><b>Für wen Anleihen passen</b><span>Und für wen nicht</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="begriffe.html"><span class="vt-t"><b>Glossar</b><span><span data-kz="begriffe-anzahl">71</span> Begriffe von A bis Z</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a><a href="etf-oder-anleihe.html"><span class="vt-t"><b>ETF oder Anleihe?</b><span>Vor- und Nachteile im Vergleich</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h13M13 6.5l5.5 5.5-5.5 5.5"/></svg></a></div></nav>
         </div>
       </section>
 
@@ -1157,7 +1164,7 @@
         <!-- seit 11.10.2026 abends (Straffen): die drei Top-10-Karten stehen hier unter der Tabelle; der eigene Abschnitt „Märkte und Top-10-Listen / Was der Markt derzeit zahlt“ ist entfallen -->
         <!-- Top-10-Listen als drei Themenportale (02.10.2026, Entwurf 01 des Nutzers aus bondarium-top10-drei-designentwuerfe.pdf):
              ersetzt die fünf Kacheln mit Renditespanne – bewusst ohne Marktkennzahlen, fünf Links zu den fünf Listen-Seiten -->
-        <h3 class="k-lab">Alle Top-10-Listen <small>nach Laufzeit, nach Land, ETFs nach Kategorie</small></h3>
+        <h3 class="k-lab">Alle Top-10-Listen <small>nach Laufzeit, nach Land, ETFs nach Kategorie · <a href="anleihen.html">alle Listen im Überblick</a></small></h3>
         <div class="tp" id="bnd-top10">
           <div class="tp-k tp-staat">
             <span class="tp-n" aria-hidden="true">10</span>
@@ -1214,7 +1221,7 @@
       </section>
 
       <section id="bnd-konto" aria-labelledby="h-konto">   <!-- Gesamtprüfung 11.10.2026, Punkt 11: der Bereich fehlte auf der Startseite -->
-        <div class="bt"><p class="kicker dach">My Bondarium</p><h2 id="h-konto">Merken, planen, erinnern lassen</h2><p class="bsub">Dein kostenloser Bereich: Anleihen und ETFs auf die Merkliste, Musterdepots mit Zinskalender, E-Mail vor Zinstermin und Fälligkeit, dein Lernstand in der Akademie.</p></div>
+        <div class="bt"><p class="kicker dach">My Bondarium</p><h2 id="h-konto">Merken, planen, erinnern lassen</h2><p class="bsub">Dein kostenloser Bereich: Anleihen und ETFs auf die Merkliste, Musterdepots mit Zinskalender, E-Mail vor Zinstermin und Fälligkeit, dein Lernstand in der Akademie. Auf Wunsch jeden Freitag der <a href="konto.html#h-nl">Wochenbrief</a> mit den Zinsen der Woche und den meistgehandelten Anleihen.</p></div>
         <a class="go kt-go" href="konto.html">My Bondarium öffnen&nbsp;→</a>
       </section>
 
@@ -1230,6 +1237,7 @@
   </footer>
 </div>
 
+<script type="application/json" id="top10-pool">null</script>   <!-- Liste der Top-10-Seiten für Tabelle und Hero-Karte – schreibt der Bau (scripts/statische_tabellen.py, seit 15.10.2026) -->
 <script src="site.js"></script>
 <script src="felder.js"></script>
 <script src="konto.js"></script>
@@ -1285,42 +1293,36 @@ var ZT = (function () {
 
 
 
-// Sechs Beispiele (01.10.2026, Nutzerwunsch): jede Stunde zufällig drei Staats- und drei Unternehmensanleihen aus den
-// Top-10-Listen (je Art aus „nach Ländern“ und „nach Laufzeit“, keine ETFs), möglichst verschiedene Emittenten.
-// Zufall an der Stundennummer wie bei der Hero-Karte: innerhalb einer Stunde sieht jeder dieselben sechs.
+// Liste „Top 10 meistgehandelt“ (seit 15.10.2026, Gesamtprüfung B01-21): dieselben Anleihen wie auf den vier Top-10-Seiten – bis deren
+// automatische Rangliste „aktiv“ ist, ihre Handauswahl, danach die automatische Liste. Bis 14.10.2026 zog die Startseite aus den
+// vorläufigen automatischen Listen (top10-*.json), die Top-10-Seiten zeigten die Handauswahl. scripts/statische_tabellen.py schreibt die
+// Liste beim Bau als JSON in #top10-pool ({stand, staat: […], unternehmen: […]}, Felder wie in top10-*.json) und dazu die sechs Zeilen
+// und die Hero-Karte der Bau-Stunde fest ins HTML. Fehlt die Liste (lokal ohne Bau), bleiben die festen Zeilen und die Karte stehen.
+var POOL = (function () {
+  try { var el = document.getElementById("top10-pool"), p = el && JSON.parse(el.textContent); return p && p.staat && p.unternehmen ? p : null; } catch (e) { return null; }
+})();
+function mitRendite(liste) { return (liste || []).filter(function (x) { return x && x.isin && x.faellig && typeof x.rendite === "number" && typeof x.kurs === "number"; }); }
+
+// Sechs Beispiele (01.10.2026, Nutzerwunsch): jede Stunde zufällig drei Staats- und drei Unternehmensanleihen aus der Liste oben,
+// möglichst verschiedene Emittenten. Zufall an der Stundennummer wie bei der Hero-Karte: innerhalb einer Stunde sieht jeder dieselben sechs
+// (und dieselben wie im HTML, wenn die Seite in der Stunde ihres Baus gebaut wurde – scripts/statische_tabellen.py rechnet gleich).
 // Seit 03.10.2026 Standardtabelle (felder.js, Konzept „Einheitliche Anleihen-Angaben“): Anleihe (ISIN · Art · Währung) · Rendite · Kupon
 // (Zinstermin darunter) · Restlaufzeit (Fälligkeit darunter) · Kurs · Bonität · Stückelung · Merken; am Handy Karten.
-// Rückfall, falls die Listen nicht laden: die festen Zeilen im HTML mit Tageskursen aus kurse-auswahl.json (scripts/update_kurse.py).
 (function () {
   var table = document.querySelector("table.itab"), st = document.getElementById("itab-stand");
-  if (!table || !MC.load || !MC.felder) return;
+  if (!table) return;
+  // Ganze Zeile öffnet den Steckbrief (UX-Review 30.09.2026); Links, Knöpfe und markierter Text behalten ihr Verhalten
+  table.addEventListener("click", function (e) {
+    if (e.target.closest("a, button, thead")) return;
+    var tr = e.target.closest("tbody tr[data-isin]"); if (!tr) return;
+    if (window.getSelection && String(window.getSelection()).length) return;
+    var url = "anleihe.html?isin=" + encodeURIComponent(tr.getAttribute("data-isin"));
+    if (e.metaKey || e.ctrlKey) window.open(url, "_blank"); else location.href = url;
+  });
+  var staat = mitRendite(POOL && POOL.staat), unt = mitRendite(POOL && POOL.unternehmen);
+  if (!MC.felder || staat.length < 3 || unt.length < 3) return;   // ohne Liste bleiben die festen Zeilen
   var IDS = ["anleihe", "rendite", "kupon", "restlaufzeit", "kurs", "bonitaet", "stueckelung"].concat(MC.konto ? ["merken"] : []);
-  var SORT = { col: null, dir: 1 }, ZEILEN = [], KSTAND = "";
-  function tageskurse() {
-    MC.load("kurse-auswahl.json").then(function (d) {
-      if (st && d.stand && MC.datum) st.textContent = MC.datum(d.stand);
-      var K = d.kurse || {};
-      table.querySelectorAll("tbody tr[data-isin]").forEach(function (tr) {
-        var k = K[tr.getAttribute("data-isin")]; if (!k) return;
-        var kurs = tr.querySelector('td[data-l="Kurs"] span'), rend = tr.querySelector('td[data-l="Rendite"]');
-        if (kurs) kurs.textContent = MC.felder.kurs(k[0]);
-        if (rend) rend.textContent = MC.felder.pct(typeof k[1] === "number" ? k[1] : null);
-      });
-    }).catch(function (e) { console.warn("Tageskurse nicht geladen:", e); });
-  }
-  function laden(namen) {
-    return Promise.all(namen.map(function (n) { return MC.load(n).catch(function () { return null; }); })).then(function (ds) {
-      var pool = {}, stand = "";
-      ds.forEach(function (d) {
-        if (!d || !d.gruppen) return;
-        if (d.stand > stand) stand = d.stand;
-        Object.keys(d.gruppen).forEach(function (g) {
-          (d.gruppen[g] || []).forEach(function (x) { if (x && x.isin && x.faellig && typeof x.rendite === "number" && typeof x.kurs === "number") pool[x.isin] = x; });
-        });
-      });
-      return { liste: Object.keys(pool).sort().map(function (i) { return pool[i]; }), stand: stand };
-    });
-  }
+  var SORT = { col: null, dir: 1 }, ZEILEN = [], KSTAND = POOL.stand || "";
   function zufall(seed) {   // xorshift32, Startwert aus der Stundennummer
     var t = (seed ^ 0x9E3779B9) >>> 0 || 1;
     return function () { t ^= t << 13; t >>>= 0; t ^= t >>> 17; t ^= t << 5; t >>>= 0; return t / 4294967296; };
@@ -1332,8 +1334,8 @@ var ZT = (function () {
     a.forEach(function (x) { if (wahl.length < n && wahl.indexOf(x) < 0) wahl.push(x); });
     return wahl;
   }
-  function objekt(x, i) {   // Zeile der Top-10-Datei → Zeilenobjekt der Standardtabelle
-    return { platz: i + 1, isin: x.isin, kurz: x.kurz || x.emittent || x.isin, reg: "", art: x.art === "Unternehmen" ? 2 : x.art === "Öffentlich" ? 1 : 0,
+  function objekt(x, i) {   // Zeile der Liste → Zeilenobjekt der Standardtabelle
+    return { platz: i + 1, isin: x.isin, kurz: x.kurz || x.emittent || x.isin, reg: x.reg || "", art: x.art === "Unternehmen" ? 2 : x.art === "Öffentlich" ? 1 : 0,
       ccy: x.cur, kupon: x.kupon, zinsart: x.kupon === 0 ? 2 : 0, faellig: x.faellig, kurs: x.kurs, kdatum: x.datum, rend: x.rendite,
       rendGrund: "keine Rendite in den Kursdaten", bon: x.bon, stk: x.stk, vol: x.vol, quelle: x };
   }
@@ -1346,32 +1348,18 @@ var ZT = (function () {
     table.insertAdjacentHTML("beforeend", html);
   }
   MC.felder.sortierbar(table, SORT, zeichne);
-  // Dateinamen ausgeschrieben (seit 03.10.2026): So bettet scripts/inline_data.py die vier Listen beim Veröffentlichen ein, und die Tabelle
-  // erscheint gleich mit den aktuellen Anleihen – vorher stand kurz die feste Auswahl vom 25.09.2026 da und wechselte dann
-  Promise.all([laden(["top10-staatsanleihen-laender.json", "top10-staatsanleihen-laufzeit.json"]), laden(["top10-unternehmensanleihen-laender.json", "top10-unternehmensanleihen-laufzeit.json"])]).then(function (r) {
-    if (r[0].liste.length < 3 || r[1].liste.length < 3) return tageskurse();
-    var her = document.getElementById("itab-her"); if (her) her.textContent = "Aus den Top 10 · stündlich neu gewählt";
-    KSTAND = r[0].stand > r[1].stand ? r[0].stand : r[1].stand;
-    if (st && KSTAND && MC.datum) st.textContent = MC.datum(KSTAND);
-    function zeige() {
-      var h = Math.floor(Date.now() / 3600000), s = ziehe(r[0].liste, 3, zufall(h)), u = ziehe(r[1].liste, 3, zufall(h + 7919));
-      ZEILEN = s.concat(u).map(objekt);
-      zeichne();
-      setTimeout(zeige, 3600000 - Date.now() % 3600000 + 500);   // zur vollen Stunde wechseln, auch bei offener Seite
-    }
-    zeige();
-  }).catch(tageskurse);
-  // Ganze Zeile öffnet den Steckbrief (UX-Review 30.09.2026); Links, Knöpfe und markierter Text behalten ihr Verhalten
-  table.addEventListener("click", function (e) {
-    if (e.target.closest("a, button, thead")) return;
-    var tr = e.target.closest("tbody tr[data-isin]"); if (!tr) return;
-    if (window.getSelection && String(window.getSelection()).length) return;
-    var url = "anleihe.html?isin=" + encodeURIComponent(tr.getAttribute("data-isin"));
-    if (e.metaKey || e.ctrlKey) window.open(url, "_blank"); else location.href = url;
-  });
+  var her = document.getElementById("itab-her"); if (her) her.textContent = "Aus den Top-10-Listen · stündlich neu gewählt";
+  if (st && KSTAND && MC.datum) st.textContent = MC.datum(KSTAND);
+  function zeige() {
+    var h = Math.floor(Date.now() / 3600000);
+    ZEILEN = ziehe(staat, 3, zufall(h)).concat(ziehe(unt, 3, zufall(h + 7919))).map(objekt);
+    zeichne();
+    setTimeout(zeige, 3600000 - Date.now() % 3600000 + 500);   // zur vollen Stunde wechseln, auch bei offener Seite
+  }
+  zeige();
 })();
 
-// Hero-Karte (01.10.2026): jede Stunde zufällig eine Anleihe aus allen Einträgen der vier Top-10-Listen (keine ETFs).
+// Hero-Karte (01.10.2026): jede Stunde zufällig eine Anleihe aus allen Einträgen der Liste (seit 15.10.2026 #top10-pool, siehe oben; keine ETFs).
 // Der Zufall hängt an der Stundennummer: innerhalb einer Stunde zeigt jeder Aufruf dieselbe Anleihe, zur vollen Stunde wechselt sie.
 // Laufzeit-Achse mit festem, gleichmäßigem 30-Jahre-Maßstab (01.10.2026): nur der große Punkt hat Bedeutung (Rückzahlung, ab 30 Jahren ganz rechts);
 // die kleinen Punkte sind reine Skala bei 6, 12, 18, 24 und 30 Jahren (Nutzerwunsch: „nur Skala, sonst keine Bedeutung“), keine Kupontermine.
@@ -1386,32 +1374,25 @@ var ZT = (function () {
     a.innerHTML = html + '<i style="--x:' + p.toFixed(4) + '"></i>';
   }
   achse(a.getAttribute("data-faellig"));
-  if (!MC.load || !window.matchMedia || !matchMedia("(min-width: 941px)").matches) return;   // Karte erscheint erst ab 941 px
-  var LISTEN = ["top10-staatsanleihen-laender", "top10-staatsanleihen-laufzeit", "top10-unternehmensanleihen-laender", "top10-unternehmensanleihen-laufzeit"];
-  Promise.all(LISTEN.map(function (n) { return MC.load(n + ".json").catch(function () { return null; }); })).then(function (ds) {
-    var pool = {};
-    ds.forEach(function (d) {
-      if (!d || !d.gruppen) return;
-      Object.keys(d.gruppen).forEach(function (g) {
-        (d.gruppen[g] || []).forEach(function (x) { if (x && x.isin && x.faellig && typeof x.rendite === "number") pool[x.isin] = x; });
-      });
-    });
-    var isins = Object.keys(pool).sort(); if (!isins.length) return;
-    function zeige() {
-      var h = Math.floor(Date.now() / 3600000), t = (h ^ 0x9E3779B9) >>> 0;   // Stundennummer verwürfeln (xorshift), damit benachbarte Stunden nicht benachbarte Anleihen zeigen
-      t ^= t << 13; t >>>= 0; t ^= t >>> 17; t ^= t << 5; t >>>= 0;
-      var x = pool[isins[t % isins.length]], d = x.faellig.split("-");
-      karte.href = "anleihe.html?isin=" + encodeURIComponent(x.isin);
-      var nm = document.getElementById("hk-name"); nm.textContent = x.emittent || x.isin; nm.title = x.emittent || "";
-      document.getElementById("hk-art").textContent = x.art === "Unternehmen" ? "Unternehmen" : "Staat";
-      document.getElementById("hk-rend").textContent = MC.zahl(x.rendite, 2) + " %";
-      document.getElementById("hk-kupon").innerHTML = ZT.karte(x);
-      document.getElementById("hk-rueck").textContent = "Rückzahlung " + d[2] + "." + d[1] + "." + d[0];
-      a.setAttribute("data-faellig", x.faellig); achse(x.faellig);
-      setTimeout(zeige, 3600000 - Date.now() % 3600000 + 500);   // zur nächsten vollen Stunde wechseln, auch bei offener Seite
-    }
-    zeige();
-  });
+  if (!window.matchMedia || !matchMedia("(min-width: 941px)").matches) return;   // Karte erscheint erst ab 941 px
+  var pool = {};
+  mitRendite(POOL ? POOL.staat.concat(POOL.unternehmen) : []).forEach(function (x) { pool[x.isin] = x; });
+  var isins = Object.keys(pool).sort(); if (!isins.length) return;
+  function zeige() {
+    var h = Math.floor(Date.now() / 3600000), t = (h ^ 0x9E3779B9) >>> 0;   // Stundennummer verwürfeln (xorshift), damit benachbarte Stunden nicht benachbarte Anleihen zeigen
+    t ^= t << 13; t >>>= 0; t ^= t >>> 17; t ^= t << 5; t >>>= 0;
+    var x = pool[isins[t % isins.length]], d = x.faellig.split("-");
+    karte.href = "anleihe.html?isin=" + encodeURIComponent(x.isin);
+    // Kurzname wie in der Tabelle darunter („Italien“ statt „Republik Italien“; seit 15.10.2026, B01-08), der Emittent als Hinweis
+    var nm = document.getElementById("hk-name"); nm.textContent = x.kurz || x.emittent || x.isin; nm.title = x.emittent || "";
+    document.getElementById("hk-art").textContent = x.art === "Unternehmen" ? "Unternehmen" : "Staat";
+    document.getElementById("hk-rend").textContent = MC.zahl(x.rendite, 2) + " %";
+    document.getElementById("hk-kupon").innerHTML = ZT.karte(x);
+    document.getElementById("hk-rueck").textContent = "Rückzahlung " + d[2] + "." + d[1] + "." + d[0];
+    a.setAttribute("data-faellig", x.faellig); achse(x.faellig);
+    setTimeout(zeige, 3600000 - Date.now() % 3600000 + 500);   // zur nächsten vollen Stunde wechseln, auch bei offener Seite
+  }
+  zeige();
 })();
 
 // Nav-Dropdowns + aria-current: gemeinsame Implementierung in site.js
@@ -1432,41 +1413,17 @@ MC.navInit();
 
 // Zinsatlas (seit 01.10.2026): ohne Skript – die Mini-Kurven und Spannen der alten Zinsen-Karten sind entfallen
 
-// Zinsstand-Zeile (11.10.2026) unter der Kopfzeile: Bund 2 und 10 Jahre und USA 10 Jahre aus zinskurve.json (jüngster Tageswert,
-// Veränderung zum Monatsdurchschnitt des Vormonats in Prozentpunkten), Bund 0 % 2050 aus langlaeufer.json (Veränderung zum Durchschnitt
-// der Wochenwerte des Vormonats), EZB-Einlagesatz aus ezb.json (ohne Veränderung). Die Werte im HTML sind Rückfall und werden je Datei
-// einzeln ersetzt; fällt eine Datei aus, bleibt ihr Rückfall stehen. Stand-Datum = Tag der Bundesbank-Kurve.
+// Zinsstand-Zeile (11.10.2026) unter der Kopfzeile: Werte, Veränderungen und Stand schreibt seit 15.10.2026 der Bau ins HTML
+// (scripts/statische_tabellen.py, zinsstand(); Gesamtprüfung B01-01, B01-02, B01-10) – vorher ersetzte dieses Skript die Rückfallwerte aus
+// zinskurve.json, langlaeufer.json und ezb.json, die dafür eingebettet wurden (rund 50 KB für fünf Zahlen); ohne Skript sahen Crawler
+// die Werte der letzten Handpflege. Hier nur der Pause-Knopf (B01-09, WCAG 2.2.2): Am Handy hält kein Überfahren mit der Maus das Band an.
 (function () {
-  var band = document.querySelector(".zs-band");
-  if (!band || typeof MC.load !== "function") return;
-  function vormonat(iso) { var j = +iso.slice(0, 4), m = +iso.slice(5, 7) - 1; if (!m) { j--; m = 12; } return j + "-" + (m < 10 ? "0" : "") + m; }
-  function pkt(d) { var n = Math.round(d * 100) / 100; return (n > 0 ? "+" : n < 0 ? "\u2212" : "\u00b1") + MC.zahl(Math.abs(n), 2); }
-  function setz(key, wert, delta) {
-    if (typeof wert !== "number") return;
-    band.querySelectorAll('[data-zs="' + key + '"]').forEach(function (k) {
-      k.querySelector("b").textContent = MC.zahl(wert, 2) + "\u00a0%";
-      var i = k.querySelector("i");
-      if (i && typeof delta === "number") i.textContent = pkt(delta);
-    });
-  }
-  MC.load("zinskurve.json").then(function (z) {
-    ["DE", "US"].forEach(function (land) {
-      var h = z.heute && z.heute[land];
-      if (!h) return;
-      var vm = vormonat(h[0]), row = null;
-      (z.monate && z.monate[land] || []).forEach(function (r) { if (r[0] === vm) row = r; });
-      if (land === "DE") setz("bund2", h[1], row && h[1] - row[1]);
-      setz(land === "DE" ? "bund10" : "us10", h[2], row && h[2] - row[2]);
-    });
-  }).catch(function () {});
-  MC.load("ezb.json").then(function (e) { if (e.aktuell) setz("ezb", e.aktuell[1]); }).catch(function () {});
-  MC.load("langlaeufer.json").then(function (l) {
-    var b = l.bonds && l.bonds.bund2050;
-    if (!b || !b.latest) return;
-    var vm = vormonat(b.latest.date), w = (b.weekly || []).filter(function (r) { return r[0].slice(0, 7) === vm; });
-    var avg = w.length ? w.reduce(function (s, r) { return s + r[2]; }, 0) / w.length : null;
-    setz("bund2050", b.latest.yield, avg != null ? b.latest.yield - avg : null);
-  }).catch(function () {});
+  var band = document.querySelector(".zs-band"), k = band && band.querySelector(".zs-pause");
+  if (!k) return;
+  k.hidden = false;   // ohne Skript kein Knopf – Überfahren und Fokus halten das Band trotzdem an
+  k.addEventListener("click", function () {
+    k.setAttribute("aria-pressed", band.classList.toggle("steht") ? "true" : "false");   // Name bleibt „Laufband anhalten“, der Zustand steht in aria-pressed
+  });
 })();
 </script>
 </body>

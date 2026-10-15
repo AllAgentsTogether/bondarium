@@ -71,6 +71,8 @@
   .kpis th[scope=row] { white-space: nowrap; font-weight: 600; }
   .kpis td.num small { display: block; color: var(--muted); font-size: 12px; }
   .tag { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 7px; }
+  .tag-strich, .tag-punkt { width: 16px; height: 2px; border-radius: 0; vertical-align: middle; background: repeating-linear-gradient(90deg, currentColor 0 6px, transparent 6px 10px); }   /* gestrichelte bzw. gepunktete Linie im Schaubild (15.10.2026) */
+  .tag-punkt { background: repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 5px); }
   @media (max-width: 760px) {  .fitrow { grid-template-columns: repeat(2, 1fr); }  .fititem .v { font-size: 23px; } }
   @media (max-width: 600px) {
     .fitrow { grid-template-columns: 1fr; gap: 14px; }
@@ -84,7 +86,7 @@
   .abschnitt { font-size: 22px; margin: 0 0 6px; }
   .note + .abschnitt { margin-top: 34px; }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Langläufer: Sieben Anleihen mit 14 bis 94 Jahren Restlaufzeit","description":"Wenn Anleihen 30, 50 oder 100 Jahre laufen: Kursverlauf von sieben Langläufern seit 2019, von Bund 2040 bis Österreich 2120 – mit Kennzahlen.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-30","dateModified":"2026-10-02","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/langlaeufer.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Langläufer: Sieben Anleihen mit 14 bis 94 Jahren Restlaufzeit","description":"Wenn Anleihen 30, 50 oder 100 Jahre laufen: Kursverlauf von sieben Langläufern seit 2019, von Bund 2040 bis Österreich 2120 – mit Kennzahlen.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-30","dateModified":"2026-10-15","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/langlaeufer.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.bondarium.de/anleihen.html"},{"@type":"ListItem","position":3,"name":"Langläufer","item":"https://www.bondarium.de/langlaeufer.html"}]}</script>
 </head>
 <body>
@@ -244,13 +246,13 @@
       <caption class="sr-only">Die sieben Anleihen im Einzelnen: Emittent, Kupon, Emission, Volumen und Stückelung, Handel, Kursspanne seit Emission</caption>
       <thead><tr><th scope="col">Anleihe</th><th scope="col">Emittent</th><th scope="col">Kupon</th><th scope="col">Emission</th><th scope="col">Volumen · Stückelung</th><th scope="col">Handel</th><th scope="col">Kursspanne seit Emission</th></tr></thead>
       <tbody>
-        <tr><th scope="row"><i class="tag" style="background:#157C00"></i>Bund 0&nbsp;% 15.08.2050<small>DE0001102481 / 110248</small></th><td>Bundesrepublik Deutschland (Finanzagentur)</td><td>0&nbsp;% – Nullkupon, Ertrag nur aus der Rückzahlung zu 100</td><td>21.08.2019 zu 103,61 (Rendite −0,11&nbsp;%); 26 Aufstockungen bis 10/2025</td><td>45,5 Mrd. € · 0,01&nbsp;€</td><td>Deutsche Börsen; Referenzpreise der Bundesbank</td><td id="b-spanne">Hoch 116,56 (12.03.2020) · Tief 40,04 (15.09.2026)</td></tr>
-        <tr><th scope="row"><i class="tag" style="background:var(--ink)"></i>Bund 4,75&nbsp;% 04.07.2040<small>DE0001135366 / 113536</small></th><td>Bundesrepublik Deutschland (Finanzagentur)</td><td>4,75&nbsp;% p. a., jährlich am 4. Juli</td><td>23.07.2008 zu ≈97,8 (Rendite 4,91&nbsp;%); 10 Aufstockungen bis 2025</td><td>23 Mrd. € · 0,01&nbsp;€</td><td>Deutsche Börsen; Referenzpreise der Bundesbank</td><td id="b2-spanne">Hoch 218,06 (12.03.2020) · Tief 97,80 (23.07.2008)</td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#8E8D86"></i>BTP 2,15&nbsp;% 01.03.2072<small>IT0005441883 / A3KPKQ</small></th><td>Republik Italien (Dipartimento del Tesoro)</td><td>2,15&nbsp;% p. a., halbjährlich je 1,075&nbsp;% (1. März, 1. September)</td><td>12.04.2021 per Konsortium zu 99,467 (Rendite 2,18&nbsp;%)</td><td>5 → rund 7,4 Mrd. € · 1.000&nbsp;€</td><td>Borsa Italiana (MOT), daneben deutsche Börsen</td><td id="t-spanne">Hoch 105,16 (17.08.2021) · Tief 48,89 (03.10.2023)</td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#A9A7A0"></i>Frankreich 0,5&nbsp;% 25.05.2072<small>FR0014001NN8 / A2876Z</small></th><td>Republik Frankreich (Agence France Trésor)</td><td>0,5&nbsp;% p. a., jährlich am 25. Mai</td><td>19.01.2021 per Konsortium zu 95,895 (Rendite 0,593&nbsp;%, Rekordtief); Orderbuch 75 Mrd. €</td><td>7 Mrd. € zum Start, später aufgestockt · 1&nbsp;€</td><td>Euronext Paris, daneben deutsche Börsen</td><td id="fr-spanne">Hoch 97,38 (25.01.2021) · Tief 21,55 (15.09.2026)</td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#CF7430"></i>Österreich 0,85&nbsp;% 30.06.2120<small>AT0000A2HLC4 / A28Y97</small></th><td>Republik Österreich (OeBFA)</td><td>0,85&nbsp;% p. a., jährlich am 30. Juni</td><td>24.06.2020 per Konsortium zu 98,01 (Rendite 0,88&nbsp;%); später aufgestockt</td><td>2 → rund 5,2 Mrd. € · 1.000&nbsp;€</td><td>Wiener Börse, daneben deutsche Börsen</td><td id="at-spanne">Hoch 134,55 (10.12.2020) · Tief 28,23 (10.09.2026)</td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#B5B3AC"></i>US-Treasury 1,25&nbsp;% 15.05.2050<small>US912810SN90 / A28XEG</small></th><td>Vereinigte Staaten (U.S. Treasury)</td><td>1,25&nbsp;% p. a., halbjährlich je 0,625&nbsp;% (15. Mai, 15. November)</td><td>Auktion 13.05.2020 zu 97,73 (Rendite 1,34&nbsp;%); Aufstockungen 06/07 2020</td><td>22 Mrd. $ Erstauktion, mit Aufstockungen deutlich mehr · 100 $</td><td>außerbörslicher US-Markt (OTC); in Deutschland u. a. Stuttgart, Frankfurt · US-Dollar</td><td id="us-spanne">Hoch 101,72 (06.08.2020) · Tief 43,65 (23.10.2023)</td></tr>
-        <tr><th scope="row"><i class="tag" style="background:#9C9A93"></i>Microsoft 2,675&nbsp;% 01.06.2060<small>US594918CD48 / A28XT9</small></th><td>Microsoft Corp., Redmond</td><td>2,675&nbsp;% p. a., halbjährlich je 1,3375&nbsp;% (1. Juni, 1. Dezember)</td><td>01.06.2020 im Umtausch gegen ältere Microsoft-Anleihen, Umtauschrendite 2,525&nbsp;% (≈ 103,8)</td><td>3,75 Mrd. $ · 2.000 $</td><td>außerbörslicher US-Markt (OTC); in Deutschland u. a. Stuttgart, Frankfurt · US-Dollar</td><td id="ms-spanne">Hoch 111,94 (23.07.2020) · Tief 50,50 (10.09.2026)</td></tr>
+        <tr><th scope="row"><i class="tag" style="background:#157C00"></i>Bund 0&nbsp;% 15.08.2050<small>DE0001102481 / 110248</small></th><td>Bundesrepublik Deutschland (Finanzagentur)</td><td>0&nbsp;% – Nullkupon, Ertrag nur aus der Rückzahlung zu 100</td><td>21.08.2019 zu 103,61 (Rendite −0,11&nbsp;%); 26 Aufstockungen bis 10/2025</td><td><span data-vol="DE0001102481">45,5&nbsp;Mrd.&nbsp;€</span> · 0,01&nbsp;€</td><td>Deutsche Börsen; Referenzpreise der Bundesbank</td><td id="b-spanne">Hoch 116,56 (12.03.2020) · Tief 40,04 (15.09.2026)</td></tr>
+        <tr><th scope="row"><i class="tag" style="background:var(--ink)"></i>Bund 4,75&nbsp;% 04.07.2040<small>DE0001135366 / 113536</small></th><td>Bundesrepublik Deutschland (Finanzagentur)</td><td>4,75&nbsp;% p. a., jährlich am 4. Juli</td><td>23.07.2008 zu ≈97,8 (Rendite 4,91&nbsp;%); 10 Aufstockungen bis 2025</td><td><span data-vol="DE0001135366">23&nbsp;Mrd.&nbsp;€</span> · 0,01&nbsp;€</td><td>Deutsche Börsen; Referenzpreise der Bundesbank</td><td id="b2-spanne">Hoch 218,06 (12.03.2020) · Tief 97,80 (23.07.2008)</td></tr>
+        <tr><th scope="row"><i class="tag" style="background:#8E8D86"></i>BTP 2,15&nbsp;% 01.03.2072<small>IT0005441883 / A3KPKQ</small></th><td>Republik Italien (Dipartimento del Tesoro)</td><td>2,15&nbsp;% p. a., halbjährlich je 1,075&nbsp;% (1. März, 1. September)</td><td>12.04.2021 per Konsortium zu 99,467 (Rendite 2,18&nbsp;%)</td><td>5 Mrd. € zum Start, heute <span data-vol="IT0005441883">9,4&nbsp;Mrd.&nbsp;€</span> · 1.000&nbsp;€</td><td>Borsa Italiana (MOT), daneben deutsche Börsen</td><td id="t-spanne">Hoch 105,16 (17.08.2021) · Tief 48,89 (03.10.2023)</td></tr>
+        <tr><th scope="row"><i class="tag" style="background:#A9A7A0"></i>Frankreich 0,5&nbsp;% 25.05.2072<small>FR0014001NN8 / A2876Z</small></th><td>Republik Frankreich (Agence France Trésor)</td><td>0,5&nbsp;% p. a., jährlich am 25. Mai</td><td>19.01.2021 per Konsortium zu 95,895 (Rendite 0,593&nbsp;%, Rekordtief); Orderbuch 75 Mrd. €</td><td>7 Mrd. € zum Start, heute <span data-vol="FR0014001NN8">14,5&nbsp;Mrd.&nbsp;€</span> · 1&nbsp;€</td><td>Euronext Paris, daneben deutsche Börsen</td><td id="fr-spanne">Hoch 97,38 (25.01.2021) · Tief 21,55 (15.09.2026)</td></tr>
+        <tr><th scope="row"><i class="tag" style="background:#CF7430"></i>Österreich 0,85&nbsp;% 30.06.2120<small>AT0000A2HLC4 / A28Y97</small></th><td>Republik Österreich (OeBFA)</td><td>0,85&nbsp;% p. a., jährlich am 30. Juni</td><td>24.06.2020 per Konsortium zu 98,01 (Rendite 0,88&nbsp;%); später aufgestockt</td><td>2 Mrd. € zum Start, heute <span data-vol="AT0000A2HLC4">6,3&nbsp;Mrd.&nbsp;€</span> · 1.000&nbsp;€</td><td>Wiener Börse, daneben deutsche Börsen</td><td id="at-spanne">Hoch 134,55 (10.12.2020) · Tief 28,23 (10.09.2026)</td></tr>
+        <tr><th scope="row"><i class="tag tag-strich" style="color:#B5B3AC"></i>US-Treasury 1,25&nbsp;% 15.05.2050<small>US912810SN90 / A28XEG</small></th><td>Vereinigte Staaten (U.S. Treasury)</td><td>1,25&nbsp;% p. a., halbjährlich je 0,625&nbsp;% (15. Mai, 15. November)</td><td>Auktion 13.05.2020 zu 97,73 (Rendite 1,34&nbsp;%); Aufstockungen 06/07 2020</td><td>22 Mrd. $ Erstauktion, heute <span data-vol="US912810SN90">73,6&nbsp;Mrd.&nbsp;$</span> · 100 $</td><td>außerbörslicher US-Markt (OTC); in Deutschland u. a. Stuttgart, Frankfurt · US-Dollar</td><td id="us-spanne">Hoch 101,72 (06.08.2020) · Tief 43,65 (23.10.2023)</td></tr>
+        <tr><th scope="row"><i class="tag tag-punkt" style="color:#9C9A93"></i>Microsoft 2,675&nbsp;% 01.06.2060<small>US594918CD48 / A28XT9</small></th><td>Microsoft Corp., Redmond</td><td>2,675&nbsp;% p. a., halbjährlich je 1,3375&nbsp;% (1. Juni, 1. Dezember)</td><td>01.06.2020 im Umtausch gegen ältere Microsoft-Anleihen, Umtauschrendite 2,525&nbsp;% (≈ 103,8)</td><td><span data-vol="US594918CD48">3,75&nbsp;Mrd.&nbsp;$</span> · 2.000 $</td><td>außerbörslicher US-Markt (OTC); in Deutschland u. a. Stuttgart, Frankfurt · US-Dollar</td><td id="ms-spanne">Hoch 111,94 (23.07.2020) · Tief 50,50 (10.09.2026)</td></tr>
       </tbody>
     </table>
     </div>
@@ -277,7 +279,8 @@
       <summary>Datenquellen und Methodik</summary>
       <div class="quellen-body">
         <p><strong>Kurse.</strong> Schaubild: Wochenschlusskurse ab Mitte 2019 – Bundesanleihen von der Deutschen Bundesbank, automatisch aktualisiert (ist der Schlusskurs der Börse Frankfurt jünger, etwa wenn die Bundesbank-Daten ausbleiben, gilt er); die übrigen fünf bis zum 15.09.2026 von der Börse Stuttgart, seit dem 24.09.2026 täglich der Schlusskurs der Börse Frankfurt (Deutsche Börse, MiFIR-Nachhandelsdaten, 15 Minuten verzögert). Tabelle: Rendite der Bundesanleihen laut Bundesbank, die übrigen aus Kurs und Kupon berechnet; Stand in der Zeile über dem Schaubild und unten.</p>
-        <p><strong>Datenquellen.</strong> <a href="https://www.bundesbank.de/de/statistiken/geld-und-kapitalmaerkte">Deutsche Bundesbank</a> (Kurse und Renditen der Bundesanleihen, börsentäglich), <a href="https://www.deutsche-finanzagentur.de/bundeswertpapiere/factsheet/isin/DE0001102481">Deutsche Finanzagentur</a>, Börse Stuttgart (Wochenschlusskurse der übrigen fünf bis 15.09.2026, einmalig erfasst und fest eingebettet), <a href="https://live.deutsche-boerse.com/">Börse Frankfurt</a> (Deutsche Börse, Schlusskurse der übrigen fünf seit 24.09.2026, täglich automatisch), <a href="https://www.dt.mef.gov.it/">Dipartimento del Tesoro</a>, <a href="https://www.aft.gouv.fr/en/publications/communiques-presse/19-january-2021-launch-new-oat-2072">Agence France Trésor</a>, <a href="https://www.oebfa.at/">OeBFA</a>, <a href="https://www.treasurydirect.gov/auctions/announcements-data-results/">TreasuryDirect</a>, <a href="https://news.microsoft.com/source/2020/05/14/microsoft-announces-pricing-terms-for-its-exchange-offers-and-increases-the-new-2060-notes-issue-cap/">Microsoft</a>, Cbonds. Renditen der Stuttgart-Reihen werden beim Seitenaufruf aus Kurs, Kupon und Restlaufzeit berechnet (jährliche Verzinsung, taggenau) und können von den Konventionen der Heimatmärkte um wenige Basispunkte abweichen.</p>
+        <p id="m-volumen"><strong>Volumen.</strong> In den Einzelheiten der Betrag zum Start laut Emittent, „heute“ und bei den übrigen der ausgegebene Nennbetrag einschließlich Aufstockungen laut ESMA-Register (FIRDS) – beim Veröffentlichen aus den Stammdaten gesetzt, wie in der Anleihen-Suche.</p>
+        <p><strong>Datenquellen.</strong> <a href="https://www.bundesbank.de/de/statistiken/geld-und-kapitalmaerkte">Deutsche Bundesbank</a> (Kurse und Renditen der Bundesanleihen, börsentäglich), <a href="https://www.deutsche-finanzagentur.de/bundeswertpapiere/factsheet/isin/DE0001102481">Deutsche Finanzagentur</a>, Börse Stuttgart (Wochenschlusskurse der übrigen fünf bis 15.09.2026, einmalig erfasst und fest eingebettet), <a href="https://live.deutsche-boerse.com/">Börse Frankfurt</a> (Deutsche Börse, Schlusskurse der übrigen fünf seit 24.09.2026, täglich automatisch), <a href="https://www.dt.mef.gov.it/it/index.html">Dipartimento del Tesoro</a>, <a href="https://www.aft.gouv.fr/en/publications/communiques-presse/19-january-2021-launch-new-oat-2072">Agence France Trésor</a>, <a href="https://www.oebfa.at/">OeBFA</a>, <a href="https://www.treasurydirect.gov/auctions/announcements-data-results/">TreasuryDirect</a>, <a href="https://news.microsoft.com/source/2020/05/14/microsoft-announces-pricing-terms-for-its-exchange-offers-and-increases-the-new-2060-notes-issue-cap/">Microsoft</a>, Cbonds. Renditen der Stuttgart-Reihen werden beim Seitenaufruf aus Kurs, Kupon und Restlaufzeit berechnet (jährliche Verzinsung, taggenau) und können von den Konventionen der Heimatmärkte um wenige Basispunkte abweichen.</p>
         <p id="datastand">Daten-Stand: 16.09.2026</p>
       </div>
     </details>
@@ -506,6 +509,10 @@ const MS = mkBond({
 });
 const COUPON_BONDS = [BTP, FR, AT, US, MS];
 const COLORS = { bund: "#157C00", bund2: "#1A1A19", btp: "#8E8D86", fr: "#A9A7A0", at: "#CF7430", us: "#B5B3AC", ms: "#9C9A93" };
+// Zwei der vier Grautöne zusätzlich mit Muster (seit 15.10.2026, Gesamtprüfung B12-02): BTP, Frankreich, US-Treasury und Microsoft waren
+// nur über Endbeschriftung und Tooltip zu unterscheiden. Farbpunkt dieser beiden in den Tabellen als kurzer Strich im selben Muster (.tag-strich, .tag-punkt).
+const DASH = { us: "6 4", ms: "1.5 3.5" };
+const TAG = k => k === "us" ? `<i class="tag tag-strich" style="color:${COLORS[k]}"></i>` : k === "ms" ? `<i class="tag tag-punkt" style="color:${COLORS[k]}"></i>` : `<i class="tag" style="background:${COLORS[k]}"></i>`;
 const LABEL_COLORS = { bund: "#157C00", bund2: "#1A1A19", btp: "#55544F", fr: "#55544F", at: "#A2561C", us: "#55544F", ms: "#55544F" };   // Bildwelt 2.0: Fokus-Regel
 
 // ---------- Bund 0 % 2050: Daten der Bundesbank (langlaeufer.json, beim Deploy eingebettet) ----------
@@ -588,7 +595,7 @@ function renderKpis() {
   const tab = document.getElementById("kpis");
   const html = MC.felder.tabelle(["anleihe", "rendite", "kupon", "restlaufzeit", "kurs", "seitHoch"].concat(MC.konto ? ["merken"] : []), rows,
     { sort: KPI_SORT, sortieren: true, leer: "Keine Anleihe entspricht dem Filter.",
-      ctx: { kstand: stand, nameVor: o => `<i class="tag" style="background:${COLORS[o.key]}"></i>` } });
+      ctx: { kstand: stand, nameVor: o => TAG(o.key) } });
   if (tab.tHead) tab.tHead.remove();
   [...tab.tBodies].forEach(b => b.remove());
   tab.insertAdjacentHTML("beforeend", html);
@@ -680,7 +687,7 @@ function buildChart() {
       tips.push(`${L(bd.key)} ${fmtDate(d)}: ${fmt(p, 2)} · ${L("tipYield")} ${fmt(yl, 2)}\u00A0%`);
     });
     series.push({ x: sx, y: sy, tips, color: COLORS[bd.key] });
-    paths.push({ d: seg.join(" "), color: COLORS[bd.key] });
+    paths.push({ d: seg.join(" "), color: COLORS[bd.key], dash: DASH[bd.key] });
     const end = bd.weekly[bd.weekly.length - 1];
     dot(x(decYear(end[0])), y(end[1]), COLORS[bd.key], null);
   });
@@ -691,10 +698,11 @@ function buildChart() {
   if (BUND2.weekly && BUND2.weekly.length > 10) { const e2 = BUND2.weekly[BUND2.weekly.length - 1]; ends.push({ key: "bund2", p: e2[1], t: decYear(e2[0]), name: "Bund 4,75\u00A0%" }); }
   ends.sort((a, b) => b.p - a.p);
   let lastY = -1e9;
-  ends.forEach(e => { let py = y(e.p); if (py - lastY < 13) py = lastY + 13; lastY = py; e.py = py; });
+  // Mindestabstand 15 (seit 15.10.2026, B12-02; bei 13 berührten sich „US-Treasury“ und „Bund 0 %“)
+  ends.forEach(e => { let py = y(e.p); if (py - lastY < 15) py = lastY + 15; lastY = py; e.py = py; });
   // unten nicht über die Achse hinaus (schmale Fassung): Überhang nach oben zurückschieben
   for (let i = ends.length - 1; i >= 0; i--) {
-    const lim = i === ends.length - 1 ? YBOT - 4 : ends[i + 1].py - 13;
+    const lim = i === ends.length - 1 ? YBOT - 4 : ends[i + 1].py - 15;
     if (ends[i].py > lim) ends[i].py = lim;
   }
   ends.forEach(e => lab(x(e.t), e.py, `${e.name} ${fmt(e.p, 2)}`, LABEL_COLORS[e.key], "start", 9, 4));
@@ -710,7 +718,7 @@ function buildChart() {
     if ((yr - 2020) % G.step === 0) xlab.push(`<text x="${x(yr + 0.5).toFixed(1)}" y="${G.xl}">${yr}</text>`);
   }
   const pathSvg = paths.map(p => `<path fill="none" stroke="${p.color}" stroke-width="14" opacity="0" pointer-events="stroke" d="${p.d}"/>`).join("")
-    + paths.map(p => `<path fill="none" stroke="${p.color}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" d="${p.d}"/>`).join("");
+    + paths.map(p => `<path fill="none" stroke="${p.color}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="${p.dash ? "butt" : "round"}"${p.dash ? ` stroke-dasharray="${p.dash}"` : ""} d="${p.d}"/>`).join("");
   const box = document.getElementById("chart-kurs");
   if (box) box.style.aspectRatio = `${G.W} / ${G.H}`;
   DRAWN_W = G.narrow ? G.W : 1000;

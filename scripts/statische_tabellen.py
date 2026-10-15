@@ -25,9 +25,13 @@ Fassung (innerHTML) – mit Sortieren, Aufklappen und den Handy-Karten. Die Quel
                           <table class="kpis" data-gruppe>  ← automatische Rangliste, solange sie nicht „aktiv“ ist die
                                                              Handauswahl der Seite (ANLEIHEN im Seitenskript; seit 03.10.2026)
 
-  index.html              „Sechs Beispiele“ (table.itab)  ← Rendite, Kurs und Restlaufzeit der Zeilen aus kurse-auswahl.json,
-                                                             „Kurse und Renditen vom“ dessen Stand und die Rendite der
-                                                             Hero-Karte (seit 03.10.2026, SEO-Runde 2)
+  index.html              „Was gerade viel gehandelt wird“ (table.itab) und Hero-Karte ← seit 15.10.2026 dieselbe Liste wie die vier
+                                                             Top-10-Seiten (Handauswahl der Seite bzw. automatische Liste, wenn
+                                                             „aktiv“) als JSON in #top10-pool, dazu sechs Zeilen und die Karte der
+                                                             Bau-Stunde (Rückfall: feste Zeilen mit Tageskursen, seit 03.10.2026);
+                          Zinsstand-Band (.zs-band)        ← zinskurve.json, langlaeufer.json, ezb.json: Werte, Veränderung, „Stand“
+                                                             (seit 15.10.2026; vorher erst im Browser)
+  staatsanleihen-laufzeit.html usw. bei „aktiv“           ← AKTIV_TEXTE der Seite, Elemente „nur-hand“ entfernt (seit 15.10.2026)
 
   bundeswertpapiere.html  <!--BUNDESLISTE-->…<!--/BUNDESLISTE-->
                                                            ← alle laufenden Bundeswertpapiere mit Kurs und Rendite der Deutschen
@@ -549,6 +553,8 @@ def std_zeile(o, ids, ctx, fett):
                  if isinstance(o.get("rend"), (int, float)) else f'<span title="{esc(o.get("rendGrund") or "keine Rendite in den Kursdaten")}">–</span>')
         elif i == "kupon":
             h = kupon_text(o.get("kupon"), o.get("zinsart", 0))
+            if callable(ctx.get("kuponZeile")):   # Zinstermin unter dem Kupon (Startseite, wie ctx.kuponZeile in felder.js)
+                sub, p = esc(ctx["kuponZeile"](o)), "Zinsen"
         elif i == "restlaufzeit":
             if o.get("faellig"):
                 h = restlaufzeit_text((datetime.date.fromisoformat(o["faellig"]) - heute).days / 365.25)
@@ -632,14 +638,71 @@ def ersetze_tabelle(html_, auswahl_re, thead, tbody):
     return html_[:m.start()] + block2 + html_[ende:], True
 
 
+# ---------- Texte bei automatischer Rangliste („aktiv“, seit 15.10.2026, Gesamtprüfung B05-01) ----------
+# Mit „aktiv“ ersetzt das Seitenskript die Texte zur Handauswahl: AKTIV_TEXTE der Seite (id → neuer Inhalt, {zeit} usw.) und die
+# Elemente mit der Klasse „nur-hand“ (Übergangshinweis, Notizen zur Handauswahl). Dieselben Änderungen schreibt dieses Skript ins
+# ausgelieferte HTML – vorher lasen Crawler und KI „Übergangsweise … Auswahl vom 22.09.2026“, „Gezählt wird der Handel an der Börse
+# Stuttgart“ und „umlaufender Betrag, Stand 23.09.2026“ neben der automatischen Liste. Die Texte stehen nur in der Seite.
+ZAHL = ["keine", "eine", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn"]
+ZAHL_GROSS = ["Keine", "Ein", "Zwei", "Drei", "Vier", "Fünf", "Sechs", "Sieben", "Acht", "Neun", "Zehn"]
+
+
+def aktiv_texte(html_):
+    """AKTIV_TEXTE aus dem Seitenskript (gültiges JSON) oder None."""
+    m = re.search(r"const AKTIV_TEXTE = (\{.*?\n\});", html_, re.S)
+    return json.loads(m.group(1)) if m else None
+
+
+def zeitraum(fenster):
+    """wie im Seitenskript: volles Fenster (60 Börsentage) = „in den letzten drei Monaten“"""
+    tage = fenster.get("tage") or 0
+    return "in den letzten drei Monaten" if tage >= (fenster.get("soll") or 0) else f"in den letzten {tage} Börsentagen"
+
+
+def inhalt_setzen(html_, id_, inhalt):
+    """Inhalt des Elements (p, span, h2) mit dieser id ersetzen; (html, Anzahl)."""
+    muster = re.compile(r'(<(p|span|h2)\b[^>]*\bid="' + re.escape(id_) + r'"[^>]*>).*?(</\2>)', re.S)
+    return muster.subn(lambda m: m.group(1) + inhalt + m.group(3), html_, count=1)
+
+
+def zahlwort(text, n, ohne):
+    """„die zehn meistgehandelten“ → Zahl n (wie T10 im Browser); n = 0 → ohne"""
+    return re.sub(r"die (?:zehn|neun|acht|sieben|sechs|fünf|vier|drei|zwei|eine|\d+) meistgehandelten",
+                  lambda _: f"die {ZAHL[n] if n <= 10 else n} meistgehandelten" if n else ohne, text, count=1)
+
+
+def aktiv_anwenden(html_, seite, fenster, mehr=None):
+    """AKTIV_TEXTE einsetzen und die Elemente mit „nur-hand“ entfernen – wie aktiv() im Browser."""
+    texte = aktiv_texte(html_)
+    if texte is None:
+        warn(f"{seite}: AKTIV_TEXTE nicht gefunden – Texte zur Handauswahl bleiben im HTML")
+        return html_
+    werte = {"zeit": zeitraum(fenster)}
+    werte.update(mehr or {})
+    fehlt, n = [], 0
+    for id_, text in texte.items():
+        if id_.startswith("_"):   # Baustein, kein Element
+            continue
+        html_, k = inhalt_setzen(html_, id_, re.sub(r"\{(\w+)\}", lambda m: str(werte.get(m.group(1), m.group(0))), text))
+        n += k
+        if not k:
+            fehlt.append(id_)
+    html_, weg = re.subn(r'[ \t]*<p\b[^>]*\bclass="[^"]*\bnur-hand\b[^"]*"[^>]*>.*?</p>\n?', "", html_, flags=re.S)
+    if fehlt:
+        warn(f"{seite}: Element(e) {', '.join(fehlt)} aus AKTIV_TEXTE nicht gefunden")
+    print(f"{seite}: automatische Rangliste – {n} Texte gesetzt, {weg} Hinweise zur Handauswahl entfernt")
+    return html_
+
+
 def laufzeit(site, seite, datei):
     """Laufzeit-Seiten: fünf Tabellen – automatische Rangliste, wenn „aktiv“, sonst die Handauswahl aus dem Seitenskript."""
     pfad = os.path.join(site, seite)
     html_ = open(pfad, encoding="utf-8").read()
     D, kurse, aus = lade(site, datei), lade(site, "kurse-auswahl.json"), lade(site, "anleihen-auswahl.json")
     aktiv = bool(D.get("aktiv") and D.get("gruppen") and D.get("fenster"))
-    if aktiv:
-        gruppen, tage, stand = D["gruppen"], D["fenster"].get("tage") or 0, D.get("stand")
+    if aktiv:   # die Gruppen der Seite; fehlt eine in der Datei, bleibt ihre Tabelle leer wie im Browser
+        tage, stand = D["fenster"].get("tage") or 0, D.get("stand")
+        gruppen = {g: D["gruppen"].get(g) or [] for g in re.findall(r'<table class="kpis(?: atab)?" data-gruppe="([^"]+)"', html_)}
     else:
         m = re.search(r"const ANLEIHEN = \{\s*date: \"([0-9-]+)\",\s*gruppen: (\{.*?\n  \})\n\};", html_, re.S)
         if not m:
@@ -649,8 +712,17 @@ def laufzeit(site, seite, datei):
     for key, reihe in gruppen.items():
         objs = [std_objekt(r, i + 1, kurse, aus, {"date": stand}) for i, r in enumerate(reihe)]
         thead, tbody = std_tabelle(objs, kurse.get("stand") or stand, tage)
+        if not objs:   # wie MC.felder.tabelle mit „leer“ (top10-tabellen.js)
+            spalten = thead.count("<th ")
+            tbody = (f'<tr><td class="leer" colspan="{spalten}">In den letzten {tage} Börsentagen wurde keine Anleihe dieser Gruppe an der '
+                     'Börse Frankfurt oder bei Tradegate gehandelt.</td></tr>')
         html_, ok = ersetze_tabelle(html_, r'<table class="kpis(?: atab)?" data-gruppe="' + re.escape(key) + '">', thead, tbody)
         n += len(objs) if ok else 0
+        if ok and aktiv:   # Tabellenbeschriftung wie im Browser: „die neun meistgehandelten“ bzw. „keine gehandelten“
+            html_ = re.sub(r'(<table class="kpis(?: atab)?" data-gruppe="' + re.escape(key) + r'">\s*<caption[^>]*>)([^<]*)',
+                           lambda m: m.group(1) + zahlwort(m.group(2), len(objs), "keine gehandelten"), html_, count=1)
+    if aktiv:
+        html_ = aktiv_anwenden(html_, seite, D["fenster"])
     kstand = kurse.get("stand") or stand
     if n and ist_datum(kstand):   # „Daten-Stand“ wie T10.datenstand() im Browser – nur zusammen mit den Zeilen (SEO-Runde 2)
         html_ = datenstand_setzen(html_, "Daten-Stand: " + datum(kstand)) or html_
@@ -664,7 +736,8 @@ def laender(site, seite, datei):
     pfad = os.path.join(site, seite)
     html_ = open(pfad, encoding="utf-8").read()
     D, kurse, aus = lade(site, datei), lade(site, "kurse-auswahl.json"), lade(site, "anleihen-auswahl.json")
-    if D.get("aktiv") and D.get("gruppen") and D.get("fenster"):
+    aktiv = bool(D.get("aktiv") and D.get("gruppen") and D.get("fenster"))
+    if aktiv:
         reihe, tage, default = D["gruppen"].get("deutschland") or [], D["fenster"].get("tage") or 0, {"date": D.get("stand")}
     else:
         m = re.search(r"\n\s*deutschland: \{(.*?)rows: (\[.*?\])\s*\}", html_, re.S)
@@ -683,9 +756,38 @@ def laender(site, seite, datei):
     kstand = kurse.get("stand") or default.get("date")
     if ist_datum(kstand):   # „Daten-Stand“ wie T10.datenstand() im Browser (SEO-Runde 2)
         html_ = datenstand_setzen(html_, "Daten-Stand: " + datum(kstand)) or html_
+    if aktiv:
+        html_ = laender_aktiv(html_, seite, D, len(objs))
     with open(pfad, "w", encoding="utf-8") as f:
         f.write(html_)
     print(f"{seite}: {len(objs)} Anleihen (Deutschland) fest im HTML")
+
+
+def laender_aktiv(html_, seite, D, n_de):
+    """Länder-Seite mit „aktiv“ wie T10.laender im Browser (seit 15.10.2026, B05-01): Länder ohne Anleihe verlieren ihren Knopf,
+    die Länderzahl (data-anzahl-laender) folgt, die Notiz unter der Tabelle ist nur noch der gemeinsame Hinweis (noteCommon),
+    der Titel nennt die Zahl der Anleihen Deutschlands, dazu AKTIV_TEXTE und „nur-hand“."""
+    namen = re.findall(r'^  ([a-z]+): \{\s*name: "([^"]+)"', html_, re.M)   # LAENDER in Reihenfolge der Seite
+    if not namen:
+        warn(f"{seite}: LAENDER nicht gefunden – Länderknöpfe und Länderzahl bleiben")
+    mit = [(k, n) for k, n in namen if D["gruppen"].get(k)]
+    ohne = [(k, n) for k, n in namen if not D["gruppen"].get(k)]
+    if namen:
+        for k, _ in ohne:
+            html_ = re.sub(r'\s*<button type="button" class="lbtn" data-land="' + re.escape(k) + r'"[^>]*>[^<]*</button>', "", html_, count=1)
+        z = len(mit)
+        html_ = re.sub(r'(<span data-anzahl-laender(?:="([a-z]*)")?>)[^<]*(</span>)',
+                       lambda m: m.group(1) + ((ZAHL_GROSS[z] if z <= 10 else str(z)) if m.group(2) == "gross" else (ZAHL[z] if z <= 10 else str(z))) + m.group(3), html_)
+    hinweis = re.search(r'noteCommon: ("(?:[^"\\]|\\.)*")', html_)
+    if hinweis:
+        html_, _ = inhalt_setzen(html_, "land-note", esc_js(json.loads(hinweis.group(1))))
+    else:
+        warn(f"{seite}: noteCommon nicht gefunden – Notiz unter der Tabelle bleibt")
+    html_ = re.sub(r'(<h2 id="land-titel"[^>]*>)([^<]*)', lambda m: m.group(1) + zahlwort(m.group(2), n_de, "zurzeit keine gehandelten"), html_, count=1)
+    texte = aktiv_texte(html_) or {}
+    mehr = {"namen": ", ".join(n for _, n in mit),
+            "weg": texte.get("_weg", "").replace("{liste}", ", ".join(n for _, n in ohne)) if ohne else ""}
+    return aktiv_anwenden(html_, seite, D["fenster"], mehr)
 
 
 def kupon(site, seite="anleihen-kupon.html", datei="top10-anleihen-kupon.json"):
@@ -714,8 +816,310 @@ def kupon(site, seite="anleihen-kupon.html", datei="top10-anleihen-kupon.json"):
         print(f"{seite}: {', '.join(geschrieben)} fest im HTML")
 
 
+# ---------- Startseite: Liste „Top 10 meistgehandelt“ wie auf den Top-10-Seiten (seit 15.10.2026, Gesamtprüfung B01-21, B01-03) ----------
+# Tabelle „Was gerade viel gehandelt wird“ und Hero-Karte wählten bis 14.10.2026 aus den automatischen Ranglisten (top10-*.json), auch
+# solange sie noch nicht „aktiv“ waren – die Top-10-Seiten zeigten dagegen ihre Handauswahl (209 von 324 ISINs der Startseite standen
+# auf keiner Top-10-Seite). Jetzt dieselbe Quelle wie jede Top-10-Seite: ist ihre Datei „aktiv“, die automatische Liste, sonst die
+# Handauswahl der Seite (Länder ohne Handauswahl – auto – wie auf der Länderseite aus der Datei). Kurs, Rendite und Kursdatum wie
+# T10.zeilen aus kurse-auswahl.json; nur Anleihen mit Kurs und Rendite (wie bisher im Seitenskript). Die Liste steht als JSON in
+# <script type="application/json" id="top10-pool"> – das Seitenskript zieht daraus stündlich sechs Zeilen und die Hero-Karte;
+# die sechs Zeilen und die Karte der Bau-Stunde stehen mit derselben Zufallsregel fest im HTML.
+TOP10_QUELLEN = (("staatsanleihen-laufzeit.html", "top10-staatsanleihen-laufzeit.json", "staat"),
+                 ("anleihen-laender.html", "top10-staatsanleihen-laender.json", "staat"),
+                 ("unternehmensanleihen-laufzeit.html", "top10-unternehmensanleihen-laufzeit.json", "unternehmen"),
+                 ("unternehmensanleihen-laender.html", "top10-unternehmensanleihen-laender.json", "unternehmen"))
+POOL_RE = re.compile(r'(<script type="application/json" id="top10-pool">)(.*?)(</script>)', re.S)
+
+
+def handauswahl(html_):
+    """[(Zeile, Vorgaben), …] der Handauswahl einer Top-10-Seite und die Schlüssel der Länder ohne Handauswahl (auto)."""
+    m = re.search(r"const ANLEIHEN = \{\s*date: \"([0-9-]+)\",\s*gruppen: (\{.*?\n  \})\n\};", html_, re.S)
+    if m:   # Laufzeit-Seite
+        gruppen = js_objekte(re.sub(r",(\s*[\]}])", r"\1", m.group(2)))
+        return [(r, {"date": m.group(1)}) for reihe in gruppen.values() for r in reihe], []
+    m = re.search(r"const LAENDER = (\{.*?\n\});", html_, re.S)
+    if not m:
+        raise ValueError("weder ANLEIHEN noch LAENDER im Seitenskript")
+    laender = js_objekte(re.sub(r",(\s*[\]}])", r"\1", m.group(1)))
+    zeilen = [(r, {k: c.get(k) for k in ("emittent", "art", "cur", "date")}) for c in laender.values() if not c.get("auto") for r in c.get("rows") or []]
+    return zeilen, [k for k, c in laender.items() if c.get("auto")]
+
+
+def pool_zeile(r, vorgabe, kurse, aus, termine):
+    """Zeile für die Startseite (Felder wie in top10-*.json) – Kurs und Rendite wie T10.zeilen; None ohne Kurs oder Rendite."""
+    k = (kurse.get("kurse") or {}).get(r["isin"])
+    tage = kurse.get("tage") or []
+    if k and isinstance(k[2], int) and k[2] < len(tage):
+        kurs, kdatum, rend = k[0], tage[k[2]], k[1]
+    else:
+        kurs, kdatum, rend = r.get("kurs"), r.get("datum") or vorgabe.get("date"), r.get("rendite")
+    if not (ist_zahl(kurs) and ist_zahl(rend) and r.get("faellig")):
+        return None
+    a = (aus.get("a") or {}).get(r["isin"]) or [None, None, None, None, ""]
+    art = r.get("art") or vorgabe.get("art") or {0: "Staat", 1: "Öffentlich", 2: "Unternehmen"}.get(a[1], "Staat")
+    emittent = r.get("emittent") or vorgabe.get("emittent") or ""
+    z = {"isin": r["isin"], "kurz": r.get("kurz") or a[0] or kurz_name(emittent, ARTNR.get(art), None, r["isin"]), "emittent": emittent,
+         "art": art, "cur": r.get("cur") or vorgabe.get("cur") or a[2] or "", "kupon": r.get("kupon"), "zins": r.get("zins") or 1,
+         "faellig": r["faellig"], "kurs": kurs, "datum": kdatum, "rendite": rend, "bon": r["bon"] if "bon" in r else a[3],
+         "stk": r.get("stk"), "vol": r.get("vol"), "reg": a[4] or ""}
+    zt = r.get("zt")
+    e = termine.get(r["isin"])
+    if not zt and e and len(e) > 1:   # Zinstage laut Börsenliste (die Handauswahl kennt nur die Zahl der Zahlungen)
+        z["zins"], zt = e[0], e[1:]
+    if zt:
+        z["zt"] = zt
+    return z
+
+
+def top10_pool(site, kurse, aus):
+    """{"stand", "staat": […], "unternehmen": […]} – je Art die Anleihen aller Top-10-Seiten, nach ISIN sortiert."""
+    from _common import zinstermine_laden
+    termine = zinstermine_laden()
+    pool, quellen = {"staat": {}, "unternehmen": {}}, []
+    for seite, datei, art in TOP10_QUELLEN:
+        D = lade(site, datei)
+        if D.get("aktiv") and D.get("gruppen") and D.get("fenster"):
+            zeilen = [(r, {"date": D.get("stand")}) for reihe in D["gruppen"].values() for r in reihe]
+            quellen.append(f"{seite} automatisch")
+        else:
+            zeilen, auto = handauswahl(open(os.path.join(site, seite), encoding="utf-8").read())
+            if D.get("gruppen") and D.get("fenster"):   # Länder ohne Handauswahl zeigt die Seite schon vor „aktiv“ aus der Datei
+                zeilen += [(r, {"date": D.get("stand")}) for k in auto for r in D["gruppen"].get(k) or []]
+            quellen.append(f"{seite} Handauswahl")
+        for r, vorgabe in zeilen:
+            z = pool_zeile(r, vorgabe, kurse, aus, termine)
+            if z:
+                pool[art][z["isin"]] = z
+    stand = kurse.get("stand") if ist_datum(kurse.get("stand")) else max((z["datum"] for t in pool.values() for z in t.values()), default="")
+    return {"stand": stand, "staat": [pool["staat"][i] for i in sorted(pool["staat"])],
+            "unternehmen": [pool["unternehmen"][i] for i in sorted(pool["unternehmen"])]}, quellen
+
+
+def xorshift(seed):
+    """Zufallszahlen wie zufall() im Seitenskript (xorshift32, Startwert aus der Stundennummer)."""
+    t = ((seed ^ 0x9E3779B9) & 0xFFFFFFFF) or 1
+
+    def rnd():
+        nonlocal t
+        t = (t ^ (t << 13)) & 0xFFFFFFFF
+        t ^= t >> 17
+        t = (t ^ (t << 5)) & 0xFFFFFFFF
+        return t / 4294967296
+    return rnd
+
+
+def ziehe(liste, n, rnd):
+    """wie ziehe() im Seitenskript: mischen, erst verschiedene Emittenten, dann auffüllen"""
+    a = list(liste)
+    for i in range(len(a) - 1, 0, -1):
+        j = math.floor(rnd() * (i + 1))
+        a[i], a[j] = a[j], a[i]
+    wahl, em = [], set()
+    for x in a:
+        e = x.get("kurz") or x.get("emittent")
+        if len(wahl) < n and e not in em:
+            em.add(e)
+            wahl.append(x)
+    for x in a:
+        if len(wahl) < n and x not in wahl:
+            wahl.append(x)
+    return wahl
+
+
+def zt_termine(x):
+    return sorted(((int(md[3:5]), int(md[:2])) for md in x.get("zt") or []), key=lambda p: (p[1], p[0]))
+
+
+def zt_text(x):
+    """Zinstermin unter dem Kupon wie ZT.text im Seitenskript"""
+    if not (ist_zahl(x.get("kupon")) and x["kupon"] > 0):
+        return "kein Zinstermin"
+    l = [f"{t:02d}.{m:02d}." for t, m in zt_termine(x)]
+    if not l:
+        return ""
+    return ("monatlich" if x.get("zins") == 12 else "vierteljährlich") if len(l) > 2 else " · ".join(l) if len(l) > 1 else "am " + l[0]
+
+
+def zt_karte(x, heute):
+    """Kalenderblatt der Hero-Karte wie ZT.karte im Seitenskript"""
+    mon = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"]
+    kupon_ = x.get("kupon")
+    if not (ist_zahl(kupon_) and kupon_ > 0):
+        return ('<span class="hk-ztt"><b>Nullkupon: keine laufenden Zinsen</b>'
+                + (f"<span>Ertrag aus dem Kurs unter 100{NBSP}%</span>" if ist_zahl(x.get("kurs")) and x["kurs"] < 100 else "") + "</span>")
+    l = zt_termine(x)
+    if not l:
+        return f'<span class="hk-ztt"><b>Kupon {zahl(kupon_, 3 if round(kupon_ * 1000) % 10 else 2)}{NBSP}%</b></span>'
+    naechster = None
+    for j in (heute.year, heute.year + 1):
+        for t, m in l:
+            try:
+                d = datetime.date(j, m, t)
+            except ValueError:
+                continue
+            if d >= heute and (naechster is None or d < naechster):
+                naechster = d
+    zins = x.get("zins") or 1
+    s = esc_js({"EUR": "€", "USD": "$", "GBP": "£"}.get(x.get("cur"), x.get("cur") or ""))
+    je = math.floor(kupon_ * 1000 / zins + 0.5) / 100
+    betrag = f"{zahl(je, 2 if je % 1 else 0)}{NBSP}{s} je 1.000{NBSP}{s}"
+    txt = [f"{t:02d}.{m:02d}." for t, m in l]
+    kopf = (("Zinsen " + ("jeden Monat" if zins == 12 else "alle drei Monate")) if zins > 2 else f"Zinsen am {txt[0]} und {txt[1]}" if zins == 2 and len(txt) > 1
+            else f"Zinsen jedes Jahr am {txt[0]}")
+    return (f'<span class="hk-blatt" aria-hidden="true"><i>{mon[naechster.month - 1]}</i>{naechster.day}</span><span class="hk-ztt"><b>{kopf}</b>'
+            f'<span>{"jeweils " + betrag if zins >= 2 else betrag + " Nennwert"}</span></span>')
+
+
 def startseite(site, seite="index.html"):
-    """„Sechs Beispiele“ (Standardtabelle seit 03.10.2026): In den Zeilen der Quell-HTML Rendite, Kurs und Restlaufzeit aus
+    """Startseite: Liste der Top-10-Seiten als JSON, sechs Zeilen und Hero-Karte der Bau-Stunde (seit 15.10.2026); geht das nicht, die
+    festen Zeilen der Quell-HTML mit Tageskursen wie bisher (startseite_feste_zeilen)."""
+    pfad = os.path.join(site, seite)
+    html_ = open(pfad, encoding="utf-8").read()
+    kurse, aus = lade(site, "kurse-auswahl.json"), lade(site, "anleihen-auswahl.json")
+    try:
+        P, quellen = top10_pool(site, kurse, aus)
+    except Exception as e:
+        warn(f"{seite}: Liste der Top-10-Seiten nicht gebildet ({type(e).__name__}: {e}) – feste Zeilen")
+        return startseite_feste_zeilen(site, seite)
+    tab = re.search(r'(<table class="itab(?: atab)?">)(.*?)(</table>)', html_, re.S)
+    if len(P["staat"]) < 3 or len(P["unternehmen"]) < 3 or not tab or not POOL_RE.search(html_) or not ist_datum(P["stand"]):
+        warn(f"{seite}: zu wenige Anleihen ({len(P['staat'])} Staat, {len(P['unternehmen'])} Unternehmen), Tabelle oder #top10-pool fehlt – feste Zeilen")
+        return startseite_feste_zeilen(site, seite)
+    h = int(datetime.datetime.now(datetime.timezone.utc).timestamp() // 3600)
+    wahl = ziehe(P["staat"], 3, xorshift(h)) + ziehe(P["unternehmen"], 3, xorshift(h + 7919))
+    ids = ["anleihe", "rendite", "kupon", "restlaufzeit", "kurs", "bonitaet", "stueckelung", "merken"]
+    objs = []
+    for i, x in enumerate(wahl):
+        o = std_objekt(x, i + 1, kurse, aus, {"date": x["datum"]})
+        o.update({"kurz": x["kurz"], "reg": x["reg"], "art": ARTNR.get(x["art"], 0), "ccy": x["cur"], "rend": x["rendite"], "kurs": x["kurs"],
+                  "kdatum": x["datum"], "bon": x.get("bon"), "quelle": x})
+        objs.append(o)
+    ctx = {"kstand": P["stand"], "kuponZeile": lambda o: zt_text(o["quelle"])}
+    tbody = "".join(std_zeile(o, ids, ctx, None).replace("<tr ", '<tr class="gr-ende" ', 1) if o["platz"] == 3 else std_zeile(o, ids, ctx, None) for o in objs)
+    neu = html_[:tab.start(2)] + std_kopf(ids, sort=(None, 1)) + "<tbody>" + tbody + "</tbody>" + html_[tab.end(2):]
+    neu = re.sub(r'(<span id="itab-stand">)[^<]*(</span>)', lambda m: m.group(1) + datum(P["stand"]) + m.group(2), neu, count=1)
+    neu = re.sub(r'(<span id="itab-her">)[^<]*(</span>)', lambda m: m.group(1) + "Aus den Top-10-Listen" + m.group(2), neu, count=1)
+    schlank = {k: [{f: v for f, v in z.items() if f not in ("reg", "vol")} for z in v] if isinstance(v, list) else v for k, v in P.items()}   # reg, vol zeigt die Seite nicht
+    daten = json.dumps(schlank, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    neu = POOL_RE.sub(lambda m: m.group(1) + daten + m.group(3), neu, count=1)
+    neu = hero_karte(neu, P, h)
+    with open(pfad, "w", encoding="utf-8") as f:
+        f.write(neu)
+    print(f"{seite}: Liste der Top-10-Seiten ({len(P['staat'])} Staat, {len(P['unternehmen'])} Unternehmen; {', '.join(quellen)}), "
+          f"sechs Beispiele und Hero-Karte vom {datum(P['stand'])}")
+
+
+def hero_karte(html_, P, h):
+    """Hero-Karte der Stunde h wie im Seitenskript: Anleihe isins[t % n] aus allen Einträgen der Liste."""
+    alle = {x["isin"]: x for x in P["staat"] + P["unternehmen"]}
+    isins = sorted(alle)
+    t = (h ^ 0x9E3779B9) & 0xFFFFFFFF
+    t = (t ^ (t << 13)) & 0xFFFFFFFF
+    t ^= t >> 17
+    t = (t ^ (t << 5)) & 0xFFFFFFFF
+    x = alle[isins[t % len(isins)]]
+    heute = datetime.datetime.now(BERLIN or datetime.timezone.utc).date()
+    f = x["faellig"]
+    teile = (
+        (r'(<a class="hero-karte" href=")[^"]*(")', "anleihe.html?isin=" + esc(x["isin"])),
+        (r'(<b id="hk-name")[^>]*(>)[^<]*', None),
+        (r'(<span class="hk-art" id="hk-art">)[^<]*(</span>)', "Unternehmen" if x["art"] == "Unternehmen" else "Staat"),
+        (r'(<span class="hk-z" id="hk-rend">)[^<]*(</span>)', pct_text(x["rendite"])),
+        (r'(<span class="hk-achse" data-faellig=")[^"]*(")', f),
+        (r'(<b id="hk-rueck">)[^<]*(</b>)', f"Rückzahlung {datum(f)}"),
+    )
+    for muster, wert in teile:
+        if wert is None:
+            ersatz = lambda m: f'{m.group(1)} title="{esc(x.get("emittent") or "")}"{m.group(2)}{esc(x["kurz"])}'
+        else:
+            ersatz = lambda m, wert=wert: m.group(1) + wert + m.group(2)
+        html_, n = re.subn(muster, ersatz, html_, count=1)
+        if not n:
+            warn(f"index.html: Hero-Karte – Stelle {muster[:40]} nicht gefunden")
+    i = html_.find('<span class="hk-zt" id="hk-kupon">')
+    j = html_.find('<b id="hk-rueck">', i)
+    if i >= 0 and j > i:
+        ende = html_.rfind("</span>", i, j)
+        html_ = html_[:i] + '<span class="hk-zt" id="hk-kupon">' + zt_karte(x, heute) + html_[ende:]
+    return html_
+
+
+# ---------- Startseite: Zinsstand-Laufband (seit 15.10.2026, Gesamtprüfung B01-01, B01-02, B01-10) ----------
+# Bund 2 und 10 Jahre und USA 10 Jahre aus zinskurve.json (jüngster Tageswert, Veränderung zum Monatsdurchschnitt des Vormonats in
+# Prozentpunkten), Bund 0 % 2050 aus langlaeufer.json (Veränderung zum Durchschnitt der Wochenwerte des Vormonats), EZB-Einlagesatz aus
+# ezb.json (ohne Veränderung) – dieselbe Rechnung wie bis 14.10.2026 das Seitenskript, das die drei Dateien dafür einbetten ließ.
+# „Stand“ = Tag der Bundesbank-Kurve; Werte von einem anderen Tag (USA laut Fed H.15, Bund 2050) mit ihrem Tag dahinter.
+# Fällt eine Datei aus, bleibt ihr Rückfallwert stehen (Warnung).
+def zinsstand(site, seite="index.html"):
+    pfad = os.path.join(site, seite)
+    html_ = open(pfad, encoding="utf-8").read()
+    if 'class="zs-band"' not in html_:
+        return warn(f"{seite}: Zinsstand-Band nicht gefunden")
+
+    def vormonat(iso):
+        j, m = int(iso[:4]), int(iso[5:7]) - 1
+        return f"{j - 1}-12" if not m else f"{j}-{m:02d}"
+
+    def pkt(d):   # wie pkt() bisher im Seitenskript: auf 0,01 gerundet, „±0,00“ ohne Bewegung
+        n = math.floor(d * 100 + 0.5) / 100
+        return ("+" if n > 0 else "−" if n < 0 else "±") + zahl(abs(n), 2)
+
+    werte, tage = {}, {}
+    try:
+        z = lade(site, "zinskurve.json")
+        for land in ("DE", "US"):
+            h = (z.get("heute") or {}).get(land)
+            if not (h and ist_datum(h[0])):
+                continue
+            vm = vormonat(h[0])
+            row = next((r for r in (z.get("monate") or {}).get(land) or [] if r and r[0] == vm), None)
+            if land == "DE":
+                werte["bund2"] = (h[1], h[1] - row[1] if row and ist_zahl(h[1]) and ist_zahl(row[1]) else None)
+            werte["bund10" if land == "DE" else "us10"] = (h[2], h[2] - row[2] if row and ist_zahl(h[2]) and ist_zahl(row[2]) else None)
+            tage[land] = h[0]
+    except Exception as e:
+        warn(f"{seite}: Zinsstand – zinskurve.json nicht gelesen ({type(e).__name__}: {e})")
+    try:
+        e = lade(site, "ezb.json")
+        if e.get("aktuell"):
+            werte["ezb"] = (e["aktuell"][1], None)
+    except Exception as e:
+        warn(f"{seite}: Zinsstand – ezb.json nicht gelesen ({type(e).__name__}: {e})")
+    try:
+        b = (lade(site, "langlaeufer.json").get("bonds") or {}).get("bund2050") or {}
+        neu = b.get("latest") or {}
+        if ist_datum(neu.get("date")) and ist_zahl(neu.get("yield")):
+            vm = vormonat(neu["date"])
+            w = [r[2] for r in b.get("weekly") or [] if r and str(r[0])[:7] == vm and ist_zahl(r[2])]
+            werte["bund2050"] = (neu["yield"], neu["yield"] - sum(w) / len(w) if w else None)
+            tage["B50"] = neu["date"]
+    except Exception as e:
+        warn(f"{seite}: Zinsstand – langlaeufer.json nicht gelesen ({type(e).__name__}: {e})")
+    gesetzt = 0
+    for key, (wert, delta) in werte.items():
+        if not ist_zahl(wert):
+            continue
+
+        def link(m, wert=wert, delta=delta):
+            a = re.sub(r"<b>[^<]*</b>", f"<b>{zahl(wert, 2)}&nbsp;%</b>", m.group(0), count=1)
+            return re.sub(r"<i>[^<]*</i>", f"<i>{pkt(delta)}</i>", a, count=1) if ist_zahl(delta) else a
+        html_, n = re.subn(r'<a [^>]*data-zs="' + key + r'"[^>]*>.*?</a>', link, html_)
+        gesetzt += 1 if n else 0
+    if tage.get("DE"):
+        kurz = lambda iso: datum(iso)[:6]
+        neben = [f"{name} {kurz(tage[k])}" for k, name in (("US", "USA"), ("B50", "Bund 2050")) if tage.get(k) and tage[k] != tage["DE"]]
+        stand = "Stand " + kurz(tage["DE"]) + "".join(" · " + t for t in neben)
+        html_ = re.sub(r'(<span class="zs-stand">)[^<]*(</span>)', lambda m: m.group(1) + stand + m.group(2), html_)
+    else:
+        stand = "Stand unverändert (keine Bundesbank-Kurve)"
+        warn(f"{seite}: Zinsstand – ohne Bundesbank-Kurve bleibt der Stand der Quell-HTML")
+    with open(pfad, "w", encoding="utf-8") as f:
+        f.write(html_)
+    print(f"{seite}: Zinsstand-Band – {gesetzt} von 5 Werten gesetzt, {stand}")
+
+
+def startseite_feste_zeilen(site, seite="index.html"):
+    """Rückfall (bis 14.10.2026 der einzige Weg): „Sechs Beispiele“ (Standardtabelle seit 03.10.2026): In den Zeilen der Quell-HTML Rendite, Kurs und Restlaufzeit aus
     kurse-auswahl.json, „Kurse und Renditen vom“ dessen Stand und dieselbe Rendite in der Hero-Karte. Die übrigen Zellen (Kupon
     mit Zinstermin, Bonität, Stückelung) bleiben, wie sie sind. Fehlt eine Anleihe in den Kursen oder passt eine Zelle nicht,
     bleibt die Seite unverändert – Zahlen und Datum gehören zusammen (SEO-Runde 2)."""
@@ -773,6 +1177,12 @@ def startseite(site, seite="index.html"):
 
 # ---------- Bundeswertpapiere (seit 04.10.2026, SEO-Runde 2: neue Seite, Entscheidung 02.10.2026) ----------
 BL_SPALTEN = ["anleihe", "rendite", "kupon", "restlaufzeit", "kurs", "volumen", "merken"]
+# Grüne Bundeswertpapiere laut Finanzagentur (deutsche-finanzagentur.de → Bundeswertpapierarten → Grüne Bundeswertpapiere, abgerufen
+# am 15.10.2026; seit 15.10.2026, Gesamtprüfung B11-01): Der Registername der ersten grünen Bundesanleihe DE0001030708 (0 % 2030) trägt
+# kein „Grüne“ – sie hieß in der Liste „Bundesanleihe“ wie ihr konventioneller Zwilling DE0001102507. Neue grüne Papiere erkennt
+# art_von() weiter am Namen; diese Liste ergänzt nur. Bei neuen Emissionen ohne „Grüne“ im Namen hier nachtragen.
+GRUENE_BUND = {"DE0001030708", "DE0001030724", "DE0001030732", "DE0001030740", "DE0001030757",
+               "DE000BU35025", "DE000BU3F007", "DE000BU3Z005", "DE000BU3Z047"}
 BL_RE = re.compile(r"(<!--BUNDESLISTE-->).*?(<!--/BUNDESLISTE-->)", re.S)
 
 
@@ -804,6 +1214,8 @@ def bundeswertpapiere(site, seite="bundeswertpapiere.html"):
         art = art_von(z[0])
         if not art:
             continue
+        if isin in GRUENE_BUND and not art.startswith("Grüne"):
+            art = "Grüne " + art
         kupon_ = z[3] if ist_zahl(z[3]) else None
         objs.append({"isin": isin, "kurz": art, "reg": z[0], "art": 0, "ccy": z[2] or "EUR", "kupon": kupon_,
                      "zinsart": 2 if (len(z) > 9 and z[9] == 2) or kupon_ == 0 else 0, "faellig": z[4], "kurs": kurs_,
@@ -831,6 +1243,41 @@ def bundeswertpapiere(site, seite="bundeswertpapiere.html"):
     print(f"{seite}: {len(objs)} Bundeswertpapiere fest im HTML, Kurse vom {datum(stand)}")
 
 
+# ---------- Langläufer: Volumen „heute“ in „Die sieben Anleihen im Einzelnen“ (seit 15.10.2026, Gesamtprüfung B12-01) ----------
+# Die Volumen standen von Hand im HTML und alterten (Österreich 2120: 5,2 statt 6,3 Mrd., BTP 2072: 7,4 statt 9,4 Mrd.). Jetzt der
+# ausgegebene Nennbetrag laut ESMA-Register (anleihen/<teil>.json, wie Anleihen-Suche und Top-10-Seiten) in <span data-vol="ISIN">.
+WSYM = {"EUR": "€", "USD": "$", "GBP": "£"}
+
+
+def langlaeufer_volumen(site, seite="langlaeufer.html"):
+    from steckbriefe import stammdaten
+    pfad = os.path.join(site, seite)
+    html_ = open(pfad, encoding="utf-8").read()
+    isins = re.findall(r'<span data-vol="([A-Z]{2}[A-Z0-9]{9}[0-9])">', html_)
+    if not isins:
+        return warn(f"{seite}: keine Volumen-Marken (data-vol) gefunden")
+    stamm, fehlt = stammdaten(site, isins), []
+
+    def setze(m):
+        z = stamm.get(m.group(2))
+        if not (z and ist_zahl(z[5]) and z[5] > 0 and z[2] in WSYM):
+            fehlt.append(m.group(2))
+            return m.group(0)
+        return m.group(1) + volumen_text(z[5]).replace(NBSP, "&nbsp;") + "&nbsp;" + WSYM[z[2]] + m.group(3)
+    html_ = re.sub(r'(<span data-vol="([A-Z0-9]{12})">)[^<]*(</span>)', setze, html_)
+    if fehlt:
+        warn(f"{seite}: Volumen ohne Stammdaten, Rückfall bleibt: {', '.join(fehlt)}")
+    # „Daten-Stand“ wie renderAll() im Browser: Tag des jüngsten Bundesbank-Kurses der Bund 0 % 2050 (stand ohne Skript auf dem Tag der
+    # Handpflege, 16.09.2026)
+    stand = ((((lade(site, "langlaeufer.json").get("bonds") or {}).get("bund2050") or {}).get("latest") or {}).get("date"))
+    if ist_datum(stand):
+        alt = veraltet(stand)
+        html_ = datenstand_setzen(html_, "Daten-Stand: " + datum(stand) + (" · veraltet" if alt else ""), stale=alt) or html_
+    with open(pfad, "w", encoding="utf-8") as f:
+        f.write(html_)
+    print(f"{seite}: {len(isins) - len(fehlt)} Volumen aus dem ESMA-Register, Daten-Stand {datum(stand) if ist_datum(stand) else 'unverändert'}")
+
+
 def main():
     site = sys.argv[1] if len(sys.argv) > 1 else "_site"
     nur = {a.lower() for a in sys.argv[2:]}   # lokal z. B. „bundeswertpapiere“: nur diese Tabelle schreiben
@@ -843,7 +1290,9 @@ def main():
                           ("Unternehmensanleihen nach Ländern", lambda: laender(site, "unternehmensanleihen-laender.html", "top10-unternehmensanleihen-laender.json")),
                           ("Anleihen nach Kupon", lambda: kupon(site)),
                           ("Startseite", lambda: startseite(site)),
-                          ("Bundeswertpapiere", lambda: bundeswertpapiere(site))):
+                          ("Zinsstand", lambda: zinsstand(site)),
+                          ("Bundeswertpapiere", lambda: bundeswertpapiere(site)),
+                          ("Langläufer", lambda: langlaeufer_volumen(site))):
         if nur and name.lower() not in nur:
             continue
         try:

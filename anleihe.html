@@ -103,6 +103,7 @@
   .kv { margin-top: 0; min-height: calc(min(100vw - 48px, 658px) * 0.39 + 40px); }
   .kv .hovergraph, .kv-kopf, .kv-leer, .kv-legende { max-width: none; }
   #kv.kv:has(.kv-leer) { min-height: 0 !important; }
+  .kv-laedt::before { content: "Kursverlauf wird geladen …"; }   /* Ladehinweis nur als Stil – Crawler lesen den Server-Steckbrief ohne ihn (15.10.2026, B04-08) */
   .kv .kv-ver.plus, .kv .kv-ver.minus { color: var(--ink); }
   .kv-quelle { font-size: 12.5px; color: var(--text); line-height: 1.5; margin-top: 6px; }
   /* Handel */
@@ -123,8 +124,6 @@
   .werkz a:focus-visible, .werkz button:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
   .werkz small { display: block; font-size: 12.5px; font-weight: 400; color: var(--text); }
   .werkz .pf { color: var(--green-text); font-weight: 600; }
-  /* feste Leiste am Handy */
-  .leiste { display: none; }
   .leer { max-width: 620px; background: #fff; border: 1px solid var(--rule); border-radius: 14px; padding: 18px 20px; font-size: 15px; line-height: 1.6; }
   .leer a { color: var(--green-text); }
   .nix-suche { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
@@ -140,18 +139,6 @@
     .kv { min-height: calc((100vw - 48px) * 0.39 + 40px); }
   }
   @media (max-width: 760px) {
-    body.mit-leiste { padding-bottom: 96px; }
-    html.mit-leiste { scroll-padding-bottom: 96px; }   /* Tastaturfokus nicht unter der festen Leiste (seit 09.10.2026, T-31) */
-    .leiste { display: grid; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; grid-template-columns: 1fr; gap: 8px; padding: 10px 14px calc(12px + env(safe-area-inset-bottom)); background: rgba(255,255,255,0.97); border-top: 1px solid var(--rule); box-shadow: 0 -6px 20px rgba(26,26,25,0.08); }
-    .leiste[hidden] { display: none; }
-    .leiste a, .leiste button { font: inherit; font-size: 15px; font-weight: 600; text-align: center; border-radius: 6px; padding: 11px 10px; text-decoration: none; color: var(--ink); border: 1px solid rgba(44,44,42,0.25); background: #fff; cursor: pointer; }
-  }
-  /* Wenig Höhe (Zoom 200/400 %, Handy quer): Leiste am Ende des Inhalts statt fest – vorher belegten Kopf und Leiste 36 bzw. 50 % der
-     Höhe (seit 09.10.2026, Technik-Test 08.10.2026 T-112); die Kopfzeile bleibt, wie sie ist */
-  @media (max-width: 760px) and (max-height: 500px) {
-    .leiste { position: static; }
-    body.mit-leiste { padding-bottom: 0; }
-    html.mit-leiste { scroll-padding-bottom: 0; }
   }
   @media (max-width: 600px) {
     h1 { font-size: 26px; min-height: 2.3em; }
@@ -205,7 +192,7 @@
   @media (max-width: 600px) { .dep-pop { left: 0 !important; right: 0; width: auto; } }
   @media (prefers-reduced-motion: no-preference) { html.sanft { scroll-behavior: smooth; } }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Anleihe – Steckbrief","description":"Steckbrief einer Anleihe: Kurs und Rendite vom letzten Börsentag, Kursverlauf, Handel, Zinsformel, Rang, Kündigung und Stückelung.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-09","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihe.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Anleihe – Steckbrief","description":"Steckbrief einer Anleihe: Kurs und Rendite vom letzten Börsentag, Kursverlauf, Handel, Zinsformel, Rang, Kündigung und Stückelung.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-15","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihe.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Anleihen","item":"https://www.bondarium.de/anleihen.html"},{"@type":"ListItem","position":3,"name":"Anleihen-Suche","item":"https://www.bondarium.de/anleihen-suche.html"},{"@type":"ListItem","position":4,"name":"Anleihe","item":"https://www.bondarium.de/anleihe.html"}]}</script>
 </head>
 <body>
@@ -358,7 +345,7 @@
 
       <section class="abs" aria-labelledby="h-verlauf">
         <h2 id="h-verlauf">Kursverlauf</h2>
-        <div class="kv" id="kv"><p class="kv-leer">Kursverlauf wird geladen …</p></div>
+        <div class="kv" id="kv"><p class="kv-leer kv-laedt"></p></div>
         <p class="kv-quelle" id="verlauf-quelle"></p>
       </section>
 
@@ -369,7 +356,7 @@
     </div>
 
     <div id="nix" class="leer" hidden>
-      <p id="nix-text"><b>Diese Anleihe kennen wir nicht.</b> Entweder ist die Anleihe nicht an einer deutschen Börse gelistet oder sie ist fällig.</p>
+      <p id="nix-text"></p>
       <form class="nix-suche" action="anleihen-suche.html" method="get" role="search"><label class="sr-only" for="nix-q">Anleihe suchen</label><input type="search" id="nix-q" name="q" placeholder="Name, ISIN oder WKN" autocomplete="off" spellcheck="false" enterkeyhint="search"><button type="submit">Suchen</button></form>
     </div>
 
@@ -401,16 +388,17 @@
         <p><strong>Von uns berechnet</strong> (alles andere steht so bei der Börse, der Deutschen Bundesbank oder im ESMA-Register):
           Rendite bis Fälligkeit (jährliche Verzinsung, taggenau, Stückzinsen eingerechnet, Valuta zwei Börsentage nach dem Handelstag; bei mehreren Zinszahlungen im Jahr ist das die effektive Jahresrendite mit Zinseszins – Broker zeigen oft die nominale, etwas niedrigere; Zinstermine wie unter „Zinstermine“ beschrieben; bei Bundeswertpapieren die Rendite der Bundesbank; keine Rendite bei variablem oder später wechselndem Kupon, Stufenzins, Wandel- und Tilgungsanleihen, bei Valuta nach der Fälligkeit und bei widersprüchlichen Registerangaben; keine Rendite und kein Aufschlag, wenn der Kurs eine Taxe ohne Umsatz ist und die berechnete Rendite unter 0 oder über 15 % liegt, mehr als einen Prozentpunkt unter Bund oder bei unter drei Monaten Restlaufzeit über 8 %) ·
           laufende Verzinsung (Kupon ÷ Kurs) ·
+          Stückzinsen je 1.000 zum Valutatag (taggenau seit dem letzten Zinstermin, für alle Anleihen nach der Zählweise act/act – bei US-Unternehmensanleihen ist 30/360 üblich, das ergibt wenige Cent Unterschied) ·
           Restlaufzeit und Alter des Kurses in Börsentagen (Montag bis Freitag) ·
           Veränderung zum Vortag (gegen unseren gespeicherten Schlusskurs) ·
           Umsatz in Geld (Stück × Kurs je Abschluss) ·
           Risikoaufschlag zu Bund (Differenz zur Rendite der Bundesanleihe gleicher Restlaufzeit, zwischen den beiden nächsten Bundeswertpapieren linear interpoliert; nur Euro, ab zwei Wochen bis 30 Jahre) ·
-          Kursveränderung im gewählten Zeitraum und „inkl. Kupons“ (Kursveränderung plus Kupon × Tage ÷ 365 im Zeitraum, bezogen auf den Anfangskurs, ohne Wiederanlage, in der Währung der Anleihe).</p>
+          Kursveränderung im gewählten Zeitraum und „inkl. Zinsen“ (Kursveränderung plus Kupon × Tage ÷ 365 im Zeitraum, bezogen auf den Anfangskurs, ohne Wiederanlage, in der Währung der Anleihe).</p>
         <p id="datastand">Daten-Stand: wird geladen</p>
       </div>
     </details>
-    <!-- feste Leiste am Handy: seit 09.10.2026 innerhalb von <main> (Technik-Test 08.10.2026 T-118; Lage unverändert, sie ist fest positioniert) -->
-    <div class="leiste" id="leiste" hidden><button type="button" id="leiste-kopie">ISIN kopieren</button></div>
+    <!-- Die feste Leiste am Handy („ISIN kopieren“, seit 30.09.2026) ist am 15.10.2026 entfallen (Gesamtprüfung B04-07): Sie wiederholte nur den
+         Knopf im Kopf und verdeckte dauerhaft rund 70 px -->
   </main>
   <p class="sr-only" id="kopie-status" role="status" aria-live="polite"></p>
   <footer class="fuss">
@@ -787,7 +775,8 @@ function zeige(r, k, meta, kf) {
 
   // --- Kopfzahlen: Kurs · Rendite · Kupon · Fälligkeit ---
   const rendGrund = !k ? "kein Kurs" : nachFaellig ? (abgelaufen ? "Fälligkeit erreicht" : "Valuta liegt nach der Fälligkeit") : befund ? "Registerangaben widersprüchlich"
-    : zinsart === 1 ? "Kupon variabel" : unsicher ? "Taxe ohne Umsatz, Wert außerhalb der Plausibilitätsgrenzen" : !faellig ? "unbefristet" : ohneRendite(name);
+    : zinsart === 1 ? "Kupon variabel" : unsicher ? "Taxe ohne Umsatz, Wert außerhalb der Plausibilitätsgrenzen" : !faellig ? "unbefristet"
+    : (new Date(faellig + "T12:00:00Z") - valuta) / 864e5 < 14 ? "Restlaufzeit unter zwei Wochen" : ohneRendite(name);   // Regel wie scripts/update_kurse.py (seit 15.10.2026, B04-05)
   const rendU = rend != null ? [(real ? "Realrendite, " : "") + "pro Jahr bis zur Fälligkeit" + (kue.k === "t" || kue.k === "e" ? " (nicht bis zum Kündigungstermin)" : ""),
     taxe ? "aus Taxe ohne Umsatz" : "", ccy !== "EUR" ? `in ${MC.esc(ccy)}` : ""].filter(Boolean).join(" · ") : rendGrund;
   let zinsTxt = "";
@@ -813,7 +802,7 @@ function zeige(r, k, meta, kf) {
   ].join("");
   // Nebenzeile: Vortag, laufende Verzinsung, Aufschlag zu Bund
   const vor = k && typeof k[6] === "number" ? k[6] : null, dif = vor != null && kurs != null ? kurs - vor : null;
-  const lfd = typeof kupon === "number" && zinsart === 0 && kurs && !inflIdx ? kupon / kurs * 100 : null;
+  const lfd = typeof kupon === "number" && zinsart === 0 && kurs && !inflIdx && !raten ? kupon / kurs * 100 : null;   // nicht bei Tilgung in Raten (B04-04)
   // Warum kein Aufschlag? Seit 03.10.2026 je Fall – vorher stand immer „nur bei Euro-Anleihen mit Rendite bis 30 Jahre berechnet“, auch bei
   // Bundesanleihen und bei Euro-Anleihen, denen nach dem Bundesbank-Ausfall vom 02.10. nur die Vergleichskurve fehlte (Nutzertest)
   const aufGrund = bundWp ? "Bundeswertpapier ist die Bezugsgröße" : unsicher ? "nicht berechnet (Plausibilitätsregel)"
@@ -858,9 +847,13 @@ function zeige(r, k, meta, kf) {
       // Neuemission im ersten Zinsjahr: Zinslauf vereinfacht ab dem ersten Handelstag, erste Zahlung anteilig (stueckzins; bis
       // 03.10.2026 nur im Rechenbeispiel, das auf Nutzerwunsch entfallen ist)
       const neu = m[1] ? { ab: new Date(m[1] + "T12:00:00Z"), jahr: ausgabeJahr(name) } : null;
-      const sz = !nachFaellig && !inflIdx ? stueckzins(kupon, faellig, freq, valuta, zinstage, neu) : null, erst = sz && sz.neu ? sz.erster : 1;
+      const sz = !nachFaellig && !inflIdx && !raten ? stueckzins(kupon, faellig, freq, valuta, zinstage, neu) : null, erst = sz && sz.neu ? sz.erster : 1;
       if (sz && sz.neu) neuAb = m[1];
-      if (n) naechsterZeile = kv(`Nächster Zinstermin${hilf("zinstermin", "Zinstermin")}`, fmtDate(n), n === faellig ? "mit Rückzahlung" : `${fmt(kupon * 10 / freq * (ks.length === 1 ? letzterKupon(faellig, freq, zinstage) : 1) * erst, 2)} ${MC.esc(ccy)} je 1.000 ${MC.esc(ccy)}${erst < 1 ? " · anteilig, erste Zinsperiode" : ""}${zinstage ? "" : " · geschätzt"}`);
+      // Betrag je 1.000 Nennwert – bei inflationsindexierten Anleihen mal Indexverhältnis, bei Tilgung in Raten auf den noch nicht getilgten
+      // Nennwert (seit 15.10.2026, Gesamtprüfung B04-02, B04-04: vorher stand der Betrag auf den ursprünglichen Nennwert ohne Zusatz)
+      const betrag = raten ? "auf den noch nicht getilgten Nennwert"
+        : `${fmt(kupon * 10 / freq * (ks.length === 1 ? letzterKupon(faellig, freq, zinstage) : 1) * erst, 2)} ${MC.esc(ccy)} je 1.000 ${MC.esc(ccy)}${inflIdx ? " × Indexverhältnis" : ""}`;
+      if (n) naechsterZeile = kv(`Nächster Zinstermin${hilf("zinstermin", "Zinstermin")}`, fmtDate(n), n === faellig ? "mit Rückzahlung" : `${betrag}${erst < 1 ? " · anteilig, erste Zinsperiode" : ""}${zinstage ? "" : " · geschätzt"}`);
       if (sz) stueckZeile = kv(`Stückzinsen je 1.000${hilf("stueckzinsen", "Stückzinsen")}`, `${fmt(sz.anteil * 10, 2)} ${MC.esc(ccy)}`, `zum Valutatag ${fmtDate(isoOf(valuta))}${sz.neu ? ` · Zinslauf ab ${fmtDate(isoOf(sz.letzter))} (erster Handelstag, vereinfacht)` : ""}`);
     } catch (e) { /* ohne die Zusatzzeilen */ }
   }
@@ -885,13 +878,13 @@ function zeige(r, k, meta, kf) {
     grp("Emittent und Sicherheit", [
       kv(`Emittent${hilf("emittent", "Emittent")}`, MC.esc(emiL || "nicht gemeldet"), emittent ? "laut LEI-Register (GLEIF)" : ""),
       kv("Art · Land", MC.esc([T.art[art], land ? landName(land) : ""].filter(Boolean).join(" · ")), ""),
-      kv(`Rang${hilf(rs === "U" || rs === "J" ? "nachranganleihe" : "senior", "Rang")}`, rangTxt ? MC.esc(rangTxt) : "nicht gemeldet", "laut ESMA-Register"),
+      kv(`Rang${hilf(rs === "U" || rs === "J" ? "nachranganleihe" : "senior", "Rang")}`, rangTxt ? MC.esc(rangTxt) : "nicht gemeldet", rangTxt ? "laut ESMA-Register" : ""),
       kv("Garantie · Besicherung", garTxt ? MC.esc(garTxt) : "nicht gemeldet", garTxt ? "laut ESMA-Register" : art === 2 ? "keine Angabe im Register – eine Garantie der Muttergesellschaft steht gegebenenfalls im Prospekt" : ""),
       // Bonitätsstufe laut EZB (scripts/update_bonitaet.py): 1 = Stufen 1 und 2, 3 = Stufe 3, 0 = auf der Liste, Stufe offen; fehlt = nicht auf der Liste.
       // Nur wenn die Teildatei den Stand der EZB-Liste trägt (meta.ezb) – sonst stünde bei jeder Anleihe „keine Angabe“.
       // Der i-Punkt führt zur Erklärung unter „Datenquellen und Methodik“ (Nutzerwunsch 02.10.2026: keine Unterzeile).
       meta.ezb ? kv(`Bonität laut EZB<a class="hilf bon-warum" href="#quellen" title="${bon == null ? "Steht nicht auf der EZB-Liste" : "Von uns aus der EZB-Liste abgelesen"} (Stand ${fmtDate(meta.ezb)}) – zur Erklärung" aria-label="Bonität laut EZB: Erklärung">i</a>`,
-        bon === 1 ? "AAA bis A− · beste Gruppe" : bon === 3 ? "BBB+ bis BBB− · untere Stufe guter Bonität" : bon === 0 ? "mindestens BBB−" : "keine Angabe", "") : "",
+        bon === 1 ? "AAA bis A− · EZB-Stufe 1 oder 2" : bon === 3 ? "BBB+ bis BBB− · EZB-Stufe 3" : bon === 0 ? "mindestens BBB−" : "keine Angabe", "") : "",   // ohne Wertung (seit 15.10.2026, B04-18)
     ]),
     grp("Ausstattung", [
       kv(`Währung${ccy !== "EUR" ? hilf("fremdwaehrungsanleihe", "Fremdwährung") : ""}`, `${MC.esc(ccy)}${wName ? " · " + MC.esc(wName) : ""}`, ""),
@@ -908,8 +901,11 @@ function zeige(r, k, meta, kf) {
   const platz = bund ? "Frankfurt" : k && k[3] === "T" ? "Tradegate" : k && k[3] === "X" ? "Xetra" : "Frankfurt";
   const umsJe = voll ? [["Frankfurt", td[5]], ["Tradegate", td[6]]].filter(x => x[1] > 0).map(x => `${x[0]} ${fmt(x[1], 0)} ${MC.esc(ccy)}`) : [];
   const zelle = (kk, w) => `<div><div class="k">${kk}</div><div class="w">${w}</div></div>`;
-  // Handelstage mit Umsatz (seit 03.10.2026, dieselbe Zahl wie in den Top-10): Börsentage im gesammelten Kursverlauf des Jahres mit Umsatz
-  const uTage = kf && kf.u && kf.u[ISIN] ? Object.keys(kf.u[ISIN]).filter(t => kf.u[ISIN][t] > 0).length : 0, nTage = kf && kf.tage ? kf.tage.length : 0;
+  // Handelstage mit Umsatz (seit 03.10.2026): Börsentage mit Umsatz im Kursverlauf des Jahres. Nenner seit 15.10.2026 (Gesamtprüfung B04-01,
+  // G01-01) nur die Börsentage seit Beginn der Umsatzsammlung (UMSATZ_AB, wie SAMMLUNG_AB in scripts/update_top10.py) – vorher alle Tage der
+  // Kursdatei, in die für US- und niederländische Staatsanleihen Kurse ab Januar eingespielt sind („5 von 195“ statt „5 von 12“)
+  const UMSATZ_AB = "2026-09-24";
+  const uTage = kf && kf.u && kf.u[ISIN] ? Object.keys(kf.u[ISIN]).filter(t => kf.u[ISIN][t] > 0).length : 0, nTage = kf && kf.tage ? kf.tage.filter(t => t >= UMSATZ_AB).length : 0;
   document.getElementById("handel").innerHTML = k ? `<div class="strip">` +
       // Seit 03.10.2026: „Schluss · Taxe“, wenn am Kursplatz kein Abschluss zustande kam; Umsatz als Summe aller Plätze benannt
       // (Nutzertest: 263.193 EUR Umsatz standen unter „Börse Frankfurt“, obwohl er von Tradegate kam)
@@ -1003,12 +999,8 @@ function zeige(r, k, meta, kf) {
     if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(() => fertig(true), () => fertig(alterWeg(text)));
     else fertig(alterWeg(text));
   };
-  document.querySelectorAll("#kopie, .kopie-w, #leiste-kopie").forEach(b => b.addEventListener("click", e => kopiere(e.currentTarget, false)));
+  document.querySelectorAll("#kopie, .kopie-w").forEach(b => b.addEventListener("click", e => kopiere(e.currentTarget, false)));
   document.querySelectorAll(".link-w").forEach(b => b.addEventListener("click", e => kopiere(e.currentTarget, true)));
-  // Klasse auch am <html> (seit 09.10.2026, Technik-Test 08.10.2026 T-31): Dort hält scroll-padding-bottom den Tastaturfokus über der
-  // festen Leiste – vorher lagen am Handy bis zu 7 Tab-Stopps ganz darunter (i-Punkt, Fußzeile)
-  const leiste = document.getElementById("leiste");
-  if (leiste) { leiste.hidden = false; document.body.classList.add("mit-leiste"); document.documentElement.classList.add("mit-leiste"); }
 }
 
 (function () {
