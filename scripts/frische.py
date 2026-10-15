@@ -25,6 +25,11 @@ Außerdem Alarm, wenn eine Datei fehlt oder unlesbar ist oder ein Pflichtwert fe
   * anleihen-kurse.json: mindestens 50 % der Euro-Anleihen mit Rendite vom letzten Kurstag haben einen Aufschlag zu Bund
     (fällt auf 0, wenn keine Bund-Kurve da ist – scripts/update_kurse.py, KURVE_ALTER_TAGE)
 Eine Datendatei im Stammordner, die hier nicht vorkommt, ergibt nur eine Warnung (neue Datei: hier aufnehmen).
+Wochenbrief (seit 15.10.2026, Gesamtprüfung E05-01/C09-02): newsletter/ausgabe.json (schreibt scripts/newsletter.py in jedem Lauf)
+nennt im Feld „grund“, warum die Ausgabe nicht verschickt würde. Steht dort etwas anderes als „kein Versandtag“, gibt es schon
+an Werktagen Alarm – vorher fiel die Sperre vom 12.10.2026 („kein Akademie-Artikel lesbar“) erst am Versandtag auf. Ausnahme an
+Tagen außer dem Versandtag: „Kurse veraltet“ und „Bundrenditen … veraltet“ hängen am Abstand zum Kalendertag (nach Feiertagen
+normal); ihre Frische prüfen die Regeln oben in Handelstagen. Fehlt die Datei (lokal üblich), wird nur das vermerkt.
 """
 import argparse
 import datetime
@@ -136,6 +141,11 @@ def als_tag(wert):
         return datetime.date.fromisoformat(str(wert)[:10])
     except ValueError:
         return None
+
+
+WOCHENBRIEF = "newsletter/ausgabe.json"
+WB_VERSANDTAG = 4   # Freitag (wie VERSANDTAG in scripts/newsletter.py)
+WB_ZEITABHAENGIG = ("Kurse veraltet", "Bundrenditen der Bundesbank fehlen oder sind veraltet")
 
 
 # ---------------------------------------------------------------- Prüfung
@@ -338,11 +348,32 @@ def pruefen(p, im_repo):
               f"anleihen-kurse.json → Aufschlag zu Bund: {mit} von {n} Euro-Kursen ({prozent(anteil)})",
               f"anleihen-kurse.json → Aufschlag zu Bund nur bei {mit} von {n} Euro-Kursen mit Rendite ({prozent(anteil)}, mindestens "
               f"{prozent(AUFSCHLAG_ANTEIL_MIN)}) – Bund-Kurve fehlt oder ist zu alt (kurse/bund, Bundesbank BBSSY)")
+    # ---- Wochenbrief: Sperre schon an Werktagen melden (Regel im Kopf)
+    wochenbrief(p)
     # ---- Datendateien ohne Regel
     for pfad in sorted(glob.glob(os.path.join(p.ordner, "*.json"))):
         name = os.path.basename(pfad)
         if name not in p.geladen and name not in OHNE_PRUEFUNG:
             p.hinweise.append(f"{name}: keine Frische-Regel – in scripts/frische.py aufnehmen")
+
+
+def wochenbrief(p):
+    """Alarm, wenn die Ausgabe des Wochenbriefs aus einem anderen Grund als „kein Versandtag“ gesperrt ist."""
+    if not os.path.isfile(os.path.join(p.ordner, WOCHENBRIEF)):
+        p.zeilen.append(f"{WOCHENBRIEF} übersprungen (keine Ausgabe gebaut – lokal üblich, im Datenlauf baut sie newsletter.py)")
+        return
+    a = p.lade(WOCHENBRIEF)
+    alle = [g.strip() for g in str(a.get("grund") or "").split(";") if g.strip()]
+    gruende = alle
+    if p.heute.weekday() != WB_VERSANDTAG:
+        gruende = [g for g in alle if g != "kein Versandtag" and not g.startswith(WB_ZEITABHAENGIG)]
+    kw = a.get("kw") or "?"
+    if a.get("versand") or not gruende:
+        p.zeilen.append(f"{WOCHENBRIEF} → {kw}: " + ("Versand freigegeben" if a.get("versand") else f"kein Versand heute ({'; '.join(alle)}) – "
+                        "kein Grund, der den Versandtag sperrt"))
+    else:
+        p.alarme.append(f"{WOCHENBRIEF} → Wochenbrief {kw} gesperrt: {'; '.join(gruende)} – am Versandtag (Freitag) fiele er aus "
+                        "(scripts/newsletter.py prüfen)")
 
 
 def main():

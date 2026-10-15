@@ -38,6 +38,16 @@ für Suchmaschinen):
     @id-Verweis ohne Knoten; Artikel ohne datePublished nur als Hinweis
   - Sitemap-lastmod jünger als dateModified der Seite; sichtbarer „Daten-Stand“ mehr als 7 Tage älter oder neuer als
     dateModified
+  - (seit 15.10.2026, Gesamtprüfung E02-03/A02-02) Schriften und Bilder im Stammordner des Baus, auf die keine Datei des Baus
+    verweist (Sammelzeile „Datei ohne Verweis im Bau“; scripts/htaccess_test.sh zählt mit, weil es Dateien live abfragt)
+Quelle (seit 15.10.2026, Gesamtprüfung A01-02, E05-02, E05-03) – Fehler bei Push-Deploys und lokal, im Datenlauf (Umgebung
+VOLL=1, update-data.yml) nur Warnung: Der Datenlauf ändert keine Seitentexte, ein Fund soll die Daten nicht anhalten (der Push,
+der ihn einführte, war schon rot):
+  - Menüdaten: scripts/nav.py, hubs.py und weiter.py --check melden keine abweichende Seite, und die Leser der Menüdaten
+    liefern etwas – newsletter.akademie() einen Artikel, kennzahlen.akademie_themen() eine Zahl, themen.menue_namen() Namen.
+    Diese Leser brachen beim Menü-Umbau vom 11.10.2026 still (Wochenbrief gesperrt, Themen der Suche mit Vorschauzeilen).
+  - Neutralität des Steckbriefs: scripts/neutral_check.py auf anleihe.html ohne Treffer (lief vorher in keinem Workflow).
+  - Zusage- und Empfehlungswörter und Hauswortschatz (Regeln oben, Ausnahmen in AUSNAHMEN_ZUSAGE) – vorher nur Warnungen.
 """
 import datetime
 import html as htmllib
@@ -45,6 +55,7 @@ import json
 import os
 import posixpath
 import re
+import subprocess
 import sys
 import urllib.parse
 from html.parser import HTMLParser
@@ -563,6 +574,81 @@ for f in sorted(seiten) + list(steckbriefe):
     except Exception as e:
         fund("SEO-Prüfung übersprungen (unerwarteter Aufbau)", steckbriefe.get(f, f), f"{type(e).__name__}: {e}")
 
+
+# ---------- Dateien ohne Verweis (seit 15.10.2026, Gesamtprüfung E02-03/A02-02) ----------
+# Der Bau kopiert alle *.woff2/*.svg/*.webp/*.png des Stammordners – nicht mehr genutzte gingen so weiter live (manrope-500/-600).
+# Gezählt wird jeder Dateiname, der in einer Textdatei des Baus vorkommt (Seiten, Stylesheets, Skripte, JSON, .htaccess, PHP …)
+# oder in scripts/htaccess_test.sh (das fragt Dateien live ab). favicon.ico fragen Browser ohne Verweis direkt ab.
+SKRIPTE = os.path.dirname(os.path.abspath(__file__))
+QUELLE = os.path.dirname(SKRIPTE)
+texte = []
+for wurzel, ordner, dateien in os.walk(site):
+    ordner[:] = [o for o in ordner if o not in ("kurse", "anleihen")]   # Kursverlauf und Stammdaten verweisen auf keine Datei
+    for d in dateien:
+        if d == ".htaccess" or d.endswith((".html", ".css", ".js", ".json", ".txt", ".xml", ".php", ".webmanifest")):
+            try:
+                with open(os.path.join(wurzel, d), encoding="utf-8", errors="replace") as t:
+                    texte.append(t.read())
+            except OSError:
+                pass
+if os.path.isfile(os.path.join(SKRIPTE, "htaccess_test.sh")):
+    texte.append(open(os.path.join(SKRIPTE, "htaccess_test.sh"), encoding="utf-8").read())
+alle_texte = "\n".join(texte)
+for d in sorted(os.listdir(site)):
+    if d.endswith((".woff2", ".svg", ".webp", ".png", ".jpg")) and d not in alle_texte:
+        fund("Datei ohne Verweis im Bau (nicht mehr genutzt? aus dem Stammordner nehmen)", d)
+del texte, alle_texte
+
+# ---------- Quelle: Menüdaten und ihre Leser, Neutralität, Text-Regeln (seit 15.10.2026, Gesamtprüfung A01-02, E05-02, E05-03) ----------
+DATENLAUF = os.environ.get("VOLL") == "1"
+
+
+def quelle_fund(text):
+    """Fehler bei Push-Deploys und lokal, im Datenlauf nur Warnung (Kopf der Datei)."""
+    (warnungen if DATENLAUF else fehler).append(text + (" (im Datenlauf nur Warnung)" if DATENLAUF else ""))
+
+
+if os.path.isfile(os.path.join(SKRIPTE, "nav.py")) and os.path.isfile(os.path.join(QUELLE, "index.html")):
+    # 1) Stimmen die Seiten mit den Menüdaten überein? --check schreibt nichts.
+    for skript in ("nav.py", "hubs.py", "weiter.py"):
+        try:
+            r = subprocess.run([sys.executable, os.path.join(SKRIPTE, skript), "--check"], cwd=QUELLE, capture_output=True,
+                               text=True, timeout=180)
+            ausgabe = (r.stdout + r.stderr).strip()
+            m = re.search(r"^(\d+) Seiten abweichend", ausgabe, re.M)
+            if r.returncode != 0 or not m or int(m.group(1)) > 0:
+                quelle_fund(f"scripts/{skript} --check: Seiten weichen von den Menüdaten ab oder die Prüfung scheiterte – "
+                            f"python3 scripts/{skript} ausführen ({' / '.join(ausgabe.splitlines()[-3:])[:300]})")
+        except Exception as e:   # noqa: BLE001
+            quelle_fund(f"scripts/{skript} --check ließ sich nicht ausführen ({type(e).__name__}: {e})")
+    # 2) Liefern die Leser der Menüdaten etwas?
+    sys.path.insert(0, SKRIPTE)
+    kw = datetime.date.today().isocalendar()[1]
+    for name, aufruf, gut in (
+            ("newsletter.akademie()", lambda: __import__("newsletter").akademie(kw), lambda x: x is not None),
+            ("kennzahlen.akademie_themen()", lambda: __import__("kennzahlen").akademie_themen(), lambda x: isinstance(x, int) and x > 0),
+            ("themen.menue_namen()", lambda: __import__("themen").menue_namen(), lambda x: isinstance(x, dict) and len(x) >= 20)):
+        try:
+            wert = aufruf()
+            if not gut(wert):
+                quelle_fund(f"Leser der Menüdaten: {name} liefert nichts ({str(wert)[:80]}) – liest er scripts/nav.py noch richtig?")
+        except Exception as e:   # noqa: BLE001
+            quelle_fund(f"Leser der Menüdaten: {name} scheitert ({type(e).__name__}: {e})")
+    # 3) Neutralität des Steckbriefs (Nutzerentscheid 29.09.2026)
+    try:
+        import neutral_check
+        treffer, klassen = neutral_check.pruefe(os.path.join(QUELLE, "anleihe.html"))
+        for w, ctx in treffer:
+            quelle_fund(f"anleihe.html: Wertwort „{w}“ im Steckbrief (scripts/neutral_check.py): …{ctx}…")
+        for k in klassen:
+            quelle_fund(f"anleihe.html: Statusklasse {k} im Steckbrief (scripts/neutral_check.py)")
+    except Exception as e:   # noqa: BLE001
+        quelle_fund(f"scripts/neutral_check.py scheitert ({type(e).__name__}: {e})")
+# 4) Zusage- und Empfehlungswörter, Hauswortschatz: Fehler statt Sammelwarnung (Ausnahmen: AUSNAHMEN_ZUSAGE)
+if not DATENLAUF:
+    for regel in ("Zusage- oder Empfehlungswort", "Hauswortschatz"):
+        for datei, text in funde.pop(regel, []):
+            fehler.append(f"{datei}: {regel} – {text}")
 
 # Sitemap: lastmod darf nicht jünger sein als das Änderungsdatum der Seite
 sm = os.path.join(site, "sitemap.xml")

@@ -8,14 +8,20 @@ Kommentare, ohne den Aufklapper „Datenquellen und Methodik“) und meldet jede
 Dazu: keine Statusklassen (plus/minus/warn) im Steckbrief.
 
 Aufruf im Ordner website:  python3 scripts/neutral_check.py [datei]   → Rückgabewert 1 bei Treffern
+
+Seit 15.10.2026 (Gesamtprüfung E05-02) ruft scripts/pruefen.py diese Prüfung bei jedem Deploy auf (Fehler im Push-Deploy, im
+Datenlauf nur Warnung). Dafür: Fachbegriffe mit „Risiko…“ (Risikoaufschlag, Risikoaufschläge) zählen nicht – sie bewerten
+nichts; die Fußzeile wird auch mit Attributen (<footer class=…>) übergangen; die Stufe der Ratingskala „untere Stufe guter
+Bonität“ (EZB-Bonitätsstufe 3) ist beschreibend wie die Ausnahmen der Ratingskala in pruefen.py (AUSNAHMEN_ZUSAGE).
 """
 import re, sys, pathlib
 
-WORTE = r"gut|gute[nmrs]?|schlecht\w*|sicher|sichere[nmrs]?|unsicher\w*|riskant\w*|risiko\w*|lohn\w*|empfehl\w*|empfohlen|passt|passend\w*|" \
+WORTE = r"gut|gute[nmrs]?|schlecht\w*|sicher|sichere[nmrs]?|unsicher\w*|riskant\w*|risiko(?!aufschl)\w*|lohn\w*|empfehl\w*|empfohlen|passt|passend\w*|" \
         r"vorteil\w*|nachteil\w*|harmlos|attraktiv\w*|günstig\w*|teuer\w*|achtung|vorsicht\w*|solide\w*|geschenk|beachte\w*|unbedingt|" \
         r"sollte\w*|besser\w*|nie|chance\w*|gefahr\w*|warn\w*|kaum|gering\w*|niedrig\w*|lieber|ideal\w*|geeignet\w*|interessant\w*"
 RE_WORT = re.compile(r"\b(" + WORTE + r")\b", re.I)
-AUSNAHMEN = {"Hoch / Tief"}   # Spaltenkopf, kein Urteil (steht nicht in der Wortliste, nur zur Dokumentation)
+AUSNAHMEN = {"Hoch / Tief",                  # Spaltenkopf, kein Urteil (steht nicht in der Wortliste, nur zur Dokumentation)
+             "untere Stufe guter Bonität"}  # Ratingskala: EZB-Bonitätsstufe 3 (BBB+ bis BBB−), beschreibend
 
 
 def js_texte(code):
@@ -70,7 +76,7 @@ def pruefe(pfad):
     body = s[s.index("<body"):]
     skripte = re.findall(r"<script>(.*?)</script>", body, re.S)
     html = re.sub(r"<script.*?</script>|<style.*?</style>|<!--.*?-->|<details class=\"quellen\".*?</details>|<noscript>.*?</noscript>", " ", body, flags=re.S)
-    html = re.sub(r"<header class=\"topbar\".*?</header>|<footer>.*?</footer>", " ", html, flags=re.S)
+    html = re.sub(r"<header class=\"topbar\".*?</header>|<footer\b[^>]*>.*?</footer>", " ", html, flags=re.S)
     texte = [re.sub(r"<[^>]+>", " ", html)]
     for sk in skripte: texte += js_texte(sk)
     treffer = []

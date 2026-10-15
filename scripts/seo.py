@@ -47,7 +47,8 @@ Außerdem:
     Textausschnitt ohne Längengrenze).
   * Artikelseiten bekommen <meta property="article:modified_time"> mit dem dateModified.
   * Sichtbarer Stand (seit 04.10.2026): „Stand: TT.MM.JJJJ“ hinter der Lesezeit (<span class="stand-t">) wird auf das
-    dateModified der Seite gesetzt – so zeigt die Seite nie ein anderes Datum als die strukturierten Daten.
+    dateModified der Seite gesetzt – so zeigt die Seite nie ein anderes Datum als die strukturierten Daten. Ist der Stand in
+    der Quelle jünger als dateModified (seit 15.10.2026), gilt das jüngere Datum für beides, mit Warnung (Quelle nachziehen).
   * sitemap.xml wird aus den Seiten neu geschrieben: jede Seite mit „index“ und eigener kanonischer Adresse steht
     drin, entfernte oder gesperrte Seiten fallen heraus, <lastmod> ist das dateModified der Seite (Regel oben).
     Die Reihenfolge der Datei im Repository bleibt erhalten, neue Seiten kommen ans Ende.
@@ -603,6 +604,19 @@ def seite(site, fname, glossar_namen=None):
                      "nicht erneuert? dateModified folgt dem sichtbaren Stand")
             if zeigt > str(haupt.get("dateModified") or "")[:10]:
                 haupt["dateModified"] = zeigt
+    # Sichtbarer „Stand: …“ der Quelle jünger als dateModified (seit 15.10.2026, Gesamtprüfung E03-02): Bei einer Textänderung
+    # wurde nur der sichtbare Stand nachgezogen, nicht das JSON-LD. Bis dahin setzte stand_anzeige() den Stand still auf das
+    # ältere dateModified zurück (live: broker-vergleich.html „Stand: 02.10.2026“, obwohl am 11.10. geändert). Jetzt gilt das
+    # jüngere Datum für beides, und eine Warnung nennt die Seite – in der Quelle dateModified nachziehen.
+    m = STAND_T_RE.search(html_)
+    if m:
+        t, mo, j = m.group(2).split(".")
+        sichtbar = f"{j}-{mo}-{t}"
+        bisher = str(haupt.get("dateModified") or "")[:10]
+        if bisher and bisher < sichtbar <= datetime.date.today().isoformat():   # nie ein Datum in der Zukunft
+            warn(f"{fname}: sichtbarer Stand {m.group(2)} ist jünger als dateModified {bisher} – beide auf {m.group(2)} gesetzt; "
+                 "in der Quell-HTML dateModified nachziehen")
+            haupt["dateModified"] = sichtbar
     datum = haupt.get("dateModified")
 
     # Jede Seite hat einen WebPage-Knoten (#seite); auf Artikelseiten ist der Artikel (#artikel) sein Hauptinhalt.

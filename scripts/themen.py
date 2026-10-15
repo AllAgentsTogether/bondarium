@@ -6,9 +6,9 @@ Glossarbegriffe („Passende Themen“).
 
 Quellen (alles aus dem Ordner, der veröffentlicht wird – im Workflow _site, lokal der Repo-Ordner):
 - Seiten: alle Adressen aus sitemap.xml und konto.html, ohne Startseite, Suche und Steckbrief-Vorlage.
-  Name = Text des Menü- oder Fußzeilen-Links (scripts/nav.py), sonst die H1. Stichwörter = Titel, H1 und H2.
+  Name = Seitenname aus den Menüdaten (scripts/nav.py, menue_namen()), sonst die H1. Stichwörter = Titel, H1 und H2.
   Beschreibung = Meta-Beschreibung.
-- Glossar: jeder Eintrag in begriffe.html (<div class="e" id="…"><dt>Begriff</dt><dd><p>Erklärung …).
+- Glossar: jeder Eintrag in begriffe.html (<div class="e" id="…" [data-k="…"]><dt>Begriff</dt><dd><p>Erklärung …).
 
 Format (kompakt): {"stand": "JJJJ-MM-TT", "seiten": [[Name, Datei, Beschreibung, Stichwörter], …],
 "begriffe": [[Begriff, Sprungmarke, erster Satz der Erklärung], …]}
@@ -45,18 +45,41 @@ def erster_satz(s):
     return kuerzen(m.group(1) if m else s)
 
 
-def menue_namen(ordner):
-    """Datei → Name aus Kopfmenü und Fußzeile der Startseite (einheitlich auf allen Seiten, Quelle scripts/nav.py)."""
-    s = (ordner / "index.html").read_text(encoding="utf-8")
+def menue_namen(ordner=None):
+    """Datei → Name aus den Menüdaten in scripts/nav.py (seit 15.10.2026, Gesamtprüfung E03-01).
+    Bis dahin las das Skript die Links aus dem Kopfmenü der fertigen Startseite. Seit dem Menü-Umbau vom 11.10.2026 stehen
+    dort Vorschauzeilen (<small class="np-kd">…</small>, <small class="nav-kurz">…</small>) im Link; die Regex entfernte
+    nur <small>, und die Suche zeigte Themen wie „Markt Renditen Staat · Renditen Unternehmen · Realzins …“. Die Menüdaten
+    selbst sind die eine Quelle (wie für newsletter.py, kennzahlen.py, hubs.py und weiter.py).
+    Reihenfolge: Seitenname der Menüeinträge (E(…)["t"], z. B. „Staatsanleihen nach Ländern“ – der kurze Menüname „nach
+    Ländern“ ist ohne das Menü mehrdeutig), dann „My Bondarium“, die kleinen Links (Über uns, Rechtliches), die Schnell-Knöpfe
+    und die Fußzeile (nur Links ohne Sprungmarke: „Grundlagen“ ist kein Name für die ganze wissen.html), zuletzt die Namen der
+    Menüs für ihre Übersichtsseiten (Akademie, Kaufen, Markt). Sind die Menüdaten nicht lesbar: Warnung, Namen aus der H1."""
+    try:
+        sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+        import nav
+    except Exception as e:   # noqa: BLE001
+        print(f"::warning::themen.py: Menüdaten (scripts/nav.py) nicht lesbar ({e}) – Themen-Namen aus der H1")
+        return {}
     namen = {}
-    bereiche = re.findall(r'<nav class="sitenav".*?</nav>', s, re.S) + re.findall(r"<footer.*?</footer>", s, re.S)
-    for b in bereiche:
-        # nur Links ohne Sprungmarke: „Haftung und Datenquellen“ (haftung.html) ist kein Name für die ganze Seite;
-        # Zusätze wie <small>Fachbegriffe von A bis Z</small> gehören nicht zum Namen
-        for href, inhalt in re.findall(r'<a href="([^"#?]+\.html)"[^>]*>(.*?)</a>', b, re.S):
-            name = text(re.sub(r"<small>.*?</small>", "", inhalt, flags=re.S))
-            if name and href not in namen:
-                namen[href] = name
+
+    def dazu(datei, name):
+        if "#" not in datei and datei.endswith(".html") and name and datei not in namen:
+            namen[datei] = name
+
+    for _menue, _ziel, eintraege in nav.ALLE:
+        for e in eintraege:
+            if isinstance(e, dict):
+                for u in e.get("sub") or [e]:
+                    dazu(u["h"], u["t"])
+    dazu(nav.KONTO[1], nav.KONTO[0])
+    for name, datei in list(nav.KLEIN) + list(nav.SCHNELL):
+        dazu(datei, name)
+    for _kopf, _id, links in nav.FOOTER:
+        for name, datei in links:
+            dazu(datei, name)
+    for menue, ziel, _eintraege in nav.ALLE:
+        dazu(ziel, menue)
     return namen
 
 
@@ -93,17 +116,23 @@ def seite(ordner, datei, namen):
 
 
 def begriffe(ordner):
+    """Glossar-Einträge [Begriff, Sprungmarke, erster Satz]. Seit 15.10.2026 (Gesamtprüfung B33-02) auch Einträge mit weiteren
+    Attributen (data-k="…" für Suchwörter): Vorher fehlten „Kündbare Anleihe“, „Quellensteuer“ und „Vorabpauschale“ (68 statt 71).
+    Weicht die Zahl von den Einträgen der Seite ab, gibt es eine Warnung."""
     s = (ordner / "begriffe.html").read_text(encoding="utf-8")
     out = []
-    for sid, dt, dd in re.findall(r'<div class="e" id="([^"]+)">\s*<dt>(.*?)</dt>\s*<dd>(.*?)</dd>', s, re.S):
+    for sid, dt, dd in re.findall(r'<div class="e" id="([^"]+)"[^>]*>\s*<dt>(.*?)</dt>\s*<dd>(.*?)</dd>', s, re.S):
         p = re.search(r"<p>(.*?)</p>", dd, re.S)
         out.append([text(dt), sid, erster_satz(text(p.group(1))) if p else ""])
+    auf_der_seite = len(re.findall(r'<div class="e"[\s>]', s))
+    if len(out) != auf_der_seite:
+        print(f"::warning::themen.py: {len(out)} von {auf_der_seite} Glossar-Einträgen gelesen – Aufbau eines Eintrags in begriffe.html geändert?")
     return out
 
 
 def main():
     ordner = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
-    namen = menue_namen(ordner)
+    namen = menue_namen()
     seiten = [seite(ordner, d, namen) for d in seiten_liste(ordner)]
     glossar = begriffe(ordner)
     if len(seiten) < 20 or len(glossar) < 30:
