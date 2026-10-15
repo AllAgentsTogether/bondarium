@@ -41,6 +41,7 @@
   .sim-echt { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 0 0 14px; padding: 10px 12px; background: var(--ap-soft); border-radius: 12px; font-size: 13.5px; color: var(--text); }
   .sim-echt label { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--ink); }
   .sim-echt input { font: inherit; font-size: 14px; width: 15ch; padding: 6px 9px; border: 1px solid rgba(26,26,25,0.22); border-radius: 8px; background: #fff; text-transform: uppercase; }
+  .sim-echt input::placeholder { text-transform: none; }   /* Großschreibung nur für die eingegebene ISIN, nicht für den Platzhalter */
   .sim-echt button { font: inherit; font-size: 13.5px; font-weight: 600; padding: 6px 11px; border-radius: 8px; border: 1.5px solid var(--ink); background: #fff; color: var(--ink); cursor: pointer; }
   .sim-echt button:hover { background: var(--green-tint); }
   .sim-echt .meld { flex: 1 1 100%; color: var(--down); font-weight: 500; }
@@ -60,7 +61,7 @@
   .kd-t.haupt .kd-l { color: rgba(255,255,255,0.72); }
   .kd-v { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; margin-top: 5px; font-variant-numeric: tabular-nums; color: var(--ink); }
   .kd-t.haupt .kd-v { font-size: 30px; color: var(--green); }
-  .kd-z { font-size: 12px; color: var(--text); margin-top: 3px; font-variant-numeric: tabular-nums; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .kd-z { font-size: 12px; color: var(--text); margin-top: 3px; font-variant-numeric: tabular-nums; line-height: 1.3; }   /* Zweitzeile bricht um (vorher abgeschnitten, u. a. „Gesamt …“) */
   .kd-t.haupt .kd-z { color: rgba(255,255,255,0.72); }
   .kd-v.plus, .kd-z.plus { color: var(--up); } .kd-v.minus, .kd-z.minus { color: var(--down); }
   /* ± x % seit Kauf groß neben dem Kurs (Nutzerwunsch 11.10.2026) – auf der dunklen Kachel: Plus hellgrün, Minus hellorange */
@@ -87,7 +88,8 @@
   .sim-ctl .zeit { font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .sim-ctl .zeit small { font-weight: 500; color: var(--text); }
   .sim-opt { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 10px; font-size: 13.5px; color: var(--text); align-items: center; }
-  .sim-opt label { display: inline-flex; align-items: center; gap: 6px; }
+  .sim-opt label { display: inline-flex; align-items: center; gap: 6px; min-height: 24px; }
+  .sim-opt input[type="checkbox"] { width: 20px; height: 20px; margin: 0; accent-color: var(--accent-text); }   /* Trefferfläche am Handy (vorher 13 px) */
   .sim-opt select { font: inherit; font-size: 13.5px; padding: 3px 6px; border-radius: 6px; border: 1px solid rgba(26,26,25,0.22); background: #fff; }
   .sim-opt .lg { display: inline-flex; align-items: center; gap: 6px; }
   .sim-opt .lg i { display: inline-block; width: 18px; height: 3px; border-radius: 2px; background: var(--accent-text); }
@@ -106,7 +108,7 @@
     .sim-hint { font-size: 12.5px; white-space: normal; text-align: center; width: 80%; }
   }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Anleihen-Simulator: 30 Jahre Kurs in 30 Sekunden","description":"Sieh, wie der Kurs einer Anleihe mit dem Zinsniveau schwankt und am Ende zum Nennwert zurückkehrt: 30 Jahre in 30 Sekunden, Zeitpunkt mit der Maus ziehen.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-10-11","dateModified":"2026-10-11","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihen-simulator.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Anleihen-Simulator: 30 Jahre Kurs in 30 Sekunden","description":"Sieh, wie der Kurs einer Anleihe mit dem Zinsniveau schwankt und am Ende zum Nennwert zurückkehrt: 30 Jahre in 30 Sekunden, Zeitpunkt mit der Maus ziehen.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-10-11","dateModified":"2026-10-15","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/anleihen-simulator.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Kaufen","item":"https://www.bondarium.de/kaufen.html"},{"@type":"ListItem","position":3,"name":"Anleihen-Simulator","item":"https://www.bondarium.de/anleihen-simulator.html"}]}</script>
 </head>
 <body>
@@ -250,14 +252,14 @@
       <form class="sim-echt" id="sim-echt" autocomplete="off">
         <label for="sim-isin">Echte Anleihe</label><input id="sim-isin" name="isin" placeholder="ISIN eingeben" spellcheck="false" aria-label="ISIN der Anleihe">
         <button type="submit">Laden</button>
-        <span>Mindestens 8 Monate Restlaufzeit, fester Kupon oder Nullkupon.</span>
+        <span>Mindestens 8 Monate Restlaufzeit, fester Kupon oder Nullkupon, Rendite bis 15&nbsp;%.</span>
         <span class="meld" id="sim-meld" role="status"></span>
       </form>
 
       <div class="kd" aria-live="off">
         <div class="kd-t haupt"><div class="kd-l">Kurs</div><div class="kd-v"><span id="k-kurs">100,00</span><span class="kd-pz" id="k-kurs-p" title="Veränderung seit Kauf">±0,0 %</span></div><div class="kd-z" id="k-kurs-z">Kurswert 10.000 € · Jahr 0</div></div>
-        <div class="kd-t"><div class="kd-l">Rendite bei Kauf</div><div class="kd-v" id="k-rk">4,00 %</div><div class="kd-z">bleibt bis Fälligkeit</div></div>
-        <div class="kd-t"><div class="kd-l">Zinsniveau jetzt</div><div class="kd-v" id="k-mr">3,00 %</div><div class="kd-z">Rendite sicherer Anleihen gleicher Laufzeit</div></div>
+        <div class="kd-t"><div class="kd-l">Rendite bei Kauf</div><div class="kd-v" id="k-rk">4,00 %</div><div class="kd-z">bis Fälligkeit, wenn der Schuldner zahlt</div></div>
+        <div class="kd-t"><div class="kd-l">Zinsniveau jetzt</div><div class="kd-v" id="k-mr">3,00 %</div><div class="kd-z">Staatsanleihen bester Bonität, gleiche Laufzeit</div></div>
         <div class="kd-t"><div class="kd-l">Rendite der Anleihe</div><div class="kd-v" id="k-ar">4,00 %</div><div class="kd-z" id="k-ar-z">Zinsniveau + 1,0 Pkt.</div></div>
         <div class="kd-t"><div class="kd-l">Restlaufzeit</div><div class="kd-v" id="k-rl">30,0 J.</div><div class="kd-z" id="k-rl-z">Hebel 17,3 (mod. Duration)</div></div>
         <div class="kd-t"><div class="kd-l">Laufende Verz.</div><div class="kd-v" id="k-lv">4,00 %</div><div class="kd-z">Kupon ÷ Kurs</div></div>
@@ -285,8 +287,8 @@
 
       <div class="sim-lies">
         <div><b>Zinsniveau rauf, Kurs runter</b>Steigt das Zinsniveau, verlangen neue Käufer auch von dieser Anleihe mehr – und der Kurs fällt. Umgekehrt genauso. Je länger die Restlaufzeit, desto stärker der Ausschlag.</div>
-        <div><b>Der Sog zum Nennwert</b>Egal wie wild der Kurs schwankt: Mit jedem Jahr wird der Hebel kleiner, am Ende zahlt der Schuldner 100 zurück.</div>
-        <div><b>Deine Rendite steht fest</b>Wer bis zur Fälligkeit hält, bekommt die Rendite vom Kauftag – die Kurse dazwischen sind nur Momentaufnahmen.</div>
+        <div><b>Der Sog zum Nennwert</b>Egal wie wild der Kurs schwankt: Mit jedem Jahr wird der Hebel kleiner, am Ende zahlt der Schuldner 100 zurück – sofern er zahlen kann.</div>
+        <div><b>Deine Rendite steht fest</b>Wer bis zur Fälligkeit hält, bekommt die Rendite vom Kauftag, sofern der Schuldner zahlt – die Kurse dazwischen sind nur Momentaufnahmen.</div>
       </div>
     </section>
 
@@ -313,9 +315,9 @@
       <summary>Methodik</summary>
       <div class="quellen-body">
         <p><strong>Kurs.</strong> Der Kurs ist der Barwert aller noch ausstehenden Zahlungen (jährlicher Kupon, am Ende der Nennwert 100), abgezinst mit der Rendite der Anleihe; Stückzinsen sind abgezogen (Clean-Kurs). Je kürzer die Restlaufzeit, desto weniger wirkt das Zinsniveau – am Fälligkeitstag ist der Kurs immer 100.</p>
-        <p><strong>Zinsniveau und Rendite der Anleihe.</strong> Das Zinsniveau ist hier das allgemeine <a href="zinsniveau.html">Zinsniveau</a>, etwa die Rendite sicherer Staatsanleihen gleicher Laufzeit. Die Rendite dieser Anleihe liegt um einen festen <a href="begriffe.html#spread">Risikoaufschlag</a> von 1,0 Prozentpunkten darüber – das ist die Rendite, die ein neuer Käufer verlangt, und mit ihm wird der Kurs abgezinst. Am Kauftag: Zinsniveau 3,0&nbsp;%, Rendite der Anleihe 4,0&nbsp;% = Rendite bei Kauf. Die fünf Verläufe sind erfunden (Grenzen 0,2 bis 15&nbsp;%). Ziehen im Schaubild verschiebt nur den Zeitpunkt; der Verlauf ändert sich nur über die Knöpfe.</p>
-        <p><strong>Echte Anleihen</strong> (seit 11.10.2026): Name, Kupon, Zinsrhythmus und Fälligkeit stammen aus den Stammdaten wie im <a href="anleihe.html">Steckbrief</a>, der Kaufkurs ist der letzte Schlusskurs (Clean-Kurs), dazu kommen die bis zum Kauf aufgelaufenen Stückzinsen. Die Rendite bei Kauf ist die Rendite, bei der der Barwert nach der Rechnung dieser Seite genau den Schlusskurs ergibt; sie weicht von der Rendite des Steckbriefs (taggenau mit Zinstagen und Valuta) höchstens um Hundertstel ab. Nennt der Steckbrief keine Rendite (Taxe außerhalb der Plausibilität, Stufenzins, Zinsformel), gibt es keine Simulation. Der Risikoaufschlag ist der des Steckbriefs (gegen Bundesanleihen gleicher Laufzeit); fehlt er, gelten 1,0 Prozentpunkte; Bundeswertpapiere haben keinen (sie sind der Maßstab). Die fünf Verläufe des Zinsniveaus sind dieselben erfundenen Muster wie bei der Beispielanleihe, auf die Restlaufzeit gerafft – kurze Anleihen sehen also dieselbe Welle in kürzerer Zeit; wie stark der Kurs darauf reagiert, ergibt sich allein aus der Restlaufzeit. Angeboten für Anleihen mit festem Kupon oder Nullkupon und mindestens 8 Monaten Restlaufzeit; Zinszahlungen je Rhythmus, Stückzinsen linear.</p>
-        <p><strong>Kenndaten.</strong> Rendite bei Kauf = Kupon (Kauf zu 100), bei echten Anleihen die Rendite zum Kaufkurs. Laufende Verzinsung = Kupon ÷ Kurs. Zinsen erhalten = seit dem Kauf gezahlte Kupons. Gesamt = Kursgewinn + gezahlte Kupons + jetzt aufgelaufene Stückzinsen − beim Kauf gezahlte Stückzinsen, in Prozent vom Kaufpreis (Kurs + Stückzinsen); so stimmt der Ertrag auch zwischen zwei Zinsterminen. Der Clean-Kurs liegt zwischen zwei Zinsterminen rechnerisch um bis zu 0,02 Punkte unter dem Wert am Termin, auch bei unveränderter Rendite (jährliche Verzinsung, lineare Stückzinsen – wie Steckbrief und Rechner). Beträge für eine Anlage von 10.000 Nennwert in der Währung der Anleihe (Beispiel: Euro zum Kurs 100, echte Anleihe: zum Kaufkurs), ohne Kosten, Steuern und Wiederanlage. Modifizierte <a href="begriffe.html#duration">Duration</a> numerisch aus der Kursänderung bei ±0,05 Prozentpunkten.</p>
+        <p><strong>Zinsniveau und Rendite der Anleihe.</strong> Das Zinsniveau ist hier das allgemeine <a href="zinsniveau.html">Zinsniveau</a>, etwa die Rendite von Staatsanleihen bester Bonität gleicher Laufzeit. Die Rendite dieser Anleihe liegt um einen festen <a href="begriffe.html#spread">Risikoaufschlag</a> von 1,0 Prozentpunkten darüber – das ist die Rendite, die ein neuer Käufer verlangt, und mit ihm wird der Kurs abgezinst. Am Kauftag: Zinsniveau 3,0&nbsp;%, Rendite der Anleihe 4,0&nbsp;% = Rendite bei Kauf. Die fünf Verläufe sind erfunden; das Zinsniveau bleibt zwischen 0,2 und 15&nbsp;% – liegt es am Kauftag schon darunter oder darüber, gilt dieser Wert als Grenze, damit der Kurs am Kauftag dem Kaufkurs entspricht. Ziehen im Schaubild verschiebt nur den Zeitpunkt; der Verlauf ändert sich nur über die Knöpfe.</p>
+        <p><strong>Echte Anleihen</strong> (seit 11.10.2026): Name, Kupon, Zinsrhythmus und Fälligkeit stammen aus den Stammdaten wie im <a href="anleihe.html">Steckbrief</a>, der Kaufkurs ist der letzte Schlusskurs (Clean-Kurs), dazu kommen die bis zum Kauf aufgelaufenen Stückzinsen. Die Rendite bei Kauf ist die Rendite, bei der der Barwert nach der Rechnung dieser Seite genau den Schlusskurs ergibt; sie weicht von der Rendite des Steckbriefs (taggenau mit Zinstagen und Valuta) höchstens um Hundertstel ab. Nennt der Steckbrief keine Rendite (Taxe außerhalb der Plausibilität, Stufenzins, Zinsformel), gibt es keine Simulation. Der Risikoaufschlag ist der des Steckbriefs (gegen Bundesanleihen gleicher Laufzeit); fehlt er, gelten 1,0 Prozentpunkte, bei einer Rendite unter 1,2&nbsp;% entsprechend weniger (Zinsniveau am Kauftag mindestens 0,2&nbsp;%); Bundeswertpapiere haben keinen (sie sind der Maßstab). Die fünf Verläufe des Zinsniveaus sind dieselben erfundenen Muster wie bei der Beispielanleihe, auf die Restlaufzeit gerafft – kurze Anleihen sehen also dieselbe Welle in kürzerer Zeit; wie stark der Kurs darauf reagiert, ergibt sich allein aus der Restlaufzeit. Angeboten für Anleihen mit festem Kupon oder Nullkupon, mindestens 8 Monaten Restlaufzeit und einer Rendite bis 15&nbsp;% – so hohe Renditen stehen meist für ein hohes Ausfallrisiko, und die Annahme, dass am Ende 100 zurückgezahlt werden, trägt dann nicht mehr. Zinszahlungen je Rhythmus; Stückzinsen linear bis heute ohne Valuta – sie können deshalb um einige Hundertstel von Steckbrief und Rechner abweichen (dort taggenau bis zur Valuta).</p>
+        <p><strong>Kenndaten.</strong> Rendite bei Kauf = Kupon (Kauf zu 100), bei echten Anleihen die Rendite zum Kaufkurs. Laufende Verzinsung = Kupon ÷ Kurs. Zinsen erhalten = seit dem Kauf gezahlte Zinsen. Gesamt = Kursgewinn + gezahlte Zinsen + jetzt aufgelaufene Stückzinsen − beim Kauf gezahlte Stückzinsen, in Prozent vom Kaufpreis (Kurs + Stückzinsen); so stimmt der Ertrag auch zwischen zwei Zinsterminen. Der Clean-Kurs liegt zwischen zwei Zinsterminen rechnerisch um bis zu 0,02 Prozentpunkte unter dem Wert am Termin, auch bei unveränderter Rendite (jährliche Verzinsung, lineare Stückzinsen – wie Steckbrief und Rechner). Beträge für eine Anlage von 10.000 Nennwert in der Währung der Anleihe (Beispiel: Euro zum Kurs 100, echte Anleihe: zum Kaufkurs), ohne Kosten, Steuern und Wiederanlage. Modifizierte <a href="begriffe.html#duration">Duration</a> numerisch aus der Kursänderung bei ±0,05 Prozentpunkten.</p>
       </div>
     </details>
   </main>
@@ -377,10 +379,14 @@
     }
     var g0 = g(0), start = kaufrendite - AUFSCHLAG;      // Zinsniveau am Kauftag = Rendite bei Kauf minus Aufschlag, kein Sprung
     var skala = 30 / T;                                  // dieselben Muster über die Restlaufzeit gerafft (Beispiel: 30 Jahre, Faktor 1)
-    for (var i = 0; i < N; i++) ys[i] = Math.min(15, Math.max(0.2, start + g(i * DT * skala) - g0));
+    // Grenzen 0,2 bis 15 % – aber nie den Startwert verschieben: Kupon 1 % (Zinsniveau 0 %) oder ein Startwert über 15 % ließen den
+    // Kurs sonst schon am Kauftag vom Kaufkurs springen (Gesamtprüfung 14.10.2026, B42-02/-03)
+    var lo = Math.min(0.2, start), hi = Math.max(15, start);
+    for (var i = 0; i < N; i++) ys[i] = Math.min(hi, Math.max(lo, start + g(i * DT * skala) - g0));
   }
 
   function fmt(v, d) { return v.toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d }); }
+  function kursT(p) { return fmt(Math.round(p * 1e6) / 1e6, 2); }   // Kurs ohne Rechenrest: Kaufkurs 92,375 zeigt am Kauftag 92,38 wie der Kopf, nicht 92,37
   function sig(v, d) { return (v > 0.004 ? '+' : v < -0.004 ? '−' : '±') + fmt(Math.abs(v), d); }
   function eur(v) {                                    // Betrag in der Währung der Anleihe („9.733 €“, „9.733 $“, „9.733 CHF“)
     try { return v.toLocaleString('de-DE', { style: 'currency', currency: CCY, minimumFractionDigits: 0, maximumFractionDigits: 0 }).replace(/ /g, '\u00a0'); }
@@ -441,11 +447,18 @@
   }
   function xOf(tt) { return L + (W - L - R) * tt / T; }
   function yOfP(p) { return TOP + (H - TOP - B) * (1 - (p - pMin) / (pMax - pMin)); }
-  var rMin = 0, rMax = 10;
+  var rMin = 0, rMax = 10, rStep = 2;
   function yOfR(r) { return TOP + (H - TOP - B) * (1 - (r - rMin) / (rMax - rMin)); }
+  function scaleR() {                                  // rechte Achse: mindestens 0 bis 10 %, sonst aus den Werten (B42-06; vorher fest 0–10 %)
+    var lo = 1e9, hi = -1e9;
+    for (var i = 0; i < N; i++) { var r = ys[i] + AUFSCHLAG; if (r < lo) lo = r; if (r > hi) hi = r; }
+    var spanne = Math.max(hi, 10) - Math.min(lo, 0);
+    rStep = spanne <= 12 ? 2 : spanne <= 30 ? 5 : 10;
+    rMin = lo < 0 ? Math.floor((lo - rStep / 4) / rStep) * rStep : 0; rMax = Math.max(10, Math.ceil((hi + rStep / 4) / rStep) * rStep);   // etwas Luft am Rand
+  }
 
   function drawStatic() {
-    scaleP();
+    scaleP(); scaleR();
     var i, d = '', dr = '', da = '';
     for (i = 0; i < N; i++) { var tt = i * DT, x = xOf(tt).toFixed(1), y = yOfP(pAt(tt)).toFixed(1); d += (i ? 'L' : 'M') + x + ' ' + y; dr += (i ? 'L' : 'M') + x + ' ' + yOfR(ys[i] + AUFSCHLAG).toFixed(1); }
     da = d + 'L' + xOf(T).toFixed(1) + ' ' + (H - B) + 'L' + L + ' ' + (H - B) + 'Z';
@@ -459,8 +472,8 @@
       var g = document.createElementNS(NS, 'line'); g.setAttribute('x1', L); g.setAttribute('x2', W - R); g.setAttribute('y1', yy); g.setAttribute('y2', yy); g.setAttribute('stroke', 'rgba(26,26,25,0.08)'); el.grid.appendChild(g);
       var tx = document.createElementNS(NS, 'text'); tx.setAttribute('x', L - 8); tx.setAttribute('y', yy); tx.setAttribute('class', 'tick'); tx.setAttribute('text-anchor', 'end'); tx.setAttribute('dominant-baseline', 'middle'); tx.textContent = p; el.ticksY.appendChild(tx);
     }
-    for (var r = 0; r <= rMax; r += 2) {
-      var tr = document.createElementNS(NS, 'text'); tr.setAttribute('x', W - R + 8); tr.setAttribute('y', yOfR(r)); tr.setAttribute('class', 'tick r'); tr.setAttribute('dominant-baseline', 'middle'); tr.textContent = r + ' %'; el.ticksR.appendChild(tr);
+    for (var r = rMin; r <= rMax + 1e-9; r += rStep) {
+      var tr = document.createElementNS(NS, 'text'); tr.setAttribute('x', W - R + 8); tr.setAttribute('y', yOfR(r)); tr.setAttribute('class', 'tick r'); tr.setAttribute('dominant-baseline', 'middle'); tr.textContent = (r < 0 ? '\u2212' + (-r) : r) + ' %'; el.ticksR.appendChild(tr);
     }
     el.coupons.textContent = '';
     if (kupon > 0) for (var j = 0; ; j++) {
@@ -474,7 +487,7 @@
     el.clip.setAttribute('width', Math.max(0, x - L));
     el.cur.setAttribute('x1', x); el.cur.setAttribute('x2', x);
     el.dot.setAttribute('cx', x); el.dot.setAttribute('cy', y);
-    var txt = fmt(p, 2); el.lbl.textContent = txt;
+    var txt = kursT(p); el.lbl.textContent = txt;
     var w = txt.length * 7.6 + 14, lx = x + 12; if (lx + w > W - R) lx = x - 12 - w;
     el.lblBg.setAttribute('x', lx); el.lblBg.setAttribute('y', y - 12); el.lblBg.setAttribute('width', w);
     el.lbl.setAttribute('x', lx + 7); el.lbl.setAttribute('y', y);
@@ -486,7 +499,7 @@
     // Gesamt = Kursgewinn (Clean) + erhaltene Kupons + jetzt aufgelaufene Stückzinsen − beim Kauf gezahlte Stückzinsen;
     // in Prozent vom Kaufpreis (Kurs + Stückzinsen). So stimmt der Ertrag auch zwischen zwei Zinsterminen (vorher fehlten die Stückzinsen).
     var p = pAt(t), mr = yAt(t), rest = T - t, zinsen = zinsenBis(t), kg = p - kaufkurs, stz = stueckzinsen(t), ges = kg + zinsen + stz - STZ0, basis = kaufkurs + STZ0;
-    $('k-kurs').textContent = fmt(p, 2);
+    $('k-kurs').textContent = kursT(p);
     var f = ANLAGE / 100;
     var kp = $('k-kurs-p'); kp.textContent = sig(kg / kaufkurs * 100, 1) + ' %'; kp.className = 'kd-pz ' + (kg > 0.004 ? 'plus' : kg < -0.004 ? 'minus' : '');
     $('k-kurs-z').textContent = (rest <= 0.001 ? 'Rückzahlung ' + eur(ANLAGE) + ' · Fälligkeit' : 'Kurswert ' + eur(p * f) + ' · ' + zeitText(t));
@@ -502,7 +515,7 @@
     $('k-kg-z').textContent = 'seit Kauf zu ' + fmt(kaufkurs, 2) + ' · ' + sig(kg / kaufkurs * 100, 1) + ' %';
     $('k-zi').textContent = eur(zinsen * f);
     var gz = $('k-zi-z'); gz.textContent = 'Gesamt ' + sigEur(ges * f) + ' · ' + sig(ges / basis * 100, 1) + ' %'; gz.className = 'kd-z ' + (ges > 0.004 ? 'plus' : ges < -0.004 ? 'minus' : '');
-    gz.title = 'Kursgewinn ' + sigEur(kg * f) + ' + Kupons ' + eur(zinsen * f) + ' + Stückzinsen jetzt ' + eur(stz * f) + (STZ0 ? ' − Stückzinsen beim Kauf ' + eur(STZ0 * f) : '') + ' · in Prozent vom Kaufpreis ' + eur(basis * f);
+    gz.title = 'Kursgewinn ' + sigEur(kg * f) + ' + Zinsen ' + eur(zinsen * f) + ' + Stückzinsen jetzt ' + eur(stz * f) + (STZ0 ? ' − Stückzinsen beim Kauf ' + eur(STZ0 * f) : '') + ' · in Prozent vom Kaufpreis ' + eur(basis * f);
     $('zeit').value = t; $('zeit-t').textContent = rest <= 0.001 ? 'Fällig' : zeitText(t);
   }
 
@@ -551,32 +564,45 @@
   }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function meld(html) { $('sim-meld').innerHTML = html; }
+  var RENDITE_MAX = 15;                                // höchste Rendite bei Kauf, für die der Simulator rechnet (in %)
+  // Titel wie in Steckbrief und Rechner („Deutschland 1,30 % 2027“, MC.felder.titel, B42-08); ohne felder.js der Registername
+  function titelVon(r, isin) {
+    var F = window.MC && MC.felder;
+    if (!F || !F.titel || !F.kurzName) return r[0] || isin;
+    try { return F.titel({ kurz: F.kurzName(r[8] || '', r[1], r[10], r[0]) || r[0] || isin, kupon: r[3], zinsart: r[9], faellig: r[4] }); } catch (e) { return r[0] || isin; }
+  }
   // Stammdaten anleihen/<hh>.json: rows[ISIN] = [name, art, waehrung, kupon, faellig, …, zinsart (9), …, zt (14) = [Zahlungen je Jahr, "MM-TT", …]];
   // Kurse kurse/<Jahr>/<hh>.json: aktuell[ISIN] = [kurs, rendite, datum, boerse, umsatz, tagesdaten, vortag, aufschlag] – wie anleihe.html
   function laden(isin) {
     isin = String(isin || '').replace(/[\s-]+/g, '').toUpperCase();
-    if (!/^[A-Z]{2}[A-Z0-9]{9}[0-9]$/.test(isin)) { meld(isin ? '„' + esc(isin) + '“ ist keine ISIN (zwölf Zeichen). <a href="anleihen-suche.html?q=' + encodeURIComponent(isin) + '">In der Anleihen-Suche nachschlagen →</a>' : 'Bitte eine ISIN eingeben.'); return; }
+    if (!/^[A-Z]{2}[A-Z0-9]{9}[0-9]$/.test(isin)) { meld(isin ? '„' + esc(isin) + '“ ist keine gültige ISIN. <a href="anleihen-suche.html?q=' + encodeURIComponent(isin) + '">In der Anleihen-Suche nachschlagen →</a>' : 'Bitte eine ISIN eingeben.'); return; }
     if (!(window.MC && MC.teil && (MC.json || MC.load))) { meld('Die Daten sind gerade nicht erreichbar.'); return; }
     var json = function (u) { return MC.json ? MC.json(u) : MC.load(u); }, h = MC.teil(isin), jahr = new Date(heute()).getUTCFullYear();
     meld('Lädt …');
     Promise.all([json('anleihen/' + h + '.json'), json('kurse/' + jahr + '/' + h + '.json')['catch'](function () { return json('kurse/' + (jahr - 1) + '/' + h + '.json'); })['catch'](function () { return null; })]).then(function (res) {
       var r = res[0] && res[0].rows ? res[0].rows[isin] : null, k = res[1] && res[1].aktuell ? res[1].aktuell[isin] : null;
       if (!r) { meld('Die ISIN ' + esc(isin) + ' kennen wir nicht – nicht an einer deutschen Börse gelistet oder schon fällig. <a href="anleihen-suche.html?q=' + encodeURIComponent(isin) + '">Suche →</a>'); return; }
-      var zinsart = r[9], c = r[3], faellig = r[4], zt = r[14];
-      if (!(zinsart === 0 || zinsart === 2) || typeof c !== 'number') { meld(esc(r[0]) + ': variabler Kupon – dafür rechnet der Simulator nicht (er braucht feste Zahlungen).'); return; }
-      if (!faellig) { meld(esc(r[0]) + ' hat keine Fälligkeit (unbefristet) – dafür rechnet der Simulator nicht.'); return; }
+      var zinsart = r[9], c = r[3], faellig = r[4], zt = r[14], nm = titelVon(r, isin);
+      if (!(zinsart === 0 || zinsart === 2) || typeof c !== 'number') { meld(esc(nm) + ': variabler Kupon – dafür rechnet der Simulator nicht (er braucht feste Zahlungen).'); return; }
+      if (!faellig) { meld(esc(nm) + ' hat keine Fälligkeit (unbefristet) – dafür rechnet der Simulator nicht.'); return; }
       var rest = jahreBis(faellig);
-      if (rest < 8 / 12) { meld(esc(r[0]) + ': Restlaufzeit ' + restText(rest) + ' – unter 8 Monaten lohnt die Simulation nicht, der Kurs läuft nur noch auf 100 zu. <a href="anleihe.html?isin=' + encodeURIComponent(isin) + '">Steckbrief →</a>'); return; }
-      if (!k || typeof k[0] !== 'number') { meld(esc(r[0]) + ': kein Schlusskurs in den Kursdaten – ohne Kaufkurs keine Simulation. <a href="anleihe.html?isin=' + encodeURIComponent(isin) + '">Steckbrief →</a>'); return; }
+      if (rest < 8 / 12) { meld(esc(nm) + ': Restlaufzeit ' + restText(rest) + ' – unter 8 Monaten lohnt die Simulation nicht, der Kurs läuft nur noch auf 100 zu. <a href="anleihe.html?isin=' + encodeURIComponent(isin) + '">Steckbrief →</a>'); return; }
+      if (!k || typeof k[0] !== 'number') { meld(esc(nm) + ': kein Schlusskurs in den Kursdaten – ohne Kaufkurs keine Simulation. <a href="anleihe.html?isin=' + encodeURIComponent(isin) + '">Steckbrief →</a>'); return; }
       // Rendite wie im Steckbrief: nur aus den Kursdaten (dort fehlt sie bewusst bei Taxen außerhalb der Plausibilität, Floatern mit
       // festem Anfangskupon u. ä.); Stufenzins nach derselben Namensregel wie der Steckbrief
-      if (typeof k[1] !== 'number' || /stufenz|step[ -]?up|step[ -]?down|\bstep\b/i.test(r[0])) { meld(esc(r[0]) + ': der Steckbrief nennt keine Rendite (Taxe, Stufenzins oder Zinsformel) – ohne Rendite bei Kauf keine Simulation. <a href="anleihe.html?isin=' + encodeURIComponent(isin) + '">Steckbrief →</a>'); return; }
-      ECHT = { isin: isin, name: r[0], faellig: faellig, kdatum: k[2] || '' };
+      if (typeof k[1] !== 'number' || /stufenz|step[ -]?up|step[ -]?down|\bstep\b/i.test(r[0])) { meld(esc(nm) + ': der Steckbrief nennt keine Rendite (Taxe, Stufenzins oder Zinsformel) – ohne Rendite bei Kauf keine Simulation. <a href="anleihe.html?isin=' + encodeURIComponent(isin) + '">Steckbrief →</a>'); return; }
+      // Rendite über 15 % (Not- und Hochzinsanleihen, Gesamtprüfung 14.10.2026 B42-03): Der Simulator setzt voraus, dass der Schuldner
+      // zahlt und am Ende 100 zurückkommen – bei Renditen wie 57 oder 59 % ist das nicht die Erwartung des Markts. Den Knopf „Im Simulator ansehen“ sollte
+      // MC.felder.simulatorUrl mit derselben Grenze ausblenden.
+      if (k[1] > RENDITE_MAX) { meld(esc(nm) + ': Rendite ' + fmt(k[1], 1) + ' % – über ' + RENDITE_MAX + ' % rechnet der Simulator nicht. So hohe Renditen stehen meist für ein hohes Ausfallrisiko; der Simulator setzt aber voraus, dass der Schuldner Zinsen und Rückzahlung leistet. <a href="anleihe.html?isin=' + encodeURIComponent(isin) + '">Steckbrief →</a>'); return; }
+      ECHT = { isin: isin, name: nm, faellig: faellig, kdatum: k[2] || '' };
       kupon = zinsart === 2 ? 0 : c; freq = Array.isArray(zt) && zt[0] > 0 ? zt[0] : 1; T = rest; kaufkurs = k[0]; CCY = r[2] || 'EUR';
       // Kaufrendite so, dass der Barwert nach der Rechnung des Simulators genau den Schlusskurs ergibt (Kursgewinn am Kauftag ±0);
       // die Rendite des Steckbriefs (k[1], taggenau mit Zinstagen und Valuta) weicht davon höchstens um Hundertstel ab
       kaufrendite = renditeAusKurs(kupon, kaufkurs, T); STZ0 = stueckzinsen(0);
-      AUFSCHLAG = r[1] === 0 && r[10] === 'DE' ? 0 : typeof k[7] === 'number' && k[7] >= 0 ? k[7] : 1.0;   // Bundeswertpapier: kein Aufschlag (ist selbst der Maßstab)
+      // Bundeswertpapier: kein Aufschlag (ist selbst der Maßstab); ohne Aufschlag im Steckbrief 1,0 Pkt., bei Renditen unter 1,2 % weniger,
+      // damit das Zinsniveau am Kauftag nicht unter 0,2 % liegt (Schweizer Franken, Yen)
+      AUFSCHLAG = r[1] === 0 && r[10] === 'DE' ? 0 : typeof k[7] === 'number' && k[7] >= 0 ? k[7] : Math.max(0, Math.min(1.0, kaufrendite - 0.2));
       $('sim-isin').value = isin; meld('');
       t = 0; setPlay(false); einrichten(); build(); szenario(szen); redraw(); setPlay(true);
       try { history.replaceState(null, '', 'anleihen-simulator.html?isin=' + encodeURIComponent(isin)); } catch (e) {}
@@ -631,5 +657,6 @@
 (function (F) { var M = window.MC = window.MC || {}; for (var k in F) if (typeof M[k] !== "function") M[k] = F[k]; })({ esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, minus: function (s) { return String(s).replace(/^-/, "\u2212"); }, zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\u2212") : "\u2013"; }, datum: function (iso) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || "")); return m ? m[3] + "." + m[2] + "." + m[1] : "\u2013"; }, load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, teil: function (s) { for (var h = 0, i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 65536; return ("0" + (h % 256).toString(16)).slice(-2); }, hoverWrap: function (s) { return s; }, navInit: function () {} });
 MC.navInit();
 </script>
+<script src="felder.js"></script>
 </body>
 </html>
