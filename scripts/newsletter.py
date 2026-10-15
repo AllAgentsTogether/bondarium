@@ -244,13 +244,22 @@ def meist(datei, n=3):
 
 
 def akademie(kw):
-    """Seite des Akademie-Menüs für diese Kalenderwoche (reihum); None, wenn das Menü nicht lesbar ist."""
-    nav = (ROOT / "scripts" / "nav.py").read_text(encoding="utf-8")
+    """Seite des Akademie-Menüs für diese Kalenderwoche (reihum); None, wenn das Menü nicht lesbar ist.
+    Seit 15.10.2026 aus den Menüdaten selbst (from nav import AKADEMIE) – vorher per Regex aus dem Text von nav.py,
+    das brach beim Menü-Umbau vom 11.10.2026 (E(…)/B(…)) still, und jede Ausgabe meldete „kein Versand“."""
     try:
-        block = nav[nav.index("AKADEMIE = ("):nav.index("ANLEIHEN = (")]
-    except ValueError:
+        from nav import AKADEMIE
+    except Exception as e:   # noqa: BLE001 – ohne Menüdaten kein Akademie-Artikel, der Lauf meldet das
+        log_err(f"Wochenbrief: Menüdaten nicht lesbar ({e})")
         return None
-    dateien = [d for _, d in re.findall(r'\("([^"]+)", "([a-z0-9-]+\.html)"\)', block) if (ROOT / d).exists()]
+    dateien = []
+    for eintrag in AKADEMIE[2]:
+        if not isinstance(eintrag, dict):
+            continue
+        for e in eintrag.get("sub") or [eintrag]:
+            d = e.get("h", "")
+            if re.fullmatch(r"[a-z0-9-]+\.html", d) and d != "begriffe.html" and (ROOT / d).exists() and d not in dateien:
+                dateien.append(d)
     for i in range(len(dateien)):   # Seite ohne Titel oder Kurztext überspringen
         s = seite(dateien[(kw + i) % len(dateien)])
         if s["titel"] and s["text"]:

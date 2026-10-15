@@ -109,16 +109,15 @@ def datenstand_suche(site):
 
 
 def akademie_themen():
-    """Zahl der Themen im Akademie-Menü (scripts/nav.py, AKADEMIE: drei Spalten, ohne das Glossar) – gelesen, nicht ausgeführt."""
-    import ast
-    pfad = os.path.join(os.path.dirname(os.path.abspath(__file__)), "nav.py")
-    with open(pfad, encoding="utf-8") as f:
-        baum = ast.parse(f.read())
-    for knoten in baum.body:
-        if isinstance(knoten, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "AKADEMIE" for t in knoten.targets):
-            akademie = ast.literal_eval(knoten.value)
-            return sum(len(spalte[2]) for spalte in akademie[2])
-    return None
+    """Zahl der Themen im Akademie-Menü (scripts/nav.py, AKADEMIE: Seiten in den Bereichen, ohne das Glossar).
+    Seit 15.10.2026 aus den Menüdaten selbst (from nav import AKADEMIE); ast.literal_eval scheiterte seit dem
+    Umbau auf E(…)/B(…) am 11.10.2026 still."""
+    try:
+        from nav import AKADEMIE
+    except Exception:   # noqa: BLE001
+        return None
+    n = sum(len(b.get("sub") or []) for b in AKADEMIE[2] if isinstance(b, dict))
+    return n or None
 
 
 def zinskurve_werte(site):
