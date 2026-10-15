@@ -67,9 +67,9 @@
   .ser.hi .band { fill-opacity: 0.3; }
   /* Tabellen-Stand, der deutlich älter ist als die jüngsten Tageswerte */
   td.num .old { color: var(--muted); }
-  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }   /* Ausnahme: sechs Segmente (bis 30.09.2026 acht) müssen in 1000 px passen (Manrope läuft breiter als die Systemschrift) */
+  table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }   /* Ausnahme: neun Spalten müssen in 1000 px passen */
   caption { text-align: left; font-size: 19px; font-weight: 600; margin-bottom: 12px; }
-  th, td { text-align: left; padding: 10px 8px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }   /* 8 statt 12 px, damit die Tabelle mit Manrope in 1000 px passt */
+  th, td { text-align: left; padding: 10px 8px 10px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }   /* 8 statt 12 px, damit die Tabelle in 1000 px passt */
   thead th { font-size: 13px; color: var(--muted); font-weight: 500; }
   tbody th { font-weight: 400; white-space: nowrap; }
   td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -92,15 +92,29 @@
     #legend-unternehmen { min-height: 181px; }   /* gemessen bei 390 px: 5 Zeilen + Hinweis */
   }
   @media (max-width: 400px) {  #legend-unternehmen { min-height: 210px; } }
-  @media (max-width: 900px) {
+  .cur-m { display: none; }
+  @media (min-width: 601px) and (max-width: 900px) {
     table { min-width: 820px; }
     #ctable-wrap table { min-width: 900px; }
+  }
+  /* Handy (seit 15.10.2026, wie renditen.html): Tabelle ohne Mindestbreite – Währung unter dem Namen, Stand unter der
+     Rendite; Spalten Währung, Bonität (steht im Namen), Laufzeit (überall 10 J.) und Stand entfallen, Werte dürfen umbrechen */
+  @media (max-width: 600px) {
+    table { font-size: 12.5px; }
+    th, td { padding: 8px 6px 8px 0; }
+    th:last-child, td:last-child { padding-right: 0; }
+    thead th { font-size: 12px; }
+    thead th .sortbtn { white-space: normal; text-align: left; }
+    tbody th { white-space: normal; }
+    td.num { white-space: normal; }
+    th[data-col="cur"], td.cur, th[data-col="rating"], th[data-col="mat"], td.txt, th[data-col="stand"], td.stand { display: none; }
+    .cur-m { display: block; font-size: 12px; color: var(--muted); }
   }
   /* Unter 900 px zeichnet das Skript eine schmale Fassung in Containerbreite (Seitenverhältnis
      setzt es selbst); bis dahin grob reservieren, damit nichts springt */
   @media (max-width: 899px) { #chart-unternehmen { aspect-ratio: 100 / 95; } }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Unternehmensanleihen: Renditen nach Bonität und Land","description":"Renditen 10-jähriger Unternehmensanleihen seit 1984 nach Bonität und Land: USA, Japan, China und Australien – Jahresmittel, Spannen, aktueller Stand.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-30","dateModified":"2026-10-02","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/unternehmensanleihen.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Unternehmensanleihen: Renditen nach Bonität und Land","description":"Renditen 10-jähriger Unternehmensanleihen seit 1984 nach Bonität und Land: USA, Japan, China und Australien – Jahresmittel, Spannen, aktueller Stand.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-30","dateModified":"2026-10-15","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/unternehmensanleihen.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Markt","item":"https://www.bondarium.de/beobachten.html"},{"@type":"ListItem","position":3,"name":"Renditen von Unternehmensanleihen seit 1984","item":"https://www.bondarium.de/unternehmensanleihen.html"}]}</script>
 </head>
 <body>
@@ -239,7 +253,7 @@
     <p class="note" id="note-unternehmen">Alle Reihen: 10 Jahre Laufzeit. Jahresdurchschnitte in der jeweiligen Landeswährung, ergänzt um den aktuellen Wert; die Fläche um jede Linie zeigt die Spanne des Jahres. Die <a href="bonitaet.html#skala">Ratingskalen</a> unterscheiden sich je Land – aussagekräftig ist vor allem der Vergleich jeder Reihe mit ihrer eigenen Geschichte.</p>
 
     <h2 class="abschnitt" id="h-segmente">Sechs Renditereihen im Überblick</h2>
-    <p class="tab-note">Hoch, Tief und Ø: Jahresdurchschnitte seit Beginn der jeweiligen Reihe (frühestens 1984), ohne das laufende Jahr; Japan: noch kein volles Jahr</p>
+    <p class="tab-note">Hoch, Tief und Ø: Jahresdurchschnitte seit Beginn der jeweiligen Reihe (frühestens 1984), ohne das laufende Jahr – erst ab drei vollen Jahren, sonst „–“</p>
     <div class="table-scroll" id="ctable-wrap">
     <table aria-labelledby="h-segmente">
       <thead id="cthead">
@@ -269,8 +283,8 @@
     <details class="quellen" id="quellen">
       <summary>Datenquellen und Methodik</summary>
       <div class="quellen-body">
-        <p><strong>Methodik.</strong> Das Schaubild zeigt sechs Segmente des Marktes für Unternehmensanleihen aus vier Volkswirtschaften als Jahresdurchschnitte seit 1984, soweit verfügbar, ergänzt um den jeweils aktuellen Wert – durchweg mit 10 Jahren Laufzeit: für die USA die Renditekurve hochwertiger Unternehmensanleihen des Finanzministeriums (AAA bis A, 10 Jahre), für Japan Unternehmensanleihen der Ratingklassen AA und A mit 10 Jahren Restlaufzeit (JSDA), für China die AAA-Unternehmensanleihekurve über 10 Jahre (ChinaBond) und für Australien Unternehmensanleihen der Ratingklassen A und BBB mit 10 Jahren Laufzeit (RBA). Japan und China werden börsentäglich aktualisiert, die USA und Australien monatlich. Alle Renditen gelten in der jeweiligen Landeswährung. Die Reihen beginnen unterschiedlich: die USA 1984, Australien 2005, China 2007. Für Japan liegen Jahresmittel erst für die Jahre vor, für die alle zwölf Monatsendwerte nachgeladen sind – die Historie bis 2002 füllt sich mit den täglichen Datenläufen schrittweise auf. Deutschland fehlt in diesem Vergleich: Die Bundesbank weist die Renditen inländischer Unternehmensanleihen nur über alle Laufzeiten zusammen aus, nicht für 10 Jahre. Die Ratings sind über Ländergrenzen nur eingeschränkt vergleichbar: Japanische Ratings (R&amp;I) und erst recht chinesische fallen auf der heimischen Skala deutlich großzügiger aus als bei S&amp;P oder Moody's – ein chinesisches AAA entspricht international etwa BBB oder darunter. Aussagekräftig ist daher vor allem der Vergleich jeder Reihe mit ihrer eigenen Geschichte und mit der 10-jährigen Staatsanleihe desselben Landes (<a href="renditen.html">Renditen von Staatsanleihen seit 1970</a>), weniger der Renditeabstand zwischen den Ländern. Die schattierte Fläche um jede Linie zeigt die Spanne des Jahres vom niedrigsten bis zum höchsten Monatswert.</p>
-        <p><strong>Datenquellen.</strong> USA: <a href="https://home.treasury.gov/data/treasury-coupon-issues-and-corporate-bond-yield-curve/corporate-bond-yield-curve">U.S. Treasury, HQM Corporate Bond Yield Curve</a> (Spot-Rendite 10 Jahre, monatlich, via <a href="https://fred.stlouisfed.org/series/HQMCB10YR">FRED</a>). Japan: <a href="https://market.jsda.or.jp/shijyo/saiken/baibai/baisanchi/index.html">Japan Securities Dealers Association (JSDA)</a>, Rating-Matrix der Referenzkurse für den außerbörslichen Anleihehandel – Durchschnittsrendite der von R&amp;I mit AA bzw. A bewerteten Anleihen mit 10 Jahren Restlaufzeit (börsentäglich, seit 2002). China: <a href="https://yield.chinabond.com.cn/">ChinaBond (China Central Depository &amp; Clearing)</a>, Renditekurve Unternehmensanleihen AAA, Punkt 10 Jahre (börsentäglich, seit 2006). Australien: <a href="https://www.rba.gov.au/statistics/tables/">Reserve Bank of Australia</a>, Tabelle F3 – Anleihen nichtfinanzieller Unternehmen mit Rating A bzw. BBB, Zielrestlaufzeit 10 Jahre (monatlich, seit 2005). Jahresdurchschnitt = Mittel der zwölf Monatswerte; Ø, Hoch und Tief beziehen sich auf Jahresdurchschnitte des jeweils verfügbaren Zeitraums ab 1984.</p>
+        <p><strong>Methodik.</strong> Das Schaubild zeigt sechs Segmente des Marktes für Unternehmensanleihen aus vier Volkswirtschaften als Jahresdurchschnitte seit 1984, soweit verfügbar, ergänzt um den jeweils aktuellen Wert – durchweg mit 10 Jahren Laufzeit: für die USA die Renditekurve hochwertiger Unternehmensanleihen des Finanzministeriums (AAA bis A, 10 Jahre), für Japan Unternehmensanleihen der Ratingklassen AA und A mit 10 Jahren Restlaufzeit (JSDA), für China die AAA-Unternehmensanleihekurve über 10 Jahre (ChinaBond) und für Australien Unternehmensanleihen der Ratingklassen A und BBB mit 10 Jahren Laufzeit (RBA). Japan und China werden börsentäglich aktualisiert, die USA und Australien monatlich. Alle Renditen gelten in der jeweiligen Landeswährung. Die Reihen beginnen unterschiedlich: die USA 1984, Australien 2005, China 2007. Für Japan entsteht ein Jahresmittel erst, wenn alle zwölf Monatsendwerte des Jahres geladen sind. Die Quelle reicht bis 2002 zurück; ältere Monate lädt der tägliche Datenlauf nach, wegen der Abrufgrenzen der JSDA aber nur wenige je Tag – die Japan-Historie wächst deshalb langsam. Deutschland fehlt in diesem Vergleich: Die Bundesbank weist die Renditen inländischer Unternehmensanleihen nur über alle Laufzeiten zusammen aus, nicht für 10 Jahre. Die Ratings sind über Ländergrenzen nur eingeschränkt vergleichbar: Japanische Ratings (R&amp;I) und erst recht chinesische fallen auf der heimischen Skala deutlich großzügiger aus als bei S&amp;P oder Moody's – ein chinesisches AAA entspricht international etwa BBB oder darunter. Aussagekräftig ist daher vor allem der Vergleich jeder Reihe mit ihrer eigenen Geschichte und mit der 10-jährigen Staatsanleihe desselben Landes (<a href="renditen.html">Renditen von Staatsanleihen seit 1970</a>), weniger der Renditeabstand zwischen den Ländern. Die schattierte Fläche um jede Linie zeigt die Spanne des Jahres vom niedrigsten bis zum höchsten Monatswert.</p>
+        <p><strong>Datenquellen.</strong> USA: <a href="https://home.treasury.gov/data/treasury-coupon-issues-and-corporate-bond-yield-curve/corporate-bond-yield-curve">U.S. Treasury, HQM Corporate Bond Yield Curve</a> (Spot-Rendite 10 Jahre, monatlich, via <a href="https://fred.stlouisfed.org/series/HQMCB10YR">FRED</a>). Japan: <a href="https://market.jsda.or.jp/shijyo/saiken/baibai/baisanchi/index.html">Japan Securities Dealers Association (JSDA)</a>, Rating-Matrix der Referenzkurse für den außerbörslichen Anleihehandel – Durchschnittsrendite der von R&amp;I mit AA bzw. A bewerteten Anleihen mit 10 Jahren Restlaufzeit (börsentäglich, seit 2002). China: <a href="https://yield.chinabond.com.cn/">ChinaBond (China Central Depository &amp; Clearing)</a>, Renditekurve Unternehmensanleihen AAA, Punkt 10 Jahre (börsentäglich, seit 2006). Australien: <a href="https://www.rba.gov.au/statistics/tables/">Reserve Bank of Australia</a>, Tabelle F3 – Anleihen nichtfinanzieller Unternehmen mit Rating A bzw. BBB, Zielrestlaufzeit 10 Jahre (monatlich, seit 2005). Jahresdurchschnitt = Mittel der zwölf Monatswerte; Ø, Hoch und Tief beziehen sich auf Jahresdurchschnitte des jeweils verfügbaren Zeitraums ab 1984 und erscheinen erst ab drei vollen Jahren.</p>
         <p id="datastand">Daten-Stand: 17.09.2026</p>
       </div>
     </details>
@@ -292,27 +306,18 @@
 // Rückfall, falls site.js nicht lädt (Netzfehler): ergänzt jede fehlende Funktion einzeln, damit die Seite trotzdem rendert – die volle Fassung steht in site.js.
 (function (F) { var M = window.MC = window.MC || {}; for (var k in F) if (typeof M[k] !== "function") M[k] = F[k]; })({ esc: function (s) { return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }, minus: function (s) { return String(s).replace(/^-/, "\u2212"); }, zahl: function (v, d) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }).replace(/^-/, "\u2212") : "\u2013"; }, datum: function (iso) { var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(iso || "")); return m ? m[3] + "." + m[2] + "." + m[1] : "\u2013"; }, load: function (n) { return fetch(n).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }, teil: function (s) { for (var h = 0, i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 65536; return ("0" + (h % 256).toString(16)).slice(-2); }, hoverWrap: function (s) { return s; }, navInit: function () {} });
 // ============ Gemeinsame Helfer ============
-const SANS = 'Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif';
+const SANS = "'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";   // wie --sans in base.css (bis 15.10.2026 Manrope, die seit 11.10. nicht mehr geladen wird)
 const X0 = 70, X1 = 930, YTOP = 20, YBOT = 465, YEAR0 = 1984;   // YEAR0: Beginn der ältesten 10-Jahres-Reihe (HQM); X1 = Standard-Rechtsrand der Zeitachse (je Chart überschreibbar: x1)
 
 // ---------- Texte ----------
 const T = {
-  skipLink: "Zum Inhalt springen",
-  title: "Unternehmensanleihen: Renditen seit 1984 – Bondarium",
-  metaDesc: "Renditen 10-jähriger Unternehmensanleihen seit 1984 nach Bonität und Land: USA, Japan, China und Australien – Jahresmittel, Spannen und aktueller Stand.",
-  footerLegal: "Rechtliches", footerImprint: "Impressum", footerPrivacy: "Datenschutz",
-  crossNav: 'Weiter: <a href="renditen.html">Renditen von Staatsanleihen seit 1970&nbsp;→</a> · <a href="langlaeufer.html">Langläufer – wenn eine Anleihe 30, 50 oder 100 Jahre läuft →</a>',
-  thCurrent: "Aktuelle Rendite", thStand: "Stand",
-  footerDisclaimer: "Keine Anlageberatung.",
   dataAsOf: "Daten-Stand:", outdated: "veraltet", standOld: "(älter)",
   legendHint: "Legende: Überfahren hebt hervor, Klick fixiert (Esc löst).",
   legendHintTouch: "Legende: Antippen hebt eine Linie hervor, erneutes Antippen löst sie.",
   axisY: "↑ Rendite in % (Jahresdurchschnitt)", axisX: "Jahr →",
-  chartHintBase: "Jahresdurchschnitte in %", chartHintHover: "Linie per Legende oder Maus hervorheben", chartHintTouch: "Linie per Legende hervorheben",
+  chartHintHover: "Linie per Legende oder Maus hervorheben", chartHintTouch: "Linie per Legende hervorheben",
   tipRange: "Spanne", asOf: "Stand:",
   corpEyebrow: "Unternehmensanleihen",
-  thHigh2: "Hoch", thLow2: "Tief", thAvg2: "Ø",
-  thSegment: "Renditereihe", thRating: "Bonität", thMaturity: "Laufzeit",
   ratingCn: "AAA (lokal)", mat10: "10 J.",
   sUsHqm: "USA · AAA–A · 10 J. (HQM)",
   sJpAa: "Japan · AA · 10 J.", sJpA: "Japan · A · 10 J.", sCnAaa: "China · AAA · 10 J.",
@@ -586,7 +591,7 @@ function buildYieldChart(ch) {
   return MC.hoverWrap(`<svg viewBox="0 0 ${G.W} ${G.H}" role="img" aria-label="${L(ch.ariaKey)}" xmlns="http://www.w3.org/2000/svg">
     <title>${L(ch.titleKey)}</title>
     <text x="4" y="12" font-family="${SANS}" font-size="12" font-weight="600" style="fill:var(--muted)">${L("axisY")}</text>
-    ${G.narrow ? "" : `<text x="${X1c}" y="12" text-anchor="end" font-family="${SANS}" font-size="11.5" style="fill:var(--muted)" letter-spacing="0.08em"><tspan class="hint-hover">${L("chartHintHover")}</tspan><tspan class="hint-touch">${L("chartHintTouch")}</tspan></text>`}
+    ${G.narrow ? "" : `<text x="${X1c}" y="12" text-anchor="end" font-family="${SANS}" font-size="11.5" style="fill:var(--muted)"><tspan class="hint-hover">${L("chartHintHover")}</tspan><tspan class="hint-touch">${L("chartHintTouch")}</tspan></text>`}
     <text x="${X1c}" y="${G.xt}" text-anchor="end" font-family="${SANS}" font-size="12" font-weight="600" style="fill:var(--muted)">${L("axisX")}</text>
     <g stroke="rgba(44,44,42,0.09)" stroke-width="1">${grid.join("")}</g>
     <g stroke="rgba(44,44,42,0.07)" stroke-width="1">${vGrid.join("")}</g>
@@ -666,11 +671,12 @@ Object.values(CHARTS).forEach(wireHighlight);
 // (Tageswert > 7 Tage, Monatswert > 100 Tage), gedämpft mit Hinweis.
 // Sortierung per Klick auf den Spaltenkopf (CSORT); bleibt über das Nachladen von unternehmen.json erhalten.
 const OLD_DAY = 7, OLD_MONTH = 100;
+const MIN_JAHRE = 3;   // Hoch/Tief/Ø erst ab drei vollen Jahren, sonst „–“ (bei einem Jahr wären alle drei gleich – Japan, Gesamtprüfung 14.10.2026)
 const CSORT = { col: null, dir: 1 };       // col: null = Listenreihenfolge (Land, dann Bonität)
 // Kennzahlen einer Reihe: aktueller Wert, Stand (+ Alter), Hoch/Tief/Ø der Jahresdurchschnitte
 function rowStats(ch, c, ref) {
   const ann = ch.data.annual[c.key] || {};
-  const years = Object.keys(ann).map(Number).sort((a, b) => a - b);
+  const years = Object.keys(ann).map(Number).sort((a, b) => a - b).filter((_, i, alle) => alle.length >= MIN_JAHRE);
   const latest = ch.data.latest[c.key] || {};
   let hi = null, lo = null, sum = 0;
   for (const yr of years) {
@@ -706,10 +712,10 @@ function cmpRows(a, b, col, dir) {
 }
 // Gemeinsame Zellen: Stand (ggf. gedämpft), aktueller Wert, Hoch/Tief/Ø
 // Aktuelle Rendite steht seit 28.09.2026 direkt hinter der Zeilenüberschrift (Nutzerwunsch: Rendite immer in Spalte 2)
-function curYieldCell(r) { return `<td class="num">${r.current !== null ? fmt(r.current, 2) + "\u00A0%" : "–"}</td>`; }
+function curYieldCell(r) { return `<td class="num">${r.current !== null ? fmt(r.current, 2) + "\u00A0%" : "–"}${r.standTxt !== null ? `<small class="cur-m">${MC.esc(r.standTxt)}</small>` : ""}</td>`; }
 function statCells(r) {
   const stand = r.standTxt !== null ? (r.old ? `<span class="old">${MC.esc(r.standTxt)} ${L("standOld")}</span>` : MC.esc(r.standTxt)) : "–";
-  return `<td class="num">${stand}</td>
+  return `<td class="num stand">${stand}</td>
       <td class="num">${r.high !== null ? `${fmt(r.high, 2)}\u00A0% (${r.hiYr})` : "–"}</td>
       <td class="num">${r.low !== null ? `${fmt(r.low, 2)}\u00A0% (${r.loYr})` : "–"}</td>
       <td class="num">${r.avg !== null ? fmt(r.avg, 2) + "\u00A0%" : "–"}</td>`;
@@ -718,7 +724,7 @@ function buildCorpTable() {
   let rows = corpRows();
   if (CSORT.col) rows = rows.slice().sort((a, b) => cmpRows(a, b, CSORT.col, CSORT.dir));
   return rows.map(r => `<tr>
-      <th scope="row"><i class="tag" style="background:${r.c.color}"></i>${MC.esc(r.name)}</th>${curYieldCell(r)}
+      <th scope="row"><i class="tag" style="background:${r.c.color}"></i>${MC.esc(r.name)}<small class="cur-m">${r.cur}</small></th>${curYieldCell(r)}
       <td class="cur">${r.cur}${CUR_SYM[r.cur] ? ` <span class="sym">${CUR_SYM[r.cur]}</span>` : ""}</td>
       <td class="txt">${MC.esc(r.rating)}</td>
       <td class="txt">${MC.esc(r.mat)}</td>

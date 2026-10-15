@@ -61,6 +61,12 @@ geladen, davor 45 s Pause. Nach HTTP 429 wartet ein JSDA-Abruf das Retry-After a
 (bis 120 s) und versucht es einmal neu. Eine Reihe zählt nur als geliefert, wenn ihre
 Quelle in diesem Lauf antwortete; antwortet keine, endet das Skript mit Exit 1 und
 schreibt kein neues checkedAt (T-62).
+Seit 15.10.2026 (Gesamtprüfung D03-01/D03-02): Die JSDA antwortete dem Datenlauf seit 13.10. schon beim dritten
+Abruf mit HTTP 429, die neue Anfrage 45 s später scheiterte jedes Mal. Deshalb steht vor jedem Abruf für die Historie
+(Archivseite, Monatsdatei) ein Abstand von JSDA_HIST_PAUSE s zum vorigen JSDA-Abruf, und nach HTTP 429 wird dort nicht
+erneut gefragt (der Rest folgt im nächsten Lauf); der Tageswert behält die eine Wiederholung. Eine leere oder fremde
+Antwort mit HTTP 200 (Wartungs- oder Prüfseite, anderes Format) gilt als Fehler: Monate werden nur dann als „ohne
+Daten“ (nodata, nie wieder abgefragt) vermerkt, wenn die Quelle wirklich gelesen wurde und keinen Wert hat.
 
 Einmaliges Nachladen (FRED/RBA komplett, Japan/China mit großem Budget):
 
@@ -232,6 +238,8 @@ def fetch_rba() -> dict[str, dict[str, float]]:
 _jsda_files_cache: dict[int, dict[str, str]] = {}
 # Seit 09.10.2026 (Technik-Test T-60: Monatsendwert September fehlte nach HTTP 429 in sieben Läufen):
 JSDA_ARCHIV_PAUSE = 45.0   # s Pause vor einem Abruf der Archivseite (die JSDA sperrt nach ~7 Abrufen binnen Minuten)
+JSDA_HIST_PAUSE = 45.0     # s Mindestabstand zum vorigen JSDA-Abruf vor jedem Abruf für die Historie (seit 15.10.2026)
+_jsda_letzter = [0.0]      # Zeitpunkt (time.monotonic) des letzten JSDA-Abrufs
 JSDA_RETRY_MAX = 120.0     # s: längste Wartezeit nach HTTP 429/503 mit Retry-After (_common deckelt auf 30 s)
 # Monatsenden je Jahr aus der Archivseite, in unternehmen.json unter „jsdaArchiv“ zwischengespeichert:
 #   {"JJJJ": {"geladen": "JJJJ-MM-TT", "monate": {"JJJJ-MM": [Handelstag, Pfad unter JSDA_BASE] | null}}}
@@ -240,13 +248,24 @@ JSDA_RETRY_MAX = 120.0     # s: längste Wartezeit nach HTTP 429/503 mit Retry-A
 _jsda_archiv: dict = {}
 
 
-def jsda_get(url: str, timeout: int = 40) -> bytes:
+def jsda_abstand(sekunden: float) -> None:
+    """Wartet, bis seit dem letzten JSDA-Abruf mindestens `sekunden` vergangen sind."""
+    rest = _jsda_letzter[0] + sekunden - time.monotonic()
+    if rest > 0:
+        time.sleep(rest)
+
+
+def jsda_get(url: str, timeout: int = 40, wiederholen: bool = True) -> bytes:
     """JSDA-Abruf mit eigener Wiederholung: nach HTTP 429/503 einmal neu versuchen, nach Retry-After (höchstens
-    JSDA_RETRY_MAX s; ohne Angabe JSDA_ARCHIV_PAUSE s). Andere Fehler gehen sofort weiter."""
+    JSDA_RETRY_MAX s; ohne Angabe JSDA_ARCHIV_PAUSE s). Andere Fehler gehen sofort weiter.
+    wiederholen=False (Historie, seit 15.10.2026): nach HTTP 429/503 sofort aufgeben – der Rest folgt im nächsten Lauf."""
     try:
-        return get_with_retry(url, headers=UA, timeout=timeout, tries=1)
+        try:
+            return get_with_retry(url, headers=UA, timeout=timeout, tries=1)
+        finally:
+            _jsda_letzter[0] = time.monotonic()
     except urllib.error.HTTPError as e:
-        if e.code not in (429, 503):
+        if e.code not in (429, 503) or not wiederholen:
             raise
         wait = JSDA_ARCHIV_PAUSE
         raw = e.headers.get("Retry-After") if e.headers is not None else None
@@ -264,15 +283,22 @@ def jsda_get(url: str, timeout: int = 40) -> bytes:
         wait = max(1.0, min(wait, JSDA_RETRY_MAX))
         print(f"JSDA: HTTP {e.code} – neuer Versuch in {wait:g} s: {url}", file=sys.stderr, flush=True)
         time.sleep(wait)
-        return get_with_retry(url, headers=UA, timeout=timeout, tries=1)
+        try:
+            return get_with_retry(url, headers=UA, timeout=timeout, tries=1)
+        finally:
+            _jsda_letzter[0] = time.monotonic()
 
 
-def jsda_files_from(url: str, year: int, pause: float) -> dict[str, str]:
-    """Links auf Rating-Matrix-Dateien einer JSDA-Seite als {"JJJJ-MM-TT": URL}."""
-    html = jsda_get(url).decode("utf-8", "replace")
+def jsda_files_from(url: str, year: int, pause: float, wiederholen: bool = True) -> dict[str, str]:
+    """Links auf Rating-Matrix-Dateien einer JSDA-Seite als {"JJJJ-MM-TT": URL}. Eine Seite ganz ohne solche Links
+    (leere Antwort, Wartungs- oder Prüfseite) ist ein Fehler – sonst gälten alle Monate des Jahres als „ohne Daten“."""
+    html = jsda_get(url, wiederholen=wiederholen).decode("utf-8", "replace")
     time.sleep(pause)
+    links = re.findall(r'href="([^"]*?R(\d{2})(\d{2})(\d{2})\.csv)"', html)
+    if not links:
+        raise ValueError(f"JSDA: keine Dateilinks auf {url} (leere oder fremde Antwort, {len(html)} Zeichen)")
     files = {}
-    for href in re.findall(r'href="([^"]*?R(\d{2})(\d{2})(\d{2})\.csv)"', html):
+    for href in links:
         path, yy, mm, dd = href
         date = f"20{yy}-{mm}-{dd}"
         if not date.startswith(str(year)):
@@ -309,9 +335,9 @@ def jsda_monatsende(m: str, pause: float, today: datetime.date) -> tuple[str, st
     # neu laden, wenn der Monat nicht im Speicher steht oder beim letzten Laden noch nicht abgeschlossen war
     if m not in monate or str(eintrag.get("geladen", ""))[:7] <= m:
         if int(jahr) not in _jsda_files_cache:
-            print(f"Japan: Archivseite {jahr} wird geladen (nach {JSDA_ARCHIV_PAUSE:g} s Pause).")
-            time.sleep(JSDA_ARCHIV_PAUSE)
-        tage = jsda_handelstage(jsda_year_files(int(jahr), pause))
+            print(f"Japan: Archivseite {jahr} wird geladen (nach {JSDA_ARCHIV_PAUSE:g} s Pause).", flush=True)
+            jsda_abstand(JSDA_ARCHIV_PAUSE)
+        tage = jsda_handelstage(jsda_year_files(int(jahr), pause, wiederholen=False))
         monate = {}
         for tag in sorted(tage):   # je Monat bleibt der letzte Handelstag
             if tag[:7] < today.isoformat()[:7]:
@@ -328,24 +354,31 @@ def jsda_monatsende(m: str, pause: float, today: datetime.date) -> tuple[str, st
     return tag, pfad if pfad.startswith("http") else JSDA_BASE + pfad
 
 
-def jsda_year_files(year: int, pause: float) -> dict[str, str]:
+def jsda_year_files(year: int, pause: float, wiederholen: bool = True) -> dict[str, str]:
     """Alle Dateien eines Jahres (Archivseite archiveJJJJ.html – existiert auch für
     das laufende Jahr; die Startseite listet nur die jüngsten Handelstage). Ein Abruf je Jahr."""
     if year not in _jsda_files_cache:
-        _jsda_files_cache[year] = jsda_files_from(JSDA_ARCHIVE.format(year=year), year, pause)
+        _jsda_files_cache[year] = jsda_files_from(JSDA_ARCHIVE.format(year=year), year, pause, wiederholen)
     return _jsda_files_cache[year]
 
 
-def jsda_values(url: str, agency: str = "1", bucket: str = "10") -> dict[str, float]:
+def jsda_values(url: str, agency: str = "1", bucket: str = "10", wiederholen: bool = True) -> dict[str, float]:
     """Renditen (Durchschnitt) aus einer Rating-Matrix-Datei für alle Rating-
     Klassen einer Zeile: Agentur (1 = R&I), Restlaufzeit-Klasse (10 = 10 Jahre);
     je Rating-Block Label, Rendite, Standardabweichung, Anzahl Emissionen, Anzahl
-    Meldungen. Shift-JIS. Rückgabe {"AA": 3.52, "A": 3.78, …} (leer, wenn ohne Wert)."""
-    text = jsda_get(url).decode("shift_jis", "replace")
+    Meldungen. Shift-JIS. Rückgabe {"AA": 3.52, "A": 3.78, …} (leer, wenn die Matrix
+    gelesen wurde, aber ohne Wert). Ist die Antwort keine Matrix (leer, HTML-Seite,
+    anderes Format), folgt ein Fehler – seit 15.10.2026, vorher wurde der Monat dann
+    dauerhaft als „ohne Daten“ vermerkt."""
+    text = jsda_get(url, wiederholen=wiederholen).decode("shift_jis", "replace")
     out: dict[str, float] = {}
     # zeilenweise füttern: die Dateien enthalten \r-Zeilenumbrüche, an denen csv.reader
     # auf einem StringIO stolpert ("new-line character seen in unquoted field")
-    for rec in csv.reader(text.splitlines()):
+    zeilen = list(csv.reader(text.splitlines()))
+    # Matrixzeilen: Datum JJJJMMTT, Agentur-Nummer, Name, Restlaufzeit-Klasse, Rating-Blöcke …
+    if not any(len(rec) >= 6 and re.fullmatch(r"\d{8}", rec[0].strip()) and rec[1].strip().isdigit() for rec in zeilen):
+        raise ValueError(f"JSDA: {url} ist keine Rating-Matrix (leere oder fremde Antwort, {len(text)} Zeichen)")
+    for rec in zeilen:
         if len(rec) < 6 or rec[1].strip() != agency or rec[3].strip().lstrip("0") != bucket.lstrip("0"):
             continue
         for i in range(4, len(rec) - 1, 5):
@@ -361,10 +394,14 @@ def jsda_values(url: str, agency: str = "1", bucket: str = "10") -> dict[str, fl
 
 def chinabond_value(date: str) -> float | None:
     """10-Jahres-Punkt der ChinaBond-Kurve am Handelstag date ("JJJJ-MM-TT");
-    None an Nicht-Handelstagen (die Antwort enthält dann keine Tabelle)."""
+    None an Nicht-Handelstagen (die Antwort enthält dann keine Tabelle). Eine leere
+    oder fremde Antwort (ohne die Seitenvorlage von ChinaBond) ist seit 15.10.2026 ein
+    Fehler – vorher galt der Monat dann dauerhaft als „ohne Daten“."""
     url = CHINABOND_URL.format(cid=CHINABOND_AAA, date=date)
     # Der Endpunkt nimmt nur POST an (GET → 405); Parameter stehen in der URL
     html = get_with_retry(url, headers=CHINABOND_HEADERS, timeout=40, data=b"").decode("utf-8", "replace")
+    if "cbweb-mn" not in html and "收益率" not in html:
+        raise ValueError(f"ChinaBond: fremde oder leere Antwort für {date} ({len(html)} Zeichen)")
     cells = [re.sub(r"<[^>]+>", "", c).strip() for c in re.findall(r"<td[^>]*>(.*?)</td>", html, flags=re.S)]
     for i, c in enumerate(cells[:-1]):
         if c == "10.0y":
@@ -464,12 +501,13 @@ def sample_jp(series: dict, cfg: dict, today: datetime.date, save=None) -> bool:
         except Exception as e:
             log_err(f"Japan: Archivseite {m[:4]} nicht abrufbar: {e}")
             break
-        if not ende:
+        if not ende:   # Archivseite gelesen (mit Dateilinks), für den Monat aber keine Datei
             if apply(m, {}, latest=False):
                 changed = True
             continue
         try:
-            vals = jsda_values(ende[1])
+            jsda_abstand(JSDA_HIST_PAUSE)
+            vals = jsda_values(ende[1], wiederholen=False)
         except Exception as e:
             log_err(f"Japan: Datei {ende[0]} nicht abrufbar: {e} – Rest im nächsten Lauf.")
             break

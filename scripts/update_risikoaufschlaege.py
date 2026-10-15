@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Schreibt risikoaufschlaege.json – der Risikoaufschlag (Spread) als Zeitreihe:
 Euro-Staaten gegen die Bundesanleihe seit 1991 und US-Unternehmensanleihen gegen
-die US-Staatsanleihe seit 1984. Seite: risikoaufschlaege.html (Menü „Zinsen“).
+die US-Staatsanleihe seit 1984. Seite: risikoaufschlaege.html (Menü „Markt“).
 
 Quellen (amtlich bzw. frei, ohne Schlüssel):
 - Euro-Staaten: OECD, Main Economic Indicators, „Long-term interest rates“ (10-jährige
@@ -10,8 +10,9 @@ Quellen (amtlich bzw. frei, ohne Schlüssel):
   Reihe wie auf renditen.html und realzins.html. Aufschlag = Rendite des Landes minus
   Rendite Deutschlands im selben Monat (BERECHNET). Die Charts zeigen Italien, Spanien
   und Frankreich seit 03/1991 (ab da hat Italien eine OECD-Monatsreihe); die übrigen
-  Länder stehen nur in der Rangliste „heute“. Die OECD veröffentlicht einen Monat rund
-  zwei Wochen nach Monatsende; einen Tageswert gibt es für diese Länder nicht.
+  Länder stehen nur in der Rangliste. Die OECD veröffentlicht einen Monat rund
+  zwei Wochen nach Monatsende, nicht für alle Länder gleichzeitig; einen Tageswert gibt es
+  für diese Länder nicht.
 - USA: Unternehmensanleihen hoher Bonität (AAA/AA/A), 10 Jahre – HQM-Renditekurve des
   US-Finanzministeriums (Spot-Rendite, monatlich seit 01/1984, gemeinfrei; Abruf über FRED,
   Reihe HQMCB10YR, dort „Public Domain: Citation Requested“) minus 10-jährige
@@ -28,7 +29,8 @@ Struktur:
    "quelle": {...},
    "laender": {"monate": [["1991-03", DE, IT, ES, FR], …],   # Renditen in %, null = kein Wert
                "heute": [{"code": "IT", "name": "Italien", "monat": "2026-08", "rendite": 3.99,
-                          "aufschlag": 0.81}, …]},           # alle Länder, nach Aufschlag sortiert
+                          "aufschlag": 0.81}, …],            # alle Länder, jüngster Monat JE LAND, nach Aufschlag sortiert
+               "rangliste": [{…wie heute…}, …]},             # dieselben Länder im jüngsten GEMEINSAMEN Monat (seit 15.10.2026)
    "us": {"monate": [["1984-01", aufschlag, hqm, staat], …], # Aufschlag in Prozentpunkten, Renditen in %
           "heute": ["JJJJ-MM", aufschlag, hqm, staat]}}       # jüngster Monat mit beiden Werten
 
@@ -99,6 +101,34 @@ def alte_monate_behalten(r: dict[str, dict[str, float]], alt: dict) -> list[str]
                 r[k][z[0]] = v
                 behalten.append(f"{k} {z[0]}")
     return behalten
+
+
+RANG_MAX_ABSTAND = 3   # Monate: liegt der gemeinsame Monat weiter hinter dem jüngsten, keine eigene Rangliste (Seite nimmt „heute“)
+
+
+def monate_zwischen(a: str, b: str) -> int:
+    """Abstand in Monaten von a nach b („JJJJ-MM“)."""
+    return (int(b[:4]) - int(a[:4])) * 12 + int(b[5:7]) - int(a[5:7])
+
+
+def rangliste(r: dict[str, dict[str, float]], heute: list, stand: str) -> list:
+    """Rangliste in EINEM Monat (seit 15.10.2026, Gesamtprüfung D12-02): Die OECD meldet die Länder unterschiedlich spät –
+    die Rangliste aus „heute“ verglich Länder aus August und September (zwei verschiedene Bund-Renditen). Hier: der jüngste
+    Monat, für den Deutschland und alle Länder aus „heute“ einen Wert haben, nach Aufschlag sortiert. Die Kacheln zeigen
+    weiter den jüngsten Wert je Land („heute“). Leer, wenn der gemeinsame Monat mehr als RANG_MAX_ABSTAND Monate zurückliegt."""
+    de, codes = r["DE"], [h["code"] for h in heute]
+    if not codes:
+        return []
+    mon = max((m for m in de if m >= START and all(m in r.get(k, {}) for k in codes)), default=None)
+    if mon is None or monate_zwischen(mon, stand) > RANG_MAX_ABSTAND:
+        log_err(f"Risikoaufschläge: kein gemeinsamer Monat aller Länder seit {stand} minus {RANG_MAX_ABSTAND} Monaten "
+                "– Rangliste mit den jüngsten Werten je Land.")
+        return []
+    name = {k: n for k, _, n in LAENDER}
+    liste = [{"code": k, "name": name[k], "monat": mon, "rendite": round(r[k][mon], 2), "aufschlag": round(r[k][mon] - de[mon], 2)}
+             for k in codes]
+    liste.sort(key=lambda h: -h["aufschlag"])
+    return liste
 
 
 def laender(r: dict[str, dict[str, float]]) -> tuple[list, list, str]:
@@ -189,7 +219,7 @@ def main() -> int:
         if vor and len(monate) < 0.9 * len(vor):
             log_err(f"Risikoaufschläge Länder: nur {len(monate)} Monate statt zuvor {len(vor)} – Datei bleibt.")
             return 1
-        neu["laender"] = {"monate": monate, "heute": heute}
+        neu["laender"] = {"monate": monate, "heute": heute, "rangliste": rangliste(renditen, heute, stand)}
         neu["stand"]["laender"] = stand
     except Exception as e:  # noqa: BLE001
         log_err(f"Risikoaufschläge Länder: OECD-Reihen unbrauchbar ({e}) – Länder behalten den alten Stand.")

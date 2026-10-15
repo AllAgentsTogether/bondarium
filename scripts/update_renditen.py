@@ -2,12 +2,10 @@
 """Aktualisiert renditen.json – 10-Jahres-Staatsanleihenrenditen der acht
 größten Volkswirtschaften (Seite renditen.html).
 
-Läuft seit 09/2026 nur noch im vollen Lauf (Workflow: VOLL=1, nächtlich nach
-US-Handelsschluss bzw. manueller 'voll'-Start) – die 3-Stunden-Läufe (FAST=1)
-committen nicht, dort wäre jeder Lauf ein erneuter Abruf aller Quellen. Die
-FAST-Selbstdrosselung (höchstens ein Abruf pro Tag, gemessen an checkedAt)
-bleibt als Schutz erhalten, falls das Skript doch einmal in einem FAST-Lauf
-gestartet wird.
+Läuft im Datenlauf werktags um 10 Uhr (Workflow update-data.yml, VOLL=1; angestoßen
+über cron-job.org) bzw. bei einem manuellen 'voll'-Start. Die FAST-Selbstdrosselung
+(höchstens ein Abruf pro Tag, gemessen an checkedAt) bleibt als Schutz erhalten,
+falls das Skript doch einmal mit FAST=1 gestartet wird.
 
 Zeitstempel in renditen.json:
 - checkedAt: ISO-Zeitstempel JEDES Laufs, der die Quellen befragt hat
@@ -33,9 +31,9 @@ Land sowie neu abgeschlossene Jahre.
 Jahresspanne (Hoch-Tief-Band im Chart, seit 09/2026): countries[<land>].range
 enthält je Jahr [Tief, Hoch] der OECD-MONATSWERTE ("JJJJ": [lo, hi]) – also
 das niedrigste und höchste Monatsmittel eines Jahres, keine Tagesextreme.
-Abgeschlossene Jahre werden einmal festgeschrieben (12 Monatswerte), das
-laufende Jahr wird bei jedem Lauf aus den bisher vorliegenden Monaten neu
-gebildet. Länder ohne OECD-Monatsreihe in frühen Jahren (Japan vor 1989,
+Das laufende Jahr wird bei jedem Lauf aus den bisher vorliegenden Monaten neu
+gebildet; ein abgeschlossenes Jahr wird vervollständigt, sobald seine letzten
+Monate erscheinen (siehe update_ranges). Länder ohne OECD-Monatsreihe in frühen Jahren (Japan vor 1989,
 Italien vor 1992, China/Indien vor ca. 2005/2012) haben dort keine Spanne –
 der Chart zeigt dann nur die Durchschnittslinie.
 
@@ -43,8 +41,9 @@ Einmaliges Nachladen der Historie ab 1970 (dauert ein paar Sekunden):
 
     python3 scripts/update_renditen.py --backfill
 
-Der Backfill ergänzt nur fehlende Jahre (ersetzt bestehende nicht) und
-schreibt renditen.json sonst wie ein normaler Lauf.
+Der Backfill ergänzt nur fehlende Jahresdurchschnitte (ersetzt bestehende nicht);
+Spannen gelten nach den Regeln von update_ranges. Sonst schreibt er renditen.json
+wie ein normaler Lauf.
 """
 
 import csv
@@ -218,8 +217,12 @@ RANGE_START = 1970   # Beginn der Chart-Zeitachse (renditen.html, YEAR0)
 
 def update_ranges(key: str, c: dict, monthly: dict[str, float], today: datetime.date) -> bool:
     """Jahresspanne [Tief, Hoch] aus Monatswerten in c["range"] pflegen.
-    Abgeschlossene Jahre nur ergänzen (12 Monatswerte nötig, nie überschreiben),
-    das laufende Jahr bei jedem Lauf neu aus den vorliegenden Monaten bilden.
+    - laufendes Jahr: bei jedem Lauf neu aus den vorliegenden Monaten;
+    - abgeschlossenes Jahr ohne Eintrag: nur mit 12 Monatswerten;
+    - abgeschlossenes Jahr mit Eintrag (seit 15.10.2026, Gesamtprüfung D02-02/D03-03): neu bilden, wenn jetzt alle 12
+      Monatswerte vorliegen oder die neue Spanne die gespeicherte umschließt (mehr Monate als beim letzten Mal) – sonst
+      bliebe die im Dezember aus elf Monaten gebildete Spanne nach dem Jahreswechsel für immer ohne den Dezember.
+      Eine engere Spanne aus weniger Monaten (z. B. kürzeres Abruffenster) ersetzt den Eintrag nicht.
     Rückgabe: True, wenn sich etwas geändert hat."""
     rng = c.setdefault("range", {})
     by_year: dict[str, list[float]] = {}
@@ -229,15 +232,22 @@ def update_ranges(key: str, c: dict, monthly: dict[str, float], today: datetime.
     changed = False
     for yr, vals in sorted(by_year.items()):
         current = int(yr) == today.year
-        if not current and (len(vals) < 12 or yr in rng):
-            continue
         span = [round(min(vals), 2), round(max(vals), 2)]
-        if rng.get(yr) == span:
+        alt = rng.get(yr)
+        if alt == span:
             continue
+        if not current:
+            if alt is None and len(vals) < 12:
+                continue
+            umschliesst = (isinstance(alt, list) and len(alt) == 2 and all(isinstance(x, (int, float)) for x in alt)
+                           and span[0] <= alt[0] and span[1] >= alt[1])
+            if alt is not None and len(vals) < 12 and not umschliesst:
+                continue
         rng[yr] = span
         changed = True
         if not current:
-            print(f"{key}: Spanne {yr} festgeschrieben ({span[0]}–{span[1]} %).")
+            print(f"{key}: Spanne {yr} " + ("festgeschrieben" if alt is None else f"neu gebildet (bisher {alt})")
+                  + f" ({span[0]}–{span[1]} %).")
     # laufendes Jahr ohne Monatswert (Jahresanfang, OECD noch leer): alten Stand behalten
     if changed:
         c["range"] = dict(sorted(rng.items()))

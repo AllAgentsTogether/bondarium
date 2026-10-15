@@ -105,7 +105,7 @@
   .kk-einsatz span { position: absolute; left: var(--einsatz); transform: translateX(-50%); white-space: nowrap; }
   @media (max-width: 600px) { .kk { grid-template-columns: 84px minmax(0, 1fr); gap: 6px 8px; } .kk-l { font-size: 12.5px; } .kk-w { font-size: 13px; } }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Realzins seit 1970: Zins minus Inflation","description":"Zins minus Inflation: Realzins der 10-jährigen Bundesanleihe seit 1970, heute und nach Steuern – plus die Inflationserwartung des Markts bis 2046.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-30","dateModified":"2026-10-09","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/realzins.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Realzins seit 1970: Zins minus Inflation","description":"Zins minus Inflation: Realzins der 10-jährigen Bundesanleihe seit 1970, heute und nach Steuern – plus die Inflationserwartung des Markts bis 2046.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-30","dateModified":"2026-10-15","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/realzins.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Markt","item":"https://www.bondarium.de/beobachten.html"},{"@type":"ListItem","position":3,"name":"Realzins seit 1970","item":"https://www.bondarium.de/realzins.html"}]}</script>
 </head>
 <body>
@@ -391,7 +391,7 @@ MC.navInit();
 
 // ---- Realzins: Bund 10 J., Inflation, Differenz (realzins.json, scripts/update_realzins.py) ----
 (function () {
-  const SANS = 'Manrope, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica Neue, Arial, sans-serif';
+  const SANS = "'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";   // wie --sans in base.css (bis 15.10.2026 Manrope, die seit 11.10. nicht mehr geladen wird)
   const C = { zins: "#157C00", infl: "#CF7430", plus: "#157C00", minus: "#A2561C", flPlus: "#DCFBD3", flMinus: "#FBE8D8" };   // plus/minus: Linien und Schrift, fl…: Flächen   // Bildwelt 2.0: Realzins-Fläche Hauch-Grün über null, Orange-Hauch darunter
   const STEUER = 0.26375;   // Abgeltungsteuer 25 % + Solidaritätszuschlag 5,5 % darauf
   const MON = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
@@ -410,16 +410,14 @@ MC.navInit();
       const z = h.zins10[1];
       setT("h-zins", ""); document.getElementById("h-zins").innerHTML = `${fmt(z, 2)}<small>%</small>`;
       setT("h-zins-d", `Rendite, nominal · Tageswert ${deDatum(h.zins10[0])}`);
-      ["s-zins", "s-zins2"].forEach(id => setT(id, fmt(z, 2)));
+      setT("s-zins", fmt(z, 2));
       setT("s-netto", fmt(z * (1 - STEUER), 2)); setT("st-z", `${fmt(z, 2)} %`); setT("st-st", `−${fmt(z * STEUER, 2)}`);
-      const brutto = 50000 * z / 100, steuer = Math.max(0, brutto - 1000) * STEUER;
-      setT("s-brutto", fmt(brutto, 0)); setT("s-steuer", fmt(steuer, 0)); setT("s-netto-eur", fmt(brutto - steuer, 0));
     }
     if (h.vpi) {
       const i = h.vpi[1];
       document.getElementById("h-vpi").innerHTML = `${fmt(i, 1)}<small>%</small>`;
       setT("h-vpi-d", `Verbraucherpreise Deutschland, ${monLang(h.vpi[0])} gegen Vorjahr`);
-      setT("s-vpi", fmt(i, 1)); setT("st-i", `−${fmt(i, 2)}`); setT("s-verlust", fmt(50000 * i / 100, 0));
+      setT("st-i", `−${fmt(i, 2)}`);
       setT("m-vpi", fmt(i, 1)); setT("m-noetig", fmt(Math.max(0, i) / (1 - STEUER), 2));
     }
     if (h.zins10 && h.vpi) {
@@ -499,8 +497,8 @@ MC.navInit();
       g += `<line x1="${X0}" y1="${Y1}" x2="${X1}" y2="${Y1}" stroke="#1A1A19" stroke-opacity="0.35" stroke-width="1.2"/>`;
       return g;
     };
-    const kopf = (text) => `<text x="${X1}" y="14" text-anchor="end" font-family="${SANS}" font-size="${eng ? 11 : 11.5}" style="fill:var(--muted)" letter-spacing="${eng ? "0.04em" : "0.08em"}"><tspan class="hint-hover">${W < 440 ? "MAUS: WERTE" : "MAUS AUF DEN CHART: WERT JE " + text}</tspan><tspan class="hint-touch">${W < 440 ? "TIPPEN: WERTE" : "TIPPEN: WERT JE " + text}</tspan></text>`;
-    const einheit = jahre ? "JAHR" : "MONAT";
+    const kopf = (text) => `<text x="${X1}" y="14" text-anchor="end" font-family="${SANS}" font-size="${eng ? 11 : 11.5}" style="fill:var(--muted)"><tspan class="hint-hover">${W < 440 ? "Maus: Werte" : "Maus auf das Schaubild: Wert je " + text}</tspan><tspan class="hint-touch">${W < 440 ? "Tippen: Werte" : "Tippen: Wert je " + text}</tspan></text>`;
+    const einheit = jahre ? "Jahr" : "Monat";
     const zeitraum = `${label(P[0])} bis ${label(P[n - 1])}`;
 
     // Chart 1: Zins und Inflation

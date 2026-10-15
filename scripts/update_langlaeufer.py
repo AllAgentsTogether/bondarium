@@ -13,8 +13,10 @@ Bundeswertpapiere), börsentäglich Kurs (KCP) und Rendite (REN) je ISIN:
 Frei nutzbar mit Quellenangabe.
 
 Die übrigen Anleihen der Seite (BTP 2072, Österreich 2120, US-Treasury 2050,
-Frankreich 2072, Microsoft 2060) haben keine frei abrufbare Kursquelle; ihre
-Wochenreihen stehen manuell in langlaeufer.html (Börse Stuttgart).
+Frankreich 2072, Microsoft 2060) stehen nicht in dieser Datei: ihre Wochenreihen
+bis 15.09.2026 (Börse Stuttgart) sind fest in langlaeufer.html eingebettet, seit
+24.09.2026 kommt täglich der Schlusskurs der Börse Frankfurt dazu (kurse-auswahl.json,
+update_kurse.py).
 
 Struktur von langlaeufer.json je Anleihe (bonds.<key>):
     latest  = {"date": "JJJJ-MM-TT", "price": 40.07, "yield": 3.90}
@@ -30,6 +32,9 @@ gegenläufig mitgeht – Bundesbank am 30.04.2021 für die 4,75 % 2040: 166,40 z
 Läuft im vollen Lauf des Workflows (VOLL=1); ein Abruf holt immer die kompletten
 Reihen (vier Anfragen à 60–150 KB) – eine Selbstdrosselung wie bei den anderen
 Skripten (checkedAt) verhindert Doppelabrufe in FAST-Läufen.
+Jede Anleihe wird für sich abgerufen (seit 15.10.2026, Gesamtprüfung D04-01): Scheitert eine, behält sie ihren
+alten Stand, die andere wird trotzdem geschrieben (Warnung). Exit 1 und keine Änderung an der Datei nur, wenn keine
+Anleihe abrufbar war.
 """
 
 import csv
@@ -123,11 +128,16 @@ def update_bond(data: dict, key: str, isin: str, start: str, max_abs: float) -> 
     return changed
 
 
-def update(data: dict) -> bool:
-    changed = False
+def update(data: dict) -> tuple[bool, int]:
+    """Rückgabe (changed, geholt): geholt = Zahl der Anleihen, deren Reihen abrufbar waren."""
+    changed, geholt = False, 0
     for key, (isin, start, max_abs) in BONDS.items():
-        changed = update_bond(data, key, isin, start, max_abs) or changed
-    return changed
+        try:
+            changed = update_bond(data, key, isin, start, max_abs) or changed
+            geholt += 1
+        except Exception as e:
+            log_err(f"langlaeufer {key}: Bundesbank nicht abrufbar – {key} behält den alten Stand: {e}")
+    return changed, geholt
 
 
 def main() -> int:
@@ -142,10 +152,9 @@ def main() -> int:
     if os.environ.get("FAST") and str(data.get("checkedAt", ""))[:10] == heute:
         print(f"Quelle heute bereits abgefragt (checkedAt {data['checkedAt']}) – übersprungen (FAST-Lauf).")
         return 0
-    try:
-        changed = update(data)
-    except Exception as e:
-        log_err(f"langlaeufer: Bundesbank nicht abrufbar – langlaeufer.json bleibt unverändert: {e}")
+    changed, geholt = update(data)
+    if geholt == 0:
+        log_err("langlaeufer: Bundesbank nicht abrufbar – langlaeufer.json bleibt unverändert.")
         return 1
     data["checkedAt"] = now_iso()
     if changed:

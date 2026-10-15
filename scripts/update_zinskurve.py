@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Schreibt zinskurve.json – der Abstand zwischen langen und kurzen Laufzeiten
 (10 Jahre minus 2 Jahre) für Deutschland und die USA, als Monatsdurchschnitte seit
-1972 bzw. 1976 und dazu der jüngste Tageswert. Seite: zinskurve.html (Menü „Einordnen“).
+1972 bzw. 1976 und dazu der jüngste Tageswert. Seite: zinskurve.html (Menü „Markt“).
 
 Quellen (amtlich, kostenlos, ohne Schlüssel):
 - Deutschland: Deutsche Bundesbank, Zinsstrukturkurve am Rentenmarkt (Svensson-Methode),
@@ -17,12 +17,17 @@ Struktur: {"updated", "updatedAt", "checkedAt", "stand": {"DE": …, "US": …},
            "monate": {"DE": [["1972-09", zwei, zehn], …], "US": [["1976-06", zwei, zehn], …]},
            "heute":  {"DE": ["JJJJ-MM-TT", zwei, zehn], "US": [...]}}
 Der Abstand (zehn − zwei) wird auf der Seite gerechnet. Der laufende Monat steht als
-Teil-Durchschnitt der bisherigen Handelstage mit drin. Die Datei ist ~35 KB und wird per
+Teil-Durchschnitt der bisherigen Handelstage mit drin; Deutschland: hat die Bundesbank
+den gerade abgeschlossenen Monat noch nicht gemeldet, entsteht auch er aus den
+Tageswerten (seit 15.10.2026). Die Datei ist ~35 KB und wird per
 inline_data.py in die Seite eingebettet.
 
 Schutz: Bleibt eine Quelle aus, behält das Land seine alten Daten; schrumpft die Reihe
 eines Landes unter 90 % des Vorbestands oder liegen Werte außerhalb −5…25 %, bleibt die
-Datei unverändert.
+Datei unverändert. Seit 15.10.2026 (Gesamtprüfung D10-02) behält ein Land auch dann seinen
+alten Stand (Exit 1), wenn der Tageswert um mehr als MAX_SPRUNG Punkte vom bisherigen
+abweicht, die 10-jährige mehr als MAX_INVERS Punkte unter der 2-jährigen liegt oder schon
+gemeldete Monate um mehr als MAX_REVISION Punkte anders ausfallen (z. B. vertauschte Spalten).
 
 Aufruf: python scripts/update_zinskurve.py
 """
@@ -48,6 +53,9 @@ FED = ("https://www.federalreserve.gov/datadownload/Output.aspx?rel=H15&series=b
 FED_HEADERS = {"User-Agent": "bondarium.de Zinskurve (Datenaufbereitung)", "Accept": "text/csv,*/*"}
 FED_COLS = {"RIFLGFCY02_N.B": 2, "RIFLGFCY10_N.B": 10}   # Spaltenkennungen in der H.15-Datei
 LO, HI = -5.0, 25.0                                      # Plausibilität je Wert (in %)
+MAX_SPRUNG = 2.5      # Punkte: Tageswert gegen den bisherigen Tageswert (wie renditen)
+MAX_INVERS = 3.0      # Punkte: so weit darf die 10-jährige unter der 2-jährigen liegen (Tiefstwert seit 1972: −2,3)
+MAX_REVISION = 0.5    # Punkte: Abweichung eines schon gespeicherten Monats (ohne die beiden jüngsten)
 US_START = "1976-06"                                     # ab hier gibt es die 2-jährige US-Rendite
 
 
@@ -75,9 +83,10 @@ def deutschland() -> tuple[list, list]:
         raise RuntimeError("Bundesbank: Monats- oder Tagesreihe leer")
     letzter = tage[-1]
     heute = [letzter, d2[letzter], d10[letzter]]
-    # laufender Monat (noch nicht in der Monatsreihe): Durchschnitt der bisherigen Handelstage
-    lm = letzter[:7]
-    if lm > monate[-1][0]:
+    # Monate nach dem letzten amtlichen Monat: Durchschnitt der Handelstage – der laufende und, solange die Bundesbank
+    # ihn noch nicht gemeldet hat, auch der abgeschlossene Vormonat (die Tagesreihe reicht ab dem Ersten des Monats
+    # vor 70 Tagen; bis 15.10.2026 nur der laufende Monat – dazwischen fehlte am Monatsanfang ein Monat)
+    for lm in sorted({d[:7] for d in tage if d[:7] > monate[-1][0]}):
         tm = [d for d in tage if d.startswith(lm)]
         monate.append([lm, round(sum(d2[d] for d in tm) / len(tm), 2), round(sum(d10[d] for d in tm) / len(tm), 2)])
     return monate, heute
@@ -122,6 +131,29 @@ def plausibel(monate: list, land: str) -> bool:
     return True
 
 
+def stimmig(land: str, monate: list, heute: list, alt: dict) -> bool:
+    """Neuer Stand gegen den gespeicherten: Tageswert-Sprung, Abstand 10 J. − 2 J., Revision schon gemeldeter Monate."""
+    vorher = (alt.get("heute") or {}).get(land)
+    if isinstance(vorher, list) and len(vorher) == 3:
+        for i, lz in ((1, "2 J."), (2, "10 J.")):
+            if isinstance(vorher[i], (int, float)) and abs(heute[i] - vorher[i]) > MAX_SPRUNG:
+                log_err(f"Zinskurve {land}: Tageswert {lz} {heute[i]} % weicht um mehr als {MAX_SPRUNG} Punkte vom bisherigen "
+                        f"{vorher[i]} % ab – {land} behält den alten Stand.")
+                return False
+    if heute[2] < heute[1] - MAX_INVERS:
+        log_err(f"Zinskurve {land}: 10 J. {heute[2]} % liegt mehr als {MAX_INVERS} Punkte unter 2 J. {heute[1]} % "
+                f"– Spalten vertauscht? {land} behält den alten Stand.")
+        return False
+    gespeichert = {z[0]: z for z in (alt.get("monate") or {}).get(land) or [] if isinstance(z, list) and len(z) == 3}
+    for z in monate[:-2]:
+        a = gespeichert.get(z[0])
+        if a and any(isinstance(a[i], (int, float)) and abs(z[i] - a[i]) > MAX_REVISION for i in (1, 2)):
+            log_err(f"Zinskurve {land}: Monat {z[0]} neu {z[1:]} statt bisher {a[1:]} – mehr als {MAX_REVISION} Punkte "
+                    f"Unterschied; {land} behält den alten Stand.")
+            return False
+    return True
+
+
 def main() -> int:
     alt = {}
     if OUT.exists():
@@ -140,6 +172,9 @@ def main() -> int:
             continue
         if not plausibel(monate, land):
             return 1
+        if not stimmig(land, monate, heute, alt):
+            fehler += 1
+            continue
         vor = alt.get("monate", {}).get(land) or []
         if vor and len(monate) < 0.9 * len(vor):
             log_err(f"Zinskurve {land}: nur {len(monate)} Monate statt zuvor {len(vor)} – Datei bleibt.")

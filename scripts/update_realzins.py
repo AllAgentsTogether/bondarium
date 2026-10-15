@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Schreibt realzins.json – Bundrendite, Inflation und Realzins seit 1970 sowie die Inflationserwartung
-des Marktes aus den inflationsindexierten Bundesanleihen. Seite: realzins.html (Menü „Einordnen“).
+des Marktes aus den inflationsindexierten Bundesanleihen. Seite: realzins.html (Menü „Markt“).
 
 Quellen (amtlich, kostenlos, ohne Schlüssel):
 - Bundrendite 10 Jahre, Monatsdurchschnitte seit 01/1970: OECD, Main Economic Indicators, „Long-term
@@ -36,6 +36,10 @@ Seit 09.10.2026 (Technik-Test 08.10.2026): Fehlt die Zinskurve, bleibt die Infla
 (Realrendite, nominal, Breakeven, stand.linker – nie neue Real- mit alter Nominalrendite mischen). Ist der Tageswert
 Bund 10 J. in renditen.json (gleiche Reihe ZAR, anderer Abrufweg) jünger, gilt er. Ist keine Quelle erreichbar:
 Exit 1; die Datei bleibt samt checkedAt unverändert, außer der Tageswert aus renditen.json ist neu.
+Seit 15.10.2026 (Gesamtprüfung D11-01/D11-02): Der Breakeven nimmt nur die Zinskurve vom Tag der Realrendite – fehlt
+sie, bleibt die Inflationserwartung ganz beim alten Stand (vorher galt dann die jüngste Kurve eines anderen Tages).
+Fällt eine Quelle aus (Teilausfall), wird die Datei mit den übrigen geschrieben und das Skript endet mit Exit 1
+(Warnung in der Zusammenfassung des Laufs); den Alarm gibt weiter frische.py.
 
 Aufruf: python scripts/update_realzins.py
 """
@@ -326,7 +330,7 @@ def main() -> int:
             if isin not in real:
                 continue
             datum, r = real[isin]
-            k = kurve.get(datum) or (kurve[max(kurve)] if kurve else None)
+            k = kurve.get(datum)   # nur die Kurve desselben Tages – nie zwei Tage mischen (Gesamtprüfung D11-01)
             jahre_rest = (datetime.date.fromisoformat(faellig) - datetime.date.fromisoformat(datum)).days / 365.25
             nominal = interpoliert(k, jahre_rest) if k else None
             linker.append({"isin": isin, "name": name, "faellig": faellig, "datum": datum, "real": round(r, 2),
@@ -334,11 +338,14 @@ def main() -> int:
                            "breakeven": None if nominal is None else round(nominal - r, 2)})
         if not linker:
             raise RuntimeError("keine Realrenditen gefunden")
-        if not kurve and any(x.get("breakeven") is not None for x in heute.get("linker") or []):
-            # Ohne Zinskurve keine Nominalrendite gleicher Restlaufzeit, also kein Breakeven. Der alte Block bleibt GANZ
-            # (Realrendite, nominal, Breakeven, Datum, stand.linker) – neue Realrendite und alte Nominalrendite ergäben
-            # einen Breakeven aus zwei Tagen (Technik-Test 08.10.2026, T-06).
-            log_err(f"Realzins: ohne Zinskurve kein Breakeven – Inflationserwartung bleibt beim Stand {stand.get('linker')}.")
+        ohne_kurve = sorted({x["datum"] for x in linker if x["datum"] not in kurve})
+        if ohne_kurve and any(x.get("breakeven") is not None for x in heute.get("linker") or []):
+            # Ohne Zinskurve vom selben Tag keine Nominalrendite gleicher Restlaufzeit, also kein Breakeven. Der alte Block
+            # bleibt GANZ (Realrendite, nominal, Breakeven, Datum, stand.linker) – neue Realrendite und alte bzw. fremde
+            # Nominalrendite ergäben einen Breakeven aus zwei Tagen (Technik-Test 08.10.2026, T-06; Gesamtprüfung D11-01).
+            log_err(f"Realzins: keine Zinskurve vom {', '.join(ohne_kurve)} – kein Breakeven, Inflationserwartung bleibt "
+                    f"beim Stand {stand.get('linker')}.")
+            fehler += 1
         else:
             heute["linker"] = linker
             stand["linker"] = max(l["datum"] for l in linker)
@@ -385,7 +392,9 @@ def main() -> int:
           f"Bund 10 J. {heute.get('zins10')}, Inflation {heute.get('vpi')}, "
           f"Linker {[(l['isin'][-4:], l['real'], l['breakeven']) for l in heute.get('linker', [])]}"
           + (f" – {fehler} Quelle(n) ausgefallen" if fehler else ""))
-    return 1 if totalausfall else 0
+    if netz_aus and not totalausfall:
+        log_err(f"Realzins: Teilausfall ({netz_aus} Abruf(e) gescheitert) – realzins.json mit den übrigen Quellen geschrieben, Exit 1.")
+    return 1 if (totalausfall or fehler or netz_aus) else 0
 
 
 if __name__ == "__main__":

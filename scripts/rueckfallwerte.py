@@ -603,9 +603,12 @@ def reihen_mischen(defs, latest, annual, items, naechster_tag=False):
                     an[int(yr)] = v
 
 
-def reihen_kennzahlen(c, latest, annual, ref, old_day, old_month, T):
-    """rowStats: aktueller Wert, Stand (+ „älter“), Hoch/Tief/Ø der Jahresdurchschnitte."""
+def reihen_kennzahlen(c, latest, annual, ref, old_day, old_month, T, min_jahre=1):
+    """rowStats: aktueller Wert, Stand (+ „älter“), Hoch/Tief/Ø der Jahresdurchschnitte – erst ab min_jahre vollen
+    Jahren (unternehmensanleihen.html: MIN_JAHRE, seit 15.10.2026), sonst „–“."""
     ann = annual.get(c["key"]) or {}
+    if len(ann) < min_jahre:
+        ann = {}
     l = latest.get(c["key"]) or {}
     hi = lo = None
     summe = 0
@@ -760,13 +763,14 @@ ANKER_UNTERNEHMEN = [
     'const old = hasDate && ageDays(latest.date, ref) > (isMonth(latest.date) ? OLD_MONTH : OLD_DAY);',
     'c, name: L(c.tblKey || c.nameKey),',
     'cur: c.cur, rating: c.rating || L(c.ratingKey), mat: L(c.matKey)',
-    'function curYieldCell(r) { return `<td class="num">${r.current !== null ? fmt(r.current, 2) + "\\u00A0%" : "–"}</td>`; }',
+    'const years = Object.keys(ann).map(Number).sort((a, b) => a - b).filter((_, i, alle) => alle.length >= MIN_JAHRE);',
+    'function curYieldCell(r) { return `<td class="num">${r.current !== null ? fmt(r.current, 2) + "\\u00A0%" : "–"}${r.standTxt !== null ? `<small class="cur-m">${MC.esc(r.standTxt)}</small>` : ""}</td>`; }',
     'const stand = r.standTxt !== null ? (r.old ? `<span class="old">${MC.esc(r.standTxt)} ${L("standOld")}</span>` : MC.esc(r.standTxt)) : "–";',
-    'return `<td class="num">${stand}</td>',
+    'return `<td class="num stand">${stand}</td>',
     '<td class="num">${r.high !== null ? `${fmt(r.high, 2)}\\u00A0% (${r.hiYr})` : "–"}</td>',
     '<td class="num">${r.low !== null ? `${fmt(r.low, 2)}\\u00A0% (${r.loYr})` : "–"}</td>',
     '<td class="num">${r.avg !== null ? fmt(r.avg, 2) + "\\u00A0%" : "–"}</td>`;',
-    '<th scope="row"><i class="tag" style="background:${r.c.color}"></i>${MC.esc(r.name)}</th>${curYieldCell(r)}',
+    '<th scope="row"><i class="tag" style="background:${r.c.color}"></i>${MC.esc(r.name)}<small class="cur-m">${r.cur}</small></th>${curYieldCell(r)}',
     '<td class="cur">${r.cur}${CUR_SYM[r.cur] ? ` <span class="sym">${CUR_SYM[r.cur]}</span>` : ""}</td>',
     '<td class="txt">${MC.esc(r.rating)}</td>',
     '<td class="txt">${MC.esc(r.mat)}</td>',
@@ -786,6 +790,7 @@ def unternehmensanleihen(site, s):
     daily = re.findall(r'"(\w+)"', js_block(js, "const CORP_DAILY = ["))
     year0 = int(re.search(r"\bYEAR0 = (\d{4})", js).group(1))
     old_day, old_month = (int(x) for x in re.search(r"const OLD_DAY = (\d+), OLD_MONTH = (\d+);", js).groups())
+    min_jahre = int(re.search(r"\bconst MIN_JAHRE = (\d+);", js).group(1))
     if len(defs) < 2:
         raise ValueError("Renditereihen im Seitenskript nicht gefunden")
     latest, annual = {}, {}
@@ -797,17 +802,18 @@ def unternehmensanleihen(site, s):
 
     zeilen = []
     for c in defs:
-        r = reihen_kennzahlen(c, latest, annual, ref, old_day, old_month, T)
+        r = reihen_kennzahlen(c, latest, annual, ref, old_day, old_month, T, min_jahre)
         cur = c["cur"]
         sym = f' <span class="sym">{cur_sym[cur]}</span>' if cur_sym.get(cur) else ""
         rating = c.get("rating") or T.get(c.get("ratingKey"), c.get("ratingKey"))
-        akt = zahl(r["current"], 2) + NBSP + "%" if r["current"] is not None else "–"
-        zeilen.append(f'<tr>\n      <th scope="row"><i class="tag" style="background:{c["color"]}"></i>{esc(r["name"])}</th>'
-                      f'<td class="num">{akt}</td>\n'
+        akt = (zahl(r["current"], 2) + NBSP + "%" if r["current"] is not None else "–") + \
+            (f'<small class="cur-m">{esc(r["standTxt"])}</small>' if r["standTxt"] is not None else "")
+        zeilen.append(f'<tr>\n      <th scope="row"><i class="tag" style="background:{c["color"]}"></i>{esc(r["name"])}'
+                      f'<small class="cur-m">{cur}</small></th><td class="num">{akt}</td>\n'
                       f'      <td class="cur">{cur}{sym}</td>\n'
                       f'      <td class="txt">{esc(rating)}</td>\n'
                       f'      <td class="txt">{esc(T.get(c["matKey"], c["matKey"]))}</td>\n'
-                      f'      {zelle_stand(r, T, "num")}\n    </tr>')
+                      f'      {zelle_stand(r, T, "num stand")}\n    </tr>')
     s.inner("#ctable", "".join(zeilen))
     s.text("#eyebrow-unternehmen", f'{T["corpEyebrow"]} · {year0} – {int(ref[:4])} · {T["asOf"]} {fmt_stand(ref)}')
     alt = ist_tag(ref) and veraltet(ref)
@@ -927,13 +933,11 @@ ANKER_REALZINS = [
     'const monLang = m => `${MON[+m.slice(5, 7) - 1]} ${m.slice(0, 4)}`;',
     'setT("h-zins", ""); document.getElementById("h-zins").innerHTML = `${fmt(z, 2)}<small>%</small>`;',
     'setT("h-zins-d", `Rendite, nominal · Tageswert ${deDatum(h.zins10[0])}`);',
-    '["s-zins", "s-zins2"].forEach(id => setT(id, fmt(z, 2)));',
+    'setT("s-zins", fmt(z, 2));',
     'setT("s-netto", fmt(z * (1 - STEUER), 2)); setT("st-z", `${fmt(z, 2)}\u00a0%`); setT("st-st", `−${fmt(z * STEUER, 2)}`);',
-    'const brutto = 50000 * z / 100, steuer = Math.max(0, brutto - 1000) * STEUER;',
-    'setT("s-brutto", fmt(brutto, 0)); setT("s-steuer", fmt(steuer, 0)); setT("s-netto-eur", fmt(brutto - steuer, 0));',
     'document.getElementById("h-vpi").innerHTML = `${fmt(i, 1)}<small>%</small>`;',
     'setT("h-vpi-d", `Verbraucherpreise Deutschland, ${monLang(h.vpi[0])} gegen Vorjahr`);',
-    'setT("s-vpi", fmt(i, 1)); setT("st-i", `−${fmt(i, 2)}`); setT("s-verlust", fmt(50000 * i / 100, 0));',
+    'setT("st-i", `−${fmt(i, 2)}`);',
     'setT("m-vpi", fmt(i, 1)); setT("m-noetig", fmt(Math.max(0, i) / (1 - STEUER), 2));',
     'const real = h.zins10[1] - h.vpi[1], netto = h.zins10[1] * (1 - STEUER) - h.vpi[1];',
     'el.innerHTML = `${vz(real, 1)}<small>Prozentpunkte</small>`; el.className = "hk-v " + (real > 0 ? "plus" : real < 0 ? "minus" : "");',
@@ -983,23 +987,15 @@ def realzins(site, s):
         z = h["zins10"][1]
         s.inner("#h-zins", f"{zahl(z, 2)}<small>%</small>")
         s.text("#h-zins-d", f"Rendite, nominal · Tageswert {datum(h['zins10'][0])}", muss=False)
-        for id_ in ("s-zins", "s-zins2"):
-            s.text("#" + id_, zahl(z, 2), muss=False)
+        s.text("#s-zins", zahl(z, 2), muss=False)
         s.text("#s-netto", zahl(z * (1 - steuer), 2), muss=False)
         s.text("#st-z", f"{zahl(z, 2)}{NBSP}%", muss=False)
         s.text("#st-st", f"{MINUS}{zahl(z * steuer, 2)}", muss=False)
-        brutto = 50000 * z / 100
-        st_ = max(0, brutto - 1000) * steuer
-        s.text("#s-brutto", zahl(brutto, 0), muss=False)
-        s.text("#s-steuer", zahl(st_, 0), muss=False)
-        s.text("#s-netto-eur", zahl(brutto - st_, 0), muss=False)
     if h.get("vpi"):
         i = h["vpi"][1]
         s.inner("#h-vpi", f"{zahl(i, 1)}<small>%</small>")
         s.text("#h-vpi-d", f"Verbraucherpreise Deutschland, {mon_lang(h['vpi'][0])} gegen Vorjahr", muss=False)
-        s.text("#s-vpi", zahl(i, 1), muss=False)
         s.text("#st-i", f"{MINUS}{zahl(i, 2)}", muss=False)
-        s.text("#s-verlust", zahl(50000 * i / 100, 0), muss=False)
         s.text("#m-vpi", zahl(i, 1), muss=False)
         s.text("#m-noetig", zahl(max(0, i) / (1 - steuer), 2), muss=False)
     if h.get("zins10") and h.get("vpi"):
@@ -1112,19 +1108,19 @@ ANKER_RISIKO = [
     'el.querySelector(".v").textContent = vz(h.aufschlag, 2);',
     'el.querySelector(".d").innerHTML = `<b>${fmt(h.rendite, 2)}&nbsp;%</b> gegen Bund ${fmt(de, 2)}&nbsp;% · Monatsdurchschnitt ${monLang(h.monat)}`;',
     'setT("k-it", fmt(it.aufschlag, 2));',
-    'setT("bsp-it", `Italien ${fmt(it.rendite, 2)}\\u00A0%, Deutschland ${fmt(it.rendite - it.aufschlag, 2)}\\u00A0%: 10.000\\u00A0€ bringen in Italien ${fmt(Math.round(it.aufschlag * 100), 0)}\\u00A0€ im Jahr mehr.`);',
     'const ok = (m, a, b) => m[a] != null && m[b] != null && m[a] > m[b];',
     'for (let i = monate.length - 1; i >= 0 && ok(monate[i], 4, 3); i--) seit = monate[i][0];',
     'const grIt = ok(letzte, 2, 6), teile = [];',
     'if (seit) teile.push(`<strong>Frankreich zahlt seit ${monLang(seit)} mehr als Spanien</strong>`);',
     'if (grIt) teile.push("Griechenland weniger als Italien");',
     'if (el) el.innerHTML = teile.length ? `Stand ${monLang(letzte[0])}: ${teile.join(", ")}. 2012 war es umgekehrt.` : `Stand ${monLang(letzte[0])}: Die Rangliste rechts zeigt die Reihenfolge von heute – 2012 lagen Griechenland, Portugal, Spanien und Italien vorn.`;',
-    'const max = Math.max(...heute.map(h => h.aufschlag), 0.01), stand = L.monate && letzte ? letzte[0] : heute[0].monat;',
+    'const rang = Array.isArray(L.rangliste) && L.rangliste.length ? L.rangliste : heute, gemeinsam = rang !== heute;',
+    'const max = Math.max(...rang.map(h => h.aufschlag), 0.01), stand = gemeinsam ? rang[0].monat : L.monate && letzte ? letzte[0] : heute[0].monat;',
     'const w = Math.max(2, Math.round(Math.max(0, h.aufschlag) / max * 88)), c = EU[h.code] ? `;--c:${EU[h.code].color}` : "";',
     'return `<span class="rl-l">${MC.esc(h.name)}${h.monat !== stand ? `<small>${monLang(h.monat)}</small>` : ""}</span><span class="rl-bahn"><span class="rl-bar" style="--w:${w}%${c}"></span><span class="rl-w" style="--w:${w}%">${vz(h.aufschlag, 2)}</span></span>`;',
     '}).join("") + `<span class="rl-null">Deutschland = 0, der Maßstab</span>`;',
-    'rl.setAttribute("aria-label", `Rangliste der Euro-Staaten nach Aufschlag gegen Deutschland, ${monLang(stand)}: ` + heute.map(h => `${h.name} ${fmt(h.aufschlag, 2)} Prozentpunkte`).join(", ") + ".");',
-    'document.getElementById("rl-f").innerHTML = `10-jährige Staatsanleihen, ${monLang(stand)}, Prozentpunkte über Deutschland. ',
+    'rl.setAttribute("aria-label", `Rangliste der Euro-Staaten nach Aufschlag gegen Deutschland, ${monLang(stand)}: ` + rang.map(h => `${h.name} ${fmt(h.aufschlag, 2)} Prozentpunkte`).join(", ") + ".");',
+    'document.getElementById("rl-f").innerHTML = `10-jährige Staatsanleihen, ${monLang(stand)}${gemeinsam ? " (jüngster Monat mit Werten aller Länder)" : ""}, Prozentpunkte über Deutschland. ',
     'const schnitt = um.reduce((a, m) => a + m[1], 0) / um.length;',
     'setT("us-v", vz(uh[1], 2)); setT("k-us", fmt(uh[1], 2));',
     'document.getElementById("us-d").innerHTML = `<b>${fmt(uh[2], 2)}&nbsp;%</b> gegen US-Staatsanleihe ${fmt(uh[3], 2)}&nbsp;% · ${monLang(uh[0])} · Durchschnitt seit ${um[0][0].slice(0, 4)}: <b>${fmt(schnitt, 1)}</b>`;',
@@ -1152,8 +1148,6 @@ def risikoaufschlaege(site, s):
     it = by_code.get("IT")
     if it:
         s.text("#k-it", zahl(it["aufschlag"], 2), muss=False)
-        s.text("#bsp-it", f"Italien {zahl(it['rendite'], 2)}{NBSP}%, Deutschland {zahl(it['rendite'] - it['aufschlag'], 2)}{NBSP}%: "
-               f"10.000{NBSP}€ bringen in Italien {zahl(js_round(it['aufschlag'] * 100), 0)}{NBSP}€ im Jahr mehr.", muss=False)
     if monate and letzte:
         def ok(m, a, b):
             return m[a] is not None and m[b] is not None and m[a] > m[b]
@@ -1171,11 +1165,14 @@ def risikoaufschlaege(site, s):
             s.inner("#rl-neu", f"Stand {mon_lang(letzte[0])}: {', '.join(teile)}. 2012 war es umgekehrt." if teile else
                     f"Stand {mon_lang(letzte[0])}: Die Rangliste rechts zeigt die Reihenfolge von heute – 2012 lagen "
                     f"Griechenland, Portugal, Spanien und Italien vorn.")
-    if heute_:
-        mx = max([h["aufschlag"] for h in heute_] + [0.01])
-        stand = letzte[0] if (L.get("monate") and letzte) else heute_[0]["monat"]
+    # Rangliste: seit 15.10.2026 aus laender.rangliste (ein gemeinsamer Monat für alle Länder), sonst „heute“
+    rang = L.get("rangliste") if isinstance(L.get("rangliste"), list) and L.get("rangliste") else heute_
+    gemeinsam = rang is not heute_
+    if rang:
+        mx = max([h["aufschlag"] for h in rang] + [0.01])
+        stand = rang[0]["monat"] if gemeinsam else letzte[0] if (L.get("monate") and letzte) else heute_[0]["monat"]
         teile = []
-        for h in heute_:
+        for h in rang:
             w = max(2, js_round(max(0, h["aufschlag"]) / mx * 88))
             c = f";--c:{eu[h['code']]}" if h["code"] in eu else ""
             klein = f"<small>{mon_lang(h['monat'])}</small>" if h["monat"] != stand else ""
@@ -1183,7 +1180,7 @@ def risikoaufschlaege(site, s):
                          f'style="--w:{w}%{c}"></span><span class="rl-w" style="--w:{w}%">{vz(h["aufschlag"], 2)}</span></span>')
         s.inner("#rangliste", "".join(teile) + '<span class="rl-null">Deutschland = 0, der Maßstab</span>')
         s.attr("#rangliste", "aria-label", f"Rangliste der Euro-Staaten nach Aufschlag gegen Deutschland, {mon_lang(stand)}: "
-               + ", ".join(f"{h['name']} {zahl(h['aufschlag'], 2)} Prozentpunkte" for h in heute_) + ".")
+               + ", ".join(f"{h['name']} {zahl(h['aufschlag'], 2)} Prozentpunkte" for h in rang) + ".")
         # Fußnote: nur den Monat ersetzen – der Linktext dahinter bleibt, wie er im Quell-HTML steht
         rl = s.finde("#rl-f")
         if not rl:
@@ -1192,7 +1189,8 @@ def risikoaufschlaege(site, s):
         m = re.match(r"10-jährige Staatsanleihen, [^,<]+, Prozentpunkte über Deutschland\. ", alt)
         if not m:
             raise ValueError("#rl-f hat einen unerwarteten Anfang")
-        s.inner("#rl-f", f"10-jährige Staatsanleihen, {mon_lang(stand)}, Prozentpunkte über Deutschland. " + alt[m.end():])
+        s.inner("#rl-f", f"10-jährige Staatsanleihen, {mon_lang(stand)}" + (" (jüngster Monat mit Werten aller Länder)" if gemeinsam else "")
+                + ", Prozentpunkte über Deutschland. " + alt[m.end():])
     u = d.get("us") or {}
     um, uh = u.get("monate") or [], u.get("heute") or []
     if len(uh) >= 4 and um:
