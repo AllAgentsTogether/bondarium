@@ -4,8 +4,8 @@
 
 AddDefaultCharset UTF-8
 
-# ---- MIME-Typen für Fotos (WebP) und die eigene Webschrift (WOFF2), falls der
-#      Server sie nicht von sich aus kennt (seit 24.09.2026, Anlegerprofile) ----
+# ---- MIME-Typen für Fotos (WebP: Startseite, Beispielpersonen in anlageziele.html) und die eigenen Webschriften (WOFF2,
+#      seit 11.10.2026 Source Sans 3 und Source Serif 4), falls der Server sie nicht von sich aus kennt (seit 24.09.2026) ----
 <IfModule mod_mime.c>
 AddType image/webp .webp
 AddType font/woff2 .woff2
@@ -61,13 +61,15 @@ RewriteRule ^(en/)?entscheiden\.html$ https://www.bondarium.de/wissen.html#auswa
 RewriteRule ^(en/)?vertiefen\.html$ https://www.bondarium.de/wissen.html#fortgeschrittene [R=301,NE,QSD,L]
 # Inhaltsprüfung (11.10.2026): zwei doppelte Seiten zusammengelegt. Die Beispiele (guide.html#nadine …) stehen jetzt auf
 # anlageziele.html unter denselben Sprungmarken – der Browser behält die Sprungmarke beim Weiterleiten, wenn das Ziel keine hat.
+# Ohne Gegenstück (landen am Seitenanfang, hingenommen – Gesamtprüfung 14.10.2026, F01-03): guide.html#personas, #h-vorteile.
 RewriteRule ^(en/)?guide\.html$ https://www.bondarium.de/anlageziele.html [R=301,L]
 RewriteRule ^(en/)?anleihen-etf-erklaert\.html$ https://www.bondarium.de/etf-oder-anleihe.html [R=301,L]
 # ---- Aktien-Teil (23.09.2026) archiviert (Ordner website_aktien_archiv) ----
 # Die Seiten liegen noch auf dem Server (der Deploy löscht nur, was er selbst hochgeladen hat).
 # (30.09.2026) Die frühere Regel „anleihen.html → /“ ist entfernt: anleihen.html ist heute die Anleihen-Übersicht.
-# (02.10.2026) zinsen.html führt auf die Zinsen-Übersicht (Menü „Zinsen“) statt auf renditen.html, steuer.html auf
-# die Seite zu Steuern. Die übrigen Aktien-Seiten antworten mit 410 – siehe Ende dieses Blocks.
+# (02.10.2026) zinsen.html führt auf die Übersicht beobachten.html (damals Menü „Zinsen“, seit 11.10.2026 „Markt“) statt
+# auf renditen.html, steuer.html auf die Seite zu Steuern. Die übrigen Aktien-Seiten antworten mit 410 – siehe Ende dieses
+# Blocks.
 RewriteRule ^(en/)?zinsen\.html$ https://www.bondarium.de/beobachten.html [R=301,L]
 RewriteRule ^(en/)?steuer\.html$ https://www.bondarium.de/steuern-handelskosten.html [R=301,L]
 # 11.10.2026 abends (Gesamtprüfung Punkt 3): fortgeschrittene.html aufgelöst – Zinskurve, Duration, Spreads, Leiter hatten eigene Seiten,
@@ -147,7 +149,7 @@ Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), 
 Header always set Cross-Origin-Opener-Policy "same-origin"
 # CSP: Inline-Skripte/-Styles sind Teil der Architektur ('unsafe-inline');
 # es werden keinerlei externe Ressourcen geladen (keine CDNs/fremden Fonts/Analytics;
-# die Schreibschrift der Anlegerprofile liegt als WOFF2 auf dem eigenen Server).
+# die Webschriften liegen als WOFF2 auf dem eigenen Server).
 Header always set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'"
 # HSTS: HTTPS läuft seit 10.07.2026 stabil (Redirect + Zertifikat verifiziert)
 Header always set Strict-Transport-Security "max-age=31536000"
@@ -199,8 +201,8 @@ RequestHeader edit "If-None-Match" '^"((.*)-gzip)"$' '"$1", "$2"'
 <FilesMatch "\.(css|js)$">
   Header set Cache-Control "max-age=31536000, immutable"
 </FilesMatch>
-# Schriften (manrope-*.woff2) ändern sich praktisch nie: ein Jahr (seit 02.10.2026, vorher ein Tag). Sie tragen keine
-# Versions-URL – eine geänderte Schrift bekommt deshalb einen neuen Dateinamen.
+# Schriften (source-sans-3.woff2, source-serif-4.woff2) ändern sich praktisch nie: ein Jahr (seit 02.10.2026, vorher ein
+# Tag). Sie tragen keine Versions-URL – eine geänderte Schrift bekommt deshalb einen neuen Dateinamen.
 <FilesMatch "\.woff2$">
   Header set Cache-Control "max-age=31536000"
 </FilesMatch>

@@ -451,7 +451,7 @@ kopf "HTML gzip" /grundlagen.html Content-Encoding '^gzip$' -H "Accept-Encoding:
 kopf "CSS ein Jahr (Versions-URL)" "/base.css?v=test" Cache-Control 'max-age=31536000.*immutable'
 kopf "JS ein Jahr (Versions-URL)" "/site.js?v=test" Cache-Control 'max-age=31536000.*immutable'
 kopf "CSS gzip" /base.css Content-Encoding '^gzip$' -H "Accept-Encoding: gzip"
-kopf "Schrift ein Jahr" /manrope-400.woff2 Cache-Control 'max-age=31536000'
+kopf "Schrift ein Jahr" /source-sans-3.woff2 Cache-Control 'max-age=31536000'   # Hausschrift seit 11.10.2026 (vorher Manrope)
 kopf "Bilder einen Tag" /logo.svg Cache-Control 'max-age=86400'
 kopf "Daten-JSON 15 Minuten" /renditen.json Cache-Control 'max-age=900'
 kopf "Daten-JSON nicht im Suchindex" /renditen.json X-Robots-Tag 'noindex'

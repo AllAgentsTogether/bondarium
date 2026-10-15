@@ -7,6 +7,9 @@
 # Hinweis: GitHub garantiert geplante Läufe nicht – sie kommen oft einige Minuten zu spät, zur vollen Stunde werden sie am
 # ehesten verschoben oder ausgelassen. Darum die ungeraden Minuten. Den ersten Takt ("*/15", 03.10.2026) hatte GitHub auch
 # nach über drei Stunden nicht übernommen; ein neu eingetragener Zeitplan wird neu angemeldet.
+#
+# Seit 15.10.2026 (Gesamtprüfung F05-02) prüft der Wächter zusätzlich, ob der tägliche Datenlauf überhaupt stattfindet
+# (zweiter Schritt „Datenstand“) – Einzelheiten dort und in docs/BETRIEB.md.
 name: Erreichbarkeit (Wächter)
 
 on:
@@ -58,3 +61,82 @@ jobs:
           done
           if [ "$ok" = "1" ]; then echo "ok   Benutzerbereich"; else echo "::error::Benutzerbereich antwortet nicht mit „ok“ – Anmelden und Merkliste sind gestört"; fehler=1; fi
           exit $fehler
+
+      # ----- Datenstand (seit 15.10.2026, Gesamtprüfung F05-02): Bleibt der Datenlauf ganz aus – cron-job.org und der
+      #       GitHub-Zeitplan fallen zugleich aus, der Workflow ist abgeschaltet –, schickt kein Lauf eine Fehler-E-Mail,
+      #       und die Seite zeigt still alte Zahlen. Darum liest der Wächter „checkedAt“ aus der LIVE-Datei renditen.json:
+      #       Den Zeitstempel setzt jeder Datenabruf, auch ohne neue Werte (scripts/update_renditen.py), Push-Deploys
+      #       lassen ihn stehen. Fällig ist ein Abruf an jedem Börsentag (Mo–Fr ohne die Feiertage der Frankfurter Börse,
+      #       wie scripts/kurs_luecken.py) ab 14 Uhr Berlin (Auslöser 10:00, Reserve 10:15, GitHub mitunter Stunden später).
+      #       Alarm erst, wenn ZWEI fällige Abrufe fehlen: Einen einzelnen fehlenden Tag meldet schon der nächste Datenlauf
+      #       („Lücken im Kursverlauf“), und Wochenende, Feiertag oder ein verspäteter Lauf lösen so keinen Fehlalarm aus.
+      #       Rot (= E-Mail) nur bei Läufen zwischen 14 und 17 Uhr Berlin – gut fünf Läufe am Tag statt vier je Stunde,
+      #       solange die Daten alt sind; zu anderen Zeiten nur eine Warnung im Lauf, beim Start von Hand immer rot. -----
+      - name: Datenstand der Live-Seite (Datenlauf ausgeblieben?)
+        if: ${{ !cancelled() }}
+        env:
+          VON_HAND: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
+        run: |
+          for versuch in 1 2 3; do
+            rm -f renditen.json
+            if curl -sS -f --max-time 25 -o renditen.json "https://www.bondarium.de/renditen.json" \
+               && grep -q '"checkedAt"' renditen.json; then
+              break
+            fi
+            echo "     renditen.json: keine Antwort mit checkedAt (Versuch $versuch)"
+            [ "$versuch" -lt 3 ] && sleep 20
+          done
+          python3 - <<'PY'
+          import datetime, json, os, sys
+          from zoneinfo import ZoneInfo
+
+          BERLIN = ZoneInfo("Europe/Berlin")
+          FAELLIG_AB = 14            # Uhr (Berlin): ab dann zählt der Abruf des Tages als fällig
+          ROT_VON, ROT_BIS = 14, 17  # Uhr (Berlin): nur in diesen Läufen rot, sonst Warnung
+          jetzt = datetime.datetime.now(BERLIN)
+          rot = bool(os.environ.get("VON_HAND")) or ROT_VON <= jetzt.hour < ROT_BIS
+
+          def melden(text):
+              if rot:
+                  print("::error::" + text)
+                  sys.exit(1)
+              print(f"::warning::{text} (rot nur bei Läufen zwischen {ROT_VON} und {ROT_BIS} Uhr Berlin)")
+              sys.exit(0)
+
+          def ostern(j):
+              a, b, c = j % 19, j // 100, j % 100
+              d, e = b // 4, b % 4
+              f = (b + 8) // 25
+              g = (b - f + 1) // 3
+              h = (19 * a + b - d - g + 15) % 30
+              i, k = c // 4, c % 4
+              l = (32 + 2 * e + 2 * i - h - k) % 7
+              m = (a + 11 * h + 22 * l) // 451
+              return datetime.date(j, (h + l - 7 * m + 114) // 31, (h + l - 7 * m + 114) % 31 + 1)
+
+          def boersentag(t):
+              o, j = ostern(t.year), t.year
+              frei = {datetime.date(j, 1, 1), o - datetime.timedelta(days=2), o + datetime.timedelta(days=1),
+                      datetime.date(j, 5, 1), datetime.date(j, 12, 24), datetime.date(j, 12, 25),
+                      datetime.date(j, 12, 26), datetime.date(j, 12, 31)}
+              return t.weekday() < 5 and t not in frei
+
+          try:
+              stempel = json.load(open("renditen.json", encoding="utf-8"))["checkedAt"]
+              zuletzt = datetime.datetime.fromisoformat(stempel.replace("Z", "+00:00")).astimezone(BERLIN)
+          except Exception as fehler:
+              melden(f"Datenstand nicht lesbar – renditen.json ohne gültiges checkedAt ({type(fehler).__name__}: {fehler})")
+
+          # die zwei letzten fälligen Börsentage (neuester zuerst)
+          faellig, tag = [], jetzt.date() if jetzt.hour >= FAELLIG_AB else jetzt.date() - datetime.timedelta(days=1)
+          while len(faellig) < 2:
+              if boersentag(tag):
+                  faellig.append(tag)
+              tag -= datetime.timedelta(days=1)
+          if zuletzt.date() >= faellig[1]:
+              print(f"ok   Datenstand: letzter Abruf {zuletzt:%d.%m.%Y %H:%M} Uhr Berlin")
+          else:
+              melden(f"Datenlauf ausgeblieben – letzter Abruf {zuletzt:%d.%m.%Y %H:%M} Uhr Berlin, die Abrufe vom "
+                     f"{faellig[1]:%d.%m.} und {faellig[0]:%d.%m.} fehlen. Prüfen: Workflow „Daten aktualisieren“ "
+                     "(abgeschaltet? letzter Lauf?), cron-job.org (10-Uhr-Auslöser), GH_DISPATCH_TOKEN (abgelaufen?)")
+          PY
