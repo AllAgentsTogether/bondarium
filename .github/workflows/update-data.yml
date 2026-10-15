@@ -137,9 +137,9 @@ jobs:
         run: python scripts/update_renditen.py
 
       # Unternehmensanleihen-Segmente (unternehmensanleihen.html):
-      # FRED (HQM, Moody's Baa), Bundesbank (Unternehmen), JSDA (Japan AA/A),
-      # ChinaBond (AAA), RBA (A/BBB 10 J.)
-      - name: Unternehmensanleihen holen (FRED/Bundesbank/JSDA/ChinaBond/RBA)
+      # U.S. Treasury HQM (über FRED), JSDA (Japan AA/A), ChinaBond (AAA), RBA (A/BBB 10 J.);
+      # bis rund 1,5 min (45 s Abstand vor jedem der höchstens drei Historien-Abrufe, seit 15.10.2026)
+      - name: Unternehmensanleihen holen (FRED/JSDA/ChinaBond/RBA)
         id: abruf_unternehmen
         if: env.VOLL == '1'
         continue-on-error: true
@@ -259,8 +259,8 @@ jobs:
         run: python scripts/update_realzins.py
 
       # Risikoaufschläge (risikoaufschlaege.html, seit 26.09.2026): Euro-Staaten gegen Deutschland (OECD Monatswerte,
-      # 11 Länder, ~1,6 MB) und US-Unternehmen Aaa/Baa gegen 10-jährige US-Staatsanleihe (FRED, monatlich seit 1953
-      # und täglich); vier Abrufe, ~10 s.
+      # 11 Länder, ~1,6 MB) und US-Unternehmen hoher Bonität (HQM-Kurve des U.S. Treasury über FRED, monatlich seit 1984)
+      # gegen 10-jährige US-Staatsanleihe (OECD); zwei Abrufe, ~10 s.
       - name: Risikoaufschläge holen (OECD, FRED)
         id: abruf_risiko
         if: env.VOLL == '1'
@@ -363,7 +363,7 @@ jobs:
         # (früher kamen OG-Bild/Favicons/Sitemap unbemerkt nie auf dem Server an).
         run: |
           mkdir -p _site
-          # webp: Fotos der Anlegerprofile, woff2: Manrope (seit 24.09.2026); indexnow-key.txt: Schlüssel für die Meldung
+          # webp: Fotos der Anlegerprofile, woff2: Source Sans 3 / Source Serif 4 (seit 11.10.2026); indexnow-key.txt: Schlüssel für die Meldung
           # geänderter Seiten an Bing & Co. (scripts/indexnow.py). llms.txt entsteht seit 30.09.2026 im Bau (scripts/llms.py).
           # favicon.ico (seit 30.09.2026): Rückfall für Browser und Dienste, die /favicon.ico direkt abfragen – neues Logo, 16/32/48 px.
           cp *.html *.json *.svg *.css *.js *.png *.webp *.woff2 favicon.ico robots.txt sitemap.xml indexnow-key.txt _site/
@@ -371,7 +371,7 @@ jobs:
           cp .htaccess _site/.htaccess
           cp kontakt.php _site/kontakt.php   # Kontaktformular (ueber-uns.html#kontakt, seit 30.09.2026)
           cp aufruf.php statistik-bericht.php _site/   # Besucherzählung und täglicher Bericht (seit 01.10.2026, docs/STATISTIK.md); Daten legt das Skript auf dem Server an (statistik-daten/, nie im Bau)
-          cp erinnerung.php _site/   # E-Mail 30 Tage vor jeder Fälligkeit (seit 02.10.2026, docs/KONTO.md) – nur von aufruf.php eingebunden
+          cp erinnerung.php _site/   # E-Mails vor Fälligkeit: 20 Tage vorher und am Tag (seit 02.10.2026, docs/KONTO.md) – nur von aufruf.php eingebunden
           cp wechselkurse.php _site/wechselkurse.php   # neuester EZB-Referenzkurs für „Mein Depot“ (seit 01.10.2026): fragt selbst bei der EZB nach, höchstens alle 30 Minuten; Zwischenstand in wechselkurs-daten/ (legt das Skript an, nie im Bau)
           cp konto.php _site/konto.php   # Benutzerbereich (konto.html, seit 30.09.2026): Anmelde-Link und Merkliste; die Datenbank legt das Skript auf dem Server an (konto-daten/, nie im Bau)
           python3 scripts/security_txt.py _site   # /.well-known/security.txt (Adresse für Sicherheitsmeldungen, RFC 9116)
@@ -476,6 +476,9 @@ jobs:
         run: |
           # alle eigenen Skripte minifizieren (site.js und ausgelagerte Seiten-Skripte wie top10-tabellen.js, bond.js, chart.js)
           for j in _site/*.js; do ./node_modules/.bin/terser "$j" --compress --mangle -o "$j"; done
+          # weltkarte.svg lädt top10-tabellen.js per fetch: Versions-URL aus dem Inhalt der Karte, bevor die Hashes der Skripte
+          # entstehen (seit 15.10.2026, Gesamtprüfung A08-03; vorher ?v=2 von Hand)
+          sed -i "s|weltkarte\.svg?v=[0-9a-z]*|weltkarte.svg?v=$(sha256sum _site/weltkarte.svg | cut -c1-10)|" _site/top10-tabellen.js
           CSS=$(sha256sum _site/base.css | cut -c1-10)
           IDX=$(sha256sum _site/anleihen-index.json | cut -c1-10)
           SIX=$(sha256sum _site/suchindex.json | cut -c1-10)
@@ -610,7 +613,7 @@ jobs:
       #       vergleicht und schreibt ein lftp-Skript. Dateien, die ein früherer Lauf hochgeladen hat und die es
       #       im Bau nicht mehr gibt, löscht das Skript auf dem Server (seit 30.09.2026; nur Dateien aus dem alten
       #       Manifest, höchstens 40 je Lauf – sonst Warnung statt Löschen). Zielordner = Startverzeichnis des SFTP-Zugangs
-      #       (/bondarium, Strato-Nutzer su1338619) = Docroot der Domain.
+      #       (/bondarium; Zugangsdaten nur in den Secrets SFTP_*) = Docroot der Domain.
       #       Reihenfolge (seit 09.10.2026): erst JSON/JS/CSS/Bilder, dann die HTML-Seiten, zuletzt .htaccess und das Manifest –
       #       sonst verlangt eine neue Seite im Upload-Fenster eine Versions-URL, unter der noch die alte Datei liegt.
       #       Scheitert ein put, bricht lftp ab (cmd:fail-exit), bevor das neue Manifest hochgeht. Dann lädt der Rückfall
@@ -807,7 +810,7 @@ jobs:
           done
 
       # Meldungen aus „My Bondarium“ (seit 02.10.2026 abends): konto.php prüft nach dem Datenlauf die Meldungen aller Konten
-      # gegen newsletter/anleihen.json (Rendite, Kurs, nächster Zinstermin, Fälligkeit) und schickt je Konto höchstens eine
+      # gegen newsletter/anleihen.json (Rendite, Kurs, nächster Zinstermin laut Börse) und schickt je Konto höchstens eine
       # E-Mail mit den neu ausgelösten – nur für Meldungen, bei denen der Nutzer „E-Mail“ gewählt hat. Eine ausgelöste Meldung
       # kommt erst wieder, wenn ihre Bedingung zwischendurch nicht mehr galt. Die Antwort nennt Zahlen, keine Adressen.
       - name: Meldungen prüfen und verschicken

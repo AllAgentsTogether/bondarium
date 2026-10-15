@@ -511,6 +511,8 @@ def _lesbar_wort(w, erstes, nach_apostroph):
         return w
     if len(w) <= 3 and u not in WORT3 and u not in KLEINWORT:
         return w
+    if re.match(r"MC[A-Z]{2}", u):   # „MCDONALD'S“ → „McDonald's“, „MCKESSON“ → „McKesson“ (wie felder.js, seit 15.10.2026, A04-05)
+        return "Mc" + u[2] + u[3:].lower()
     return w[0] + w[1:].replace("İ", "i").lower()
 
 
@@ -603,7 +605,7 @@ def kupon_text(kupon, zinsart=0) -> str:
     """„3,50 %“, „3,625 %“, „variabel“, „Nullkupon“ (wie MC.felder.kupon)."""
     if zinsart == 1 or kupon == "var":
         return "variabel"
-    if zinsart == 2 or (kupon == 0 and zinsart != 0):
+    if zinsart == 2 or kupon == 0:   # Kupon 0 auch bei Zinsart „fest“ nie „0,00 %“ (wie felder.js, seit 15.10.2026, A04-03)
         return "Nullkupon"
     if not _ist_zahl(kupon):
         return "–"

@@ -25,6 +25,8 @@ Außerdem Alarm, wenn eine Datei fehlt oder unlesbar ist oder ein Pflichtwert fe
   * anleihen-kurse.json: mindestens 50 % der Euro-Anleihen mit Rendite vom letzten Kurstag haben einen Aufschlag zu Bund
     (fällt auf 0, wenn keine Bund-Kurve da ist – scripts/update_kurse.py, KURVE_ALTER_TAGE)
 Eine Datendatei im Stammordner, die hier nicht vorkommt, ergibt nur eine Warnung (neue Datei: hier aufnehmen).
+Broker-Preise (seit 15.10.2026, Gesamtprüfung B36-11): broker.json wird von Hand gepflegt; ist „stand“ (Tag der letzten Prüfung der
+Preisverzeichnisse) älter als BROKER_TAGE, gibt es eine Warnung (kein Alarm).
 Wochenbrief (seit 15.10.2026, Gesamtprüfung E05-01/C09-02): newsletter/ausgabe.json (schreibt scripts/newsletter.py in jedem Lauf)
 nennt im Feld „grund“, warum die Ausgabe nicht verschickt würde. Steht dort etwas anderes als „kein Versandtag“, gibt es schon
 an Werktagen Alarm – vorher fiel die Sperre vom 12.10.2026 („kein Akademie-Artikel lesbar“) erst am Versandtag auf. Ausnahme an
@@ -42,8 +44,9 @@ import sys
 ALARM_AB = 2                # Handelstage Rückstand gegen das Soll
 AUFSCHLAG_ANTEIL_MIN = 0.5  # Anteil der Euro-Kurse mit Aufschlag zu Bund
 CHINA_TAGE = 10             # Kalendertage
-# Dateien im Stammordner ohne Frische-Prüfung (Handpflege, Bau, Werkzeuge)
-OHNE_PRUEFUNG = {"broker.json", "themen.json", "package.json", "package-lock.json"}
+BROKER_TAGE = 120          # Kalendertage, nach denen die Broker-Preise (broker.json, Handpflege) wieder zu prüfen sind
+# Dateien im Stammordner ohne Frische-Prüfung (Bau, Werkzeuge); broker.json seit 15.10.2026 mit eigener Warnung (BROKER_TAGE)
+OHNE_PRUEFUNG = {"themen.json", "package.json", "package-lock.json"}
 
 
 # ---------------------------------------------------------------- Kalender
@@ -348,6 +351,8 @@ def pruefen(p, im_repo):
               f"anleihen-kurse.json → Aufschlag zu Bund: {mit} von {n} Euro-Kursen ({prozent(anteil)})",
               f"anleihen-kurse.json → Aufschlag zu Bund nur bei {mit} von {n} Euro-Kursen mit Rendite ({prozent(anteil)}, mindestens "
               f"{prozent(AUFSCHLAG_ANTEIL_MIN)}) – Bund-Kurve fehlt oder ist zu alt (kurse/bund, Bundesbank BBSSY)")
+    # ---- Broker-Preise (Handpflege): Warnung, kein Alarm – die Seite rechnet weiter, nur die Prüfung der Preisverzeichnisse ist fällig
+    broker(p)
     # ---- Wochenbrief: Sperre schon an Werktagen melden (Regel im Kopf)
     wochenbrief(p)
     # ---- Datendateien ohne Regel
@@ -355,6 +360,20 @@ def pruefen(p, im_repo):
         name = os.path.basename(pfad)
         if name not in p.geladen and name not in OHNE_PRUEFUNG:
             p.hinweise.append(f"{name}: keine Frische-Regel – in scripts/frische.py aufnehmen")
+
+
+def broker(p):
+    """broker.json: „stand“ = Tag, an dem die Preisverzeichnisse der Anbieter zuletzt geprüft wurden (Seite: „Preise geprüft am …“).
+    Älter als BROKER_TAGE → Warnung (seit 15.10.2026, Gesamtprüfung B36-11)."""
+    stand = p.lade("broker.json").get("stand")
+    ist = als_tag(stand) if stand else None
+    if ist is None:
+        p.hinweise.append(f"broker.json: stand fehlt oder unlesbar ({stand!r}) – Broker-Preise ohne Prüfdatum")
+    elif (p.heute - ist).days > BROKER_TAGE:
+        p.hinweise.append(f"broker.json: Broker-Preise seit {ist:%d.%m.%Y} nicht geprüft ({(p.heute - ist).days} Tage, Pflege alle "
+                          f"{BROKER_TAGE} Tage) – Preisverzeichnisse der Anbieter prüfen, dann „stand“ setzen")
+    else:
+        p.zeilen.append(f"broker.json → stand: {ist} (Preise vor {(p.heute - ist).days} Tagen geprüft, Pflege alle {BROKER_TAGE} Tage)")
 
 
 def wochenbrief(p):

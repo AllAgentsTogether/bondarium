@@ -49,11 +49,19 @@ Außerdem:
   * Sichtbarer Stand (seit 04.10.2026): „Stand: TT.MM.JJJJ“ hinter der Lesezeit (<span class="stand-t">) wird auf das
     dateModified der Seite gesetzt – so zeigt die Seite nie ein anderes Datum als die strukturierten Daten. Ist der Stand in
     der Quelle jünger als dateModified (seit 15.10.2026), gilt das jüngere Datum für beides, mit Warnung (Quelle nachziehen).
+    Seiten mit Erklärtext und Datenliste (TEXT_UND_DATEN, seit 15.10.2026, Gesamtprüfung B11-02) nennen beide Daten getrennt,
+    sobald die Daten jünger sind als der Text: „Text: 04.10.2026 · Kurse: 13.10.2026“ – vorher sah der Kurstag wie eine
+    Prüfung des Textes aus. dateModified und Sitemap folgen weiter dem jüngeren Datum.
   * sitemap.xml wird aus den Seiten neu geschrieben: jede Seite mit „index“ und eigener kanonischer Adresse steht
     drin, entfernte oder gesperrte Seiten fallen heraus, <lastmod> ist das dateModified der Seite (Regel oben).
     Die Reihenfolge der Datei im Repository bleibt erhalten, neue Seiten kommen ans Ende.
 
-Außer dem Stand-Datum ändert nichts davon sichtbaren Text. Fehlt einer Seite etwas Erwartetes, gibt es eine Warnung –
+  * Lesezeit (seit 15.10.2026, Gesamtprüfung B16-09): „Lesezeit: etwa N Minuten“ wird aus der Wortzahl des Hauptteils gesetzt –
+    <main> ohne den Aufklapper „Datenquellen und Methodik“, ohne Anleihen-Tabellen (.atab), Skripte, Stile und Schaubilder (SVG),
+    LESEZEIT_WPM Wörter je Minute (Kalibrierung: die von Hand gesetzten Werte der Seiten lagen im Mittel bei rund 200). Vorher
+    stand die Zahl von Hand in der Seite und blieb bei Textänderungen stehen (zinsniveau.html: „etwa 3 Minuten“ bei 950 Wörtern).
+
+Außer dem Stand-Datum und der Lesezeit ändert nichts davon sichtbaren Text. Fehlt einer Seite etwas Erwartetes, gibt es eine Warnung –
 der Deploy läuft.
 """
 import calendar
@@ -593,6 +601,13 @@ def seite(site, fname, glossar_namen=None):
     # Datum: Datenseiten bekommen den Stand, den sie sichtbar zeigen, wenn er jünger ist als das Quelldatum (siehe
     # DATENSTAND und Kopf dieser Datei). Der Datenstand der JSONs ist nur die Gegenprobe – und das Ende des Datensatzes.
     stand = datenstand(site, DATENSTAND[fname], STAND_NUR.get(fname)) if fname in DATENSTAND else None
+    # Datum des Textes vor dem Daten-Stand (für TEXT_UND_DATEN): dateModified der Quelle oder ihr jüngerer sichtbarer „Stand:“
+    text_datum = str(haupt.get("dateModified") or "")[:10]
+    m = STAND_T_RE.search(html_)
+    if m:
+        t, mo, j = m.group(2).split(".")
+        if text_datum < f"{j}-{mo}-{t}" <= datetime.date.today().isoformat():
+            text_datum = f"{j}-{mo}-{t}"
     if fname in DATENSTAND:
         zeigt = sichtbarer_stand(html_)
         if not zeigt:
@@ -697,7 +712,8 @@ def seite(site, fname, glossar_namen=None):
     neu = ROBOTS_RE.sub(ROBOTS_NEU, neu)
     if artikel and datum:
         neu = aenderungsdatum(neu, datum)
-    neu = stand_anzeige(neu, datum, fname)
+    neu = stand_anzeige(neu, datum, fname, text_datum if fname in TEXT_UND_DATEN else None)
+    neu = lesezeit(neu, fname)
     with open(pfad, "w", encoding="utf-8") as f:
         f.write(neu)
     if url != eigen or fname in OHNE_SITEMAP:
@@ -709,16 +725,42 @@ def seite(site, fname, glossar_namen=None):
 
 
 STAND_T_RE = re.compile(r'(<span class="stand-t">Stand: )(\d{2}\.\d{2}\.\d{4})(</span>)')
+LESEZEIT_RE = re.compile(r"(Lesezeit: etwa )(\d+)(&nbsp;|\s)(Minuten?)")
+LESEZEIT_WPM = 200
 
 
-def stand_anzeige(html_, datum, fname):
-    """„Stand: TT.MM.JJJJ“ hinter der Lesezeit = dateModified der Seite (seit 04.10.2026, SEO-Runde 2)."""
+def lesezeit(html_, fname):
+    """„Lesezeit: etwa N Minuten“ aus der Wortzahl des Hauptteils (Regel im Kopf der Datei)."""
+    m = LESEZEIT_RE.search(html_)
+    haupt = re.search(r"<main\b.*?</main>", html_, re.S)
+    if not m or not haupt:
+        return html_
+    t = re.sub(r'<details class="quellen".*?</details>|<table class="[^"]*\batab\b[^"]*".*?</table>', " ", haupt.group(0), flags=re.S)
+    t = re.sub(r"<script\b.*?</script>|<style\b.*?</style>|<svg\b.*?</svg>", " ", t, flags=re.S)
+    woerter = len(re.findall(r"\w+", htmllib.unescape(re.sub(r"<[^>]+>", " ", t))))
+    n = max(1, int(woerter / LESEZEIT_WPM + 0.5))
+    if str(n) != m.group(2):
+        print(f"{fname}: Lesezeit {m.group(2)} → {n} Minuten ({woerter} Wörter)")
+    return html_[:m.start()] + m.group(1) + str(n) + m.group(3) + ("Minute" if n == 1 else "Minuten") + html_[m.end():]
+
+
+# Seiten mit Erklärtext und Datenliste: Bezeichnung der Daten im sichtbaren Stand („Text: … · Kurse: …“, B11-02)
+TEXT_UND_DATEN = {"bundeswertpapiere.html": "Kurse", "zinsniveau.html": "Daten"}
+
+
+def stand_anzeige(html_, datum, fname, text=None):
+    """„Stand: TT.MM.JJJJ“ hinter der Lesezeit = dateModified der Seite (seit 04.10.2026, SEO-Runde 2). text: Datum des Textes
+    (ISO) auf Seiten in TEXT_UND_DATEN – ist dateModified (Daten-Stand) jünger, steht dort „Text: … · Kurse: …“."""
     try:
         soll = datetime.date.fromisoformat(str(datum)[:10]).strftime("%d.%m.%Y")
+        text_de = datetime.date.fromisoformat(str(text)[:10]).strftime("%d.%m.%Y") if text and str(text)[:10] < str(datum)[:10] else None
     except (TypeError, ValueError):
         return html_
 
     def ersetze(m):
+        if text_de:
+            print(f"{fname}: sichtbarer Stand → Text: {text_de} · {TEXT_UND_DATEN.get(fname, 'Daten')}: {soll}")
+            return f'<span class="stand-t">Text: {text_de} · {TEXT_UND_DATEN.get(fname, "Daten")}: {soll}</span>'
         if m.group(2) != soll:
             print(f"{fname}: sichtbarer Stand {m.group(2)} → {soll} (dateModified)")
         return m.group(1) + soll + m.group(3)

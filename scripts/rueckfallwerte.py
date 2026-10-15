@@ -28,6 +28,7 @@ Repository bleiben unverändert.
   zinsniveau.html            ← zinskurve.json, realzins.json, ezb.json: Kacheln „Zinsniveau heute“, ihre Stand-Zeile,
                                EZB-Einlagesatz, Daten-Stand (seit 04.10.2026)
   markttechnik.html          ← ezb.json: Einlagesatz mit Stand unter dem Schaubild „Was der Markt einpreist“ (seit 09.10.2026)
+                               und renditen.json: Bund 10 Jahre in Karte 4 (#bund10-stand, seit 15.10.2026)
   risiko.html                ← langlaeufer.json: Verlust der Bundesanleihe 0 % 2050 seit 2019 und ihr Stand (seit 09.10.2026)
 
 Regeln:
@@ -250,8 +251,12 @@ class Pricer:
 
 
 def yield_from_price(b, p, settle_iso, start=None):
-    """MC.bond.yieldFromPrice: Newton, Rückfall Halbierung im Bereich −2 … 30 %; Ergebnis dezimal."""
+    """MC.bond.yieldFromPrice: Newton, Rückfall Halbierung im Bereich −2 … 30 %; Ergebnis dezimal. Liegt der Kurs außerhalb
+    dieses Bereichs (Rendite unter −2 % oder über 30 %) → NaN, wie bond.js seit 15.10.2026 (Gesamtprüfung A04-02); vorher kam der
+    Rand des Bereichs als scheinbar gültige Rendite heraus."""
     f = Pricer(b, settle_iso)
+    if not (f.price(-0.02) >= p >= f.price(0.30)):
+        return float("nan")
     y = start if start is not None and math.isfinite(start) else 0.03
     for _ in range(40):
         try:
@@ -1229,7 +1234,8 @@ ANKER_LANGLAEUFER = [
     'kupon: r.coupon, zinsart: r.coupon === 0 ? 2 : 0, faellig: r.maturity, kurs: r.price, kdatum: r.date, rend: r.yld, bon: a[3],',
     'seitHoch: r.sinceHigh, hochText: `Hoch ${MC.felder.kurs(r.high.price)} am ${fmtDate(r.high.date)}` };',
     'const html = MC.felder.tabelle(["anleihe", "rendite", "kupon", "restlaufzeit", "kurs", "seitHoch"].concat(MC.konto ? ["merken"] : []), rows,',
-    'ctx: { kstand: stand, nameVor: o => `<i class="tag" style="background:${COLORS[o.key]}"></i>` } });',
+    'ctx: { kstand: stand, nameVor: o => TAG(o.key) } });',
+    'const TAG = k => k === "us" ? `<i class="tag tag-strich" style="color:${COLORS[k]}"></i>` : k === "ms" ? `<i class="tag tag-punkt" style="color:${COLORS[k]}"></i>` : `<i class="tag" style="background:${COLORS[k]}"></i>`;',
     'const fmtDate = iso => MC.datum(iso);',
     'return rows.map(r => { Object.assign(r, KPI_META[r.key]); r.label = L(r.key); r.sinceHigh = (r.price / r.high.price - 1) * 100; return r; });',
     'const ids = { bund: "b-spanne", bund2: "b2-spanne", btp: "t-spanne", fr: "fr-spanne", at: "at-spanne", us: "us-spanne", ms: "ms-spanne" };',
@@ -1435,7 +1441,12 @@ def langlaeufer(site, s):
             "seitHoch": (r["price"] / r["high"]["price"] - 1) * 100,
             "hochText": f'Hoch {kurs_text(r["high"]["price"])} am {datum(r["high"]["date"])}'})
     ids_tab = ["anleihe", "rendite", "kupon", "restlaufzeit", "kurs", "seitHoch", "merken"]
-    ctx = {"kstand": stand, "nameVor": lambda o: f'<i class="tag" style="background:{farben[o["key"]]}"></i>'}
+    # Kennzeichen wie TAG im Seitenskript (seit 15.10.2026): USA gestrichelt, Mexiko gepunktet – wie die Linien im Schaubild
+    def tag(k):
+        if k in ("us", "ms"):
+            return f'<i class="tag {"tag-strich" if k == "us" else "tag-punkt"}" style="color:{farben[k]}"></i>'
+        return f'<i class="tag" style="background:{farben[k]}"></i>'
+    ctx = {"kstand": stand, "nameVor": lambda o: tag(o["key"])}
     thead = std_kopf(ids_tab, sort=(None, 1)).replace("<thead>", '<thead class="std-kopf">', 1)
     tbody = "".join(std_zeile(o, ids_tab, ctx, None) for o in objekte)
     m = re.search(r'<table\b[^>]*\bid="kpis"[^>]*>\s*(<caption\b.*?</caption>)', s.html, re.S)
@@ -1531,16 +1542,28 @@ ANKER_MARKTTECHNIK = [
     'if (window.MC && MC.load) MC.load("ezb.json").then(function (d) {',
     'var e = document.getElementById("ezb-stand");',
     'if (e && d && d.aktuell) e.textContent = "Einlagesatz " + MC.zahl(d.aktuell[1], 2) + "\\u00a0% seit " + MC.datum(d.aktuell[0]) + " (Stand " + MC.datum(d.stand) + ")";',
+    'if (window.MC && MC.load) MC.load("renditen.json").then(function (d) {',
+    'var e = document.getElementById("bund10-stand"), l = d && d.countries && d.countries.de && d.countries.de.latest;',
+    'if (e && l && typeof l.yield === "number") e.textContent = "Bund 10 Jahre " + MC.zahl(l.yield, 2) + "\\u00a0% am " + MC.datum(l.date);',
 ]
 
 
 def markttechnik(site, s):
-    """Ausgangspunkt des Schaubilds „Was der Markt einpreist“: aktueller EZB-Einlagesatz mit Stand (ezb.json)."""
+    """Ausgangspunkt des Schaubilds „Was der Markt einpreist“: aktueller EZB-Einlagesatz mit Stand (ezb.json); seit 15.10.2026
+    (Gesamtprüfung B31-03) auch die Rendite der 10-jährigen Bundesanleihe in Karte 4 (renditen.json, #bund10-stand)."""
     s.anker(ANKER_MARKTTECHNIK)
     E = lade(site, "ezb.json")
     if not isinstance(E, dict) or not E.get("aktuell"):
         raise ValueError("ezb.json ohne aktuell")
     s.text("#ezb-stand", f'Einlagesatz {zahl(E["aktuell"][1], 2)}{NBSP}% seit {datum(E["aktuell"][0])} (Stand {datum(E.get("stand"))})')
+    try:
+        l = lade(site, "renditen.json")["countries"]["de"]["latest"]
+    except (OSError, ValueError, KeyError, TypeError):
+        l = None
+    if isinstance(l, dict) and ist_zahl(l.get("yield")) and ist_tag(l.get("date")):
+        s.text("#bund10-stand", f'Bund 10 Jahre {zahl(l["yield"], 2)}{NBSP}% am {datum(l["date"])}')
+    else:
+        warn("markttechnik.html: renditen.json ohne Rendite Deutschland – #bund10-stand bleibt")
     return datum(E.get("stand"))
 
 

@@ -48,6 +48,12 @@ der ihn einführte, war schon rot):
     Diese Leser brachen beim Menü-Umbau vom 11.10.2026 still (Wochenbrief gesperrt, Themen der Suche mit Vorschauzeilen).
   - Neutralität des Steckbriefs: scripts/neutral_check.py auf anleihe.html ohne Treffer (lief vorher in keinem Workflow).
   - Zusage- und Empfehlungswörter und Hauswortschatz (Regeln oben, Ausnahmen in AUSNAHMEN_ZUSAGE) – vorher nur Warnungen.
+Gebaute Zahlen gegen Daten und Regeln (seit 15.10.2026, Gesamtprüfung B01-18, B10-07, B33-11) – Warnungen:
+  - Startseite: Werte im Zinsstand-Band = Rechnung aus zinskurve.json, langlaeufer.json, ezb.json (statische_tabellen.zinsstand_werte);
+    jede Beispiel-Anleihe der Tabelle steht in der Liste der Top-10-Seiten (#top10-pool).
+  - anleihen-kupon.html: jede Zeile der drei Listen erfüllt die Regeln aus top10-anleihen-kupon.json (Währung, Restlaufzeit ab
+    Kursstand, Stückelung), Reihenfolge Kupon absteigend, dann Volumen; die Seite zeigt genau die Liste der Datei.
+  - Glossar: Einträge in begriffe.html = Begriffe in themen.json; keine feste Zahl „NN Fachbegriffe“ in Kopf und Menüdaten.
 """
 import datetime
 import html as htmllib
@@ -649,6 +655,78 @@ if not DATENLAUF:
     for regel in ("Zusage- oder Empfehlungswort", "Hauswortschatz"):
         for datei, text in funde.pop(regel, []):
             fehler.append(f"{datei}: {regel} – {text}")
+
+# ---------- Gebaute Zahlen gegen Daten und Regeln (seit 15.10.2026, Gesamtprüfung B01-18, B10-07, B33-11) – nur Warnungen ----------
+# Zinsstand-Band und Beispiel-Anleihen der Startseite schreibt statische_tabellen.py beim Bau, die drei Ranglisten auf
+# anleihen-kupon.html kommen aus top10-anleihen-kupon.json, die Zahl der Glossar-Begriffe zählen themen.py und kennzahlen.py.
+# Hier wird nachgerechnet, ob das Gebaute zu den Daten und Regeln passt.
+sys.path.insert(0, SKRIPTE)
+try:
+    if "index.html" in seiten:
+        start = lies_html("index.html")
+        from statische_tabellen import zinsstand_werte, zahl as st_zahl
+        werte_zs, _ = zinsstand_werte(site)
+        for key, (wert, _delta) in werte_zs.items():
+            if not isinstance(wert, (int, float)):
+                continue
+            soll = f"{st_zahl(wert, 2)}&nbsp;%"
+            for m in re.finditer(r'<a [^>]*data-zs="' + key + r'"[^>]*>.*?<b>([^<]*)</b>', start, re.S):
+                if m.group(1) != soll:
+                    warnungen.append(f"index.html: Zinsstand „{key}“ zeigt {htmllib.unescape(m.group(1))}, die Daten ergeben "
+                                     f"{htmllib.unescape(soll)} (statische_tabellen.zinsstand)")
+                    break
+        pool = re.search(r'<script type="application/json" id="top10-pool">(.*?)</script>', start, re.S)
+        im_pool = set(re.findall(r'"isin":"([A-Z0-9]{12})"', pool.group(1))) if pool else set()
+        tab = re.search(r'<table class="itab[^"]*">.*?</table>', start, re.S)
+        fremd = [i for i in re.findall(r'data-isin="([A-Z0-9]{12})"', tab.group(0) if tab else "") if i not in im_pool]
+        if fremd:
+            warnungen.append(f"index.html: Beispiel-Anleihen nicht in der Liste der Top-10-Seiten (#top10-pool): {', '.join(fremd)}")
+except Exception as e:   # noqa: BLE001
+    warnungen.append(f"index.html: Zinsstand und Beispiel-Anleihen nicht nachgeprüft ({type(e).__name__}: {e})")
+try:
+    if "anleihen-kupon.html" in seiten and os.path.isfile(os.path.join(site, "top10-anleihen-kupon.json")):
+        with open(os.path.join(site, "top10-anleihen-kupon.json"), encoding="utf-8") as d:
+            kd = json.load(d)
+        regeln, kseite = kd.get("regeln") or {}, lies_html("anleihen-kupon.html")
+        kstand = datetime.date.fromisoformat(str(kd.get("stand"))[:10])
+        for gruppe, liste in (kd.get("gruppen") or {}).items():
+            falsch = []
+            for x in liste:
+                if regeln.get("waehrungen") and x.get("cur") not in regeln["waehrungen"]:
+                    falsch.append(f"{x.get('isin')} Währung {x.get('cur')}")
+                if regeln.get("min_jahre") and (datetime.date.fromisoformat(x["faellig"]) - kstand).days / 365.25 < regeln["min_jahre"]:
+                    falsch.append(f"{x.get('isin')} fällig {x.get('faellig')}")
+                if regeln.get("max_stueckelung") and not (isinstance(x.get("stk"), (int, float)) and x["stk"] <= regeln["max_stueckelung"]):
+                    falsch.append(f"{x.get('isin')} Stückelung {x.get('stk')}")
+            folge = [(-x["kupon"], -(x.get("vol") or 0)) for x in liste]
+            if folge != sorted(folge):
+                falsch.append("Reihenfolge nicht Kupon absteigend, dann Volumen")
+            m = re.search(r'<tbody id="kpis-' + re.escape(gruppe) + r'">(.*?)</tbody>', kseite, re.S)
+            gezeigt = re.findall(r'data-isin="([A-Z0-9]{12})"', m.group(1)) if m else []
+            if gezeigt != [x.get("isin") for x in liste]:
+                falsch.append("Zeilen der Seite ≠ Liste in top10-anleihen-kupon.json")
+            if falsch:
+                warnungen.append(f"anleihen-kupon.html, Liste {gruppe}: Regeln aus top10-anleihen-kupon.json verletzt – {'; '.join(falsch[:5])}")
+except Exception as e:   # noqa: BLE001
+    warnungen.append(f"anleihen-kupon.html: Ranglisten nicht gegen die Regeln geprüft ({type(e).__name__}: {e})")
+try:
+    if "begriffe.html" in seiten and os.path.isfile(os.path.join(site, "themen.json")):
+        n_seite = len(re.findall(r'<div class="e" id="', lies_html("begriffe.html")))
+        with open(os.path.join(site, "themen.json"), encoding="utf-8") as d:
+            n_themen = len(json.load(d).get("begriffe") or [])
+        if n_seite != n_themen:
+            warnungen.append(f"begriffe.html: {n_seite} Einträge, themen.json {n_themen} Begriffe – scripts/themen.py liest das Glossar nicht vollständig")
+    # feste Zahl „NN Fachbegriffe“ veraltet mit jedem neuen Eintrag – in Beschreibungen und Menüdaten ohne Zahl (Startseite: data-kz)
+    for f in sorted(seiten):
+        m = re.search(r"\b\d+\s+Fachbegriffe", lies_html(f).split("</head>")[0])
+        if m:
+            warnungen.append(f"{f}: feste Zahl „{m.group(0)}“ im Kopf (Beschreibung, og, JSON-LD) – ohne Zahl schreiben")
+    if os.path.isfile(os.path.join(SKRIPTE, "nav.py")):
+        m = re.search(r"\b\d+\s+Fachbegriffe", open(os.path.join(SKRIPTE, "nav.py"), encoding="utf-8").read())
+        if m:
+            warnungen.append(f"scripts/nav.py: feste Zahl „{m.group(0)}“ in den Menüdaten – ohne Zahl schreiben")
+except Exception as e:   # noqa: BLE001
+    warnungen.append(f"begriffe.html: Zahl der Begriffe nicht nachgeprüft ({type(e).__name__}: {e})")
 
 # Sitemap: lastmod darf nicht jünger sein als das Änderungsdatum der Seite
 sm = os.path.join(site, "sitemap.xml")

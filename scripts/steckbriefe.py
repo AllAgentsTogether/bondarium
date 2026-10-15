@@ -62,8 +62,17 @@ def datum(iso):
     return f"{iso[8:10]}.{iso[5:7]}.{iso[:4]}"
 
 
-def art_von(name):
-    """Art des Bundeswertpapiers aus dem Registernamen (FIRDS)."""
+# Grüne Bundeswertpapiere laut Finanzagentur (deutsche-finanzagentur.de → Bundeswertpapierarten → Grüne Bundeswertpapiere, abgerufen
+# am 15.10.2026; Gesamtprüfung B11-01): Der Registername der ersten grünen Bundesanleihe DE0001030708 (0 % 2030) trägt kein „Grüne“ –
+# sie hieß in der Liste und im Server-Steckbrief „Bundesanleihe Nullkupon 2030“ wie ihr konventioneller Zwilling DE0001102507.
+# Neue grüne Papiere erkennt art_von() weiter am Namen; diese Liste ergänzt nur. Bei neuen Emissionen ohne „Grüne“ im Namen hier
+# nachtragen. Eine Liste für Steckbriefe, Bundeswertpapiere-Seite (statische_tabellen.py) und das Paar auf grundlagen.html (kennzahlen.py).
+GRUENE_BUND = {"DE0001030708", "DE0001030724", "DE0001030732", "DE0001030740", "DE0001030757",
+               "DE000BU35025", "DE000BU3F007", "DE000BU3Z005", "DE000BU3Z047"}
+
+
+def art_von(name, isin=None):
+    """Art des Bundeswertpapiers aus dem Registernamen (FIRDS); mit isin auch die grünen Papiere aus GRUENE_BUND."""
     n = name.lower()
     if "inflationsindex" in n or "infl." in n:
         art = "Inflationsindexierte Bundesanleihe"
@@ -75,7 +84,7 @@ def art_von(name):
         art = "Bundesanleihe"
     else:
         return None
-    return ("Grüne " + art) if re.search(r"\bgrüne\b", n) else art
+    return ("Grüne " + art) if re.search(r"\bgrüne\b", n) or isin in GRUENE_BUND else art
 
 
 def stammdaten(site, isins):
@@ -120,7 +129,7 @@ def ersetze(text, muster, neu, pflicht=True, flags=0):
 def seite(vorlage, isin, r, stand, stand_art="Stammdaten "):
     name, kupon, faellig, volumen, stk, emittent = r[0], r[3], r[4], r[5], r[6], r[8] or "Bundesrepublik Deutschland"
     zinsart = r[9] if len(r) > 9 and isinstance(r[9], int) else 0
-    art = art_von(name)
+    art = art_von(name, isin)
     if not art or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(faellig or "")) or not isinstance(kupon, (int, float)):
         raise ValueError(f"{isin}: Stammdaten unvollständig ({name!r}, {kupon!r}, {faellig!r})")
     null = zinsart == 2 or kupon == 0

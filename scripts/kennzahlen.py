@@ -41,6 +41,17 @@ Seit 09.10.2026 für cds.html („Kreditausfallswap (CDS)“, Karte 4 – Beispi
          der Suche (suchindex.json: Land TR, Art Staat, Währung USD); dazu die Rendite der 10-jährigen US-Staatsanleihe (zinskurve.json,
          heute.US) und der Abstand in Prozentpunkten. Schlüssel: tr-stand, tr-name, tr-kupon, tr-faellig, tr-stueck, tr-kurs, tr-rendite,
          us10-rendite, us10-stand, tr-aufschlag. Findet sich keine Anleihe, bleibt der Rückfall-Text samt seinem Datum stehen.
+         Seit 15.10.2026 (Gesamtprüfung B32-02) ist die Rendite der Anleihe (Suche: jährliche Zählweise) für Anzeige und Abstand auf die
+         halbjährliche Zählweise der US-Staatsanleihe umgerechnet: 2 × ((1 + r)^½ − 1) – sonst lag der Abstand 0,1 bis 0,2 Punkte zu hoch.
+
+Seit 15.10.2026 für anleihe-nicht-kaufbar.html (Karte 1, Schaubild „Euro-Unternehmensanleihen nach Stückelung“, Gesamtprüfung
+B38-03), aus dem Register der Suche (anleihen/*.json: Art, Währung, Stückelung) – vorher feste Zahlen vom 26.09.2026:
+    <span data-kz="stk-u-a">37</span> usw.          Euro-Unternehmensanleihen: Anzahl (stk-u-n, gerundet stk-u-rund), mit Stückelung
+         (stk-u-mit), bis 1.000 / 1.001 bis 99.999 / ab 100.000 als Anzahl (stk-u-a-n, -b-n, -c-n) und Anteil an allen in % (stk-u-a,
+         -b, -c); Euro-Staatsanleihen: Anzahl (stk-s-n), bis 1.000 (stk-s-a-n, Anteil stk-s-a), ohne Angabe (stk-s-ohne); stk-stand.
+         Balken (Breite --w und Zahl) und aria-label des Schaubilds setzt stueckelung_schaubild() an ihrer festen Form im HTML.
+Seit 15.10.2026 für die Startseite (Akademie, „Tiefer einsteigen“, Gesamtprüfung B01-04):
+    <span data-kz="begriffe-anzahl">75</span>      Zahl der Einträge im Glossar (<div class="e" id=…> in begriffe.html, wie scripts/themen.py)
 
 Außerdem wird in Meta-/og-/JSON-LD-Texten die Wendung „Suche über rund NN.000 Anleihen“ auf die aktuelle Zahl gesetzt
 (nur diese Wendung – Zahlen wie „Börse Frankfurt rund 27.700 Anleihen“ bleiben unberührt).
@@ -157,7 +168,7 @@ def anleihen_paar(site, heute=None):
         if not z:
             continue
         name, kupon, faellig = z[0], z[3], z[4]
-        art = art_von(name or "")
+        art = art_von(name or "", isin)
         if not art or "Inflation" in art or art.startswith("Grüne") or not isinstance(kupon, (int, float)) or kupon <= 0:
             continue
         try:
@@ -207,8 +218,9 @@ def tuerkei_beispiel(site, heute=None):
         return {}
     r = min(rows, key=lambda r: abs(rest(r) - 10))
     kupon = de(r[4], 3).rstrip("0").rstrip(",")
+    rendite = 2 * ((1 + r[16] / 100) ** 0.5 - 1) * 100   # jährliche Zählweise der Suche → halbjährliche wie die US-Staatsanleihe
     w = {"tr-name": f"Türkei {kupon}&nbsp;% {r[5][:4]}", "tr-kupon": kupon, "tr-faellig": iso_de(r[5]),
-         "tr-stueck": f"{int(r[7]):,}".replace(",", ".") + "&nbsp;USD", "tr-kurs": de(r[15], 1), "tr-rendite": de(r[16], 1)}
+         "tr-stueck": f"{int(r[7]):,}".replace(",", ".") + "&nbsp;USD", "tr-kurs": de(r[15], 1), "tr-rendite": de(rendite, 1)}
     tage = d.get("tage") or []
     if isinstance(r[17], int) and 0 <= r[17] < len(tage) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(tage[r[17]])):
         w["tr-stand"] = iso_de(tage[r[17]])
@@ -217,8 +229,53 @@ def tuerkei_beispiel(site, heute=None):
     if isinstance(us, list) and len(us) >= 3 and isinstance(us[2], (int, float)) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(us[0])):
         w["us10-rendite"] = de(us[2], 1)
         w["us10-stand"] = iso_de(us[0])
-        w["tr-aufschlag"] = de(r[16] - us[2], 1)
+        w["tr-aufschlag"] = de(rendite - us[2], 1)
     return w
+
+
+def stueckelung_werte(site):
+    """anleihe-nicht-kaufbar.html, Karte 1: Stückelung der Euro-Anleihen im Register der Suche (anleihen/<teil>.json, Zeile
+    [name, art, waehrung, kupon, faellig, volumen, stueckelung, …]; art 0 Staat, 2 Unternehmen). Anteile an allen Anleihen der
+    Gruppe (auch ohne Angabe zur Stückelung), wie die Auswertung vom 26.09.2026."""
+    import glob
+    stand, u, st = None, [], []
+    for pfad in sorted(glob.glob(os.path.join(site, "anleihen", "*.json"))):
+        with open(pfad, encoding="utf-8") as f:
+            d = json.load(f)
+        stand = stand or d.get("stand")
+        for z in (d.get("rows") or {}).values():
+            if isinstance(z, list) and len(z) > 6 and z[2] == "EUR":
+                (u if z[1] == 2 else st if z[1] == 0 else []).append(z[6] if isinstance(z[6], (int, float)) and z[6] > 0 else None)
+    if len(u) < 1000 or len(st) < 100 or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(stand or "")):
+        return {}
+    t = lambda n: f"{n:,}".replace(",", ".")
+    mit = [x for x in u if x is not None]
+    a, c = sum(1 for x in mit if x <= 1000), sum(1 for x in mit if x >= 100000)
+    sa = sum(1 for x in st if x is not None and x <= 1000)
+    p = lambda n, N: str(int(n * 100 / N + 0.5))
+    return {"stk-stand": iso_de(stand), "stk-u-n": t(len(u)), "stk-u-rund": t(int(round(len(u), -2))), "stk-u-mit": t(len(mit)),
+            "stk-u-a-n": t(a), "stk-u-b-n": t(len(mit) - a - c), "stk-u-c-n": t(c),
+            "stk-u-a": p(a, len(u)), "stk-u-b": p(len(mit) - a - c, len(u)), "stk-u-c": p(c, len(u)),
+            "stk-s-n": t(len(st)), "stk-s-a-n": t(sa), "stk-s-a": p(sa, len(st)), "stk-s-ohne": t(sum(1 for x in st if x is None))}
+
+
+STK_LABEL_RE = re.compile(r'aria-label="Von rund [\d.]+ Euro-Unternehmensanleihen im Register der Suche haben \d+ Prozent eine Stückelung '
+                          r'bis 1\.000 Euro, \d+ Prozent zwischen 1\.001 und 99\.999 Euro und \d+ Prozent ab 100\.000 Euro\."')
+STK_BALKEN_RE = re.compile(r'<span class="([abc])" style="--w:\d+%">\d+&nbsp;%</span>')
+
+
+def stueckelung_schaubild(html, w):
+    """Balken und aria-label des Schaubilds auf anleihe-nicht-kaufbar.html (Attribute – data-kz greift nur im Text)."""
+    neu, n_label = STK_LABEL_RE.subn(f'aria-label="Von rund {w["stk-u-rund"]} Euro-Unternehmensanleihen im Register der Suche haben '
+                                     f'{w["stk-u-a"]} Prozent eine Stückelung bis 1.000 Euro, {w["stk-u-b"]} Prozent zwischen 1.001 und '
+                                     f'99.999 Euro und {w["stk-u-c"]} Prozent ab 100.000 Euro."', html, count=1)
+    neu, n = STK_BALKEN_RE.subn(lambda m: f'<span class="{m.group(1)}" style="--w:{w["stk-u-" + m.group(1)]}%">'
+                                          f'{w["stk-u-" + m.group(1)]}&nbsp;%</span>', neu)
+    if n_label != 1 or n != 3:
+        print(f"::warning::kennzahlen.py: anleihe-nicht-kaufbar.html: Schaubild Stückelung nicht gefunden (aria-label {n_label}, "
+              f"{n} Balken) – feste Werte bleiben")
+        return html
+    return neu
 
 
 def main():
@@ -265,6 +322,13 @@ def main():
                 werte["broker-stand"] = ".".join(reversed(b["stand"].split("-")))
         except Exception as e:   # Rechnung nicht möglich: der Rückfall-Text der Seiten bleibt stehen
             print(f"::warning::kennzahlen.py: Broker-Kennzahlen nicht gesetzt ({type(e).__name__}: {e})")
+    try:   # Zahl der Glossar-Einträge (Startseite „Glossar · NN Begriffe von A bis Z“) – wie themen.py aus begriffe.html
+        with open(os.path.join(site, "begriffe.html"), encoding="utf-8") as f:
+            n = len(re.findall(r'<div class="e" id="', f.read()))
+        if n >= 30:
+            werte["begriffe-anzahl"] = str(n)
+    except Exception as e:
+        print(f"::warning::kennzahlen.py: Zahl der Glossar-Begriffe nicht gesetzt ({type(e).__name__}: {e})")
     try:   # Zahl der Akademie-Themen für „NN Themen und das Glossar“ (wissen.html)
         n = akademie_themen()
         if n:
@@ -286,6 +350,10 @@ def main():
         werte.update(anleihen_paar(site))
     except Exception as e:
         print(f"::warning::kennzahlen.py: Anleihen-Paar nicht gesetzt ({type(e).__name__}: {e})")
+    try:   # Stückelung der Euro-Anleihen (anleihe-nicht-kaufbar.html, Karte 1)
+        werte.update(stueckelung_werte(site))
+    except Exception as e:
+        print(f"::warning::kennzahlen.py: Stückelung nicht gesetzt ({type(e).__name__}: {e})")
     try:   # Beispiel Türkei (cds.html, Karte 4)
         werte.update(tuerkei_beispiel(site))
     except Exception as e:
@@ -319,6 +387,8 @@ def main():
                 neu = themen_re.sub(lambda m: werte["akademie-themen"] + m.group(1), neu)
             if fname in datenstand:
                 neu = stand_re.sub(lambda m: m.group(1) + htmllib.escape(datenstand[fname], quote=False) + m.group(2), neu, count=1)
+            if fname == "anleihe-nicht-kaufbar.html" and "stk-u-a" in werte:
+                neu = stueckelung_schaubild(neu, werte)
         except Exception as e:   # Rückfall-Text der Seite bleibt
             print(f"::warning::kennzahlen.py: {fname}: Zahlen im Kopf oder Daten-Stand nicht gesetzt ({type(e).__name__}: {e})")
         if neu != html:

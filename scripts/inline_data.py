@@ -43,6 +43,24 @@ def kuerzen(data, html):
                 data = dict(data)
                 data[feld] = {k: v for k, v in data[feld].items() if k in isins}
     return data
+
+
+def _zinsniveau_kurve(d):
+    """zinsniveau.html braucht aus zinskurve.json nur heute.DE (Kacheln) und die deutschen Monate 10/2021–12/2024 (Schaubild 4)."""
+    m = [x for x in ((d.get("monate") or {}).get("DE") or []) if isinstance(x, list) and x and "2021-10" <= str(x[0]) <= "2024-12"]
+    return {"stand": d.get("stand"), "heute": {"DE": (d.get("heute") or {}).get("DE")}, "monate": {"DE": m}}
+
+
+def _zinsniveau_realzins(d):
+    """… und aus realzins.json nur heute (Kacheln), jahre und laufend (Schaubild 3) – die Monatsreihe nicht."""
+    return {k: d[k] for k in ("stand", "heute", "jahre", "laufend") if k in d}
+
+
+# Seitenbezogene Ausschnitte (seit 15.10.2026, Gesamtprüfung B16-08): Eine Seite, die aus einer großen Datei nur wenige Werte
+# braucht, bekommt nur diese eingebettet – zinsniveau.html vorher 44 KB Daten, davon rund 41 KB ungenutzt (Monatsreihen seit 1972).
+# MC.load nimmt die Einbettung und lädt nichts nach: Liest das Seitenskript künftig mehr aus der Datei, hier nachziehen.
+AUSSCHNITT = {("zinsniveau.html", "zinskurve.json"): _zinsniveau_kurve,
+              ("zinsniveau.html", "realzins.json"): _zinsniveau_realzins}
 ANCHOR_RE = re.compile(r'<script src="site\.js[^"]*"></script>')
 
 
@@ -76,6 +94,8 @@ def embed(site, fname):
             print(f"::warning::{fname}: {n} nicht einbettbar ({e}) – Seite nutzt fetch")
             continue
         data = kuerzen(data, html)
+        if (fname, n) in AUSSCHNITT and isinstance(data, dict):
+            data = AUSSCHNITT[(fname, n)](data)
         compact = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
         # "</" darf in einem Script-Block nicht vorkommen (würde ihn beenden)
         compact = compact.replace("</", "<\\/")

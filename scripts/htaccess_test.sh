@@ -367,6 +367,8 @@ pruefe "Entscheiden (alt) mit Abfrage" https $W "/entscheiden.html?a=1" 301 "$D/
 pruefe "Laufzeit-Einzelseite (alt, englisch) mit Abfrage, http" http bondarium.de "/en/anleihen-langfristig.html?gclid=1" 301 \
   "$D/staatsanleihen-laufzeit.html#langfristig"
 pruefe "Vertiefen (alt)" https bondarium.com /vertiefen.html 301 "$D/wissen.html#fortgeschrittene"
+pruefe "Fortgeschrittene (alt)" https bondarium.com /fortgeschrittene.html 301 "$D/wissen.html#fortgeschrittene"
+pruefe "Anlegerprofile (alt)" https bondarium.com /anlegerprofile.html 301 "$D/anlageziele.html#fuer-wen"
 pruefe "Anleihen-Beispiele (alt)" https $W /guide.html 301 "$D/anlageziele.html"
 pruefe "Anleihen-ETF Vor- und Nachteile (alt)" https $W /anleihen-etf-erklaert.html 301 "$D/etf-oder-anleihe.html"
 pruefe "Unternehmensanleihen nach Kupon (alt)" https $W /unternehmensanleihen-kupon.html 301 "$D/anleihen-kupon.html"
@@ -452,7 +454,7 @@ kopf "CSS ein Jahr (Versions-URL)" "/base.css?v=test" Cache-Control 'max-age=315
 kopf "JS ein Jahr (Versions-URL)" "/site.js?v=test" Cache-Control 'max-age=31536000.*immutable'
 kopf "CSS gzip" /base.css Content-Encoding '^gzip$' -H "Accept-Encoding: gzip"
 kopf "Schrift ein Jahr" /source-sans-3.woff2 Cache-Control 'max-age=31536000'   # Hausschrift seit 11.10.2026 (vorher Manrope)
-kopf "Bilder einen Tag" /logo.svg Cache-Control 'max-age=86400'
+kopf "Bilder einen Tag" /weltkarte.svg Cache-Control 'max-age=86400'   # seit 15.10.2026 (vorher logo.svg, seit dem Logo 06 ungenutzt)
 kopf "Daten-JSON 15 Minuten" /renditen.json Cache-Control 'max-age=900'
 kopf "Daten-JSON nicht im Suchindex" /renditen.json X-Robots-Tag 'noindex'
 kopf "Such-Index lange (Versions-URL)" "/anleihen-index.json?v=test" Cache-Control 'max-age=2592000'

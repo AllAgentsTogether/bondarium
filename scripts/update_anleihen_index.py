@@ -21,7 +21,8 @@ Einstufung (Spalte „Art“) je Emittent, über das LEI-Register GLEIF:
 - Öffentlich: Bundesländer, Regionen, Städte, Förderbanken, staatlich
   garantierte Emittenten und supranationale Institutionen (GLEIF-Kategorie
   Regierungsstelle/internationale Organisation oder überwiegend CFI-Garantie
-  „Staat“ bzw. „supranational“).
+  „Staat“ bzw. „supranational“; dazu Namen in OEFFENTLICH_NAME, z. B. die
+  Oesterreichische Kontrollbank).
 - Unternehmen: alle übrigen (einschließlich Banken und Versicherer).
 
 Land: Konzernmutter („ultimate parent“, sonst direkte Mutter) aus der Beziehungsdatei des
@@ -242,6 +243,10 @@ KUERZEL = [(re.compile(p, re.IGNORECASE), w) for p, w in [
 # Staatliche Banken/Agenturen, die GLEIF als Zentralstaat führt (→ Öffentlich)
 AGENTUR = re.compile(r"BANK|BANCO|BANQUE|INSTITUT|BPIFRANCE|ADIF|COMISI|AGENC|CORPORA|SOCIET|COMPAN|FUND|FONDS",
                      re.IGNORECASE)
+# Öffentlich, obwohl das Register es nicht erkennen lässt (seit 15.10.2026, Gesamtprüfung B03-04): Die Oesterreichische Kontrollbank
+# begibt Anleihen mit Garantie der Republik Österreich, GLEIF führt sie als gewöhnliches Unternehmen und die CFI-Codes melden keine
+# Staatsgarantie – sie stand als „Unternehmen“, die KfW als „Öffentlich“. Name laut GLEIF (legalName), Prüfung nach dem Staat.
+OEFFENTLICH_NAME = re.compile(r"^(?:Oe|Ö)sterreichische Kontrollbank\b", re.IGNORECASE)
 # Nach dem Ländernamen folgt in Staatsanleihe-Namen: Komma („Österreich, Republik“),
 # Währungskürzel („EO-“, „DL-“), eine Zahl („Griechenland 34“) oder eine Gattung.
 NACH_LAND = re.compile(r"(?:,|\s+(?:[A-Z]{2}-|\d|perp\b|FLR\b|Anl|Bds?\b|Bonds?\b|Notes?\b|Treasury\b)|$)")
@@ -531,7 +536,7 @@ def einstufen(lei: str, info: dict | None, namen: list[tuple[str, str]], cfi4: c
             info.get("sub") == "CENTRAL_GOVERNMENT" and not AGENTUR.search(info.get("name", ""))):
         worte = [LAENDER.get(land, "")] + ALIAS.get(land, [])
         return 0, " ".join(w for w in worte if w)
-    if info.get("kat") in ("RESIDENT_GOVERNMENT_ENTITY", "INTERNATIONAL_ORGANIZATION"):
+    if info.get("kat") in ("RESIDENT_GOVERNMENT_ENTITY", "INTERNATIONAL_ORGANIZATION") or OEFFENTLICH_NAME.search(info.get("name", "")):
         return 1, ""
     if (cfi4["T"] + cfi4["C"]) * 2 > sum(cfi4.values()):
         return 1, ""

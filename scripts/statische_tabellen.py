@@ -1050,19 +1050,13 @@ def hero_karte(html_, P, h):
 # ezb.json (ohne Veränderung) – dieselbe Rechnung wie bis 14.10.2026 das Seitenskript, das die drei Dateien dafür einbetten ließ.
 # „Stand“ = Tag der Bundesbank-Kurve; Werte von einem anderen Tag (USA laut Fed H.15, Bund 2050) mit ihrem Tag dahinter.
 # Fällt eine Datei aus, bleibt ihr Rückfallwert stehen (Warnung).
-def zinsstand(site, seite="index.html"):
-    pfad = os.path.join(site, seite)
-    html_ = open(pfad, encoding="utf-8").read()
-    if 'class="zs-band"' not in html_:
-        return warn(f"{seite}: Zinsstand-Band nicht gefunden")
-
+def zinsstand_werte(site, seite="index.html"):
+    """Werte des Zinsstand-Bands: {Schlüssel data-zs: (Wert in %, Veränderung zum Vormonat oder None)} und die Tage je Quelle
+    ({"DE", "US", "B50": ISO}). Eigene Funktion seit 15.10.2026, damit scripts/pruefen.py das gebaute Band nachrechnen kann
+    (Gesamtprüfung B01-18)."""
     def vormonat(iso):
         j, m = int(iso[:4]), int(iso[5:7]) - 1
         return f"{j - 1}-12" if not m else f"{j}-{m:02d}"
-
-    def pkt(d):   # wie pkt() bisher im Seitenskript: auf 0,01 gerundet, „±0,00“ ohne Bewegung
-        n = math.floor(d * 100 + 0.5) / 100
-        return ("+" if n > 0 else "−" if n < 0 else "±") + zahl(abs(n), 2)
 
     werte, tage = {}, {}
     try:
@@ -1095,6 +1089,20 @@ def zinsstand(site, seite="index.html"):
             tage["B50"] = neu["date"]
     except Exception as e:
         warn(f"{seite}: Zinsstand – langlaeufer.json nicht gelesen ({type(e).__name__}: {e})")
+    return werte, tage
+
+
+def zinsstand(site, seite="index.html"):
+    pfad = os.path.join(site, seite)
+    html_ = open(pfad, encoding="utf-8").read()
+    if 'class="zs-band"' not in html_:
+        return warn(f"{seite}: Zinsstand-Band nicht gefunden")
+
+    def pkt(d):   # wie pkt() bisher im Seitenskript: auf 0,01 gerundet, „±0,00“ ohne Bewegung
+        n = math.floor(d * 100 + 0.5) / 100
+        return ("+" if n > 0 else "−" if n < 0 else "±") + zahl(abs(n), 2)
+
+    werte, tage = zinsstand_werte(site, seite)
     gesetzt = 0
     for key, (wert, delta) in werte.items():
         if not ist_zahl(wert):
@@ -1177,12 +1185,8 @@ def startseite_feste_zeilen(site, seite="index.html"):
 
 # ---------- Bundeswertpapiere (seit 04.10.2026, SEO-Runde 2: neue Seite, Entscheidung 02.10.2026) ----------
 BL_SPALTEN = ["anleihe", "rendite", "kupon", "restlaufzeit", "kurs", "volumen", "merken"]
-# Grüne Bundeswertpapiere laut Finanzagentur (deutsche-finanzagentur.de → Bundeswertpapierarten → Grüne Bundeswertpapiere, abgerufen
-# am 15.10.2026; seit 15.10.2026, Gesamtprüfung B11-01): Der Registername der ersten grünen Bundesanleihe DE0001030708 (0 % 2030) trägt
-# kein „Grüne“ – sie hieß in der Liste „Bundesanleihe“ wie ihr konventioneller Zwilling DE0001102507. Neue grüne Papiere erkennt
-# art_von() weiter am Namen; diese Liste ergänzt nur. Bei neuen Emissionen ohne „Grüne“ im Namen hier nachtragen.
-GRUENE_BUND = {"DE0001030708", "DE0001030724", "DE0001030732", "DE0001030740", "DE0001030757",
-               "DE000BU35025", "DE000BU3F007", "DE000BU3Z005", "DE000BU3Z047"}
+# Grüne Bundeswertpapiere: Liste GRUENE_BUND in scripts/steckbriefe.py (seit 15.10.2026 dort für Steckbriefe, diese Seite und
+# kennzahlen.py; art_von(name, isin) setzt „Grüne …“ auch bei Registernamen ohne „Grüne“, z. B. DE0001030708).
 BL_RE = re.compile(r"(<!--BUNDESLISTE-->).*?(<!--/BUNDESLISTE-->)", re.S)
 
 
@@ -1211,11 +1215,9 @@ def bundeswertpapiere(site, seite="bundeswertpapiere.html"):
         z = stamm.get(isin)
         if not z or not z[4] or z[4] < heute:
             continue
-        art = art_von(z[0])
+        art = art_von(z[0], isin)
         if not art:
             continue
-        if isin in GRUENE_BUND and not art.startswith("Grüne"):
-            art = "Grüne " + art
         kupon_ = z[3] if ist_zahl(z[3]) else None
         objs.append({"isin": isin, "kurz": art, "reg": z[0], "art": 0, "ccy": z[2] or "EUR", "kupon": kupon_,
                      "zinsart": 2 if (len(z) > 9 and z[9] == 2) or kupon_ == 0 else 0, "faellig": z[4], "kurs": kurs_,

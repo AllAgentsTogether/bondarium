@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Schreibt zinskurve.json – der Abstand zwischen langen und kurzen Laufzeiten
-(10 Jahre minus 2 Jahre) für Deutschland und die USA, als Monatsdurchschnitte seit
-1972 bzw. 1976 und dazu der jüngste Tageswert. Seite: zinskurve.html (Menü „Markt“).
+(10 Jahre minus 2 Jahre) für Deutschland und die USA, als Monatswerte seit 1972 bzw. 1976
+(Deutschland: Monatsendwerte der Bundesbank, Stand am Monatsende; USA: Monatsdurchschnitte)
+und dazu der jüngste Tageswert. Seite: zinskurve.html (Menü „Markt“).
 
 Quellen (amtlich, kostenlos, ohne Schlüssel):
 - Deutschland: Deutsche Bundesbank, Zinsstrukturkurve am Rentenmarkt (Svensson-Methode),
@@ -72,8 +73,8 @@ def buba(freq: str, lz: str, extra: str = "") -> dict[str, float]:
 
 
 def deutschland() -> tuple[list, list]:
-    """Monatsreihe seit 1972 (amtliche Monatsdurchschnitte) plus laufender Monat aus den
-    Tageswerten; dazu der jüngste Tageswert."""
+    """Monatsreihe seit 1972 (amtliche Monatsendwerte, Stand am Monatsende) plus laufender Monat als
+    Teil-Durchschnitt der Tageswerte; dazu der jüngste Tageswert."""
     m2, m10 = buba("M", "R02XX"), buba("M", "R10XX")
     seit = (datetime.date.today() - datetime.timedelta(days=70)).replace(day=1).isoformat()
     d2, d10 = buba("D", "R02XX", f"&startPeriod={seit}"), buba("D", "R10XX", f"&startPeriod={seit}")

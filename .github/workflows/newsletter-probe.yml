@@ -21,3 +21,5 @@ jobs:
           code=$(curl -sS -o antwort.json -w "%{http_code}" --max-time 90 -H "X-Requested-With: bondarium-konto" -H "X-Trigger-Key: $KEY" --data "aktion=newsletter-senden&an=betreiber" https://www.bondarium.de/konto.php || true)
           echo "HTTP $code: $(cat antwort.json 2>/dev/null)"
           [ "$code" = "200" ]
+          # rot, wenn nichts verschickt wurde – konto.php antwortet bei gesperrter Ausgabe mit "gesendet":0 und dem Grund (seit 15.10.2026)
+          grep -q '"gesendet":1' antwort.json
