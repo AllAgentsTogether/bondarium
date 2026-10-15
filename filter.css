@@ -17,7 +17,7 @@
 .fval::before { content: "· "; font-weight: 400; opacity: 0.75; }
 .fclear { font: inherit; font-size: 13px; color: var(--line); background: none; border: 0; padding: 8px 4px; cursor: pointer; }
 .fclear:hover { text-decoration: underline; }
-/* Weitere Filter (UX 29.09.2026): die sechs wichtigsten Filter immer sichtbar, fünf seltener gebrauchte hinter einem Schalter –
+/* Weitere Filter (UX 29.09.2026): die sieben wichtigsten Filter immer sichtbar, fünf seltener gebrauchte hinter einem Schalter –
    gleiche Filter, gleiche Wirkung; aktive Filter aus der Adresse öffnen den Bereich von selbst */
 .filter:not(.alle) .fgrp.neben { display: none; }
 .fmehr { font: inherit; font-size: 13px; line-height: 1; color: var(--text); background: none; border: 1px dashed rgba(44,44,42,0.32); border-radius: 6px; padding: 8px 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
@@ -58,6 +58,8 @@
 .fber input:focus-visible { outline: 2px solid var(--line); outline-offset: 1px; }
 .fber input[aria-invalid="true"] { border-color: #A2561C; background: #FFF6EE; }
 .fber-h { flex-basis: 100%; margin: 2px 0 0; font-size: 12px; line-height: 1.45; color: var(--muted); }
+.fber-f { flex-basis: 100%; margin: 2px 0 0; font-size: 12.5px; line-height: 1.45; font-weight: 600; color: #A2561C; }   /* Fehler an den Feldern (seit 15.10.2026), Farbe wie der Feldrand, 5,4:1 */
+.fber-f[hidden] { display: none; }
 @media (max-width: 600px) {
   .fgrp { position: static; }
   .fpanel, .fpanel.rechts { left: 0; right: 0; max-width: none; width: auto; }
@@ -74,7 +76,7 @@
 .sol-btn:hover { border-color: var(--green-text); }
 .fclear[hidden] { display: none; }   /* am Touch-Gerät überschrieb display: inline-flex das hidden-Attribut (Knopf stand ohne aktiven Filter da) */
 .sol-btn:focus-visible, .sol-mehr summary:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; }
-.sol-sw { flex: none; position: relative; width: 30px; height: 18px; border-radius: 999px; background: #D9D8D3; transition: background .15s; }
+.sol-sw { flex: none; position: relative; width: 30px; height: 18px; border-radius: 999px; background: #8E8D86; transition: background .15s; }   /* „aus“: Spur 3,3:1 auf Weiß (seit 15.10.2026; vorher #D9D8D3 mit 1,4:1, WCAG 1.4.11, A05-02) */
 .sol-sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(26,26,25,0.3); transition: transform .15s; }
 .sol-btn[aria-pressed="true"] { border-color: var(--green-text); }
 .sol-btn[aria-pressed="true"] .sol-sw { background: var(--green-text); }

@@ -27,6 +27,9 @@ Handy-Karten, PDFs, CSV, Kalender, E-Mails), nimmt Bezeichnung und Format aus de
   Katalog; PHP nimmt ihn fertig aus `newsletter/anleihen.json`. Im Datenlauf stehen Kurzname und Bonität in den Zeilen der Ranglisten
   (`kurz`, `bon`) und für die übrigen Seiten in `anleihen-auswahl.json` (`scripts/suchindex.py`).
 - Neue Ausnahme: im Katalog unter `ausnahmen` eintragen (Schlüssel = Emittent in lesbarer Schreibung, wie in `suchindex.json`).
+- Lesbare Schreibung: Namen mit „Mc“ behalten die Binnengroßschreibung („MCDONALD'S CORPORATION“ → „McDonald's Corporation“,
+  seit 15.10.2026 in `MC.felder.lesbar`; dieselbe Regel gehört in `_common.lesbar` und die Kopie in `anleihe.html`).
+- Land „INT“ (supranationale Emittenten) heißt überall „International (supranational)“ – Filter, Suche, Steckbrief, `MC.felder.landName`.
 
 ## Tabellenstandard
 
@@ -86,5 +89,6 @@ an die Seite geliefert als `termine` und `termine_geschaetzt`; Musterdepots, Ste
 ## Neue Anleihen-Tabelle bauen
 
 1. Zeilenobjekte bilden (Felder siehe Kopf von `felder.js`), 2. `MC.felder.tabelle(spaltenIds, zeilen, { sort, sortieren: true, rang, ctx })`
-in ein `<table class="kpis atab">` schreiben, 3. `MC.felder.sortierbar(table, sort, neuZeichnen)`. Seitenspezifische Spalten über
+in ein `<table class="kpis atab">` schreiben, 3. `MC.felder.sortierbar(table, sort, neuZeichnen)` – `neuZeichnen` schreibt Kopf und Zeilen in dieselbe Tabelle; der Fokus kehrt danach auf
+den Sortierknopf zurück (Tastatur, seit 15.10.2026). Seitenspezifische Spalten über
 `opt.extra`. Wird die Tabelle auch vorgerendert, `scripts/statische_tabellen.py` (`std_tabelle`) nutzen.

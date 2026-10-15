@@ -52,6 +52,7 @@
     if (!erstes && KLEINWORT.has(u)) return w.toLowerCase();
     if (KUERZEL.has(u) || !/[AEIOUYÄÖÜÉÈÀÁÍÓÚÂÊÎÔÛİ]/.test(u)) return w;
     if (w.length <= 3 && !WORT3.has(u) && !KLEINWORT.has(u)) return w;
+    if (/^MC[A-Z]{2}/.test(u)) return "Mc" + u[2] + u.slice(3).toLowerCase();   // „MCDONALD'S“ → „McDonald's“, „MCKESSON“ → „McKesson“ (seit 15.10.2026, A04-05)
     return w[0] + w.slice(1).replace(/İ/g, "i").toLowerCase();
   }
   function lesbar(name) {
@@ -75,7 +76,7 @@
     return e;
   }
   var DN = (function () { try { return new Intl.DisplayNames(["de"], { type: "region" }); } catch (e) { return null; } })();
-  function landName(c) { if (c === "INT") return "International"; try { return (DN && DN.of(c)) || c; } catch (e) { return c; } }
+  function landName(c) { if (c === "INT") return "International (supranational)"; try { return (DN && DN.of(c)) || c; } catch (e) { return c; } }
 
   // ---------- Schreibweisen (Kapitel 6 des Konzepts) ----------
   // Jahre von heute bis iso – „heute“ ist der Berliner Kalendertag (MC.heuteBerlin, seit 09.10.2026, Technik-Test 08.10.2026 T-51):
@@ -86,7 +87,7 @@
   function kupon(o) {
     if (!o) return "–";
     if (o.zinsart === 1 || o.kupon === "var") return "variabel";
-    if (o.zinsart === 2 || (o.kupon === 0 && o.zinsart !== 0)) return "Nullkupon";
+    if (o.zinsart === 2 || o.kupon === 0) return "Nullkupon";   // Kupon 0 auch bei Zinsart „fest“ nie „0,00 %“ (seit 15.10.2026, A04-03)
     return typeof o.kupon === "number" ? kuponZahl(o.kupon) : "–";
   }
   function kursZahl(v) { return zahl(v, Math.abs(v * 100 - Math.round(v * 100)) > 1e-6 ? 3 : 2); }   // dritte Stelle, wenn vorhanden (99,015)
@@ -244,14 +245,17 @@
     return kopf + "<tbody>" + rumpf + "</tbody>";
   }
   // Sortieren per Klick auf den Spaltenkopf: sort = {col, dir} wird geändert, danach neu(); erste Richtung absteigend bei Rendite, Kupon,
-  // Volumen, Handelstage, Risikoaufschlag (abw), sonst aufsteigend
+  // Volumen, Handelstage, Risikoaufschlag (abw), sonst aufsteigend. neu() schreibt den Tabellenkopf neu – lag der Fokus auf dem
+  // Sortierknopf, steht er danach auf dem neuen Knopf derselben Spalte (seit 15.10.2026, Gesamtprüfung A04-01; vorher auf <body>)
   function sortierbar(table, sort, neu) {
     table.addEventListener("click", function (e) {
       var b = e.target.closest(".sortbtn[data-col]");
       if (!b || !table.tHead || !table.tHead.contains(b)) return;
-      var col = b.dataset.col;
+      var col = b.dataset.col, fokus = document.activeElement === b;
       if (sort.col === col) sort.dir = -sort.dir; else { sort.col = col; sort.dir = SPALTEN[col] && SPALTEN[col].abw ? -1 : 1; }
       neu();
+      var nb = fokus && table.querySelector('.sortbtn[data-col="' + col + '"]');
+      if (nb && nb !== document.activeElement) nb.focus();
     });
   }
 

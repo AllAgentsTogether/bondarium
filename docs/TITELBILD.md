@@ -1,7 +1,7 @@
 # Titel-Illustration – Platz, Größe, Zeichenfläche
 
-Stand: 01.10.2026 · gilt für die Illustration neben der Überschrift (`.b2-kopf` / `.b2-spot`, Dateien `spot-<seite>.svg`)
-auf den 39 Themenseiten. Die Regeln stehen in `bildwelt2.css`; diese Datei erklärt sie und hält fest, was gemessen wurde.
+Stand: 15.10.2026 (Regeln vom 01.10.2026) · gilt für die Illustration neben der Überschrift (`.b2-kopf` / `.b2-spot`, Dateien
+`spot-<seite>.svg`) auf 48 Seiten (Über uns seit 14.10.2026 ohne Illustration, `.b2-kopf-ohne`; am 01.10.2026 waren es 39). Die Regeln stehen in `bildwelt2.css`; diese Datei erklärt sie und hält fest, was gemessen wurde.
 
 ## Wozu die Illustration da ist
 
@@ -37,6 +37,9 @@ nie verdrängen. Daraus folgt alles Weitere: Die Überschrift bestimmt den Platz
 - Die Zeichnung füllt **75 bis 95 % der Breite**. Schmalere Motive wirken neben der Überschrift eingerückt, weil ihr
   rechter Rand weit vom Inhaltsrand entfernt ist.
 - Mindestens 4 Einheiten Rand nach allen Seiten, nichts ragt über die Fläche.
+- Schrift in der Zeichnung nur, wo sie das Motiv ist (AAA, A–Z, §, ETF): `font-family="'Source Sans 3', 'Helvetica Neue', Arial,
+  sans-serif"`, Schnitt höchstens 600. Im `<img>` lädt keine Webschrift – es erscheint die Systemschrift (seit 15.10.2026; vorher
+  „Manrope“ in 800).
 
 Einbau:
 
@@ -71,8 +74,9 @@ Ursache war eine einzige Regel: `align-items: center` im Kopf-Raster. Jetzt `ali
 - **Sechs schmale Motive** füllen weniger als 60 % der Breite (oder enden mehr als 40 px vor dem Inhaltsrand): Rechner
   (39 %), Rechtliches (48 %), Bonität (51 %), Erste Anleihe (53 %), Grundlagen (59 %), Broker-Vergleich. Sie sind richtig
   platziert, wirken aber eingerückt. Abhilfe wäre, sie breiter zu zeichnen – nicht, sie anders zu platzieren.
-- **Zwei Dateien haben eine Fläche von 320 × 200** statt 160 × 110 (`spot-anlageziele.svg`, `spot-etf-oder-anleihe.svg`).
-  Sie werden im Rahmen etwas kleiner dargestellt. Beim nächsten Anfassen auf 160 × 110 umstellen.
+- Erledigt: Zwei Dateien mit Fläche 320 × 200 (`spot-anlageziele.svg`, `spot-etf-oder-anleihe.svg`): seit 15.10.2026 auf 160 × 110
+  umgestellt – die Zeichnung steht unverändert in einer Gruppe mit `scale(0.5)`, 5 Einheiten von oben; im Titelrahmen
+  (232 × 160) sieht sie genau aus wie vorher.
 - **Am Handy steht die Illustration über der Überschrift** und schiebt sie um 118 px nach unten. Das ist unverändert –
   eine Geschmacksfrage zwischen Wiedererkennung und „Inhalt zuerst“, die der Betreiber entscheidet.
 

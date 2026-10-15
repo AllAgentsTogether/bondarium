@@ -2,12 +2,13 @@
    Inline-Script am Body-Ende geladen (DOM ist dann bereits geparst).
    Einzige Quelle für: HTML-Escaping (XSS-Schutz), Datenladen (eingebettete
    Deploy-Daten vor fetch, gemeinsamer Fetch-Cache), Zahlen-/Datumsformat, die
-   „veraltet“-Regel, Nav-Dropdowns inkl. aria-current, Chart-Tooltips, Kursverläufe,
-   den Wisch-Hinweis quer scrollender Tabellen und die Einordnungsregel.
+   „veraltet“-Regel, Nav-Dropdowns inkl. aria-current, Chart-Tooltips, Kursverläufe
+   und den Wisch-Hinweis quer scrollender Tabellen.
    Der Kurs-Chart (MC.kursChart) steht seit 30.09.2026 in chart.js, die Anleihen-
    Mathematik (MC.bond) in bond.js – beide nur auf den Seiten, die sie brauchen.
 
-   API (window.MC), Stand 30.09.2026:
+   API (window.MC), Stand 15.10.2026 (Kopfzeilen-Suche und Einordnung percentile/stats/rate/pctText/ratePill entfernt –
+   die Kopfzeile hat seit 10.10.2026 kein Suchfeld, die Einordnung rief keine Seite mehr auf; Gesamtprüfung A03-01):
      MC.esc(s)                 HTML-Escaping – für jede Fremd-Zeichenkette vor innerHTML
      MC.minus(s)               führendes „-“ → echtes Minus „−“
      MC.zahl(v, nachkomma)     1234.5 → „1.234,50“ (de-DE, echtes Minus); keine Zahl → „–“
@@ -24,8 +25,7 @@
      MC.teil(isin), MC.verlauf(isin[, bund][, {ab}])   Kursverlauf aus kurse/ (nur vorhandene Jahre, kurse/jahre.json)
      MC.hoverWrap(svg, series[, label[, opts]])        Chart-Tooltip; Daten bleiben im JS (nicht im DOM)
      MC.wischPruefen()         Wisch-Hinweis (.ueberlauf) neu prüfen
-     MC.navInit()              Menü, aria-current, Kopfzeilen-Suche
-     MC.percentile/stats/rate/pctText/ratePill         Einordnung gegen die eigene Historie */
+     MC.navInit()              Menü (Aufklapper, Handy-Blatt), aria-current, „Datenquellen und Methodik“ per #quellen */
 window.MC = (function () {
   "use strict";
 
@@ -85,7 +85,7 @@ window.MC = (function () {
   // Anzeige als Feld (Wert + Erläuterung), gleich in Suche und Steckbrief. kurs = aktueller Kurs in % oder null.
   // Rückgabe: { wert, klein (HTML), warn (true bei fester Kündigung/ewig), anker (Sprungmarke auf kuendbare-anleihen.html, leer = kein Link) }
   function kuendigungFeld(o, kurs) {
-    var jetzt = new Date().getFullYear(), ab = o.jahr != null ? (o.jahr <= jetzt ? "seit " : "ab ") + o.jahr : "";
+    var jetzt = heuteBerlin().getUTCFullYear(), ab = o.jahr != null ? (o.jahr <= jetzt ? "seit " : "ab ") + o.jahr : "";   // Jahr in Berlin (A03-04)
     var put = o.put ? " · du kannst kündigen (Put)" : "";
     var f = {
       n: o.put ? ["nur durch dich", "Kündigungsrecht für dich (Put) – ein Vorteil", "put"] : ["keine", "feste Laufzeit", ""],
@@ -142,10 +142,17 @@ window.MC = (function () {
     var s = nf.format(v);
     return /[1-9]/.test(s) ? minus(s) : s.replace(/^[-−]/, "");
   }
-  // ISO-Datum „JJJJ-MM-TT…“ → „TT.MM.JJJJ“ (MC.datum) bzw. „TT.MM.“ (MC.tag); ungültig → „–“
+  // ISO-Datum „JJJJ-MM-TT…“ → „TT.MM.JJJJ“ (MC.datum) bzw. „TT.MM.“ (MC.tag); ungültig → „–“. Seit 15.10.2026 auch ein Tag, den es
+  // nicht gibt („2026-02-30“ stand als „30.02.2026“ da; Gesamtprüfung A03-05)
   var ISO_RE = /^(\d{4})-(\d{2})-(\d{2})/;
-  function datum(iso) { var m = ISO_RE.exec(String(iso || "")); return m ? m[3] + "." + m[2] + "." + m[1] : "–"; }
-  function tag(iso) { var m = ISO_RE.exec(String(iso || "")); return m ? m[3] + "." + m[2] + "." : "–"; }
+  function isoTeile(iso) {
+    var m = ISO_RE.exec(String(iso || ""));
+    if (!m) return null;
+    var d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], 12));
+    return d.getUTCMonth() === +m[2] - 1 && d.getUTCDate() === +m[3] ? m : null;
+  }
+  function datum(iso) { var m = isoTeile(iso); return m ? m[3] + "." + m[2] + "." + m[1] : "–"; }
+  function tag(iso) { var m = isoTeile(iso); return m ? m[3] + "." + m[2] + "." : "–"; }
   // „Heute“ ist der Berliner Kalendertag (seit 09.10.2026, Technik-Test 08.10.2026 T-51): Die Kurse sind Berliner Börsentage. Vorher
   // galt das Gerätedatum bzw. die UTC-Grenze – am Fälligkeitstag zwischen 0 und 2 Uhr stand „1 Tag“, in Auckland war ein Kurs einen
   // Börsentag älter als in Berlin. MC.heuteBerlin() → Date um 12:00 UTC dieses Tages; ohne Zeitzonen-Daten im Browser das Ortsdatum.
@@ -271,12 +278,28 @@ window.MC = (function () {
     // Tiefe des Blatts laut History: 0 zu, 1 erste Stufe, 2 ein Bereich
     var tiefe = function () { return (history.state && history.state.mnav) || 0; };
     var merken = function (t) { try { history.pushState({ mnav: t }, ""); } catch (e) {} };
+    // Seite hinter dem offenen Blatt (seit 15.10.2026, Gesamtprüfung A01-05): Brotkrumen, Inhalt, Fußzeile und Sprunglink werden
+    // „inert“ – Tab läuft nicht mehr in die verdeckte Seite, Screenreader lesen sie nicht mit. Gesperrt werden die Geschwister der
+    // Kopfzeile und ihrer Vorfahren bis <body>; beim Schließen genau diese wieder frei.
+    var hinterBlatt = [];
+    var sperren = function (an) {
+      hinterBlatt.forEach(function (x) { x.removeAttribute("inert"); });
+      hinterBlatt = [];
+      if (!an) return;
+      for (var el = bar; el && el.parentElement && el !== document.body; el = el.parentElement) {
+        Array.prototype.forEach.call(el.parentElement.children, function (x) {
+          if (x === el || /^(SCRIPT|STYLE|TEMPLATE|LINK|META)$/.test(x.tagName) || x.hasAttribute("inert")) return;
+          x.setAttribute("inert", ""); hinterBlatt.push(x);
+        });
+      }
+    };
     var setOpen = function (open, vonHistory) {
       if (!bar || !toggle) return;
       var war = bar.classList.contains("nav-open");
       bar.classList.toggle("nav-open", open);
       bar.classList.remove("nav-tief");
       document.body.classList.toggle("nav-lock", open);
+      sperren(open);
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
       toggle.setAttribute("aria-label", open ? "Menü schließen" : "Menü öffnen");
       closeAll(null);
@@ -313,6 +336,26 @@ window.MC = (function () {
       if (!vonHistory && tiefe() === 2) history.back();
     };
     if (toggle) toggle.addEventListener("click", function () { setOpen(!bar.classList.contains("nav-open")); });
+    // Link im offenen Blatt (seit 15.10.2026, Gesamtprüfung A01-06): erst die History-Einträge des Blatts abbauen, dann folgen.
+    // Vorher blieben sie stehen – nach „Zurück“ stand die Vorseite mit offenem Blatt auf Stufe 2 da, erst der dritte Zurück-Schritt
+    // verließ sie. Gilt nicht für Bereichsköpfe und Gruppen (die klappen nur, preventDefault) und nicht für Klicks mit Zusatztaste.
+    if (bar) bar.addEventListener("click", function (e) {
+      if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      var a = e.target.closest ? e.target.closest("a[href]") : null, n = tiefe();
+      if (!a || !n || !bar.classList.contains("nav-open") || (a.target && a.target !== "_self")) return;
+      e.preventDefault();
+      var ziel = a.href, t = 0;
+      var los = function () { window.removeEventListener("popstate", los); clearTimeout(t); location.href = ziel; };
+      window.addEventListener("popstate", los);
+      t = setTimeout(los, 500);   // Rückfall, falls popstate ausbleibt
+      history.go(-n);
+    });
+    // Seite aus dem Zwischenspeicher des Browsers (Zurück/Vor): Blatt zu, eigene Einträge abbauen (A01-06)
+    window.addEventListener("pageshow", function (e) {
+      if (!e.persisted || !bar) return;
+      if (bar.classList.contains("nav-open")) setOpen(false, true);
+      if (tiefe()) history.go(-tiefe());
+    });
     // Zurück-Taste (Android, Browser): eine Stufe zurück bzw. Blatt zu – Vorwärts-Einträge öffnen nichts
     window.addEventListener("popstate", function () {
       if (!bar || !mobile() || !bar.classList.contains("nav-open")) return;
@@ -324,8 +367,18 @@ window.MC = (function () {
       var b = e.target.closest ? e.target.closest(".nav-back") : null;
       if (b) { e.preventDefault(); zurueck(); }
     });
+    // Bis 1000 px navigieren Bereichsköpfe und Gruppen (Grundlagen, Top 10 …) nicht, sie öffnen Stufe 2 bzw. klappen auf: dort sind
+    // sie für Screenreader Knöpfe (role="button", Leertaste wie Enter), am Desktop wieder Links (seit 15.10.2026, Gesamtprüfung A01-14)
+    var rollen = function () {
+      var m = mobile();
+      groups.forEach(function (g) { var b = g.querySelector(".nav-group-btn"); if (m) b.setAttribute("role", "button"); else b.removeAttribute("role"); });
+      Array.prototype.forEach.call(document.querySelectorAll(".sitenav .np-item.hat-sub"), function (a) {
+        if (m) a.setAttribute("role", "button"); else { a.removeAttribute("role"); a.removeAttribute("aria-expanded"); }
+      });
+    };
+    rollen();
     // Wechsel Handy ↔ Desktop (Drehen, Fenster ändern): alles zu
-    var onChange = function () { setOpen(false); };
+    var onChange = function () { setOpen(false); rollen(); };
     if (mq.addEventListener) mq.addEventListener("change", onChange); else if (mq.addListener) mq.addListener(onChange);
     // Der Gruppen-Kopf ist ein Link (Suche → anleihen-suche.html, Wissen →
     // wissen.html). Mit Maus öffnet das Menü per Hover (CSS), per Tastatur mit
@@ -341,12 +394,37 @@ window.MC = (function () {
       var menu = grp.querySelector(".nav-group-menu");
       // Vorschau (seit 11.10.2026, nav.py panel()): Überfahren oder Fokus auf einen Eintrag zeigt rechts seine Vorschau
       // (Titel, Text, Bild bzw. die Unterseiten eines Bereichs). Im Handy-Akkordeon gibt es keine Vorschau.
-      if (menu) Array.prototype.forEach.call(menu.querySelectorAll(".np-item"), function (a) {
-        var zeigen = function () {
-          if (mobile()) return;
-          Array.prototype.forEach.call(menu.querySelectorAll(".np-item"), function (x) { x.classList.toggle("on", x === a); });
-          Array.prototype.forEach.call(menu.querySelectorAll(".np-pv-wrap"), function (v) { v.hidden = v.getAttribute("data-np") !== a.getAttribute("data-np"); });
-        };
+      var items = menu ? Array.prototype.slice.call(menu.querySelectorAll(".np-item")) : [];
+      var vorschau = function (a) {
+        items.forEach(function (x) { x.classList.toggle("on", x === a); });
+        Array.prototype.forEach.call(menu.querySelectorAll(".np-pv-wrap"), function (v) { v.hidden = v.getAttribute("data-np") !== a.getAttribute("data-np"); });
+      };
+      // Unterseiten eines Bereichs in seiner Vorschau (nur Bereiche mit Gruppe: Grundlagen, Top 10 …)
+      var unterseiten = function (a) {
+        var w = a && a.classList.contains("hat-sub") ? menu.querySelector('.np-pv-wrap[data-np="' + a.getAttribute("data-np") + '"]') : null;
+        return w ? Array.prototype.slice.call(w.querySelectorAll(".np-subs a")) : [];
+      };
+      // Tastatur (seit 15.10.2026, Gesamtprüfung A01-04): Tab führt von einem Bereich erst durch seine Unterseiten in der Vorschau,
+      // dann zum nächsten Eintrag; Umschalt+Tab ebenso zurück. Vorher sprang Tab von Eintrag zu Eintrag – 19 Themenseiten der
+      // Akademie und „nach Ländern“ unter Anleihen waren per Tastatur nicht erreichbar. Die Vorschau „Alle Themen im Überblick“
+      // führt auf dasselbe Ziel wie der Bereich selbst und bleibt hier außen vor.
+      if (menu) menu.addEventListener("keydown", function (e) {
+        if (e.key !== "Tab" || e.altKey || e.ctrlKey || e.metaKey || mobile()) return;
+        var x = document.activeElement, i = items.indexOf(x), ziel = null, subs;
+        if (i >= 0) {
+          if (!e.shiftKey) { subs = unterseiten(x); ziel = subs[0] || null; }
+          else if (i > 0 && (subs = unterseiten(items[i - 1])).length) { vorschau(items[i - 1]); ziel = subs[subs.length - 1]; }
+        } else if (x && x.closest && x.closest(".np-subs")) {
+          var w = x.closest(".np-pv-wrap"), item = w && menu.querySelector('.np-item[data-np="' + w.getAttribute("data-np") + '"]');
+          subs = unterseiten(item);
+          var k = subs.indexOf(x);
+          if (k >= 0 && e.shiftKey && k === 0) ziel = item;
+          else if (k >= 0 && !e.shiftKey && k === subs.length - 1) ziel = items[items.indexOf(item) + 1] || null;
+        }
+        if (ziel) { e.preventDefault(); ziel.focus(); }
+      });
+      if (menu) items.forEach(function (a) {
+        var zeigen = function () { if (!mobile()) vorschau(a); };
         // Maus: erst nach kurzem Verweilen umschalten – wer schräg zur Vorschau fährt, streift sonst andere Einträge
         var t = null;
         a.addEventListener("mouseenter", function () { clearTimeout(t); t = setTimeout(zeigen, 90); });
@@ -359,13 +437,15 @@ window.MC = (function () {
           var auf = !a.classList.contains("auf");
           a.classList.toggle("auf", auf); a.setAttribute("aria-expanded", auf ? "true" : "false");
         });
+        if (a.classList.contains("hat-sub")) a.addEventListener("keydown", function (e) {   // role="button" am Handy: Leertaste klappt (A01-14)
+          if (mobile() && (e.key === " " || e.key === "Spacebar")) { e.preventDefault(); a.click(); }
+        });
       });
       // Ragt das Menü rechts aus dem Fenster (schmale Bildschirme: Marke und
       // Menü stehen seit 23.09.2026 in einer Zeile), wird es so weit nach links
       // geschoben, dass es passt – höchstens bis 8 px vor den linken Rand.
       var place = function () {
         if (!menu) return;
-        menu.classList.remove("nav-menu-right");
         menu.style.left = "";
         var vw = document.documentElement.clientWidth;
         var r = menu.getBoundingClientRect();
@@ -394,7 +474,10 @@ window.MC = (function () {
       // Pfeil nach unten auf dem Kopf: Menü öffnen und ersten Eintrag fokussieren;
       // Leertaste: Menü auf- und zuklappen, der Fokus bleibt auf dem Kopf (Tab führt dann hinein)
       btn.addEventListener("keydown", function (e) {
-        if (mobile()) return;
+        if (mobile()) {   // role="button" im Handy-Blatt: Leertaste wie Enter (A01-14)
+          if (e.key === " " || e.key === "Spacebar") { e.preventDefault(); btn.click(); }
+          return;
+        }
         if (e.key === " " || e.key === "Spacebar") {
           e.preventDefault();
           var auf = !grp.classList.contains("kb");
@@ -455,27 +538,6 @@ window.MC = (function () {
       var g = a && a.closest ? a.closest(".nav-group") : null;
       if (g) { var b = g.querySelector(".nav-group-btn"); if (a !== b) { g._esc = true; b.focus(); } b.setAttribute("aria-expanded", "false"); }
     });
-
-    // Suchfeld in der Kopfzeile (nav.py SEARCH, seit 26.09.2026). Leer abgeschickt (am Handy nur die Lupe):
-    // direkt auf die Anleihen-Suche, dort Fokus ins Suchfeld (#suchen). Auf der Suchseite selbst wird der
-    // Begriff ohne Neuladen in deren Feld übernommen.
-    var ks = bar ? bar.querySelector("form.kopfsuche") : null;
-    var seitenFeld = document.querySelector("main input#q") || document.getElementById("q");
-    if (ks) ks.addEventListener("submit", function (e) {
-      var v = ks.q.value.trim();
-      if (seitenFeld) {
-        e.preventDefault();
-        if (v) { seitenFeld.value = v; seitenFeld.dispatchEvent(new Event("input", { bubbles: true })); ks.q.value = ""; }
-        setOpen(false);
-        seitenFeld.focus();
-        return;
-      }
-      if (!v) { e.preventDefault(); location.href = ks.action.split("?")[0] + "#suchen"; }
-    });
-    if (location.hash === "#suchen" && seitenFeld) {
-      seitenFeld.focus();
-      if (history.replaceState) history.replaceState(null, "", location.pathname + location.search);
-    }
   }
 
   // --- Hover-Tooltip für Charts: beim Überfahren wird der nächstgelegene
@@ -780,7 +842,7 @@ window.MC = (function () {
       return out;
     };
     var boerse = function (liste) {
-      var jetzt = new Date().getFullYear(), t = teil(isin), jahre = [], j;
+      var jetzt = heuteBerlin().getUTCFullYear(), t = teil(isin), jahre = [], j;   // Jahr in Berlin, nicht auf dem Gerät (A03-04)
       if (liste) {
         var letztes = 0;
         Object.keys(liste.jahre).forEach(function (y) {
@@ -816,63 +878,6 @@ window.MC = (function () {
 
   // MC.kursChart (Kursverlauf zeichnen) steht seit 30.09.2026 in chart.js – nur anleihe.html und anleihen-etf.html laden es.
 
-  // --- Einordnung gegen die eigene Historie (seit 09/2026) ---
-  // Einzige Quelle der Perzentil-/Einstufungsregel für Startseite, Bewertungs-
-  // und Zinsen-Seite. percentile(v, arr): Anteil der Referenzwerte (z. B.
-  // Jahresdurchschnitte seit 1928) unterhalb von v in Prozent, Gleichstände
-  // zur Hälfte; null bei unbrauchbaren Eingaben.
-  function isNum(x) { return typeof x === "number" && isFinite(x); }
-  function percentile(v, arr) {
-    var s = (arr || []).filter(isNum);
-    if (!s.length || !isNum(v)) return null;
-    var below = 0, equal = 0;
-    for (var i = 0; i < s.length; i++) { if (s[i] < v) below++; else if (s[i] === v) equal++; }
-    return (below + equal / 2) / s.length * 100;
-  }
-  // Mittelwert, Median, Spanne einer Reihe (für „Ø seit …“ und Hoch/Tief-Angaben)
-  function stats(arr) {
-    var s = (arr || []).filter(isNum).sort(function (a, b) { return a - b; });
-    var n = s.length;
-    if (!n) return null;
-    var sum = 0;
-    for (var i = 0; i < n; i++) sum += s[i];
-    return { n: n, mean: sum / n, median: n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2, min: s[0], max: s[n - 1] };
-  }
-  // Einstufung nach Perzentil-Bändern – die offengelegte Regel der Seite:
-  // unter 10 % · 10–30 % · 30–70 % · 70–90 % · ab 90 % der Historie.
-  // kind "valuation": hoher Wert = teuer (Bewertungskennzahlen);
-  // kind "level": wertneutral (Zinsen, Inflation, Zinskurve);
-  // invert: true dreht die Skala (z. B. Risikoprämie: hoher Wert = günstig).
-  var RATE_BANDS = [10, 30, 70, 90];
-  var RATE_WORDS = {
-    valuation: ["sehr günstig", "günstig", "fair", "teuer", "sehr teuer"],
-    level: ["sehr niedrig", "niedrig", "mittel", "hoch", "sehr hoch"]
-  };
-  // Bildwelt 2.0 (30.09.2026): Datenpalette – günstig Tiefgrün, fair Grau, teuer Orange; wertneutral in Tinte
-  var RATE_COLORS = {
-    valuation: ["#157C00", "#157C00", "#55544F", "#CF7430", "#A2561C"],
-    level: ["#1A1A19", "#1A1A19", "#55544F", "#1A1A19", "#1A1A19"]
-  };
-  function rate(pct, kind, invert) {
-    if (!isNum(pct)) return null;
-    var k = RATE_WORDS[kind] ? kind : "level";
-    var p = invert ? 100 - pct : pct;
-    var idx = 0;
-    while (idx < RATE_BANDS.length && p >= RATE_BANDS[idx]) idx++;
-    return { idx: idx, label: RATE_WORDS[k][idx], color: RATE_COLORS[k][idx], pct: pct, extreme: idx === 0 || idx === 4 };
-  }
-  // Satzbaustein „höher als in 98 % der Jahre seit 1928“ (unit z. B. "Jahre"/"Monate")
-  function pctText(pct, unit, since) {
-    if (!isNum(pct)) return "";
-    var p = Math.round(pct);
-    var word = p >= 50 ? "höher als in " + p + "\u00a0%" : "niedriger als in " + Math.round(100 - pct) + "\u00a0%";
-    return word + " der " + unit + (since ? " seit " + since : "");
-  }
-  // Status-Pille wie auf Startseite/Stimmungsseiten; Inhalt nur aus den Regelwörtern
-  function ratePill(r) {
-    return r ? '<span class="pill" style="background:' + r.color + '">' + esc(r.label) + '</span>' : "";
-  }
-
   // Besucherzählung (seit 01.10.2026, docs/STATISTIK.md): meldet den Seitenaufruf an aufruf.php – ohne Cookies und
   // ohne Speicherung im Browser. Gesendet werden nur Pfad (ohne Suchparameter), Herkunft (Referrer) und utm_source.
   // Nicht gezählt: lokale Dateien, automatisierte Browser, „Global Privacy Control“ und „Do Not Track“.
@@ -895,6 +900,5 @@ window.MC = (function () {
   return { esc: esc, minus: minus, zahl: zahl, datum: datum, tag: tag, STALE_TAGE: STALE_TAGE, heuteBerlin: heuteBerlin, boersentage: boersentage, veraltet: veraltet,
     handelstag: handelstag, plusAbwicklungstage: plusAbwicklungstage, EURO_FEST: EURO_FEST, betragLesen: betragLesen,
     restlaufzeit: restlaufzeit, kuendigung: kuendigung, kuendigungFeld: kuendigungFeld, load: load, json: json, navInit: navInit, hoverWrap: hoverWrap, wischPruefen: wischPruefen,
-    percentile: percentile, stats: stats, rate: rate, pctText: pctText, ratePill: ratePill,
     teil: teil, verlauf: verlauf };
 })();

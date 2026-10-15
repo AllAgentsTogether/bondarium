@@ -25,8 +25,8 @@
      utc(iso)                          ms-Zeitstempel (12:00 UTC) des Datums
      addDays(iso, n)                   Datum + n Kalendertage → ISO
      monthsBack(t, m)                  Zeitstempel t minus m Monate, ohne Monatsüberlauf → Zeitstempel
-     settleDays(cur)                   Valuta in Abwicklungstagen: 2 für alle Währungen (Börsenhandel in Deutschland; bis 09.10.2026 USD/GBP 1)
-     settle(iso, cur)                  Valutatag zum Handelstag → ISO: settleDays(cur) Abwicklungstage später, ohne Wochenende und
+     settle(iso, cur)                  Valutatag zum Handelstag → ISO: 2 Abwicklungstage später (alle Währungen, Börsenhandel in
+                                       Deutschland; bis 09.10.2026 USD/GBP 1), ohne Wochenende und
                                        TARGET-Feiertage (MC.plusAbwicklungstage aus site.js; bis 09.10.2026 Kalendertage)
      yearsTo(maturity, from)           Restlaufzeit in Jahren (Tage / 365,25)
      couponDates(b, settle)            { dates: [künftige Kupontermine (ms), aufsteigend], prev: letzter Termin davor (ms),
@@ -36,16 +36,14 @@
                                        (Termine je Anleihe einmal erzeugt und zwischengespeichert – schnell für lange Reihen)
      accrued(b, settle)                Stückzinsen in % vom Nennwert: nächste Zahlung × (Valuta − start) / (nächster Termin − start)
      pricer(b, settle)                 { price(y), slope(y) } – Clean-Kurs und Ableitung als Funktion der Rendite
-     cleanPrice(b, y, settle)          Clean-Kurs (%) bei Rendite y
-     dirtyPrice(b, y, settle)          Kurs inkl. Stückzinsen
-     yieldFromPrice(b, p, settle[, start])  Rendite (dezimal) aus Clean-Kurs p; Newton, Rückfall Halbierung im Bereich −2 … 30 %
+     yieldFromPrice(b, p, settle[, start])  Rendite (dezimal) aus Clean-Kurs p; Newton, Rückfall Halbierung im Bereich −2 … 30 %;
+                                       liegt die Rendite außerhalb dieses Bereichs: NaN (seit 15.10.2026 – vorher der Rand, Kurs 20 ergab
+                                       „29,99999 %“; Aufrufer prüfen mit isFinite)
      duration(b, y, settle)            { macaulay, modified } in Jahren
-     fmt(v, dec)                       wie MC.zahl: „1.234,50“, keine Zahl → „–“
      fmtDate(iso)                      „TT.MM.JJJJ“, ungültig → „–“
      fmtCoupon(c)                      Kupon mit 2 oder 3 Nachkommastellen („2,50“ / „2,125“)
-     fmtVol(v[, einheit])              Volumen in Mrd., höchstens drei gültige Ziffern („1,25 Mrd.“); erst gerundet, dann die Einheit
-                                       (999,6 Mrd. → „1 Bio.“ statt „1.000 Mrd.“)
-     fmtStk(v)                         Stückelung („0,001“ · „0,01“ · „1.000“ · „200.000“)
+   Seit 15.10.2026 nicht mehr ausgeführt (keine Seite nutzte sie; Gesamtprüfung A04-04): settleDays, cleanPrice, dirtyPrice, fmt,
+   fmtVol, fmtStk – Volumen, Stückelung und Kupon für Tabellen schreibt MC.felder (felder.js).
 */
 (function (MC) {
   "use strict";
@@ -155,12 +153,13 @@
       tau: tau, cf: cf, accrued: acc
     };
   }
-  function cleanPrice(b, y, settleIso) { return pricer(b, settleIso).price(y); }
-  function dirtyPrice(b, y, settleIso) { var f = pricer(b, settleIso); return f.price(y) + f.accrued; }
   // Rendite aus dem Kurs: Newton-Verfahren (wenige Schritte); konvergiert es nicht im Bereich −2 … 30 %,
   // Halbierung mit 80 Schritten auf derselben Kursfunktion (Ergebnis wie die frühere reine Halbierung).
+  // Liegt die Rendite außerhalb von −2 … 30 % (Kurs über dem Kurs bei −2 % oder unter dem bei 30 %), gibt es keine: NaN
+  // (seit 15.10.2026, Gesamtprüfung A04-02; vorher der Rand selbst – Kurs 20 ergab 29,99999 %, Kurs 150 −1,99999 %).
   function yieldFromPrice(b, p, settleIso, start) {
     var f = pricer(b, settleIso), y = start != null && isFinite(start) ? start : 0.03;
+    if (!(p <= f.price(-0.02) && p >= f.price(0.30))) return NaN;
     for (var i = 0; i < 40; i++) {
       var step = (f.price(y) - p) / f.slope(y);
       if (!isFinite(step)) break;
@@ -188,19 +187,11 @@
   }
   function fmtDate(iso) { var m = ISO.exec(String(iso || "")); return m ? m[3] + "." + m[2] + "." + m[1] : "–"; }
   function fmtCoupon(c) { return fmt(c, Math.round(c * 1000) % 10 ? 3 : 2); }
-  // Ohne Zahl „–“ (seit 03.10.2026; vorher „NaN Mrd.“ bzw. Abbruch bei fehlendem Wert). Erst auf drei gültige Ziffern runden, dann die
-  // Einheit wählen (seit 09.10.2026, T-54: 999,6 Mrd. stand als „1.000 Mrd.“ da)
-  function fmtVol(v, einheit) {
-    if (typeof v !== "number" || !isFinite(v)) return "–";
-    var r = +v.toPrecision(3), bio = Math.abs(r) >= 1e12;
-    return (bio ? r / 1e12 : r / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 }) + " " + (bio ? "Bio." : einheit || "Mrd.");
-  }
-  function fmtStk(v) { return typeof v === "number" && isFinite(v) ? v.toLocaleString("de-DE", { maximumFractionDigits: 3 }) : "–"; }   // drei Stellen seit 01.10.2026: Landesanleihen mit Stückelung 0,001 standen als „0“ da
 
   MC.bond = {
-    DAY: DAY, utc: utc, addDays: addDays, monthsBack: monthsBack, settleDays: settleDays, settle: settle, yearsTo: yearsTo,
-    couponDates: couponDates, accrued: accrued, pricer: pricer, cleanPrice: cleanPrice, dirtyPrice: dirtyPrice,
+    DAY: DAY, utc: utc, addDays: addDays, monthsBack: monthsBack, settle: settle, yearsTo: yearsTo,
+    couponDates: couponDates, accrued: accrued, pricer: pricer,
     yieldFromPrice: yieldFromPrice, duration: duration,
-    fmt: fmt, fmtDate: fmtDate, fmtCoupon: fmtCoupon, fmtVol: fmtVol, fmtStk: fmtStk
+    fmtDate: fmtDate, fmtCoupon: fmtCoupon
   };
 })(window.MC);

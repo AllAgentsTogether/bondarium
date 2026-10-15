@@ -164,11 +164,13 @@
     var ver = (K[K.length - 1] / K[0] - 1) * 100;
     if (Math.abs(ver) < 0.05) ver = 0;   // gerundet unverändert: ohne Vorzeichen und ohne Farbe
     // o.neutral (Steckbrief, seit 29.09.2026): Veränderung nur mit Vorzeichen, ohne Signalfarbe.
-    // o.kupon (Kupon in % p. a.): zusätzlich „inkl. Kupons“ = (Kursänderung + Kupon × Tage/365) / Anfangskurs, ohne Wiederanlage
+    // o.kupon (Kupon in % p. a.): zusätzlich „inkl. Zinsen“ = (Kursänderung + Kupon × Tage/365,25) / Anfangskurs, ohne Wiederanlage.
+    // Nur bei Kupon über 0 – beim Nullkupon wiederholte die Zahl sonst nur die Kursänderung (seit 15.10.2026, A06-01); Tage ÷ 365,25
+    // wie die übrige Anleihen-Rechnung in bond.js (vorher ÷ 365, A06-02)
     var cls = function (x) { return o.neutral ? "null" : x > 0 ? "plus" : x < 0 ? "minus" : "null"; };
     var inkl = "";
-    if (typeof o.kupon === "number" && einheit === "%") {
-      var gs = (K[K.length - 1] - K[0] + o.kupon * (tLetzt - zeitOf(T[0])) / 864e5 / 365) / K[0] * 100;
+    if (typeof o.kupon === "number" && o.kupon > 0 && einheit === "%") {
+      var gs = (K[K.length - 1] - K[0] + o.kupon * (tLetzt - zeitOf(T[0])) / 864e5 / 365.25) / K[0] * 100;
       if (Math.abs(gs) < 0.05) gs = 0;
       inkl = ' · inkl. Zinsen <span class="kv-ver ' + cls(gs) + '">' + (gs > 0 ? "+" : "") + zahl(gs, 1) + "\u00a0%</span>";
     }
@@ -179,7 +181,7 @@
       (mitUmsatz || inkl || mitF || mitTerminen ? '<p class="kv-legende">' + (mitUmsatz ? '<span class="kv-punkt" aria-hidden="true"></span>Tag mit Umsatz; die Linie verbindet die täglichen Schlusskurse.' : "") +
         (mitF ? " Kreis: Fälligkeit, Rückzahlung zum Nennwert (100\u00a0%)." : "") +
         (mitTerminen ? " Grüne Punkte auf der Zeitachse: Zinstermine." : "") +
-        (inkl ? " „Inkl. Zinsen“: Kursänderung plus Kupon × Tage ÷ 365 im Zeitraum, bezogen auf den Anfangskurs, ohne Wiederanlage." : "") + "</p>" : "");
+        (inkl ? " „Inkl. Zinsen“: Kursänderung plus Kupon × Tage ÷ 365,25 im Zeitraum, bezogen auf den Anfangskurs, ohne Wiederanlage." : "") + "</p>" : "");
     el.onclick = function (e) {
       var b = e.target.closest ? e.target.closest(".kv-btn") : null;
       if (!b) return;

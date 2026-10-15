@@ -20,7 +20,8 @@
      { isin, emittent?, art?, cur?, kupon, zins (Zahlungen je Jahr), zt? (Zinstage „MM-TT“ laut Börsenliste), faellig, kurs,
        datum?, rendite?, vol, stk }
    Rendite: Tageskurs aus kurse-auswahl.json → dessen Rendite (fehlt sie dort: leer, nicht nachrechnen); sonst die
-   vorgegebene rendite der Zeile; sonst aus Kurs, Kupon und Datum berechnet (MC.bond, Valuta T+1 für USD/GBP, sonst T+2). */
+   vorgegebene rendite der Zeile; sonst aus Kurs, Kupon und Datum berechnet (MC.bond, Valuta T+2 für alle Währungen). Ohne gültiges
+   Kursdatum oder außerhalb von −2 … 30 % gibt es keine Rendite („–“). */
 (function () {
   "use strict";
   var ZAHL = ["keine", "eine", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn"];
@@ -28,9 +29,7 @@
   var KURSE = {}, KTAGE = [], KSTAND = "", AUS = {}, TAGE = 0;   // AUS: anleihen-auswahl.json {ISIN: [kurz, art, waehrung, bon, registername]}
   var ARTNR = { "Staat": 0, "Öffentlich": 1, "Unternehmen": 2 };
 
-  function fmt(v, dec) { return MC.zahl(v, dec || 0); }
   function fmtDate(iso) { return MC.bond.fmtDate(iso); }
-  function RL(y) { return MC.restlaufzeit ? MC.restlaufzeit(y) : fmt(y, 1) + " Jahre"; }
 
   // ---------- Zeilen: Kurs, Datum, Rendite – als Zeilenobjekte der Standardtabelle (felder.js) ----------
   // Ohne felder.js (MC.felder) – etwa wenn site.js nicht lädt und felder.js deshalb abbricht – still beenden: Die statischen
@@ -41,10 +40,17 @@
     def = def || {};
     return liste.map(function (r, i) {
       var k = KURSE[r.isin], kurs = k ? k[0] : r.kurs, datum = k ? KTAGE[k[2]] : (r.datum || def.date);
-      var cur = r.cur || def.cur, settle = MC.bond.settle(datum, cur);
+      var cur = r.cur || def.cur;
+      // Nachrechnen nur mit gültigem Kursdatum und Kurs (seit 15.10.2026, A08-04: ohne Datum warf MC.bond.settle „Invalid time value“
+      // und die Tabelle blieb auf der Handauswahl stehen); außerhalb von −2 … 30 % liefert MC.bond NaN → keine Rendite (A04-02)
+      var rechnen = function () {
+        if (!/^\d{4}-\d{2}-\d{2}/.test(String(datum || "")) || typeof kurs !== "number" || !isFinite(kurs)) return null;
+        var y = MC.bond.yieldFromPrice({ coupon: r.kupon, freq: r.zins, maturity: r.faellig, days: r.zt }, kurs, MC.bond.settle(datum, cur)) * 100;
+        return isFinite(y) ? y : null;
+      };
       var yld = k ? (typeof k[1] === "number" ? k[1] : null)
         : "rendite" in r ? (typeof r.rendite === "number" ? r.rendite : null)
-        : MC.bond.yieldFromPrice({ coupon: r.kupon, freq: r.zins, maturity: r.faellig, days: r.zt }, kurs, settle) * 100;
+        : rechnen();
       var a = AUS[r.isin] || [], artTxt = r.art || def.art;
       var art = artTxt in ARTNR ? ARTNR[artTxt] : a[1];
       return {
@@ -128,7 +134,7 @@
         });
         try { if (opt.aktiv) opt.aktiv(d); } catch (e) { console.warn(e); }
       }
-      alle();
+      try { alle(); } catch (e) { console.warn("Render fehlgeschlagen:", e); }   // wie beim ersten Zeichnen (A08-04)
       datenstand();
     });
   }
@@ -265,7 +271,7 @@
         if (autos.length) zaehlen();
         if (L[current].aus) current = opt.standard;
       }
-      select(current);
+      try { select(current); } catch (e) { console.warn("Render fehlgeschlagen:", e); }   // wie beim ersten Zeichnen (A08-04)
       datenstand();
       return kartenLauf;
     });

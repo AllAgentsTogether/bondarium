@@ -46,7 +46,10 @@
   const fmtDate = iso => iso && MC.datum ? MC.datum(iso) : iso || "–";
   const norm = s => String(s).normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase();
   const NAMEN = (() => { try { return { land: new Intl.DisplayNames(["de"], { type: "region" }), w: new Intl.DisplayNames(["de"], { type: "currency" }) }; } catch (e) { return {}; } })();
-  const landName = c => c === "INT" ? "International (supranational)" : ((NAMEN.land && (() => { try { return NAMEN.land.of(c); } catch (e) { return ""; } })()) || c);
+  // Ländernamen aus dem Katalog (MC.felder.landName, felder.js) – eine Bezeichnung für Filter, Tabellen und Steckbrief (seit 15.10.2026,
+  // A05-04); ohne felder.js derselbe Rückfall
+  const landName = c => MC.felder && MC.felder.landName ? MC.felder.landName(c)
+    : c === "INT" ? "International (supranational)" : ((NAMEN.land && (() => { try { return NAMEN.land.of(c); } catch (e) { return ""; } })()) || c);
   const wName = c => { try { const n = NAMEN.w && NAMEN.w.of(c); return n && n !== c ? `${c} · ${n}` : c; } catch (e) { return c; } };
   // „Heute“ ist der Berliner Kalendertag (MC.heuteBerlin, site.js; seit 09.10.2026, Technik-Test 08.10.2026 T-51) – vorher Uhrzeit des
   // Geräts: zwischen 0 und 2 Uhr und in fernen Zeitzonen eine andere Restlaufzeit als im Steckbrief
@@ -63,13 +66,18 @@
   // selbst suchen“): Fälligkeit als Zeitraum im Feld Restlaufzeit, Rendite als Spanne im Feld Rendite – zusätzlich zu den Stufen.
   const BEREICHE = { rest: { datum: true, label: "Fällig von", ph: ["MM.JJJJ", "MM.JJJJ"], hint: "Monat und Jahr (06.2027), nur das Jahr (2027) oder ein Tag (15.06.2027)." },
     rendite: { datum: false, label: "Rendite von", ph: ["z. B. 3", "z. B. 5"], hint: "In Prozent, z. B. von 3 bis 4,5. Anleihen ohne Rendite fallen dann heraus." } };
+  // Hinweis bei ungültiger Eingabe direkt an den Feldern (seit 15.10.2026, A05-03; vorher nur rot umrandet bzw. in der Statuszeile der Seite)
+  const FEHLER = { rest: { lesen: "Nicht lesbar – bitte z. B. 06.2027 oder 2027 eingeben.", verkehrt: "„Von“ liegt nach „Bis“ – so passt keine Anleihe." },
+    rendite: { lesen: "Nicht lesbar – bitte eine Zahl eingeben, z. B. 3 oder 4,5.", verkehrt: "„Von“ ist größer als „Bis“ – so passt keine Anleihe." } };
   const letzterTag = (j, m) => new Date(Date.UTC(j, m, 0)).getUTCDate();
-  // „2027“, „06.2027“, „6/2027“, „15.06.2027“ oder ISO → ISO-Datum; bis = letzter Tag des Jahres bzw. Monats; "" = leer, null = ungültig
+  // „2027“, „06.2027“, „6/2027“, „15.06.2027“ oder ISO → ISO-Datum; bis = letzter Tag des Jahres bzw. Monats; "" = leer, null = ungültig.
+  // Seit 15.10.2026 auch Komma, Leerzeichen und Bindestrich als Trenner („06,2027“, „06 2027“, „06-2027“): Das Feld öffnet am iPhone die
+  // Zifferntastatur mit Komma (inputmode="decimal"), vorher eine reine Zifferntastatur ohne Punkt und Schrägstrich (A05-01)
   function datumLesen(t, bis) {
     t = String(t == null ? "" : t).trim(); if (!t) return "";
     let m = /^(\d{4})(?:-(\d{1,2})(?:-(\d{1,2}))?)?$/.exec(t), j, mo = null, d = null;
     if (m) { j = +m[1]; if (m[2]) mo = +m[2]; if (m[3]) d = +m[3]; }
-    else if ((m = /^(?:(\d{1,2})[./])?(\d{1,2})[./](\d{4})$/.exec(t))) { j = +m[3]; mo = +m[2]; if (m[1]) d = +m[1]; }
+    else if ((m = /^(?:(\d{1,2})\s*[./,\s-]\s*)?(\d{1,2})\s*[./,\s-]\s*(\d{4})$/.exec(t))) { j = +m[3]; mo = +m[2]; if (m[1]) d = +m[1]; }
     else return null;
     if (j < 1900 || j > 2200 || (mo != null && (mo < 1 || mo > 12))) return null;
     if (mo == null) { mo = bis ? 12 : 1; d = bis ? 31 : 1; }
@@ -187,11 +195,14 @@
     const verkehrt = k => { const b = bereich[k]; return b.von !== "" && b.bis !== "" && b.von > b.bis; };
     // Feld ungültig: Text, der sich nicht lesen ließ, oder Von über Bis
     const ungueltig = (k, w) => { const b = bereich[k]; return (b[w === "von" ? "tv" : "tb"] !== "" && b[w] === "") || verkehrt(k); };
+    // Text unter den Feldern: verkehrte Spanne vor unlesbarer Eingabe; "" = alles in Ordnung
+    const fehlerText = k => { const b = bereich[k]; return verkehrt(k) ? FEHLER[k].verkehrt : (b.tv !== "" && b.von === "") || (b.tb !== "" && b.bis === "") ? FEHLER[k].lesen : ""; };
     function markieren(k) {
       const g = grp(k); if (!g) return;
       g.querySelectorAll(".fber input").forEach(i => { if (ungueltig(k, i.classList.contains("fber-von") ? "von" : "bis")) i.setAttribute("aria-invalid", "true"); else i.removeAttribute("aria-invalid"); });
+      const f = g.querySelector(".fber-f"); if (f) { f.textContent = fehlerText(k); f.hidden = !f.textContent; }
     }
-    function bereichLeeren(k) { Object.assign(bereich[k], { von: "", bis: "", tv: "", tb: "" }); const g = grp(k); if (g) g.querySelectorAll(".fber input").forEach(i => { i.value = ""; i.removeAttribute("aria-invalid"); }); }
+    function bereichLeeren(k) { Object.assign(bereich[k], { von: "", bis: "", tv: "", tb: "" }); const g = grp(k); if (g) { g.querySelectorAll(".fber input").forEach(i => { i.value = ""; i.removeAttribute("aria-invalid"); }); const f = g.querySelector(".fber-f"); if (f) { f.textContent = ""; f.hidden = true; } } }
     function bereichText(k) {
       const b = bereich[k], e = BEREICHE[k].datum ? "" : "\u00a0%";
       const v = b.von !== "" ? b.tv : "", t = b.bis !== "" ? b.tb : "";
@@ -228,10 +239,11 @@
       } else opts = f.opts();
       f.namen = new Map(opts.map(o => [o[0], o[1]]));
       const B = BEREICHE[f.k], bf = bereich[f.k];
-      const feld = (w, i) => `<input type="text" class="fber-${w}" inputmode="${B.datum ? "numeric" : "decimal"}" autocomplete="off" placeholder="${B.ph[i]}" value="${esc(w === "von" ? bf.tv : bf.tb)}"${ungueltig(f.k, w) ? ' aria-invalid="true"' : ""} aria-label="${B.datum ? (w === "von" ? "Fällig ab" : "Fällig bis") + " (Monat und Jahr)" : (w === "von" ? "Rendite ab" : "Rendite bis") + " in Prozent"}">`;
+      const hid = `${pre}fber-h-${f.k}`, fid = `${pre}fber-f-${f.k}`, ftext = B ? fehlerText(f.k) : "";
+      const feld = (w, i) => `<input type="text" class="fber-${w}" inputmode="decimal" autocomplete="off" placeholder="${B.ph[i]}" value="${esc(w === "von" ? bf.tv : bf.tb)}"${ungueltig(f.k, w) ? ' aria-invalid="true"' : ""} aria-describedby="${fid} ${hid}" aria-label="${B.datum ? (w === "von" ? "Fällig ab" : "Fällig bis") + " (Monat und Jahr)" : (w === "von" ? "Rendite ab" : "Rendite bis") + " in Prozent"}">`;
       p.innerHTML =
         (f.k === "land" ? `<input type="search" class="fsuche" placeholder="${TXT.landSuche}" aria-label="${TXT.landSuche}">` : "") +
-        (B ? `<div class="fber" data-b="${f.k}"><span class="fber-l">${B.label}</span>${feld("von", 0)}<span class="fber-s">bis</span>${feld("bis", 1)}${B.datum ? "" : '<span class="fber-s">%</span>'}<p class="fber-h">${esc(B.hint)}</p></div>` : "") +
+        (B ? `<div class="fber" data-b="${f.k}"><span class="fber-l">${B.label}</span>${feld("von", 0)}<span class="fber-s">bis</span>${feld("bis", 1)}${B.datum ? "" : '<span class="fber-s">%</span>'}<p class="fber-f" id="${fid}" role="status"${ftext ? "" : " hidden"}>${esc(ftext)}</p><p class="fber-h" id="${hid}">${esc(B.hint)}</p></div>` : "") +
         `<fieldset><legend class="sr-only">${esc(f.label)}</legend><div class="fopts">` +
         opts.map(([v, t, d]) => `<label class="fopt" data-v="${esc(v)}" data-n="${esc(norm(t))}"><input type="checkbox" value="${esc(v)}"><span class="ftxt">${esc(t)}${d ? `<small>${esc(d)}</small>` : ""}</span><span class="fnum"></span></label>`).join("") +
         `</div></fieldset>` +

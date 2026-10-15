@@ -4,7 +4,7 @@
    direkt nach base.css geladen. Titel-Illustrationen und Kartenbilder: spot-<seite>.svg (160 × 110).
    Regeln: 2,5 px Tinte, Flächen Weiß/Hauch, genau ein Neon-Punkt, Orange nur für Risiko & Kosten.
    ========================================================================================== */
-:root { --up: #157C00; --down: #A2561C; }
+/* Plus/Minus-Farben (--up/--down) stehen seit 15.10.2026 nur noch in base.css (gleiche Werte wie bisher hier) */
 /* Abschnittskarten: weiß statt Grünverlauf */
 .kap, .kap.kap-b { background: #fff; border: 1px solid #E4E3DF; box-shadow: var(--shadow); }
 .k-bild { border-color: #E4E3DF; }
@@ -26,22 +26,13 @@
    Nach unten wird nichts gezogen: Auf Seiten mit kurzem Text käme die Zeichnung dem nächsten Element sonst zu nahe. */
 .b2-kopf { display: grid; grid-template-columns: minmax(0, 1fr) 232px; gap: 40px; align-items: start; }
 .b2-kopf .b2-spot { margin: -8px 0 0; }
-.b2-kopf .b2-spot svg { width: 232px; height: 160px; display: block; }
 /* Schmale Fenster (Tablet hochkant): kleinere Illustration, damit die Überschrift mehr Breite bekommt */
-@media (max-width: 900px) { .b2-kopf { grid-template-columns: minmax(0, 1fr) 160px; gap: 28px; } .b2-kopf .b2-spot { margin: -6px 0 0; } .b2-kopf .b2-spot svg { width: 160px; height: 110px; } }
-@media (max-width: 720px) { .b2-kopf { grid-template-columns: minmax(0, 1fr); gap: 8px; } .b2-kopf .b2-spot { order: -1; margin: 0; } .b2-kopf .b2-spot svg { width: 160px; height: 110px; } }
+@media (max-width: 900px) { .b2-kopf { grid-template-columns: minmax(0, 1fr) 160px; gap: 28px; } .b2-kopf .b2-spot { margin: -6px 0 0; } }
+@media (max-width: 720px) { .b2-kopf { grid-template-columns: minmax(0, 1fr); gap: 8px; } .b2-kopf .b2-spot { order: -1; margin: 0; } }
 /* Risiko-Punkte (Anleihen-ETFs): Tinte statt Ampel */
 .kats .dots i { background: #fff !important; border: 1.5px solid #1A1A19; box-sizing: border-box; }
 .kats .dots i.on { background: #1A1A19 !important; }
 .kats .kat.r4 .dots i.on, .kats .kat.r3 .dots i.on { background: #CF7430 !important; border-color: #CF7430; }
-/* Porträts (Guide): Laufzeit-Ring */
-.pc .pc-img { position: relative; border-radius: 50%; overflow: visible !important; background: transparent !important; }
-.pc .pc-img img { border-radius: 50%; background: #fff; }
-.b2-ring { position: absolute; inset: -7%; width: 114%; height: 114%; pointer-events: none; overflow: visible; }   /* Punkt am Ring ragt über den Rand – nicht abschneiden (wie .ppl .ring svg auf der Startseite) */
-a.pc { padding-top: 26px; }   /* Platz über dem Ring: Der Punkt oben (Nadine, Jonas) stieß sonst an den Kartenrand; a.pc schlägt .pc im Seitenstil */
-@media (max-width: 600px) { a.pc { padding-top: 20px; } }
-.ap-badge { background: #39FF14 !important; color: #1A1A19 !important; border: 2px solid #1A1A19; }
-.ap-card { background: #fff !important; border: 1px solid #E4E3DF; }
 .merk .mi::before { display: block; box-sizing: border-box; }
 /* Kartenbilder als Datei (<img class="hub-img">) statt Inline-SVG: Motiv ganz zeigen */
 img.hub-img { object-fit: contain; }

@@ -4,8 +4,9 @@
    Gestaltungssystem (24.09.2026) – ein Look für alle Seiten.
    Zwei Schriften (seit 11.10.2026, Nutzerentscheid nach PDF „Schrift seriöser“, Variante A): Source Serif 4 für Titel, Source Sans 3 für Text –
    selbst gehostet (source-serif-4.woff2, source-sans-3.woff2, variabel, Latein, SIL OFL). Davor Manrope für alles (27.09.–11.10.2026), noch früher drei Schriften.
-   Stufenleiter: Display 56 · H1 44 · H2 32 · H3 20 · Lead 19 · Body 17 · UI 15 · Label 12–12,5 (Versalien, 0,06 em) · Caption 13.
-   Titel (H1, H2, Marke) in 700 mit enger Laufweite, sonst kein Schnitt über 600; Versal-Labels 0,08 em; keine Schrift unter 12 px. Fließtext groß und ruhig, Inhalte in Karten. Die Seiten definieren nur noch ihre eigenen Bausteine;
+   Stufenleiter: Display 56 · H1 44 · H2 32 · H3 20 · Lead 19 · Body 17 · UI 15 · Etikett 13 (normale Schreibweise, 500) · Caption 13.
+   Titel (h1, h2) in Source Serif 4, Schnitt 500; kein Schnitt über 600; keine gesperrten Versal-Etiketten; Ecken 6 px statt Pillen; keine Schrift
+   unter 12 px (Regel seit 11.10.2026, „Schrift seriöser“). Fließtext groß und ruhig, Inhalte in Karten. Die Seiten definieren nur noch ihre eigenen Bausteine;
    alles Gemeinsame steht hier. Ältere Variablennamen (--blue, --line, --ma, --muted, --ap-*) bleiben als Alias gültig.
 
    SEIT 30.09.2026 ZENTRAL (Abschnitt „Gemeinsame Komponenten“ am Dateiende) – die gleichlautenden Regeln in den
@@ -13,7 +14,7 @@
      .sb-go (Knopf unter Schaubildern) · details.more / .more summary (Aufklapper) · .hub / .hub-card / .hub-img (Übersichts-Kacheln)
      · .hb-bar / .hb-l / .balken .hb (HTML-Balken) · .sortbtn (Sortierknopf im Tabellenkopf) · .kpis (Kennzahlen-Tabellen)
      · .legend / .legend .leg / .legend button.leg (Legende, Grundform; Linien oben/unten: Klasse „linie“)
-     · .gruppe / .typ (Typ-Karten in anleihe-arten, kuendbare-anleihen) · button.lbtn (Filter-Chips, jetzt in Manrope)
+     · .gruppe / .typ (Typ-Karten in anleihe-arten, kuendbare-anleihen) · button.lbtn (Filter-Chips, Schrift der Seite)
      · footer.fuss (gemeinsame Fußzeile, scripts/nav.py) · .krumen (Brotkrumen, scripts/nav.py)
      · Wisch-Hinweis .table-scroll.ueberlauf / .chart-scroll.ueberlauf (Klasse setzt site.js)
      · Tippflächen ≥ 44 px bei (pointer: coarse) für Sortierknöpfe, Legenden-Knöpfe, Aufklapper, Chips, Sprungpillen, Fußzeile.
@@ -40,7 +41,10 @@
   --green: #39FF14; --green-hover: #2EE60D; --green-text: #157C00;
   --green-tint: rgba(57,255,20,0.16); --green-tint-2: rgba(57,255,20,0.30); --green-line: rgba(57,255,20,0.55);
   --soft: var(--green-tint);
-  --rule: rgba(26,26,25,0.10); --up: #1F7A5E; --down: #993C1D;
+  --rule: rgba(26,26,25,0.10);
+  /* Plus/Minus (Kursveränderung u. a.): seit 15.10.2026 eine Fassung für alle Seiten – vorher hier #1F7A5E/#993C1D und in bildwelt2.css
+     #157C00/#A2561C, Startseite und 404 färbten anders als die übrigen Seiten (Gesamtprüfung A02-07) */
+  --up: #157C00; --down: #A2561C;
   --line: var(--accent-text); --ma: var(--orange); --muted: var(--text);
   --ap-blue: var(--blue); --ap-orange: var(--orange); --ap-ink: var(--ink); --ap-text: var(--text); --ap-soft: var(--soft); --ap-sans: var(--sans);
   --radius: 10px; --shadow: 0 1px 2px rgba(26,26,25,0.04), 0 10px 28px rgba(26,26,25,0.05);
@@ -138,7 +142,6 @@ footer a { color: var(--blue); }
   h2 { font-size: 26px; }
   .sub { font-size: 17px; }
   .prose, .k-text p { font-size: 17px; }
-  .eyebrow { letter-spacing: 0.08em; }
   .section { margin-top: 44px; padding-top: 26px; }
   .kap { padding: 20px 16px 22px; border-radius: 12px; }
   .knr { width: 36px; height: 36px; font-size: 17px; }
@@ -150,7 +153,7 @@ footer a { color: var(--blue); }
   .k-bild table td.z, .k-bild table th.z, .k-bild table td small, .k-bild table .z small { white-space: normal; }
 }
 
-.topbar { display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 12px 24px; margin-bottom: 40px; }   /* Spaltenabstand 24 px (vorher 44), damit vier Stufen, Such-Knopf und „Über uns“ neben die Marke passen */
+.topbar { display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: center; gap: 12px 24px; margin-bottom: 40px; }   /* Spaltenabstand 24 px (vorher 44), damit die vier Bereiche und „My Bondarium“ neben die Marke passen */
 /* Seit 23.09.2026 bleibt die Kopfzeile beim Scrollen oben stehen. Der Hintergrund reicht per border-image-outset
    über die volle Fensterbreite (ohne Querscrollen); Innenabstand und negativer Außenabstand halten die Lage im
    Ruhezustand unverändert. Beim Scrollen (Klasse is-stuck, site.js) bekommt sie unten eine dunklere Kante. */
@@ -179,7 +182,7 @@ footer a { color: var(--blue); }
 .topbar .nav-group.open .nav-group-btn { color: var(--ink); }
 html { scroll-padding-top: 100px; }   /* Sprungziele nicht unter der festen Kopfzeile verstecken */
 /* Seit 23.09.2026 steht die Navigation (Suche, Wissen) in derselben Zeile wie die Marke, links, auf einer Mittellinie */
-.topbar .sitenav { margin-bottom: 0; position: relative; top: 1px; flex: 1 1 auto; align-items: center; }   /* 1 px tiefer: Mitte der Großbuchstaben wie bei der Marke; flex: 1 füllt die Zeile, damit Such-Knopf und „Über uns“ (margin-left: auto) rechts stehen */
+.topbar .sitenav { margin-bottom: 0; position: relative; top: 1px; flex: 1 1 auto; align-items: center; }   /* 1 px tiefer: Mitte der Großbuchstaben wie bei der Marke; die Breite regelt die Zeile weiter unten (flex: 0 0 auto) */
 /* Logo 06 (04.10.2026, Maße aus der Reinzeichnung): Bildzeichen 36 px, Abstand 5,3 px, Wortmarke 19,5 px hoch (viewBox 1303 × 210,
    Oberkante i-Punkt bis Grundlinie), 1 px über der Mitte. Buchstaben in currentColor; i-Punkt grün, auf dem grünen Kopfband dunkelgrün. */
 .brand { display: inline-flex; align-items: center; gap: 5.3px; text-decoration: none; color: var(--ink); line-height: 1; }
@@ -188,8 +191,6 @@ html { scroll-padding-top: 100px; }   /* Sprungziele nicht unter der festen Kopf
 .brand .brand-i { fill: var(--green); }
 .topbar .brand .brand-i { fill: var(--green-text); }
 .brand:hover { color: rgba(26,26,25,0.78); }
-.brand--dark { color: #FBFAF7; }
-.brand--dark .brand-i { fill: var(--green); }
 .sitenav { display: flex; gap: 14px; flex-wrap: wrap; font-family: var(--sans); font-size: 14.5px; font-weight: 500; margin-bottom: 40px; }
 .sitenav a { color: var(--muted); text-decoration: none; padding: 13px 4px 16px; margin: -13px -4px -13px; transition: color 0.15s ease; }
 .sitenav a:hover { color: var(--line); }
@@ -226,10 +227,10 @@ html { scroll-padding-top: 100px; }   /* Sprungziele nicht unter der festen Kopf
   * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
 
-/* --- Nav-Dropdowns (seit 25.09.2026 die vier Stufen Verstehen, Entscheiden, Kaufen, Einordnen – Menü „Der Weg“) ---
-   Der Gruppen-Kopf (.nav-group-btn) ist ein Link auf die Übersicht der Stufe; das Menü öffnet per Hover
-   bzw. per Tastatur mit Pfeil runter oder Leertaste (seit 03.10.2026 nicht mehr beim bloßen Fokus), auf Touch-Geräten per erstem Tipp (site.js, Klasse .open). Bis 760 px wird die
-   Kopfzeile zum Akkordeon hinter einem Burger-Knopf (Regeln am Dateiende). */
+/* --- Nav-Aufklapper (seit 11.10.2026 die vier Bereiche Akademie, Anleihen, Kaufen, Markt; Daten in scripts/nav.py) ---
+   Der Gruppen-Kopf (.nav-group-btn) ist ein Link auf die Übersicht des Bereichs; das Menü öffnet per Hover
+   bzw. per Tastatur mit Pfeil runter oder Leertaste (seit 03.10.2026 nicht mehr beim bloßen Fokus), auf Touch-Geräten per erstem Tipp (site.js, Klasse .open). Bis 1000 px öffnet
+   der Burger-Knopf stattdessen das Handy-Blatt (Regeln am Dateiende). */
 .nav-group { position: relative; display: inline-block; }
 .nav-group-btn { font-family: var(--sans); font-size: 14.5px; font-weight: 500; background: none; border: none; color: var(--muted); cursor: pointer; padding: 13px 4px 16px; margin: -13px -4px -13px; display: inline-flex; align-items: baseline; gap: 5px; transition: color 0.15s ease; }
 .nav-group-btn:hover { color: var(--line); }
@@ -245,42 +246,19 @@ html { scroll-padding-top: 100px; }   /* Sprungziele nicht unter der festen Kopf
 @media (hover: hover) and (min-width: 1001px) { .nav-group:hover .nav-group-menu { display: block; } }
 .nav-esc .nav-group:hover .nav-group-menu { display: none; }   /* Escape schließt auch das per Maus geöffnete Menü (WCAG 1.4.13, T-124): site.js setzt nav-esc bis zur nächsten Mausbewegung */
 @media (min-width: 761px) { .nav-group-menu { max-height: calc(100vh - 110px); overflow-y: auto; } }   /* seit 27.09.2026 (Verstehen hat 19 Zeilen): auf niedrigen Bildschirmen scrollt der Aufklapper statt abgeschnitten zu werden */
-/* Früher: rechtsbündig bei Platzmangel. Seit 23.09.2026 verschiebt site.js navInit das Menü per style.left passgenau; die Klasse bleibt als Rückfall. */
-.nav-group-menu.nav-menu-right { left: auto; right: -12px; }
-.sitenav .nav-group-menu a { display: block; padding: 10px 16px; margin: 0; text-transform: none; letter-spacing: 0; font-size: 14.5px; font-weight: 500; }   /* Einträge in normaler Schreibweise – lange Titel lesen sich so leichter; Köpfe und Chips bleiben Versalien */
+/* Ragt der Aufklapper rechts aus dem Fenster, verschiebt site.js navInit ihn per style.left passgenau (seit 23.09.2026). */
+.sitenav .nav-group-menu a { display: block; padding: 10px 16px; margin: 0; text-transform: none; letter-spacing: 0; font-size: 14.5px; font-weight: 500; }   /* Einträge in normaler Schreibweise – lange Titel lesen sich so leichter (seit 11.10.2026 auch die Köpfe) */
 .sitenav .nav-group-menu a:hover { background: rgba(44,44,42,0.04); }
-/* Trennlinie im Aufklapper (nav.py: Eintrag None) */
-.nav-group-menu .nav-sep { display: block; height: 1px; background: var(--rule); margin: 6px 16px; }
-/* Gruppenüberschrift im Aufklapper (nav.py: Eintrag als Zeichenkette), z. B. „Einstieg“, „Weiter“, „Nachschlagen“:
-   kleine graue Zeile, ab der zweiten mit feiner Linie darüber */
-/* Gruppenüberschriften (seit 25.09.2026 spät als grüne Chips, damit sie sich klar von den Einträgen abheben – Nutzerwunsch) */
-.nav-group-menu .nav-cap { display: inline-block; margin: 8px 16px 4px; padding: 3px 8px; border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--ink); background: var(--green); }
-.nav-group-menu .nav-cap:first-child { margin-top: 4px; }
-.nav-group-menu a:not(.nav-ov) + .nav-cap { margin-top: 10px; }
-/* Hervorgehobener Eintrag (nav.py, Klasse nav-hl – die Anleihen-Suche ganz oben im Menü Kaufen): dezenter Rahmen statt Farbe */
-.sitenav .nav-group-menu a.nav-hl { margin: 4px 10px 6px; padding: 9px 12px; background: #F2F2EF; border: 1px solid var(--green-line); border-radius: 6px; font-weight: 600; }   /* hellgrau mit feiner grüner Linie (26.09.2026) */
-.sitenav .nav-group-menu a.nav-hl:hover { background: #EAEAE6; border-color: var(--blue); }
-.nav-group-menu a.nav-hl + .nav-cap { margin-top: 6px; }
 /* „Übersicht …“ (nav.py, Klasse nav-ov) nur im Handy-Blatt: dort führt der Kopf in die zweite Stufe statt zu navigieren */
 .sitenav .nav-group-menu a.nav-ov { display: none; }
 .nav-group-btn:focus-visible { outline: 2px solid var(--line); outline-offset: 2px; border-radius: 3px; }
-/* Knopf „Anleihen-Suche“ rechts in der Kopfzeile: dunkel mit Neon-Schrift, auf der Suche selbst mint (Stufe Kaufen) */
-/* Seit 25.09.2026 abends kein Such-Knopf mehr in der Kopfzeile (Nutzerwunsch „Die Anleihen-Suche soll ganz oben raus“, jetzt im Menü Kaufen):
-   Die nav-cta-Regeln bleiben für einen späteren Knopf (nav.py BUTTONS). */
-/* 25.09.2026 spät: „Über uns“ steht direkt hinter den Stufen in einer Reihe (Nutzerwunsch), nicht mehr am rechten Rand. */
-.topbar .sitenav a.nav-cta { margin-left: auto; padding: 8px 12px; border-radius: 6px; background: var(--ink); color: var(--green); font-weight: 600; letter-spacing: 0.08em; transition: background-color .15s ease, color .15s ease; }
-.topbar .sitenav a.nav-cta:hover { background: #000; color: #fff; }
-.topbar .sitenav a.nav-cta.current { text-decoration: none; background: var(--up); color: #fff; }
-.topbar .sitenav a.nav-cta:focus-visible { outline-color: var(--ink); outline-offset: 3px; }
 /* Burger-Knopf: nur bis 1000 px sichtbar (Regeln am Dateiende; bis 26.09.2026: 760 px) */
 .nav-toggle { display: none; }
-/* Suchfeld rechts außen in der Kopfzeile (nav.py SEARCH, seit 26.09.2026): führt direkt in die Anleihen-Suche.
-   38 px hoch wie das Logo – links die Marke, rechts das Feld, beide bündig mit dem Seitenrand; dazwischen das Menü.
-   Weiß mit tiefgrünem Rand (dieselbe Farbe wie die Kante unter dem Band), Lupe links im Feld. */
+/* Das Menü nimmt nur seine eigene Breite; rechts außen steht der Knopf „My Bondarium“ (seit 10.10.2026 ohne Suchfeld davor). */
 .topbar .sitenav { flex: 0 0 auto; }
-/* Knopf „My Bondarium“ rechts neben dem Suchfeld (nav.py KONTO, seit 01.10.2026 abends – vorher ein Menüpunkt): gleiche Höhe
-   und gleicher tiefgrüner Rand wie das Suchfeld, aber ohne weiße Fläche – das Feld bleibt das Auffälligste. Bis 1000 px steht
-   stattdessen der Eintrag .nav-konto unten im Burger-Menü (Regeln am Dateiende). */
+/* Knopf „My Bondarium“ rechts in der Kopfzeile (nav.py KONTO, seit 01.10.2026 abends – vorher ein Menüpunkt): 38 px hoch, tiefgrüner
+   Rand wie die Kante unter dem Band, ohne weiße Fläche. Bis 1000 px steht stattdessen der Eintrag .nav-konto unten im Handy-Blatt
+   (Regeln am Dateiende). */
 .kopfkonto { flex: none; display: inline-flex; align-items: center; gap: 7px; height: 38px; padding: 0 13px 0 10px; border: 2px solid var(--blue-dark); border-radius: 10px; font-family: var(--sans); font-size: 14.5px; font-weight: 500; text-decoration: none; color: var(--ink); white-space: nowrap; transition: background-color .15s ease, border-color .15s ease; }
 .kopfkonto svg { width: 18px; height: 18px; flex: none; display: block; }
 .kopfkonto:hover, .kopfkonto.current { background: #fff; }
@@ -388,7 +366,8 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
   .nav-back:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
   .nav-mtitel { font-family: var(--serif); font-size: 26px; font-weight: 500; line-height: 1.1; margin: 2px 0 10px; color: var(--ink); }
   /* Ohne JavaScript öffnet der Burger-Knopf nichts: dann das Blatt gleich im Seitenfluss zeigen, die Köpfe führen direkt zur Übersicht (T-87) */
-  @media (scripting: none) { .nav-toggle { display: none; } .topbar .sitenav { display: flex; position: static; padding: 0; } .nav-caret, .nav-back, .nav-mtitel { display: none; } }
+  /* … in voller Breite der Kopfzeile, Schnell-Knöpfe umbrechend (seit 15.10.2026: vorher 595 px breit, Seite 611 statt 375 px; A01-12) */
+  @media (scripting: none) { .nav-toggle { display: none; } .topbar .sitenav { display: flex; position: static; padding: 0; flex: 1 1 100%; width: 100%; min-width: 0; } .topbar .sitenav .nav-schnell a { white-space: normal; } .nav-caret, .nav-back, .nav-mtitel { display: none; } }
 }
 /* Kopfzeile am Handy: Marke etwas kompakter */
 @media (max-width: 600px) {
@@ -495,7 +474,6 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 .det-kpi dd small { display: block; font-size: 12px; font-weight: 400; color: var(--text); margin-top: 1px; }
 .det-note { font-size: 12.5px; line-height: 1.5; color: var(--text); margin: 14px 0 0; max-width: 760px; }
 @media (max-width: 760px) { .det-kpi { grid-template-columns: repeat(2, minmax(0, 1fr)); } .det { padding: 14px; } }
-.det-legende { display: block; margin: 12px 0 0; font-size: 12px; line-height: 1.5; color: var(--text); max-width: 760px; }
 .det-kpi dd .klein { font-size: 14.5px; font-weight: 600; line-height: 1.3; }
 /* Kurzansicht (Anleihen-Suche, seit 26.09.2026): fünf Kennzahlen, alles Weitere auf dem Steckbrief anleihe.html;
    die Veränderung zum Vortag steht als +/− (.kv-ver) direkt hinter dem Kurs */
@@ -509,9 +487,8 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 @media (max-width: 900px) { .det-kpi.fuenf { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 520px) { .det-kpi.fuenf { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
-/* Kacheln der Stufen (seit 29.09.2026 drei: Verstehen, Entscheiden, Kaufen – Einordnen ist das Menü „Zinsen“): auf der Startseite unter „Unsere Akademie“ und seit 28.09.2026
-   oben auf den drei Übersichten (wissen, entscheiden, kaufen) als Navigation zwischen den Stufen (Nutzerwunsch; ersetzt
-   den kurzen Umschalter .stufen-nav vom selben Tag). Die aktuelle Stufe trägt aria-current="page" und sieht aus wie beim Überfahren. */
+/* Kachelleiste .tueren (seit 28.09.2026): heute die Sprungleiste der Akademie mit vier Bereichen (.tueren.vier, unten); die aktuelle
+   Kachel trägt aria-current="page" und sieht aus wie beim Überfahren. Bis 11.10.2026 Stufen Verstehen/Entscheiden/Kaufen. */
 .tueren { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; border: 1px solid var(--rule); border-radius: 16px; overflow: hidden; }   /* seit 28.09.2026 mitten im Blatt (Akademie): eigener Rahmen statt Anschnitt an die Blattkante */
 .tueren a { position: relative; display: flex; align-items: center; gap: 10px; min-height: 108px; padding: 18px 12px 18px 18px; border-left: 1px solid var(--rule); text-decoration: none; color: var(--ink); background: #fff; transition: background-color .18s ease; }
 .tueren a:first-child { border-left: 0; }
@@ -527,7 +504,6 @@ details.quellen > summary:focus-visible { outline: 2px solid var(--line); outlin
 .tueren .sub { font-size: 14px; line-height: 1.35; color: #3A3A36; margin: 0; max-width: none; }   /* margin: base.css gibt .sub (Seiten-Untertitel) 24 px Abstand */
 .tueren .sub b { font-weight: 500; color: inherit; }
 .tueren .ill { flex: none; width: 52px; height: auto; display: block; }
-.tueren .ill-weit { display: none; }
 @media (prefers-reduced-motion: reduce) { .tueren a, .tueren a::before { transition: none; } }
 @media (max-width: 1000px) { .tueren a { padding: 16px 12px 16px 16px; } .tueren .verb { font-size: 19px; } .tueren .ill { width: 54px; } }
 @media (max-width: 880px) {   /* seit 29.09.2026 drei Stufen: bleiben bis 600 px in einer Reihe */
@@ -723,7 +699,6 @@ th[aria-sort="descending"] .sortbtn::after { content: "↓"; opacity: 1; }
    las sich als „100,197,125 %“) und eine stehende Namensspalte. Die Klasse .table-scroll hebt die Regel über die knappen Seitenwerte. */
 .kpis th[scope=row] a.name-link { color: var(--ink); text-decoration: underline; text-decoration-color: rgba(26,26,25,0.3); text-underline-offset: 2px; }
 .kpis th[scope=row] a.name-link:hover { text-decoration-color: var(--ink); }
-.kpis td.num small.w-kz { font-size: 11.5px; color: var(--muted); font-weight: 500; }
 .kurs-stand { font-size: 13px; color: var(--text); margin: 0 0 6px; }
 @media (max-width: 1000px) {
   .table-scroll .kpis th, .table-scroll .kpis td { padding-right: 12px; }
@@ -831,8 +806,8 @@ button.lbtn:hover .rng { color: inherit; }
 .krumen [aria-current] { color: var(--ink); font-weight: 500; }
 @media (max-width: 600px) { .krumen { margin: -4px 0 16px; font-size: 12.5px; } }
 
-/* Fußzeile aller Seiten (scripts/nav.py): fünf Spalten in der Reihenfolge des Menüs – Akademie · Anleihen · Kaufen · Zinsen · Bondarium,
-   darunter Hinweis und Link „Rechtliches“. Die Grundregel „footer“ oben (Linie, Abstand, Schriftgröße) gilt weiter. */
+/* Fußzeile aller Seiten (scripts/nav.py): fünf Spalten in der Reihenfolge des Menüs – Akademie · Anleihen · Kaufen · Markt · Bondarium,
+   darunter Hinweis mit Impressum, Datenschutz und Haftung. Die Grundregel „footer“ oben (Linie, Abstand, Schriftgröße) gilt weiter. */
 footer.fuss { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 22px 24px; padding-top: 26px; font-size: 14px; }
 .fuss nav { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .fuss .fuss-k { font-size: 14px; font-weight: 600; letter-spacing: 0; line-height: 1.3; color: var(--ink); margin: 0 0 4px; }
@@ -859,7 +834,7 @@ footer.fuss { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); g
   .crossnav .crossnav-l a { min-height: 44px; align-items: center; }
 }
 
-/* Stufen-Leiste (Verstehen · Entscheiden · Kaufen) am Handy kompakt: drei Reiter in einer Zeile, nur das Verb (30.09.2026; vorher je Seite in wissen, entscheiden, kaufen) */
+/* Kachelleiste als Reiter (.tueren.stufen-kopf) am Handy kompakt: drei Reiter in einer Zeile, nur das Verb (30.09.2026) */
 @media (max-width: 600px) {
   .tueren.stufen-kopf { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-bottom: 18px; border: 1px solid var(--rule); border-radius: 12px; }
   .tueren.stufen-kopf a, .tueren.stufen-kopf a:nth-child(n+3), .tueren.stufen-kopf a + a:nth-child(n) { min-height: 48px; padding: 8px 4px; justify-content: center; border-top: 0; border-left: 1px solid var(--rule); }
@@ -881,11 +856,11 @@ footer.fuss { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); g
 /* ===== Drucken (seit 04.10.2026): Akademie- und Themenseiten ohne Kopf, Menü, Sprungleisten und Fußzeile; Karten nicht teilen.
    Seiten mit eigenen Druckregeln (erste-anleihe.html) ergänzen diese. Zugeklappte Erklärungen öffnet das Seitenskript, wo es eines gibt. ===== */
 @media print {
-  .skip-link, .topbar, .lands, .weiter, .crossnav, .mb-seite, .sb-go, footer.fuss { display: none !important; }
+  .skip-link, .topbar, .krumen, .weg, .tueren, .lands, .weiter, .crossnav, .mb-seite, .sb-go, footer.fuss { display: none !important; }   /* Brotkrumen, Weg-Zeile, Sprungleiste seit 15.10.2026 (A02-10) */
   body, .wrap { background: #fff !important; }
   .kap { box-shadow: none !important; background: #fff !important; border: 1px solid #ccc; break-inside: avoid; }
   .merk { break-inside: avoid; }
-  a { color: inherit; }
+  a, main a { color: inherit; }   /* main a: sonst blieben Links grün (main a oben ist spezifischer) */
   .merkbtn, #depbtn, .kopie, .kopie-w, .link-w, .kv-zeit, .fbtn, #fmehr { display: none !important; }   /* Bedienknöpfe nicht drucken (T-121); Rechner-Felder bleiben, sie tragen die Werte */
   th .sortbtn { display: contents; }   /* Chrome druckt Knopftext im wiederholten Tabellenkopf nicht – ab Seite 2 fehlten die Spaltentitel (T-121, anleihen-kupon) */
 }

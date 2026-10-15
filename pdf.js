@@ -1,8 +1,10 @@
 /* pdf.js – kleiner PDF-Schreiber im Browser (seit 30.09.2026), für den Depot-Auszug auf konto.html („Depot teilen“).
    Keine fremde Bibliothek: Die Website lädt nichts von fremden Servern, und für eine Tabelle mit Text, Linien, dem Logo
    und Links reicht ein PDF mit den Standardschriften Helvetica und Helvetica-Bold (jedes PDF-Programm bringt sie mit).
-   Zeichen: Windows-1252 (WinAnsi) – deutsche Umlaute, ß, €, Gedankenstrich, „Anführungszeichen“. Andere Zeichen werden
-   auf ihren Grundbuchstaben zurückgeführt (İ → I, Ş → S), sonst „?“.
+   Zeichen: Windows-1252 (WinAnsi) – deutsche Umlaute, ß, €, Gedankenstrich, „Anführungszeichen“. Häufige Zeichen außerhalb davon
+   werden ersetzt (→ „->“, ≈ „ca.“, ✓ „x“, ★ „*“ …; seit 15.10.2026), andere auf ihren Grundbuchstaben zurückgeführt (İ → I, Ş → S),
+   sonst „?“. Dokumenttitel in den PDF-Eigenschaften als UTF-16 (seit 15.10.2026: „–“ erschien dort als „Œ“), Sprache de-DE,
+   Erstellungszeit mit Zeitzone.
 
    Laden nach site.js:  <script src="pdf.js"></script>
 
@@ -56,7 +58,12 @@
     var z = ch.normalize ? ch.normalize("NFKD").charAt(0) : "";   // İ → I, Ş → S, ő → o
     return z && z !== ch && z.charCodeAt(0) >= 32 && z.charCodeAt(0) < 127 ? z.charCodeAt(0) : 63;
   }
-  function codes(s) { return Array.from(String(s == null ? "" : s)).map(code); }
+  // Ersatz für häufige Zeichen außerhalb von WinAnsi, bevor sie zu „?“ würden (seit 15.10.2026, Gesamtprüfung A07-02) – etwa in
+  // selbst gewählten Namen von Musterdepots
+  var ERSATZ = { "→": "->", "←": "<-", "↔": "<->", "⇒": "=>", "↑": "^", "↓": "v", "≈": "ca.", "≤": "<=", "≥": ">=", "≠": "!=",
+    "✓": "x", "✔": "x", "✗": "x", "✘": "x", "★": "*", "☆": "*", "‑": "-", "‐": "-", "′": "'", "″": "\"" };
+  var ERSATZ_RE = new RegExp("[" + Object.keys(ERSATZ).join("") + "]", "g");
+  function codes(s) { return Array.from(String(s == null ? "" : s).replace(ERSATZ_RE, function (z) { return ERSATZ[z]; })).map(code); }
   function zahl(v) { return (Math.round(v * 100) / 100).toString(); }
   function fein(v) { return (Math.round(v * 1e6) / 1e6).toString(); }   // Maßstäbe genau – zwei Stellen verzerren kleine Maßstäbe
   function rgb(f) {
@@ -66,6 +73,19 @@
   function farbe(f, op) { f = rgb(f); return zahl(f[0]) + " " + zahl(f[1]) + " " + zahl(f[2]) + " " + op; }
   function pdfText(s) {   // WinAnsi-Bytes, Klammern und Rückstrich maskiert
     return "(" + codes(s).map(function (c) { var ch = String.fromCharCode(c); return c === 40 || c === 41 || c === 92 ? "\\" + ch : ch; }).join("") + ")";
+  }
+  // Text für das Dokument-Info-Verzeichnis (Titel): UTF-16BE mit BOM als Hex-Zeichenkette. Programme lesen Info-Texte als
+  // PDFDocEncoding – WinAnsi-Bytes zeigten den Gedankenstrich „–“ dort als „Œ“ (seit 15.10.2026, Gesamtprüfung A07-01).
+  function infoText(s) {
+    var h = "<FEFF";
+    String(s == null ? "" : s).split("").forEach(function (z) { h += ("000" + z.charCodeAt(0).toString(16).toUpperCase()).slice(-4); });
+    return h + ">";
+  }
+  // Erstellungszeit mit Zeitzone („D:20261015143000+02'00'“) – ohne Angabe lesen Programme die Ortszeit als UTC (A07-03)
+  function pdfDatum(d) {
+    var p2 = function (k) { return (k < 10 ? "0" : "") + k; }, off = -d.getTimezoneOffset(), a = Math.abs(off);
+    return "D:" + d.getFullYear() + p2(d.getMonth() + 1) + p2(d.getDate()) + p2(d.getHours()) + p2(d.getMinutes()) + p2(d.getSeconds()) +
+      (off === 0 ? "Z" : (off > 0 ? "+" : "-") + p2(Math.floor(a / 60)) + "'" + p2(a % 60) + "'");
   }
 
   function weite(s, gr, fett) {
@@ -163,9 +183,7 @@
         var obj = [], kids = [], n = 6;
         obj[3] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>";
         obj[4] = "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>";
-        var d = new Date(), p2 = function (k) { return (k < 10 ? "0" : "") + k; };
-        obj[5] = "<< /Title " + pdfText(titel || "Bondarium") + " /Producer (Bondarium) /CreationDate (D:" + d.getFullYear() + p2(d.getMonth() + 1) +
-          p2(d.getDate()) + p2(d.getHours()) + p2(d.getMinutes()) + p2(d.getSeconds()) + ") >>";
+        obj[5] = "<< /Title " + infoText(titel || "Bondarium") + " /Producer (Bondarium) /CreationDate (" + pdfDatum(new Date()) + ") >>";
         seiten.forEach(function (s) {
           var seite = n++, inhalt = n++, annots = [];
           s.links.forEach(function (l) {
@@ -179,7 +197,7 @@
             inhalt + " 0 R" + (annots.length ? " /Annots [" + annots.map(function (a) { return a + " 0 R"; }).join(" ") + "]" : "") + " >>";
           kids.push(seite + " 0 R");
         });
-        obj[1] = "<< /Type /Catalog /Pages 2 0 R >>";
+        obj[1] = "<< /Type /Catalog /Pages 2 0 R /Lang (de-DE) >>";   // Sprache für Vorlesen (seit 15.10.2026, A07-04; Tagging fehlt weiter)
         obj[2] = "<< /Type /Pages /Kids [" + kids.join(" ") + "] /Count " + kids.length + " >>";
         // Zusammensetzen; alle Zeichen sind Bytes (0–255), die Länge der Zeichenkette ist also die Byte-Länge
         var out = "%PDF-1.4\n%âãÏÓ\n", lagen = [];
