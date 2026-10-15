@@ -10,8 +10,11 @@ Was das Skript schreibt:
     Kaufen → Markt), der aktuelle markiert – so sieht man, wo man steht (Stil .weg in base.css);
   * die regulären Kacheln <a class="hub-card"> in jedem <div class="hub…">: Reihenfolge, Titel, Bild und Kurztext aus nav.py,
     Etiketten je Bereich (ETIKETT). Die Abschluss-Kachel „next“ bleibt in der Seite stehen; auf kaufen.html führt sie zum Markt.
+    Auf wissen.html laden die Kachelbilder ab dem zweiten Bereich (Risiken) erst beim Scrollen (loading="lazy", seit 15.10.2026);
+  * (seit 15.10.2026, Gesamtprüfung B13-05) im JSON-LD der Übersicht (CollectionPage) die Liste der Kacheln als mainEntity
+    (ItemList: Position, Seitenname, Adresse) – dieselben Einträge in derselben Reihenfolge wie die Kacheln.
 Eigene Stile, Einleitungen, Suchfeld (anleihen.html) und Bereichs-Sprungleiste (wissen.html) bleiben unberührt."""
-import re, sys, pathlib
+import json, re, sys, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from nav import AKADEMIE, ANLEIHEN, KAUFEN, MARKT, esc   # noqa: E402
 
@@ -21,6 +24,8 @@ SHY = [("Unternehmensanleihen", "Unternehmens&shy;anleihen"), ("Staatsanleihen",
 CARD_RE = re.compile(r'    <a class="hub-card(?! next)[^"]*" href="[^"]+">.*?</a>\n', re.S)
 HUB_RE = re.compile(r'(<div class="hub[^"]*">\n)(.*?)(  </div>\n)', re.S)
 WEG_RE = re.compile(r'  <nav class="weg".*?</nav>\n', re.S)
+LD_RE = re.compile(r'(<script type="application/ld\+json">)(.*?)(</script>)', re.S)
+BASE = "https://www.bondarium.de/"
 
 
 def titel(t):
@@ -30,16 +35,13 @@ def titel(t):
     return t
 
 
-def kd(text):
-    return esc(text).replace("18 Anbieter", '<span data-kz="broker-anzahl">18</span> Anbieter')
-
-
-def karte(it, h, etikett="", klasse="", ebene="h2"):
+def karte(it, h, etikett="", klasse="", ebene="h2", lazy=False):
+    laden = ' loading="lazy" decoding="async"' if lazy else ""
     z = [f'    <a class="hub-card{(" " + klasse) if klasse else ""}" href="{it["h"]}">',
-         f'      <img class="hub-img" src="{it["img"]}" alt="" width="160" height="110">']
+         f'      <img class="hub-img" src="{it["img"]}" alt="" width="160" height="110"{laden}>']
     if etikett:
         z.append(f'      {etikett}')
-    z += [f'      <{ebene}>{titel(it["t"])}</{ebene}>', f'      <p class="desc">{kd(it["kd"])}</p>', '    </a>']
+    z += [f'      <{ebene}>{titel(it["t"])}</{ebene}>', f'      <p class="desc">{esc(it["kd"])}</p>', '    </a>']
     return "\n".join(z) + "\n"
 
 
@@ -86,11 +88,40 @@ def karten_markt():
     return "".join(out)
 
 
-def karten_wissen(anker):
+BEREICHE = ("grundlagen", "risiken", "auswaehlen", "fortgeschrittene")   # Abschnitte von wissen.html in dieser Reihenfolge
+
+
+def bereich_wissen(anker):
     for it in AKADEMIE[2]:
         if isinstance(it, dict) and it.get("h") == f"wissen.html#{anker}":
-            return "".join(karte(u, u["h"], ebene="h3") for u in it["sub"])
+            return it["sub"]
     raise SystemExit(f"wissen.html: Bereich #{anker} nicht in nav.py")
+
+
+def karten_wissen(anker):
+    # der erste Bereich steht oben auf der Seite; die Bilder der übrigen lädt der Browser erst beim Scrollen (B13-03)
+    return "".join(karte(u, u["h"], ebene="h3", lazy=anker != BEREICHE[0]) for u in bereich_wissen(anker))
+
+
+def eintraege(seite):
+    """Die Seiten der Kacheln einer Übersicht in ihrer Reihenfolge (für die ItemList im JSON-LD)."""
+    if seite == "wissen.html":
+        return [u for anker in BEREICHE for u in bereich_wissen(anker)]
+    menue = {"anleihen.html": ANLEIHEN, "kaufen.html": KAUFEN, "beobachten.html": MARKT}[seite]
+    return [it for it, _ in flach(menue[2])]
+
+
+def setze_liste(s, seite):
+    """mainEntity (ItemList) im JSON-LD-Block der CollectionPage; die übrigen Angaben des Blocks bleiben, wie sie sind."""
+    for m in LD_RE.finditer(s):
+        d = json.loads(m.group(2))
+        if d.get("@type") != "CollectionPage":
+            continue
+        d["mainEntity"] = {"@type": "ItemList", "numberOfItems": len(eintraege(seite)), "itemListElement": [
+            {"@type": "ListItem", "position": i + 1, "name": u["t"], "url": BASE + u["h"]} for i, u in enumerate(eintraege(seite))]}
+        roh = json.dumps(d, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+        return s[:m.start(2)] + roh + s[m.end(2):]
+    raise SystemExit(f"{seite}: kein JSON-LD-Block mit CollectionPage")
 
 
 def weg(seite):
@@ -135,7 +166,7 @@ KAUFEN_NEXT = ('    <a class="hub-card next" href="beobachten.html">\n'
 def baue(seite):
     s = (ROOT / seite).read_text(encoding="utf-8")
     if seite == "wissen.html":
-        for anker in ("grundlagen", "risiken", "auswaehlen", "fortgeschrittene"):
+        for anker in BEREICHE:
             s = ersetze_hub(s, karten_wissen(anker), anker)
     elif seite == "anleihen.html":
         s = ersetze_hub(s, karten_anleihen())
@@ -144,7 +175,7 @@ def baue(seite):
         s = re.sub(r'    <a class="hub-card next" href="[^"]+">.*?</a>\n', lambda m: KAUFEN_NEXT, s, count=1, flags=re.S)
     elif seite == "beobachten.html":
         s = ersetze_hub(s, karten_markt())
-    return setze_weg(s, seite)
+    return setze_liste(setze_weg(s, seite), seite)
 
 
 def main():

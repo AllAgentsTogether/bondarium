@@ -13,8 +13,8 @@ Die aktive Seite erhält `class="current"` am Gruppenkopf und am Eintrag;
 site.js setzt daraus `aria-current`.
 
 Menü seit 01.10.2026 abends (Nutzerentscheid „Navigation neu“, Diagramm im Chat): vier Aufklapper in der Reihenfolge
-des Weges – Akademie (lernen), Anleihen (finden), Kaufen, Markt (beobachten; bis 11.10.2026 „Zinsen“) –, rechts das Suchfeld und der Knopf
-„My Bondarium“ (KONTO). „Über uns“ steht nur noch in der Fußzeile. Jede Seite steht genau einmal im Menü und ist
+des Weges – Akademie (lernen), Anleihen (finden), Kaufen, Markt (beobachten; bis 11.10.2026 „Zinsen“) –, rechts der Knopf
+„My Bondarium“ (KONTO; bis 10.10.2026 stand davor ein Suchfeld). „Über uns“ steht nur noch in der Fußzeile. Jede Seite steht genau einmal im Menü und ist
 mit zwei Klicks erreichbar. Der Gruppenkopf ist ein Link auf die Übersichtsseite (wissen.html, anleihen.html,
 kaufen.html, beobachten.html).
   * Seit 11.10.2026 abends („Navigation einfach“, Vorbild zendepot.de): Jeder Aufklapper hat links höchstens sieben kurze Einträge
@@ -72,14 +72,14 @@ AKADEMIE = ("Akademie", "wissen.html", [
     ]),
     B("Risiken", "wissen.html#risiken", "spot-risiko.svg", "Risiken", "Was schiefgehen kann – und woran du es vor dem Kauf erkennst.", [
         E("Risiko kennen", "risiko.html", "spot-risiko.svg", "Risiko kennen", "Sieben Risiken im Überblick", "Sieben Risiken von Anleihen: Pleite des Schuldners, Anstieg des allgemeinen Zinsniveaus, Inflation, Fremdwährung, fehlende Käufer, Kündigung, Nachrang."),
-        E("Bonität", "bonitaet.html", "spot-bonitaet.svg", "Bonität und Ratings", "Wie sicher ist dein Geld?", "Bonität und Ratings erklärt: die Skala von AAA bis D, Investment Grade und Hochzins, Ausfälle je Note und warum schlechtere Noten mehr Zins zahlen."),
+        E("Bonität", "bonitaet.html", "spot-bonitaet.svg", "Bonität und Ratings", "Wie verlässlich zahlt der Schuldner?", "Bonität und Ratings erklärt: die Skala von AAA bis D, Investment Grade und Hochzins, Ausfälle je Note und warum schlechtere Noten mehr Zins zahlen."),
         E("Zahlungsausfall", "zahlungsausfall.html", "spot-zahlungsausfall.svg", "Wenn der Schuldner nicht zahlt", "Insolvenz, Umschuldung und was zurückkommt", "Was passiert, wenn der Emittent einer Anleihe nicht zahlt: Insolvenzverfahren, Rangfolge, Erlösquoten, Bail-in bei Banken, Umschuldung bei Staaten, Steuer."),
-        E("Kündbare Anleihen", "kuendbare-anleihen.html", "spot-kuendbare-anleihen.svg", "Kündbare Anleihen", "Sechs Kündigungsarten und ihre Folgen", "Make-Whole, fester Termin, Put: Welche Kündigung einer Anleihe harmlos ist, welche dich Zinsen kostet – und wie du sie am Namen erkennst."),
+        E("Kündbare Anleihen", "kuendbare-anleihen.html", "spot-kuendbare-anleihen.svg", "Kündbare Anleihen", "Sechs Kündigungsarten und ihre Folgen", "Make-Whole, fester Termin, Put: Welche Kündigung einer Anleihe meist ohne Nachteil bleibt, welche dich Zinsen kostet – und wie du sie am Namen erkennst."),
         E("Eisenbahn-Blase 1873", "eisenbahn-blase-1873.html", "spot-eisenbahn-blase-1873.svg", "Eisenbahn-Blase 1873", "Fallbeispiel: wie die Blase der Bahnanleihen platzte", "Die Eisenbahn-Blase der frühen 1870er einfach erklärt: wie Bahnanleihen mit hohen Kupons 1873 ausfielen, was Anleger verloren und was das für dich heißt.")
     ]),
     B("Auswählen", "wissen.html#auswaehlen", "spot-anlageziele.svg", "Auswählen", "Sind Anleihen etwas für dich – und welche, wie viel davon?", [
         E("Wie viel ins Depot?", "anleihen-anteil.html", "spot-anleihen-anteil.svg", "Wie viel Anleihen ins Depot?", "Anleihen neben Aktien – Mischung, Faustregeln, Nachjustieren", "Wie viel Anleihen neben Aktien? Was die Mischung bewirkt, warum der Puffer 2022 fehlte, drei Faustregeln und wie du nachjustierst – mit Zahlen und Quellen."),
-        E("Welche wozu?", "anlageziele.html", "spot-anlageziele.svg", "Welche Anleihe wozu passt?", "Für wen, welches Ziel – vier Beispiele bis in die Suche", "Sechs Anlageziele und die passende Anleihe: Geld parken, langfristig anlegen, Zinseinkommen, Zins sichern, große Beträge – mit vier Beispielen."),
+        E("Welche wozu?", "anlageziele.html", "spot-anlageziele.svg", "Welche Anleihe wozu passt?", "Für wen, welches Ziel – vier Beispiele bis in die Suche", "Für wen Anleihen passen – und sechs Anlageziele mit der passenden Anleihe: Geld parken, langfristig anlegen, Zinseinkommen, Zins sichern, große Beträge."),
         E("Festgeld oder Anleihe?", "anleihe-festgeld-tagesgeld.html", "spot-anleihe-festgeld-tagesgeld.svg", "Anleihe, Festgeld oder Tagesgeld?", "Zins, Verfügbarkeit und Schutz im Vergleich", "Anleihe, Festgeld, Tagesgeld und Geldmarkt-ETF im Vergleich: Zins, Verfügbarkeit, Schutz durch Einlagensicherung oder Bonität, Steuern und Kosten."),
         E("ETF oder Anleihe?", "etf-oder-anleihe.html", "spot-etf-oder-anleihe.svg", "ETF oder Anleihe?", "Vor- und Nachteile, drei Unterschiede, eine Entscheidungstabelle", "Anleihen-ETF oder einzelne Anleihe? Vor- und Nachteile des ETF, drei Unterschiede und eine Entscheidungstabelle – mit Schaubildern erklärt."),
         E("Für Unternehmen", "anleihen-fuer-unternehmen.html", "spot-anleihen-fuer-unternehmen.svg", "Anleihen für Unternehmen", "Rücklagen der GmbH anlegen – Depot, LEI, Steuern, Bilanz", "Rücklagen des Unternehmens in Anleihen anlegen: Depot und LEI, rund 30 % Steuer bei der GmbH, Abschreibung in der Bilanz und was vorher zu klären ist.")
@@ -91,10 +91,10 @@ AKADEMIE = ("Akademie", "wissen.html", [
         E("CDS", "cds.html", "spot-cds.svg", "Kreditausfallswap (CDS)", "Der Preis des Ausfallrisikos – am Beispiel Türkei", "Was ein Credit Default Swap ist, was seine Prämie über das Ausfallrisiko sagt und wie du sie als Signal nutzt – am Beispiel der Türkei 2018 bis 2026.")
     ]),
     "-",
-    E("Glossar", "begriffe.html", "spot-begriffe.svg", "Glossar", "Alle Fachbegriffe von A bis Z, jeder in wenigen Sätzen erklärt", "69 Fachbegriffe rund um Anleihen kurz erklärt – von Kupon, Kurs und Rendite über Duration und Spread bis Abgeltungsteuer."),
+    E("Glossar", "begriffe.html", "spot-begriffe.svg", "Glossar", "Alle Fachbegriffe von A bis Z, jeder in wenigen Sätzen erklärt", "Die wichtigsten Fachbegriffe rund um Anleihen kurz erklärt – von Kupon, Kurs und Rendite über Duration und Spread bis Abgeltungsteuer."),
 ])
 ANLEIHEN = ("Anleihen", "anleihen.html", [
-    E("Anleihen-Suche", "anleihen-suche.html", "spot-anleihen-suche.svg", "Anleihen-Suche", "Rund 33.000 Anleihen an deutschen Börsen – Filter nach Land, Währung, Laufzeit und Rendite.", "Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen: Suche nach Name, ISIN oder WKN, Filter nach Land, Währung, Laufzeit."),
+    E("Anleihen-Suche", "anleihen-suche.html", "spot-anleihen-suche.svg", "Anleihen-Suche", "Staats- und Unternehmensanleihen an deutschen Börsen – Filter nach Land, Währung, Laufzeit und Rendite.", "Staats- und Unternehmensanleihen mit aktuellem Kurs an deutschen Börsen: Suche nach Name, ISIN oder WKN, Filter nach Land, Währung, Laufzeit."),
     B("Top 10 Staat", "staatsanleihen-laufzeit.html", "spot-staatsanleihen-laufzeit.svg", "Top 10 Staatsanleihen", "Die zehn meistgehandelten Staatsanleihen – je Laufzeit oder je Land.", [
         E("nach Laufzeit", "staatsanleihen-laufzeit.html", "spot-staatsanleihen-laufzeit.svg", "Staatsanleihen nach Laufzeit", "Fünf Laufzeitbereiche – von „bis 1 Jahr“ bis „über 30 Jahre“", "Die meistgehandelten Staatsanleihen in fünf Laufzeitgruppen, von unter 1 bis über 30 Jahre – mit ISIN, Kurs, Kupon, Rendite und Volumen."),
         E("nach Ländern", "anleihen-laender.html", "spot-anleihen-laender.svg", "Staatsanleihen nach Ländern", "20 Länder auf der Karte", "Weltkarte zum Anklicken: je zehn meistgehandelte Staatsanleihen aus 20 Ländern – mit ISIN, Kurs, Kupon, Rendite, Restlaufzeit und Stückelung.")
@@ -104,26 +104,26 @@ ANLEIHEN = ("Anleihen", "anleihen.html", [
         E("nach Ländern", "unternehmensanleihen-laender.html", "spot-unternehmensanleihen-laender.svg", "Unternehmensanleihen nach Ländern", "Deutschland, USA, Frankreich und weitere Länder auf der Karte", "Weltkarte zum Anklicken: je zehn meistgehandelte Unternehmensanleihen aus sechs Ländern – mit ISIN, Kurs, Kupon, Rendite, Restlaufzeit und Stückelung.")
     ]),
     E("Anleihen-ETFs", "anleihen-etf.html", "spot-anleihen-etf.svg", "Anleihen-ETFs", "Sieben Kategorien, von ruhig bis riskant", "Die zehn meistgehandelten Anleihen-ETFs in sieben Kategorien, von ruhig bis riskant – mit Kurs, Kosten, Laufzeit, Größe und Ausschüttung. Täglich aktuell."),
-    E("Höchste Kupons", "anleihen-kupon.html", "spot-anleihen-kupon.svg", "Anleihen nach Kupon", "Auf der EZB-Liste: Staaten, öffentliche Emittenten und Unternehmen", "Die 30 höchsten Kupons je Art: Staatsanleihen, öffentliche Emittenten und Unternehmen – von der EZB-Liste notenbankfähiger Sicherheiten, ab zwei Jahren."),
+    E("Anleihen nach Kupon", "anleihen-kupon.html", "spot-anleihen-kupon.svg", "Anleihen nach Kupon", "Auf der EZB-Liste: Staaten, öffentliche Emittenten und Unternehmen", "Die 30 höchsten Kupons je Art: Staatsanleihen, öffentliche Emittenten und Unternehmen – von der EZB-Liste notenbankfähiger Sicherheiten, ab zwei Jahren."),
     E("Bundeswertpapiere", "bundeswertpapiere.html", "spot-bundeswertpapiere.svg", "Bundeswertpapiere", "Alle laufenden Anleihen des Bundes mit Kurs und Rendite", "Alle Bundeswertpapiere mit Kurs und Rendite der Bundesbank: Bundesanleihen, Bundesobligationen, Schatzanweisungen – und wie du sie kaufst."),
     E("Langläufer", "langlaeufer.html", "spot-langlaeufer.svg?v=2", "Langläufer", "Sieben Anleihen mit 30 bis 100 Jahren Laufzeit – Kursverlauf seit 2019", "Wenn Anleihen 30, 50 oder 100 Jahre laufen: Kursverlauf von sieben Langläufern seit 2019, von Bund 2040 bis Österreich 2120 – mit Kennzahlen."),
 ])
 KAUFEN = ("Kaufen", "kaufen.html", [
     E("Erste Anleihe", "erste-anleihe.html", "spot-erste-anleihe.svg", "Deine erste Anleihe", "Neun Schritte vom Termin bis zur Rückzahlung", "Deine erste Anleihe in neun Schritten: vom Termin über Bonität, Depot und Order bis zu den Stückzinsen – mit durchgerechnetem Beispiel und Checkliste."),
-    E("Broker-Vergleich", "broker-vergleich.html", "spot-broker-vergleich.svg", "Broker im Vergleich", "18 Anbieter: Angebot, Börsen, Kosten – nur Angaben der Anbieter selbst.", "Wo kannst du Anleihen kaufen? 18 Anbieter im Vergleich: Kosten für Käufe von 1.000 bis 100.000 € offen vorgerechnet – mit Rechenweg und Quelle."),
+    E("Broker-Vergleich", "broker-vergleich.html", "spot-broker-vergleich.svg", "Broker im Vergleich", "Anbieter im Vergleich: Angebot, Börsen, Kosten – nur Angaben der Anbieter selbst.", "Wo kannst du Anleihen kaufen? 18 Anbieter im Vergleich: Kosten für Käufe von 1.000 bis 100.000 € offen vorgerechnet – mit Rechenweg und Quelle."),
     E("Handelsplätze", "handelsplaetze.html", "spot-handelsplaetze.svg", "Handelsplätze", "Frankfurt, Stuttgart, gettex & Co. – wer den Kurs stellt", "Profimarkt oder Börse, wer den Kurs stellt und elf Handelsplätze für Anleihen im Vergleich: Frankfurt, Stuttgart, gettex, Tradegate, Direkthandel und mehr."),
     E("Nicht kaufbar?", "anleihe-nicht-kaufbar.html", "spot-anleihe-nicht-kaufbar.svg", "Warum kann ich diese Anleihe nicht kaufen?", "Stückelung, Zielmarkt, Handelsplatz – und was du tun kannst", "Stückelung ab 100.000 €, fehlendes Basisinformationsblatt, nur für Profis, Handelsplatz: die häufigsten Gründe für eine Kaufsperre – und was du tun kannst."),
     E("Nach dem Kauf", "nach-dem-kauf.html", "spot-nach-dem-kauf.svg", "Nach dem Kauf", "Zinsen, Verkauf, Rückzahlung und Depotwechsel", "Was nach dem Anleihekauf passiert: Zinsen am Zinstermin, Verkauf vor Fälligkeit, Rückzahlung zum Nennwert, Post von der Bank und Depotwechsel."),
-    E("Steuern und Kosten", "steuern-handelskosten.html", "spot-steuern-handelskosten.svg", "Steuern und Handelskosten", "Was zwischen brutto und netto liegt", "Abgeltungsteuer, Stückzinsen, Nullkupon, Fremdwährung, Vorabpauschale beim Anleihen-ETF, Quellensteuer im Ausland, Ordergebühr, Spanne und Stückelung: was zwischen brutto und netto liegt."),
+    E("Steuern und Kosten", "steuern-handelskosten.html", "spot-steuern-handelskosten.svg", "Steuern und Handelskosten", "Was zwischen brutto und netto liegt", "Abgeltungsteuer, Stückzinsen, Nullkupon, Fremdwährung, ETF-Vorabpauschale, Quellensteuer, Ordergebühr und Spanne: was zwischen brutto und netto liegt."),
     E("Rechner", "rechner.html", "spot-rechner.svg", "Rechner", "Rendite, Stückzinsen, Netto, Zinsniveau", "Vier Rechner: Rendite aus Kurs und Kupon, Stückzinsen, Zinsen netto nach Steuer und der Kurs, wenn das allgemeine Zinsniveau steigt oder fällt."),
     E("Simulator", "anleihen-simulator.html", "spot-anleihen-simulator.svg", "Anleihen-Simulator", "30 Jahre Kurs in 30 Sekunden", "Sieh, wie der Kurs einer Anleihe mit dem Zinsniveau schwankt und am Ende zum Nennwert zurückkehrt: 30 Jahre in 30 Sekunden, Zeitpunkt mit der Maus ziehen."),   # seit 11.10.2026 abends im Menü „Kaufen“ (Nutzerwunsch; vorher Akademie › Grundlagen)
 ])
 MARKT = ("Markt", "beobachten.html", [   # bis 11.10.2026 abends ZINSEN/„zinsen“ (Menüname „Zinsen“ bis 11.10.2026)
-    E("Renditen Staat", "renditen.html", "spot-renditen.svg?v=2", "Renditen von Staatsanleihen seit 1970", "Acht Länder im Vergleich", "Renditen 10-jähriger Staatsanleihen der acht größten Volkswirtschaften seit 1970: USA, China, Deutschland, Indien, Japan, UK, Frankreich und Italien."),
+    E("Renditen Staat", "renditen.html", "spot-renditen.svg?v=2", "Renditen von Staatsanleihen seit 1970", "Acht Länder im Vergleich", "Renditen 10-jähriger Staatsanleihen der acht größten Volkswirtschaften seit 1970: USA, China, Deutschland, Indien, Japan, Großbritannien, Frankreich, Italien."),
     E("Renditen Unternehmen", "unternehmensanleihen.html", "spot-unternehmensanleihen.svg?v=2", "Renditen von Unternehmensanleihen seit 1984", "Sechs Segmente nach Bonität, je 10 Jahre", "Renditen 10-jähriger Unternehmensanleihen seit 1984 nach Bonität und Land: USA, Japan, China und Australien – Jahresmittel, Spannen, aktueller Stand."),
     E("Realzins", "realzins.html", "spot-realzins.svg?v=2", "Realzins seit 1970", "Was nach der Inflation übrig bleibt", "Zins minus Inflation: Realzins der 10-jährigen Bundesanleihe seit 1970, heute und nach Steuern – plus die Inflationserwartung des Markts bis 2046."),
     E("Zinskurve", "zinskurve.html", "spot-zinskurve.svg?v=2", "Zinskurve seit 1972", "Bringt lange Bindung mehr Zins?", "Steil, flach oder invers? Der Abstand zwischen 10- und 2-jährigen Staatsanleihen – Deutschland seit 1972, USA seit 1976, börsentäglich aktualisiert."),
-    E("Risikoaufschläge", "risikoaufschlaege.html", "spot-risikoaufschlaege.svg?v=2", "Risikoaufschläge: Euro-Staaten und USA", "Das Angstbarometer: Euro-Staaten und Unternehmen", "Risikoaufschläge seit 1984: Wie viel mehr Zins Italien, Frankreich und US-Unternehmen zahlen als Schuldner bester Bonität – das Angstbarometer."),
+    E("Risikoaufschläge", "risikoaufschlaege.html", "spot-risikoaufschlaege.svg?v=2", "Risikoaufschläge: Euro-Staaten und USA", "Das Angstbarometer: Euro-Staaten und Unternehmen", "Risikoaufschläge (Spreads): Wie viel mehr Zins Italien und Frankreich (seit 1991) und US-Unternehmen (seit 1984) zahlen als Schuldner bester Bonität."),
 ])
 
 # Die Aufklapper neben der Akademie, in dieser Reihenfolge; Rubrik-Schlüssel je Menü; Zusatzseiten, die zu einem Menü zählen
@@ -131,19 +131,13 @@ MENUS = [ANLEIHEN, KAUFEN, MARKT]
 ALLE = [AKADEMIE] + MENUS
 MENU_RUBRIK = {"Akademie": "verstehen", "Anleihen": "anleihen", "Kaufen": "kaufen", "Markt": "markt"}   # Rubrik-Schlüssel „markt“ seit 11.10.2026 abends (vorher „zinsen“; mein.js und bereich.js lesen .nav-markt)
 MENU_EXTRA = {"Anleihen": ["anleihe.html"]}
-# Knopf „My Bondarium“ rechts außen, hinter dem Suchfeld (Benutzerbereich konto.html: Anmeldung, Merkliste und Musterdepots). Bis 1000 px
+# Knopf „My Bondarium“ rechts außen (Benutzerbereich konto.html: Anmeldung, Merkliste und Musterdepots). Bis 1000 px
 # steht er stattdessen als letzter Eintrag im Burger-Menü (Klasse nav-konto) – base.css zeigt jeweils nur eines von beiden.
 KONTO = ("My Bondarium", "konto.html")   # seit 10.10.2026 „My Bondarium“ (Nutzerwunsch); seit 11.10.2026 heißt auch die Seite selbst so (vorher „Mein Bondarium“)
 KONTO_BILD = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" '
               'aria-hidden="true" focusable="false"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.2-4 4-5.5 7.5-5.5s6.3 1.5 7.5 5.5"/></svg>')
-# Suchfeld rechts außen (26.09.2026 bis 10.10.2026, dann auf Nutzerwunsch „nimm die suche raus“ entfernt – SEARCH wird nicht mehr
-# ausgegeben, END_RE erkennt alte Kopfzeilen weiter; die Suche selbst bleibt unter Anleihen → Anleihen-Suche):
-# schickt q an die Anleihen-Suche; leer abgeschickt führt site.js direkt auf die Suchseite (Fokus ins Suchfeld).
-# Im DOM nach dem Menü (Tab-Reihenfolge Marke → Menü → Suche); der Lupen-Knopf steht per CSS links im Feld.
-SEARCH = ('    <form class="kopfsuche" action="{p}anleihen-suche.html" method="get" role="search" aria-label="Anleihen-Suche">'
-          '<input type="search" name="q" placeholder="Anleihe suchen" aria-label="Anleihe suchen – Name, ISIN oder WKN" '
-          'autocomplete="off" spellcheck="false" enterkeyhint="search">'
-          '<button type="submit" aria-label="Suchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg></button></form>')
+# Das Suchfeld rechts außen (26.09.2026 bis 10.10.2026, Konstante SEARCH) ist auf Nutzerwunsch („nimm die suche raus“) entfernt;
+# END_RE erkennt alte Kopfzeilen mit <form class="kopfsuche"> weiter. Die Suche bleibt unter Anleihen → Anleihen-Suche.
 
 # Logo 06 „Kompakt & modern“ (seit 04.10.2026, Reinzeichnung des Nutzers): Bildzeichen = volles weißes „b“ im schwarzen Quadrat,
 # grüner Punkt mit schwarzem Ring oben rechts am Bauch – vermessen und nur aus Flächen gebaut (keine Maske, keine IDs).
@@ -180,8 +174,8 @@ FOOTER = [
     ("Kaufen", "f-kauf", [("Deine erste Anleihe", "erste-anleihe.html"), ("Broker im Vergleich", "broker-vergleich.html"),
                           ("Steuern und Handelskosten", "steuern-handelskosten.html"), ("Nach dem Kauf", "nach-dem-kauf.html"),
                           ("Rechner", "rechner.html"), ("Simulator", "anleihen-simulator.html")]),
-    ("Markt", "f-zins", [("Renditen Staatsanleihen", "renditen.html"), ("Realzins", "realzins.html"), ("Zinskurve", "zinskurve.html"),
-                         ("Risikoaufschläge", "risikoaufschlaege.html")]),
+    ("Markt", "f-markt", [("Renditen Staat", "renditen.html"), ("Renditen Unternehmen", "unternehmensanleihen.html"), ("Realzins", "realzins.html"),
+                          ("Zinskurve", "zinskurve.html"), ("Risikoaufschläge", "risikoaufschlaege.html")]),
     ("Bondarium", "f-bond", [("Über uns", "ueber-uns.html"), ("Haftung und Datenquellen", "haftung.html"),
                              ("Impressum", "impressum.html"), ("Datenschutz", "datenschutz.html")]),
 ]
