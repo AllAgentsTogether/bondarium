@@ -62,7 +62,9 @@ Workflow `update-data.yml`:
 - **Frische-Prüfung** (`scripts/frische.py`, seit 09.10.2026): jede Datendatei, `kurse/bund` und Pflichtwerte (Breakeven,
   Anteil der Kurse mit Aufschlag zu Bund). Soll in Handelstagen je Quelle, Alarm ab 2 Handelstagen Rückstand; Monatswerte
   (OECD, HQM, RBA – auch der US-Risikoaufschlag ist seit 30.09.2026 ein Monatswert) gegen den Monat vor drei Monaten. Nur
-  im Abruf-Lauf, nicht bei Push-Deploys. Regeln im Kopf des Skripts.
+  im Abruf-Lauf, nicht bei Push-Deploys. Regeln im Kopf des Skripts. Seit 15.10.2026 auch der **Wochenbrief**: Alarm schon an
+  Werktagen, wenn `newsletter/ausgabe.json` einen Sperrgrund außer „kein Versandtag“ nennt (sonst fiele er am Freitag aus);
+  dazu eine Warnung (kein Alarm), wenn die Broker-Preise (`broker.json`, „stand“) älter als 120 Tage sind.
 - **Lücken im Kursverlauf** (`scripts/kurs_luecken.py`, seit 29.09.2026): Fehlt seit dem 24.09.2026 ein Börsentag in
   `kurse/`, wird der Abruf-Lauf rot. Nicht mehr nachholbare Tage stehen in `BEKANNTE_LUECKEN` und lösen keinen Alarm aus.
   **Stand 15.10.2026:** Der 05.10.2026 fehlt und steht nicht in der Liste (Technik-Test E1, Frage 3: nachtragen – offen).
@@ -72,6 +74,10 @@ Workflow `update-data.yml`:
   Warnung (GitHub zeigt sie wegen `continue-on-error` grün). Selbst kein Alarm – den gibt die Frische-Prüfung.
 - **.htaccess-Prüfung** (`scripts/htaccess_test.sh`, seit 02.10.2026): echter Apache im Runner vor dem Upload. Falscher
   Status, falsches Weiterleitungsziel oder offene Sperre → kein Upload, die Seite behält den letzten Stand, der Lauf ist rot.
+- **Quelle in `scripts/pruefen.py`** (seit 15.10.2026): Seiten weichen von den Menüdaten ab (`nav.py`, `hubs.py`,
+  `weiter.py --check`), ein Leser der Menüdaten liefert nichts (Akademie-Artikel des Wochenbriefs, Themenzahl, Themen der
+  Suche), Wertwort im Steckbrief (`neutral_check.py`), Zusage-Wörter oder Hauswortschatz. Bei Push-Deploys ein Fehler (kein
+  Upload, Lauf rot), im Datenlauf nur Warnung – dort ändern sich keine Seitentexte.
 - **Alarm bei fehlgeschlagener Nach-Deploy-Prüfung**: Seite/Weiterleitung/410, Trigger-Konfiguration nicht abrufbar,
   Benutzerbereich, Besucherzählung, Server-Steckbriefe der Bundeswertpapiere, seit 09.10.2026 auch Wochenbrief (bauen und
   verschicken) und Meldungen. Diese Schritte laufen mit `continue-on-error`, damit Wochenbrief und Meldungen rausgehen; der
@@ -150,3 +156,22 @@ zufällige Dateiname, welche gilt. `erinnerung.php` verschickt bei zwei Dateien 
 - PHP-Version und Webspace-Sicherung im STRATO-Kundenbereich nachsehen (Abschnitt 4).
 - DMARC ohne Berichtsadresse (`rua`); CAA und DNSSEC fehlen (Technik-Test E4, Frage 20) – beides bei STRATO.
 - Privates Repo `bondarium-sicherung` löschen (Einleitung).
+- S&P Annual Global Corporate Default Study 2025 beschaffen (nicht frei abrufbar) – für die Ausfallquoten (Abschnitt 8).
+
+## 8. Zahlen von Hand nachziehen (Pflegeliste)
+
+Diese Angaben kommen aus Berichten, die einmal im Jahr (oder seltener) erscheinen, und stehen fest in den Seiten (Liste der
+handgepflegten Angaben für Leser: haftung.html). Bei neuer Ausgabe Zahlen, Quellen-Link und Datum in der Methodik nachziehen,
+dateModified der Seite setzen.
+
+| Wann | Quelle | Wo |
+|---|---|---|
+| Frühjahr | S&P Annual Global Corporate Default Study | bonitaet.html #ausfall und Methodik, risiko.html #ausfall und Methodik, zahlungsausfall.html Karten 1, 3, 6 und Methodik (59,3 %, 91,7 %, 10-Jahres-Werte) |
+| Januar | Damodaran, Risikoaufschläge je Note | bonitaet.html #zins, zinsniveau.html (Schema, BBB 1,1 Punkte) |
+| Dezember | ESMA, Marktanteile der Ratingagenturen | bonitaet.html #was |
+| Sommer | SIFMA Capital Markets Fact Book | grundlagen.html, Kreis „So groß ist der Markt“ (data-kz markt-*) |
+| August | Destatis, Insolvenzquote | zahlungsausfall.html Karte 2 |
+| nach jeder Zinssitzung der TCMB | CDS-Prämie Türkei (Berichte der Zentralbank) | cds.html |
+| alle 120 Tage (frische.py warnt) | Preisverzeichnisse der Broker | broker.json „stand“; Scalable: Link mit `version=` der geltenden Fassung (seit 01.09.2026) |
+| September | Handelszeiten und Anleihenzahlen der Börsen | handelsplaetze.html, Tabelle (zuletzt 28.09.2026) |
+| bei Entscheidung, spätestens Januar 2027 | Bundesverfassungsgericht, Vorlage 2 BvL 3/21 | steuern-handelskosten.html, Karte 3 |
