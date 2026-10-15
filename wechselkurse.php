@@ -5,7 +5,8 @@
  *
  * Der tägliche Datenlauf um 10 Uhr schreibt wechselkurse.json (scripts/update_wechselkurse.py) – die EZB veröffentlicht
  * ihre Kurse aber erst gegen 16 Uhr. Deshalb fragt dieses Skript selbst bei der EZB nach: höchstens alle 30 Minuten,
- * und gar nicht mehr, sobald der Kurs von heute da ist. Der Stand liegt in wechselkurs-daten/kurse.json. Scheitert der
+ * und gar nicht mehr, sobald der Kurs von heute da ist – am Wochenende und an TARGET-Feiertagen (keine Kurse) nur, solange
+ * der des letzten Veröffentlichungstags fehlt. Der Stand liegt in wechselkurs-daten/kurse.json. Scheitert der
  * Abruf, gilt der bisherige Stand weiter (neuer Versuch nach 5 Minuten); gibt es noch keinen, die Datei aus dem Datenlauf.
  *
  * Antwort wie wechselkurse.json: {"stand": "JJJJ-MM-TT", "quelle": …, "kurse": {"USD": 1.1355, …}} (1 Euro = x Einheiten).
@@ -31,6 +32,29 @@ function fx_lesen(string $pfad): ?array
     if (!is_array($d) || !isset($d['stand'], $d['kurse']) || !is_array($d['kurse'])) return null;
     if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) $d['stand']) || count($d['kurse']) < 20) return null;
     return $d;
+}
+
+/**
+ * Veröffentlicht die EZB an diesem Tag Referenzkurse? Nicht an Samstagen, Sonntagen und den TARGET-Feiertagen: Neujahr, Karfreitag,
+ * Ostermontag, 1. Mai, 25. und 26. Dezember. Ostern nach der Gaußschen Osterformel (ohne die Erweiterung „calendar“ von PHP).
+ */
+function fx_veroeffentlicht(DateTimeImmutable $tag): bool
+{
+    if ((int) $tag->format('N') >= 6 || in_array($tag->format('m-d'), ['01-01', '05-01', '12-25', '12-26'], true)) return false;
+    $j = (int) $tag->format('Y');
+    $a = $j % 19; $b = intdiv($j, 100); $c = $j % 100; $d = intdiv($b, 4); $e = $b % 4; $f = intdiv($b + 8, 25); $g = intdiv($b - $f + 1, 3);
+    $h = (19 * $a + $b - $d - $g + 15) % 30; $i = intdiv($c, 4); $k = $c % 4; $l = (32 + 2 * $e + 2 * $i - $h - $k) % 7; $m = intdiv($a + 11 * $h + 22 * $l, 451);
+    $ostern = (new DateTimeImmutable(sprintf('%04d-%02d-%02d', $j, intdiv($h + $l - 7 * $m + 114, 31), (($h + $l - 7 * $m + 114) % 31) + 1)));
+    $karfreitag = $ostern->modify('-2 days')->format('Y-m-d');
+    $ostermontag = $ostern->modify('+1 day')->format('Y-m-d');
+    return !in_array($tag->format('Y-m-d'), [$karfreitag, $ostermontag], true);
+}
+
+/** Letzter Tag vor $tag, an dem die EZB Kurse veröffentlicht hat (JJJJ-MM-TT) */
+function fx_letzter_tag(DateTimeImmutable $tag): string
+{
+    do { $tag = $tag->modify('-1 day'); } while (!fx_veroeffentlicht($tag));
+    return $tag->format('Y-m-d');
 }
 
 /** Tageskurse bei der EZB holen; null, wenn der Abruf scheitert oder die Antwort unplausibel ist */
@@ -79,6 +103,10 @@ $fest  = fx_lesen(__DIR__ . '/wechselkurse.json');   // Stand des letzten Datenl
 $lager = fx_lesen(FX_DATEI);
 $faellig = $lager === null || $jetzt - (int) ($lager['geprueft'] ?? 0) >= FX_PAUSE;
 if ($lager !== null && $lager['stand'] === date('Y-m-d')) $faellig = false;   // Kurs von heute ist da – bis morgen kommt kein neuer
+// Am Wochenende und an TARGET-Feiertagen kommt kein neuer Kurs: Ist der des letzten Veröffentlichungstags da, nicht nachfragen (seit 15.10.2026,
+// Gesamtprüfung C07-01 – vorher fragte das Skript dann bei jedem Besuch alle 30 Minuten vergeblich bei der EZB nach)
+$heute = new DateTimeImmutable('today');
+if ($lager !== null && !fx_veroeffentlicht($heute) && $lager['stand'] >= fx_letzter_tag($heute)) $faellig = false;
 
 if ($faellig) {
     if (!is_dir(FX_ORDNER)) @mkdir(FX_ORDNER, 0700, true);

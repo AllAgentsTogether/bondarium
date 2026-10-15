@@ -23,7 +23,13 @@
  * GitHub gibt bei Erfolg HTTP 204 zurück (kein Inhalt).
  */
 
-$cfg = require __DIR__ . '/refresh-config.php';
+// Fehlt die Konfiguration (z. B. weil ihr Bauschritt im Workflow scheiterte), sauber mit 503 antworten – vorher brach „require“ mit einem
+// PHP-Fehler samt Serverpfad im Text ab (seit 15.10.2026, Gesamtprüfung C08-01)
+$cfg = is_file(__DIR__ . '/refresh-config.php') ? require __DIR__ . '/refresh-config.php' : null;
+if (!is_array($cfg)) {
+    http_response_code(503);
+    exit('not configured');
+}
 
 $isCli = (php_sapi_name() === 'cli');
 
@@ -34,7 +40,7 @@ if ($isCli) {
     // Aufruf über das Web: nur mit korrektem Schlüssel auslösbar.
     // Ohne konfiguriertes Secret (leer/fehlend) gar nicht erst vergleichen –
     // sonst wäre der Trigger mit ?key= (leer) für jedermann auslösbar.
-    if (!is_string($cfg['secret']) || trim($cfg['secret']) === '') {
+    if (!is_string($cfg['secret'] ?? null) || trim($cfg['secret']) === '') {
         http_response_code(503);
         exit('not configured');
     }

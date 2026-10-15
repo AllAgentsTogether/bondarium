@@ -4,7 +4,7 @@
      <script src="site.js"></script><script src="konto.js"></script><script src="mein.js"></script>
 
    Was die Seite bekommt, entscheidet ihr Platz im Menü (scripts/nav.py) – keine zweite Liste:
-     Akademie-Seiten und die Seiten unter „Kaufen“ (ohne Rechner): am Ende die Leiste „Als gelesen markieren“ und „Lesezeichen“ – für
+     Akademie-Seiten und die Seiten unter „Kaufen“ (ohne die Werkzeuge Rechner, Simulator, Broker-Vergleich): am Ende die Leiste „Als gelesen markieren“ und „Lesezeichen“ – für
        alle sichtbar; wer nicht angemeldet ist, landet beim Klick auf konto.html. Angemeldet dazu ein kleines Lesezeichen an jeder
        Zwischenüberschrift (Abschnitt).
      Glossar (begriffe.html): angemeldet ein Stern an jedem Begriff („Gemerkte Begriffe“).
@@ -26,7 +26,10 @@
   function imMenue(sel) { var a = document.querySelector('#sitenav ' + sel + ' a[href="' + datei + '"]'); return !!a && !a.classList.contains("nav-ov"); }
   // Menü seit 11.10.2026 abends („Navigation einfach“): Akademie-Seiten stehen als Unterseiten ihres Bereichs in .np-mob (Handy-Liste,
   // im selben Markup) oder als eigener Eintrag .np-item; Kaufen und Markt sind flache Listen. Vorher .nav-spalte/.nav-group-menu.
-  var lern = (imMenue(".nav-akademie") && seite !== "begriffe") || (imMenue(".nav-kaufen") && seite !== "rechner");
+  // Werkzeuge unter „Kaufen“ sind nichts zum Lesen: keine Leiste, zählen nicht zum Lernstand (dieselbe Liste in bereich.js, GRUPPEN) –
+  // seit 15.10.2026 neben dem Rechner auch Simulator und Broker-Vergleich (Gesamtprüfung B56-04)
+  var WERKZEUGE = ["rechner", "anleihen-simulator", "broker-vergleich"];
+  var lern = (imMenue(".nav-akademie") && seite !== "begriffe") || (imMenue(".nav-kaufen") && WERKZEUGE.indexOf(seite) < 0);
   var zinsen = imMenue(".nav-markt") || seite === "beobachten";
 
   // Kennzahlen für „Mein Zins-Blick“ je Seite: [Kennung, Beschriftung] – Werte und Quellen stehen in bereich.js (KZ)

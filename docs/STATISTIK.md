@@ -37,14 +37,16 @@ muss die Datenschutzerklärung (`datenschutz.html#statistik`) mit, und der Betre
 
 ## Bericht
 
-Seit 02.10.2026 stößt derselbe Weg auch die E-Mails „30 Tage vor jeder Fälligkeit“ an: Der erste gezählte Aufruf ab 7 Uhr ruft
+Seit 02.10.2026 stößt derselbe Weg auch die E-Mails vor Fälligkeit an (seit 02.10.2026 abends 20 Tage vorher und am Tag der
+Fälligkeit, vorher 30 Tage vorher): Der erste gezählte Aufruf ab 7 Uhr ruft
 nach der Antwort `erinnerungen_senden()` aus `erinnerung.php` (Beschreibung in docs/KONTO.md). Der Workflow „Statistik –
 Testmail“ schickt mit der Auswahl `erinnerung` eine Beispiel-Erinnerung statt des Berichts.
 
 Seit 02.10.2026 steht unter den vier Kacheln das Band „Wochenbrief“: Abonnenten (Stand beim Erstellen), An- und Abmeldungen
 des Berichtstags, Zahl der Konten und die zuletzt verschickte Ausgabe. `bericht_newsletter()` liest dafür die Datenbank des
 Benutzerbereichs (`konto-daten/`, nur lesend); ist sie nicht lesbar, entfällt das Band, und das Schaubild darunter ist wieder
-34 Punkt höher. Dieselbe Zahl steht im Text der E-Mail (`docs/NEWSLETTER.md`).
+34 Punkt höher. Dieselbe Zahl steht im Text der E-Mail als „Wochenbrief-Abonnenten“ (bis 14.10.2026 „Newsletter-Abonnenten“;
+`docs/NEWSLETTER.md`).
 
 - Der erste Aufruf ab 6:00 Uhr (Berlin) verschickt den Bericht des Vortags. Das passiert erst nach der Antwort an den
   Browser, der Besucher wartet also nicht. Ohne Besucher am Morgen kommt der Bericht später. Tage ohne Zählung werden

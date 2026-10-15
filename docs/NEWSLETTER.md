@@ -18,7 +18,7 @@ Besucherbericht.
 | `konto.html`, `konto.js` | Häkchen im Registrierungsformular, Schalter „Wochenbrief per E-Mail“ in der Ansicht „Meldungen“ (bis 12.10.2026 „Meldungen und Konto“, bis 02.10.2026 abends unter der Merkliste), Abmelde-Link `konto.html#nl-ab=<Kennung>` |
 | `statistik-bericht.php` | Band „Wochenbrief“ im täglichen Bericht: Abonnenten, An-/Abmeldungen, Konten, letzte Ausgabe |
 | `.github/workflows/update-data.yml` | Schritte „Wochenbrief bauen“ und „Wochenbrief verschicken (nur am Versandtag)“ |
-| `.github/workflows/newsletter-probe.yml` | von Hand auslösbar: schickt die aktuelle Ausgabe mit Muster-Merkliste an info@bondarium.com |
+| `.github/workflows/newsletter-probe.yml` | von Hand auslösbar: schickt die aktuelle Ausgabe mit Muster-Merkliste an info@bondarium.com; ist die Ausgabe gesperrt (leer), verschickt `konto.php` seit 15.10.2026 nichts und antwortet mit `gesendet: 0` und dem Grund |
 
 ## Inhalt – woher jeder Abschnitt kommt
 
@@ -49,7 +49,9 @@ Anbieter und gibt keine Kaufempfehlung.
    Ausgaben, die älter als zwei Tage sind, gehen nicht mehr raus. Fällt der Freitagslauf aus, gibt es in der Woche keine Ausgabe.
 4. **Zählen** – der tägliche Besucherbericht nennt Abonnenten, An- und Abmeldungen des Tages, Konten und die letzte Ausgabe.
 
-Die E-Mail hat eine Text- und eine HTML-Fassung, keine Bilder, keine Zählpixel, keine Verfolgungs-Links. Im Kopf stehen
+Die E-Mail hat eine Text- und eine HTML-Fassung, keine Bilder, keine Zählpixel, keine Verfolgungs-Links. Die HTML-Fassung ist
+höchstens 600 px breit und passt sich schmaleren Bildschirmen an: Seit 15.10.2026 dürfen die Zahlenspalten umbrechen (vorher 624 px
+bei 375 px Bildschirmbreite), Zwischentitel und Spaltenköpfe stehen ohne Versalien wie auf der Website. Im Kopf stehen
 `List-Unsubscribe` und `List-Unsubscribe-Post` (Abbestellen aus dem E-Mail-Programm, RFC 8058).
 
 ## Einwilligung und Abbestellen
@@ -78,19 +80,22 @@ den Starter mit `from __future__ import annotations`.
 
 ## Offen
 
-- **Zustellung:** Versand über PHP `mail()` bei STRATO mit Absender info@bondarium.com. Ohne SPF-Eintrag kann der
-  Wochenbrief im Spam landen (siehe docs/KONTO.md).
+- **Zustellung:** Versand über PHP `mail()` bei STRATO mit Absender info@bondarium.com. SPF ist seit 02.10.2026 gesetzt,
+  DMARC steht auf `p=reject`, DKIM-Schlüssel liegen bei STRATO (docs/KONTO.md) – offen ist nur, ob STRATO die E-Mails aus
+  `mail()` auch mit DKIM signiert (im Kopf einer empfangenen Probe nachsehen).
 - **USA im Wochenvergleich:** bräuchte Tageswerte im Datenlauf.
 - **Rechtstexte** (Einwilligung, Datenschutzabsatz) sind nicht juristisch geprüft.
 
 
 ## Datensatz `newsletter/anleihen.json` (seit 03.10.2026)
 
-`{ISIN: [Name, Kupon-Text, Fälligkeit, Kurs, Rendite, Veränderung zur Vorwoche, nächster Zinstermin, Zinsart, geschätzt]}` – gebaut in
+`{ISIN: [Name, Kupon-Text, Fälligkeit, Kurs, Rendite, Veränderung zur Vorwoche, nächster Zinstermin, Zinsart, geschätzt, Währung]}` (Felder 0–9) – gebaut in
 `scripts/newsletter.py` (`anleihen_daten`), gelesen von `konto.php` (Meldungen, Wochenbrief-Merkliste, Termine in „My Bondarium“) und
 `erinnerung.php` (Titel der E-Mail vor Fälligkeit). Name = Kurzname nach der Regel der Website (`_common.kurz_name`), Kupon-Text
 „3,50 %“ · „variabel“ · „Nullkupon“; der nächste Zinstermin ist laut Deutscher Börse oder – Feld 8 = 1 – geschätzt (dieselbe Rechnung
 wie der Steckbrief). Titel („Deutschland 2,60 % 2033“) und Restlaufzeit werden beim Versand aus den Feldern 0–2 gebildet
-(`titel_aus` in newsletter.py, `nl_titel`/`nl_restlaufzeit` in konto.php) – gespeichert wären sie 1,5 MB zusätzlich. Neue Felder nur
+(`titel_aus` in newsletter.py, `nl_titel`/`nl_restlaufzeit` in konto.php) – gespeichert wären sie 1,5 MB zusätzlich. Feld 9 (seit
+15.10.2026) ist das Währungskürzel: Ist es nicht EUR, hängt der Titel es an („Erste Bank 3,80 % 2029 · USD“) – in Meldungen,
+Wochenbrief-Merkliste und „Meistgehandelt“; die Erinnerung vor Fälligkeit (erinnerung.php) nimmt die Währung aus den Stammdaten. Neue Felder nur
 hinten anhängen: die PHP-Dateien lesen nach Stelle. `konto.php` liefert die geschätzten Termine an die Seite als `termine_geschaetzt`
 ({ISIN: 1}) neben `termine`.

@@ -544,7 +544,7 @@ function bericht_senden(PDO $db, string $tag, bool $test = false): bool
         'Besucher: ' . b_zahl($h['b']) . ($delta !== '–' ? " ($delta zum Vortag)" : '') . "\n" .
         'Seitenaufrufe: ' . b_zahl($h['a']) . "\n" .
         ($top ? 'Meistbesuchte Seite: ' . $top[1] . ' (' . b_zahl($top[2]) . ' Aufrufe)' . "\n" : '') .
-        (is_array($d['newsletter']) ? 'Newsletter-Abonnenten: ' . b_zahl($d['newsletter']['abonnenten'])
+        (is_array($d['newsletter']) ? 'Wochenbrief-Abonnenten: ' . b_zahl($d['newsletter']['abonnenten'])
             . ($d['newsletter']['an'] || $d['newsletter']['ab'] ? ' (' . ($d['newsletter']['an'] ? '+' . $d['newsletter']['an'] : '') . ($d['newsletter']['an'] && $d['newsletter']['ab'] ? ', ' : '') . ($d['newsletter']['ab'] ? '−' . $d['newsletter']['ab'] : '') . ')' : '')
             . ' bei ' . b_zahl($d['newsletter']['konten']) . ($d['newsletter']['konten'] === 1 ? ' Konto' : ' Konten') . "\n" : '') .
         "\nDer ausführliche Bericht hängt als PDF an.\n\n– automatisch erstellt von " . SEITE . "\n";

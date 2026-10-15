@@ -241,7 +241,8 @@ function erinnerung_text(array $posten, string $aus, bool $heute = false): array
 /** E-Mail wie mail_senden() in konto.php (Kopf, Fuß, Absender); lokal in konto-daten/lokal-mail.txt */
 function erinnerung_mail(string $an, string $betreff, string $text): bool
 {
-    $text = "Hallo,\n\n" . $text . "\n\nBondarium – ein Angebot der urbanelo GmbH\nhttps://www.bondarium.de/rechtliches.html\n";
+    // Fuß mit dem Impressum wie der Wochenbrief (seit 15.10.2026, Gesamtprüfung C01-04/G05-03 – vorher rechtliches.html, seit 11.10.2026 nur eine Übersicht)
+    $text = "Hallo,\n\n" . $text . "\n\nBondarium – ein Angebot der urbanelo GmbH\nhttps://www.bondarium.de/impressum.html\n";
     if (PHP_SAPI === 'cli-server' || PHP_SAPI === 'cli') {
         return file_put_contents(ERINNERUNG_DATEN . '/lokal-mail.txt', "An: $an\nBetreff: $betreff\n\n$text\n----\n", FILE_APPEND) !== false;
     }
@@ -297,7 +298,10 @@ function erinnerungen_senden(): array
             $da = $schon->fetchColumn();
             $schon->closeCursor();   // offene Leseanweisung vor dem Schreiben (merke) schließen – sonst „database is locked“ (T-20)
             if ($da) continue;
-            $p = [erinnerung_titel($isin) ?? $a[0], $isin, $a[1], $tage, $depot, $nenn, $a[2], $marke];   // Titel erst hier: nur für fällige Anleihen suchen
+            // Titel erst hier: nur für fällige Anleihen suchen. Seit 15.10.2026 mit der Währung, wenn sie nicht Euro ist („Weltbank 3,00 % 2026 · AUD“,
+            // wie nl_titel() in konto.php; Gesamtprüfung C03-03) – auf der Merkliste steht sonst nirgends, dass es keine Euro-Anleihe ist
+            $titel = (erinnerung_titel($isin) ?? $a[0]) . ($a[2] !== '' && $a[2] !== 'EUR' ? ' · ' . $a[2] : '');
+            $p = [$titel, $isin, $a[1], $tage, $depot, $nenn, $a[2], $marke];
             if ($tage === 0) $amTag[] = $p; else $vorab[] = $p;
         }
         foreach ([[$vorab, false], [$amTag, true]] as [$posten, $heuteFaellig]) {

@@ -1,6 +1,6 @@
 # Benutzerbereich „My Bondarium“
 
-Stand 11.10.2026. Der Bereich hieß bis 01.10.2026 „Mein Depot“, dann „Mein Bondarium“, seit 10./11.10.2026 „My Bondarium“
+Stand 15.10.2026 (Datenbank Fassung 9). Der Bereich hieß bis 01.10.2026 „Mein Depot“, dann „Mein Bondarium“, seit 10./11.10.2026 „My Bondarium“
 (Menüknopf und Seite). Er hat fünf Ansichten (bereich.js, seit 02.10.2026 abends): **Start**, **Merkliste**, **Planen** (die
 Musterdepots), **Meldungen** (darin auch die E-Mails) und **Lernen** (Lernstand der Akademie- und Kaufen-Seiten aus dem Menü).
 Ursprünglich (01.10.2026) waren es zwei Reiter nebeneinander: **Merkliste** und **Mein Depot**. Besucher
@@ -18,7 +18,8 @@ ist ein Planspiel, kein Wertpapierdepot: keine echten Bestände, keine Kaufpreis
 „Meldungen und Konto“ steht oben rechts die Karte „E-Mails an dich“ (`#d-nl`, vorher nur der Wochenbrief) mit drei Zeilen:
 „Vor Fälligkeit“ (Schalter `#kd-er-schalter`, Spalte `nutzer.erinnern`), „Meldungen“ (Zahl der Meldungen per E-Mail, Link zur
 Karte „Meldungen“, `#em-meld` zeichnet bereich.js) und „Wochenbrief“ (`#nl-knopf`); darunter die Adresse mit „Adresse ändern“
-(öffnet `#f-email`). Im Reiter „Musterdepots“ steht statt des Kastens nur noch „E-Mail vor Fälligkeit: an/aus · ändern unter
+(öffnet seit 15.10.2026 das Konto `#a-konto` mit dem Formular `#f-email`; seit dem 12.10.2026 lag das Formular dort, und der Klick
+tat im verborgenen Panel sichtbar nichts). Im Reiter „Musterdepots“ steht statt des Kastens nur noch „E-Mail vor Fälligkeit: an/aus · ändern unter
 „Meldungen und Konto““ (`#erinnerung`); die Adresse `konto.html#erinnerung` öffnet jetzt „Meldungen und Konto“. Eine Regel für
 Fälligkeiten: erinnerung.php schreibt 20 Tage vorher und am Tag für Anleihen auf der Merkliste und in den Musterdepots (Merkliste
 ohne Nennwert, je Anleihe und Fälligkeit eine E-Mail); die Meldung „termin“ heißt „Zinstermin steht an“ und nennt keine
@@ -37,7 +38,7 @@ Wochenbrief) entsprechend.
 | `pdf.js` | Kleiner PDF-Schreiber im Browser (`MC.pdf`: Helvetica, WinAnsi, Linien, Flächen, SVG-Pfade fürs Logo, Links; A4 hoch oder quer) für den Depot-Auszug. Nur auf `konto.html`. |
 | `base.css` | `.merkbtn` (Merken-Knopf, `.nur` = nur der Stern), `.ablbtn` und `.mb-seite` (Knöpfe der Ablage auf den Inhaltsseiten). |
 | `bereich.js`, `bereich.css` | Die fünf Ansichten von „My Bondarium“ (nur `konto.html`) – siehe „My Bondarium: fünf Ansichten“. |
-| `mein.js` | „My Bondarium“ auf den Inhaltsseiten: Leiste „Als gelesen markieren“/„Lesezeichen“, Abschnitts-Lesezeichen, Stern im Glossar, „In meinen Zins-Blick“, „Rechnung speichern“, Checkliste im Konto, „Zuletzt angesehen“. |
+| `mein.js` | „My Bondarium“ auf den Inhaltsseiten: Leiste „Als gelesen markieren“/„Lesezeichen“, Abschnitts-Lesezeichen, Stern im Glossar, „In meinen Zins-Blick“, Checkliste im Konto, „Zuletzt angesehen“ („Rechnung speichern“ am 02.10.2026 abends entfernt). |
 | `scripts/nav.py` | Menüpunkt „My Bondarium“ (`LINKS`). |
 | `datenschutz.html#konto` | Abschnitt der Datenschutzerklärung. |
 
@@ -299,20 +300,22 @@ Merkliste, „Mein Depot“ ist offen und die Anleihe im Formular ausgewählt (h
 
 ## Was gespeichert wird
 
-SQLite-Datei `konto-daten/konto-<zufällig>.sqlite` (Fassung 5):
+SQLite-Datei `konto-daten/konto-<zufällig>.sqlite`, Fassung 9 (`PRAGMA user_version`; `db()` in `konto.php` zieht ältere Fassungen
+nach – 6: Wochenbrief, 7: My Bondarium, 8: „E-Mails an einer Stelle“, 9: Indizes und Zeitpunkt der neuen Ein-Klick-Links):
 
 | Tabelle | Inhalt | Löschung |
 | --- | --- | --- |
-| `nutzer` | E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet, Erinnerung per E-Mail an/aus (seit Fassung 5) | „Konto löschen“ sofort; nach zwei Jahren ohne Anmeldung |
+| `nutzer` | E-Mail-Adresse, Hashwert des Passworts, angelegt am, zuletzt angemeldet, Erinnerung per E-Mail an/aus (seit Fassung 5); Wochenbrief ja/nein, seit wann, zuletzt erhaltene Ausgabe (Fassung 6); Beginn des laufenden und des vorigen Besuchs (Fassung 7) | „Konto löschen“ sofort; nach zwei Jahren ohne Anmeldung |
 | `erinnert` | verschickte Erinnerungen (seit Fassung 5): Nutzer, ISIN, Fälligkeit, Zeitpunkt | nach der Fälligkeit, mit dem Konto |
 | `favoriten` | ISIN (Anleihe oder ETF) und Zeitpunkt je Nutzer, höchstens 200; seit Fassung 7 die Rendite am Tag des Merkens (aus `newsletter/anleihen.json`) | „Entfernen“, mit dem Konto |
 | `ablage` | persönliche Ablage (seit Fassung 7): Nutzer, Art, Schlüssel, Wert (JSON), Zeitpunkt – nur, was der Nutzer selbst ablegt; Arten und Grenzen in `ABLAGE` (konto.php) | einzeln durch den Nutzer; Notiz 30 Tage nach dem Entfernen der Anleihe; mit dem Konto |
 | `musterdepots` | Musterdepots (seit 02.10.2026, Fassung 4): Nummer, Nutzer, Name (höchstens 40 Zeichen), angelegt am; höchstens 5 je Nutzer | „Löschen“, mit dem Konto |
 | `depot` | Anleihen der Musterdepots (seit 01.10.2026, Fassung 3; seit Fassung 4 je Musterdepot statt je Nutzer): Nummer des Musterdepots, ISIN, gedachter Nennwert (ganze Zahl) und Zeitpunkt, höchstens 10 je Depot | „Entfernen“, mit dem Musterdepot, mit dem Konto |
-| `links` | offene Registrierungen (Adresse, Hashwert des Passworts, vorgemerkte ISIN) und Links „Passwort vergessen“; jeweils Hashwert des Link-Kennworts und Ablauf | beim Einlösen; sonst nach Ablauf |
+| `links` | offene Registrierungen (Adresse, Hashwert des Passworts, vorgemerkte ISIN, Wochenbrief-Häkchen), Links „Passwort vergessen“ und Links zum Ändern der Adresse (mit Kontonummer, Fassung 7); jeweils Hashwert des Link-Kennworts und Ablauf | beim Einlösen; sonst nach Ablauf |
+| `newsletter_log` | An- und Abmeldungen des Wochenbriefs als Zeitpunkt und Art, ohne Bezug zum Konto – nur zum Zählen für den täglichen Bericht (Fassung 6) | nach 25 Monaten |
 | `sitzungen` | Hashwert des Cookies, Ablauf; seit Fassung 7 Gerätebezeichnung („Mac (Safari)“ – nur Geräteart und Browser), angemeldet am, zuletzt genutzt | Abmelden, „Andere Geräte abmelden“, Passwort- oder Adresswechsel; nach Ablauf |
 | `zaehler` | verschlüsselte Hashwerte von Adresse und IP-Adresse: verschickte E-Mails, falsche Passwörter | nach 24 Stunden |
-| `meta` | Schlüssel für diese Hashwerte, Zeitpunkt des letzten Aufräumens, Vergleichs-Hashwert | – |
+| `meta` | Schlüssel für diese Hashwerte, Zeitpunkt des letzten Aufräumens, Vergleichs-Hashwert; Warnung und letzte Ausgabe des Wochenbriefs; seit Fassung 9 der Zeitpunkt, ab dem die Ein-Klick-Links an Kontonummer und Anlagezeitpunkt hängen (`kennung_neu_ab`) | – |
 
 Passwörter, Link-Kennwörter und Cookies stehen nie im Klartext in der Datei. Passwörter: Argon2id, wo PHP es kann,
 sonst bcrypt (Kosten 12); beim Anmelden wird ein älterer Hashwert auf das aktuelle Verfahren gehoben. „Nach Ablauf“
@@ -335,19 +338,28 @@ setzt eines.
   (`PW_HAEUFIG`), nicht die eigene Adresse. Keine Pflicht zu Sonderzeichen – Länge zählt.
 - Falsche Passwörter (`LOGIN_GRENZEN`): je Adresse und IP-Adresse zusammen 5 in 15 Minuten, je Adresse 30 je Stunde
   und 100 am Tag, je IP-Adresse 30 in 15 Minuten und 200 am Tag. Die enge Grenze hängt an Adresse *und* IP-Adresse,
-  damit ein Angreifer den Inhaber nicht aussperren kann.
+  damit ein Angreifer den Inhaber nicht aussperren kann. Wer schon angemeldet ist und sein Passwort nur bestätigt (Passwort
+  ändern, Adresse ändern, Konto löschen), wird nach `LOGIN_GRENZEN_ANGEMELDET` gebremst – ohne die Grenze je Adresse, damit
+  fremde Fehlversuche ihn dort nicht aussperren (T-24 Teil a; ob das auch für die Anmeldung gilt, ist eine offene Entscheidung,
+  E3 Nr. 11). Ein neues Passwort über „Passwort vergessen“ löscht die Fehlversuche je Adresse und – seit 15.10.2026 – die je
+  Adresse und Anschluss für den Anschluss, von dem es kommt.
 - Die Antworten verraten nicht, ob es zu einer Adresse ein Konto gibt: Anmelden meldet immer „E-Mail-Adresse oder
   Passwort stimmen nicht“ und rechnet auch ohne Konto einen Hashwert; Registrieren und „Passwort vergessen“ antworten
   immer gleich und schicken in beiden Fällen eine E-Mail (mit passendem Inhalt).
-- Verschickte E-Mails (`GRENZEN`): je Adresse 3 in 15 Minuten und 8 am Tag, je IP-Adresse 10 und 30, insgesamt 60 je
+- Verschickte E-Mails (`GRENZEN`; ist nur die Gesamtgrenze erreicht, heißt die Antwort `zuviel-gesamt` statt `zuviel` und die
+  Seite sagt, dass es nicht an dieser Adresse liegt – T-25): je Adresse 3 in 15 Minuten und 8 am Tag, je IP-Adresse 10 und 30, insgesamt 60 je
   Stunde und 300 am Tag. Dazu ein Honigtopf-Feld. Kein Captcha, keine fremden Dienste.
 - Der Deploy fasst `konto-daten/` nicht an (steht nicht im Manifest). Eine Sicherung gibt es nur über die
   Webspace-Sicherung von STRATO.
 
 ## E-Mail-Versand
 
-`mail()` von PHP, Absender `info@bondarium.com` – wie das Kontaktformular. Vier E-Mails: Adresse bestätigen, „es gibt
-schon ein Konto“, neues Passwort setzen (bzw. „kein Konto zu dieser Adresse“), Passwort geändert. Für beide Domains
+`mail()` von PHP, Absender `info@bondarium.com` – wie das Kontaktformular. Acht E-Mails zum Konto (`mail_senden()`): Adresse
+bestätigen, „es gibt schon ein Konto“, neues Passwort setzen, „kein Konto zu dieser Adresse“, Passwort geändert, neue Adresse
+bestätigen, „für die neue Adresse gibt es schon ein Konto“ und „Adresse geändert“ (an die alte). Dazu die Meldungen
+(`meldungen_senden()`), der Wochenbrief (`nl_mail()`, docs/NEWSLETTER.md), die Warnung an den Betreiber, wenn er ausfällt, und die
+Erinnerung vor Fälligkeit (`erinnerung.php`). Der Fuß jeder E-Mail verlinkt seit 15.10.2026 das Impressum (vorher `rechtliches.html`,
+seit 11.10.2026 nur noch eine Übersicht). Für beide Domains
 gilt DMARC `p=reject`. Seit 02.10.2026 hat `bondarium.com` (die Absender-Domain) den SPF-Eintrag
 `v=spf1 redirect=_spf.strato.com` (STRATO-Standard; Kundenbereich → Domains → Domainverwaltung → Zahnrad → DNS →
 TXT- und CNAME-Records); DKIM-Schlüssel von STRATO liegen unter `strato-dkim-0002` und `-0003`. `bondarium.de` hat seit
@@ -385,7 +397,7 @@ Meldungen nennen Tatsachen aus den Daten, „Passend zu deiner Merkliste“ zeig
 | Musterdepots (`#planen`, auch `#depot`, `#erinnerung`) | „Mein Depot“ (Musterdepots); Reiter seit 03.10.2026 „Musterdepots“ (Nutzerwunsch, vorher „Rechnen und planen“); die Voreinstellungen darunter am 02.10.2026 auf Nutzerwunsch entfernt – nicht neu einbauen |
 | Meldungen (`#meldungen`; bis 12.10.2026 „Meldungen und Konto“) | Meldungen (Liste, Neue Meldung) und die Karte „E-Mails an dich“ (Vor Fälligkeit, Meldungen, Wochenbrief). Die Karte „Mitnehmen“ ist seit 12.10.2026 weg: PDF/CSV stehen in der Merkliste, PDF und „Termine als Kalenderdatei“ (.ics, `data-ics="depot"`) bei den Musterdepots |
 | Konto (`#konto`, Link „Konto“ in der Kopfzeile, kein Reiter; seit 12.10.2026, Konzept tmp/Bondarium-My-Bondarium-Gliederung.pdf) | Panel `#a-konto` (Ansicht `konto` in `OHNE_REITER`; kein Reiter gewählt, `aria-expanded` am Link): E-Mail ändern, Passwort ändern, angemeldete Geräte, „Zuletzt angesehen“, Daten herunterladen, Konto löschen; „← Zurück zu Start“ |
-| Lernen (`#lernen`) | Lernstand je Menügruppe (Grundlagen, Auswählen, Kaufen, Für Fortgeschrittene – aus dem Menü der Seite gelesen), „Passend zu deiner Merkliste“, Lesezeichen, gemerkte Begriffe |
+| Lernen (`#lernen`) | Lernstand je Menügruppe (Grundlagen, Risiken, Auswählen, Fortgeschrittene, danach Kaufen – aus dem Menü der Seite gelesen, Reihenfolge wie im Menü seit 15.10.2026; Rechner, Simulator und Broker-Vergleich zählen als Werkzeuge nicht mit und tragen keine Leiste „Als gelesen markieren“), „Passend zu deiner Merkliste“, Lesezeichen, gemerkte Begriffe |
 
 **Ablage** (`konto.php`, `aktion=ablage`; `MC.konto.ablage(art, schluessel, wert)`): eine Tabelle für alles Abgelegte. Arten:
 `notiz` (je ISIN), `liste` (`{n, i: [ISIN…]}`), `gelesen`
@@ -398,18 +410,21 @@ die Seite schreibt jeden Wert nur über `MC.esc` ins Dokument.
 DSGVO).
 
 **Meldungen.** Regeln je Anleihe (`rendite-ueber`, `rendite-unter`, `kurs-ueber`, `kurs-unter` mit Schwelle) oder für alle gemerkten
-(`termin`: Zinstermin oder Fälligkeit in höchstens 7 Tagen; `kurslos`: kein Kurs oder Datenbefund). Die Seite zeigt den Stand beim Besuch. E-Mails verschickt `aktion=meldungen-senden` (Workflow-Schritt „Meldungen prüfen
+(`termin`: Zinstermin laut Deutscher Börse in höchstens 7 Tagen – seit 03.10.2026 ohne Fälligkeiten, seit 15.10.2026 auch auf der Seite
+ohne geschätzte Termine, wie in der E-Mail; `kurslos`: kein Kurs oder Datenbefund). Der Server nimmt seit 15.10.2026 nur gültige Meldungen
+an (`meldung_sauber()`: Art, ISIN bzw. „*“, Schwelle als Zahl, `m`/`an` 0 oder 1, bei `termin` `bis`); `a` und `aw` setzt nur er. Die Seite zeigt den Stand beim Besuch. E-Mails verschickt `aktion=meldungen-senden` (Workflow-Schritt „Meldungen prüfen
 und verschicken“ im täglichen Abruf-Lauf, Kopf `X-Trigger-Key`): geprüft wird gegen `newsletter/anleihen.json`, je Konto höchstens
 eine E-Mail mit den neu ausgelösten Meldungen, die „E-Mail“ gewählt haben. Eine Schwellen-Meldung trägt danach `a` (Tag) und `aw`
 (Wert) und kommt erst wieder, wenn die Bedingung zwischendurch nicht galt; `termin` merkt in `bis` den spätesten gemeldeten Tag.
-`kurslos` gibt es nur im Bereich. Link in jeder E-Mail:
+Den neuen Stand speichert `meldungen_senden()` seit 15.10.2026 erst, wenn die E-Mail verschickt ist – scheitert sie oder ist die Grenze
+von 200 E-Mails je Lauf erreicht, prüft der nächste Lauf die Meldung noch einmal. `kurslos` gibt es nur im Bereich. Link in jeder E-Mail:
 `konto.html#meldungen-aus=<Nummer>.<Prüfsumme>` stellt alle Meldungen auf „nur im Bereich“ (`aktion=meldungen-aus`).
 
 **Weitere Aktionen:** `besuch` (Beginn des Besuchs; liefert den des vorigen, neue Seiten aus `newsletter/seiten.json` und die
 nächsten Zinstermine der Merkliste), `geraete-ab`, `export`, `email-aendern` (Passwort nötig; Link an die neue Adresse, 24 Stunden) und
 `email-bestaetigen` (`konto.html#email=<Kennwort>`; meldet andere Geräte ab, Hinweis an die alte Adresse).
 
-**Seiten außerhalb von konto.html:** Akademie- und Kaufen-Seiten (Leiste am Ende, `mein.js`), Glossar (Stern), Zinsen-Seiten
+**Seiten außerhalb von konto.html:** Akademie- und Kaufen-Seiten (Leiste am Ende, `mein.js`), Glossar (Stern), Markt-Seiten (bis 11.10.2026 „Zinsen“)
 („In meinen Zins-Blick“ – Kennungen in `mein.js` und `bereich.js` gleich halten), Steckbrief („Zuletzt angesehen“),
 Anleihen-ETFs und Top-10-Tabellen (Merken). Besucher ohne Konto lösen dabei keine Anfrage an den Server aus.
 

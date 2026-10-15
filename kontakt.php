@@ -14,7 +14,7 @@
  *   - Längen begrenzt, E-Mail-Adresse geprüft, keine Zeilenumbrüche in Kopfzeilen
  *
  * Status: ok · methode (kein POST) · anfrage (Kopf fehlt) · ursprung · email · nachricht · name · versand
- * Ändert sich hier etwas an den verarbeiteten Daten, muss die Datenschutzerklärung (rechtliches.html) mit.
+ * Ändert sich hier etwas an den verarbeiteten Daten, muss die Datenschutzerklärung (datenschutz.html) mit.
  */
 declare(strict_types=1);
 

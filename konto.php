@@ -97,7 +97,7 @@
  *         nutzbar, fehlt nach dem Anlegen oder liegt doppelt da) · art (unbekannte Art der Ablage) · wert (kein gültiger Wert
  *         oder zu lang) · voll (Ablage dieser Art voll) · aus („Zuletzt angesehen“ ist ausgeschaltet) · gleich (neue
  *         E-Mail-Adresse ist die alte) · fehler
- * Ändert sich hier etwas an den verarbeiteten Daten, muss die Datenschutzerklärung (rechtliches.html) mit – und der
+ * Ändert sich hier etwas an den verarbeiteten Daten, muss die Datenschutzerklärung (datenschutz.html) mit – und der
  * Betreiber vorher gefragt werden.
  *
  * Lokal testen (PHP-eigener Server, nie auf dem Webserver): php -S 127.0.0.1:8090 – dann gilt der lokale Ursprung,
@@ -658,8 +658,9 @@ function favoriten(int $id): array
 
 /**
  * Zeile einer Anleihe aus dem letzten Datenlauf (newsletter/anleihen.json: ISIN → [0 Name, 1 Kupon-Text, 2 Fälligkeit, 3 Kurs,
- * 4 Rendite|null, 5 Veränderung zur Vorwoche|null, 6 nächster Zinstermin|null, 7 Zinsart, 8 Titel, 9 Restlaufzeit,
- * 10 Zinstermin geschätzt 1|0] – Felder 7 bis 10 seit 03.10.2026, Beschreibung im Kopf von scripts/newsletter.py) oder null.
+ * 4 Rendite|null, 5 Veränderung zur Vorwoche|null, 6 nächster Zinstermin|null, 7 Zinsart, 8 Zinstermin geschätzt 1|0, 9 Währung] –
+ * Felder 7 und 8 seit 03.10.2026, Feld 9 seit 15.10.2026; Beschreibung im Kopf von scripts/newsletter.py) oder null. Titel und
+ * Restlaufzeit stehen nicht in der Datei – nl_titel() und nl_restlaufzeit() bilden sie aus den Feldern 0–2 (und 9).
  * Die Datei ist groß; gesucht wird die eine Zeile im Text, ohne alles zu entpacken.
  */
 function zeile_heute(string $isin): ?array
@@ -897,7 +898,8 @@ function link_lesen(string $art): array
 
 function mail_senden(string $an, string $betreff, string $text): bool
 {
-    $text = "Hallo,\n\n" . $text . "\n\nBondarium – ein Angebot der urbanelo GmbH\n" . SEITE . "/rechtliches.html\n";
+    // Fuß mit dem Impressum wie der Wochenbrief (seit 15.10.2026, Gesamtprüfung C01-04/G05-03 – vorher rechtliches.html, seit 11.10.2026 nur eine Übersicht)
+    $text = "Hallo,\n\n" . $text . "\n\nBondarium – ein Angebot der urbanelo GmbH\n" . SEITE . "/impressum.html\n";
     if (LOKAL) {
         return file_put_contents(DATEN . '/lokal-mail.txt', "An: $an\nBetreff: $betreff\n\n$text") !== false;
     }
@@ -1039,10 +1041,13 @@ function nl_text(string $s): string
 }
 
 /** Titel einer Zeile aus anleihen.json: Kurzname (Feld 0, in scripts/newsletter.py nach der Regel der Website), Kupon-Text (Feld 1),
- *  Fälligkeitsjahr – „Deutschland 2,60 % 2033“ (wie titel_aus() in newsletter.py und MC.felder.titel) */
+ *  Fälligkeitsjahr – „Deutschland 2,60 % 2033“ (wie titel_aus() in newsletter.py und MC.felder.titel). Seit 15.10.2026 (Gesamtprüfung C03-03)
+ *  mit der Währung, wenn sie nicht Euro ist (Feld 9): „Erste Bank 3,80 % 2029 · USD“ – sonst lasen sich Meldung, Erinnerung und
+ *  Wochenbrief-Merkliste wie eine Euro-Anleihe. Zeilen aus älteren Datenläufen ohne Feld 9 bleiben ohne Währung. */
 function nl_titel(array $b): string
 {
-    return trim($b[0] . ' ' . $b[1]) . ' ' . ($b[2] !== '' ? substr((string)$b[2], 0, 4) : 'unbefristet');
+    $w = isset($b[9]) && is_string($b[9]) && preg_match('/^[A-Z]{3}$/', $b[9]) && $b[9] !== 'EUR' ? ' · ' . $b[9] : '';
+    return trim($b[0] . ' ' . $b[1]) . ' ' . ($b[2] !== '' ? substr((string)$b[2], 0, 4) : 'unbefristet') . $w;
 }
 
 /** Restlaufzeit ab heute wie MC.restlaufzeit und _common.restlaufzeit_text: unter einem Monat Tage, unter einem Jahr Monate, sonst Jahre */
@@ -1198,6 +1203,11 @@ function nl_senden(): array
     $anleihen = nl_datei('anleihen.json') ?? [];
     $db = db();
     if (text($_POST, 'an') === 'betreiber') {
+        // Gesperrte Ausgabe (Daten unvollständig): Betreff, Text und HTML sind leer – keine leere Probe verschicken, sondern den Grund
+        // melden (seit 15.10.2026, Gesamtprüfung C09-02; vorher kam eine leere E-Mail, und die Antwort sagte „gesendet: 1“)
+        if (trim((string)$a['betreff']) === '' || trim((string)$a['text']) === '') {
+            return ['gesendet' => 0, 'offen' => 0, 'kw' => $a['kw'], 'grund' => 'Probe nicht verschickt – Ausgabe gesperrt: ' . (string)($a['grund'] ?? 'ohne Inhalt')];
+        }
         $ok = nl_mail($a, ABSENDER, '0.' . str_repeat('0', 32), nl_merkliste($a, $anleihen, (array)($a['muster'] ?? [])), 0);
         return ['gesendet' => $ok ? 1 : 0, 'offen' => 0, 'kw' => $a['kw'], 'grund' => 'Probe an den Betreiber'];
     }
@@ -1269,9 +1279,50 @@ function ablage_sauber($w, int $tiefe = 0)
 }
 
 /**
+ * Wert einer Meldung prüfen (Ablage, Art „meldung“; seit 15.10.2026, Gesamtprüfung C02-01 – vorher nahm der Server beliebige Felder an, und
+ * die Seite zeigte dann z. B. „Rendite steigt über –. Ausgelöst am –“). Erlaubt sind: b (eine der sechs Arten), i (ISIN bei den Schwellen,
+ * sonst „*“), w (Zahl, nur bei den Schwellen), m und an (0 oder 1) und bei „termin“ bis (JJJJ-MM-TT) – den schickt die Seite beim Ein- und
+ * Ausschalten mit zurück, damit kein Zinstermin zweimal gemeldet wird. „a“ und „aw“ (ausgelöst am/mit) setzt nur meldungen_senden();
+ * was der Browser dafür schickt, fällt weg. null = ungültig.
+ */
+function meldung_sauber($w): ?array
+{
+    if (!is_array($w)) {
+        return null;
+    }
+    $b = $w['b'] ?? null;
+    $schwelle = in_array($b, ['rendite-ueber', 'rendite-unter', 'kurs-ueber', 'kurs-unter'], true);
+    if (!$schwelle && !in_array($b, ['termin', 'kurslos'], true)) {
+        return null;
+    }
+    $i = $w['i'] ?? null;
+    if ($schwelle ? !(is_string($i) && ist_isin($i)) : $i !== '*') {
+        return null;
+    }
+    $bit = fn($v): bool => in_array($v, [0, 1, true, false], true);
+    if (!$bit($w['m'] ?? 0) || !$bit($w['an'] ?? 0)) {
+        return null;
+    }
+    $aus = ['i' => $i, 'b' => $b];
+    if ($schwelle) {
+        $v = $w['w'] ?? null;
+        if (!(is_int($v) || is_float($v)) || !is_finite((float)$v) || abs((float)$v) > 10000) {
+            return null;
+        }
+        $aus['w'] = $v;
+    }
+    $aus['m'] = (int)(bool)($w['m'] ?? 0);
+    $aus['an'] = (int)(bool)($w['an'] ?? 0);
+    if ($b === 'termin' && is_string($w['bis'] ?? null) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $w['bis'])) {
+        $aus['bis'] = $w['bis'];
+    }
+    return $aus;
+}
+
+/**
  * Meldungen prüfen und verschicken (aktion=meldungen-senden, nur mit dem Schlüssel des Auslösers; der Workflow ruft nach
  * dem täglichen Datenlauf). Geprüft wird gegen newsletter/anleihen.json (Felder siehe zeile_heute(); der Name in der E-Mail ist
- * der Titel aus Feld 8). Regeln je Meldung (Ablage, Art „meldung“):
+ * der Titel aus nl_titel()). Regeln je Meldung (Ablage, Art „meldung“):
  *   rendite-ueber | rendite-unter | kurs-ueber | kurs-unter   Schwelle w zur Anleihe i. Ausgelöst wird einmal: Die Meldung
  *       trägt danach „a“ (Tag) und „aw“ (Wert) und wird erst wieder scharf, wenn die Bedingung nicht mehr gilt.
  *   termin   Zinstermin einer gemerkten Anleihe in höchstens MELDUNG_TAGE Tagen; „bis“ merkt den spätesten schon gemeldeten
@@ -1307,6 +1358,7 @@ function meldungen_senden(): array
     $fehler = 0;
     foreach ($je as $id => $k) {
         $zeilen = [];
+        $aenderungen = [];
         foreach ($k['regeln'] as $schl => $w) {
             if (!is_array($w) || empty($w['an'])) {
                 continue;
@@ -1346,7 +1398,7 @@ function meldungen_senden(): array
                         continue;
                     }
                     // nächster Zinstermin; am Fälligkeitstag meldet „Vor Fälligkeit“. Seit 03.10.2026 stehen in Feld 6 auch geschätzte
-                    // Termine (Feld 10 = 1, für die Merkliste) – gemeldet werden wie bisher nur Termine laut Deutscher Börse (Tatsachen).
+                    // Termine (Feld 8 = 1, für die Merkliste) – gemeldet werden wie bisher nur Termine laut Deutscher Börse (Tatsachen).
                     $d = $a[6];
                     if (is_string($d) && empty($a[8]) && $d !== (string)$a[2] && $d > $heute && $d <= $bis && $d > (string)($w['bis'] ?? '')) {
                         $neu[] = [$d, $titel($a) . ' zahlt Zinsen am ' . nl_datum($d) . '.'];
@@ -1366,10 +1418,16 @@ function meldungen_senden(): array
                 }
             }
             if ($w !== $vorher) {
-                $sichern->execute([json_encode($w, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $id, $schl]);
+                $aenderungen[] = [json_encode($w, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), $id, $schl];
             }
         }
-        if ($zeilen && $gesendet < MELDUNG_MAILS) {
+        // Den neuen Stand („ausgelöst“, „bis“) erst speichern, wenn die E-Mail raus ist – wie bei Erinnerung und Wochenbrief (seit 15.10.2026,
+        // Gesamtprüfung C03-02). Vorher galt eine Meldung als verbraucht, auch wenn mail() scheiterte oder die Grenze MELDUNG_MAILS erreicht
+        // war, und kam nie; jetzt prüft sie der nächste Lauf noch einmal.
+        if ($zeilen) {
+            if ($gesendet >= MELDUNG_MAILS) {
+                continue;
+            }
             $n = count($zeilen);
             $ok = mail_senden($k['email'], $n === 1 ? 'Bondarium: eine Meldung aus deinem Bereich' : "Bondarium: $n Meldungen aus deinem Bereich",
                 "du hast in „My Bondarium“ Meldungen eingerichtet. Nach den Schlusskursen vom letzten Börsentag gilt:\n\n- " . implode("\n- ", $zeilen)
@@ -1377,6 +1435,12 @@ function meldungen_senden(): array
                 . "Keine E-Mails mehr zu Meldungen (sie stehen dann nur noch in deinem Bereich) – ein Klick:\n" . SEITE . '/konto.html#meldungen-aus=' . link_kennung('meldungen-aus', $id, $k['erstellt']) . "\n\n"
                 . 'Das sind Tatsachen aus den Kursdaten, keine Empfehlung zum Kauf oder Verkauf. Keine Anlageberatung.');
             $ok ? $gesendet++ : $fehler++;
+            if (!$ok) {
+                continue;
+            }
+        }
+        foreach ($aenderungen as $x) {
+            $sichern->execute($x);
         }
     }
     return ['gesendet' => $gesendet, 'ausgeloest' => $ausgeloest, 'konten' => count($je), 'fehler' => $fehler];
@@ -1591,7 +1655,10 @@ try {
             // Eine offene Adressänderung verfällt mit dem neuen Passwort: Wer das alte kannte, hätte sonst noch 24 Stunden lang die
             // Adresse des Kontos auf seine eigene umstellen können (Technik-Test 08.10.2026, T-19)
             $db->prepare("DELETE FROM links WHERE art = 'email' AND nutzer = ?")->execute([$id]);
-            $db->prepare('DELETE FROM zaehler WHERE schluessel = ?')->execute(['lm:' . schluessel_hash($l['email'])]);
+            // Fehlversuche aufheben: je Adresse (lm) und – seit 15.10.2026, Gesamtprüfung B55-03 – je Adresse und Anschluss (le) für den
+            // Anschluss, von dem das neue Passwort kommt; sonst lief eine Anmeldung von dort direkt danach noch bis zu 15 Minuten in „zuviel“
+            $schl = login_schluessel($l['email']);
+            $db->prepare('DELETE FROM zaehler WHERE schluessel IN (?, ?)')->execute([$schl['lm'], $schl['le']]);
             sitzung_starten($id);
             $aus = stand($id, $l['email'], null);
             $db->exec('COMMIT');
@@ -1856,6 +1923,12 @@ try {
                     antwort(422, 'wert', ['max' => $lang]);
                 }
                 $w = ablage_sauber($w);
+                if ($art === 'meldung') {
+                    $w = meldung_sauber($w);   // nur die bekannten Felder in der richtigen Form (C02-01)
+                    if ($w === null) {
+                        antwort(422, 'wert');
+                    }
+                }
                 if ($art === 'notiz' && is_string($w) && laenge($w) > NOTIZ_MAX) {
                     antwort(422, 'wert', ['max' => NOTIZ_MAX]);   // Zeichen statt Byte (T-109): „€“ zählt wie „e“
                 }

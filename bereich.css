@@ -337,6 +337,11 @@ main .mb-lz a { color: var(--ink); }
   .mb-kz { align-items: flex-start; }
   .mb-pkt { width: 34px; height: 34px; }
 }
+/* Eingabefelder am Handy in 16 px – iOS vergrößert sonst beim Antippen die Seite (seit 15.10.2026, Gesamtprüfung B55-05, T-125;
+   dieselbe Regel wie filter.css): ISINs einfügen, Menü „…“ (Notiz, Liste, Meldung), Neue Meldung, Name einer Liste */
+@media (max-width: 680px), (pointer: coarse) {
+  .mb-einf textarea, .mb-felder input, .mb-felder select, .mb-inline input { font-size: 16px; }
+}
 /* Karte „E-Mails an dich“ (seit 03.10.2026, Nutzerentscheid „E-Mails an einer Stelle“): je Zeile Titel, kurzer Satz und Schalter
    oder Link – Vor Fälligkeit, Meldungen, Wochenbrief; darunter die Adresse. Im Reiter „Musterdepots“ nur noch eine Zeile (.kd-er-zeile). */
 .mb-em-z { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px 14px; padding: 11px 0; border-top: 1px solid #EEEDE8; }

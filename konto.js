@@ -47,7 +47,7 @@
      ablage(art, schluessel, wert)   Eintrag setzen (wert null/undefined = löschen) → Promise mit dem Stand; abgelehnt mit { status }
      ablKnopf(art, schluessel, wert, texte[, klasse])   HTML eines Umschalt-Knopfs (z. B. „Als gelesen markieren“ / „Gelesen“);
                               texte = [aus, an]. Klick und Zustand übernimmt dieses Skript; wer nicht angemeldet ist, landet auf konto.html
-     besuch()                 Beginn des Besuchs merken → Stand mit besuch (Beginn des vorigen) und neueSeiten
+     besuch()                 Beginn des Besuchs merken → Stand mit besuch (Beginn des vorigen), neueSeiten, termine und termine_geschaetzt
      geraeteAb()              alle anderen Geräte abmelden → Stand;  exportieren() → Promise { ok, daten }
      emailAendern(neu, passwort) → { ok, status, stunden };  emailBestaetigen(kennwort) → { ok, status, … }
      meldungenAus(kennung)    Link aus einer Meldungs-E-Mail: keine Meldungen mehr per E-Mail → { ok, status } */
@@ -56,7 +56,7 @@
   MC = window.MC = MC || {};
 
   var API = "konto.php", SEITE = "konto.html";
-  var st = { angemeldet: false, email: "", favoriten: [], depots: [], erinnern: false, newsletter: false, ablage: {}, besuch: 0, geraete: [], neueSeiten: {}, termine: {} }, menge = {}, hoerer = [], abfrage = null;
+  var st = { angemeldet: false, email: "", favoriten: [], depots: [], erinnern: false, newsletter: false, ablage: {}, besuch: 0, geraete: [], neueSeiten: {}, termine: {}, termine_geschaetzt: {} }, menge = {}, hoerer = [], abfrage = null;
 
   function markiert() { return /(?:^|;\s*)bondarium-angemeldet=1(?:;|$)/.test(document.cookie); }
   function esc(s) { return MC.esc ? MC.esc(s) : String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; }); }
@@ -66,7 +66,10 @@
     st = { angemeldet: an, email: (an && j.email) || "", favoriten: (an && j.favoriten) || [],
       depots: (an && j.depots) || (an && j.depot ? [[0, "Musterdepot 1", j.depot]] : []), erinnern: !!(an && j.erinnern), newsletter: !!(an && j.newsletter),
       ablage: (an && j.ablage && typeof j.ablage === "object" && !Array.isArray(j.ablage) && j.ablage) || {}, besuch: (an && j.besuch) || 0, geraete: (an && j.geraete) || [],
-      neueSeiten: (an && (j.neue_seiten || st.neueSeiten)) || {}, termine: (an && (j.termine || st.termine)) || {} };
+      neueSeiten: (an && (j.neue_seiten || st.neueSeiten)) || {}, termine: (an && (j.termine || st.termine)) || {},
+      // geschätzte Zinstermine (ISIN → 1, konto.php aktion=besuch) – fehlten hier bis 15.10.2026, deshalb stand in der Merkliste nie „geschätzt“
+      // und die Meldung „Zinstermin steht an“ rechnete mit geschätzten Terminen (Gesamtprüfung B58-04)
+      termine_geschaetzt: (an && (j.termine_geschaetzt || st.termine_geschaetzt)) || {} };
     menge = {};
     st.favoriten.forEach(function (f) { menge[f[0]] = true; });
     knoepfe(); ablKnoepfe();

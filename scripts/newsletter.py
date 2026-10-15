@@ -27,7 +27,7 @@ Schreibt in den Ordner newsletter/ (konto.php liest ihn auf dem Server; per .hta
   ausgabe.json    {"kw": "2026-W40", "erstellt": Datum, "versand": true|false, "grund": …, "warnen": true|false, "betreff", "text",
                    "html", "merk": Vorlagen für den Abschnitt „Deine Merkliste“, "muster": drei ISINs für die Probe an den Betreiber}
                   – Text und HTML mit den Platzhaltern {{MERKLISTE}} und {{ABMELDEN}}. Wird nicht committet.
-  anleihen.json   {ISIN: [Feld 0 … 10]} für alle Anleihen mit aktuellem Kurs (suchindex.json). Die eine Quelle für Namen und Zahlen
+  anleihen.json   {ISIN: [Feld 0 … 9]} für alle Anleihen mit aktuellem Kurs (suchindex.json). Die eine Quelle für Namen und Zahlen
                   der E-Mails (Wochenbrief-Merkliste und Meldungen in konto.php, Erinnerung vor der Fälligkeit in erinnerung.php)
                   und für den nächsten Zinstermin in „My Bondarium“ (konto.php, aktion=besuch). Wird nicht committet (~5 MB).
                      0  Name          Kurzname wie auf der Website (_common.kurz_name: Staat → Land laut Katalog, sonst Emittent
@@ -42,9 +42,10 @@ Schreibt in den Ordner newsletter/ (konto.php liest ihn auf dem Server; per .hta
                      7  Zinsart       0 fest, 1 variabel, 2 Nullkupon                                            (seit 03.10.2026)
                      8  geschätzt     1 = Zinstermin nach der Schätzregel (_common.zinsfrequenz – die Börsenliste nennt für die
                                       Anleihe keine Zinstage), 0 = laut Deutscher Börse oder kein Zinstermin
+                     9  Währung       ISO-Kürzel („EUR“, „USD“); Titel in den E-Mails tragen es, wenn es nicht EUR ist  (seit 15.10.2026)
                   Texte mit geschütztem Leerzeichen (U+00A0) vor „%“ wie auf der Website; Textfassungen setzen ein normales.
                   Titel („Deutschland 2,60 % 2033“) und Restlaufzeit („4,2 Jahre“) stehen bewusst nicht in der Datei (sie wäre 1,5 MB
-                  größer): titel_aus() hier und nl_titel()/nl_restlaufzeit() in konto.php bilden sie aus den Feldern 0–2.
+                  größer): titel_aus() hier und nl_titel()/nl_restlaufzeit() in konto.php bilden sie aus den Feldern 0–2 (und 9).
                   Neue Felder nur hinten anhängen – konto.php und erinnerung.php lesen nach Stelle.
   seiten.json     {"seiten": {Datei: erster Tag oder ""}} – wird committet (Gedächtnis für „Neue Seiten“).
 
@@ -122,8 +123,10 @@ def kern(rendite, faellig, restlaufzeit, kurs):
 
 def titel_aus(b):
     """Titel aus einer Zeile von anleihen.json: Kurzname, Kupon-Text, Fälligkeitsjahr („Deutschland 2,60 % 2033“) – wie
-    _common.titel_text und nl_titel() in konto.php."""
-    return f"{b[0]} {b[1]} {b[2][:4] if b[2] else 'unbefristet'}"
+    _common.titel_text und nl_titel() in konto.php; bei einer anderen Währung als Euro mit dem Kürzel („Erste Bank 3,80 % 2029 · USD“,
+    seit 15.10.2026, Gesamtprüfung C03-03 – sonst las sich eine Dollar-Anleihe in der E-Mail wie eine Euro-Anleihe)."""
+    w = f" · {b[9]}" if len(b) > 9 and b[9] and b[9] != "EUR" else ""
+    return f"{b[0]} {b[1]} {b[2][:4] if b[2] else 'unbefristet'}{w}"
 
 
 def zinstermin_text(b):
@@ -175,7 +178,7 @@ def naechster_zinstermin(r, termine, heute):
 
 def anleihen_daten(heute):
     """newsletter/anleihen.json: {ISIN: [Name, Kupon-Text, Fälligkeit, Kurs, Rendite|None, Veränderung zur Vorwoche|None,
-    nächster Zinstermin|None, Zinsart, Titel, Restlaufzeit, Zinstermin geschätzt 1|0]} – Felder im Kopf der Datei."""
+    nächster Zinstermin|None, Zinsart, Zinstermin geschätzt 1|0, Währung]} – zehn Felder, beschrieben im Kopf der Datei."""
     si = lade("suchindex.json", {}) or {}
     emi, termine = si.get("emittenten") or [], zinstermine_laden()
     # Kurs vor fünf Börsentagen je Anleihe aus dem Kursverlauf des laufenden Jahres
@@ -208,7 +211,7 @@ def anleihen_daten(heute):
         # Rendite auf zwei Stellen wie die Website sie zeigt (seit 09.10.2026, Technik-Test 08.10.2026 T-52): round() machte aus
         # 3,565 „3,56“, die Seite zeigt „3,57“ – konto.php formatiert den gespeicherten Wert nur noch
         aus[isin] = [name, kupon_text(r[4], r[10]), r[5] or "", kurs, None if rend is None else runden_wie_browser(rend, 2), diff, zt,
-                     r[10], geschaetzt]
+                     r[10], geschaetzt, r[3] or ""]
     return aus, si.get("kstand") or ""
 
 
@@ -292,19 +295,22 @@ def neue_seiten(heute):
 
 
 # ---------------------------------------------------------------- Bausteine der HTML-Fassung (Tabellen, Inline-Stile, 600 px)
+# Seit 15.10.2026 (Gesamtprüfung C09-03): Zwischentitel und Spaltenköpfe ohne Versalien wie die Website seit 11.10.2026, und die Zahlen-
+# spalten dürfen umbrechen – am Handy war die Ausgabe 624 px breit (feste Zeilen mit „white-space:nowrap“). Prozent und „Pkt.“ hängen mit
+# geschütztem Leerzeichen an ihrer Zahl und brechen nie ab.
 e = html.escape
 
 
 def h2(s):
-    return f'<tr><td style="padding:26px 32px 8px;{F}font-size:12px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:{TIEF};">{e(s)}</td></tr>'
+    return f'<tr><td class="r" style="padding:26px 32px 8px;{F}font-size:15px;font-weight:700;color:{TIEF};">{e(s)}</td></tr>'
 
 
 def p(s, extra=""):
-    return f'<tr><td style="padding:0 32px 10px;{F}font-size:15px;line-height:1.55;color:{INK};{extra}">{s}</td></tr>'
+    return f'<tr><td class="r" style="padding:0 32px 10px;{F}font-size:15px;line-height:1.55;color:{INK};{extra}">{s}</td></tr>'
 
 
 def klein(s):
-    return f'<tr><td style="padding:0 32px 10px;{F}font-size:13px;line-height:1.5;color:{TXT};">{s}</td></tr>'
+    return f'<tr><td class="r" style="padding:0 32px 10px;{F}font-size:13px;line-height:1.5;color:{TXT};">{s}</td></tr>'
 
 
 def link(u, s):
@@ -312,18 +318,18 @@ def link(u, s):
 
 
 def kachel(titel, wert, unter):
-    return (f'<td width="33%" valign="top" style="padding:14px 12px;border:1px solid {LINIE};border-radius:10px;{F}">'
-            f'<div style="font-size:12px;color:{TXT};">{e(titel)}</div><div style="font-size:24px;font-weight:700;color:{INK};padding:4px 0 2px;">{e(wert)}</div>'
+    # Innenabstand 12/10 px und Wert in 22 px (bis 14.10.2026: 14/12 px und 24 px) – so passen drei Kacheln nebeneinander auch auf 320 px (C09-03)
+    return (f'<td class="k" width="33%" valign="top" style="padding:12px 10px;border:1px solid {LINIE};border-radius:10px;{F}">'
+            f'<div style="font-size:12px;color:{TXT};">{e(titel)}</div><div class="kw" style="font-size:22px;font-weight:700;color:{INK};padding:4px 0 2px;">{e(wert)}</div>'
             f'<div style="font-size:12px;line-height:1.4;color:{TXT};">{e(unter)}</div></td>')
 
 
 def zeile(anleihe, *werte, kopf=False):
     """Tabellenzeile: Anleihe links, die Zahlen rechts in der Reihenfolge der Website-Tabellen (Rendite, Restlaufzeit, Kurs);
     die Rendite – die erste Zahl – fett wie auf der Website."""
-    st = (f"padding:8px 0;border-bottom:1px solid {LINIE};{F}font-size:{'12' if kopf else '14'}px;color:{TXT if kopf else INK};"
-          + ("text-transform:uppercase;letter-spacing:0.04em;" if kopf else ""))
+    st = f"padding:8px 0;border-bottom:1px solid {LINIE};{F}font-size:{'12' if kopf else '14'}px;color:{TXT if kopf else INK};"
     return (f'<tr><td valign="top" style="{st}">{anleihe}</td>'
-            + "".join(f'<td align="right" valign="top" style="{st}white-space:nowrap;padding-left:10px;font-weight:{"700" if i == 0 and not kopf else "400"};">{w}</td>'
+            + "".join(f'<td align="right" valign="top" style="{st}padding-left:10px;font-weight:{"700" if i == 0 and not kopf else "400"};">{w}</td>'
                       for i, w in enumerate(werte)) + "</tr>")
 
 
@@ -334,8 +340,9 @@ def unter(s, farbe=TXT):
 
 def tabellenkopf(anleihe, kurs_unter=""):
     """Kopfzeile der Anleihen-Tabellen: Bezeichnungen aus dem Feldkatalog, Restlaufzeit mit „Fälligkeit“ darunter (wie auf der Website)."""
-    u = lambda s: f'<div style="font-size:11px;text-transform:none;letter-spacing:0;padding-top:1px;">{e(s)}</div>' if s else ""   # noqa: E731
-    return zeile(e(anleihe), e(FELD["rendite"]["kurz"]), e(FELD["restlaufzeit"]["kurz"]) + u(FELD["restlaufzeit"]["unter"]),
+    u = lambda s: f'<div style="font-size:11px;padding-top:1px;">{e(s)}</div>' if s else ""   # noqa: E731
+    # „Unternehmens­anleihen“ mit weichem Trennzeichen: das lange Wort bestimmte am Handy die Mindestbreite der Tabelle (C09-03)
+    return zeile(re.sub(r"(?<=[a-z])anleihen$", "&shy;anleihen", e(anleihe)), e(FELD["rendite"]["kurz"]), e(FELD["restlaufzeit"]["kurz"]) + u(FELD["restlaufzeit"]["unter"]),
                  e(FELD["kurs"]["kurz"]) + u(kurs_unter), kopf=True)
 
 
@@ -344,7 +351,7 @@ def anleihe_link(u, titel):
 
 
 def tabelle(inhalt):
-    return f'<tr><td style="padding:0 32px 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">{inhalt}</table></td></tr>'
+    return f'<tr><td class="r" style="padding:0 32px 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0">{inhalt}</table></td></tr>'
 
 
 # Vorlagen für „Deine Merkliste“ – konto.php setzt je Abonnent die Zeilen ein (nl_merkliste; Platzhalter {{…}}, Werte im HTML
@@ -441,15 +448,19 @@ def baue(heute):
           "Bondarium – ein Angebot der urbanelo GmbH, Heinrich-Baumann-Straße 38, 70190 Stuttgart", SEITE + "impressum.html"]
 
     # ---- HTML-Fassung ----
-    H = [f'<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Bondarium Wochenbrief {e(tag_text)}</title></head>',
-         '<body style="margin:0;padding:0;background:#F4F3EE;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F4F3EE;"><tr><td align="center" style="padding:24px 12px;">',
-         '<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:100%;background:#ffffff;border-radius:14px;overflow:hidden;">',
+    H = [f'<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Bondarium Wochenbrief {e(tag_text)}</title>'
+         # schmale Bildschirme (C09-03): weniger Seitenabstand und kleinere Kacheln; E-Mail-Programme ohne <style> zeigen die Breitfassung
+         '<style>@media only screen and (max-width:480px){.r{padding-left:14px !important;padding-right:14px !important}'
+         '.a{padding:12px 6px !important}.k{padding:10px 6px !important}.kw{font-size:19px !important}}</style></head>',
+         '<body style="margin:0;padding:0;background:#F4F3EE;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F4F3EE;"><tr><td class="a" align="center" style="padding:24px 12px;">',
+         # fluid bis 600 px (C09-03): mit fester Breite 600 rechnete die umgebende Tabelle am Handy mit 600 px, „max-width“ griff nicht
+         '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="width:100%;max-width:600px;background:#ffffff;border-radius:14px;overflow:hidden;">',
          f'<tr><td style="background:{GRUEN};padding:20px 32px;{F}"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>'
          f'<td style="{F}font-size:24px;font-weight:700;letter-spacing:-0.02em;color:{INK};"><a href="{SEITE}" style="color:{INK};text-decoration:none;">bondarium</a></td>'
          f'<td align="right" style="{F}font-size:13px;color:{INK};">Wochenbrief · {e(tag_text)}</td></tr></table></td></tr>',
-         f'<tr><td style="padding:26px 32px 4px;{F}font-size:26px;line-height:1.2;font-weight:700;letter-spacing:-0.02em;color:{INK};">{e(titel)}</td></tr>',
+         f'<tr><td class="r" style="padding:26px 32px 4px;{F}font-size:26px;line-height:1.2;font-weight:700;letter-spacing:-0.02em;color:{INK};">{e(titel)}</td></tr>',
          p(e(einleitung), "padding-top:8px;"), h2("Zinsen der Woche"),
-         '<tr><td style="padding:4px 26px 6px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="6"><tr>'
+         '<tr><td class="r" style="padding:4px 26px 6px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="6"><tr>'
          + kachel("Bund 10 Jahre", pct_text(b10['r']), f"{vorwoche(b10['d'])} · Stand {datum(b10['tag'])}")
          + kachel("Bund 2 Jahre", pct_text(b2['r']), f"{vorwoche(b2['d'])} · Stand {datum(b2['tag'])}")
          + kachel("EZB-Einlagesatz", pct_text(ezb_satz), f"seit {datum(ezb_seit)}, davor {pct_text(ezb_davor)}") + "</tr></table></td></tr>",
@@ -460,12 +471,12 @@ def baue(heute):
             zeile(anleihe_link(f"{SEITE}anleihe.html?isin={x['isin']}", e(titel_von(x))), e(pct_text(x["rendite"])),
                   e(rlz(x)) + (unter(e(datum(x["faellig"]))) if x.get("faellig") else ""), e(kurs_text(x["kurs"]))) for x in liste)))
     H += [klein(link(SEITE + "anleihen.html", "Alle Top-10-Listen")), "{{MERKLISTE}}", h2("Aus der Akademie"),
-          f'<tr><td style="padding:2px 32px 6px;{F}font-size:19px;font-weight:700;color:{INK};">{e(aka["titel"])}</td></tr>', p(e(aka["text"])), klein(link(aka["link"], "Artikel lesen"))]
+          f'<tr><td class="r" style="padding:2px 32px 6px;{F}font-size:19px;font-weight:700;color:{INK};">{e(aka["titel"])}</td></tr>', p(e(aka["text"])), klein(link(aka["link"], "Artikel lesen"))]
     if neu:
         H += [h2("Neue Seiten auf Bondarium"),
               p("".join(f'<div style="padding:0 0 10px;"><a href="{e(x["link"])}" style="color:{INK};font-weight:700;text-decoration:underline;">{e(x["titel"])}</a><br>'
                         f'<span style="color:{TXT};">{e(x["text"])}</span></div>' for x in neu))]
-    H += [f'<tr><td style="padding:18px 32px 24px;border-top:1px solid {LINIE};{F}font-size:12px;line-height:1.6;color:{TXT};">Keine Anlageberatung. Alle Angaben ohne Gewähr; '
+    H += [f'<tr><td class="r" style="padding:18px 32px 24px;border-top:1px solid {LINIE};{F}font-size:12px;line-height:1.6;color:{TXT};">Keine Anlageberatung. Alle Angaben ohne Gewähr; '
           'Börsenkurse sind Schlusskurse, keine Echtzeitkurse. Quellen: Deutsche Bundesbank, Europäische Zentralbank, Federal Reserve, Deutsche Börse.<br><br>'
           f'Du bekommst diese E-Mail, weil du den Wochenbrief in „My Bondarium“ bestellt hast. <a href="{{{{ABMELDEN}}}}" style="color:{TIEF};">Newsletter abbestellen</a> – ein Klick genügt.<br>'
           f'Bondarium – ein Angebot der urbanelo GmbH, Heinrich-Baumann-Straße 38, 70190 Stuttgart · <a href="{SEITE}impressum.html" style="color:{TXT};">Impressum</a></td></tr>',

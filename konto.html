@@ -252,6 +252,8 @@
   .kd-t td small { font-weight: 400; }
   .kd-t .kd-eur { display: inline-block; width: 150px; }
   .kd-t .kd-eur input { font-size: 15px; padding: 7px 28px 7px 10px; }
+  /* Am Handy 16 px wie alle Eingabefelder – iOS vergrößert sonst beim Antippen (seit 15.10.2026, Gesamtprüfung B55-05) */
+  @media (max-width: 680px), (pointer: coarse) { .kd-t .kd-eur input, .kd-dw-form input { font-size: 16px; } }
   .kd-eur.w3 input { padding-right: 52px; }
   .kd-t .kd-eur.w3 input { padding-right: 46px; }
   .kd-eur.w3 > span { font-size: 13px; letter-spacing: 0.02em; }
@@ -333,7 +335,11 @@
     .kto-t tbody td[data-l]::before { content: attr(data-l); display: block; font-size: 13px; font-weight: 500; color: var(--text); }
     .kto-t tbody td[data-l] { font-size: 15px; font-weight: 600; text-align: left; }
     .kto-t tbody td small { font-weight: 400; }
-    .kto-t tbody td small[data-p]::before { content: attr(data-p) "\00a0"; }   /* Vorsatz der zweiten Zeile auf der Karte (seit 03.10.2026) */
+    /* Vorsatz der zweiten Zeile auf der Karte (seit 03.10.2026). Seit 15.10.2026 darf die Zeile umbrechen (normales Leerzeichen nach dem
+       Vorsatz, white-space: normal gegen das nowrap von .num) – „zum Vortag −0,02 Pkt.“ passte nicht in ein Drittel der Karte und lief in die
+       Nachbarspalte („Pkt.gemerkt“, Gesamtprüfung B56-01) */
+    .kto-t tbody td small[data-p] { white-space: normal; }
+    .kto-t tbody td small[data-p]::before { content: attr(data-p) " "; }
     .kto-t tbody td:last-child { grid-column: 1 / -1; text-align: right; width: auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 10px; white-space: normal; }
     .kto-t tbody td[data-l="Seit dem Merken"] { grid-column: span 2; }
     .kto-dep, .kto-dep.drin { width: auto; height: auto; padding: 7px 12px; margin-right: 0; font-size: 13px; display: inline-flex; gap: 5px; }
@@ -717,7 +723,6 @@
         </div>
         </div>
       </section>
-      <div id="mb-planen"></div>   <!-- gespeicherte Rechnungen und Voreinstellungen: bereich.js -->
       </div>
       <div id="a-meldungen" role="tabpanel" aria-labelledby="t-meldungen" hidden>
         <div class="mb-zwei e" style="margin-top:0">
@@ -739,7 +744,7 @@
         <section class="mb-konto" id="konto" aria-labelledby="h-konto">
           <div class="mb-konto-kopf"><h2 class="mb-h2" id="h-konto" tabindex="-1">Konto</h2><button type="button" class="kto-textbtn" data-zu="start">← Zurück zu Start</button></div>
           <ul>
-            <li><div class="mb-kz"><div><b>E-Mail-Adresse</b><span id="mb-k-email"></span></div><button type="button" class="kto-textbtn" data-auf="f-email" aria-expanded="false" aria-controls="f-email">Ändern</button></div>
+            <li><div class="mb-kz"><div><b>E-Mail-Adresse</b><span id="mb-k-email"></span></div><button type="button" class="kto-textbtn" data-auf="f-email" aria-expanded="false" aria-controls="f-email" aria-label="E-Mail-Adresse ändern">Ändern</button></div>
               <form class="kf" id="f-email" action="konto.php" method="post" hidden>
                 <div><label for="em-neu">Neue E-Mail-Adresse</label><input id="em-neu" name="email" type="email" autocomplete="email" inputmode="email" maxlength="254" required></div>
                 <div><label for="em-pw">Passwort zur Bestätigung</label><div class="kto-pw"><input id="em-pw" name="passwort" type="password" autocomplete="current-password" maxlength="200" required><button type="button" class="kto-auge" aria-pressed="false" aria-controls="em-pw">anzeigen</button></div></div>
@@ -747,7 +752,7 @@
                 <p class="kf-status" role="status" aria-live="polite"></p>
                 <p class="kf-hinweis">Die neue Adresse gilt erst, wenn du den Link in der E-Mail anklickst. Danach sind alle anderen Geräte abgemeldet.</p>
               </form></li>
-            <li><div class="mb-kz"><div><b>Passwort</b><span>Danach sind alle anderen Geräte abgemeldet.</span></div><button type="button" class="kto-textbtn" data-auf="d-pw" aria-expanded="false" aria-controls="d-pw">Ändern</button></div>
+            <li><div class="mb-kz"><div><b>Passwort</b><span>Danach sind alle anderen Geräte abgemeldet.</span></div><button type="button" class="kto-textbtn" data-auf="d-pw" aria-expanded="false" aria-controls="d-pw" aria-label="Passwort ändern">Ändern</button></div>
               <details id="d-pw"><summary class="sr-only" tabindex="-1">Passwort ändern</summary>
                 <form class="kf" id="f-aendern" action="konto.php" method="post">
                   <input class="sr-only" id="ae-email" name="email" type="email" autocomplete="username" tabindex="-1" aria-hidden="true" readonly>
@@ -831,7 +836,9 @@ MC.navInit();
     zugang: "E-Mail-Adresse oder Passwort stimmen nicht.",
     // Ohne feste Dauer und mit dem Ausweg (seit 09.10.2026, Technik-Test 08.10.2026 T-24): Die Sperre kann bis zu einem Tag dauern;
     // „Passwort vergessen“ hebt die Sperre für die Adresse auf (konto.php, passwort-neu). Vorher: „Bitte warte eine Viertelstunde“.
-    zuviel: "Zu viele Versuche. Bitte versuch es später noch einmal. Wenn du dein Passwort nicht mehr weißt: Über „Passwort vergessen“ setzt du ein neues – damit ist die Sperre für deine Adresse aufgehoben.",
+    // Seit 15.10.2026 (Gesamtprüfung B55-03) verspricht der Text nur noch, was sicher eintritt: Nach dem neuen Passwort ist man angemeldet
+    // (passwort-neu startet die Sitzung); die enge Sperre je Adresse und Anschluss löscht der Server dabei nur für den Anschluss des Links.
+    zuviel: "Zu viele Versuche. Bitte versuch es später noch einmal. Wenn du dein Passwort nicht mehr weißt: Über „Passwort vergessen“ setzt du ein neues und bist danach gleich angemeldet.",
     // Gesamtgrenze für E-Mails erreicht (konto.php „zuviel-gesamt“, seit 09.10.2026, T-25) – liegt nicht an dieser Adresse
     "zuviel-gesamt": "Gerade werden sehr viele E-Mails angefordert. Bitte versuch es in einer Stunde noch einmal.",
     versand: "Die E-Mail ließ sich nicht verschicken. Bitte versuch es später noch einmal.",
@@ -917,6 +924,9 @@ MC.navInit();
   const fmtVol = (v, w) => typeof v === "number" ? `${(v / 1e9).toLocaleString("de-DE", { maximumSignificantDigits: 3 })} Mrd.${w ? " " + w : ""}` : "–";   // wie anleihen-suche.html
   const fmtStk = v => typeof v === "number" ? v.toLocaleString("de-DE", { maximumFractionDigits: 3 }) : "–";
   const fmtCoupon = c => c === "var" ? "variabel" : typeof c === "number" ? `${fmt(c, Math.round(c * 1000) % 10 ? 3 : 2)} %` : "–";
+  // Kupon einer Anleihe wie in Tabelle, Steckbrief und E-Mails: „Nullkupon“ und „variabel“ als Wort (MC.felder.kupon) – seit 15.10.2026 auch
+  // in Legende, Zinstermin-Liste, Balken-Tooltip, Auswahl, geteiltem Musterdepot und PDF, vorher dort „0,00 %“ (Gesamtprüfung B57-02)
+  const kupTxt = o => MC.felder ? MC.felder.kupon({ kupon: o.kupon, zinsart: o.zinsart }) : fmtCoupon(o.kupon);
   // „Heute“ ist der Berliner Kalendertag um 12:00 UTC (MC.heuteBerlin, seit 09.10.2026, Technik-Test 08.10.2026 T-51) – wie Steckbrief
   // und Suche: am Fälligkeitstag ganztägig „fällig“, auch zwischen 0 und 2 Uhr und in anderen Zeitzonen (vorher gegen die Uhrzeit des Geräts)
   const HEUTE = MC.heuteBerlin ? MC.heuteBerlin().getTime() : Date.now();
@@ -1215,7 +1225,7 @@ MC.navInit();
       $("geteilt-nein").textContent = stand.angemeldet && !GETEILT_NEU.length ? "Schließen" : "Nicht übernehmen";
       $("geteilt-liste").innerHTML = GETEILT.slice(0, 30).map(i => {
         const o = D && bekannt(i) ? anleihe(i, 0, D) : { name: i, kupon: null, faellig: "" };
-        return `<li${da(i) || !bekannt(i) ? ' class="da"' : ""}>${MC.esc(o.name)}${o.name !== i ? ` <small>${fmtCoupon(o.kupon)}${o.faellig ? " · " + o.faellig.slice(0, 4) : ""} · ${MC.esc(i)}</small>` : ""}${da(i) ? " <small>· schon gemerkt</small>" : !bekannt(i) ? " <small>· Bondarium unbekannt</small>" : ""}</li>`;
+        return `<li${da(i) || !bekannt(i) ? ' class="da"' : ""}>${MC.esc(o.name)}${o.name !== i ? ` <small>${kupTxt(o)}${o.faellig ? " · " + o.faellig.slice(0, 4) : ""} · ${MC.esc(i)}</small>` : ""}${da(i) ? " <small>· schon gemerkt</small>" : !bekannt(i) ? " <small>· Bondarium unbekannt</small>" : ""}</li>`;
       }).join("") + (n > 30 ? `<li>… und ${n - 30} weitere</li>` : "");
     }
     zeichneBox(null);
@@ -1268,7 +1278,7 @@ MC.navInit();
     $("geteilt-m-nein").textContent = stand.angemeldet && voll ? "Schließen" : "Nicht übernehmen";
     const liste = D => { $("geteilt-m-liste").innerHTML = g.liste.map(([i, nenn]) => {
       const o = D ? anleihe(i, 0, D) : { name: i, kupon: null, faellig: "", cur: "" };
-      return `<li>${MC.esc(o.name)} <small>${o.name !== i ? `${fmtCoupon(o.kupon)}${o.faellig ? " · " + o.faellig.slice(0, 4) : ""} · ` : ""}${fmt(nenn)} ${o.cur && o.cur !== "EUR" ? MC.esc(o.cur) : "EUR"}</small></li>`;
+      return `<li>${MC.esc(o.name)} <small>${o.name !== i ? `${kupTxt(o)}${o.faellig ? " · " + o.faellig.slice(0, 4) : ""} · ` : ""}${fmt(nenn)} ${o.cur && o.cur !== "EUR" ? MC.esc(o.cur) : "EUR"}</small></li>`;
     }).join(""); };
     liste(null);
     ladeDaten().then(D => ladeStamm(g.liste.map(x => x[0]).filter(i => !D.idx.has(i))).then(() => D)).then(D => { if (GETEILT_M === g) liste(D); }, () => {});
@@ -1450,7 +1460,7 @@ MC.navInit();
     const warn = [p.warum ? p.warum + " – fehlt im Schaubild" : "", stk && p.nenn < stk ? `unter der Mindestanlage von ${fmtStk(stk)}` : stk >= 1 && Number.isInteger(stk) && p.nenn % stk ? `kein Vielfaches der Stückelung ${fmtStk(stk)}` : ""].filter(Boolean);
     return `<tr><th scope="row">${p.rechnet && p.farbe ? `<i class="kd-f" style="background: ${p.farbe}"></i>` : ""}<a href="${steck}">${MC.esc(o.name)}</a>${p.stern ? `<span class="kd-stern" title="Zur Vereinfachung in Euro umgerechnet – siehe Hinweis unter der Tabelle">*</span>` : ""}<small${o.reg ? ` title="${MC.esc("Registername: " + o.reg)}"` : ""}>${MC.esc([p.isin, ART_NAME[o.art] || "", o.cur || ""].filter(Boolean).join(" · "))}</small>${warn.map(w => `<small class="kd-warn">${MC.esc(w)}</small>`).join("")}</th>` +
       `<td class="num" data-l="Rendite">${p.rend != null ? MC.felder.pct(p.rend) : "–"}</td>` +
-      `<td class="num" data-l="Kupon">${o.zinsart === 2 ? "Nullkupon" : fmtCoupon(o.kupon)}<small><span class="kd-m">lfd. Verzinsung </span>${p.lfd != null ? MC.felder.pct(p.lfd) : "–"}</small></td>` +
+      `<td class="num" data-l="Kupon">${kupTxt(o)}<small><span class="kd-m">lfd. Verzinsung </span>${p.lfd != null ? MC.felder.pct(p.lfd) : "–"}</small></td>` +
       `<td class="num" data-l="Restlaufzeit">${p.rest != null ? (p.rest > 0 ? MC.esc(MC.restlaufzeit(p.rest)) : "fällig") : "–"}<small><span class="kd-m">fällig </span>${o.faellig ? MC.datum(o.faellig) : "unbefristet"}</small></td>` +
       `<td class="num" data-l="Duration">${p.mac != null ? MC.esc(MC.restlaufzeit(p.mac)) : "–"}<small><span class="kd-m">mod. Duration </span>${p.dur != null ? fmt(p.dur, 1) : "–"}</small></td>` +
       `<td class="num" data-l="Nennwert"><span class="kd-eur w3"><input type="text" inputmode="numeric" autocomplete="off" maxlength="11" value="${fmt(p.nenn)}" data-nenn="${MC.esc(p.isin)}" aria-label="Nennwert ${MC.esc(o.name)}${p.cur ? " in " + MC.esc(p.cur) : ""}"><span>${p.cur ? MC.esc(p.cur) : "EUR"}</span></span>${p.fremd ? `<small>= ${eur(p.nennEur)}</small>` : ""}</td>` +
@@ -1460,10 +1470,13 @@ MC.navInit();
       `<td>${simKnopf(o)}<button type="button" class="kto-x" data-raus="${MC.esc(p.isin)}" aria-label="${MC.esc(o.name)} aus dem Musterdepot entfernen" title="Aus dem Musterdepot entfernen">×<span> Entfernen</span></button></td></tr>`;
   }
   // Summenzeile für Tabelle und PDF. Gewicht ist der Kurswert (Nennwert × Kurs): Anteil je Anleihe (wird an p.anteil gesetzt), Rendite,
-  // Restlaufzeit und beide Durationen gewichtet; laufende Verzinsung = Zinsen ÷ Kurswert. Anleihen ohne Kurs zählen in die Kennzahlen nicht mit.
+  // Restlaufzeit und beide Durationen gewichtet; laufende Verzinsung = Zinsen ÷ Kurswert. Anleihen ohne Kurs zählen in die Kennzahlen nicht mit,
+  // fällige auch nicht (seit 15.10.2026, Gesamtprüfung B57-04): Am Fälligkeitstag zählte die Anleihe mit dem Vortageskurs weiter in Kaufpreis,
+  // Anteil und Nennwert, obwohl sie „Fälligkeit erreicht – fehlt im Schaubild“ trägt.
+  const faelligErreicht = p => p.rest != null && p.rest <= 0;
   function depotSummen(pos) {
-    const mk = pos.filter(p => p.kauf != null), kw = mk.reduce((x, p) => x + p.kauf, 0), mn = pos.filter(p => p.nennEur != null);
-    pos.forEach(p => { p.anteil = p.kauf != null && kw > 0 ? p.kauf / kw * 100 : null; });
+    const mk = pos.filter(p => p.kauf != null && !faelligErreicht(p)), kw = mk.reduce((x, p) => x + p.kauf, 0), mn = pos.filter(p => p.nennEur != null && !faelligErreicht(p));
+    pos.forEach(p => { p.anteil = p.kauf != null && kw > 0 && !faelligErreicht(p) ? p.kauf / kw * 100 : null; });
     const gew = feld => { const l = mk.filter(p => p[feld] != null), g = l.reduce((x, p) => x + p.kauf, 0); return g > 0 ? l.reduce((x, p) => x + p[feld] * p.kauf, 0) / g : null; };
     return { mitKurs: mk.length, kw, preis: mk.reduce((x, p) => x + p.preis, 0), sz: mk.reduce((x, p) => x + (p.sz || 0), 0), mitNenn: mn.length, nenn: mn.reduce((x, p) => x + p.nennEur, 0), nennFremd: fremdIn(mn),
       zins: pos.reduce((x, p) => x + (p.zins || 0), 0), rend: gew("rend"), rest: gew("rest"), mac: gew("mac"), dur: gew("dur"), lfd: kw > 0 ? mk.reduce((x, p) => x + (p.zins || 0), 0) / kw * 100 : null };
@@ -1472,7 +1485,7 @@ MC.navInit();
     const drin = new Set(POS.map(p => p.isin)), sel = $("kd-isin"), wahl = sel.value || WAHL;
     const frei = LISTE.filter(o => !drin.has(o.isin)).sort((a, b) => a.name.localeCompare(b.name, "de") || (a.faellig || "").localeCompare(b.faellig || ""));
     sel.innerHTML = `<option value="">${frei.length ? "Anleihe wählen …" : LISTE.length ? "Alle Anleihen deiner Merkliste liegen in diesem Musterdepot" : "Deine Merkliste ist noch leer"}</option>` +
-      frei.map(o => { const g = grund(o); return `<option value="${MC.esc(o.isin)}"${g ? " disabled" : ""} data-stk="${typeof o.stk === "number" ? o.stk : ""}" data-cur="${MC.esc(o.cur || "")}">${MC.esc(o.name)} · ${fmtCoupon(o.kupon)}${o.faellig ? " · " + o.faellig.slice(0, 4) : ""}${o.cur && o.cur !== "EUR" ? " · " + MC.esc(o.cur) : ""}${g ? " – " + MC.esc(g) : ""}</option>`; }).join("");
+      frei.map(o => { const g = grund(o); return `<option value="${MC.esc(o.isin)}"${g ? " disabled" : ""} data-stk="${typeof o.stk === "number" ? o.stk : ""}" data-cur="${MC.esc(o.cur || "")}">${MC.esc(o.name)} · ${kupTxt(o)}${o.faellig ? " · " + o.faellig.slice(0, 4) : ""}${o.cur && o.cur !== "EUR" ? " · " + MC.esc(o.cur) : ""}${g ? " – " + MC.esc(g) : ""}</option>`; }).join("");
     if (wahl && Array.from(sel.options).some(x => x.value === wahl && !x.disabled)) { sel.value = wahl; if (wahl === WAHL) { WAHL = ""; sel.dispatchEvent(new Event("change")); } }
     nennWaehrung();
     const voll = POS.length >= DEPOT_MAX; $("f-depot").classList.toggle("voll", voll);
@@ -1537,7 +1550,7 @@ MC.navInit();
       let y = y0, svg = "";
       teile.filter(t => wert(t) > 0).forEach(t => {
         const h = Math.max(1.5, hoehe * wert(t) / max);   // sehr kleine Anteile bleiben als feine Linie sichtbar, ohne den Stapel aufzublähen
-        svg += `<rect x="${(cx - b / 2).toFixed(1)}" y="${(y - h).toFixed(1)}" width="${b.toFixed(1)}" height="${(h > 6 ? h - 2 : h).toFixed(1)}" rx="${h > 6 ? 3 : 0.5}" fill="${t.p.farbe}"><title>${MC.esc(`${t.p.o.name} ${fmtCoupon(t.p.o.kupon)} ${t.p.o.faellig.slice(0, 4)}: ${was} ${eur(wert(t))}${t.p.stern ? " (in Euro umgerechnet, Wechselkurs als fest angenommen)" : t.p.fremd ? " (in Euro umgerechnet, fester Umrechnungskurs)" : ""}`)}</title></rect>`;
+        svg += `<rect x="${(cx - b / 2).toFixed(1)}" y="${(y - h).toFixed(1)}" width="${b.toFixed(1)}" height="${(h > 6 ? h - 2 : h).toFixed(1)}" rx="${h > 6 ? 3 : 0.5}" fill="${t.p.farbe}"><title>${MC.esc(`${t.p.o.name} ${kupTxt(t.p.o)} ${t.p.o.faellig.slice(0, 4)}: ${was} ${eur(wert(t))}${t.p.stern ? " (in Euro umgerechnet, Wechselkurs als fest angenommen)" : t.p.fremd ? " (in Euro umgerechnet, fester Umrechnungskurs)" : ""}`)}</title></rect>`;
         y -= h;
       });
       return [svg, y];
@@ -1588,7 +1601,7 @@ MC.navInit();
     $("kd-leg-h").hidden = alle.length < 2;
     $("kd-leg").innerHTML = alle.map(p => {
       const an = !AUS.has(p.isin);
-      return `<li><button type="button" class="kd-wahl" aria-pressed="${an}" data-wahl="${MC.esc(p.isin)}" title="${an ? "Im Schaubild – Klick blendet aus" : "Ausgeblendet – Klick blendet ein"}"><i class="kd-f" style="${an ? `background: ${p.farbe}` : `box-shadow: inset 0 0 0 2px ${p.farbe}`}"></i>${MC.esc(p.o.name)} ${fmtCoupon(p.o.kupon)} ${p.o.faellig.slice(0, 4)}${p.fremd ? ` · ${MC.esc(p.o.cur)}` : ""}</button></li>`;
+      return `<li><button type="button" class="kd-wahl" aria-pressed="${an}" data-wahl="${MC.esc(p.isin)}" title="${an ? "Im Schaubild – Klick blendet aus" : "Ausgeblendet – Klick blendet ein"}"><i class="kd-f" style="${an ? `background: ${p.farbe}` : `box-shadow: inset 0 0 0 2px ${p.farbe}`}"></i>${MC.esc(p.o.name)} ${kupTxt(p.o)} ${p.o.faellig.slice(0, 4)}${p.fremd ? ` · ${MC.esc(p.o.cur)}` : ""}</button></li>`;
     }).join("") + (AUS.size ? `<li><button type="button" class="kto-textbtn" data-wahl="alle">Alle zeigen</button></li>` : "");
     if (!alle.length) { if (POS.length) { box.hidden = false; leeren("Für diese Auswahl lässt sich keine Zahlung berechnen."); } return; }
     if (!z.length) { leeren("Keine Anleihe ausgewählt – klick oben auf eine Anleihe, um sie wieder einzublenden."); return; }
@@ -1628,7 +1641,7 @@ MC.navInit();
     $("kd-plan").innerHTML = zj.length ? jahreZ.map(j => {
       const imJahr = zj.filter(x => x.tag.slice(0, 4) === j);
       return `<tr class="rz kd-jz"><th scope="rowgroup" colspan="2">${j}</th><td class="num">${eur(imJahr.reduce((a, x) => a + x.betrag, 0))}</td></tr>` +
-        imJahr.map(x => `<tr><td>${MC.datum(x.tag)}</td><th scope="row"><i class="kd-f" style="background: ${x.p.farbe}"></i>${MC.esc(x.p.o.name)} ${fmtCoupon(x.p.o.kupon)} ${x.p.o.faellig.slice(0, 4)}</th>` +
+        imJahr.map(x => `<tr><td>${MC.datum(x.tag)}</td><th scope="row"><i class="kd-f" style="background: ${x.p.farbe}"></i>${MC.esc(x.p.o.name)} ${kupTxt(x.p.o)} ${x.p.o.faellig.slice(0, 4)}</th>` +
           `<td class="num">${eur(x.betrag)}${x.p.fremd ? `<small>${fmt(x.roh, 2)} ${MC.esc(x.p.o.cur)}</small>` : ""}</td></tr>`).join("");
     }).join("") : `<tr><td colspan="3">Bis zur letzten Fälligkeit steht kein Zinstermin an.</td></tr>`;
     $("kd-plan-summe").innerHTML = zj.length > 1 ? `<tr><td colspan="2">Zinsen bis zur letzten Fälligkeit</td><td class="num">${eur(zj.reduce((a, x) => a + x.betrag, 0))}</td></tr>` : "";
@@ -1735,17 +1748,21 @@ MC.navInit();
     if (an && next) {
       const e = new Date(next.faellig + "T12:00:00Z"); e.setUTCDate(e.getUTCDate() - ERINNERUNG_TAGE);
       const eIso = e.toISOString().slice(0, 10);
-      satz += ` Nächste: ${MC.esc(next.name)} ${fmtCoupon(next.kupon)} ${next.faellig.slice(0, 4)} am ${MC.datum(next.faellig)}${eIso > HEUTE_ISO ? `, erste E-Mail am ${MC.datum(eIso)}` : ""}.`;
+      satz += ` Nächste: ${MC.esc(next.name)} ${kupTxt(next)} ${next.faellig.slice(0, 4)} am ${MC.datum(next.faellig)}${eIso > HEUTE_ISO ? `, erste E-Mail am ${MC.datum(eIso)}` : ""}.`;
     }
     $("kd-er-satz").innerHTML = satz;
     $("em-fuss").innerHTML = `Alle E-Mails gehen an <b>${MC.esc(st.email)}</b> · <button type="button" class="kto-textbtn" id="em-adresse">Adresse ändern</button>. Jede E-Mail hat einen Link zum Abbestellen.`;
     if (ER_SPRUNG && !$("a-meldungen").hidden) { ER_SPRUNG = false; z.scrollIntoView({ block: "center" }); }
   }
-  // „Adresse ändern“ in der Karte „E-Mails an dich“ öffnet das Formular in der Karte „Konto“ darunter
+  // „Adresse ändern“ in der Karte „E-Mails an dich“ öffnet das Formular im Konto (#a-konto). Seit 15.10.2026 (Gesamtprüfung B58-01) wird
+  // zuerst das Konto gezeigt: Seit dem 12.10.2026 liegt das Formular dort, und im verborgenen Panel tat der Klick sichtbar nichts.
   document.addEventListener("click", e => {
     if (!e.target.closest || !e.target.closest("#em-adresse")) return;
     const f = $("f-email"); if (!f) return;
-    f.hidden = false; f.scrollIntoView({ block: "center" }); const i = f.querySelector("input:not([type=hidden]):not([tabindex='-1'])"); if (i) i.focus();
+    reiterWahl("konto");
+    f.hidden = false;
+    const auf = document.querySelector('[data-auf="f-email"]'); if (auf) auf.setAttribute("aria-expanded", "true");
+    f.scrollIntoView({ block: "center" }); const i = f.querySelector("input:not([type=hidden]):not([tabindex='-1'])"); if (i) i.focus();
   });
   $("kd-er-schalter").addEventListener("click", e => {
     const b = e.currentTarget, an = b.getAttribute("aria-checked") !== "true", st = $("kd-er-status");
@@ -1924,7 +1941,7 @@ MC.navInit();
         y += 30;
       } else { P.text(R, y, "Merkliste – Fortsetzung", { gr: 12, fett: true }); y += 22; }
       SP.forEach((s, i) => {
-        P.text(s.r ? rx(i) : lx(i), y, s.t.toUpperCase(), { gr: 6.5, fett: true, farbe: GRAU, rechts: s.r });
+        P.text(s.r ? rx(i) : lx(i), y, s.t, { gr: 6.5, fett: true, farbe: GRAU, rechts: s.r });   // seit 15.10.2026 ohne Versalien wie die Website (B57-05)
         if (s.t2) P.text(s.r ? rx(i) : lx(i), y + 8.5, s.t2, { gr: 6.5, farbe: GRAU, rechts: s.r });
       });
       y += 14; P.linie(R, y, PB - R, y, INK, 0.8);
@@ -2001,6 +2018,11 @@ MC.navInit();
       ["Duration", 46, 1, "mod. Duration"], ["Nennwert", 64, 1], ["Kaufpreis", 64, 1, "Kurs"], ["Anteil", 32, 1], ["Zinsen pro Jahr", 57, 1, "nächster Termin"]]
       .reduce((x, [t, b, r, t2]) => { SP.push({ t, t2, x, b, r: !!r }); return x + b; }, R);
     const rx = i => SP[i].x + SP[i].b - (i === SP.length - 1 ? 0 : 6), NAME = 120;
+    const pt = t => String(t).replace(/\u00a0/g, " ");   // im PDF normales Leerzeichen (wie depotPdf)
+    // Wert rechtsbündig in Spalte i. Passt er nicht hinein – Beträge ab sechs Stellen, der Nennwert darf bis 100 Mio. gehen –, wird er
+    // kleiner gesetzt, statt in die Nachbarspalte zu laufen (seit 15.10.2026, Gesamtprüfung B57-01: „5,1 Jahre203.882,87 EUR204.756,60 EUR“)
+    const rechtsMax = (x, yy, t, o, max) => { let gr = o.gr || 10; while (gr > 5 && P.weite(t, gr, o.fett) > max) gr -= 0.25; return P.text(x, yy, t, Object.assign({}, o, { gr, rechts: true })); };
+    const zelle = (i, yy, t, o) => rechtsMax(rx(i), yy, t, o, SP[i].b - 7);
     const noten = [];
     if (fremd.length && FX) noten.push(`* Fremdwährung: zur Vereinfachung mit dem Euro-Referenzkurs der EZB vom ${MC.datum(FX.stand)} in Euro umgerechnet (${[...new Set(fremd.map(p => p.o.cur))].sort().map(c => `1 EUR = ${fmtFx(FX.kurse[c])} ${c}`).join(", ")}) und für die ganze Laufzeit als fest angenommen – tatsächlich schwankt er (Wechselkursrisiko).`);
     // Frühere Euro-Währungen (T-40): fester Umrechnungskurs, kein Sternchen
@@ -2024,7 +2046,7 @@ MC.navInit();
         // Dachzeile „Musterdepot“, darunter der Name – lange Namen werden kleiner (bis 15 pt), damit der Knopf rechts Platz hat
         const platzName = B - 2 * R - KB - 16;
         let gr = 22; while (gr > 15 && P.weite(name, gr, true) > platzName) gr--;
-        P.text(R, y - 14, "MUSTERDEPOT", { gr: 7.5, fett: true, farbe: GRAU });
+        P.text(R, y - 14, "Musterdepot", { gr: 8, fett: true, farbe: GRAU });
         P.text(R, y + 8, name, { gr, fett: true, max: platzName }); y += 28;
         P.text(R, y, `Erstellt am ${datum} um ${uhr} Uhr · ${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}${KSTAND ? ` · Kurse vom ${MC.datum(KSTAND)}` : ""}`, { gr: 9.5, farbe: GRAU });
         y += 30;
@@ -2032,11 +2054,11 @@ MC.navInit();
     }
     const platz = h => { if (y + h > UNTEN) seite(false); };
     const klein = o => Object.assign({ gr: 7, farbe: GRAU }, o || {});
-    const kurz = p => `${p.o.name} ${fmtCoupon(p.o.kupon)} ${(p.o.faellig || "").slice(0, 4)}`;
+    const kurz = p => pt(`${p.o.name} ${kupTxt(p.o)} ${(p.o.faellig || "").slice(0, 4)}`);
     seite(true);
     SP.forEach((s, i) => {
       const x = s.r ? rx(i) : s.x;
-      P.text(x, y, s.t.toUpperCase(), { gr: 6.5, fett: true, farbe: GRAU, rechts: s.r });
+      P.text(x, y, s.t, { gr: 6.5, fett: true, farbe: GRAU, rechts: s.r });   // seit 15.10.2026 ohne Versalien wie die Website (B57-05)
       if (s.t2) P.text(x, y + 8.5, s.t2, { gr: 6.5, farbe: GRAU, rechts: s.r });
     });
     y += 14; P.linie(R, y, B - R, y, INK, 0.8);
@@ -2046,20 +2068,20 @@ MC.navInit();
       if (p.stern) P.text(R + nw + 1, z1, "*", { gr: 9, fett: true });
       P.link(R, y + 4, Math.min(NAME, nw), 13, `${LINK}anleihe.html?isin=${encodeURIComponent(p.isin)}`);
       P.text(R, z2, [p.isin, p.warum, ART_NAME[o.art] || "", o.cur || ""].filter(Boolean).join(" · "), klein({ max: NAME }));
-      P.text(rx(1), z1, p.rend != null ? `${fmt(p.rend, 2)} %` : "–", { gr: 8.5, fett: true, rechts: true });
-      P.text(rx(2), z1, fmtCoupon(o.kupon), { gr: 8.5, rechts: true });
-      P.text(rx(2), z2, p.lfd != null ? `${fmt(p.lfd, 2)} %` : "–", klein({ rechts: true }));
-      P.text(rx(3), z1, p.rest != null ? (p.rest > 0 ? MC.restlaufzeit(p.rest) : "fällig") : "–", { gr: 8.5, rechts: true });
-      P.text(rx(3), z2, o.faellig ? MC.datum(o.faellig) : "unbefristet", klein({ rechts: true }));
-      P.text(rx(4), z1, p.mac != null ? MC.restlaufzeit(p.mac) : "–", { gr: 8.5, rechts: true });
-      P.text(rx(4), z2, p.dur != null ? fmt(p.dur, 1) : "–", klein({ rechts: true }));
-      P.text(rx(5), z1, `${fmt(p.nenn)} ${p.cur || "EUR"}`, { gr: 8.5, rechts: true });
-      if (p.fremd && p.nennEur != null) P.text(rx(5), z2, `= ${eur(p.nennEur)}`, klein({ rechts: true }));
-      P.text(rx(6), z1, p.preis != null ? eur(p.preis) : "–", { gr: 8.5, fett: true, rechts: true });
-      P.text(rx(6), z2, o.kurs != null ? fmt(o.kurs, 2) : "–", klein({ rechts: true }));
-      P.text(rx(7), z1, p.anteil != null ? `${fmt(p.anteil, 1)} %` : "–", { gr: 8.5, rechts: true });
-      P.text(rx(8), z1, p.zins != null ? eur(p.zins) : "–", { gr: 8.5, rechts: true });
-      P.text(rx(8), z2, p.zt ? MC.datum(p.zt) : p.rechnet && !p.fest ? "kein Kupon" : "–", klein({ rechts: true }));
+      zelle(1, z1, p.rend != null ? `${fmt(p.rend, 2)} %` : "–", { gr: 8.5, fett: true, rechts: true });
+      zelle(2, z1, pt(kupTxt(o)), { gr: 8.5, rechts: true });
+      zelle(2, z2, p.lfd != null ? `${fmt(p.lfd, 2)} %` : "–", klein({ rechts: true }));
+      zelle(3, z1, p.rest != null ? (p.rest > 0 ? MC.restlaufzeit(p.rest) : "fällig") : "–", { gr: 8.5, rechts: true });
+      zelle(3, z2, o.faellig ? MC.datum(o.faellig) : "unbefristet", klein({ rechts: true }));
+      zelle(4, z1, p.mac != null ? MC.restlaufzeit(p.mac) : "–", { gr: 8.5, rechts: true });
+      zelle(4, z2, p.dur != null ? fmt(p.dur, 1) : "–", klein({ rechts: true }));
+      zelle(5, z1, `${fmt(p.nenn)} ${p.cur || "EUR"}`, { gr: 8.5, rechts: true });
+      if (p.fremd && p.nennEur != null) zelle(5, z2, `= ${eur(p.nennEur)}`, klein({ rechts: true }));
+      zelle(6, z1, p.preis != null ? eur(p.preis) : "–", { gr: 8.5, fett: true, rechts: true });
+      zelle(6, z2, o.kurs != null ? pt(MC.felder.kurs(o.kurs)) : "–", klein({ rechts: true }));   // Kurs wie auf der Seite: 99,747 % (B57-03)
+      zelle(7, z1, p.anteil != null ? `${fmt(p.anteil, 1)} %` : "–", { gr: 8.5, rechts: true });
+      zelle(8, z1, p.zins != null ? eur(p.zins) : "–", { gr: 8.5, rechts: true });
+      zelle(8, z2, p.zt ? MC.datum(p.zt) : p.rechnet && !p.fest ? "kein Kupon" : "–", klein({ rechts: true }));
       y += 31; P.linie(R, y, B - R, y, LINIE, 0.5);
       if (y + 31 > UNTEN) seite(false);
     });
@@ -2068,16 +2090,16 @@ MC.navInit();
     platz(40);
     P.linie(R, y, B - R, y, INK, 0.8);
     P.text(R, y + 14, "Summe", { gr: 9, fett: true }); P.text(R, y + 25, `${pos.length} ${pos.length === 1 ? "Anleihe" : "Anleihen"}${fremdIn(pos) ? ", in Euro" : ""}`, klein());
-    P.text(rx(1), y + 14, S.rend != null ? `${fmt(S.rend, 2)} %` : "–", { gr: 8.5, fett: true, rechts: true });
-    P.text(rx(2), y + 14, "–", { gr: 8.5, fett: true, rechts: true });
-    P.text(rx(2), y + 25, S.lfd != null ? `${fmt(S.lfd, 2)} %` : "–", klein({ rechts: true }));
-    P.text(rx(3), y + 14, S.rest != null ? MC.restlaufzeit(S.rest) : "–", { gr: 8.5, fett: true, rechts: true });
-    P.text(rx(4), y + 14, S.mac != null ? MC.restlaufzeit(S.mac) : "–", { gr: 8.5, fett: true, rechts: true });
-    P.text(rx(4), y + 25, S.dur != null ? fmt(S.dur, 1) : "–", klein({ rechts: true }));
-    P.text(rx(5), y + 14, S.mitNenn ? eur(S.nenn, S.nennFremd ? 2 : 0) : "–", { gr: 8.5, fett: true, rechts: true });
-    P.text(rx(6), y + 14, S.mitKurs ? eur(S.preis) : "–", { gr: 8.5, fett: true, rechts: true });
-    P.text(rx(7), y + 14, S.mitKurs ? "100 %" : "–", { gr: 8.5, fett: true, rechts: true });
-    P.text(rx(8), y + 14, eur(S.zins), { gr: 8.5, fett: true, rechts: true });
+    zelle(1, y + 14, S.rend != null ? `${fmt(S.rend, 2)} %` : "–", { gr: 8.5, fett: true, rechts: true });
+    zelle(2, y + 14, "–", { gr: 8.5, fett: true, rechts: true });
+    zelle(2, y + 25, S.lfd != null ? `${fmt(S.lfd, 2)} %` : "–", klein({ rechts: true }));
+    zelle(3, y + 14, S.rest != null ? MC.restlaufzeit(S.rest) : "–", { gr: 8.5, fett: true, rechts: true });
+    zelle(4, y + 14, S.mac != null ? MC.restlaufzeit(S.mac) : "–", { gr: 8.5, fett: true, rechts: true });
+    zelle(4, y + 25, S.dur != null ? fmt(S.dur, 1) : "–", klein({ rechts: true }));
+    zelle(5, y + 14, S.mitNenn ? eur(S.nenn, S.nennFremd ? 2 : 0) : "–", { gr: 8.5, fett: true, rechts: true });
+    zelle(6, y + 14, S.mitKurs ? eur(S.preis) : "–", { gr: 8.5, fett: true, rechts: true });
+    zelle(7, y + 14, S.mitKurs ? "100 %" : "–", { gr: 8.5, fett: true, rechts: true });
+    zelle(8, y + 14, eur(S.zins), { gr: 8.5, fett: true, rechts: true });
     y += 46;
     const merk = new Set(AUS); AUS.clear();   // das ganze Depot, nicht nur die Auswahl im Schaubild
     const z = zahlungen(); merk.forEach(i => AUS.add(i));
@@ -2110,12 +2132,12 @@ MC.navInit();
       const jKopf = fort => {
         P.text(R, y, fort ? "Zahlungen pro Jahr – Fortsetzung" : "Zahlungen pro Jahr", { gr: 13, fett: true });
         P.text(B - R, y, `${j0}${j1 > j0 ? ` bis ${j1}` : ""}${jE > j1 ? " je Jahr · danach die Fälligkeiten" : " · bis zur letzten Fälligkeit"}`, klein({ rechts: true, gr: 8 })); y += 18;
-        P.text(R, y, "JAHR", { gr: 6.5, fett: true, farbe: GRAU });
+        P.text(R, y, "Jahr", { gr: 6.5, fett: true, farbe: GRAU });
         P.rechteck(BX, y - 6, 7, 7, GRUEN_T, 1.5); P.text(BX + 10, y, "Zinsen", klein({ gr: 6.5 }));
         P.rechteck(BX + 46, y - 6, 7, 7, INK, 1.5); P.text(BX + 56, y, "Rückzahlung zum Nennwert", klein({ gr: 6.5 }));
-        P.text(cZ, y, "ZINSEN", { gr: 6.5, fett: true, farbe: GRAU, rechts: true });
-        P.text(cR, y, "RÜCKZAHLUNG", { gr: 6.5, fett: true, farbe: GRAU, rechts: true });
-        P.text(cS, y, "ZUSAMMEN", { gr: 6.5, fett: true, farbe: GRAU, rechts: true });
+        P.text(cZ, y, "Zinsen", { gr: 6.5, fett: true, farbe: GRAU, rechts: true });
+        P.text(cR, y, "Rückzahlung", { gr: 6.5, fett: true, farbe: GRAU, rechts: true });
+        P.text(cS, y, "Zusammen", { gr: 6.5, fett: true, farbe: GRAU, rechts: true });
         y += 6; P.linie(R, y, B - R, y, INK, 0.8);
       };
       platz(18 + 24 + 16 * 3); jKopf(false);
@@ -2130,9 +2152,9 @@ MC.navInit();
         const wz = r.zins / max * BW, wr = r.rueck / max * BW;
         if (wz > 0) P.rechteck(BX, y + 4 + m, Math.max(wz, 1), 8, GRUEN_T);
         if (wr > 0) P.rechteck(BX + wz, y + 4 + m, wr, 8, INK);
-        P.text(cZ, g, r.zins ? vor + eur(r.zins) : "–", { gr: 8.5, rechts: true });
-        P.text(cR, g, r.rueck ? eur(r.rueck, fremdIn(pos) ? 2 : 0) : "–", { gr: 8.5, rechts: true });
-        P.text(cS, g, vor + eur(r.zins + r.rueck), { gr: 8.5, fett: true, rechts: true });
+        rechtsMax(cZ, g, r.zins ? vor + eur(r.zins) : "–", { gr: 8.5 }, cZ - BX - BW - 6);
+        rechtsMax(cR, g, r.rueck ? eur(r.rueck, fremdIn(pos) ? 2 : 0) : "–", { gr: 8.5 }, cR - cZ - 6);
+        rechtsMax(cS, g, vor + eur(r.zins + r.rueck), { gr: 8.5, fett: true }, cS - cR - 6);
         y += h;
       });
       P.linie(R, y, B - R, y, LINIE, 0.5);
@@ -2144,8 +2166,8 @@ MC.navInit();
         const tKopf = fort => {
           P.text(R, y, `Kommende Zinstermine${fort ? " – Fortsetzung" : ""}`, { gr: 13, fett: true });
           P.text(B - R, y, restZ.length ? `die nächsten ${zj.length} von ${alleZ.length}` : "bis zur letzten Fälligkeit", klein({ rechts: true, gr: 8 })); y += 18;
-          P.text(R, y, "DATUM", { gr: 6.5, fett: true, farbe: GRAU }); P.text(R + 70, y, "ANLEIHE", { gr: 6.5, fett: true, farbe: GRAU });
-          P.text(B - R, y, "ZINSEN", { gr: 6.5, fett: true, farbe: GRAU, rechts: true });
+          P.text(R, y, "Datum", { gr: 6.5, fett: true, farbe: GRAU }); P.text(R + 70, y, "Anleihe", { gr: 6.5, fett: true, farbe: GRAU });
+          P.text(B - R, y, "Zinsen", { gr: 6.5, fett: true, farbe: GRAU, rechts: true });
           y += 6; P.linie(R, y, B - R, y, INK, 0.8);
         };
         platz(18 + 24 + 16 * 3); tKopf(false);
@@ -2231,7 +2253,7 @@ MC.navInit();
   $("d-weg").addEventListener("toggle", wegZurueck);
 
   // ---------- My Bondarium: die fünf Ansichten (bereich.js) ----------
-  // B zeichnet Start, Lernen, die Zusätze der Merkliste, Rechnungen/Voreinstellungen und Meldungen/Konto; die Brücke gibt ihm, was
+  // B zeichnet Start, Lernen, die Zusätze der Merkliste, Meldungen und das Konto-Panel; die Brücke gibt ihm, was
   // dieses Skript schon hat (Daten, Formatierer, Aktionen). Ohne bereich.js (Netzfehler) bleibt B null – Merkliste und Depot gehen weiter.
   let BESUCHT = false;
   const B = MC.bereich ? MC.bereich({ K, $, fmt, fmtCoupon, TEXT, hinweis, reiterWahl, werkzeuge, heute: HEUTE_ISO, jahre, STAMM, anleihe, ladeDaten, ladeStamm,
@@ -2250,7 +2272,7 @@ MC.navInit();
     zahlungen: liste => zahlungen(liste),
     oeffneDepot: id => { oeffne(id); reiterWahl("depot", true); },
     zeichneListe: () => { if (LISTE.length) zeichne(); else if (B) B.nachListe(); statusText(); },
-    entfernen: entferne, insDepot: isin => insDepot({ dataset: { depot: isin } }), teilen: nur => teilen(nur, "mitnehmen"),
+    entfernen: entferne, insDepot: isin => insDepot({ dataset: { depot: isin } }),
     neuLaden: () => ladeDaten().then(D => { DDATA = D; MF_EZB = D.ezb; if (!KSTAND) KSTAND = D.kstand; if (B) B.ablageNeu(); }, () => {}) }) : null;
   reiter(ausHash() || (VOR ? "merkliste" : "start"));
 
