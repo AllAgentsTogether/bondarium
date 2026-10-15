@@ -57,6 +57,7 @@
   .bk-frei input[aria-invalid="true"] { border-color: var(--down); }
   .bk-frei-h { font-size: 13px; font-weight: 600; color: var(--down); }
   /* Liste: eine Zeile je Anbieter – Name · Balken mit Preis und Rechenweg · Anleihen-Angebot · Handelsplätze · Depot im Jahr; darunter der Aufklapper */
+  .bk-box.veraltet .bk-liste { opacity: 0.4; }   /* eigener Betrag ungültig: Liste gilt für den letzten gültigen Wert */
   .bk-box { background: #fff; border: 1px solid rgba(26,26,25,0.10); border-radius: var(--radius); box-shadow: var(--shadow); padding: 6px 22px 10px; }
   .bk-kopf, .bk-z { display: grid; grid-template-columns: 150px minmax(0, 1fr) 178px 208px 88px; column-gap: 18px; }
   .bk-kopf { padding: 12px 0 9px; border-bottom: 1px solid rgba(26,26,25,0.14); font-size: 13px; font-weight: 500; color: var(--text); align-items: end; }
@@ -194,7 +195,7 @@
   @media (pointer: coarse) { details.bk-d > summary { min-height: 44px; } }
   @media (prefers-reduced-motion: reduce) { .bk-bar i { transition: none; } }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Anleihen-Broker: 18 Anbieter im Vergleich","description":"Wo kannst du Anleihen kaufen? 18 Anbieter im Vergleich: Kosten für Käufe von 1.000 bis 100.000 € offen vorgerechnet – mit Rechenweg und Quelle.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-30","dateModified":"2026-10-02","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/broker-vergleich.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Anleihen-Broker: 18 Anbieter im Vergleich","description":"Wo kannst du Anleihen kaufen? 18 Anbieter im Vergleich: Kosten für Käufe von 1.000 bis 100.000 € offen vorgerechnet – mit Rechenweg und Quelle.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-09-30","dateModified":"2026-10-15","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/broker-vergleich.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Kaufen","item":"https://www.bondarium.de/kaufen.html"},{"@type":"ListItem","position":3,"name":"Broker im Vergleich","item":"https://www.bondarium.de/broker-vergleich.html"}]}</script>
 </head>
 <body>
@@ -321,7 +322,7 @@
       </div>
       <div class="b2-spot"><img src="spot-broker-vergleich.svg" alt="" width="232" height="160"></div>
     </div>
-    <p class="bv-stand"><span><b>Stand <span data-bv="stand">siehe Liste</span></b> · jede Zahl aus dem Preisverzeichnis oder von der Seite des Anbieters · sortiert nur nach dem Preis</span></p>
+    <p class="bv-stand"><span><b>Preise geprüft am <span data-bv="stand">siehe Liste</span></b> · jede Zahl aus dem Preisverzeichnis oder von der Seite des Anbieters · sortiert nur nach dem Preis</span></p>
     <nav class="lands" aria-label="Zum Abschnitt springen">
       <a class="lbtn" href="#kosten"><span class="n">1</span>Kosten und Angebot</a>
       <a class="lbtn" href="#methodik"><span class="n">2</span>So rechnen wir</a>
@@ -344,7 +345,7 @@
       </div>
 <noscript><p class="klein">Die Liste braucht JavaScript. Alle Angaben stehen auch in der Datei <a href="broker.json">broker.json</a>.</p></noscript>
       <p class="bv-leg2" id="bv-leg2"></p>
-      <p class="klein">Prozent = Kosten im Verhältnis zum Kaufbetrag. Depot im Jahr = Preis für ein Depot, in dem nur diese Anleihe liegt. In keiner Zahl steckt die Spanne zwischen Geld- und Briefkurs – sie kommt bei jedem Anbieter dazu. Wo ein Anbieter fremde Kosten nicht beziffert, steht das in Orange dabei. Handelsplätze: Gezeigt sind die vier Börsen, die für Anleihen von Privatanlegern am wichtigsten sind (unsere Einschätzung, siehe <a href="handelsplaetze.html">Handelsplätze verstehen</a>) – ✓ heißt, der Anbieter nennt die Börse als Handelsplatz, – heißt nicht genannt. Ob es eine bestimmte Anleihe dort gibt, zeigt erst die Suche nach der ISIN. Nicht mehr dabei: die onvista bank – ihr Betrieb endete <a href="https://hilfe.onvista.de/de/gibt-es-onvista-noch-nach-ende-2025" rel="noopener">am 31.12.2025</a>.</p>
+      <p class="klein">Prozent = Kosten im Verhältnis zum Kaufbetrag. Depot im Jahr = Preis für ein Depot, in dem nur diese Anleihe liegt. In keiner Zahl steckt die Spanne zwischen Geld- und Briefkurs – sie kommt bei jedem Anbieter dazu. Wo ein Anbieter fremde Kosten nicht beziffert, steht das in Orange dabei. Handelsplätze: Gezeigt sind die vier Börsen, die für Anleihen von Privatanlegern am wichtigsten sind (unsere Einschätzung, siehe <a href="handelsplaetze.html">Handelsplätze</a>) – ✓ heißt, der Anbieter nennt die Börse als Handelsplatz, – heißt nicht genannt. Ob es eine bestimmte Anleihe dort gibt, zeigt erst die Suche nach der ISIN. Nicht mehr dabei: die onvista bank – ihr Betrieb endete <a href="https://hilfe.onvista.de/de/gibt-es-onvista-noch-nach-ende-2025" rel="noopener">am 31.12.2025</a>.</p>
     </section>
 
     <section class="section" id="methodik" aria-labelledby="h-methodik">
@@ -374,7 +375,7 @@
       <p class="crossnav-t">Verwandte Seiten</p>
       <ul class="crossnav-l">
         <li><a href="erste-anleihe.html">Deine erste Anleihe</a></li>
-        <li><a href="handelsplaetze.html">Handelsplätze verstehen</a></li>
+        <li><a href="handelsplaetze.html">Handelsplätze</a></li>
         <li><a href="rechner.html">Rechner: Rendite, Stückzinsen, Netto</a></li>
         <li><a href="handelsplaetze.html#regeln">Vier Regeln: Handel ohne Renditeverlust</a></li>
         <li><a href="begriffe.html">Glossar: Begriffe kurz erklärt</a></li>
@@ -409,7 +410,9 @@ MC.navInit();
 (function () {
   var box = document.getElementById("bk-liste");
   if (!box || !window.MC || !MC.load) return;
-  var heute = new Date(), iso = heute.getFullYear() + "-" + String(heute.getMonth() + 1).padStart(2, "0") + "-" + String(heute.getDate()).padStart(2, "0");
+  // Angebotsgrenzen ({bis}) gegen den Berliner Kalendertag (MC.heuteBerlin, Date um 12:00 UTC), nicht gegen das Gerätedatum
+  var heute = MC.heuteBerlin ? MC.heuteBerlin() : (function (h) { return new Date(Date.UTC(h.getFullYear(), h.getMonth(), h.getDate(), 12)); })(new Date());
+  var iso = heute.toISOString().slice(0, 10);
   var EUR = "&nbsp;€", PZ = "&nbsp;%";
   function gilt(x) { return x != null && (typeof x === "string" || !x.bis || iso <= x.bis); }
   function txt(x) { return typeof x === "string" ? x : x.t + (x.zeige_bis ? " (Angebot bis " + MC.datum(x.bis) + ")" : ""); }
@@ -497,7 +500,7 @@ MC.navInit();
     try {
       var d = heute, f = new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", hour: "numeric", hourCycle: "h23", timeZoneName: "short" });
       var teil = function (std) {
-        var p = f.formatToParts(new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), std - h.utc)));
+        var p = f.formatToParts(new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), std - h.utc)));
         var o = {}; p.forEach(function (x) { o[x.type] = x.value; }); return o;
       };
       var a = teil(h.von), z = teil(h.bis);
@@ -535,7 +538,9 @@ MC.navInit();
     }
     function kopf(b) { return '<div class="bk-an"><b>' + b.name + '</b><span class="typ">' + b.typ + "</span>" + hin(b) + "</div>"; }
     function quelle(b) { return "<dt>Quelle</dt><dd>" + (quellen(b) || "–") + (b.notiz ? "<small>" + b.notiz + "</small>" : "") + "</dd>"; }
+    var bkBox = box.parentNode, letzterB = null;
     function zeichne(B) {
+      letzterB = B; veraltet(false);
       [].forEach.call(box.querySelectorAll("details.bk-d"), function (d) { offen[d.getAttribute("data-b")] = d.open; });
       var zeilen = mit.map(function (b) { return { b: b, r: guenstigster(b, B), d: depot(b, B) }; });
       zeilen.sort(function (x, y) { return x.r.v - y.r.v || x.b._i - y.b._i; });
@@ -588,9 +593,15 @@ MC.navInit();
       if (falsch) frei.setAttribute("aria-invalid", "true"); else frei.removeAttribute("aria-invalid");
       freiH.hidden = !falsch;
     }
+    // Ungültiger eigener Betrag (z. B. „10000001“): Liste ausgrauen und im Kopf „–“ statt des letzten gültigen Zwischenwerts
+    function veraltet(an) {
+      bkBox.classList.toggle("veraltet", an);
+      document.querySelectorAll('[data-bv="betrag"]').forEach(function (e) { if (an) e.textContent = "–"; else if (letzterB != null) e.innerHTML = glatt(letzterB); });
+    }
     frei.addEventListener("input", function () {
       var v = MC.betragLesen(frei.value, { min: 100, max: 1e7 });
       if (!isNaN(v)) { freiMarke(false); setze(v, true); }
+      else veraltet(frei.value.trim() !== "");
     });
     frei.addEventListener("change", function () {
       freiMarke(frei.value.trim() !== "" && isNaN(MC.betragLesen(frei.value, { min: 100, max: 1e7 })));

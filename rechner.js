@@ -198,7 +198,8 @@
     R1 = { rendite: y * 100, jahre: jahre, start: start, next: sched.next[0], anteil: cd.first * (einfach ? cd.last : 1), freq: freq, kauf: kauf };
     setText("r1-jahre", fmt(jahre, 1) + " Jahre");
     setText("r1-kauf", geld1(kauf));
-    setText("r1-stz", geld1(stz) + " (" + days(start, settle) + " Tage)");
+    var nTage = days(start, settle);
+    setText("r1-stz", geld1(stz) + " (" + nTage + (nTage === 1 ? " Tag)" : " Tage)"));   // Einzahl: „1 Tag“ (B41-03)
     setText("r1-gesamt", geld1(gesamt));
     setText("r1-zinsen", geld1(zinsenSumme) + " (" + sched.next.length + (sched.next.length === 1 ? " Zahlung)" : " Zahlungen)"));
     setText("r1-rueck", geld1(nenn) + " am " + fmtDate(mat));
@@ -237,7 +238,7 @@
     setText("r2-stz", geld2(stz));
     setText("r2-tage", t + " von " + per + " Tagen");
     setText("r2-next", geld2(zahlung) + " am " + fmtDate(next));
-    ok("r2", "Du zahlst dem Verkäufer die Zinsen für " + t + " Tage seit dem " + fmtDate(last) + ". Am " + fmtDate(next) + " bekommst du " + (anteil < 1 - 1e-9 ? "die anteilige Zinszahlung" : "den vollen Kupon") + " – die Stückzinsen sind damit zurück. Steuerlich mindern gezahlte Stückzinsen deine Kapitalerträge im Kaufjahr.",
+    ok("r2", "Du zahlst dem Verkäufer die Zinsen für " + t + (t === 1 ? " Tag" : " Tage") + " seit dem " + fmtDate(last) + ". Am " + fmtDate(next) + " bekommst du " + (anteil < 1 - 1e-9 ? "die anteilige Zinszahlung" : "den vollen Kupon") + " – die Stückzinsen sind damit zurück. Steuerlich mindern gezahlte Stückzinsen deine Kapitalerträge im Kaufjahr.",
       "Stückzinsen " + geld2(stz) + " für " + t + " von " + per + " Zinstagen.");
   }
 
@@ -325,6 +326,11 @@
       if (MCX.json && MCX.teil && MCX.felder) MCX.json("anleihen/" + MCX.teil(qi) + ".json").then(function (d) {
         var s = d && d.rows && d.rows[qi], F = MCX.felder;
         if (!s) return;
+        // Kupon und Fälligkeit aus der Adresse gegen die Stammdaten (Gesamtprüfung 14.10.2026, B41-06): Passen sie nicht zusammen
+        // (selbst gebauter Link), bleibt „ISIN …“ stehen – sonst stünde der Name einer Anleihe neben fremden Werten.
+        var qk = parseDe(q.get("kupon") || "", true), qf = datText(q.get("faellig") || "");
+        if (typeof s[3] === "number" && !isNaN(qk) && Math.abs(qk - s[3]) > 0.0006) return;
+        if (s[4] && qf && isoOf(qf) !== String(s[4]).slice(0, 10)) return;
         a.textContent = F.titel({ kurz: F.kurzName(s[8] || "", s[1], s[10], s[0]) || s[0] || qi, kupon: s[3], zinsart: s[9], faellig: s[4] });
         nachName.textContent = " · ISIN " + qi;
       }).catch(function () { /* Ladefehler: es bleibt „ISIN …“ */ });

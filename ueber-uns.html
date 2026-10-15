@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Über uns – Bondarium</title>
-<meta name="description" content="Wir machen Anleihen verständlich – damit Privatpersonen und Unternehmen selbst entscheiden können, wie sie ihr Geld verzinsen. Warum Anleihen in Vergessenheit geraten sind und was Bondarium dagegen tut: Wissen und tägliche Daten, keine Beratung.">
+<meta name="description" content="Wir machen Anleihen verständlich, damit Privatpersonen und Unternehmen selbst über ihr Geld entscheiden: Wissen und tägliche Daten, keine Beratung.">
 <link rel="canonical" href="https://www.bondarium.de/ueber-uns.html">
 <meta name="robots" content="index, follow">
 <meta name="author" content="Bondarium">
@@ -55,6 +55,7 @@
   .band .go.leise { background: transparent; color: #fff; border-color: rgba(255,255,255,0.45); }
   .band .go.leise:hover { background: rgba(255,255,255,0.08); }
   .band a:focus-visible { outline-color: var(--green); }
+  .band p a { color: var(--green); }   /* Textlink im dunklen Band hell wie „und was nicht“ (vorher 3,25:1, G03-02) */
   /* Risiko sichtbar statt Kleintext (seit 30.09.2026) */
   .risiko-hw { margin-top: 18px; background: #FBE8D8; border-radius: 12px; padding: 14px 18px; font-size: 15.5px; line-height: 1.6; color: var(--ink); max-width: 820px; }
   .risiko-hw strong { font-weight: 600; }
@@ -88,7 +89,7 @@
   .kap.kap-eins .k-text { max-width: 76ch; }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Über uns","item":"https://www.bondarium.de/ueber-uns.html"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"Über uns","headline":"Wir machen Anleihen verständlich.","description":"Wir machen Anleihen verständlich – damit Privatpersonen und Unternehmen selbst entscheiden können, wie sie ihr Geld verzinsen. Warum Anleihen in Vergessenheit geraten sind und was Bondarium dagegen tut: Wissen und tägliche Daten, keine Beratung.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-14","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/","address":{"@type":"PostalAddress","addressLocality":"Stuttgart","addressCountry":"DE"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","url":"https://www.bondarium.de/ueber-uns.html#kontakt","availableLanguage":"de"}},"mainEntityOfPage":"https://www.bondarium.de/ueber-uns.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"AboutPage","name":"Über uns","headline":"Wir machen Anleihen verständlich.","description":"Wir machen Anleihen verständlich, damit Privatpersonen und Unternehmen selbst über ihr Geld entscheiden: Wissen und tägliche Daten, keine Beratung.","inLanguage":"de","isAccessibleForFree":true,"dateModified":"2026-10-15","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/","address":{"@type":"PostalAddress","addressLocality":"Stuttgart","addressCountry":"DE"},"contactPoint":{"@type":"ContactPoint","contactType":"customer support","url":"https://www.bondarium.de/ueber-uns.html#kontakt","availableLanguage":"de"}},"mainEntityOfPage":"https://www.bondarium.de/ueber-uns.html"}</script>
 </head>
 <body>
 <a class="skip-link" href="#main">Zum Inhalt springen</a>
@@ -220,8 +221,8 @@
   <section class="kap kap-eins" aria-labelledby="h-warum">   <!-- seit 14.10.2026 (Nutzerwunsch): Warum es Bondarium gibt, direkt unter der Mission -->
     <div class="k-text">
       <h2 id="h-warum">Warum es Bondarium gibt</h2>
-      <p><strong>Anleihen passen in viele Lebenslagen.</strong> Geld für ein Jahr parken, die Ausbildung der Kinder vorbereiten, im Ruhestand regelmäßig Zinsen bekommen, Rücklagen einer Firma bis zum festen Termin anlegen: Für all das gibt es Anleihen mit passender Laufzeit, passendem Schuldner und einem Zins, der bis zum Ende feststeht.</p>
-      <p><strong>Trotzdem sind sie in Vergessenheit geraten.</strong> Über zehn Jahre gab es auf Anleihen kaum Zinsen. Eine Generation von Sparern hat sie nie kennengelernt, und bei Banken und Brokern stehen sie bis heute hinter Aktien und ETFs. Seit es wieder Zinsen gibt, lohnt sich der zweite Blick.</p>
+      <p><strong>Anleihen passen in viele Lebenslagen.</strong> Geld für ein Jahr parken, die Ausbildung der Kinder vorbereiten, im Ruhestand regelmäßig Zinsen bekommen, Rücklagen eines Unternehmens bis zum festen Termin anlegen: Für all das gibt es Anleihen mit passender Laufzeit, passendem Schuldner und einem Zins, der bis zum Ende feststeht.</p>
+      <p><strong>Trotzdem sind sie in Vergessenheit geraten.</strong> Über zehn Jahre gab es auf Anleihen kaum Zinsen. Eine Generation von Sparern hat sie nie kennengelernt, und bei Banken und Brokern stehen sie bis heute hinter Aktien und ETFs. Seit es wieder Zinsen gibt, verdienen sie einen zweiten Blick.</p>
       <p><strong>Deshalb gibt es diese Seite.</strong> Wir erklären, wie Anleihen funktionieren, und zeigen die Daten dazu: Kurse, Renditen, Zinstermine und Bonität, jeden Börsentag aktuell, mit Quelle und Rechenweg. Keine Empfehlung, keine Beratung. Du bekommst das Wissen, um selbst zu entscheiden, was für dich die richtige Lösung ist.</p>
     </div>
   </section>
@@ -258,7 +259,7 @@
 
   <section class="section kontakt" id="kontakt" aria-labelledby="h-kontakt">
     <h2 id="h-kontakt">Kontakt</h2>
-    <!-- das Formular sendet über kontakt.php an das Postfach aus dem Impressum (rechtliches.html); die Adresse selbst wird hier bewusst nicht genannt (Nutzerwunsch 11.10.2026) -->
+    <!-- das Formular sendet über kontakt.php an das Postfach des Anbieters (impressum.html; Verarbeitung siehe datenschutz.html); die Adresse selbst wird hier bewusst nicht genannt (Nutzerwunsch 11.10.2026) -->
     <p>Fragen, Hinweise oder einen Fehler gefunden? Schreib uns über das Formular.</p>
     <form class="kf" id="kontaktformular" action="kontakt.php" method="post" hidden>
       <div><label for="kf-name">Name <span>(freiwillig)</span></label><input id="kf-name" name="name" type="text" autocomplete="name" maxlength="100"></div>

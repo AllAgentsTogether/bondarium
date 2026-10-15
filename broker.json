@@ -393,7 +393,7 @@
       "quellen": [
         {"t": "Anleihen", "url": "https://de.scalable.capital/anleihen"},
         {"t": "Hilfe: Finanzprodukte", "url": "https://help.scalable.capital/handeln-1541d52f/in-welche-finanzprodukte-kann-ich-investieren-65438ba9"},
-        {"t": "Preis- und Leistungsverzeichnis", "url": "https://de.scalable.capital/terms-and-conditions", "stand": "Stand September 2026"}
+        {"t": "Preis- und Leistungsverzeichnis", "url": "https://de.scalable.capital/cockpit/api/pdf/legal-document/terms-and-conditions?branch=GERMANY&version=20260901&diff=false", "stand": "Stand September 2026"}
       ]
     }
   ]

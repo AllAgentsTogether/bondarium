@@ -34,9 +34,10 @@
   /* Kacheln (.hub, .hub-card, .next) und Aufklapper (.more) seit 30.09.2026 zentral in base.css – hier nur Seitenspezifisches. */
   .crossnav b { color: var(--ink); font-weight: 600; }
   .crossnav { line-height: 1.9; }
-  /* Fünf Kacheln (seit 01.10.2026 abends, Kaufen ist ein eigener Menüpunkt): oben die zwei Schritte als breite Kacheln
-     (Bild links, Text rechts), darunter Handelsplätze, Steuern und Handelskosten, Rechner zu dritt. Sechser-Raster:
-     breit = 3 Spalten, sonst 2. Bis 600 px zwei Spalten wie die anderen Übersichten. */
+  /* Acht Kacheln plus Weiter-Kachel (seit 01.10.2026 abends Kaufen als eigener Menüpunkt, seit 11.10.2026 mit Simulator):
+     oben die zwei Schritte als breite Kacheln (Bild links, Text rechts), darunter Handelsplätze, Nicht kaufbar, Nach dem Kauf,
+     Steuern und Handelskosten, Rechner und Simulator zu dritt. Sechser-Raster: breit = 3 Spalten, sonst 2.
+     Bis 600 px zwei Spalten wie die anderen Übersichten. */
   .hub.hub-kauf { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .hub-kauf .hub-card { grid-column: span 2; }
   .hub-kauf .hub-card.breit { grid-column: span 3; }
