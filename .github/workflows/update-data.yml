@@ -318,6 +318,12 @@ jobs:
         continue-on-error: true
         run: python3 scripts/newsletter.py
 
+      # ----- Liste der vorhandenen Kurs-Jahre (site.js MC.verlauf lädt nur diese – keine 404 mehr). Läuft in JEDEM Lauf (auch
+      #       Push-Deploys), seit 15.10.2026 (Gesamtprüfung E01-03) VOR dem Commit: Vorher entstand kurse/jahre.json erst danach
+      #       und blieb im Repository veraltet (79 statt 81 Bund-Verläufe) – die lokale Vorschau zeigte dann keinen Verlauf. -----
+      - name: Kurs-Jahresliste schreiben
+        run: if [ -f scripts/kurse_jahre.py ]; then python3 scripts/kurse_jahre.py; fi
+
       # ----- Versionierung: nur im Abruf-Lauf (nicht bei Push/'schnell') -----
       - name: Änderungen committen (Versionierung auf GitHub)
         id: commit
@@ -338,10 +344,6 @@ jobs:
           fi
 
       # ----- Veröffentlichen: IMMER (auch bei jedem Push) -----
-      # ----- Liste der vorhandenen Kurs-Jahre (site.js MC.verlauf lädt nur diese – keine 404 mehr) -----
-      - name: Kurs-Jahresliste schreiben
-        run: if [ -f scripts/kurse_jahre.py ]; then python3 scripts/kurse_jahre.py; fi
-
       # ----- PHP-Syntax prüfen (seit 30.09.2026): ein Tippfehler in kontakt.php, konto.php oder refresh.php soll den Lauf stoppen,
       #       nicht erst beim Besucher als Fehler 500 auffallen. Lokal gibt es kein PHP – der Runner bringt es mit.
       #       Seit 09.10.2026 jede PHP-Datei im Stammordner und in strato-cron/ (vorher nur die drei genannten; eine neue Datei
@@ -379,6 +381,22 @@ jobs:
           if [ -f newsletter/ausgabe.json ]; then mkdir -p _site/newsletter && cp newsletter/ausgabe.json newsletter/anleihen.json _site/newsletter/; fi
           # seiten.json (Datei → erster Tag, von newsletter.py fortgeführt): „Neu auf Bondarium“ in „My Bondarium“ (konto.php, aktion=besuch)
           if [ -f newsletter/seiten.json ]; then mkdir -p _site/newsletter && cp newsletter/seiten.json _site/newsletter/; fi
+          # Schriften ohne Verweis nicht veröffentlichen (seit 15.10.2026, Gesamtprüfung A02-02): Der Platzhalter *.woff2 nahm auch
+          # Schriften mit, die keine Seite mehr lädt (manrope-500/-600 seit dem Schriftwechsel 11.10.2026). Bleibt eine Schrift weg,
+          # löscht der Upload sie auf dem Server (scripts/deploy_manifest.py). Nur Schriften – sie werden immer wörtlich eingebunden
+          # (@font-face, preload); scripts/htaccess_test.sh zählt mit, weil es eine Schrift live abfragt. Bilder meldet
+          # scripts/pruefen.py nur („Datei ohne Verweis im Bau“), denn Skripte setzen Bildnamen auch zusammen.
+          python3 - <<'PY'
+          import glob, os
+          texte = ""
+          for p in glob.glob("_site/*.html") + glob.glob("_site/*.css") + glob.glob("_site/*.js") + ["_site/.htaccess", "scripts/htaccess_test.sh"]:
+              if os.path.isfile(p):
+                  texte += open(p, encoding="utf-8", errors="replace").read()
+          for p in sorted(glob.glob("_site/*.woff2")):
+              if os.path.basename(p) not in texte:
+                  os.remove(p)
+                  print(f"Schrift ohne Verweis nicht veröffentlicht: {os.path.basename(p)}")
+          PY
           ls -la _site
 
       # ----- Daten in die Seiten einbetten: die JSONs landen kompakt als
@@ -754,23 +772,36 @@ jobs:
           echo "newsletter/ausgabe.json -> HTTP $code"
           if [ "$code" = "200" ]; then echo "::error::/newsletter/ ist öffentlich abrufbar – kein Versand"; exit 1; fi
           KEY=$(printf '%s' "$TRIGGER_KEY" | tr -d '\r\n')
+          # Antwort außerhalb des Repo-Ordners (seit 15.10.2026, Gesamtprüfung E01-04): Im Stammordner meldete die Frische-Prüfung
+          # danach täglich „antwort.json: keine Frische-Regel“.
+          ANTWORT="$RUNNER_TEMP/antwort.json"
           # aufrufen <aktion>: POST an konto.php, setzt $code; wiederholt nur bei curl-Exitcode 6, 7 oder 35 (siehe oben)
           aufrufen() {
             local versuch rc
             for versuch in 1 2 3; do
-              rc=0; rm -f antwort.json
-              code=$(curl -sS -o antwort.json -w "%{http_code}" --connect-timeout 20 --max-time 180 -H "X-Requested-With: bondarium-konto" -H "X-Trigger-Key: $KEY" --data "aktion=$1" https://www.bondarium.de/konto.php) || rc=$?
+              rc=0; rm -f "$ANTWORT"
+              code=$(curl -sS -o "$ANTWORT" -w "%{http_code}" --connect-timeout 20 --max-time 180 -H "X-Requested-With: bondarium-konto" -H "X-Trigger-Key: $KEY" --data "aktion=$1" https://www.bondarium.de/konto.php) || rc=$?
               case "$rc" in 6|7|35) ;; *) return 0 ;; esac
               echo "::warning::$1: keine Verbindung zu www.bondarium.de (curl-Exitcode $rc, Versuch $versuch von 3)"
               if [ "$versuch" -lt 3 ]; then sleep 30; fi
             done
             return 0
           }
+          # Protokoll (seit 15.10.2026, Gesamtprüfung E01-05): Das Repository ist öffentlich – im Protokoll stehen nur Ergebnis und
+          # Grund, Zahlen (Empfänger, offene, Fehler) nur, wenn etwas schiefging.
           for i in $(seq 1 25); do
             aufrufen newsletter-senden
-            echo "HTTP $code: $(cat antwort.json 2>/dev/null)"
-            [ "$code" = "200" ] || { echo "::warning::Wochenbrief: Versand-Aufruf fehlgeschlagen (HTTP $code)"; exit 1; }
-            offen=$(python3 -c 'import json; print(int(json.load(open("antwort.json")).get("offen") or 0))' 2>/dev/null || echo 0)
+            [ "$code" = "200" ] || { echo "HTTP $code: $(cat "$ANTWORT" 2>/dev/null)"; echo "::warning::Wochenbrief: Versand-Aufruf fehlgeschlagen (HTTP $code)"; exit 1; }
+            python3 - "$ANTWORT" <<'PY' || cat "$ANTWORT"
+          import json, sys
+          a = json.load(open(sys.argv[1], encoding="utf-8"))
+          if a.get("fehler"):
+              print("HTTP 200 mit Fehlern: " + json.dumps(a, ensure_ascii=False))
+          else:
+              print("HTTP 200: " + (a.get("grund") or ("Versand läuft" if a.get("offen") else "Versand abgeschlossen"))
+                    + (f" (Ausgabe {a['kw']})" if a.get("kw") else ""))
+          PY
+            offen=$(python3 -c 'import json, sys; print(int(json.load(open(sys.argv[1])).get("offen") or 0))' "$ANTWORT" 2>/dev/null || echo 0)
             [ "$offen" -gt 0 ] || break
             sleep 20
           done
@@ -789,15 +820,24 @@ jobs:
           KEY=$(printf '%s' "$TRIGGER_KEY" | tr -d '\r\n')
           # wie beim Wochenbrief: wiederholt nur, wenn keine Verbindung zustande kam (curl-Exitcode 6, 7, 35), nie nach einer
           # Zeitüberschreitung – sonst könnte dieselbe Meldung zweimal verschickt werden
+          ANTWORT="$RUNNER_TEMP/antwort.json"   # außerhalb des Repo-Ordners (E01-04, siehe Wochenbrief)
           for versuch in 1 2 3; do
-            rc=0; rm -f antwort.json
-            code=$(curl -sS -o antwort.json -w "%{http_code}" --connect-timeout 20 --max-time 180 -H "X-Requested-With: bondarium-konto" -H "X-Trigger-Key: $KEY" --data "aktion=meldungen-senden" https://www.bondarium.de/konto.php) || rc=$?
+            rc=0; rm -f "$ANTWORT"
+            code=$(curl -sS -o "$ANTWORT" -w "%{http_code}" --connect-timeout 20 --max-time 180 -H "X-Requested-With: bondarium-konto" -H "X-Trigger-Key: $KEY" --data "aktion=meldungen-senden" https://www.bondarium.de/konto.php) || rc=$?
             case "$rc" in 6|7|35) ;; *) break ;; esac
             echo "::warning::Meldungen: keine Verbindung zu www.bondarium.de (curl-Exitcode $rc, Versuch $versuch von 3)"
             if [ "$versuch" -lt 3 ]; then sleep 30; fi
           done
-          echo "HTTP $code: $(cat antwort.json 2>/dev/null)"
-          [ "$code" = "200" ] || { echo "::warning::Meldungen: Aufruf fehlgeschlagen (HTTP $code)"; exit 1; }
+          [ "$code" = "200" ] || { echo "HTTP $code: $(cat "$ANTWORT" 2>/dev/null)"; echo "::warning::Meldungen: Aufruf fehlgeschlagen (HTTP $code)"; exit 1; }
+          # Protokoll ohne Zahlen (E01-05, siehe Wochenbrief): Konten, ausgelöste und gesendete Meldungen nur bei Fehlern
+          python3 - "$ANTWORT" <<'PY' || cat "$ANTWORT"
+          import json, sys
+          a = json.load(open(sys.argv[1], encoding="utf-8"))
+          if a.get("fehler"):
+              print("HTTP 200 mit Fehlern: " + json.dumps(a, ensure_ascii=False))
+          else:
+              print("HTTP 200: " + (a.get("grund") or "Meldungen geprüft"))
+          PY
 
       # ----- Ergebnis der Abruf-Schritte (seit 09.10.2026, Technik-Test 08.10.2026, T-26): Mit continue-on-error zeigt GitHub
       #       einen gescheiterten Abruf-Schritt grün. Dieser Schritt schreibt das outcome jedes Abruf-Schritts als Tabelle in die
