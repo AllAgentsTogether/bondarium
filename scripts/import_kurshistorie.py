@@ -6,6 +6,7 @@ Aufruf (im Repo-Wurzelverzeichnis):
   python3 scripts/import_kurshistorie.py lieferung.csv --pruefen        # nur Bericht, schreibt nichts
   python3 scripts/import_kurshistorie.py lieferung.csv                   # einspielen
   python3 scripts/import_kurshistorie.py lieferung.csv --site-js         # dazu VERLAUF_AB in site.js auf das früheste Jahr setzen
+  python3 scripts/import_kurshistorie.py DFRA-…json.gz DGAT-…json.gz DETR-…json.gz   # mehrere Dateien in einem Lauf (seit 15.10.2026)
 
 Eingabe (auch .gz):
   * CSV/TSV mit Kopfzeile. Spalten werden am Namen erkannt (ISIN, Datum, Schlusskurs, Umsatz, Stück, Notierung, Währung,
@@ -13,6 +14,11 @@ Eingabe (auch .gz):
   * JSON-Zeilen im Format der MiFIR-Tagesdateien (instrumentIdentificationCode, tradingDateAndTime, price, quantity,
     priceNotation, mmtTradingMode, mmtModificationInd) – etwa ein Archiv der DFRA-posttrade-Dateien; je Tag zählt die
     letzte Kursfeststellung, Umsatz = Summe Stück × Kurs.
+    Handelsplatz aus dem Dateinamen (DFRA = Frankfurt, DGAT = Tradegate, DETR = Xetra, wie die Rohdaten-Artefakte des
+    Workflows). Dann wie scripts/update_kurse.py (seit 15.10.2026, Gesamtprüfung D15-01): Kurs von Frankfurt vor Tradegate,
+    Umsatz einer Anleihe = Frankfurt + Tradegate, und die Handelsdaten „h“ (Abschlüsse und Umsatz je Platz) – vorher fehlten
+    sie bei einem Nachtrag, der Steckbrief zeigte für den Tag keinen Handel. Alle Plätze eines Tages in EINEM Lauf angeben:
+    Ein späterer Lauf ergänzt nur fehlende Kurse und rührt einen schon eingetragenen Tag nicht mehr an.
 Regeln:
   * Nur ISINs aus anleihen-index.json (Option --alle nimmt jede gültige ISIN). Kurse in % des Nennwerts; Stücknotiz
     (Notierung 1 / UNIT) wird über die Stückelung des Index umgerechnet. Plausibilität 1–400 %.
@@ -107,9 +113,20 @@ def oeffnen(pfad: Path):
 
 
 # ---------- Eingabe lesen: {(isin, tag): (kurs_roh, notiz, umsatz, stueck, rang)} ----------
-def lese_jsonl(text: str):
-    """MiFIR-Tagesdatei(en): letzte Kursfeststellung je ISIN und Tag, Umsatz = Σ Stück × Kurs."""
-    letzte, umsatz = {}, defaultdict(float)
+PLAETZE = "FTX"   # Reihenfolge der Handelsdaten „h“ wie update_kurse.handel: Frankfurt, Tradegate, Xetra
+PLATZ_DATEI = {"DFRA": "F", "DGAT": "T", "DETR": "X"}
+
+
+def platz_aus_name(name: str) -> str | None:
+    """Handelsplatz einer MiFIR-Tagesdatei aus dem Dateinamen (DFRA-posttrade-daily-…), sonst None."""
+    m = re.match(r"(DFRA|DGAT|DETR)-", name)
+    return PLATZ_DATEI[m.group(1)] if m else None
+
+
+def lese_jsonl(text: str, platz: str | None = None):
+    """MiFIR-Tagesdatei(en): letzte Kursfeststellung je ISIN und Tag, Umsatz = Σ Stück × Kurs, Abschlüsse = Feststellungen
+    mit Stückzahl (wie update_kurse.auswerten). Rückgabe (Werte, Zeilen, {(isin, tag): (abschlüsse, umsatz)})."""
+    letzte, umsatz, abschluesse = {}, defaultdict(float), defaultdict(int)
     n = 0
     for zeile in text.splitlines():
         zeile = zeile.strip()
@@ -133,8 +150,10 @@ def lese_jsonl(text: str):
             letzte[k] = (zeit, preis, notiz)
         if menge > 0:
             umsatz[k] += menge * preis / 100 if notiz == 2 else menge * preis
-    out = {k: (v[1], v[2], umsatz.get(k, 0.0), None, 0) for k, v in letzte.items()}
-    return out, n
+            abschluesse[k] += 1
+    rang = PLAETZE.index(platz) if platz else 0
+    out = {k: (v[1], v[2], umsatz.get(k, 0.0), None, rang) for k, v in letzte.items()}
+    return out, n, {k: (abschluesse.get(k, 0), umsatz.get(k, 0.0)) for k in letzte}
 
 
 def lese_csv(text: str, spalten: dict, trenner: str | None, datumsformat: str | None, fehler: dict):
@@ -203,7 +222,7 @@ def wochenschluss(tage: set[str]) -> set[str]:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("datei", type=Path, help="CSV/TSV oder JSON-Zeilen, auch .gz")
+    ap.add_argument("datei", type=Path, nargs="+", help="CSV/TSV oder JSON-Zeilen, auch .gz; mehrere Dateien möglich")
     ap.add_argument("--pruefen", action="store_true", help="nur Bericht, nichts schreiben")
     ap.add_argument("--spalten", default="", help="feld=Spaltenname,… (isin, datum, kurs, umsatz, stueck, notiz, waehrung, boerse)")
     ap.add_argument("--trenner", default=None, help="Feldtrenner der CSV (Standard: erkennen)")
@@ -221,17 +240,29 @@ def main() -> int:
     if not zeilen and not a.alle:
         sys.exit("anleihen-index.json fehlt – ohne Index keine Stückelung und keine ISIN-Auswahl (oder --alle).")
 
-    text = oeffnen(a.datei)
     fehler = defaultdict(int)
-    if text.lstrip().startswith("{"):
-        roh, n = lese_jsonl(text)
-        print(f"JSON-Zeilen gelesen: {n}")
-    else:
-        roh, n = lese_csv(text, spalten, a.trenner, a.datumsformat, fehler)
-        print(f"CSV-Zeilen gelesen: {n}")
+    roh = {}
+    # MiFIR-Dateien mit bekanntem Handelsplatz: Handelsdaten je Platz (D15-01) – {(isin, tag): {platz: (abschlüsse, umsatz)}}
+    plaetze = defaultdict(dict)
+    for datei in a.datei:
+        text = oeffnen(datei)
+        if text.lstrip().startswith("{"):
+            platz = platz_aus_name(datei.name)
+            teil_roh, n, handel = lese_jsonl(text, platz)
+            print(f"{datei.name}: JSON-Zeilen gelesen: {n}" + (f" (Handelsplatz {platz})" if platz else
+                  " (Handelsplatz unbekannt – ohne Handelsdaten)"))
+            if platz:
+                for k, h in handel.items():
+                    plaetze[k][platz] = h + teil_roh[k][:2]   # (abschlüsse, umsatz, kurs, notiz)
+        else:
+            teil_roh, n = lese_csv(text, spalten, a.trenner, a.datumsformat, fehler)
+            print(f"{datei.name}: CSV-Zeilen gelesen: {n}")
+        for k, v in teil_roh.items():   # bessere Börse gewinnt (Rang), bei gleichem Rang die spätere Datei
+            if k not in roh or v[4] <= roh[k][4]:
+                roh[k] = v
 
     # Normieren: Kurs in % des Nennwerts, Plausibilität, Auswahl
-    werte = {}      # (isin, tag) -> (kurs, umsatz)
+    werte = {}      # (isin, tag) -> (kurs, umsatz, handelsdaten | None)
     for (isin, tag), (kurs, notiz, umsatz, stueck, _rang) in roh.items():
         if not isin_ok(isin):
             fehler["ISIN ungültig"] += 1
@@ -243,6 +274,14 @@ def main() -> int:
         if (a.ab and tag < a.ab) or (a.bis and tag > a.bis):
             fehler["außerhalb --ab/--bis"] += 1
             continue
+        je_platz = plaetze.get((isin, tag))
+        if je_platz:
+            # Kurs wie update_kurse.py: Anleihe Frankfurt vor Tradegate (Xetra nicht), sonst Xetra vor Tradegate vor Frankfurt
+            wahl = next((p for p in (("F", "T") if z is not None else ("X", "T", "F")) if p in je_platz), None)
+            if wahl is None:
+                fehler["Anleihe nur auf Xetra (wie update_kurse.py: kein Kurs)"] += 1
+                continue
+            kurs, notiz = je_platz[wahl][2], je_platz[wahl][3]
         if notiz == 1:
             stk = z[7] if z and isinstance(z[7], (int, float)) and z[7] > 0 else None
             if not stk:
@@ -254,7 +293,15 @@ def main() -> int:
             continue
         if umsatz is None and stueck:
             umsatz = stueck * kurs / 100
-        werte[(isin, tag)] = (round(kurs, 4 if kurs < 10 else 3), round(umsatz) if umsatz and umsatz > 0 else 0)
+        h = None
+        if je_platz:
+            # wie update_kurse.py: Umsatz einer Anleihe = Frankfurt + Tradegate (Xetra nur bei Papieren außerhalb des Index),
+            # Handelsdaten [Abschlüsse F, T, X, Umsatz F, T, X] nur an Tagen mit Abschluss oder Umsatz
+            umsatz = sum(x[1] for p, x in je_platz.items() if p != "X" or z is None)
+            h = [je_platz[p][0] if p in je_platz else 0 for p in PLAETZE] + [round(je_platz[p][1]) if p in je_platz else 0 for p in PLAETZE]
+            if not any(h):
+                h = None
+        werte[(isin, tag)] = (round(kurs, 4 if kurs < 10 else 3), round(umsatz) if umsatz and umsatz > 0 else 0, h)
 
     if not werte:
         print("Keine verwertbaren Kurse.", dict(fehler))
@@ -278,7 +325,7 @@ def main() -> int:
     je_datei = defaultdict(dict)     # (jahr, teil) -> {isin: {tag: (kurs, umsatz)}}
     for (isin, tag), v in werte.items():
         je_datei[(int(tag[:4]), teil(isin))].setdefault(isin, {})[tag] = v
-    dazu = vorhanden = dateien = 0
+    dazu = vorhanden = dateien = h_dazu = 0
     for (jahr, t), neu in sorted(je_datei.items()):
         pfad = DIR_VERLAUF / str(jahr) / f"{t}.json"
         v = lade_json(pfad, {"tage": [], "k": {}, "u": {}})
@@ -306,22 +353,25 @@ def main() -> int:
                     ha[str(alt_pos[int(i_alt)])] = wert
                 except (ValueError, IndexError):
                     pass
-            if ha:
-                h_neu[isin] = dict(sorted(ha.items(), key=lambda x: int(x[0])))
-            for tag, (kurs, umsatz) in neu.get(isin, {}).items():
+            for tag, (kurs, umsatz, h) in neu.get(isin, {}).items():
                 p = pos[tag]
                 if reihe[p] is None:
                     reihe[p] = kurs
                     dazu += 1
                     if umsatz > 0:
                         um[str(p)] = umsatz
+                    if h:   # Handelsdaten nur zusammen mit einem neu eingetragenen Kurs (D15-01)
+                        ha[str(p)] = h
+                        h_dazu += 1
                 else:
                     vorhanden += 1
+            if ha:
+                h_neu[isin] = dict(sorted(ha.items(), key=lambda x: int(x[0])))
             if any(x is not None for x in reihe):
                 k_neu[isin] = reihe
             if um:
                 u_neu[isin] = dict(sorted(um.items(), key=lambda x: int(x[0])))
-        if neue_tage == alt_tage and k_neu == v.get("k") and u_neu == v.get("u", {}):
+        if neue_tage == alt_tage and k_neu == v.get("k") and u_neu == v.get("u", {}) and h_neu == v.get("h", {}):
             continue
         v["tage"], v["k"], v["u"] = neue_tage, k_neu, u_neu
         if h_neu or "h" in v:
@@ -330,7 +380,8 @@ def main() -> int:
         if not a.pruefen:
             pfad.parent.mkdir(parents=True, exist_ok=True)
             write_atomic(pfad, v, indent=None)
-    print(f"{'Würde ergänzen' if a.pruefen else 'Ergänzt'}: {dazu} Kurse in {dateien} Teildateien; {vorhanden} schon vorhanden (unverändert gelassen)")
+    print(f"{'Würde ergänzen' if a.pruefen else 'Ergänzt'}: {dazu} Kurse in {dateien} Teildateien, davon {h_dazu} mit Handelsdaten; "
+          f"{vorhanden} schon vorhanden (unverändert gelassen)")
 
     # site.js: frühestes Jahr
     fruehestes = min([jahre[0]] + [int(p.name) for p in DIR_VERLAUF.iterdir() if p.is_dir() and p.name.isdigit()])

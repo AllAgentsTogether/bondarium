@@ -1,6 +1,6 @@
 # ETF-Datenbank — Strategie und Umsetzungsstand
 
-Stand: 30.09.2026, vierte Fassung · Register, Kursabruf und die ETF-Seiten ohne Handpflege sind seit dem 30.09.2026 veröffentlicht. Der erste Datenlauf bei GitHub steht noch aus (01.10.2026). Suche und Steckbrief fehlen noch.
+Stand: 15.10.2026, fünfte Fassung (Umsetzungsstand nachgezogen) · Register, Kursabruf und die ETF-Seiten ohne Handpflege sind seit dem 30.09.2026 veröffentlicht und laufen seit dem 01.10.2026 in jedem Datenlauf. Suche und Steckbrief fehlen noch.
 Ziel: eine Datenbank aller Anleihen-ETFs, die in Deutschland handelbar sind – mit Suche und Steckbrief, so wie es sie für die rund 33.000 Anleihen schon gibt.
 
 **Grundsatz seit 30.09.2026 (Nutzerentscheid): Kein ETF wird von Hand gepflegt.** Keine handverlesenen Listen, keine Kennzahlen von Anbieterseiten, keine Korrekturliste. Was sich nicht automatisch aktualisieren lässt, steht nicht auf der Seite.
@@ -17,7 +17,7 @@ Ziel: eine Datenbank aller Anleihen-ETFs, die in Deutschland handelbar sind – 
 
 ---
 
-## Umsetzungsstand (30.09.2026)
+## Umsetzungsstand (30.09.2026, nachgezogen am 15.10.2026)
 
 | Baustein | Stand |
 |---|---|
@@ -27,12 +27,12 @@ Ziel: eine Datenbank aller Anleihen-ETFs, die in Deutschland handelbar sind – 
 | ETF-Seite `anleihen-etf.html` | umgebaut: die zehn meistgehandelten je Kategorie aus `top10-anleihen-etfs.json`, bei jedem Lauf neu |
 | ETF-Karten im Guide | umgebaut: im HTML steht je Karte nur die ISIN, alles andere kommt aus `etf-auswahl.json` und den Kursen |
 | Startseite und `etf-oder-anleihe.html` | Zahl der ETFs und Kostenspanne setzt der Deploy aus den Daten ein |
-| Handgepflegte Datei `etfs.json` | gelöscht; nichts liest sie mehr |
+| Handgepflegte Datei `etfs.json` | gelöscht; nichts liest sie mehr. Seit 09.10.2026 löscht der Deploy sie auch auf dem Webserver (`scripts/deploy_manifest.py`, ALTLASTEN) – live 404 |
 | Hinweis „Angaben ohne Gewähr“ in `rechtliches.html` | angepasst: „Kennzahlen von Fondsanbietern“ stehen nicht mehr unter den von Hand erfassten Angaben |
 | Lücken nachtragen | gebaut: `update_kurse.py --nachtragen` mit den gesicherten Rohdateien; der 29.09. ist nachgetragen |
 | Alarm bei veralteten Daten | ergänzt (Frische-Prüfung für `etf-index.json` und `etf-kurse.json`) |
 | Veröffentlichung | am 30.09.2026 (Commit 4b4b892). Die Dateien liegen im öffentlichen GitHub-Repo und auf dem Webserver |
-| Erster Datenlauf bei GitHub | **offen** – 01.10.2026, 10:15 Uhr |
+| Datenlauf bei GitHub | läuft seit dem 01.10.2026 in jedem 10-Uhr-Lauf. Die Börse schrieb den Link zur Liste zeitweise absolut statt relativ – seit 09.10.2026 gelten beide Formen (Technik-Test 08.10.2026, T-08). Stand 14.10.2026: 911 ETFs im Register, 910 mit Kurs (ein am 14.10. neu gelisteter ETF bekommt seinen ersten Kurs mit dem nächsten Börsentag) |
 | Steckbrief `etf.html`, Suche `etf-suche.html` | offen (Phase 3) |
 | Rendite und Duration | offen (Phase 4, braucht eine automatische Quelle) |
 
@@ -58,8 +58,8 @@ Ziel: eine Datenbank aller Anleihen-ETFs, die in Deutschland handelbar sind – 
 ### Nach der Veröffentlichung (30.09.2026)
 
 - **Live geprüft:** ETF-Seite mit 70 ETFs, alle mit Kurs; sechs ETF-Karten im Guide mit Daten und Kurs; Startseite, `etf-oder-anleihe.html` und `rechtliches.html` mit den neuen Angaben; die vier Datendateien sind abrufbar.
-- **Noch zu prüfen:** das Protokoll des ersten 10:15-Uhr-Laufs – holt der Schritt „ETF-Register aktualisieren“ die Börsenliste, schreibt der Kursabruf `etf-kurse.json` mit dem neuen Tag?
-- **Alte Datei auf dem Webserver:** `etfs.json` liegt dort weiter, weil der Deploy nichts löscht. Keine Seite lädt sie mehr.
+- **Datenläufe seit 01.10.2026:** Bis zum 09.10. scheiterte der Schritt „ETF-Register aktualisieren“ oft, weil die Börse den Link zur Liste absolut schrieb (T-08, behoben); seither ist das Register täglich aktuell (Gesamtprüfung 14.10.2026: Stand 14.10. = Soll, Register = Börsenliste, 937 von 937 Zeilen). Die Frische-Prüfung (`scripts/frische.py`) wacht über `etf-index.json`, `etf-auswahl.json`, `top10-anleihen-etfs.json` und `etf-kurse.json`.
+- **Alte Datei auf dem Webserver:** `etfs.json` ist seit 09.10.2026 auch dort gelöscht (Deploy mit Aufräumen, `scripts/deploy_manifest.py`).
 - **Nachtrag fehlender ETF-Tage:** Die Rohdateien liegen im Artefakt `kurse-roh-…` des jeweiligen Laufs (90 Tage).
 
 ---

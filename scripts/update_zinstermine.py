@@ -55,6 +55,8 @@ import json
 import os
 import re
 import sys
+import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -72,6 +74,7 @@ MIN_ANLEIHEN = 15000    # weniger Anleihen mit Zinsterminen in der Liste → Que
 MIN_ANTEIL = 0.8        # weniger als 80 % der bisherigen Einträge bestätigt oder ersetzt → ebenso
 AUSGABE_TOLERANZ = 10   # Tage: „letzter Zinstermin“ so nah am Ausgabetag ist der Ausgabetag (Zinslaufbeginn), kein Zinstermin
 RHYTHMUS = {12: 1, 6: 2, 3: 4, 1: 12}
+LINK_PAUSE = 20         # Sekunden vor dem zweiten Lesen der Seite, wenn der Link der Liste mit 404 antwortet
 
 
 def lade(pfad: Path, leer):
@@ -134,13 +137,24 @@ def boersenliste():
     fix = os.environ.get("FIXTURE_DIR")
     if fix:
         return open(Path(fix) / DATEI, encoding="utf-8", errors="replace", newline="")
-    html = get_with_retry(SEITE, headers=UA, timeout=60).decode("utf-8", "replace")
-    m = re.search(r'href="((?:https://www\.cashmarket\.deutsche-boerse\.com)?/resource/blob/[^"]+/' + re.escape(DATEI) + r')"', html)
-    if not m:
-        raise ValueError("Link zur Instrumentenliste auf der Seite der Börse nicht gefunden")
-    link = m.group(1) if m.group(1).startswith("http") else BASIS + m.group(1)
-    antwort = urllib.request.urlopen(urllib.request.Request(link, headers=UA), timeout=300)  # noqa: S310 – feste Adresse der Börse
-    return io.TextIOWrapper(antwort, encoding="utf-8", errors="replace", newline="")
+    # Der Link trägt eine Prüfsumme und wechselt mit jeder neuen Liste. Am 12.10.2026 antwortete der gerade gelesene Link mit
+    # HTTP 404 (Liste zwischen Seitenabruf und Download ersetzt), die Termine blieben auf dem Vortag. Seit 15.10.2026
+    # (Gesamtprüfung D07-01): bei 404 die Seite nach einer kurzen Pause einmal neu lesen und den neuen Link nehmen.
+    for versuch in (1, 2):
+        html = get_with_retry(SEITE, headers=UA, timeout=60).decode("utf-8", "replace")
+        m = re.search(r'href="((?:https://www\.cashmarket\.deutsche-boerse\.com)?/resource/blob/[^"]+/' + re.escape(DATEI) + r')"', html)
+        if not m:
+            raise ValueError("Link zur Instrumentenliste auf der Seite der Börse nicht gefunden")
+        link = m.group(1) if m.group(1).startswith("http") else BASIS + m.group(1)
+        try:
+            antwort = urllib.request.urlopen(urllib.request.Request(link, headers=UA), timeout=300)  # noqa: S310 – feste Adresse der Börse
+        except urllib.error.HTTPError as e:
+            if e.code != 404 or versuch == 2:
+                raise
+            print(f"Instrumentenliste: {link} antwortet mit HTTP 404 – Seite der Börse wird in {LINK_PAUSE} s neu gelesen")
+            time.sleep(LINK_PAUSE)
+            continue
+        return io.TextIOWrapper(antwort, encoding="utf-8", errors="replace", newline="")
 
 
 def lies_liste(zeilen: dict) -> tuple[str, dict, int]:

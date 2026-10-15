@@ -46,6 +46,7 @@ BASE = "https://www.bondarium.de/"
 ROBOTS_INDEX = "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
 NBSP = "\u00a0"
 MARKE = "# @@STECKBRIEFE@@"
+AUSGELAUFEN_TAGE = 5   # ohne Stammdaten und so viele Kalendertage ohne Bundesbank-Kurs: ausgelaufen, keine Warnung
 
 
 def esc(s):
@@ -198,6 +199,7 @@ def main():
         if re.fullmatch(r"DE[A-Z0-9]{9}[0-9]", isin) and t:
             staende[isin] = max(t)
     stamm = stammdaten(site, staende)
+    kurs_ende = dict(staende)   # letzter Bundesbank-Kurs je ISIN (staende wird unten zum Stand der Stammdaten)
     # Stand der Seite = Stand der Stammdaten (zeigt die Seite ohne JavaScript); nur ohne „stand“ in anleihen/*.json wie bisher
     # das Ende der Kursreihe kurse/bund/<ISIN>.json
     st_stamm, stand_art = stammdaten_stand(site), "Stammdaten "
@@ -207,11 +209,21 @@ def main():
         stand_art = ""
         print("::warning::steckbriefe.py: kein „stand“ in anleihen/*.json – Daten-Stand der Steckbriefe aus kurse/bund/")
     heute = datetime.date.today().isoformat()
-    seiten, fehler = {}, []
+    # Ausgelaufen (seit 15.10.2026, Gesamtprüfung E04-01): Ein fälliges Bundeswertpapier fällt aus dem Index, seine Datei
+    # kurse/bund/<ISIN>.json bleibt. Vorher gab das täglich die Warnung „keine Stammdaten“ (DE0001141844, fällig 09.10.2026).
+    # Ohne Stammdaten UND ohne Bundesbank-Kurs seit AUSGELAUFEN_TAGE vor dem jüngsten Kurs aller Bundeswertpapiere: still
+    # übergehen. Ein neues Bundeswertpapier, das die Bundesbank schon führt, das wöchentliche Register aber noch nicht, hat
+    # einen frischen Kurs und bleibt eine Warnung.
+    juengster = max(kurs_ende.values(), default="")
+    grenze = (datetime.date.fromisoformat(juengster) - datetime.timedelta(days=AUSGELAUFEN_TAGE)).isoformat() if juengster else ""
+    seiten, fehler, ausgelaufen = {}, [], []
     for isin, stand in staende.items():
         r = stamm.get(isin)
         if not r:
-            fehler.append(f"{isin}: keine Stammdaten")
+            if kurs_ende.get(isin, "") <= grenze:
+                ausgelaufen.append(isin)
+            else:
+                fehler.append(f"{isin}: keine Stammdaten")
             continue
         if r[4] and r[4] <= heute:   # fällig: kein Steckbrief mehr (die Vorlage sagt „nicht mehr gelistet“)
             continue
@@ -222,6 +234,9 @@ def main():
     if not seiten:
         print("::warning::steckbriefe.py: nichts geschrieben – " + ("; ".join(fehler[:5]) or "keine Bundeswertpapiere"))
         return
+    if ausgelaufen:
+        print(f"steckbriefe.py: {len(ausgelaufen)} Bundeswertpapier(e) ohne Stammdaten und ohne Kurs seit mindestens {AUSGELAUFEN_TAGE} Tagen "
+              f"übergangen (fällig oder nicht mehr gelistet): {', '.join(sorted(ausgelaufen))}")
     if fehler:
         # Einzelne Bundeswertpapiere mit unvollständigen Stammdaten (z. B. Registername „Bundesrepublik Deutschland  Bond“
         # ohne erkennbare Art, 09.10.2026) bekommen keinen Server-Steckbrief und bleiben bei der Vorlage (noindex) – die

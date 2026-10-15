@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Gemeinsame Helfer für die update_*.py-Skripte.
 
-Nur Standardbibliothek – KEINE externen Abhängigkeiten (die Pipeline
-installiert ausschließlich pdfplumber). Die Skripte laufen in GitHub Actions
+Nur Standardbibliothek – KEINE externen Abhängigkeiten (der Workflow installiert
+für Python nichts). Die Skripte laufen in GitHub Actions
 als `python scripts/update_xxx.py` vom Repo-Root; das Skript-Verzeichnis liegt
 dann auf sys.path, daher funktioniert `from _common import ...` direkt.
 
@@ -33,15 +33,12 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-# Chrome-Browserkennung – bisher identisch dupliziert in update_sentiment.py
-# und update_verlierer.py. Hinweis: Das Vortäuschen eines Browsers gegenüber
-# inoffiziellen Endpunkten (CNN, Nasdaq, AAII) birgt ToS-/Sperr-Risiken –
-# offizielle Quellen (FRED, Treasury, CBOE) sind zu bevorzugen.
-UA_CHROME = (
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-    "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
-)
-HEADERS = {"User-Agent": UA_CHROME, "Accept": "*/*"}
+# Kennung für Abrufe ohne eigene Kopfzeilen (get_with_retry ohne headers=, heute die EZB-Sicherheitenliste in
+# update_bonitaet.py und update_top10_kupon.py). Seit 15.10.2026 (Gesamtprüfung D01-02) ehrlich mit Kontaktadresse statt
+# einer Chrome-Browserkennung – bei amtlichen Quellen gibt es keinen Grund, einen Browser vorzutäuschen. Dieselbe Art
+# Kennung („bondarium-datenabruf“) holt seit 01.10.2026 die Referenzkurse vom selben EZB-Server (update_wechselkurse.py).
+UA_BONDARIUM = "bondarium.de Datenaufbereitung (+https://www.bondarium.de/ueber-uns.html#kontakt)"
+HEADERS = {"User-Agent": UA_BONDARIUM, "Accept": "*/*"}
 
 
 def log_err(msg: str) -> None:
@@ -73,10 +70,11 @@ def today_iso() -> str:
     return datetime.date.today().isoformat()
 
 
-def write_atomic(path: Path, obj, indent: int = 1) -> None:
+def write_atomic(path: Path, obj, indent: int | None = 1, separators: tuple | None = None) -> None:
     """JSON atomar schreiben: erst in temporäre Datei im selben Verzeichnis,
-    dann os.replace() – so entsteht nie eine halb geschriebene/korrupte Datei."""
-    text = json.dumps(obj, ensure_ascii=False, indent=indent) + "\n"
+    dann os.replace() – so entsteht nie eine halb geschriebene/korrupte Datei.
+    separators=(",", ":") schreibt ganz kompakt (suchindex.py, seit 15.10.2026)."""
+    text = json.dumps(obj, ensure_ascii=False, indent=indent, separators=separators) + "\n"
     tmp = path.with_name(path.name + ".tmp")
     try:
         tmp.write_text(text, encoding="utf-8")

@@ -35,7 +35,7 @@ AKTUELL_TAGE = 14   # wie anleihen-suche.html: Kurs höchstens so viele Kalender
 
 # Emittent lesbar: gemeinsame Regel in _common.py (lesbar, wie MC.felder.lesbar in felder.js)
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import bonitaet_stufen, lesbar, stamm_felder  # noqa: E402
+from _common import bonitaet_stufen, lesbar, stamm_felder, write_atomic  # noqa: E402
 
 AUSWAHL = ROOT / "anleihen-auswahl.json"   # Kurzname, Art, Währung, Bonität der Anleihen auf den übrigen Seiten (seit 03.10.2026)
 ISIN_RE = re.compile(r"\b([A-Z]{2}[A-Z0-9]{9}[0-9])\b")
@@ -59,8 +59,9 @@ def auswahl_schreiben(ix: dict) -> int:
         if r[0] in isins:
             f = stamm_felder(r, emis, stufen)
             a[r[0]] = [f["kurz"], r[2], r[3], f.get("bon"), r[1]]
-    AUSWAHL.write_text(json.dumps({"stand": ix.get("stand"), "felder": ["kurz", "art", "waehrung", "bon", "registername"], "a": dict(sorted(a.items()))},
-                                  ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    # atomar (seit 15.10.2026, Gesamtprüfung D05-01): ein Abbruch beim Schreiben hinterlässt nie eine halbe Datei
+    write_atomic(AUSWAHL, {"stand": ix.get("stand"), "felder": ["kurz", "art", "waehrung", "bon", "registername"], "a": dict(sorted(a.items()))},
+                 indent=None, separators=(",", ":"))
     return len(a)
 
 
@@ -106,7 +107,7 @@ def main():
         "quelle": "scripts/suchindex.py aus anleihen-index.json und anleihen-kurse.json",
         "emittenten": liste, "rows": rows,
     }
-    OUT.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    write_atomic(OUT, out, indent=None, separators=(",", ":"))   # atomar wie alle Pipelines (seit 15.10.2026, D05-01)
     n_auswahl = auswahl_schreiben(ix)
     print(f"suchindex.json: {len(rows)} Anleihen mit Kurs (von {out['anzahl']} im Register), {len(liste) - 1} Emittenten, "
           f"{OUT.stat().st_size / 1e6:.1f} MB (Kurse {kstand}, Stammdaten {out['stand']}); "

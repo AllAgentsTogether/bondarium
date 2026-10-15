@@ -2,7 +2,8 @@
 """update_kurse.py – Tageskurse und Kursverlauf aller Anleihen der Suche, aller Anleihen/ETFs der Datenseiten und aller
 Anleihen-ETFs des Registers (etf-index.json, scripts/update_etf_index.py – seit 30.09.2026).
 
-Quellen (beide kostenlos, beide mit ausdrücklicher Erlaubnis zur Anzeige):
+Quellen (beide kostenlos; Nutzungsbedingungen der Börse siehe unten – die Anfrage an die Deutsche Börse, ob eine
+werbefreie Informationsseite nicht als Vermarktung gilt, ist offen, docs/DATENQUELLEN.md, Reihenfolge 1):
   * Deutsche Börse, MiFIR-Delayed-Data-Service (MiFIR Art. 13(2), Delegierte Verordnung (EU) 2025/1156):
     Nachhandelsdaten 15 Minuten verzögert, ohne Registrierung, als Tagesdatei je Handelsplatz
         https://mfs.deutsche-boerse.com/api/<Dienst>                  Dateiliste (JSON)
@@ -26,7 +27,8 @@ Schreibt (alle im Website-Ordner):
                            vortag: vorheriger Schlusskurs aus unserer Datei (für die Veränderung, BERECHNET) oder null;
                            aufschlag: Rendite minus Bund-Rendite gleicher Restlaufzeit in Prozentpunkten (BERECHNET, nur Euro-
                            Anleihen mit Rendite und bis 30 Jahren Restlaufzeit – seit 27.09.2026 auch unter einem halben
-                           Jahr, das kürzeste Bundeswertpapier bildet den Anfang der Kurve; Bundeswertpapiere selbst: null)
+                           Jahr, das kürzeste Bundeswertpapier bildet den Anfang der Kurve; seit 15.10.2026 gilt vor dem
+                           kürzesten Bundeswertpapier dessen Rendite als Vergleich (kurve_rendite); Bundeswertpapiere selbst: null)
                            oder null.
                            Einträge ohne neuen Kurs bleiben bis zu 45 Tage mit ihrem Datum stehen.
   kurse-auswahl.json       dieselben Felder für alle ISINs, die in den übrigen HTML-Seiten vorkommen (Länder, Laufzeit,
@@ -257,9 +259,14 @@ def rendite(kupon: float, faellig: datetime.date, kurs: float, valuta: datetime.
 
 
 def kurve_rendite(kurve: list, jahre: float):
-    """Bund-Rendite gleicher Restlaufzeit, linear zwischen den beiden nächsten Bundeswertpapieren; None außerhalb."""
-    if len(kurve) < 4 or jahre < kurve[0][0] or jahre > kurve[-1][0]:
+    """Bund-Rendite gleicher Restlaufzeit, linear zwischen den beiden nächsten Bundeswertpapieren; None hinter dem längsten.
+    Vor dem kürzesten Bundeswertpapier (seit 15.10.2026, Gesamtprüfung D06-05) gilt dessen Rendite: Vorher bekamen Anleihen,
+    die vor ihm fällig werden (Oktober 2026: 170 Euro-Anleihen vor dem 10.12.2026), keinen Aufschlag – AUFSCHLAG_MIN und das
+    „?“ der Suche griffen dort nicht, und Taxe-Renditen bis 43 % standen ungekennzeichnet in den Daten."""
+    if len(kurve) < 4 or jahre > kurve[-1][0]:
         return None
+    if jahre < kurve[0][0]:
+        return kurve[0][1]
     for (j0, r0), (j1, r1) in zip(kurve, kurve[1:]):
         if j0 <= jahre <= j1:
             return r0 if j1 == j0 else r0 + (r1 - r0) * (jahre - j0) / (j1 - j0)
