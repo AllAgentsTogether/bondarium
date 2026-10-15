@@ -31,11 +31,9 @@
 <link rel="preload" href="source-sans-3.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="source-serif-4.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-  /* Wenn der Schuldner nicht zahlt – neu 04.10.2026 (SEO-Runde 2, Themenlücke 3; Menü Akademie, Spalte Grundlagen): sechs Karten zu Ausfall,
+  /* Wenn der Schuldner nicht zahlt – neu 04.10.2026 (SEO-Runde 2, Themenlücke 3; Menü Akademie, Bereich Risiken): sechs Karten zu Ausfall,
      Insolvenz, Erlösquoten, Bankanleihen, Staaten und Depot/Steuer. Zahlen mit Quelle im Aufklapper; Rechtslage Deutschland, Stand Oktober 2026.
-     Bausteine (Stand-Pille, Balken, Tabellen, Schritte, Prüfliste) wie anleihen-fuer-unternehmen.html. Grundregeln in base.css. */
-  .stand { display: inline-flex; align-items: center; gap: 8px; margin: -8px 0 22px; padding: 7px 12px; border-radius: 6px; background: #fff; border: 1px solid rgba(26,26,25,0.14); font-size: 13px; color: var(--text); }
-  .stand b { font-weight: 600; color: var(--ink); }
+     Bausteine (Balken, Tabellen, Schritte) wie anleihen-fuer-unternehmen.html. Grundregeln in base.css. */
   .balken .hb { display: grid; grid-template-columns: 172px minmax(0, 1fr); align-items: center; gap: 10px; }
   .balken .hb + .hb { margin-top: 7px; }
   .hb-l { font-size: 13.5px; font-weight: 600; color: var(--ap-ink); line-height: 1.25; }
@@ -48,28 +46,20 @@
   .tab th, .tab td { text-align: left; padding: 8px 8px 8px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
   .tab thead th { font-size: 13px; font-weight: 500; color: var(--text); vertical-align: bottom; }
   .tab tbody th { font-weight: 600; color: var(--ink); }
-  .tab td.z, .tab th.z { text-align: right; padding-left: 10px; padding-right: 0; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .tab td.m { color: var(--down); font-weight: 600; } .tab td.p { color: var(--up); font-weight: 600; }
   .tab tbody tr:last-child th, .tab tbody tr:last-child td { border-bottom: 0; }
   .tab small { display: block; font-size: 12.5px; font-weight: 400; color: var(--text); line-height: 1.35; }
-  /* Schritte (2) und Prüfliste (6) */
-  .schritte, .pruef { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  /* Schritte (2, 4) */
+  .schritte { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
   .schritte li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 14.5px; line-height: 1.45; color: var(--ink); }
   .schritte li > span { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #1A1A19; color: #fff; font-size: 13px; font-weight: 600; }
-  .schritte b, .pruef b { font-weight: 600; }
-  .schritte small, .pruef small { display: block; font-size: 13px; color: var(--text); }
-  .pruef li { position: relative; padding-left: 30px; font-size: 14.5px; line-height: 1.45; color: var(--ink); }
-  .pruef li::before { content: ""; position: absolute; left: 0; top: 1px; width: 18px; height: 18px; border-radius: 5px; border: 2px solid #1A1A19; background: #fff; box-sizing: border-box; }
-  .pruef li::after { content: ""; position: absolute; left: 6px; top: 3px; width: 5px; height: 10px; border: solid #157C00; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); }
-  .zw { font-size: 13px; font-weight: 500; color: var(--rub-text); margin: 16px 0 8px; }
-  .sb-f strong { font-weight: 600; }
+  .schritte b { font-weight: 600; }
+  .schritte small { display: block; font-size: 13px; color: var(--text); }
   @media (max-width: 600px) {
     .balken .hb { grid-template-columns: 118px minmax(0, 1fr); } .hb-l { font-size: 12.5px; }
-    .tab { font-size: 13.5px; } .tab thead th { letter-spacing: 0.02em; } .tab td.z, .tab th.z { padding-left: 6px; }
-    .sb-go { align-self: stretch; text-align: center; }
+    .tab { font-size: 13.5px; } .tab thead th { letter-spacing: 0.02em; }
   }
 </style>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Wenn der Schuldner nicht zahlt: was bei einem Zahlungsausfall passiert","description":"Was passiert, wenn der Emittent einer Anleihe nicht zahlt: Insolvenzverfahren, Rangfolge, Erlösquoten, Bail-in bei Banken, Umschuldung bei Staaten, Steuer.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-10-04","dateModified":"2026-10-09","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/zahlungsausfall.html"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Wenn der Schuldner nicht zahlt: was bei einem Zahlungsausfall passiert","description":"Was passiert, wenn der Emittent einer Anleihe nicht zahlt: Insolvenzverfahren, Rangfolge, Erlösquoten, Bail-in bei Banken, Umschuldung bei Staaten, Steuer.","inLanguage":"de","isAccessibleForFree":true,"datePublished":"2026-10-04","dateModified":"2026-10-15","publisher":{"@type":"Organization","name":"Bondarium","url":"https://www.bondarium.de/"},"mainEntityOfPage":"https://www.bondarium.de/zahlungsausfall.html"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Start","item":"https://www.bondarium.de/"},{"@type":"ListItem","position":2,"name":"Akademie","item":"https://www.bondarium.de/wissen.html"},{"@type":"ListItem","position":3,"name":"Wenn der Schuldner nicht zahlt","item":"https://www.bondarium.de/zahlungsausfall.html"}]}</script>
 </head>
 <body>
@@ -218,7 +208,7 @@
       <div class="k-text">
         <span class="knr" aria-hidden="true">2</span>
         <h2 id="h-insolvenz">Insolvenz: wer zuerst bezahlt wird</h2>
-        <p>Geht ein Unternehmen in Deutschland in die Insolvenz, verwertet ein Insolvenzverwalter das Vermögen oder setzt einen Insolvenzplan um. Die Gläubiger melden ihre Forderungen an; ausgezahlt wird erst nach dem Prüfungstermin. Bei Anleihen nach dem Schuldverschreibungsgesetz <strong>macht ein gemeinsamer Vertreter die Rechte aller Anleihegläubiger geltend</strong> – einzeln anmelden musst du dann nichts.</p><p>Gewöhnliche Anleihegläubiger stehen in der Mitte: nach den gesicherten Gläubigern und den Kosten des Verfahrens, vor den nachrangigen. Am Ende kommt oft wenig an, und es dauert: Über alle 2024 beendeten Unternehmensinsolvenzen erhielten die Gläubiger rund 10&nbsp;% ihrer Forderungen, nach im Mittel 4,7 Jahren.</p>
+        <p>Geht ein Unternehmen in Deutschland in die Insolvenz, verwertet ein Insolvenzverwalter das Vermögen oder setzt einen Insolvenzplan um. Die Gläubiger melden ihre Forderungen an; ausgezahlt wird erst nach dem Prüfungstermin. Bei Anleihen nach dem Schuldverschreibungsgesetz <strong>macht ein gemeinsamer Vertreter die Rechte aller Anleihegläubiger geltend</strong> – einzeln anmelden musst du dann nichts.</p><p>Gewöhnliche Anleihegläubiger stehen in der Mitte: nach den gesicherten Gläubigern und den Kosten des Verfahrens, vor den nachrangigen. Am Ende kommt oft wenig an, und es dauert: Über alle 2024 beendeten Unternehmensinsolvenzen erhielten die Gläubiger rund 10&nbsp;% ihrer Forderungen; die Hälfte der Verfahren hatte 4,7 Jahre oder länger gedauert.</p>
       </div>
       <div class="k-bild"><p class="sb-k">Die Reihenfolge in der Insolvenz</p><ol class="schritte"><li><span aria-hidden="true">1</span><div><b>Eigentum anderer</b><small>Was nicht dem Unternehmen gehört, geht heraus – etwa Wertpapiere im Depot einer insolventen Bank.</small></div></li><li><span aria-hidden="true">2</span><div><b>Gesicherte Gläubiger</b><small>Werden vorab aus ihren Sicherheiten bedient, etwa aus einer Grundschuld.</small></div></li><li><span aria-hidden="true">3</span><div><b>Kosten des Verfahrens</b><small>Gericht, Verwalter und Verbindlichkeiten aus dem Verfahren.</small></div></li><li><span aria-hidden="true">4</span><div><b>Gewöhnliche Gläubiger</b><small>Hier stehen unbesicherte Anleihen – gleichrangig mit Lieferanten und anderen Gläubigern.</small></div></li><li><span aria-hidden="true">5</span><div><b>Nachrangige Gläubiger</b><small>Zuletzt, darunter <a href="begriffe.html#nachranganleihe">Nachranganleihen</a>.</small></div></li></ol><p class="sb-f">Quote 2024: 1,25&nbsp;Mrd.&nbsp;€ zur Verteilung auf 12,10&nbsp;Mrd.&nbsp;€ Forderungen (Statistisches Bundesamt, alle Gläubiger, nicht nur Anleihen).</p></div>
       <p class="merk"><span class="mi" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9.5 18h5M10.3 21h3.4"/><path d="M12 5.5a5.5 5.5 0 0 0-3.3 9.9c.6.5.9 1.1.9 1.9v.7h4.8v-.7c0-.8.3-1.4.9-1.9A5.5 5.5 0 0 0 12 5.5z"/><path d="M12 1.5v1.3M4.6 4.6l.9.9M19.4 4.6l-.9.9M2.5 11.5h1.3M20.2 11.5h1.3"/></svg></span><span><strong>Kurz gesagt:</strong> Unbesicherte Anleihen stehen in der Mitte: nach den Sicherheiten, vor dem Nachrang.</span></p>
@@ -271,10 +261,10 @@
       <p class="crossnav-t">Verwandte Seiten</p>
       <ul class="crossnav-l">
         <li><a href="risiko.html">Risiko kennen: sieben Risiken von Anleihen</a></li>
+        <li><a href="bonitaet.html#ausfall">Bonität und Ratings: Ausfälle je Note</a></li>
+        <li><a href="anleihe-arten.html#nachrang">Anleihe-Arten: Nachrang- und Hybridanleihe</a></li>
         <li><a href="anleihe-festgeld-tagesgeld.html">Anleihe, Festgeld oder Tagesgeld?</a></li>
-        <li><a href="kuendbare-anleihen.html">Kündbare Anleihen</a></li>
-        <li><a href="eisenbahn-blase-1873.html">Eisenbahn-Blase 1873</a></li>
-        <li><a href="cds.html">Kreditausfallswap (CDS): der Preis des Ausfallrisikos</a></li>
+        <li><a href="nach-dem-kauf.html">Nach dem Kauf</a></li>
       </ul>
     </nav>
     <details class="quellen" id="quellen">

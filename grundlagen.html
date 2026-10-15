@@ -35,7 +35,7 @@
      Schaubild-Kasten kommen aus base.css/bildwelt2.css; hier nur, was diese Seite braucht. */
   /* ===== Neufassung 04.10.2026 (Konzept 03.10.2026, tmp/grundlagen-konzept): je Schritt eine Frage, ein Schaubild, zwei, drei Sätze,
      „Kurz gesagt“, Einzelheiten zugeklappt. Am Desktop das Schaubild links, am Handy über dem Text. Schaubilder als SVG ohne
-     eigene Schrift (erben Manrope), Schritt 2 als HTML (Begriffe mit i-Kreis zum Glossar). ===== */
+     eigene Schrift (erben die Seitenschrift Source Sans 3), Schritt 2 als HTML (Begriffe mit i-Kreis zum Glossar). ===== */
   .kap { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); grid-template-areas: "kopf kopf" "bild text" "bild merk" "bild mehr"; grid-template-rows: auto auto auto 1fr; gap: 16px 36px; align-items: start; }
   .k-kopf { grid-area: kopf; display: flex; align-items: center; gap: 14px; }
   .k-kopf .knr { margin: 0; flex: none; }
@@ -47,7 +47,6 @@
   figure.k-bild figcaption { font-size: 13px; font-weight: 500; color: #157C00; margin-bottom: 12px; }
   svg.sb { display: block; width: 100%; max-width: 440px; height: auto; overflow: visible; }
   svg.sb text { font-variant-numeric: tabular-nums; }
-  svg.sb.klein { max-width: 380px; margin: 4px 0 12px; }
   .sb-f { max-width: 440px; }
   .wippe { margin: 0 0 14px; padding: 10px 12px 6px; border: 1px solid var(--rule); border-radius: 12px; background: #fff; max-width: 360px; }   /* Zinswippe, seit 11.10.2026 (Nutzerwunsch) */
   .wippe .sb { display: block; width: 100%; height: auto; }
@@ -115,7 +114,6 @@
   .stimmt summary::before { content: ''; flex: none; width: 7px; height: 7px; border-right: 1.5px solid #157C00; border-bottom: 1.5px solid #157C00; transform: rotate(-45deg); }
   .stimmt details[open] summary::before { transform: rotate(45deg); }
   .stimmt details p { margin: 0 0 12px; font-size: 15px; line-height: 1.5; }
-  .klein-wege { margin-top: 12px; }
   @media (max-width: 860px) {
     .kap { grid-template-columns: minmax(0, 1fr); grid-template-areas: "kopf" "bild" "text" "merk" "mehr"; grid-template-rows: none; }
   }
@@ -137,9 +135,6 @@
     .kaufkurs { display: none !important; }
     .kap > figure.k-bild { break-inside: avoid; }
   }
-  /* Schaubild 1: eigene Handy-Fassung (schmalere viewBox, Schrift effektiv ≥ 11 px) */
-  .sb-m { display: none; }
-  @media (max-width: 600px) { .sb-d { display: none; } .sb-m { display: block; } }
 /* Marktgröße: Kreis in Abschnitt 1 */
 .kap > figure.k-bild.k-markt { grid-area: auto; grid-column: 1 / -1; grid-row: auto; margin-top: 2px; }
 .k-markt-i { display: grid; grid-template-columns: 200px auto minmax(0, 1fr); gap: 16px 36px; align-items: center; }
@@ -150,7 +145,7 @@
 .k-markt-s { flex: none; width: 18px; height: 18px; border-radius: 5px; border: 2px solid #1A1A19; box-sizing: border-box; }
 .k-markt-h { font-size: 20px; line-height: 1.3; font-weight: 600; color: #1A1A19; margin: 0 0 8px; }
 .k-markt .sb-f { margin-top: 6px; }
-.k-markt-q { color: #8A8984; font-size: 13px; }
+.k-markt-q { color: #55544F; font-size: 13px; }
 @media (max-width: 860px) { .k-markt-i { grid-template-columns: 180px minmax(0,1fr); } .k-markt-t { grid-column: 1 / -1; } .sb-markt { width: 180px; height: 180px; } }
 @media (max-width: 480px) { .k-markt-i { grid-template-columns: minmax(0,1fr); justify-items: center; } .k-markt-l { justify-self: start; } .k-markt-t { justify-self: stretch; } .k-markt-h { font-size: 18px; } }
 </style>
@@ -339,7 +334,7 @@
 <path d="M110.0 6.0 A104 104 0 1 1 107.0 214.0 L108.0 180.0 A70 70 0 1 0 110.0 40.0 Z" fill="#39FF14" stroke="#1A1A19" stroke-width="2" stroke-linejoin="round"/>
 <path d="M107.0 214.0 A104 104 0 0 1 110.0 6.0 L110.0 40.0 A70 70 0 0 0 108.0 180.0 Z" fill="#F4F3EF" stroke="#1A1A19" stroke-width="2" stroke-linejoin="round"/>
 <text x="110" y="112" text-anchor="middle" font-size="34" font-weight="700" fill="#1A1A19" letter-spacing="-0.8"><tspan data-kz="markt-anteil-anleihen">50,5</tspan><tspan font-size="20" font-weight="600">&#8239;%</tspan></text>
-<text x="110" y="134" text-anchor="middle" font-size="13" font-weight="600" fill="#55544F" letter-spacing="0.06em">ANLEIHEN</text>
+<text x="110" y="134" text-anchor="middle" font-size="13" font-weight="600" fill="#55544F">Anleihen</text>
 </svg>
 <ul class="k-markt-l" aria-hidden="true">
 <li><span class="k-markt-s" style="background:#39FF14"></span><span><strong>Anleihen</strong><br><span data-kz="markt-anleihen-genau">160,7</span>&nbsp;Billionen&nbsp;$</span></li>
@@ -428,7 +423,7 @@
       <details class="mehr-k"><summary>Mehr dazu</summary>
         <ul>
           <li>So kommen die 3,9&nbsp;% zustande: 40&nbsp;€ Kursgewinn auf fünf Jahre sind 8&nbsp;€ pro Jahr. Mit 30&nbsp;€ Zinsen sind das 38&nbsp;€ pro Jahr auf 960&nbsp;€ – rund 4&nbsp;%, genau gerechnet 3,9&nbsp;%.</li>
-          <li>Echte Kurse (Deutsche Bundesbank, <span data-kz="paar-stand">30.09.2026</span>): Die <span data-kz="paar-hoch-name">Bundesanleihe 6,25&nbsp;% fällig 04.01.2030</span> kostet <span data-kz="paar-hoch-kurs">108,98&nbsp;%</span>, die <span data-kz="paar-tief-name">Bundesanleihe 2,10&nbsp;% fällig 15.11.2029</span> nur <span data-kz="paar-tief-kurs">96,48&nbsp;%</span>. Die Rendite ist fast gleich: <span data-kz="paar-hoch-rendite">3,29&nbsp;%</span> und <span data-kz="paar-tief-rendite">3,30&nbsp;%</span>. Ein Kurs unter 100&nbsp;% ist also kein Schnäppchen – er gleicht nur den niedrigeren Kupon aus.</li>
+          <li>Echte Kurse (Deutsche Bundesbank, <span data-kz="paar-stand">30.09.2026</span>): Die <span data-kz="paar-hoch-name">Bundesanleihe 6,25&nbsp;% fällig 04.01.2030</span> kostet <span data-kz="paar-hoch-kurs">108,98&nbsp;%</span>, die <span data-kz="paar-tief-name">Bundesanleihe 2,10&nbsp;% fällig 15.11.2029</span> nur <span data-kz="paar-tief-kurs">96,48&nbsp;%</span>. Die Rendite ist praktisch gleich: <span data-kz="paar-hoch-rendite">3,29&nbsp;%</span> und <span data-kz="paar-tief-rendite">3,30&nbsp;%</span>. Ein Kurs unter 100&nbsp;% ist also kein Schnäppchen – er gleicht nur den niedrigeren Kupon aus.</li>
         </ul>
         <div class="kaufkurs" id="kaufkurs" hidden>
           <p class="kk-t">Kaufkurs ausprobieren</p>
@@ -482,31 +477,10 @@
       <div class="k-text"><figure class="wippe" id="wippe"><svg class="sb" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 118" role="img" aria-labelledby="s4w-t s4w-d"><title id="s4w-t">Die Zinswippe: Geht das Zinsniveau hoch, geht der Kurs laufender Anleihen runter – und umgekehrt.</title><desc id="s4w-d">Eine Wippe auf einem Dreieck: Links sitzt das Zinsniveau oben mit einem Pfeil nach oben, rechts der Kurs unten mit einem Pfeil nach unten. Sinkt das Zinsniveau, kippt die Wippe zur anderen Seite.</desc><path d="M160 104L148 118H172Z" fill="#1A1A19"/><g transform="rotate(11.8 160 72)"><path d="M30 72H290" stroke="#1A1A19" stroke-width="5" stroke-linecap="round"/><rect x="30" y="34" width="112" height="34" rx="8" fill="#DCFBD3" stroke="#1A1A19" stroke-width="2"/><text x="86" y="57" text-anchor="middle" font-size="14" font-weight="700" fill="#157C00">Zinsniveau ↑</text><rect x="178" y="34" width="112" height="34" rx="8" fill="#FBE8D8" stroke="#1A1A19" stroke-width="2"/><text x="234" y="57" text-anchor="middle" font-size="14" font-weight="700" fill="#A2561C">Kurs ↓</text></g></svg><figcaption>Die Zinswippe: Zinsniveau rauf, Kurs runter – und umgekehrt.</figcaption></figure><p>Kurz nach deinem Kauf steigt das <span class="nw">Zinsniveau<a class="hilf" href="begriffe.html#zinsniveau" aria-label="Zinsniveau im Glossar">i</a></span>: Neue Anleihen haben jetzt 3,9&nbsp;% Kupon statt 3&nbsp;%. Deine Anleihe kauft dir dann nur noch jemand für 96&nbsp;% ab – <strong>so hat auch er 3,9&nbsp;% Rendite.</strong> Hältst du sie, holt der Kurs bis zur Fälligkeit wieder auf – bis dahin bekommst du aber nur 30&nbsp;€ Zinsen pro Jahr statt 39&nbsp;€. Das Bild dazu heißt Zinswippe: Zinsniveau und Kurs sitzen an den beiden Enden – geht das eine hoch, geht das andere runter. Fällt das Zinsniveau, kippt die Wippe zurück, und der Kurs steigt.</p></div>
       <p class="merk"><span class="mi" aria-hidden="true"></span><span><strong>Kurz gesagt:</strong> Zinsniveau rauf, Kurs runter – je länger die Restlaufzeit, desto stärker.</span></p>
       <details class="mehr-k"><summary>Mehr dazu</summary>
-        <svg class="sb klein" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 185" role="img" aria-labelledby="s4b-t s4b-d">
-
-<title id="s4b-t">Gleicher Anstieg des Zinsniveaus von 3 auf 3,9 %: Je länger die Restlaufzeit, desto stärker fällt der Kurs.</title>
-<desc id="s4b-d">Kursverlust einer Anleihe mit 3 % Kupon, gekauft zu 100 %, wenn das Zinsniveau von 3 auf 3,9 % steigt: bei 2 Jahren Restlaufzeit −1,70 %, bei 5 Jahren (deine Anleihe) −4,02 %, bei 10 Jahren −7,34 %, bei 30 Jahren −15,75 %.</desc>
-<text x="1" y="13" font-size="13" fill="#55544F">Restlaufzeit</text>
-<text x="92" y="13" font-size="13" fill="#55544F">Kursverlust</text>
-<rect x="92" y="24" width="17.91" height="18" fill="#CF7430"/>
-<text x="1" y="38.04" font-size="14" font-weight="600" fill="#1A1A19">2 Jahre</text>
-<text x="115.91" y="38.04" font-size="14" font-weight="700" fill="#A2561C">−1,7 %</text>
-<rect x="92" y="62" width="42.34" height="18" fill="#CF7430"/>
-<text x="1" y="68" font-size="14" font-weight="700" fill="#1A1A19">5 Jahre</text>
-<text x="140.34" y="76.04" font-size="14" font-weight="700" fill="#A2561C">−4,0 %</text>
-<text x="1" y="84" font-size="13" fill="#55544F">deine Anleihe</text>
-<rect x="92" y="100" width="77.3" height="18" fill="#CF7430"/>
-<text x="1" y="114.04" font-size="14" font-weight="600" fill="#1A1A19">10 Jahre</text>
-<text x="175.3" y="114.04" font-size="14" font-weight="700" fill="#A2561C">−7,3 %</text>
-<rect x="92" y="138" width="166" height="18" fill="#CF7430"/>
-<text x="1" y="152.04" font-size="14" font-weight="600" fill="#1A1A19">30 Jahre</text>
-<text x="264" y="152.04" font-size="14" font-weight="700" fill="#A2561C">−15,8 %</text>
-<path d="M92 20V160" stroke="#1A1A19" stroke-width="1.5"/>
-<text x="1" y="179.55" font-size="13" fill="#55544F">Zinsniveau 3 → 3,9 % · 3 % Kupon · Kauf zu 100 %</text>
-</svg>
         <ul>
           <li>Warum genau 96&nbsp;%? Deiner Anleihe fehlen gegenüber einer neuen fünf Jahre lang je 9&nbsp;€ Zinsen. Auf heute umgerechnet sind das rund 40&nbsp;€, also 4&nbsp;% von 1.000&nbsp;€.</li>
           <li>Auch eine schwächere Bonität drückt den Kurs (Schritt&nbsp;5).</li>
+          <li>Bei längerer Restlaufzeit fällt der Kurs beim selben Anstieg stärker, bei kürzerer schwächer. Wie stark, kannst du selbst ausprobieren.</li>
         </ul>
         <a class="go leise sb-go" href="duration.html#schieben">Selbst ausprobieren: Wie stark reagiert der Kurs? →</a>
       </details>
@@ -554,9 +528,10 @@
       <details class="mehr-k"><summary>Mehr dazu</summary>
         <ul>
           <li>Ab BB+ beginnt der Hochzins-Bereich: spekulativ. Unter CCC folgen noch CC und C, D heißt Ausfall. Eine Note ist eine Einschätzung, keine Zusage.</li>
-          <li>Bei vielen Anleihen zeigt Bondarium die Bonität laut EZB im Steckbrief.</li>
+          <li>Bei vielen Anleihen zeigt Bondarium die <a href="bonitaet.html#laut-ezb">Bonität laut EZB</a> im Steckbrief.</li>
         </ul>
         <a class="go leise sb-go" href="bonitaet.html">Bonität und Ratings genauer →</a>
+        <a class="go leise sb-go" href="zahlungsausfall.html">Was bei einem Ausfall passiert →</a>
       </details>
     </section>
 
@@ -629,9 +604,16 @@
       <a class="go leise" href="anlageziele.html#fuer-wen">Für wen Anleihen passen&nbsp;→</a>
       <a class="go leise" href="anleihe-festgeld-tagesgeld.html">Anleihe, Festgeld oder Tagesgeld?&nbsp;→</a>
     </div>
-    <p class="klein klein-wege"><a href="risiko.html">Risiko kennen</a> · <a href="begriffe.html">Alle Begriffe im Glossar</a></p>
     <p class="klein">Diese Seite erklärt, wie Anleihen funktionieren. Sie empfiehlt keine Anlage. Die Zahlen sind gerundet.</p>
-    <details class="quellen"><summary>Datenquellen und Methodik</summary><p>Beispielanleihe: 1.000&nbsp;€ Nennwert, 3&nbsp;% Kupon, Zinsen einmal pro Jahr, Restlaufzeit 5&nbsp;Jahre, gekauft am Zinstermin, ohne Kosten und Steuern. Rendite = Rendite bis Fälligkeit: Kurs 96 / 100 / 104&nbsp;% ergibt 3,90 / 3,00 / 2,15&nbsp;%. Kursweg: Das Zinsniveau steigt direkt nach dem Kauf von 3 auf 3,9&nbsp;% und bleibt dort; Kurs 95,98 / 96,73 / 97,50 / 98,30 / 99,13 / 100&nbsp;%. Gleicher Anstieg bei 2 / 5 / 10 / 30&nbsp;Jahren Restlaufzeit: −1,70 / −4,02 / −7,34 / −15,75&nbsp;%. Rendite für zehn Jahre Restlaufzeit: Deutsche Bundesbank, Zinsstrukturkurve am Rentenmarkt (Svensson), Monatsendwerte. Echte Kurse in Schritt&nbsp;3: Deutsche Bundesbank, Kurse und Renditen börsennotierter Bundeswertpapiere; bei jedem Datenlauf neu gewählt – fast gleiche Fälligkeit (höchstens 120 Tage auseinander), Kupon mindestens 2&nbsp;Prozentpunkte verschieden, eine Anleihe über, eine unter 100&nbsp;%. Notentreppe schematisch. Einlagensicherung: §&nbsp;8 Einlagensicherungsgesetz. Spareinlagen: §&nbsp;21 Abs.&nbsp;4 RechKredV.</p></details>
+
+    <nav class="crossnav" aria-label="Verwandte Seiten">
+      <p class="crossnav-t">Verwandte Seiten</p>
+      <ul class="crossnav-l">
+        <li><a href="risiko.html">Risiko kennen: sieben Risiken von Anleihen</a></li>
+        <li><a href="begriffe.html">Alle Begriffe im Glossar</a></li>
+      </ul>
+    </nav>
+    <details class="quellen"><summary>Datenquellen und Methodik</summary><p>Beispielanleihe: 1.000&nbsp;€ Nennwert, 3&nbsp;% Kupon, Zinsen einmal pro Jahr, Restlaufzeit 5&nbsp;Jahre, gekauft am Zinstermin, ohne Kosten und Steuern. Rendite = Rendite bis Fälligkeit: Kurs 96 / 100 / 104&nbsp;% ergibt 3,90 / 3,00 / 2,15&nbsp;%. Kursweg: Das Zinsniveau steigt direkt nach dem Kauf von 3 auf 3,9&nbsp;% und bleibt dort; Kurs 95,98 / 96,73 / 97,50 / 98,30 / 99,13 / 100&nbsp;%. Rendite für zehn Jahre Restlaufzeit: Deutsche Bundesbank, Zinsstrukturkurve am Rentenmarkt (Svensson), Monatsendwerte. Echte Kurse in Schritt&nbsp;3: Deutsche Bundesbank, Kurse und Renditen börsennotierter Bundeswertpapiere; bei jedem Datenlauf neu gewählt – fast gleiche Fälligkeit (höchstens 120 Tage auseinander), Kupon mindestens 2&nbsp;Prozentpunkte verschieden, eine Anleihe über, eine unter 100&nbsp;%. Notentreppe schematisch. Einlagensicherung: §&nbsp;8 Einlagensicherungsgesetz.</p></details>
   </main>
   <footer class="fuss">
     <nav aria-labelledby="f-akad"><p class="fuss-k" id="f-akad">Akademie</p><a href="wissen.html#grundlagen">Grundlagen</a><a href="wissen.html#risiken">Risiken</a><a href="wissen.html#auswaehlen">Auswählen</a><a href="wissen.html#fortgeschrittene">Für Fortgeschrittene</a><a href="begriffe.html">Glossar</a></nav>
