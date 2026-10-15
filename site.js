@@ -89,8 +89,8 @@ window.MC = (function () {
     var put = o.put ? " · du kannst kündigen (Put)" : "";
     var f = {
       n: o.put ? ["nur durch dich", "Kündigungsrecht für dich (Put) – ein Vorteil", "put"] : ["keine", "feste Laufzeit", ""],
-      m: ["Make-Whole", "zum Barwert, meist über dem Kurs – harmlos" + put, "make-whole"],
-      p: ["kurz vor Fälligkeit", ab + " zu 100 %, höchstens ein Jahr früher – harmlos" + put, "kurz-vor-ende"],
+      m: ["Make-Whole", "zum Barwert, in der Regel über dem Kurs – meist ohne Nachteil" + put, "make-whole"],
+      p: ["kurz vor Fälligkeit", ab + " zu 100 %, höchstens ein Jahr früher – meist ohne Nachteil" + put, "kurz-vor-ende"],
       t: [ab, (kurs != null && kurs > 100 ? "Kurs über 100: Bei Kündigung verlierst du den Aufschlag" : "meist zu 100 %, Jahre vor Fälligkeit – beachten") + put, "termin"],
       e: [ab, "ewige Anleihe – kündigt er nicht, läuft sie weiter" + put, "ewig"],
       u: ["ja, Termin unklar", "laut Register kündbar, Termin nicht gemeldet – Bedingungen prüfen" + put, "name"]

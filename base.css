@@ -832,6 +832,8 @@ footer.fuss { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); g
   .fuss .fuss-k { margin-bottom: 0; }
   .fuss .fuss-hw a, .krumen a, footer:not(.fuss) a { display: inline-block; padding: 12px 0; margin: -12px 0; }
   .crossnav .crossnav-l a { min-height: 44px; align-items: center; }
+  /* Namen in den Anleihen-Tabellen mindestens 24 px hoch (seit 15.10.2026, Gesamtprüfung G03-06: vorher 21 px) */
+  .atab a.name-link { display: inline-block; padding: 2px 0; min-height: 24px; }
 }
 
 /* Kachelleiste als Reiter (.tueren.stufen-kopf) am Handy kompakt: drei Reiter in einer Zeile, nur das Verb (30.09.2026) */

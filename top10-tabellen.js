@@ -201,7 +201,7 @@
       });
     }
     // Karte: gemeinsame, cachebare Datei weltkarte.svg (vorher je Seite 49 KB inline); nur die Länder dieser Seite bleiben wählbar.
-    // ?v= nach jeder Änderung der Karte hochzählen – sonst zeigt der Browser bis zu einen Tag die alte (v=2: 20 Länder, 30.09.2026).
+    // ?v= setzt der Bau aus dem Inhalt von weltkarte.svg (update-data.yml, seit 15.10.2026) – von Hand nichts hochzählen.
     function karte() {
       if (!map) return Promise.resolve();
       return fetch("weltkarte.svg?v=2").then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (t) {

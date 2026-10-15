@@ -95,7 +95,7 @@
     clear: "Auswahl löschen", landSuche: "Land suchen …", mehr: "Weitere Filter", weniger: "Weniger Filter", alle: "Alle Filter zurücksetzen",
     hint: {
       rendite: d => `Rendite bis Fälligkeit aus dem Schlusskurs vom ${d} (Börse Frankfurt, Bundeswertpapiere: Bundesbank). Ohne Rendite: variabel oder später variabel verzinste, Stufenzins-, Wandel-, Tilgungs-, unbefristete und inflationsindexierte Anleihen (inflationsindexierte Bundeswertpapiere: Realrendite, mit * gekennzeichnet) sowie Kurse ohne Umsatz mit unplausibler Rendite. Grau mit Fragezeichen: Rendite aus einer Taxe ohne Umsatz, die bei unter einem Jahr Restlaufzeit zu weit über Bund liegt (Staat 2, Öffentlich 1,5, Unternehmen 3 Prozentpunkte) – meist ist die Taxe veraltet.`,
-      stk: "Stückelung = kleinster handelbarer Nennwert (zugleich Mindestanlage), in der Währung der Anleihe.",
+      stk: 'Stückelung = kleinster handelbarer Nennwert (zugleich Mindestanlage), in der Währung der Anleihe. <a href="anleihe-nicht-kaufbar.html#stueckelung">Warum manche Anleihen erst ab 100.000 € zu haben sind →</a>',
       pruef: "Jede Anleihe wird gegen den Kurznamen im ESMA-Register (Kupon und Fälligkeit nach ISO 18774) und gegen ihren Namen geprüft. Weicht etwas ab, bleiben die Registerwerte stehen, der Widerspruch steht daneben („Daten?“) und es gibt keine Rendite – die Quelle wird nicht verändert.",
       vol: "Ausgegebener Nennbetrag in der Währung der Anleihe – 100 Mio. Yen sind also weniger als 100 Mio. Euro. Unter 100 Mio. stellt die Börse oft nur kleine Stückzahlen; wer vor der Fälligkeit verkaufen will, braucht Geduld oder nimmt Abschläge in Kauf. Ein Anhaltspunkt für die Handelbarkeit, keine Garantie.",
       land: "Sitz des Konzerns laut LEI-Register.",
@@ -163,7 +163,7 @@
         kurz: v => ({ a: "ohne Befund", b: "Widerspruch" })[v] || v,
         key: r => befund(r) ? "b" : "a", hint: () => TXT.hint.pruef },
       { k: "stk", opts: () => [["a", "bis 1.000"], ["b", "über 1.000 bis unter 100.000"], ["c", "100.000 und mehr"]],
-        key: r => typeof r[7] === "number" ? (r[7] <= 1000 ? "a" : r[7] < 100000 ? "b" : "c") : null, hint: () => TXT.hint.stk },
+        key: r => typeof r[7] === "number" ? (r[7] <= 1000 ? "a" : r[7] < 100000 ? "b" : "c") : null, hintHtml: () => TXT.hint.stk },
     ];
     const sel = {};
     FILTER.forEach((f, i) => { f.i = i; sel[f.k] = new Set(); f.label = (LEISTE.find(l => l[0] === f.k) || [])[1] || f.k; });
