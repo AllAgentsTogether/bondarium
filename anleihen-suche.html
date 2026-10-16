@@ -96,6 +96,12 @@
   .kpis thead th small { display: block; font-size: 11.5px; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--text); }
   .kpis thead th.num { text-align: right; }
   .kpis thead th.num .sortbtn { flex-direction: row-reverse; }
+  /* Zahlen rechtsbündig unter ihrem Spaltentitel, alle Werte einer Zeile auf einer Grundlinie (16.10.2026, Nutzerhinweis: Titel standen
+     rechts, Werte links; Name 13 px und Zahlen 14 px lagen um 1–2 px versetzt). Stern und Pfeil bleiben oben: so stehen sie mittig
+     auf der ersten Zeile. Am Handy gelten die Karten-Regeln unten. */
+  .kpis tbody td.num { text-align: right; }
+  .kpis tbody tr.zeile > th, .kpis tbody tr.zeile > td:not(.aktion) { vertical-align: baseline; }
+  @media (min-width: 601px) { .kpis thead th[data-col="bon"], .kpis tbody td.txt { padding-left: 16px; } }   /* Abstand zum rechtsbündigen Kurs davor */
   .kpis tbody th[scope=row] { font-weight: 600; }
   .kpis tbody th[scope=row] a.name-link { color: var(--ink); text-decoration: none; }
   .kpis tbody th[scope=row] a.name-link:hover { color: var(--green-text); text-decoration: underline; text-underline-offset: 2px; }
