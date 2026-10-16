@@ -80,7 +80,7 @@ Technisch liegt alles offen, rechtlich verlangt jeder Anbieter eine vorherige Zu
 
 | Anbieter | Was offen abrufbar ist | Bedingungen | Kontakt |
 |---|---|---|---|
-| **iShares (BlackRock)** | eine Datei je Fonds: Kurswerte seit Auflage, alle Bestände, Rendite, Duration, Kosten, Fondsgröße [geprüft: IE00B3F81R35, 7 MB]; Ausschüttungen auf der Produktseite | nur persönlicher Gebrauch; Vervielfältigung von Daten nur mit Zustimmung [Recherche] | info@iShares.de |
+| **iShares (BlackRock)** | eine Datei je Fonds: Kurswerte seit Auflage, alle Bestände, Rendite, Duration, Kosten, Fondsgröße [geprüft: IE00B3F81R35, 7 MB]; Ausschüttungen auf der Produktseite | **abgelehnt** (Antwort von info@iShares.de auf die Anfrage vom 14.10.2026): nur persönlicher und interner Gebrauch, jede Vervielfältigung nur mit vorheriger Genehmigung; Quellenangabe und Link machen die Nutzung nicht zulässig; Indexdaten sind beim Indexanbieter zu klären, SEDOL-Codes bei der London Stock Exchange | info@iShares.de nennt keine Lizenzkonditionen und keine Kontakte; verwiesen wird nur auf „Marketing und Medien“ der BlackRock-Kontaktseite, ohne Zusage einer Prüfung |
 | **Xtrackers (DWS)** | Bestände als CSV; Kostendatei für alle Fonds (EMT) [geprüft: 113 Register-ETFs enthalten] | Herunterladen und Verbreiten nur mit schriftlicher Zustimmung; `robots.txt` sperrt die Export-Adressen [Recherche] | Kontaktseite etf.dws.com |
 | **Amundi** | Kurswerte, Bestände, Fondsgröße, Kosten; Rendite und Duration nur auf Index-Ebene [Recherche] | Wiedergabe nur mit schriftlicher Zustimmung | info_de@amundi.com |
 | **Vanguard** | Kurswert- und Kursverlauf, Ausschüttungen, Bestände, Kosten [Recherche] | nur persönlich; automatischer Zugriff untersagt | info.deutschland@vanguard.com |
@@ -122,5 +122,5 @@ Pflichtdokumente als Ausweg für einzelne Werte: Das Basisinformationsblatt (PDF
 1. **Eine Anfrage an die Deutsche Börse** mit drei Punkten: ETF-Liste und Monatsstatistik (seit 30.09. ohne Zusage veröffentlicht), Kurshistorie per automatischem Abruf, Bestätigung, dass eine werbefreie Informationsseite nicht als Vermarktung gilt.
 2. **Parallel bauen, was frei ist:** Geld-/Briefkurse (Spanne im Steckbrief und in der Suche), EZB-Merkmal, ESMA-Anleiheart, Verlauf des Fondsvermögens aus den vorhandenen Monatsdateien, niederländische und belgische Staatsanleihen.
 3. **Anfrage an die Börse Stuttgart.**
-4. **Anfragen an iShares, DWS und Amundi**, danach Vanguard und SPDR.
+4. **Anfragen an iShares, DWS und Amundi**, danach Vanguard und SPDR. iShares hat abgelehnt (Oktober 2026, siehe Tabelle) – keine Daten von ishares.com abrufen oder wiedergeben, auch nicht einzelne Werte.
 5. **Januar 2027:** fairCT prüfen.
