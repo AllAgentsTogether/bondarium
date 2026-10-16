@@ -1,14 +1,14 @@
 {
- "stand": "2026-10-15",
- "updated": "2026-10-15",
- "updatedAt": "2026-10-15T08:03:21Z",
+ "stand": "2026-10-16",
+ "updated": "2026-10-16",
+ "updatedAt": "2026-10-16T08:05:15Z",
  "quelle": "Deutsche Börse: Liste der handelbaren ETFs & ETPs (Stammdaten, Kosten) und Monatsstatistik ETFs & ETPs (Umsatz im Xetra-Orderbuch, Fondsvermögen der Anteilsklasse, XLM); Kategorie, Laufzeit und Absicherung aus Name und Index abgeleitet",
  "statistik": "2026-09",
  "umsatz": {
   "von": "2025-10",
   "bis": "2026-09"
  },
- "anzahl": 911,
+ "anzahl": 912,
  "gruppen": {
   "kurze-laufzeiten": {
    "anzahl": 86,

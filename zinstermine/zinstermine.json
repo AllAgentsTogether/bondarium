@@ -1,4 +1,4 @@
-{"stand": "2026-10-15", "quelle": "Deutsche Börse, T7 (Frankfurt) – Alle handelbaren Instrumente: letzter und nächster Zinstermin", "felder": ["zahlungen_je_jahr", "zinstage MM-TT …"], "anzahl": 29787, "updatedAt": "2026-10-15T08:03:10Z", "termine": {
+{"stand": "2026-10-16", "quelle": "Deutsche Börse, T7 (Frankfurt) – Alle handelbaren Instrumente: letzter und nächster Zinstermin", "felder": ["zahlungen_je_jahr", "zinstage MM-TT …"], "anzahl": 29789, "updatedAt": "2026-10-16T08:05:07Z", "termine": {
 "AR0963787574": [2,"05-30","11-30"],
 "ARPCDB320099": [4,"01-27","04-27","07-27","10-27"],
 "AT0000272505": [1,"07-15"],
@@ -218,6 +218,7 @@
 "AT0000A3USC0": [1,"06-16"],
 "AT0000A3USG1": [1,"06-03"],
 "AT0000A3UX25": [1,"05-27"],
+"AT0000A3V200": [1,"10-20"],
 "AT0000A3V234": [1,"09-20"],
 "AT0000A3VEB0": [1,"07-07"],
 "AT0000A3VVZ3": [1,"07-22"],
@@ -5612,6 +5613,7 @@
 "DE000DP9BE27": [1,"01-21"],
 "DE000DP9BE35": [1,"01-29"],
 "DE000DP9BE43": [1,"02-18"],
+"DE000DP9BE50": [1,"10-20"],
 "DE000DP9BE68": [1,"01-21"],
 "DE000DP9BE76": [1,"01-23"],
 "DE000DP9BE84": [1,"01-24"],
