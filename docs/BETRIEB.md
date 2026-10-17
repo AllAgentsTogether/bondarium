@@ -176,7 +176,10 @@ dateModified der Seite setzen.
 | August | Destatis, Insolvenzquote | zahlungsausfall.html Karte 2 |
 | nach jeder Zinssitzung der TCMB | CDS-Prämie Türkei (Berichte der Zentralbank) | cds.html |
 | alle 120 Tage (frische.py warnt) | Preisverzeichnisse der Broker | broker.json „stand“; Scalable: Link mit `version=` der geltenden Fassung (seit 01.09.2026) |
-| September | Handelszeiten und Anleihenzahlen der Börsen | handelsplaetze.html, Tabelle (zuletzt 28.09.2026) |
+| September | Handelszeiten und Anleihenzahlen der Börsen | handelsplaetze.html, Tabelle (zuletzt 17.10.2026; Tradegate: Bekanntmachung Handelszeiten, nicht der Handelskalender) |
+| nach jeder EZB-Zinssitzung | Chronik der Zinsschritte im Text | zinsniveau.html Karte 2, Bildunterschrift „Bis Oktober 2026: …“ (Schaubild und Stand kommen aus ezb.json; seit 17.10.2026, Website-Test P8-25) |
+| Oktober | Destatis, durchschnittlicher Hebesatz der Gewerbesteuer | anleihen-fuer-unternehmen.html Karte 3 und Methodik (zuletzt 410 %, Pressemitteilung Nr. 369 vom 15.10.2026) |
+| bei Änderung | Finanzagentur, Zahl der Institute in der Bietergruppe Bundesemissionen | bundeswertpapiere.html Karte 2 und Methodik (zuletzt 32 seit 09.10.2026) |
 | bei Entscheidung, spätestens Januar 2027 | Bundesverfassungsgericht, Vorlage 2 BvL 3/21 | steuern-handelskosten.html, Karte 3 |
 | bei Gesetzesänderung, spätestens Januar | Steuerwerte: Abgeltungsteuer mit Soli 26,375 %, Kirchensteuer 8/9 %, Sparerpauschbetrag 1.000/2.000 € | rechner.js, steuern-handelskosten.html, anleihen-fuer-unternehmen.html, begriffe.html |
 | bei Gesetzesänderung | Einlagensicherung 100.000 € je Bank und Kunde | anleihe-festgeld-tagesgeld.html |

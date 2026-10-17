@@ -972,7 +972,7 @@ ANKER_REALZINS = [
     'let DATA = null, MODUS = "jahre", BREITE = 0;',
     'const P = jahre ? (d.jahre || []).map(j => ({ k: String(j[0]), z: j[1], i: j[2] }))',
     'setT("eyebrow-rz", `10-jährige Bundesanleihe und Verbraucherpreise · ${jahre ? "Jahreswerte" : "Monatsdurchschnitte"} · ${jahr(P[0].k)} – ${jahr(P[n - 1].k)}${stand ? ` · Stand: ${deDatum(stand)}` : ""}`);',
-    'const tagHinweis = jahre && hz && d.laufend && +lz.k === d.laufend.jahr ? ` Das Feld „Bund 10 Jahre“ oben zeigt den Tageswert (${fmt(hz[1], 2)} % am ${deDatum(hz[0])}), das Schaubild den Jahresdurchschnitt (${lz.k} bisher ${fmt(lz.z, 2)} %).` : "";',
+    'const tagHinweis = jahre && hz && d.laufend && +lz.k === d.laufend.jahr ? ` Das Feld „Bund 10 Jahre“ oben zeigt den Tageswert (${fmt(hz[1], 2)}\\u00a0% am ${deDatum(hz[0])}), das Schaubild den Jahresdurchschnitt (${lz.k} bisher ${fmt(lz.z, 2)}\\u00a0%).` : "";',
     '? "Bund 10 Jahre: Jahresdurchschnitt der Rendite; Inflation: Jahresteuerung des Verbraucherpreisindex (bis 1991 früheres Bundesgebiet); das laufende Jahr bis zum letzten veröffentlichten Monat. Realzins = Differenz beider Werte in Prozentpunkten." + tagHinweis',
     'if (el) { el.textContent = "Daten-Stand: " + deDatum(stand) + (st.vpi ? ` · Preise ${monLang(st.vpi)}` : ""); el.classList.toggle("stale", !!(MC.veraltet && MC.veraltet(stand))); }',
     'MC.load("realzins.json").then(function (d) { DATA = d; kacheln(d); charts(d); })',
@@ -1092,8 +1092,8 @@ def realzins(site, s):
     s.text("#eyebrow-rz", f"10-jährige Bundesanleihe und Verbraucherpreise · Jahreswerte · {int(P[0][0][:4])} – {int(P[-1][0][:4])}"
            + (f" · Stand: {datum(stand)}" if stand else ""))
     hz, lz, lauf = h.get("zins10"), P[-1], (d.get("laufend") or {}).get("jahr")
-    hinweis = (f" Das Feld „Bund 10 Jahre“ oben zeigt den Tageswert ({zahl(hz[1], 2)} % am {datum(hz[0])}), "
-               f"das Schaubild den Jahresdurchschnitt ({lz[0]} bisher {zahl(lz[1], 2)} %).") \
+    hinweis = (f" Das Feld „Bund 10 Jahre“ oben zeigt den Tageswert ({zahl(hz[1], 2)}{NBSP}% am {datum(hz[0])}), "
+               f"das Schaubild den Jahresdurchschnitt ({lz[0]} bisher {zahl(lz[1], 2)}{NBSP}%).") \
         if hz and d.get("laufend") and int(lz[0]) == lauf else ""
     s.text("#note-rz", REALZINS_HINWEIS + hinweis)
     if not stand:
@@ -1568,23 +1568,27 @@ def markttechnik(site, s):
 
 
 # ---------- risiko.html (seit 09.10.2026, Technik-Test T-38) ----------
+B50_AUSGABE = 103.61   # Auktion 21.08.2019, gewogener Durchschnittskurs (Bundesbank, Tenderergebnis)
 ANKER_B50 = [   # eigener Name: ANKER_RISIKO gehört zu risikoaufschlaege.html
     'if (window.MC && MC.json) MC.json("langlaeufer.json").then(function (d) {',
     'var b = d.bonds && d.bonds.bund2050, v = document.getElementById("b50-verlust"), t = document.getElementById("b50-stand");',
-    'if (!b || !b.first || !b.latest || !v) return;',
-    'v.textContent = MC.zahl(Math.round((1 - b.latest.price / b.first.price) * 100));',
+    'var AUSGABE = 103.61;',
+    'if (!b || !b.latest || !v) return;',
+    'v.textContent = MC.zahl(Math.round((1 - b.latest.price / AUSGABE) * 100));',
     'if (t) t.textContent = MC.datum(b.latest.date);',
 ]
 
 
 def risiko(site, s):
-    """Bildunterschrift „Bund 0 % 2050“: Verlust seit der Ausgabe 2019 in Prozent und Stand des Kurses (langlaeufer.json)."""
+    """Bildunterschrift „Bund 0 % 2050“: Verlust seit der Ausgabe 2019 in Prozent und Stand des Kurses (langlaeufer.json).
+    Ausgabekurs 103,61 = gewogener Durchschnittskurs der Auktion vom 21.08.2019 (seit 17.10.2026, Website-Test P8-20; vorher
+    der erste Börsenkurs 103,04 aus langlaeufer.json)."""
     s.anker(ANKER_B50)
     b = (lade(site, "langlaeufer.json").get("bonds") or {}).get("bund2050") or {}
-    first, latest = b.get("first") or {}, b.get("latest") or {}
-    if not (ist_zahl(first.get("price")) and first["price"] and ist_zahl(latest.get("price"))):
-        raise ValueError("langlaeufer.json bonds.bund2050 ohne Erst- oder Schlusskurs")
-    s.text("#b50-verlust", zahl(js_round((1 - latest["price"] / first["price"]) * 100), 0))
+    latest = b.get("latest") or {}
+    if not ist_zahl(latest.get("price")):
+        raise ValueError("langlaeufer.json bonds.bund2050 ohne Schlusskurs")
+    s.text("#b50-verlust", zahl(js_round((1 - latest["price"] / B50_AUSGABE) * 100), 0))
     s.text("#b50-stand", datum(latest.get("date")), muss=False)
     return datum(latest.get("date"))
 

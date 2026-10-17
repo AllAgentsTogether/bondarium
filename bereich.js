@@ -610,7 +610,7 @@
       const el = $("a-start"); if (!el) return;
       const D = X.daten(), st = K.stand(), ls = X.liste(), nE = etfListe().length, nZ = Object.keys(abl("kennzahl")).filter(k => KZ[k]).slice(0, 6).length;
       const zins = `<section class="mb-karte mb-zinsblick">` + kartenKopf("linie", "Mein Zins-Blick", nZ ? `${nZ} angeheftet` : "", "Marktzahlen, die du auf den Markt-Seiten angeheftet hast") +
-        `<div id="mb-zins"></div><p class="mb-fuss"><span>${nZ ? "Ein Klick auf eine Kachel öffnet die Seite dazu" : ""}</span><a href="beobachten.html">Zum Markt</a></p></section>`;
+        `<div id="mb-zins"></div><p class="mb-fuss"><span>${nZ ? "Ein Klick auf eine Kennzahl öffnet die Seite dazu" : ""}</span><a href="beobachten.html">Zum Markt</a></p></section>`;
       const an = wert("einstellung", "zuletzt") === 1, ang = Object.entries(abl("angesehen")).sort((a, b) => b[1][1] - a[1][1]);
       const zuletzt = an && ang.length ? `<div class="mb-zuletzt"><p class="mb-zk">Zuletzt angesehen</p><p class="mb-chips-a">${ang.map(([k, e]) => `<a href="${/^[A-Z]{2}/.test(k) ? "anleihe.html?isin=" + encodeURIComponent(k) : esc(k) + ".html"}">${esc(typeof e[0] === "string" && e[0] ? e[0] : k)}</a>`).join("")}</p></div>` : "";
       el.innerHTML = seitBesuch(D) + dach("Deine Anleihen", "was du beobachtest und was du durchspielst") + `<div class="mb-reihe">${merkKarte(st, ls, nE)}${depotKarte(st)}</div>` +
