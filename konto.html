@@ -630,7 +630,7 @@
             <th scope="col" data-col="rendite" class="num" title="Rendite bis Fälligkeit in % pro Jahr – von uns aus dem Schlusskurs berechnet (Bundeswertpapiere: Rendite der Deutschen Bundesbank)"><button type="button" class="sortbtn" data-col="rendite">Rendite</button></th>
             <th scope="col" data-col="kupon" class="num" title="Zinssatz pro Jahr auf den Nennwert"><button type="button" class="sortbtn" data-col="kupon">Kupon</button></th>
             <th scope="col" data-col="faellig" class="num" title="Zeit von heute bis zur Fälligkeit, darunter der Fälligkeitstag"><button type="button" class="sortbtn" data-col="faellig">Restlaufzeit</button><small>Fälligkeit</small></th>
-            <th scope="col" data-col="kurs" class="num" title="Schlusskurs in % des Nennwerts, darunter die Veränderung zum Vortag in Prozentpunkten"><button type="button" class="sortbtn" data-col="kurs">Kurs</button><small>zum Vortag</small></th>
+            <th scope="col" data-col="kurs" class="num" title="Schlusskurs in % des Nennwerts, darunter die Veränderung zum Vortag in Prozent"><button type="button" class="sortbtn" data-col="kurs">Kurs</button><small>zum Vortag</small></th>
             <th scope="col" data-col="delta" class="num" title="Veränderung der Rendite seit dem Tag, an dem du die Anleihe gemerkt hast, in Prozentpunkten"><button type="button" class="sortbtn" data-col="delta">Seit dem Merken</button><small>gemerkt am</small></th>
             <th scope="col" data-col="zt" class="num" title="Laut Deutscher Börse; geschätzt, wo die Börse keinen Termin nennt"><button type="button" class="sortbtn" data-col="zt">Nächster Zinstermin</button></th>
             <th scope="col"><span class="sr-only">Zum Musterdepot hinzufügen, Notiz und mehr</span></th>
@@ -988,8 +988,8 @@ MC.navInit();
   // Seit 03.10.2026 Standardreihenfolge (Konzept „Einheitliche Anleihen-Angaben“, felder.js): Anleihe (ISIN · Art · Währung) · Rendite · Kupon ·
   // Restlaufzeit (Fälligkeit) · Kurs (zum Vortag) · Seit dem Merken · Nächster Zinstermin; Schreibweisen aus MC.felder.
   function zeile(o) {
-    const F = MC.felder, d = o.kurs != null && o.vortag != null ? o.kurs - o.vortag : null;
-    const kurs = o.kurs != null ? `${F.kurs(o.kurs)}${o.datum && o.datum !== KSTAND ? `<small>vom ${MC.esc(MC.tag(o.datum))}</small>` : d != null ? `<small data-p="zum Vortag" class="${d < -0.004 ? "ab" : d > 0.004 ? "auf" : ""}">${F.pkt(d)}</small>` : ""}` : "–";
+    const F = MC.felder, d = F.kursAenderung(o.kurs, o.vortag);   // in Prozent (seit 17.10.2026; vorher Prozentpunkte, „Pkt.“)
+    const kurs = o.kurs != null ? `${F.kurs(o.kurs)}${o.datum && o.datum !== KSTAND ? `<small>vom ${MC.esc(MC.tag(o.datum))}</small>` : d != null ? `<small data-p="zum Vortag" class="${d < -0.004 ? "ab" : d > 0.004 ? "auf" : ""}">${F.aenderung(d)}</small>` : ""}` : "–";
     const rend = o.rendite != null ? (o.fraglich != null
       ? `<span class="fraglich" title="Kurs ohne Umsatz (Taxe): Die Rendite liegt ${fmt(o.fraglich, 1)} Prozentpunkte über Bund – bei unter einem Jahr Restlaufzeit wahrscheinlich zu hoch: Meist ist die Taxe veraltet und der Briefkurs höher, sonst zweifelt der Markt an der Rückzahlung. Beim Broker den Briefkurs prüfen.">${F.pct(o.rendite)}<sup>?</sup></span>`
       : `<span${o.real ? ' title="Realrendite (inflationsindexiert)"' : ""}>${F.pct(o.rendite)}${o.real ? "*" : ""}</span>`) : "–";
@@ -1915,7 +1915,7 @@ MC.navInit();
     if (liste.some(o => o.fraglich != null)) noten.push("? Kurs ohne Umsatz, Rendite weit über Bund – die Taxe ist vermutlich veraltet.");
     if (liste.some(o => o.befund)) noten.push("Daten? Widerspruch im ESMA-Register – Registerwerte unverändert gezeigt, keine Rendite.");
     noten.push("Rendite: bis zur Fälligkeit, pro Jahr, von Bondarium aus dem Kurs berechnet. Kurs: Schlusskurs in % des Nennwerts (Börse Frankfurt, Tradegate; " +
-      "Bundeswertpapiere: Deutsche Bundesbank), darunter die Veränderung zum Vortag in Prozentpunkten (Pkt.); ein älterer Kurs trägt sein Datum. Seit dem Merken: " +
+      "Bundeswertpapiere: Deutsche Bundesbank), darunter die Veränderung zum Vortag in Prozent; ein älterer Kurs trägt sein Datum. Seit dem Merken: " +
       "Veränderung der Rendite in Prozentpunkten. Zinstermine laut Deutscher Börse, sonst geschätzt. Einzelheiten zu jeder Anleihe: Klick auf den Namen.");
     // Zweiter Knopf (Nutzerwunsch 03.10.2026): dieselben Anleihen als neues Musterdepot, über den Link des Musterdepot-PDFs. Nur, was
     // sich rechnen lässt (wie beim „+“ der Merkliste; ein fehlender Wechselkurs auf diesem Gerät zählt nicht), Nennwert wie beim „+“,
@@ -1956,10 +1956,10 @@ MC.navInit();
       P.text(rx(2), z1, pt(F.kupon({ kupon: o.kupon, zinsart: o.zinsart })), { gr: 8.5, rechts: true });
       P.text(rx(3), z1, o.faellig ? (jahre(o.faellig) > 0 ? pt(F.restlaufzeit(o.faellig)) : "fällig") : o.cur ? "unbefristet" : "–", { gr: 8.5, rechts: true });
       if (o.faellig) P.text(rx(3), z2, MC.datum(o.faellig), Object.assign({ rechts: true }, klein));
-      const dv = o.kurs != null && o.vortag != null ? o.kurs - o.vortag : null;
+      const dv = F.kursAenderung(o.kurs, o.vortag);
       P.text(rx(4), z1, o.kurs != null ? pt(F.kurs(o.kurs)) : "–", { gr: 8.5, rechts: true });
       if (o.kurs != null && o.datum && o.datum !== KSTAND) P.text(rx(4), z2, `vom ${MC.tag(o.datum)}`, Object.assign({ rechts: true }, klein));
-      else if (dv != null) P.text(rx(4), z2, pt(F.pkt(dv)), Object.assign({ rechts: true }, klein));
+      else if (dv != null) P.text(rx(4), z2, pt(F.aenderung(dv)), Object.assign({ rechts: true }, klein));
       const dm = KEY.delta(o);
       P.text(rx(5), z1, dm != null ? pt(F.pkt(dm)) : "–", { gr: 8.5, rechts: true });
       if (o.seit) P.text(rx(5), z2, new Date(o.seit * 1000).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" }), Object.assign({ rechts: true }, klein));

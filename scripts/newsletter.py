@@ -19,8 +19,9 @@ geschrieben. Jeder Abschnitt kommt aus einer Datei des Datenlaufs oder aus einer
 Schreibweise je Anleihe (seit 03.10.2026, Konzept „Einheitliche Anleihen-Angaben“, docs/ANLEIHEN-ANGABEN.md): erste Zeile der Titel
 („Deutschland 2,60 % 2033“ – Kurzname, Kupon, Fälligkeitsjahr wie auf der Website), zweite Zeile die Kernzahlen in der Reihenfolge der
 Website-Tabellen („Rendite 3,85 % · Restlaufzeit 4,2 Jahre (fällig 15.08.2033) · Kurs 98,50 %“, nur vorhandene Angaben), danach, was
-der Abschnitt meldet. Veränderungen mit Vorzeichen in Prozentpunkten („+0,12 Pkt. zur Vorwoche“), Kupon „variabel“/„Nullkupon“ als
-Wort. Namen und Schreibweisen kommen aus scripts/_common.py (kurz_name, titel_text, pct_text, kurs_text, pkt_text …), Spaltenköpfe
+der Abschnitt meldet. Kursveränderungen mit Vorzeichen in Prozent („Kurs +1,42 % zur Vorwoche“, seit 17.10.2026; vorher Prozentpunkte),
+Veränderungen der Rendite in Prozentpunkten („+0,12 Pkt.“), Kupon „variabel“/„Nullkupon“ als
+Wort. Namen und Schreibweisen kommen aus scripts/_common.py (kurz_name, titel_text, pct_text, kurs_text, aenderung_text, pkt_text …), Spaltenköpfe
 aus dem Feldkatalog in felder.js. Die HTML-Fassung behält das geschützte Leerzeichen vor „%“ und „Pkt.“, die Textfassung nicht.
 
 Schreibt in den Ordner newsletter/ (konto.php liest ihn auf dem Server; per .htaccess nicht abrufbar):
@@ -70,7 +71,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import (NBSP, datum_text, felder_katalog, kupon_text, kurs_text, kurz_name, log_err, pct_text, pkt_text,  # noqa: E402
+from _common import (NBSP, aenderung_text, datum_text, felder_katalog, kupon_text, kurs_text, kurz_name, log_err, pct_text, pkt_text,  # noqa: E402
                      restlaufzeit_text, runden_wie_browser, titel_text, write_atomic, zahl_de, zinsplan, zinstermine_laden,
                      zinszahlungen)
 
@@ -177,7 +178,7 @@ def naechster_zinstermin(r, termine, heute):
 
 
 def anleihen_daten(heute):
-    """newsletter/anleihen.json: {ISIN: [Name, Kupon-Text, Fälligkeit, Kurs, Rendite|None, Veränderung zur Vorwoche|None,
+    """newsletter/anleihen.json: {ISIN: [Name, Kupon-Text, Fälligkeit, Kurs, Rendite|None, Kursveränderung zur Vorwoche in %|None,
     nächster Zinstermin|None, Zinsart, Zinstermin geschätzt 1|0, Währung]} – zehn Felder, beschrieben im Kopf der Datei."""
     si = lade("suchindex.json", {}) or {}
     emi, termine = si.get("emittenten") or [], zinstermine_laden()
@@ -207,7 +208,8 @@ def anleihen_daten(heute):
         # Kurzname und Titel wie auf der Website; die Emittenten im Suchindex sind schon lesbar geschrieben
         name = kurz_name(emi[r[9]] if isinstance(r[9], int) and 0 <= r[9] < len(emi) else "", r[2], r[11], r[1])
         zt, geschaetzt = naechster_zinstermin(r, termine, heute)
-        diff = round(kurs - vorwoche[isin], 3) if isin in vorwoche else None
+        # Kursveränderung zur Vorwoche in Prozent (seit 17.10.2026; vorher Prozentpunkte des Nennwerts): 77,99 → 79,10 ist +1,42 %
+        diff = round((kurs / vorwoche[isin] - 1) * 100, 3) if vorwoche.get(isin) else None
         # Rendite auf zwei Stellen wie die Website sie zeigt (seit 09.10.2026, Technik-Test 08.10.2026 T-52): round() machte aus
         # 3,565 „3,56“, die Seite zeigt „3,57“ – konto.php formatiert den gespeicherten Wert nur noch
         aus[isin] = [name, kupon_text(r[4], r[10]), r[5] or "", kurs, None if rend is None else runden_wie_browser(rend, 2), diff, zt,
@@ -488,7 +490,7 @@ def baue(heute):
 
 def merk_werte(isin, b, v):
     """Platzhalter einer Anleihe für „Deine Merkliste“ – dieselben Werte wie nl_merkliste in konto.php (dort für den Versand)."""
-    diff = "" if b[5] is None else pkt_text(b[5])
+    diff = "" if b[5] is None else aenderung_text(b[5])
     r = round(b[5], 2) if b[5] is not None else 0
     zt = zinstermin_text(b)
     zusatz = " · ".join(x for x in ((FELD["kurs"]["kurz"] + " " + diff + " zur Vorwoche") if diff else "", zt) if x)

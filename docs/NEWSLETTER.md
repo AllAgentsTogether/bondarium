@@ -27,7 +27,7 @@ Besucherbericht.
 | Überschrift, Einleitung | Regel: Rendite des Bundeswertpapiers mit rund zehn Jahren Restlaufzeit gegen fünf Börsentage zuvor – ab 0,03 Prozentpunkten „gestiegen“/„gefallen“, sonst „kaum verändert“ |
 | Zinsen der Woche | `kurse/bund/` (Tagesrenditen der Bundesbank, rund 2 und rund 10 Jahre), `ezb.json`, `renditen.json` (USA 10 Jahre, nur Stand – Tageswerte der Vorwoche speichert der Datenlauf nicht) |
 | Meistgehandelt | `top10-staatsanleihen-laufzeit.json`, `top10-unternehmensanleihen-laufzeit.json`: je drei nach Umsatz |
-| Deine Merkliste | Merkliste des Kontos (höchstens 8, zuletzt Gemerktes zuerst): Titel, dann Rendite · Restlaufzeit (fällig …) · Kurs, Veränderung zur Vorwoche in Pkt. und nächster Zinstermin aus `newsletter/anleihen.json` (Schreibweisen wie auf der Website, siehe docs/ANLEIHEN-ANGABEN.md); leere Merkliste: Hinweis auf den Knopf „Merken“ |
+| Deine Merkliste | Merkliste des Kontos (höchstens 8, zuletzt Gemerktes zuerst): Titel, dann Rendite · Restlaufzeit (fällig …) · Kurs, Kursveränderung zur Vorwoche in Prozent (seit 17.10.2026; vorher Pkt.) und nächster Zinstermin aus `newsletter/anleihen.json` (Schreibweisen wie auf der Website, siehe docs/ANLEIHEN-ANGABEN.md); leere Merkliste: Hinweis auf den Knopf „Merken“ |
 | Aus der Akademie | reihum durch das Akademie-Menü in `scripts/nav.py`, eine Seite je Kalenderwoche; Titel = `h1`, Text = `meta description` |
 | Neue Seiten | Seiten, die `newsletter/seiten.json` in den letzten sieben Tagen zum ersten Mal gesehen hat; ohne neue Seite entfällt der Abschnitt |
 
@@ -89,7 +89,7 @@ den Starter mit `from __future__ import annotations`.
 
 ## Datensatz `newsletter/anleihen.json` (seit 03.10.2026)
 
-`{ISIN: [Name, Kupon-Text, Fälligkeit, Kurs, Rendite, Veränderung zur Vorwoche, nächster Zinstermin, Zinsart, geschätzt, Währung]}` (Felder 0–9) – gebaut in
+`{ISIN: [Name, Kupon-Text, Fälligkeit, Kurs, Rendite, Kursveränderung zur Vorwoche in %, nächster Zinstermin, Zinsart, geschätzt, Währung]}` (Felder 0–9) – gebaut in
 `scripts/newsletter.py` (`anleihen_daten`), gelesen von `konto.php` (Meldungen, Wochenbrief-Merkliste, Termine in „My Bondarium“) und
 `erinnerung.php` (Titel der E-Mail vor Fälligkeit). Name = Kurzname nach der Regel der Website (`_common.kurz_name`), Kupon-Text
 „3,50 %“ · „variabel“ · „Nullkupon“; der nächste Zinstermin ist laut Deutscher Börse oder – Feld 8 = 1 – geschätzt (dieselbe Rechnung

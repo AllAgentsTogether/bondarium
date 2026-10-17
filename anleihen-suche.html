@@ -439,7 +439,7 @@ const T = {
   det: {
     kurs: "Kurs", rendite: "Rendite bis Fälligkeit", umsatz: d => `Umsatz am ${d}`, kupon: "Kupon", faellig: "Fälligkeit",
     stk: "Stückelung", vol: "Volumen", emi: "Emittent", keinKurs: "kein aktueller Kurs",
-    veraendT: (p, v) => `Veränderung zum Vortag (${p}\u00a0%, Vortag ${v}) – berechnet gegen unseren gespeicherten Schlusskurs`, keinVortag: "kein Vortageskurs",
+    veraendT: v => `Veränderung zum Vortag in Prozent (Vortag ${v}\u00a0%) – berechnet gegen unseren gespeicherten Schlusskurs`, keinVortag: "kein Vortageskurs",
     tag: "Kursspanne des Tags", eroeff: "Eröffnung", hoch: "Hoch", tief: "Tief", fest: n => `${n} ${n === 1 ? "Kursfeststellung" : "Kursfeststellungen"}`,
     alleGleich: "alle zum selben Kurs", abschl: n => `${n} ${n === 1 ? "Abschluss" : "Abschlüsse"}`,
     umsatzJe: { F: "Frankfurt", T: "Tradegate", X: "Xetra" }, stueckKurs: "Stück × Kurs",
@@ -697,10 +697,11 @@ function detailZeile(r) {
   const hinweis = befund(r) ? L("pruefRendite") : r[10] === 1 ? D.varRendite : [rd != null ? (real ? L("real") : fraglich(r) ? L("fraglichKurz") : D.paFaellig) : (k ? (unsicher(r) ? "Kurs ohne Umsatz – Rendite nicht aussagekräftig" : spaeter ? D.fixFloat : D.keineRenditeWarum) : ""),
     kue && kue.k === "t" ? D.kuendbar(kueAb, k && k[0] > 100) : "", rd != null && spaeter ? D.stufe : ""].filter(Boolean).join(" · ");
   const vor = k && typeof k[6] === "number" ? k[6] : null;
-  const dif = vor != null && k ? k[0] - vor : null;
-  // Veränderung zum Vortag in Punkten, direkt hinter dem Kurs: grün (+), rot (−), grau (±0,00); Prozent und Vortag im Tooltip
-  const vz = dif == null ? "" : dif > 0 ? "+" : dif < 0 ? "−" : "±";
-  const veraend = dif == null ? "" : ` <span class="kv-ver ${dif > 0 ? "plus" : dif < 0 ? "minus" : "null"}" title="${MC.esc(D.veraendT(`${vz}${fmt(Math.abs(dif / vor * 100), 2)}`, fmt(vor, 2)))}">${vz}${fmt(Math.abs(dif), 2)}\u00a0Pkt.</span>`;
+  const dif = k ? MC.felder.kursAenderung(k[0], vor) : null;   // in Prozent (seit 17.10.2026; vorher Prozentpunkte des Nennwerts, „Pkt.“)
+  // Veränderung zum Vortag in Prozent, direkt hinter dem Kurs: grün (+), rot (−), grau (±0,00, nach Rundung); Vortag im Tooltip
+  const dr = dif == null ? null : Math.round(dif * 100) / 100 || 0;
+  const vz = dif == null ? "" : dr > 0 ? "+" : dr < 0 ? "−" : "±";
+  const veraend = dif == null ? "" : ` <span class="kv-ver ${dr > 0 ? "plus" : dr < 0 ? "minus" : "null"}" title="${MC.esc(D.veraendT(fmt(vor, 2)))}">${vz}${fmt(Math.abs(dif), 2)}\u00a0%</span>`;
   // Seit 03.10.2026 in der Reihenfolge der Tabelle: Rendite · Kupon · Restlaufzeit (Fälligkeit) · Kurs, dazu die Kündigung
   const kpi = [
     kv(D.renditeKurz, rd != null ? `${fmt(rd, 2)}\u00a0%${real ? "*" : fraglich(r) ? "<sup>?</sup>" : ""}` : D.keineRendite, hinweis),

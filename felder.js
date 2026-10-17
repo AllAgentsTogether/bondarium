@@ -93,6 +93,10 @@
   function kursZahl(v) { return zahl(v, Math.abs(v * 100 - Math.round(v * 100)) > 1e-6 ? 3 : 2); }   // dritte Stelle, wenn vorhanden (99,015)
   function kurs(v) { return typeof v === "number" && isFinite(v) ? kursZahl(v) + NBSP + "%" : "–"; }
   function pkt(v, d) { d = d == null ? 2 : d; if (typeof v !== "number" || !isFinite(v)) return "–"; var r = Math.round(v * Math.pow(10, d)) / Math.pow(10, d) || 0; return (r > 0 ? "+" : "") + zahl(r, d) + NBSP + "Pkt."; }
+  // Kursveränderung in Prozent (seit 17.10.2026, Nutzerentscheid: „keiner rechnet mit Pkt.“): 77,99 % → 79,10 % ist +1,42 %, nicht
+  // „+1,11 Pkt.“. Prozentpunkte (pkt) bleiben für Renditen und Aufschläge – dort wäre eine Veränderung in Prozent irreführend.
+  function kursAenderung(neu, vor) { return typeof neu === "number" && typeof vor === "number" && vor > 0 ? (neu / vor - 1) * 100 : null; }
+  function aenderung(v, d) { d = d == null ? 2 : d; if (typeof v !== "number" || !isFinite(v)) return "–"; var r = Math.round(v * Math.pow(10, d)) / Math.pow(10, d) || 0; return (r > 0 ? "+" : "") + zahl(r, d) + NBSP + "%"; }
   function datum(iso) { return iso ? MC.datum(iso) : "–"; }
   function tag(iso) { return iso ? MC.tag(iso) : "–"; }
   function restlaufzeit(x) { var y = typeof x === "number" ? x : jahre(x); return y == null ? "unbefristet" : MC.restlaufzeit(y); }
@@ -155,8 +159,8 @@
     var stand = ctx && ctx.kstand;
     if (o.kdatum && stand && o.kdatum !== stand) return { h: h, s: "vom " + tag(o.kdatum), p: "" };
     if (ctx && ctx.vortag && typeof o.vortag === "number" && typeof o.kurs === "number") {
-      var d = o.kurs - o.vortag;
-      return { h: h, s: '<span class="' + (d > 0.004 ? "plus" : d < -0.004 ? "minus" : "") + '">' + pkt(d) + "</span>", p: "zum Vortag" };
+      var d = kursAenderung(o.kurs, o.vortag);
+      if (d != null) return { h: h, s: '<span class="' + (d > 0.004 ? "plus" : d < -0.004 ? "minus" : "") + '">' + aenderung(d) + "</span>", p: "zum Vortag" };
     }
     return { h: h };
   }
@@ -262,7 +266,7 @@
 
   MC.felder = {
     K: K, F: F, ART: ART, BOERSE: BOERSE, lesbar: lesbar, kurzName: kurzName, landName: landName, titel: titel, jahre: jahre, rechnerUrl: rechnerUrl, simulatorUrl: simulatorUrl,
-    pct: pct, kupon: kupon, kuponZahl: kuponZahl, kurs: kurs, pkt: pkt, datum: datum, tag: tag, restlaufzeit: restlaufzeit,
+    pct: pct, kupon: kupon, kuponZahl: kuponZahl, kurs: kurs, pkt: pkt, kursAenderung: kursAenderung, aenderung: aenderung, datum: datum, tag: tag, restlaufzeit: restlaufzeit,
     volumen: volumen, stueckelung: stueckelung, betrag: betrag, bonitaet: bonitaet,
     SPALTEN: SPALTEN, REIHE: REIHE, spalten: spalten, tabelle: tabelle, sortiere: sortiere, sortierbar: sortierbar
   };

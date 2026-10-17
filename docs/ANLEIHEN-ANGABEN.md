@@ -54,7 +54,7 @@ Volumen, Handelstage, Seit Hoch, Seit dem Merken, Nächster Zinstermin, Merken. 
 - **PDF = Tabelle**: gleiche Spalten, gleiche Reihenfolge (Merkliste, Musterdepot). **CSV**: Spalten der Tabelle in Langform mit Einheit
   („Rendite bis Fälligkeit in %“), dazu ISIN, Art, Währung, Fälligkeit.
 - **Handy**: Karten – Name oben, darunter groß Rendite · Kupon · Restlaufzeit, dann die übrigen Werte; zweite Zeilen mit Vorsatz Ausnahme Startseite (seit 11.10.2026 abends, Nutzerwunsch „nur eine Zeile mit geringer Höhe“): die sechs Beispiele stehen bis 640 px je Anleihe in EINER Zeile – Name (mit Auslassung), Rendite, Kupon, Restlaufzeit, Merken – mit Kopfzeile; ISIN, Zinstermin, Fälligkeitstag, Kurs, Bonität und Stückelung nur im Steckbrief, dazu die kurze Fußnote `.itab-note-handy`. CSS-Block „Handy: eine Zeile je Anleihe“ am Stilende von index.html; überschreibt die Karten aus base.css nur dort.
-  („fällig 15.08.2033“, „zum Vortag +0,12 Pkt.“). Die Suche behält ihre „Sortieren nach“-Chips.
+  („fällig 15.08.2033“, „zum Vortag +0,15 %“). Die Suche behält ihre „Sortieren nach“-Chips.
 - **E-Mails**: erste Zeile Titel, zweite Zeile „Rendite 3,85 % · Restlaufzeit 4,2 Jahre (fällig 15.08.2033) · Kurs 98,50 %“.
 
 ## Schreibweisen
@@ -64,7 +64,7 @@ Volumen, Handelstage, Seit Hoch, Seit dem Merken, Nächster Zinstermin, Merken. 
 | Rendite, lfd. Verzinsung | zwei Stellen, geschütztes Leerzeichen vor % – „3,85 %“ |
 | Kupon | zwei Stellen, drei wenn nötig; „variabel“, „Nullkupon“ als Wort (nie „0,00 %“) |
 | Kurs | zwei Stellen (drei, wenn die Börse sie liefert), **immer mit %** – „98,50 %“ |
-| Veränderungen | mit Vorzeichen und „Pkt.“ – „+0,12 Pkt.“ |
+| Veränderungen | mit Vorzeichen. **Kurs in Prozent** – „+1,42 %“ (Kurs heute ÷ Kurs damals − 1; seit 17.10.2026, Nutzerentscheid „keiner rechnet mit Pkt.“, `MC.felder.kursAenderung`/`aenderung`, `aenderung_text`, `nl_aenderung`). **Rendite und Aufschläge in Prozentpunkten** – „+0,12 Pkt.“ (`pkt`), denn eine Rendite von 3,00 auf 3,30 % ist +0,30 Pkt., nicht +10 % |
 | Fälligkeit, Termine | TT.MM.JJJJ; „vom TT.MM.“ beim alten Kurs; Jahr allein nur im Titel |
 | Restlaufzeit, Duration | unter einem Monat Tage, unter einem Jahr Monate, sonst „4,2 Jahre“ |
 | Volumen, Umsatz | ab 1 Mrd. in Mrd., darunter Mio., höchstens drei gültige Ziffern, immer mit Währungscode – „1,25 Mrd. EUR“ |

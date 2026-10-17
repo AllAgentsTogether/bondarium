@@ -285,12 +285,12 @@
         kd = v => typeof v === "number" && Math.abs(v * 100 - Math.round(v * 100)) > 1e-6 ? 3 : 2;
       // Seit 03.10.2026 Spalten wie die Tabelle in Langform mit Einheit (Konzept „Einheitliche Anleihen-Angaben“, Kapitel 5.5)
       const kopf = ["Anleihe", "ISIN", "Art", "Währung", "Rendite bis Fälligkeit in %", "Kupon in %", "Restlaufzeit in Jahren", "Fälligkeit", "Kurs in %", "Kurs vom",
-        "Veränderung zum Vortag in Pkt.", "Rendite seit dem Merken in Pkt.", "Gemerkt am", "Nächster Zinstermin", "ETF: Kurs je Anteil"];
+        "Veränderung zum Vortag in %", "Rendite seit dem Merken in Pkt.", "Gemerkt am", "Nächster Zinstermin", "ETF: Kurs je Anteil"];
       const ART = ["Staat", "Öffentlich", "Unternehmen"], jahreBis = iso => (Date.parse(iso + "T12:00:00Z") - Date.parse(HEUTE + "T12:00:00Z")) / (365.25 * 864e5);
       const zeilen = X.liste().map(o => [o.name, o.isin, ART[o.art] || "", o.cur, n(o.rendite, 2),
         o.zinsart === 1 || o.kupon === "var" ? "variabel" : typeof o.kupon === "number" ? n(o.kupon, 3) : "", o.faellig ? n(Math.max(0, jahreBis(o.faellig)), 1) : "",
         o.faellig ? MC.datum(o.faellig) : "", n(o.kurs, kd(o.kurs)), o.datum ? MC.datum(o.datum) : "",
-        typeof o.kurs === "number" && typeof o.vortag === "number" ? n(o.kurs - o.vortag, 2) : "", delta(o) != null ? n(delta(o), 2) : "", tagDe(o.seit), termin(o) ? MC.datum(termin(o)) : "", ""]);
+        n(F ? F.kursAenderung(o.kurs, o.vortag) : null, 2), delta(o) != null ? n(delta(o), 2) : "", tagDe(o.seit), termin(o) ? MC.datum(termin(o)) : "", ""]);
       etfListe().forEach(f => { const r = ETF.get(f[0]), k = ETFK && ETFK.kurse ? ETFK.kurse[f[0]] : null; zeilen.push([r[1], r[0], "ETF", r[9] || "", "", "", "", "", "", "", "", "", tagDe(f[1]), "", k && typeof k[0] === "number" ? n(k[0], 2) : ""]); });
       lade(`Bondarium-Merkliste-${HEUTE}.csv`, "﻿" + [kopf].concat(zeilen).map(r => r.map(z).join(";")).join("\r\n") + "\r\n", "text/csv;charset=utf-8");
     }

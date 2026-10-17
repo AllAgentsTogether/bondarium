@@ -803,7 +803,7 @@ function zeige(r, k, meta, kf) {
     kachel("Kurs", kurs != null ? `${fmtKurs(kurs)} %` : "kein Kurs", k ? `${bund ? "Kurs der Bundesbank" : "Schlusskurs"} ${wtag} ${fmtDate(datum)}${alter ? ` · ${alter} ${alter === 1 ? "Börsentag" : "Börsentage"} alt` : ""}${bund ? "" : ` · ${MC.esc(T.boersen[k[3]] || "")}`}` : "keine Kursfeststellung", kurs == null),
   ].join("");
   // Nebenzeile: Vortag, laufende Verzinsung, Aufschlag zu Bund
-  const vor = k && typeof k[6] === "number" ? k[6] : null, dif = vor != null && kurs != null ? kurs - vor : null;
+  const vor = k && typeof k[6] === "number" ? k[6] : null, dif = MC.felder.kursAenderung(kurs, vor);   // in Prozent (seit 17.10.2026; vorher Pkt.)
   const lfd = typeof kupon === "number" && zinsart === 0 && kurs && !inflIdx && !raten ? kupon / kurs * 100 : null;   // nicht bei Tilgung in Raten (B04-04)
   // Warum kein Aufschlag? Seit 03.10.2026 je Fall – vorher stand immer „nur bei Euro-Anleihen mit Rendite bis 30 Jahre berechnet“, auch bei
   // Bundesanleihen und bei Euro-Anleihen, denen nach dem Bundesbank-Ausfall vom 02.10. nur die Vergleichskurve fehlte (Nutzertest)
@@ -825,7 +825,7 @@ function zeige(r, k, meta, kf) {
     lfd != null ? `<span>Laufende Verzinsung <b>${fmt(lfd, 2)} %</b>${BER}</span>` : "",
     dur ? `<span>Duration${hilf("duration", "Duration")} <b>${RL(dur.macaulay)}</b> · mod. Duration <b>${fmt(dur.modified, 1)}</b>${BER}</span>` : "",
     `<span>Risikoaufschlag zu Bund${hilf("spread", "Risikoaufschlag")} ${auf != null ? `<b>${vz(auf)} Pkt.</b>${BER}` : `<b>–</b> ${aufGrund}`}</span>`,
-    dif != null ? `<span>Zum Vortag <b>${vz(dif)} Pkt.</b> (${vz(dif / vor * 100)} %, Vortag ${fmtKurs(vor)} %)</span>` : "",
+    dif != null ? `<span>Zum Vortag <b>${vz(dif)} %</b> (Vortag ${fmtKurs(vor)} %)</span>` : "",
     fxBsp != null ? `<span>In Euro: Fällt ${MC.esc(ccy)} bis zur Fälligkeit um 10 % gegenüber dem Euro, bleiben rund <b>${fmt(fxBsp, 1)} %</b> pro Jahr (Beispiel)<a class="hilf" href="risiko.html#waehrung" aria-label="Währungsrisiko erklärt">i</a></span>` : "",
   ].filter(Boolean).join("");
 

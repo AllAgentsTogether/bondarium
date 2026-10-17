@@ -626,6 +626,15 @@ def pkt_text(v, d=2) -> str:
     return ("+" if r > 0 else "") + zahl_de(r, d) + NBSP + "Pkt."
 
 
+def aenderung_text(v, d=2) -> str:
+    """„+1,42 %“, „−0,26 %“, „0,00 %“ – Kursveränderung in Prozent, wie MC.felder.aenderung (seit 17.10.2026; Prozentpunkte mit
+    pkt_text nur noch für Renditen und Aufschläge)."""
+    if not _ist_zahl(v):
+        return "–"
+    r = _js_round(v * 10 ** d) / 10 ** d or 0.0
+    return ("+" if r > 0 else "") + zahl_de(r, d) + NBSP + "%"
+
+
 def datum_text(iso) -> str:
     return f"{iso[8:10]}.{iso[5:7]}.{iso[0:4]}" if iso and len(iso) >= 10 else "–"
 

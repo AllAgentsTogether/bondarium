@@ -658,7 +658,7 @@ function favoriten(int $id): array
 
 /**
  * Zeile einer Anleihe aus dem letzten Datenlauf (newsletter/anleihen.json: ISIN → [0 Name, 1 Kupon-Text, 2 Fälligkeit, 3 Kurs,
- * 4 Rendite|null, 5 Veränderung zur Vorwoche|null, 6 nächster Zinstermin|null, 7 Zinsart, 8 Zinstermin geschätzt 1|0, 9 Währung] –
+ * 4 Rendite|null, 5 Kursveränderung zur Vorwoche in %|null, 6 nächster Zinstermin|null, 7 Zinsart, 8 Zinstermin geschätzt 1|0, 9 Währung] –
  * Felder 7 und 8 seit 03.10.2026, Feld 9 seit 15.10.2026; Beschreibung im Kopf von scripts/newsletter.py) oder null. Titel und
  * Restlaufzeit stehen nicht in der Datei – nl_titel() und nl_restlaufzeit() bilden sie aus den Feldern 0–2 (und 9).
  * Die Datei ist groß; gesucht wird die eine Zeile im Text, ohne alles zu entpacken.
@@ -1011,7 +1011,7 @@ function nl_datum(string $iso): string
     return substr($iso, 8, 2) . '.' . substr($iso, 5, 2) . '.' . substr($iso, 0, 4);
 }
 
-// Schreibweisen der Anleihen-Angaben in E-Mails – dieselben Regeln wie scripts/_common.py (pct_text, kurs_text, pkt_text) und
+// Schreibweisen der Anleihen-Angaben in E-Mails – dieselben Regeln wie scripts/_common.py (pct_text, kurs_text, aenderung_text) und
 // felder.js auf der Website (Konzept „Einheitliche Anleihen-Angaben“, docs/ANLEIHEN-ANGABEN.md). Mit geschütztem Leerzeichen;
 // Textfassungen gehen durch nl_text().
 
@@ -1027,11 +1027,11 @@ function nl_kurs(float $v): string
     return nl_zahl($v, abs($v * 100 - round($v * 100)) > 1e-6 ? 3 : 2) . NL_NBSP . '%';
 }
 
-/** „+0,12 Pkt.“, „−0,26 Pkt.“, „0,00 Pkt.“ (Veränderung in Prozentpunkten, mit Vorzeichen) */
-function nl_pkt(float $v): string
+/** „+1,42 %“, „−0,26 %“, „0,00 %“ (Kursveränderung in Prozent, mit Vorzeichen; seit 17.10.2026, vorher „Pkt.“) */
+function nl_aenderung(float $v): string
 {
     $r = round($v, 2);
-    return ($r > 0 ? '+' : '') . nl_zahl($r) . NL_NBSP . 'Pkt.';
+    return ($r > 0 ? '+' : '') . nl_zahl($r) . NL_NBSP . '%';
 }
 
 /** Textfassung: normales statt geschütztes Leerzeichen */
@@ -1127,8 +1127,8 @@ function nl_merkliste(array $a, array $anleihen, array $isins): array
             continue;
         }
         $n++;
-        $diff = is_numeric($b[5]) ? round((float)$b[5], 2) : null;   // Kurs zur Vorwoche, Prozentpunkte des Nennwerts
-        $pkt = $diff === null ? '' : nl_pkt($diff);
+        $diff = is_numeric($b[5]) ? round((float)$b[5], 2) : null;   // Kurs zur Vorwoche in Prozent (seit 17.10.2026)
+        $pkt = $diff === null ? '' : nl_aenderung($diff);
         $zt = nl_zinstermin($b);
         $zusatz = implode(' · ', array_filter([$pkt !== '' ? 'Kurs ' . $pkt . ' zur Vorwoche' : '', $zt], fn($x) => $x !== ''));
         $w = [
