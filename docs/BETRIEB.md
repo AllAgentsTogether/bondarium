@@ -178,3 +178,7 @@ dateModified der Seite setzen.
 | alle 120 Tage (frische.py warnt) | Preisverzeichnisse der Broker | broker.json „stand“; Scalable: Link mit `version=` der geltenden Fassung (seit 01.09.2026) |
 | September | Handelszeiten und Anleihenzahlen der Börsen | handelsplaetze.html, Tabelle (zuletzt 28.09.2026) |
 | bei Entscheidung, spätestens Januar 2027 | Bundesverfassungsgericht, Vorlage 2 BvL 3/21 | steuern-handelskosten.html, Karte 3 |
+| bei Gesetzesänderung, spätestens Januar | Steuerwerte: Abgeltungsteuer mit Soli 26,375 %, Kirchensteuer 8/9 %, Sparerpauschbetrag 1.000/2.000 € | rechner.js, steuern-handelskosten.html, anleihen-fuer-unternehmen.html, begriffe.html |
+| bei Gesetzesänderung | Einlagensicherung 100.000 € je Bank und Kunde | anleihe-festgeld-tagesgeld.html |
+| wenn sich ein Bild ändert | Versionsnummer `?v=` der Bilder (von Hand gezählt) | `ICON_V` in scripts/nav.py, Bildverweise in den Seiten |
+| wenn ein beschreibendes Wort als Zusage gemeldet wird | Ausnahmen der Wortprüfung | `AUSNAHMEN_ZUSAGE` in scripts/pruefen.py |

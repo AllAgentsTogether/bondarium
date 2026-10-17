@@ -44,7 +44,7 @@
   .welt-z small { display: block; font-size: 12.5px; font-weight: 400; letter-spacing: 0; color: var(--text); margin-top: 2px; }
   .welt ul { list-style: none; margin: 2px 0 0; padding: 0; display: grid; gap: 4px; font-size: 13.5px; line-height: 1.35; color: var(--ink); }
   .welt li { padding-left: 14px; position: relative; }
-  .welt li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--green-graph, #157C00); }
+  .welt li::before { content: ""; position: absolute; left: 0; top: 7px; width: 6px; height: 6px; border-radius: 50%; background: var(--green-text); }
   .welt-pfeil { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text); justify-content: center; }
   .welt-pfeil b { color: var(--green-text); font-weight: 600; }
 
@@ -80,7 +80,7 @@
   .hp-t .bd.k { background: rgba(26,26,25,0.07); color: var(--text); }
   .dots { display: inline-flex; gap: 3px; vertical-align: middle; }
   .dots i { width: 9px; height: 9px; border-radius: 50%; background: rgba(26,26,25,0.13); }
-  .dots i.on { background: var(--green-graph, #157C00); }
+  .dots i.on { background: var(--green-text); }
   .hp-t tbody tr.dim > * { color: var(--text); }
   .hp-t tbody tr.dim th { color: var(--text); }
   .hp .klein { margin-top: 14px; }
@@ -88,7 +88,7 @@
   /* Platz wählen (4) */
   .schritte { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: s; }
   .schritte li { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: start; padding: 10px 12px; border-radius: 12px; background: var(--ap-soft); counter-increment: s; }
-  .schritte li::before { content: counter(s); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--green-graph, #157C00); color: #fff; font-weight: 600; font-size: 14px; }
+  .schritte li::before { content: counter(s); display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--green-text); color: #fff; font-weight: 600; font-size: 14px; }
   .schritte b { display: block; font-size: 14.5px; font-weight: 600; }
   .schritte span { display: block; font-size: 13px; color: var(--text); line-height: 1.4; margin-top: 1px; }
 

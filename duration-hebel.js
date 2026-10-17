@@ -7,6 +7,9 @@
    (viewBox = Breite des Kastens), damit die Schrift am Handy nicht schrumpft. */
 (function () {
   "use strict";
+  // Formulare nur zum Rechnen: Enter schickt nichts ab (seit 17.10.2026 hier statt onsubmit="return false" im Markup,
+  // Website-Test P10-03 – keine Inline-Handler mehr auf der Website)
+  document.querySelectorAll("form.dh-regler").forEach(function (f) { f.addEventListener("submit", function (e) { e.preventDefault(); }); });
   var $ = function (id) { return document.getElementById(id); };
   var svg = $("dh-svg");
   if (!svg) return;

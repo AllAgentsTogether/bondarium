@@ -10,6 +10,9 @@
 // Rechner 1, der Name der übernommenen Anleihe kommt aus den Daten statt aus ?titel=.
 (function () {
   "use strict";
+  // Formulare nur zum Rechnen: Enter schickt nichts ab (seit 17.10.2026 hier statt onsubmit="return false" im Markup,
+  // Website-Test P10-03 – keine Inline-Handler mehr auf der Website)
+  document.querySelectorAll("form.f").forEach(function (f) { f.addEventListener("submit", function (e) { e.preventDefault(); }); });
   var MCX = window.MC || {};
   var minus = MCX.minus || function (s) { return String(s).replace(/^-/, "−"); };
   var BOND = MCX.bond;   // bond.js (nach site.js geladen)

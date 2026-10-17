@@ -317,7 +317,7 @@
       <div>
         <h1 id="titel">Anleihe</h1>
         <p class="reg" id="reg"></p>
-        <p class="idz" id="idz"><span>Der Steckbrief wird geladen …</span></p>
+        <div class="idz" id="idz"><span>Der Steckbrief wird geladen …</span></div>
       </div>
       <div class="b2-spot"><img src="spot-anleihe.svg" alt="" width="232" height="160"></div>
     </div>
@@ -463,7 +463,6 @@ const BER = '<span class="ber">berechnet</span>';
 const hilf = (anker, begriff) => `<a class="hilf" href="begriffe.html#${anker}" aria-label="${begriff} im Glossar">i</a>`;
 const kv = (dt, dd, klein) => `<div><dt>${dt}</dt><dd>${dd}${klein ? `<small>${klein}</small>` : ""}</dd></div>`;
 // Vorzeichen-Zahl mit zwei Stellen; gerundet 0 → „0,00“ ohne Vorzeichen (nicht „−0,00“)
-const rund2 = x => Math.round(x * 100) / 100 || 0;
 const vz = (x, dec = 2) => { const r = Math.round(x * 10 ** dec) / 10 ** dec || 0; return (r > 0 ? "+" : "") + fmt(r, dec); };
 // Laden über den gemeinsamen Fetch-Cache (site.js MC.json): MC.verlauf nutzt dieselbe Kursdatei, sie wird nur einmal geladen
 const json = url => MC.json ? MC.json(url) : MC.load(url);

@@ -8,6 +8,11 @@ refresh-config.php
 .env*
 .claude/
 konto-daten/
+# Datenbanken nie ins öffentliche Repo – auch heruntergeladene Kopien im Arbeitsordner (docs/BETRIEB.md §5; Website-Test P10-11)
+*.sqlite
+*.sqlite.alt
+*.sqlite-*
+*.sqlite-journal
 # Wochenbrief: Ausgabe und Daten je Anleihe entstehen in jedem Datenlauf neu (scripts/newsletter.py); nur seiten.json wird committet
 newsletter/ausgabe.json
 newsletter/anleihen.json

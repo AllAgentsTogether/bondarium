@@ -180,8 +180,8 @@ def seite(vorlage, isin, r, stand, stand_art="Stammdaten "):
     h = ersetze(h, r'<h1 id="titel">[^<]*</h1>', f'<h1 id="titel">{esc(kopf)} <span class="fa">· fällig {datum(faellig)}</span></h1>')
     h = ersetze(h, r'<p class="reg" id="reg"></p>',
                 f'<p class="reg" id="reg">Registername <b>{esc(name)}</b> · Emittent <b>{esc(emittent)}</b></p>')
-    h = ersetze(h, r'<p class="idz" id="idz"><span>[^<]*</span></p>',
-                f'<p class="idz" id="idz"><span class="isin">ISIN <b>{isin}</b> · WKN <b>{wkn}</b></span></p>')
+    h = ersetze(h, r'<div class="idz" id="idz"><span>[^<]*</span></div>',
+                f'<div class="idz" id="idz"><span class="isin">ISIN <b>{isin}</b> · WKN <b>{wkn}</b></span></div>')
     # Ohne JavaScript (KI-Crawler, Vorschauen): die Stammdaten in Sätzen statt nur „braucht JavaScript“
     fakten = (f'<noscript><p class="note"><b>{esc(art)} {esc(k_text)} {jahr}</b> der Bundesrepublik Deutschland · '
               + ("" if null else f"Kupon {esc(k_text)} · ") + f'{esc(zins)} · fällig am {datum(faellig)} · Stückelung {stk_text}'

@@ -315,7 +315,7 @@
         <h2 id="h-schieben">So wirkt der Hebel bei deiner Anleihe</h2>
         <p>Stell Restlaufzeit, Kupon und Rendite ein. Dann schieb den Regler unter dem Schaubild: Er hebt oder senkt das allgemeine Zinsniveau – und du siehst sofort, was mit dem Kurs passiert.</p><p>Die gestrichelte <strong>Gerade der Duration</strong> ist die Faustformel: Je steiler sie fällt, desto größer die modifizierte Duration. Das farbige Dreieck ist der Hebel – so breit wie die Zinsänderung, so hoch wie die Kursänderung laut Gerade. Die grüne Kurve ist der <strong>echte Kurs</strong>.</p>
       </div>
-      <form class="dh-regler" onsubmit="return false" aria-label="Anleihe einstellen">
+      <form class="dh-regler" aria-label="Anleihe einstellen">
         <div><div class="rg-k"><label for="dh-jahre">Restlaufzeit</label><output id="dh-jahre-o" for="dh-jahre">10 Jahre</output></div><input type="range" id="dh-jahre" min="1" max="30" step="1" value="10"></div>
         <div><div class="rg-k"><label for="dh-kupon">Kupon</label><output id="dh-kupon-o" for="dh-kupon">3,00&nbsp;% pro Jahr</output></div><input type="range" id="dh-kupon" min="0" max="8" step="0.25" value="3"></div>
         <div><div class="rg-k"><label for="dh-rendite">Rendite</label><output id="dh-rendite-o" for="dh-rendite">3,00&nbsp;%</output></div><input type="range" id="dh-rendite" min="0" max="8" step="0.25" value="3"></div>
