@@ -743,7 +743,7 @@ function zeige() {
   zeigeThemen();
   if (!IDX) return;
   const box = document.getElementById("treffer"), status = document.getElementById("status");
-  if (!status.dataset.gf) { status.dataset.gf = "1"; status.addEventListener("click", e => { if (e.target.closest("#grundfilter-aus")) { const s = document.getElementById("solide"); if (s) s.click(); } }); }
+  if (!status.dataset.gf) { status.dataset.gf = "1"; status.addEventListener("click", e => { if (e.target.closest("#grundfilter-aus")) { const s = document.querySelector("#filterbox .sol-btn"); if (s) s.click(); } }); }
   const AUS = auswerten(), { hits, zahl, suche } = AUS;
   F.zeigen(zahl);
   const aus = suche || F.gesetzt();
