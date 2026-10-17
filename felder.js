@@ -174,7 +174,7 @@
       zelle: function (o, ctx) {
         var name = o.kurz || o.reg || o.isin, link = ctx && ctx.link ? ctx.link(o) : "anleihe.html?isin=" + encodeURIComponent(o.isin);
         var sub = [o.isin, ART[o.art] || "", o.ccy].filter(Boolean).join(" · ");
-        return { h: (ctx && ctx.nameVor ? ctx.nameVor(o) : "") + '<a class="name-link" href="' + esc(link) + '" title="' + esc(o.reg ? "Registername: " + o.reg : "") + '" aria-label="Steckbrief ' + esc(titel(o)) + '">' + esc(name) + "</a>" +
+        return { h: (ctx && ctx.nameVor ? ctx.nameVor(o) : "") + '<a class="name-link" href="' + esc(link) + '" title="' + esc(name + (o.reg ? " · Registername: " + o.reg : "")) + '" aria-label="Steckbrief ' + esc(titel(o)) + '">' + esc(name) + "</a>" +
           (o.pruef ? '<span class="pruef" title="' + esc(typeof o.pruef === "string" ? o.pruef : "Widerspruch im ESMA-Register – Registerwerte unverändert gezeigt, keine Rendite") + '">Daten?</span>' : "") +
           (ctx && ctx.nameZusatz ? ctx.nameZusatz(o) : ""), s: esc(sub), p: "" };
       } },

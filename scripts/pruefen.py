@@ -684,7 +684,7 @@ try:
                     break
         pool = re.search(r'<script type="application/json" id="top10-pool">(.*?)</script>', start, re.S)
         im_pool = set(re.findall(r'"isin":"([A-Z0-9]{12})"', pool.group(1))) if pool else set()
-        tab = re.search(r'<table class="itab[^"]*">.*?</table>', start, re.S)
+        tab = re.search(r'<table class="itab[^"]*"[^>]*>.*?</table>', start, re.S)
         fremd = [i for i in re.findall(r'data-isin="([A-Z0-9]{12})"', tab.group(0) if tab else "") if i not in im_pool]
         if fremd:
             warnungen.append(f"index.html: Beispiel-Anleihen nicht in der Liste der Top-10-Seiten (#top10-pool): {', '.join(fremd)}")

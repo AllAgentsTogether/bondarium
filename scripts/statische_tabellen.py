@@ -543,7 +543,8 @@ def std_zeile(o, ids, ctx, fett):
             h = str(o.get("platz") or "")
         elif i == "anleihe":
             titel = titel_text(o["kurz"], o.get("kupon"), o.get("zinsart", 0), o.get("faellig") or "")
-            reg = f'Registername: {o["reg"]}' if o.get("reg") else ""
+            # voller Anzeigename im title: am Handy kürzt die Startseite lange Namen (seit 17.10.2026, Website-Test P1, wie felder.js)
+            reg = o["kurz"] + (f' · Registername: {o["reg"]}' if o.get("reg") else "")
             vor = ctx["nameVor"](o) if callable(ctx.get("nameVor")) else ""   # z. B. Farbpunkt der Linie (langlaeufer.html)
             h = (f'{vor}<a class="name-link" href="anleihe.html?isin={esc(o["isin"])}" title="{esc(reg)}" aria-label="Steckbrief {esc(titel)}">'
                  f'{esc(o["kurz"])}</a>')
@@ -981,7 +982,7 @@ def startseite(site, seite="index.html"):
     except Exception as e:
         warn(f"{seite}: Liste der Top-10-Seiten nicht gebildet ({type(e).__name__}: {e}) – feste Zeilen")
         return startseite_feste_zeilen(site, seite)
-    tab = re.search(r'(<table class="itab(?: atab)?">)(.*?)(</table>)', html_, re.S)
+    tab = re.search(r'(<table class="itab(?: atab)?"[^>]*>)(.*?)(</table>)', html_, re.S)   # [^>]*: aria-labelledby (seit 17.10.2026)
     if len(P["staat"]) < 3 or len(P["unternehmen"]) < 3 or not tab or not POOL_RE.search(html_) or not ist_datum(P["stand"]):
         warn(f"{seite}: zu wenige Anleihen ({len(P['staat'])} Staat, {len(P['unternehmen'])} Unternehmen), Tabelle oder #top10-pool fehlt – feste Zeilen")
         return startseite_feste_zeilen(site, seite)
@@ -1137,7 +1138,7 @@ def startseite_feste_zeilen(site, seite="index.html"):
     if not ist_datum(stand):
         return warn(f"{seite}: kurse-auswahl.json ohne gültigen Stand – Seite bleibt unverändert")
     html_ = open(pfad, encoding="utf-8").read()
-    tab = re.search(r'(<table class="itab(?: atab)?">(?:(?!</table>).)*?<tbody>)((?:(?!</table>).)*?)(</tbody>)', html_, re.S)
+    tab = re.search(r'(<table class="itab(?: atab)?"[^>]*>(?:(?!</table>).)*?<tbody>)((?:(?!</table>).)*?)(</tbody>)', html_, re.S)
     if not tab:
         return warn(f"{seite}: Tabelle .itab nicht gefunden – Seite bleibt unverändert")
     heute, fehler = datetime.date.today(), []

@@ -219,7 +219,7 @@
     </div>
 
     <div class="landhead">
-      <h2 id="land-titel" aria-live="polite">Deutschland: die zehn meistgehandelten Unternehmensanleihen</h2>
+      <h2 id="land-titel" aria-live="polite">Deutschland: die zehn meistgehandelten Unternehmens&shy;anleihen</h2>
       <div class="table-scroll">
       <table class="kpis atab" id="kpis">
         <caption class="sr-only">Die meistgehandelten Unternehmensanleihen des gewählten Landes</caption>
@@ -281,7 +281,7 @@
 
 // ---------- Texte ----------
 const T = {
-  titleSuffix: n => n ? `die ${ZAHL[n] || n} meistgehandelten Unternehmensanleihen` : "zurzeit keine gehandelten Unternehmensanleihen",
+  titleSuffix: n => n ? `die ${ZAHL[n] || n} meistgehandelten Unternehmens\u00adanleihen` : "zurzeit keine gehandelten Unternehmens\u00adanleihen",   // weiches Trennzeichen: am Handy mit Strich (Website-Test 17.10.2026)
   years: "Jahre", bn: "Mrd.",
   noteCommon: "Kurs in Prozent des Nennwerts, Rendite bis Fälligkeit (auch bei vorzeitig kündbaren Anleihen); Volumen (Emissionsvolumen) und Stückelung (kleinster Nennwert, zugleich Mindestanlage) in der Währung der Anleihe. Klick auf einen Spaltentitel sortiert."
 };

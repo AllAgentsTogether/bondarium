@@ -604,7 +604,7 @@ jobs:
               print("GH_DISPATCH_TOKEN: GitHub meldet kein Ablaufdatum")
               raise SystemExit(0)
           ablauf = datetime.datetime.strptime(s[:19], "%Y-%m-%d %H:%M:%S")
-          tage = (ablauf - datetime.datetime.utcnow()).days
+          tage = (ablauf - datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)).days
           text = f"GH_DISPATCH_TOKEN läuft am {ablauf:%d.%m.%Y} ab (in {tage} Tagen) – neues Token anlegen, Secret ersetzen (docs/BETRIEB.md Abschnitt 3)"
           print(("::error::" if tage <= 3 else "::warning::" if tage <= 14 else "") + text)
           PY

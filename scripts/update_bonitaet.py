@@ -198,13 +198,16 @@ def lies_liste(heute: datetime.date):
 def kupon_abweichungen(kupons: dict, index_rows: dict) -> dict:
     """{ISIN: Kupon laut EZB-Liste} für Anleihen des Index, deren Registerkupon davon abweicht (Website-Test P3-02:
     IT0001174611 Register 3,25 % statt 6,5 %, ENI-Stufenzins 3,625 statt 4,125 %, SSE Register 0 statt 1,375 %).
-    Ohne inflationsindexierte Anleihen: Die EZB-Liste nennt dort den Kupon auf den angepassten Nennwert (Bund 0,5 % 2030:
-    0,648 %), kein Widerspruch."""
+    Inflationsindexierte Anleihen nur beim Muster „Register = halber Kupon“ (italienische BTP€i 0,325 statt 0,65 %): sonst nennt
+    die EZB-Liste den Kupon auf den angepassten Nennwert (Bund 0,5 % 2030: 0,648 %), kein Widerspruch."""
     out = {}
     for i, c in sorted(kupons.items()):
         r = index_rows.get(i)
-        if r and isinstance(r[4], (int, float)) and abs(c - r[4]) > KUPON_TOLERANZ and not INFLATION.search(r[1] or ""):
-            out[i] = c
+        if not (r and isinstance(r[4], (int, float)) and abs(c - r[4]) > KUPON_TOLERANZ):
+            continue
+        if INFLATION.search(r[1] or "") and abs(c - 2 * r[4]) > KUPON_TOLERANZ:
+            continue
+        out[i] = c
     return out
 
 
