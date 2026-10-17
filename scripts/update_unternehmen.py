@@ -509,7 +509,12 @@ def sample_jp(series: dict, cfg: dict, today: datetime.date, save=None) -> bool:
             jsda_abstand(JSDA_HIST_PAUSE)
             vals = jsda_values(ende[1], wiederholen=False)
         except Exception as e:
-            log_err(f"Japan: Datei {ende[0]} nicht abrufbar: {e} – Rest im nächsten Lauf.")
+            # HTTP 429/503 nach dem ersten Archivabruf ist erwartet (JSDA bremst) – nur Hinweis, damit neue Warnungen
+            # im Lauf auffallen (seit 17.10.2026, Website-Test P3-12); andere Fehler bleiben Warnungen.
+            if getattr(e, "code", None) in (429, 503):
+                print(f"Hinweis Japan: Datei {ende[0]} gebremst (HTTP {e.code}) – Rest im nächsten Lauf.")
+            else:
+                log_err(f"Japan: Datei {ende[0]} nicht abrufbar: {e} – Rest im nächsten Lauf.")
             break
         time.sleep(pause)
         if apply(m, vals, latest=False):

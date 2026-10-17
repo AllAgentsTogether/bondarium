@@ -574,6 +574,41 @@ jobs:
               f.write("\n".join(lines) + "\n")
           '
 
+      # ----- Ablauf des Tokens GH_DISPATCH_TOKEN (seit 17.10.2026, Website-Test P3-05): GitHub nennt das Ablaufdatum in der
+      #       Antwort-Kopfzeile github-authentication-token-expiration. Warnung ab 14 Tagen vorher, Fehler-Annotation ab
+      #       3 Tagen und bei 401 (abgelaufen) – der Lauf geht in jedem Fall weiter (docs/BETRIEB.md Abschnitt 3). -----
+      - name: Ablauf des 10-Uhr-Tokens prüfen
+        continue-on-error: true
+        env:
+          GH_DISPATCH_TOKEN: ${{ secrets.GH_DISPATCH_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import datetime, os, urllib.error, urllib.request
+          t = os.environ.get("GH_DISPATCH_TOKEN", "")
+          if not t:
+              print("::warning::GH_DISPATCH_TOKEN fehlt – der 10-Uhr-Auslöser kann den Datenlauf nicht starten")
+              raise SystemExit(0)
+          req = urllib.request.Request("https://api.github.com/repos/AllAgentsTogether/bondarium",
+                                       headers={"Authorization": "Bearer " + t, "User-Agent": "bondarium-deploy"})
+          try:
+              kopf = urllib.request.urlopen(req, timeout=20).headers
+          except urllib.error.HTTPError as e:
+              print("::error::GH_DISPATCH_TOKEN abgelaufen oder ungültig – der 10-Uhr-Auslöser fällt aus (docs/BETRIEB.md Abschnitt 3)"
+                    if e.code == 401 else f"Token-Prüfung: HTTP {e.code}")
+              raise SystemExit(0)
+          except Exception as e:
+              print(f"Token-Prüfung nicht möglich: {e}")
+              raise SystemExit(0)
+          s = kopf.get("github-authentication-token-expiration")
+          if not s:
+              print("GH_DISPATCH_TOKEN: GitHub meldet kein Ablaufdatum")
+              raise SystemExit(0)
+          ablauf = datetime.datetime.strptime(s[:19], "%Y-%m-%d %H:%M:%S")
+          tage = (ablauf - datetime.datetime.utcnow()).days
+          text = f"GH_DISPATCH_TOKEN läuft am {ablauf:%d.%m.%Y} ab (in {tage} Tagen) – neues Token anlegen, Secret ersetzen (docs/BETRIEB.md Abschnitt 3)"
+          print(("::error::" if tage <= 3 else "::warning::" if tage <= 14 else "") + text)
+          PY
+
       # ----- Qualitätsprüfung: tote interne Links oder Reste des alten Namens stoppen den Upload.
       #       Platzhalter (Impressum noch leer) erscheinen nur als Warnung. -----
       - name: Veröffentlichungs-Ordner prüfen

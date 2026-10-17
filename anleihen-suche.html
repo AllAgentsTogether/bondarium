@@ -598,7 +598,7 @@ const unsicher = r => { const k = KURSE[r[0]]; if (!k || k[4] || k[3] === "B" ||
 // Datenprüfung (27.09.2026): r[14] = Befunde des Indexskripts ({} = keiner) – bei Befund keine Rendite, Kennzeichen „Daten?“
 const pruefVon = r => r[14] && typeof r[14] === "object" ? r[14] : {};
 const befund = r => Object.keys(pruefVon(r)).length > 0;
-const widerspruch = r => { const p = pruefVon(r); return [p.kuponFisn != null ? `Kupon laut Kurzname ${fmtCoupon(p.kuponFisn)}` : "", p.zinsName ? "Name: variabel (FLR), Register: Nullkupon" : "", p.kuponHoch ? "Kupon unplausibel hoch" : "",
+const widerspruch = r => { const p = pruefVon(r); return [p.kuponFisn != null ? `Kupon laut Kurzname ${fmtCoupon(p.kuponFisn)}` : "", p.kuponEZB != null ? `Kupon laut EZB-Liste ${fmtCoupon(p.kuponEZB)}` : "", p.zinsName ? "Name: variabel (FLR), Register: Nullkupon" : "", p.kuponHoch ? "Kupon unplausibel hoch" : "",
   p.faelligFisn ? `Fälligkeit laut Kurzname ${fmtDate(p.faelligFisn)}` : "", p.faelligName ? `Fälligkeit laut Name ${p.faelligName}${!r[5] ? " – vermutlich fällig, nicht zurückgezahlt" : ""}` : ""].filter(Boolean).join("; "); };
 const rendite = r => { const k = KURSE[r[0]]; return k && typeof k[1] === "number" && !unsicher(r) && !befund(r) ? k[1] : null; };
 // Kennzeichnung (27.09.2026): Rendite aus einer Taxe ohne Umsatz, die bei unter einem Jahr Restlaufzeit zu weit über Bund liegt –
@@ -705,7 +705,7 @@ function detailZeile(r) {
   // Seit 03.10.2026 in der Reihenfolge der Tabelle: Rendite · Kupon · Restlaufzeit (Fälligkeit) · Kurs, dazu die Kündigung
   const kpi = [
     kv(D.renditeKurz, rd != null ? `${fmt(rd, 2)}\u00a0%${real ? "*" : fraglich(r) ? "<sup>?</sup>" : ""}` : D.keineRendite, hinweis),
-    kv(D.kupon, MC.esc(MC.felder.kupon({ kupon: r[4], zinsart: r[10] })), [zinsart, pw.kuponFisn != null ? `Kurzname: ${fmtCoupon(pw.kuponFisn)} – widersprüchlich` : "", pw.zinsName ? "Name: variabel (FLR) – widersprüchlich" : "", pw.kuponHoch ? "unplausibel hoch" : ""].filter(Boolean).join(" · "), pw.kuponFisn != null || pw.zinsName || pw.kuponHoch ? "warn" : ""),
+    kv(D.kupon, MC.esc(MC.felder.kupon({ kupon: r[4], zinsart: r[10] })), [zinsart, pw.kuponFisn != null ? `Kurzname: ${fmtCoupon(pw.kuponFisn)} – widersprüchlich` : "", pw.kuponEZB != null ? `EZB-Liste: ${fmtCoupon(pw.kuponEZB)} – widersprüchlich` : "", pw.zinsName ? "Name: variabel (FLR) – widersprüchlich" : "", pw.kuponHoch ? "unplausibel hoch" : ""].filter(Boolean).join(" · "), pw.kuponFisn != null || pw.kuponEZB != null || pw.zinsName || pw.kuponHoch ? "warn" : ""),
     kv("Restlaufzeit", r[5] ? MC.esc(RL(jahre(r[5]))) : L("perp"), [r[5] ? "fällig " + fmtDate(r[5]) : D.keinEnde, pw.faelligFisn ? `Kurzname: ${fmtDate(pw.faelligFisn)} – widersprüchlich` : "", pw.faelligName ? `Name: ${pw.faelligName}${!r[5] ? " – vermutlich fällig, nicht zurückgezahlt" : " – widersprüchlich"}` : ""].filter(Boolean).join(" · "), pw.faelligFisn || pw.faelligName ? "warn" : ""),
     kv(D.kurs, k ? `${MC.felder.kurs(k[0])}${veraend}` : "–", k ? `${MC.esc(BOERSEN[k[3]] || "")} · ${fmtDate(kDatum(k))}${k[4] ? "" : " · " + D.keinUmsatz}${dif == null ? " · " + D.keinVortag : ""}` : D.keinKurs),
     kueF ? kv(D.kue, kueF.wert, kueF.klein + (kueF.anker ? ` · <a href="kuendbare-anleihen.html#${kueF.anker}">${D.kueMehr}</a>` : ""), kueF.warn ? "warn" : "") : "",

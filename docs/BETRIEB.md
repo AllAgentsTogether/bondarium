@@ -100,6 +100,9 @@ mit dem Schlüssel im Kopf `X-Trigger-Key` (Secret `TRIGGER_KEY`). `refresh.php`
 - **Ablaufdatum: noch nicht notiert.** Nachsehen unter GitHub → Settings → Developer settings → Personal access tokens →
   Fine-grained tokens und hier eintragen; zwei Wochen vorher eine Erinnerung setzen. GitHub schlägt beim Anlegen 30 Tage
   vor – blieb es dabei, läuft das Token um den 30.10.2026 ab.
+- Seit 17.10.2026 liest jeder Deploy das Ablaufdatum bei GitHub nach (Schritt „Ablauf des 10-Uhr-Tokens prüfen“, Kopfzeile
+  `github-authentication-token-expiration`): Das Datum steht im Protokoll des Schritts, ab 14 Tagen vorher als Warnung in
+  der Lauf-Zusammenfassung, ab 3 Tagen und nach Ablauf (401) als Fehler-Annotation. Der Lauf geht trotzdem weiter.
 - Läuft es ab, antwortet GitHub `refresh.php` mit 401, `refresh.php` meldet 502 (cron-job.org zeigt den Fehlschlag), der
   10-Uhr-Lauf startet nicht. Der Reserve-Lauf um 10:15 holt die Daten und wird rot („Reserve-Lauf musste selbst abrufen“).
 - Erneuern: neues Token mit denselben Rechten anlegen, Secret `GH_DISPATCH_TOKEN` ersetzen, dann einen Deploy starten

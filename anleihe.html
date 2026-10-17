@@ -764,7 +764,7 @@ function zeige(r, k, meta, kf) {
     : stufen ? "Stufenzins – die künftigen Kupons stehen nicht in unseren Daten" : zinsart === 0 && typeof kupon !== "number" ? "Kupon unbekannt" : "" });
 
   // --- Datenhinweis: nur Tatsachen und Rechenregeln ---
-  const wKupon = [pruef.kuponFisn != null ? `Kurzname im Register: ${fmtCoupon(pruef.kuponFisn)}` : "", pruef.zinsName ? "Name: variabel (FLR)" : "", pruef.kuponHoch ? "Registerwert über den Plausibilitätsgrenzen (vermutlich Faktor 10 oder 1000)" : ""].filter(Boolean);
+  const wKupon = [pruef.kuponFisn != null ? `Kurzname im Register: ${fmtCoupon(pruef.kuponFisn)}` : "", pruef.kuponEZB != null ? `EZB-Sicherheitenliste: ${fmtCoupon(pruef.kuponEZB)}` : "", pruef.zinsName ? "Name: variabel (FLR)" : "", pruef.kuponHoch ? "Registerwert über den Plausibilitätsgrenzen (vermutlich Faktor 10 oder 1000)" : ""].filter(Boolean);
   const wFaellig = [pruef.faelligFisn ? `Kurzname im Register: ${fmtDate(pruef.faelligFisn)}` : "", pruef.faelligName ? `Name: ${pruef.faelligName}` : ""].filter(Boolean);
   const hinw = [];
   if (nachFaellig) hinw.push(abgelaufen

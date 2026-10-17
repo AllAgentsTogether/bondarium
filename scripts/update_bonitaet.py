@@ -37,6 +37,12 @@ Abschläge zur Tabelle (dann hat die EZB die Tabelle geändert), bleibt alles be
 Schreibt:
   bonitaet/ezb-stufen.json   {"stand": Datum der Liste, "stufen": {ISIN: 1 | 3 | 0}} – nur Anleihen des Index; wird
                              committet, nicht veröffentlicht. Gelesen von suchindex.py (Filter der Suche).
+                             Seit 17.10.2026 (Website-Test P3-02) außerdem „kuponEZB“ {ISIN: Kupon laut EZB-Liste} für Anleihen
+                             mit festem Kupon oder Nullkupon (COUPON_DEFINITION CD4/CD1), deren Registerkupon davon abweicht
+                             (alte italienische Staatsanleihen mit halbem Kupon, Stufenzins mit dem Anfangssatz, Register 0).
+  anleihen-index.json        Feld pruef (Index 14): Schlüssel „kuponEZB“ = Kupon laut EZB-Liste, wenn er vom Register abweicht
+                             (wie kuponFisn: Anzeige mit „Daten?“, keine Rendite – _common.ohne_rendite). update_anleihen_index.py
+                             setzt ihn beim wöchentlichen Neubau aus bonitaet/ezb-stufen.json ebenso (pruefung()).
   anleihen/<hh>.json         Teildateien des Steckbriefs: Kopf „ezb“ = Stand der Liste; jede Anleihe der Liste bekommt
                              als 16. Feld die Stufe (1 = Stufen 1 und 2, 3 = Stufe 3, 0 = auf der Liste, Stufe offen).
                              Fehlt das 15. Feld (Zinstermine, update_zinstermine.py), steht dort 0 als Platzhalter.
@@ -58,7 +64,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _common import get_with_retry, log_err, now_iso, today_iso, write_atomic  # noqa: E402
+from _common import INFLATION, get_with_retry, log_err, now_iso, today_iso, write_atomic  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 INDEX = ROOT / "anleihen-index.json"
@@ -70,6 +76,9 @@ EZB_TAGE_ZURUECK = 7      # Wochenende plus Feiertage – älter soll die Liste 
 EZB_MIN_ZEILEN = 20000    # die Liste hat rund 31.000 Zeilen
 MIN_TREFFER = 0.95        # Anteil der Papiere der Klassen I–IV, deren Abschlag zur Tabelle passt (01.10.2026: 99,9 %)
 SPALTEN = ("ISIN_CODE", "HAIRCUT_CATEGORY", "DENOMINATION", "MATURITY_DATE", "COUPON_DEFINITION", "HAIRCUT")
+SPALTE_KUPON = "COUPON_RATE (%)"   # Kupon laut EZB-Liste (seit 17.10.2026 für den Abgleich mit dem Register, Website-Test P3-02)
+KUPON_FEST = ("CD4", "CD1")        # CD4 fester Kupon, CD1 Nullkupon (CD2 variabel: Satz wechselt, kein Abgleich)
+KUPON_TOLERANZ = 0.0005
 
 # Laufzeitbänder in Jahren: [0-1) [1-3) [3-5) [5-7) [7-10) [10-15) [15-30) [30-∞)
 BAENDER = (1, 3, 5, 7, 10, 15, 30)
@@ -149,7 +158,8 @@ def ezb_datei(heute: datetime.date):
 
 
 def lies_liste(heute: datetime.date):
-    """(Datum der Liste, {ISIN: Stufe} aller Papiere der Liste, Anteil der Klassen I–IV mit ablesbarer Stufe)."""
+    """(Datum der Liste, {ISIN: Stufe} aller Papiere der Liste, Anteil der Klassen I–IV mit ablesbarer Stufe,
+    {ISIN: Kupon} der Papiere mit festem Kupon oder Nullkupon – leer, wenn die Liste keine Kuponspalte hat)."""
     tag, roh = ezb_datei(heute)
     if roh is None:
         raise ValueError("keine EZB-Liste der letzten Tage abrufbar")
@@ -158,8 +168,9 @@ def lies_liste(heute: datetime.date):
     if any(s not in kopf for s in SPALTEN) or len(zeilen) < EZB_MIN_ZEILEN:
         raise ValueError(f"EZB-Liste vom {tag.isoformat()}: unerwartetes Format ({len(zeilen)} Zeilen, Kopf {kopf[:3]})")
     s_isin, s_kl, s_w, s_f, s_k, s_h = (kopf.index(s) for s in SPALTEN)
+    s_c = kopf.index(SPALTE_KUPON) if SPALTE_KUPON in kopf else None
     breite = max(s_isin, s_kl, s_w, s_f, s_k, s_h)
-    out, einstufbar, erkannt = {}, 0, 0
+    out, kupons, einstufbar, erkannt = {}, {}, 0, 0
     for z in zeilen[1:]:
         f = z.split("\t")
         if len(f) <= breite or len(f[s_isin]) != 12:
@@ -176,11 +187,57 @@ def lies_liste(heute: datetime.date):
             einstufbar += 1
             erkannt += 1 if s else 0
         out[f[s_isin]] = s
-    return tag, out, (erkannt / einstufbar if einstufbar else 0.0)
+        if s_c is not None and s_c < len(f) and f[s_k] in KUPON_FEST:
+            try:
+                kupons[f[s_isin]] = float(f[s_c]) if f[s_c].strip() else (0.0 if f[s_k] == "CD1" else None)
+            except ValueError:
+                pass
+    return tag, out, (erkannt / einstufbar if einstufbar else 0.0), {i: c for i, c in kupons.items() if c is not None}
 
 
-def teildateien(stufen: dict, stand: str) -> int:
-    """Feld 16 (Bonitätsstufe laut EZB) und den Kopf „ezb“ in anleihen/<hh>.json setzen; Zahl der geänderten Dateien."""
+def kupon_abweichungen(kupons: dict, index_rows: dict) -> dict:
+    """{ISIN: Kupon laut EZB-Liste} für Anleihen des Index, deren Registerkupon davon abweicht (Website-Test P3-02:
+    IT0001174611 Register 3,25 % statt 6,5 %, ENI-Stufenzins 3,625 statt 4,125 %, SSE Register 0 statt 1,375 %).
+    Ohne inflationsindexierte Anleihen: Die EZB-Liste nennt dort den Kupon auf den angepassten Nennwert (Bund 0,5 % 2030:
+    0,648 %), kein Widerspruch."""
+    out = {}
+    for i, c in sorted(kupons.items()):
+        r = index_rows.get(i)
+        if r and isinstance(r[4], (int, float)) and abs(c - r[4]) > KUPON_TOLERANZ and not INFLATION.search(r[1] or ""):
+            out[i] = c
+    return out
+
+
+def pruef_setzen(p, wert):
+    """Feld pruef (Objekt) mit kuponEZB = wert (None: Schlüssel entfernen) – (neues Objekt, geändert?)."""
+    p = dict(p) if isinstance(p, dict) else {}
+    if wert is None:
+        return p, p.pop("kuponEZB", None) is not None
+    geaendert = p.get("kuponEZB") != wert
+    p["kuponEZB"] = wert
+    return p, geaendert
+
+
+def index_pruef(abw: dict) -> int:
+    """kuponEZB im Feld pruef von anleihen-index.json setzen bzw. entfernen; Zahl der geänderten Zeilen. Schreibt im
+    Format von update_anleihen_index.schreiben() (eine Anleihe je Zeile) und nur bei Änderung."""
+    from update_anleihen_index import schreiben   # dasselbe Format, damit Git-Diffs klein bleiben
+    d = lade(INDEX, {})
+    rows = d.get("rows") or []
+    n = 0
+    for r in rows:
+        if len(r) < 15:
+            r.extend([None] * (14 - len(r)) + [{}])
+        r[14], g = pruef_setzen(r[14], abw.get(r[0]))
+        n += g
+    if n:
+        schreiben({k: v for k, v in d.items() if k != "rows"}, rows)
+    return n
+
+
+def teildateien(stufen: dict, stand: str, abw: dict | None = None) -> int:
+    """Feld 16 (Bonitätsstufe laut EZB), kuponEZB im Feld pruef (Feld 14, Index 13) und den Kopf „ezb“ in
+    anleihen/<hh>.json setzen; Zahl der geänderten Dateien."""
     geaendert = 0
     for pfad in sorted(DIR_TEILE.glob("*.json")):
         d = lade(pfad, None)
@@ -189,6 +246,9 @@ def teildateien(stufen: dict, stand: str) -> int:
         neu = d.get("ezb") != stand
         d["ezb"] = stand
         for isin, row in d["rows"].items():
+            if abw is not None and len(row) > 13:
+                row[13], g = pruef_setzen(row[13], abw.get(isin))
+                neu = neu or g
             s = stufen.get(isin)
             alt = row[15] if len(row) > 15 else None
             if s == alt:
@@ -208,16 +268,18 @@ def teildateien(stufen: dict, stand: str) -> int:
 
 
 def main() -> int:
-    index = {r[0] for r in lade(INDEX, {}).get("rows", [])}
+    index_rows = {r[0]: r for r in lade(INDEX, {}).get("rows", [])}
+    index = set(index_rows)
     if not index:
         log_err("Bonitätsstufe: anleihen-index.json fehlt oder ist leer – nichts geändert.")
         return 1
     alt = lade(OUT, {})
     stufen = {i: s for i, s in (alt.get("stufen") or {}).items() if i in index}
+    abw = {i: c for i, c in (alt.get("kuponEZB") or {}).items() if i in index}
     stand, rc = alt.get("stand") or "", 0
     if "--ohne-abruf" not in sys.argv:
         try:
-            tag, liste, anteil = lies_liste(datetime.date.fromisoformat(today_iso()))
+            tag, liste, anteil, kupons = lies_liste(datetime.date.fromisoformat(today_iso()))
         except Exception as e:  # noqa: BLE001
             log_err(f"Bonitätsstufe: {e} – bisherige Stufen bleiben.")
             liste, rc = None, 1
@@ -229,10 +291,12 @@ def main() -> int:
             neu = {i: s for i, s in liste.items() if i in index}
             anders = sum(1 for i, s in neu.items() if i in stufen and stufen[i] != s)
             stufen, stand = neu, tag.isoformat()
+            if kupons:
+                abw = kupon_abweichungen(kupons, index_rows)
             inhalt = {"stand": stand, "quelle": "EZB, Liste der notenbankfähigen marktfähigen Sicherheiten: Bonitätsstufe "
                       "aus dem Bewertungsabschlag abgelesen (scripts/update_bonitaet.py)",
                       "felder": "1 = Bonitätsstufen 1 und 2 (AAA bis A−), 3 = Stufe 3 (BBB+ bis BBB−), 0 = auf der Liste, Stufe offen",
-                      "anzahl": len(stufen), "stufen": dict(sorted(stufen.items()))}
+                      "anzahl": len(stufen), "kuponEZB": abw, "stufen": dict(sorted(stufen.items()))}
             if inhalt != {k: v for k, v in alt.items() if k != "updatedAt"}:
                 # eine Anleihe je Zeile, damit Git-Diffs klein bleiben
                 kopf = json.dumps({**{k: v for k, v in inhalt.items() if k != "stufen"}, "updatedAt": now_iso()}, ensure_ascii=False)
@@ -243,11 +307,18 @@ def main() -> int:
                 os.replace(tmp, OUT)
             zahl = {s: sum(1 for v in stufen.values() if v == s) for s in (1, 3, 0)}
             print(f"Bonitätsstufe (EZB-Liste vom {stand}, {len(liste)} Papiere, {anteil:.1%} ablesbar): {len(stufen)} Anleihen "
-                  f"des Index – Stufen 1 und 2: {zahl[1]}, Stufe 3: {zahl[3]}, offen: {zahl[0]}; {anders} geändert")
+                  f"des Index – Stufen 1 und 2: {zahl[1]}, Stufe 3: {zahl[3]}, offen: {zahl[0]}; {anders} geändert; "
+                  f"Kupon weicht vom Register ab: {len(abw)}")
     if not stand:
         log_err("Bonitätsstufe: noch keine Stufen vorhanden – Teildateien unverändert.")
         return 1
-    n = teildateien(stufen, stand)
+    try:
+        k = index_pruef(abw)
+        print(f"anleihen-index.json: kuponEZB in {k} Zeilen gesetzt oder entfernt ({len(abw)} Anleihen mit Abweichung)")
+    except Exception as e:  # noqa: BLE001 – der Abgleich darf die Stufen nicht verhindern
+        log_err(f"Bonitätsstufe: Kupon-Abgleich im Index nicht geschrieben ({type(e).__name__}: {e})")
+        abw, rc = None, 1
+    n = teildateien(stufen, stand, abw)
     print(f"anleihen/<hh>.json: {n} Teildateien mit Bonitätsstufe aktualisiert")
     return rc
 

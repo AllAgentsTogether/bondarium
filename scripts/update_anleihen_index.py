@@ -767,7 +767,8 @@ def fisn_werte(fisn: str) -> tuple[float | None, str | None]:
     return kupon, faellig
 
 
-def pruefung(row: list, fisn: str | None, heute: datetime.date, alt: dict | None = None, beleg: dict | None = None) -> dict:
+def pruefung(row: list, fisn: str | None, heute: datetime.date, alt: dict | None = None, beleg: dict | None = None,
+             kupon_ezb: float | None = None) -> dict:
     """Befunde je Anleihe (Feld pruef) – die Registerwerte bleiben, die Anzeige weist auf den Widerspruch hin und
     die Kursdatei rechnet keine Rendite (_common.ohne_rendite). Ein Befund braucht zwei Quellen gegen das
     Registerfeld (Kurzname nach ISO 18774 UND ein Handelsplatz-Name bzw. der WM-Name), weil der Kurzname allein
@@ -782,6 +783,10 @@ def pruefung(row: list, fisn: str | None, heute: datetime.date, alt: dict | None
       kuponHoch    true: Kupon über 100 % oder über 20 % außerhalb von Hochzinswährungen (Faktor 10/1000)
       waehrungName Währung laut Währungskürzel im Namen (EO-, DL-, LS- …), wenn sie von der Registerwährung abweicht –
                    auch nachdem die Währung des Nennbetrags NtnlCcy ersetzt hat (seit 09.10.2026)
+      kuponEZB     Kupon laut Liste der notenbankfähigen Sicherheiten der EZB (fester Kupon oder Nullkupon), wenn er vom
+                   Register abweicht – die EZB-Liste ist die zweite amtliche Quelle (seit 17.10.2026, Website-Test P3-02:
+                   alte BTP mit halbem Kupon, Stufenzins mit dem Anfangssatz). Gelesen aus bonitaet/ezb-stufen.json, das
+                   update_bonitaet.py täglich schreibt und dabei den Schlüssel auch im Index nachzieht.
     fisn None (--bereinigen ohne Abruf): die Kurzname-Befunde aus alt bleiben."""
     p = {}
     kupon, reg = row[4], row[5]
@@ -817,6 +822,8 @@ def pruefung(row: list, fisn: str | None, heute: datetime.date, alt: dict | None
         p["zinsName"] = "var"   # nur bei gemeldetem Nullkupon: ein fester Anfangssatz (Fix-to-Float) ist kein Widerspruch
     if isinstance(kupon, (int, float)) and (kupon > 100 or (kupon > KUPON_MAX and row[3] not in HOCHZINS)):
         p["kuponHoch"] = True
+    if isinstance(kupon_ezb, (int, float)) and isinstance(kupon, (int, float)) and abs(kupon_ezb - kupon) > 0.0005:
+        p["kuponEZB"] = kupon_ezb
     m = WM_KUERZEL.search(row[1] or "")
     if m and WM_WAEHRUNG.get(m.group(1), row[3]) != row[3]:
         p["waehrungName"] = WM_WAEHRUNG[m.group(1)]   # Name nennt eine andere Währung als das Register (beide Felder)
@@ -826,9 +833,13 @@ def pruefung(row: list, fisn: str | None, heute: datetime.date, alt: dict | None
 def pruefen(rows: list[list], fisns: dict[str, str] | None, heute: datetime.date, belege: dict[str, dict] | None = None) -> tuple[list[list], collections.Counter]:
     """Feld pruef (Index 14) für alle Zeilen setzen; fisns None = ohne Abruf (Kurzname-Befunde bleiben)."""
     n = collections.Counter()
+    try:   # Kupon laut EZB-Liste (update_bonitaet.py) – fehlt die Datei, entfällt nur dieser Abgleich
+        kupon_ezb = json.loads((OUT.parent / "bonitaet" / "ezb-stufen.json").read_text(encoding="utf-8")).get("kuponEZB") or {}
+    except (OSError, ValueError):
+        kupon_ezb = {}
     for r in rows:
         alt = r[14] if len(r) > 14 and isinstance(r[14], dict) else None
-        p = pruefung(r, fisns.get(r[0], "") if fisns is not None else None, heute, alt, (belege or {}).get(r[0]))
+        p = pruefung(r, fisns.get(r[0], "") if fisns is not None else None, heute, alt, (belege or {}).get(r[0]), kupon_ezb.get(r[0]))
         for k in p:
             n[k] += 1
         if len(r) > 14:
