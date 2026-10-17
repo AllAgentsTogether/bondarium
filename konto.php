@@ -910,7 +910,8 @@ function mail_senden(string $an, string $betreff, string $text): bool
         'Content-Transfer-Encoding: base64',
         'Auto-Submitted: auto-generated',
     ]);
-    return mail($an, '=?UTF-8?B?' . base64_encode($betreff) . '?=', chunk_split(base64_encode($text)), $kopf, '-f ' . ABSENDER);
+    // Betreff in Wörtern ≤ 75 Zeichen (RFC 2047) auf einer Zeile – vorher ein einziges, bis 80 Zeichen langes Wort (Website-Test P5-01)
+    return mail($an, mb_encode_mimeheader($betreff, 'UTF-8', 'B', '', 9), chunk_split(base64_encode($text)), $kopf, '-f ' . ABSENDER);
 }
 
 /** Aufrufe des Workflows (Wochenbrief, Meldungen): nur mit dem Schlüssel des Auslösers im Kopf X-Trigger-Key, sonst Antwort „zugang“. */
@@ -1176,7 +1177,8 @@ function nl_mail(array $a, string $an, string $kennung, array $merk, int $nr): b
     $koerper = "--$grenze\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n" . chunk_split(base64_encode($text))
         . "--$grenze\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: base64\r\n\r\n" . chunk_split(base64_encode($html))
         . "--$grenze--\r\n";
-    return mail($an, '=?UTF-8?B?' . base64_encode($betreff) . '?=', $koerper, $kopf, '-f ' . ABSENDER);
+    // Betreff in Wörtern ≤ 75 Zeichen (RFC 2047) auf einer Zeile – vorher ein einziges, bis 80 Zeichen langes Wort (Website-Test P5-01)
+    return mail($an, mb_encode_mimeheader($betreff, 'UTF-8', 'B', '', 9), $koerper, $kopf, '-f ' . ABSENDER);
 }
 
 /** JSON-Datei aus dem Ordner newsletter/ lesen (vom Datenlauf geschrieben); null, wenn sie fehlt oder unlesbar ist. */

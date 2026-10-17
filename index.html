@@ -877,7 +877,7 @@
   .zs-in a:focus-visible { outline: 2px solid var(--green-text); outline-offset: 3px; border-radius: 4px; }
   .zs-in a span { color: var(--text); } .zs-in a b { font-weight: 600; } .zs-in a i { font-style: normal; font-size: var(--fs-label); color: var(--text); }
   @media (prefers-reduced-motion: reduce) { .zs-lauf { animation: none; } .zs-in { overflow-x: auto; scrollbar-width: none; mask-image: none; -webkit-mask-image: none; } .zs-in::-webkit-scrollbar { display: none; } }
-  @media (max-width: 600px) { .zs-band { margin-bottom: 10px; } .zs-in { padding: 8px 16px; } .zs-gruppe { gap: 24px; padding-right: 24px; } .zs-lauf { animation-duration: 30s; } .zs-in a i { display: none; } }
+  @media (max-width: 600px) { .zs-band { margin-bottom: 10px; } .zs-in { padding: 8px 16px; } .zs-gruppe { gap: 24px; padding-right: 24px; } .zs-lauf { animation-duration: 30s; } .zs-in a i, .zs-in .zs-bezug { display: none; } }
   /* Stand und Pause-Knopf (15.10.2026, Gesamtprüfung B01-01, B01-09): „Stand“ am Ende jeder Gruppe (Werte verschiedener Tage);
      der Knopf liegt rechts über der ausgeblendeten Kante und hält das Band an (WCAG 2.2.2 – am Handy gibt es kein Überfahren) */
   .zs-band { position: relative; }
@@ -890,6 +890,10 @@
   .zs-pause[aria-pressed="true"] .zs-p-lauf { display: inline; }
   .zs-pause:focus-visible { outline: 2px solid var(--green-text); outline-offset: 2px; }
   @media (prefers-reduced-motion: reduce) { .zs-pause { display: none; } }
+  /* Die Werte laufen nicht unter dem Pause-Knopf hindurch: rechts 40 px abgeschnitten, Ausblendung davor (WCAG 2.5.8, Website-Test P6-11) */
+  @media (prefers-reduced-motion: no-preference) {
+    .zs-band.mit-pause .zs-in { clip-path: inset(0 40px 0 0); -webkit-mask-image: linear-gradient(90deg, transparent, #000 32px, #000 calc(100% - 72px), transparent calc(100% - 40px)); mask-image: linear-gradient(90deg, transparent, #000 32px, #000 calc(100% - 72px), transparent calc(100% - 40px)); }
+  }
 
   /* ===== Straffen 11.10.2026 ===== Mockup tmp/startseite-opt, Nutzerentscheid „setze 1 bis 4 um“ */
   /* 1 Akademie: Reihe „Tiefer einsteigen“ mit sechs Einträgen in voller Breite (ab 601 px drei bzw. sechs je Zeile, Handy zweispaltig) */
@@ -960,7 +964,7 @@
     .interessant table.atab > tbody > tr > th[scope=row] a.name-link { display: block; overflow: hidden; text-overflow: ellipsis; text-decoration: none; }
     .interessant table.atab > tbody > tr > td { display: block; padding: 0; }
     .interessant table.atab > tbody > tr > td::before { content: none; }
-    .interessant table.atab > tbody > tr > td.gross { font-size: var(--fs-klein); font-weight: 600; color: var(--ink); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .interessant table.atab > tbody > tr > td.gross { font-size: var(--fs-klein); font-weight: 600; color: var(--ink); text-align: right; white-space: normal; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }   /* umbrechen statt überlappen bei größeren Textabständen (WCAG 1.4.12, Website-Test P6-08) */
     .interessant table.atab > tbody > tr > td.gross small { display: none; }
     .interessant table.atab > tbody > tr > td[data-l="Kurs"], .interessant table.atab > tbody > tr > td[data-l="Bonität"], .interessant table.atab > tbody > tr > td[data-l="Stückelung"] { display: none; }
     .interessant table.atab > tbody > tr > td.merkspalte { position: static; width: auto; text-align: right; }
@@ -1060,7 +1064,7 @@
             <div class="np-pv-wrap" data-np="kaufen-4" hidden><div class="np-pv"><div><p class="np-h">Nach dem Kauf</p><p class="np-d">Was nach dem Anleihekauf passiert: Zinsen am Zinstermin, Verkauf vor Fälligkeit, Rückzahlung zum Nennwert, Post von der Bank und Depotwechsel.</p></div><img src="spot-nach-dem-kauf.svg" alt="" width="140" height="96" loading="lazy" decoding="async"></div><a class="np-more" href="nach-dem-kauf.html">Öffnen&nbsp;→</a></div>
             <div class="np-pv-wrap" data-np="kaufen-5" hidden><div class="np-pv"><div><p class="np-h">Steuern und Handelskosten</p><p class="np-d">Abgeltungsteuer, Stückzinsen, Nullkupon, Fremdwährung, ETF-Vorabpauschale, Quellensteuer, Ordergebühr und Spanne: was zwischen brutto und netto liegt.</p></div><img src="spot-steuern-handelskosten.svg" alt="" width="140" height="96" loading="lazy" decoding="async"></div><a class="np-more" href="steuern-handelskosten.html">Öffnen&nbsp;→</a></div>
             <div class="np-pv-wrap" data-np="kaufen-6" hidden><div class="np-pv"><div><p class="np-h">Rechner</p><p class="np-d">Vier Rechner: Rendite aus Kurs und Kupon, Stückzinsen, Zinsen netto nach Steuer und der Kurs, wenn das allgemeine Zinsniveau steigt oder fällt.</p></div><img src="spot-rechner.svg" alt="" width="140" height="96" loading="lazy" decoding="async"></div><a class="np-more" href="rechner.html">Öffnen&nbsp;→</a></div>
-            <div class="np-pv-wrap" data-np="kaufen-7" hidden><div class="np-pv"><div><p class="np-h">Anleihen-Simulator</p><p class="np-d">Sieh, wie der Kurs einer Anleihe mit dem Zinsniveau schwankt und am Ende zum Nennwert zurückkehrt: 30 Jahre in 30 Sekunden, Zeitpunkt mit der Maus ziehen.</p></div><img src="spot-anleihen-simulator.svg" alt="" width="140" height="96" loading="lazy" decoding="async"></div><a class="np-more" href="anleihen-simulator.html">Öffnen&nbsp;→</a></div>
+            <div class="np-pv-wrap" data-np="kaufen-7" hidden><div class="np-pv"><div><p class="np-h">Anleihen-Simulator</p><p class="np-d">Sieh, wie der Kurs einer Anleihe mit dem Zinsniveau schwankt und am Ende zum Nennwert zurückkehrt: 30 Jahre in 30 Sekunden, Zeitpunkt selbst verschieben.</p></div><img src="spot-anleihen-simulator.svg" alt="" width="140" height="96" loading="lazy" decoding="async"></div><a class="np-more" href="anleihen-simulator.html">Öffnen&nbsp;→</a></div>
           </div>
         </div>
       </div>
@@ -1091,7 +1095,7 @@
     <a class="kopfkonto" href="konto.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20.5c1.2-4 4-5.5 7.5-5.5s6.3 1.5 7.5 5.5"/></svg><span>My Bondarium</span></a>
   </header>
   <section class="zs-band" aria-label="Zinsstand: Schlusswerte und Veränderung zum Vormonat in Prozentpunkten" title="Schlusswerte; Veränderung zum Monatsdurchschnitt des Vormonats in Prozentpunkten. Quellen: Deutsche Bundesbank, Federal Reserve (H.15), EZB.">   <!-- Zinsstand-Zeile seit 11.10.2026 (Nutzerwunsch, Beispiel 4 aus tmp/Bondarium-Marktuebersicht-Umsetzungsbeispiele.pdf); seit 11.10. abends als Laufband (Nutzerwunsch; die Kartenreihe mit denselben fünf Zinsen im Zinsatlas ist seit 11.10. abends entfallen, Feedback): zweite Gruppe ist die Kopie für die Endlosschleife (aria-hidden, Links mit tabindex="-1" – sonst landete die Tab-Taste auf Links, die Screenreader verschweigen; G03-01). Werte, Veränderungen und „Stand“ (B01-01: Tag der Bundesbank-Kurve, abweichende Tage je Wert) schreibt seit 15.10.2026 der Bau (scripts/statische_tabellen.py, zinsstand()); hier Rückfall. section mit aria-label = Landmarke (G03-01). -->
-    <div class="zs-in"><div class="zs-lauf"><div class="zs-gruppe"><a href="zinskurve.html" data-zs="bund2"><span>Bund 2 J.</span><b>3,10&nbsp;%</b><i>−0,14</i></a><a href="zinskurve.html" data-zs="bund10"><span>Bund 10 J.</span><b>3,49&nbsp;%</b><i>−0,15</i></a><a href="langlaeufer.html" data-zs="bund2050"><span>Bund 2050</span><b>3,79&nbsp;%</b><i>−0,06</i></a><a href="zinskurve.html" data-zs="us10"><span>USA 10 J.</span><b>5,24&nbsp;%</b><i>+0,25</i></a><a href="zinsniveau.html#ezb" data-zs="ezb"><span>EZB-Einlagesatz</span><b>2,50&nbsp;%</b></a><span class="zs-stand">Stand 13.10. · USA 09.10.</span></div><div class="zs-gruppe" aria-hidden="true"><a tabindex="-1" href="zinskurve.html" data-zs="bund2"><span>Bund 2 J.</span><b>3,10&nbsp;%</b><i>−0,14</i></a><a tabindex="-1" href="zinskurve.html" data-zs="bund10"><span>Bund 10 J.</span><b>3,49&nbsp;%</b><i>−0,15</i></a><a tabindex="-1" href="langlaeufer.html" data-zs="bund2050"><span>Bund 2050</span><b>3,79&nbsp;%</b><i>−0,06</i></a><a tabindex="-1" href="zinskurve.html" data-zs="us10"><span>USA 10 J.</span><b>5,24&nbsp;%</b><i>+0,25</i></a><a tabindex="-1" href="zinsniveau.html#ezb" data-zs="ezb"><span>EZB-Einlagesatz</span><b>2,50&nbsp;%</b></a><span class="zs-stand">Stand 13.10. · USA 09.10.</span></div></div></div>
+    <div class="zs-in"><div class="zs-lauf"><div class="zs-gruppe"><a href="zinskurve.html" data-zs="bund2"><span>Bund 2 J.</span><b>3,10&nbsp;%</b><i>−0,14</i></a><a href="zinskurve.html" data-zs="bund10"><span>Bund 10 J.</span><b>3,49&nbsp;%</b><i>−0,15</i></a><a href="langlaeufer.html" data-zs="bund2050"><span>Bund 2050</span><b>3,79&nbsp;%</b><i>−0,06</i></a><a href="zinskurve.html" data-zs="us10"><span>USA 10 J.</span><b>5,24&nbsp;%</b><i>+0,25</i></a><a href="zinsniveau.html#ezb" data-zs="ezb"><span>EZB-Einlagesatz</span><b>2,50&nbsp;%</b></a><span class="zs-stand">Stand 13.10. · USA 09.10.</span><span class="zs-stand zs-bezug">± in Pkt. zum Vormonat</span></div><div class="zs-gruppe" aria-hidden="true"><a tabindex="-1" href="zinskurve.html" data-zs="bund2"><span>Bund 2 J.</span><b>3,10&nbsp;%</b><i>−0,14</i></a><a tabindex="-1" href="zinskurve.html" data-zs="bund10"><span>Bund 10 J.</span><b>3,49&nbsp;%</b><i>−0,15</i></a><a tabindex="-1" href="langlaeufer.html" data-zs="bund2050"><span>Bund 2050</span><b>3,79&nbsp;%</b><i>−0,06</i></a><a tabindex="-1" href="zinskurve.html" data-zs="us10"><span>USA 10 J.</span><b>5,24&nbsp;%</b><i>+0,25</i></a><a tabindex="-1" href="zinsniveau.html#ezb" data-zs="ezb"><span>EZB-Einlagesatz</span><b>2,50&nbsp;%</b></a><span class="zs-stand">Stand 13.10. · USA 09.10.</span><span class="zs-stand zs-bezug">± in Pkt. zum Vormonat</span></div></div></div>
     <button type="button" class="zs-pause" aria-pressed="false" aria-label="Laufband anhalten" hidden><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="zs-p-halt" d="M8 6v12M16 6v12" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path class="zs-p-lauf" d="M8.5 6.2v11.6L18 12z" fill="currentColor"/></svg></button>
   </section>
   <main id="main">
@@ -1421,6 +1425,7 @@ MC.navInit();
   var band = document.querySelector(".zs-band"), k = band && band.querySelector(".zs-pause");
   if (!k) return;
   k.hidden = false;   // ohne Skript kein Knopf – Überfahren und Fokus halten das Band trotzdem an
+  band.classList.add("mit-pause");
   k.addEventListener("click", function () {
     k.setAttribute("aria-pressed", band.classList.toggle("steht") ? "true" : "false");   // Name bleibt „Laufband anhalten“, der Zustand steht in aria-pressed
   });

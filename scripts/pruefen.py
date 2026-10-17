@@ -461,6 +461,13 @@ def seo_pruefung(f, html, adresse=None):
     haupt = klartext(m.group(1)) if m else ""
     sichtbar = klartext(html.split("</head>", 1)[-1])
 
+    # Teilen-Vorschau (seit 17.10.2026, Website-Test P9-10): og:/twitter:-Titel und -Beschreibung = <title> und Beschreibung,
+    # sonst teilt eine überarbeitete Seite alte Texte (Über uns teilte nach dem 14.10. noch den alten Claim)
+    for name, soll in (("og:title", titel), ("twitter:title", titel), ("og:description", beschreibung), ("twitter:description", beschreibung)):
+        m = re.search(r'<meta (?:property|name)="' + name + r'" content="([^"]*)"', kopf)
+        if m and soll and htmllib.unescape(m.group(1)).strip() != soll:
+            fund(f"{name} weicht von {'<title>' if 'title' in name else 'der Beschreibung'} ab", f, htmllib.unescape(m.group(1))[:80])
+
     # Ladetext und Canonical per Skript
     m = LADEN.search(sichtbar)
     if m:

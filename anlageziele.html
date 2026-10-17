@@ -44,7 +44,7 @@
   .passt { list-style: none; margin-top: 16px; display: grid; gap: 8px; }
   .passt li { display: grid; grid-template-columns: 34px minmax(0, 1fr); column-gap: 10px; align-items: center; font-size: 15px; line-height: 1.4; color: var(--ap-text); }
   .passt b { display: block; font-size: 13px; font-weight: 500; color: var(--green-text); }
-  .pi { width: 34px; height: 34px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--green-text); box-shadow: 0 3px 10px rgba(30,45,80,0.10); }
+  .pi { width: 34px; height: 34px; border-radius: 50%; background: #fff; display: grid; place-items: center; color: var(--green-text); box-shadow: 0 3px 10px rgba(26,26,25,0.10); }
   .pi svg { width: 18px; height: 18px; }
   .sb-bon { margin-top: 10px; align-self: flex-start; font-size: 14px; font-weight: 600; color: var(--green-text); text-decoration: none; }
   .sb-bon:hover { text-decoration: underline; }
@@ -55,7 +55,7 @@
 
   /* 3 – Kalender */
   .kal { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
-  .kal div { min-height: 58px; border-radius: 8px; background: #F3F4F7; padding: 6px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .kal div { min-height: 58px; border-radius: 8px; background: #F3F2EE; padding: 6px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; }
   .kal .m { font-size: 12px; font-weight: 600; color: var(--ap-text); }
   .kal .on { background: var(--ap-soft); outline: 2px solid var(--green-text); outline-offset: -2px; }
   .kal .on .m { color: var(--green-text); }
@@ -100,7 +100,7 @@
      volle Breite der Karte unter „Kurz gesagt“ – Lage, Kriterien, Suche. Sprungmarken #nadine, #tobias, #michael, #jonas
      (alte Links guide.html#… kommen per 301 hierher, der Browser behält die Sprungmarke). */
   .bsp { grid-column: 1 / -1; display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 18px; align-items: start; background: #fff; border: 1px solid var(--green-line); border-radius: 14px; padding: 18px 22px 20px; scroll-margin-top: 90px; }
-  .bsp-av { display: block; width: 88px; height: 88px; border-radius: 50%; background: #E6ECF6; overflow: hidden; }
+  .bsp-av { display: block; width: 88px; height: 88px; border-radius: 50%; background: #F3F2EE; overflow: hidden; }
   .bsp-av img { display: block; width: 100%; height: auto; margin-top: 5px; }
   .bsp-wer { font-size: 13px; font-weight: 500; color: var(--green-text); margin: 2px 0 4px; }
   .bsp h3 { font-size: 19px; line-height: 1.3; margin-bottom: 8px; }
@@ -202,7 +202,7 @@
             <div class="np-pv-wrap" data-np="kaufen-4" hidden><div class="np-pv"><div><p class="np-h">Nach dem Kauf</p><p class="np-d">Was nach dem Anleihekauf passiert: Zinsen am Zinstermin, Verkauf vor Fälligkeit, Rückzahlung zum Nennwert, Post von der Bank und Depotwechsel.</p></div><img src="spot-nach-dem-kauf.svg" alt="" width="140" height="96" loading="lazy" decoding="async"></div><a class="np-more" href="nach-dem-kauf.html">Öffnen&nbsp;→</a></div>
             <div class="np-pv-wrap" data-np="kaufen-5" hidden><div class="np-pv"><div><p class="np-h">Steuern und Handelskosten</p><p class="np-d">Abgeltungsteuer, Stückzinsen, Nullkupon, Fremdwährung, ETF-Vorabpauschale, Quellensteuer, Ordergebühr und Spanne: was zwischen brutto und netto liegt.</p></div><img src="spot-steuern-handelskosten.svg" alt="" width="140" height="96" loading="lazy" decoding="async"></div><a class="np-more" href="steuern-handelskosten.html">Öffnen&nbsp;→</a></div>
             <div class="np-pv-wrap" data-np="kaufen-6" hidden><div class="np-pv"><div><p class="np-h">Rechner</p><p class="np-d">Vier Rechner: Rendite aus Kurs und Kupon, Stückzinsen, Zinsen netto nach Steuer und der Kurs, wenn das allgemeine Zinsniveau steigt oder fällt.</p></div><img src="spot-rechner.svg" alt="" width="140" height="96" loading="lazy" decoding="async"></div><a class="np-more" href="rechner.html">Öffnen&nbsp;→</a></div>
-            <div class="np-pv-wrap" data-np="kaufen-7" hidden><div class="np-pv"><div><p class="np-h">Anleihen-Simulator</p><p class="np-d">Sieh, wie der Kurs einer Anleihe mit dem Zinsniveau schwankt und am Ende zum Nennwert zurückkehrt: 30 Jahre in 30 Sekunden, Zeitpunkt mit der Maus ziehen.</p></div><img src="spot-anleihen-simulator.svg" alt="" width="140" height="96" loading="lazy" decoding="async"></div><a class="np-more" href="anleihen-simulator.html">Öffnen&nbsp;→</a></div>
+            <div class="np-pv-wrap" data-np="kaufen-7" hidden><div class="np-pv"><div><p class="np-h">Anleihen-Simulator</p><p class="np-d">Sieh, wie der Kurs einer Anleihe mit dem Zinsniveau schwankt und am Ende zum Nennwert zurückkehrt: 30 Jahre in 30 Sekunden, Zeitpunkt selbst verschieben.</p></div><img src="spot-anleihen-simulator.svg" alt="" width="140" height="96" loading="lazy" decoding="async"></div><a class="np-more" href="anleihen-simulator.html">Öffnen&nbsp;→</a></div>
           </div>
         </div>
       </div>

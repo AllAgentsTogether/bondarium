@@ -253,7 +253,8 @@ function erinnerung_mail(string $an, string $betreff, string $text): bool
         'Content-Transfer-Encoding: base64',
         'Auto-Submitted: auto-generated',
     ]);
-    return mail($an, '=?UTF-8?B?' . base64_encode($betreff) . '?=', chunk_split(base64_encode($text)), $kopf, '-f ' . ERINNERUNG_ABSENDER);
+    // Betreff in Wörtern ≤ 75 Zeichen (RFC 2047) auf einer Zeile – vorher ein einziges, bis 80 Zeichen langes Wort (Website-Test P5-01)
+    return mail($an, mb_encode_mimeheader($betreff, 'UTF-8', 'B', '', 9), chunk_split(base64_encode($text)), $kopf, '-f ' . ERINNERUNG_ABSENDER);
 }
 
 /** Der tägliche Lauf: alle fälligen Erinnerungen verschicken. Gibt [verschickt, fehlgeschlagen] zurück. */

@@ -37,7 +37,7 @@ Schreibt in den Ordner newsletter/ (konto.php liest ihn auf dem Server; per .hta
                      2  Fälligkeit    JJJJ-MM-TT, "" = unbefristet
                      3  Kurs          Schlusskurs in % des Nennwerts
                      4  Rendite       % p. a. oder null (Anzeige-Schutz wie auf der Website)
-                     5  Veränderung   Kurs minus Kurs fünf Börsentage zuvor, in Prozentpunkten des Nennwerts, oder null
+                     5  Veränderung   Kursveränderung zur Vorwoche in Prozent ((Kurs ÷ Kurs fünf Börsentage zuvor − 1) × 100) oder null
                      6  Zinstermin    nächster Zinstermin JJJJ-MM-TT (ab heute, höchstens die Fälligkeit – sie zählt mit, der letzte
                                       Zins kommt mit der Rückzahlung) oder null; Rechnung wie im Steckbrief (_common.zinszahlungen)
                      7  Zinsart       0 fest, 1 variabel, 2 Nullkupon                                            (seit 03.10.2026)
@@ -358,17 +358,17 @@ def tabelle(inhalt):
 
 # Vorlagen für „Deine Merkliste“ – konto.php setzt je Abonnent die Zeilen ein (nl_merkliste; Platzhalter {{…}}, Werte im HTML
 # maskiert). Platzhalter je Anleihe: TITEL, LINK, KERN (zweite Zeile, nl_kern), ZUSATZ (dritte Zeile der Textfassung samt Einzug und
-# Zeilenende, sonst leer), RENDITE, RESTLAUFZEIT, FAELLIG, KURS, DIFF („+0,12 Pkt.“), DIFF_FARBE, ZT („Nächster Zinstermin …“).
+# Zeilenende, sonst leer), RENDITE, RESTLAUFZEIT, FAELLIG, KURS, DIFF („+1,42 %“), DIFF_FARBE, ZT („Nächster Zinstermin …“).
 MERK = {
     "farbe_plus": TIEF, "farbe_minus": MINUS, "farbe_null": TXT,
     "text_zeile": "{{TITEL}}\n  {{KERN}}\n{{ZUSATZ}}\n",
-    "text_rahmen": "DEINE MERKLISTE IN DIESER WOCHE\n\n{{ZEILEN}}{{WEITERE}}Zur Merkliste: " + SEITE + "konto.html\n",
+    "text_rahmen": "DEINE MERKLISTE IN DIESER WOCHE\n\n{{ZEILEN}}{{WEITERE}}Zur Merkliste: " + SEITE + "konto.html#merkliste\n",
     "text_leer": "DEINE MERKLISTE\n\nDeine Merkliste ist noch leer. In der Anleihen-Suche und auf jedem Steckbrief steht der Knopf „Merken“ – dann zeigt dir der "
                  "Wochenbrief hier Rendite, Restlaufzeit, Kurs und den nächsten Zinstermin deiner Anleihen.\n" + SEITE + "anleihen-suche.html\n",
     "html_zeile": zeile(anleihe_link("{{LINK}}", "{{TITEL}}") + unter("{{ZT}}"), "{{RENDITE}}", "{{RESTLAUFZEIT}}" + unter("{{FAELLIG}}"),
                         "{{KURS}}" + unter("{{DIFF}}", "{{DIFF_FARBE}}")),
     "html_rahmen": h2("Deine Merkliste in dieser Woche") + tabelle(tabellenkopf(FELD["anleihe"]["kurz"], "zur Vorwoche") + "{{ZEILEN}}")
-                   + klein('{{WEITERE}} ' + link(SEITE + "konto.html", "Zur Merkliste")),
+                   + klein('{{WEITERE}} ' + link(SEITE + "konto.html#merkliste", "Zur Merkliste")),
     "html_leer": h2("Deine Merkliste") + p("Deine Merkliste ist noch leer. In der Anleihen-Suche und auf jedem Steckbrief steht der Knopf „Merken“ – dann zeigt dir "
                                          "der Wochenbrief hier Rendite, Restlaufzeit, Kurs und den nächsten Zinstermin deiner Anleihen.")
                  + klein(link(SEITE + "anleihen-suche.html", "Zur Anleihen-Suche")),
@@ -480,7 +480,7 @@ def baue(heute):
                         f'<span style="color:{TXT};">{e(x["text"])}</span></div>' for x in neu))]
     H += [f'<tr><td class="r" style="padding:18px 32px 24px;border-top:1px solid {LINIE};{F}font-size:12px;line-height:1.6;color:{TXT};">Keine Anlageberatung. Alle Angaben ohne Gewähr; '
           'Börsenkurse sind Schlusskurse, keine Echtzeitkurse. Quellen: Deutsche Bundesbank, Europäische Zentralbank, Federal Reserve, Deutsche Börse.<br><br>'
-          f'Du bekommst diese E-Mail, weil du den Wochenbrief in „My Bondarium“ bestellt hast. <a href="{{{{ABMELDEN}}}}" style="color:{TIEF};">Newsletter abbestellen</a> – ein Klick genügt.<br>'
+          f'Du bekommst diese E-Mail, weil du den Wochenbrief in „My Bondarium“ bestellt hast. <a href="{{{{ABMELDEN}}}}" style="color:{TIEF};">Wochenbrief abbestellen</a> – ein Klick genügt.<br>'
           f'Bondarium – ein Angebot der urbanelo GmbH, Heinrich-Baumann-Straße 38, 70190 Stuttgart · <a href="{SEITE}impressum.html" style="color:{TXT};">Impressum</a></td></tr>',
           "</table></td></tr></table></body></html>"]
     ausgabe = {**kopf, "betreff": f"Wochenbrief KW {kw}: Bundrendite {richtung}", "text": nur_text("\n".join(t) + "\n"), "html": "\n".join(H) + "\n",

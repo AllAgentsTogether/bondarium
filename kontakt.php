@@ -20,7 +20,8 @@ declare(strict_types=1);
 
 const EMPFAENGER = 'info@bondarium.com';
 const ABSENDER   = 'info@bondarium.com';   // eigenes Postfach (bondarium.com liegt wie bondarium.de bei STRATO); die Adresse des Besuchers steht in Reply-To
-const URSPRUNG   = 'https://www.bondarium.de';
+const LOKAL      = PHP_SAPI === 'cli-server';   // lokaler Testserver (php -S) wie in konto.php – live gilt nur URSPRUNG (Website-Test P5-07)
+define('URSPRUNG', LOKAL ? 'http://' . ($_SERVER['HTTP_HOST'] ?? 'localhost') : 'https://www.bondarium.de');
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');

@@ -290,7 +290,7 @@
       const zeilen = X.liste().map(o => [o.name, o.isin, ART[o.art] || "", o.cur, n(o.rendite, 2),
         o.zinsart === 1 || o.kupon === "var" ? "variabel" : typeof o.kupon === "number" ? n(o.kupon, 3) : "", o.faellig ? n(Math.max(0, jahreBis(o.faellig)), 1) : "",
         o.faellig ? MC.datum(o.faellig) : "", n(o.kurs, kd(o.kurs)), o.datum ? MC.datum(o.datum) : "",
-        n(F ? F.kursAenderung(o.kurs, o.vortag) : null, 2), delta(o) != null ? n(delta(o), 2) : "", tagDe(o.seit), termin(o) ? MC.datum(termin(o)) : "", ""]);
+        n(F && !(o.datum && o.datum !== X.kstand()) ? F.kursAenderung(o.kurs, o.vortag) : null, 2), delta(o) != null ? n(delta(o), 2) : "", tagDe(o.seit), termin(o) ? MC.datum(termin(o)) : "", ""]);
       etfListe().forEach(f => { const r = ETF.get(f[0]), k = ETFK && ETFK.kurse ? ETFK.kurse[f[0]] : null; zeilen.push([r[1], r[0], "ETF", r[9] || "", "", "", "", "", "", "", "", "", tagDe(f[1]), "", k && typeof k[0] === "number" ? n(k[0], 2) : ""]); });
       lade(`Bondarium-Merkliste-${HEUTE}.csv`, "﻿" + [kopf].concat(zeilen).map(r => r.map(z).join(";")).join("\r\n") + "\r\n", "text/csv;charset=utf-8");
     }
@@ -331,7 +331,7 @@
         const bekannt = isins.filter(i => D.idx.has(i) || X.STAMM[i] || ETF.has(i)), neu = bekannt.filter(i => !K.hat(i)), fremd = isins.length - bekannt.length;
         if (!neu.length) { st.textContent = bekannt.length ? "Alles davon steht schon auf deiner Merkliste." + (fremd ? ` ${fremd} ${fremd === 1 ? "ISIN kennt" : "ISINs kennt"} Bondarium nicht.` : "") : "Keine dieser ISINs kennt Bondarium."; return; }
         return K.uebernehmen(neu).then(a => {
-          $("mb-einf-t").value = ""; $("mb-einf").hidden = true; st.textContent = "";
+          $("mb-einf-t").value = ""; $("mb-einf").hidden = true; $("mb-einf-btn").setAttribute("aria-expanded", "false"); st.textContent = "";
           X.hinweis(`${a.neu === 1 ? "1 Wertpapier ist" : a.neu + " Wertpapiere sind"} neu auf deiner Merkliste.` + (fremd ? ` ${fremd} ${fremd === 1 ? "ISIN kennt" : "ISINs kennt"} Bondarium nicht.` : "") + (a.uebrig ? ` ${a.uebrig} passten nicht mehr – die Merkliste fasst höchstens ${a.max || 200}.` : ""));
           K.besuch().catch(() => {});   // holt die Zinstermine der neuen Anleihen
         });
@@ -778,8 +778,8 @@
       const ew = e.target.closest("[data-etf-weg]"); if (ew) { ew.disabled = true; K.entfernen(ew.dataset.etfWeg).catch(() => {}); return; }
       if (e.target.closest("#mb-vgl-btn")) { if (VGL.size < 2) X.hinweis("Kreuz in der Tabelle mindestens zwei Anleihen an – dann stehen sie hier nebeneinander."); else $("mb-vgl").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
       if (e.target.closest("#mb-vgl-leer")) { VGL.clear(); X.zeichneListe(); return; }
-      if (e.target.closest("#mb-einf-btn")) { const b = $("mb-einf"); b.hidden = !b.hidden; if (!b.hidden) $("mb-einf-t").focus(); return; }
-      if (e.target.closest("#mb-einf-zu")) { $("mb-einf").hidden = true; return; }
+      if (e.target.closest("#mb-einf-btn")) { const b = $("mb-einf"); b.hidden = !b.hidden; $("mb-einf-btn").setAttribute("aria-expanded", String(!b.hidden)); if (!b.hidden) $("mb-einf-t").focus(); return; }
+      if (e.target.closest("#mb-einf-zu")) { $("mb-einf").hidden = true; $("mb-einf-btn").setAttribute("aria-expanded", "false"); return; }
       if (e.target.closest("#mb-csv")) { csv(); return; }
       if (e.target.closest("#mb-listen")) { listenKlick(e); return; }
       if (e.target.closest("#mb-meld")) { meldungKlick(e); return; }
