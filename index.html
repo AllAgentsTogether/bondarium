@@ -890,6 +890,7 @@
   .zs-pause[aria-pressed="true"] .zs-p-lauf { display: inline; }
   .zs-pause:focus-visible { outline: 2px solid var(--green-text); outline-offset: 2px; }
   @media (prefers-reduced-motion: reduce) { .zs-pause { display: none; } }
+  @media print { .zs-band { display: none; } }   /* Laufband mit Pause-Knopf nicht angeschnitten drucken (Website-Test P1-07) */
   /* Die Werte laufen nicht unter dem Pause-Knopf hindurch: rechts 40 px abgeschnitten, Ausblendung davor (WCAG 2.5.8, Website-Test P6-11) */
   @media (prefers-reduced-motion: no-preference) {
     .zs-band.mit-pause .zs-in { clip-path: inset(0 40px 0 0); -webkit-mask-image: linear-gradient(90deg, transparent, #000 32px, #000 calc(100% - 72px), transparent calc(100% - 40px)); mask-image: linear-gradient(90deg, transparent, #000 32px, #000 calc(100% - 72px), transparent calc(100% - 40px)); }
@@ -925,6 +926,7 @@
     #bnd-top10 .tp-lnk { min-height: 44px; }
   }
   @media (min-width: 601px) and (max-width: 1000px) {
+    #bnd-top10 .tp-n { display: none; }   /* zwischen 701 und 870 px liefen die Titel in die „10“-Marke (Website-Test P1-01), wie bis 700 px */
     #bnd-top10 .tp-k { padding: 16px; }
     #bnd-top10 .tp-go { flex-wrap: wrap; gap: 8px 14px; }
   }
@@ -964,12 +966,19 @@
     .interessant table.atab > tbody > tr > th[scope=row] a.name-link { display: block; overflow: hidden; text-overflow: ellipsis; text-decoration: none; }
     .interessant table.atab > tbody > tr > td { display: block; padding: 0; }
     .interessant table.atab > tbody > tr > td::before { content: none; }
-    .interessant table.atab > tbody > tr > td.gross { font-size: var(--fs-klein); font-weight: 600; color: var(--ink); text-align: right; white-space: normal; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }   /* umbrechen statt überlappen bei größeren Textabständen (WCAG 1.4.12, Website-Test P6-08) */
+    .interessant table.atab > tbody > tr > td.gross { font-size: var(--fs-klein); font-weight: 600; color: var(--ink); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
     .interessant table.atab > tbody > tr > td.gross small { display: none; }
     .interessant table.atab > tbody > tr > td[data-l="Kurs"], .interessant table.atab > tbody > tr > td[data-l="Bonität"], .interessant table.atab > tbody > tr > td[data-l="Stückelung"] { display: none; }
     .interessant table.atab > tbody > tr > td.merkspalte { position: static; width: auto; text-align: right; }
     .interessant table.atab > tbody > tr > td.merkspalte .merkbtn.nur { min-width: 28px; min-height: 28px; width: 28px; height: 28px; padding: 0; }
     .interessant table.atab > tbody > tr > td.merkspalte .merkbtn.nur svg { width: 16px; height: 16px; }
+    /* Unter 360 px war die Namensspalte nur 48 px breit („Deu…“) – dort steht der Name über der ganzen Zeile, die Werte darunter in
+       ihren Spalten (seit 17.10.2026, Website-Test P1-02) */
+    @media (max-width: 359px) {
+      .interessant table.atab > tbody > tr > th[scope=row] { grid-column: 1 / -1; white-space: normal; padding-bottom: 0 !important; }
+      .interessant table.atab > tbody > tr > th[scope=row] a.name-link { white-space: normal; }
+      .interessant table.atab > tbody > tr > th[scope=row] + td.gross { grid-column-start: 2; }
+    }
     .interessant .itab-note { display: none; }
     .interessant .itab-note-handy { display: block; }
   }

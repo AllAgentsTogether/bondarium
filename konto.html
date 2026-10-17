@@ -1100,7 +1100,7 @@ MC.navInit();
         if (i < 0 || typeof v.k[i] !== "number" || v.t[i] >= HEUTE_ISO) return;
         const zt = STAMM[o.isin] && Array.isArray(STAMM[o.isin][14]) ? STAMM[o.isin][14] : null;
         const b = { coupon: o.kupon, freq: zt && zt[0] > 0 ? zt[0] : 1, maturity: o.faellig, days: zt && zt.length > 1 ? zt.slice(1) : null };
-        const y = MC.bond.yieldFromPrice(b, v.k[i], v.t[i]) * 100;
+        const y = MC.bond.yieldFromPrice(b, v.k[i], MC.bond.settle(v.t[i], o.cur)) * 100;   // Valuta = Handelstag + 2 wie überall (seit 17.10.2026, Website-Test P2-02)
         if (isFinite(y) && y > -2 && y < 30) o.rseit = Math.round(y * 1000) / 1000;
       }).catch(() => {});
     })).then(() => { if (offen.some(o => o.rseit != null) && $("liste") && !$("liste").hidden) zeichne(); });
@@ -2014,7 +2014,7 @@ MC.navInit();
     const datum = `${zwei(jetzt.getDate())}.${zwei(jetzt.getMonth() + 1)}.${jetzt.getFullYear()}`, uhr = `${zwei(jetzt.getHours())}:${zwei(jetzt.getMinutes())}`;
     const name = aktName(), titel = /^Musterdepot\b/i.test(name) ? name : `Musterdepot „${name}“`;
     // Dateiname mit dem Namen des Depots, nur Buchstaben, Ziffern und Bindestriche
-    const slug = name.replace(/[äÄ]/g, "ae").replace(/[öÖ]/g, "oe").replace(/[üÜ]/g, "ue").replace(/ß/g, "ss").normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 30);
+    const slug = name.replace(/ä/g, "ae").replace(/Ä/g, "Ae").replace(/ö/g, "oe").replace(/Ö/g, "Oe").replace(/ü/g, "ue").replace(/Ü/g, "Ue").replace(/ß/g, "ss").normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 30);
     const pos = POS.slice().sort((a, b) => (a.o.faellig || "9999").localeCompare(b.o.faellig || "9999") || a.isin.localeCompare(b.isin));
     const fremd = pos.filter(p => p.stern), alt = pos.filter(p => p.festKurs), GRUEN_T = "#157C00", HELL = [0.957, 0.953, 0.937];
     // „€“ mitten im Text: macOS-Vorschau (PDFKit) kennt für die Standardschrift Helvetica keine Breite des Euro-Zeichens und zeichnet es

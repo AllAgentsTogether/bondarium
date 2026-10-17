@@ -109,6 +109,7 @@
   .kpis .sortiert { font-weight: 600; color: var(--ink); }
   .kpis .sortiert small { font-weight: 400; }
   .kpis td.aktion { white-space: nowrap; text-align: right; width: 1%; }
+  .st-btn { font: inherit; color: var(--green-text); background: none; border: 0; padding: 2px 0; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
   .kpis td.aktion .merkbtn.nur { margin-left: 0; min-width: 24px; min-height: 24px; }   /* Zielgröße 24 px (WCAG 2.5.8, Website-Test P6-10) */
   .kpis .zbtn { font: inherit; font-size: 0; color: var(--ink); background: none; border: 0; padding: 4px 6px; min-width: 24px; min-height: 24px; cursor: pointer; line-height: 1; vertical-align: middle; }
   .kpis .zbtn::after { content: ""; display: inline-block; width: 6px; height: 6px; margin: 0 0 2px 7px; border-right: 1.5px solid var(--green-text); border-bottom: 1.5px solid var(--green-text); transform: rotate(45deg); transition: transform .15s; }
@@ -422,6 +423,9 @@ const T = {
   keinWort: "Im Suchbegriff steht kein Wort, nach dem sich suchen lässt – gib einen Namen, eine ISIN, eine WKN oder ein Jahr ein, z. B. „Bund 2030“.",
   none: "Keine Anleihe gefunden. Tipp: Emittent oder Land und Jahr eingeben, z. B. „Bund 2030“, „Siemens 2029“ oder „Italien 2035“ – oder weniger Wörter und Filter lockern.",
   noneThemen: "Keine Anleihe gefunden. Passende Themen findest du darunter.",
+  // Leere Liste bei eingeschaltetem Grundfilter (seit 17.10.2026, Website-Test P2-01: „Anleihen mit gleichen Merkmalen“ einer
+  // Franken- oder Pfund-Anleihe endete hier, ohne dass der Grund dastand)
+  ohneGF: ' Der Grundfilter ist an und blendet unter anderem alle Währungen außer Euro und Dollar aus. <button type="button" class="st-btn" id="grundfilter-aus">Grundfilter ausschalten</button>',
   // Von über Bis (seit 09.10.2026, T-91): statt des Tipps sagen, woran es liegt – die Felder sind markiert, getauscht wird nichts
   verkehrt: t => `Keine Anleihe gefunden: Von liegt über Bis (${t}). Bitte die Spanne im Filter prüfen.`,
   verkehrtFeld: { rest: (v, b) => `Fällig von ${v} bis ${b}`, rendite: (v, b) => `Rendite von ${v} bis ${b}\u00a0%` },
@@ -693,7 +697,7 @@ function detailZeile(r) {
   const zinsart = L("zins")[r[10]] || "";
   // Kündigung (seit 27.09.2026): Art aus dem Namen „2024(27/34)“ und der Rückzahlungsart im Register – gemeinsame Regel in site.js
   const kue = kueVon(r), kueF = kue && MC.kuendigungFeld ? MC.kuendigungFeld(kue, k ? k[0] : null) : null;
-  const kueAb = kue && kue.jahr ? `${kue.jahr <= new Date().getFullYear() ? "seit" : "ab"} ${kue.jahr}` : "";
+  const kueAb = kue && kue.jahr ? `${kue.jahr <= MC.heuteBerlin().getUTCFullYear() ? "seit" : "ab"} ${kue.jahr}` : "";
   const spaeter = /Stufenzins|Step[- ]?up|FLR\b|Fix[- ]to[- ]Float/i.test(r[1]);   // Kupon ändert sich später (Stufenzins, Fix-to-Float)
   const hinweis = befund(r) ? L("pruefRendite") : r[10] === 1 ? D.varRendite : [rd != null ? (real ? L("real") : fraglich(r) ? L("fraglichKurz") : D.paFaellig) : (k ? (unsicher(r) ? "Kurs ohne Umsatz – Rendite nicht aussagekräftig" : spaeter ? D.fixFloat : D.keineRenditeWarum) : ""),
     kue && kue.k === "t" ? D.kuendbar(kueAb, k && k[0] > 100) : "", rd != null && spaeter ? D.stufe : ""].filter(Boolean).join(" · ");
@@ -739,6 +743,7 @@ function zeige() {
   zeigeThemen();
   if (!IDX) return;
   const box = document.getElementById("treffer"), status = document.getElementById("status");
+  if (!status.dataset.gf) { status.dataset.gf = "1"; status.addEventListener("click", e => { if (e.target.closest("#grundfilter-aus")) { const s = document.getElementById("solide"); if (s) s.click(); } }); }
   const AUS = auswerten(), { hits, zahl, suche } = AUS;
   F.zeigen(zahl);
   const aus = suche || F.gesetzt();
@@ -757,7 +762,7 @@ function zeige() {
   box.querySelector("tbody").innerHTML = hits.slice(0, S.zeig).map(zeile).join("");
   const verk = hits.length ? [] : F.spanneVerkehrt ? F.spanneVerkehrt() : [];
   status.innerHTML = hits.length ? L("hits")(hits.length.toLocaleString("de-DE")) + (S.col === "rel" && hits.length > 1 ? L("relevanz") : S.col === "rendite" && hits.length > 1 ? L("renditeSort") : "") + (hits.length > MAX ? L("capped")(MAX) : "")
-    : verk.length ? MC.esc(L("verkehrt")(verk.map(k => L("verkehrtFeld")[k](...F.bereichTexte(k))).join("; "))) : TH ? L("noneThemen") : L("none");
+    : verk.length ? MC.esc(L("verkehrt")(verk.map(k => L("verkehrtFeld")[k](...F.bereichTexte(k))).join("; "))) : (TH ? L("noneThemen") : L("none")) + (F.solide ? L("ohneGF") : "");
   untenZeile();
   for (const th of box.querySelectorAll("thead th[data-col]")) {
     if (th.dataset.col === S.col) th.setAttribute("aria-sort", S.dir > 0 ? "ascending" : "descending");

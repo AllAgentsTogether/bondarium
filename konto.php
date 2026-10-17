@@ -355,6 +355,9 @@ function db(): PDO
     try {
         $db = new PDO('sqlite:' . $pfad, null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_TIMEOUT => 5]);
         $db->exec('PRAGMA foreign_keys = ON');
+        // Gelöschtes überschreiben (seit 17.10.2026, Website-Test P4-01): Ohne secure_delete blieben E-Mail-Adresse, Notizen und
+        // Depotnamen gelöschter Konten in freien Seiten der Datei lesbar – die Datenschutzerklärung sagt „sofort gelöscht“.
+        $db->exec('PRAGMA secure_delete = ON');
         $fassung = (int)$db->query('PRAGMA user_version')->fetchColumn();
         if ($fassung < 1) {
             $db->exec('BEGIN IMMEDIATE');
@@ -465,6 +468,16 @@ function db(): PDO
             $db->prepare("INSERT OR IGNORE INTO meta (k, v) VALUES ('kennung_neu_ab', ?)")->execute([(string)time()]);
             $db->exec('PRAGMA user_version = 9');
             $db->exec('COMMIT');
+        }
+        // Reste von früher (vor secure_delete gelöscht) einmal mit VACUUM entfernen – Marke „vakuum“ in meta; scheitert es (Datei
+        // gerade belegt), folgt es beim nächsten Aufruf (seit 17.10.2026, Website-Test P4-01)
+        if ($db->query("SELECT v FROM meta WHERE k = 'vakuum'")->fetchColumn() === false) {
+            try {
+                $db->exec('VACUUM');
+                $db->prepare("INSERT OR REPLACE INTO meta (k, v) VALUES ('vakuum', ?)")->execute([(string)time()]);
+            } catch (Throwable $e) {
+                error_log('konto.php: VACUUM nicht möglich – ' . $e->getMessage());
+            }
         }
         if (!is_file($marke)) {
             @file_put_contents($marke, "Hier gab es eine Datenbank (konto.php, docs/BETRIEB.md). Nicht löschen.\n");

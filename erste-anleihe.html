@@ -555,7 +555,7 @@ MC.navInit();
     box.classList.toggle("fl-done", n === cbs.length);
     if (speichern) { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
   }
-  Array.prototype.forEach.call(cbs, function (c) { c.checked = !!st[c.value]; c.addEventListener("change", function () { upd(true); }); });
+  Array.prototype.forEach.call(cbs, function (c) { c.checked = !!st[c.value]; c.addEventListener("change", function (e) { upd(e.isTrusted); });   /* nur echte Klicks speichern – der Abgleich mit dem Konto (mein.js) schreibt nichts in den Browser (Website-Test P4-03) */ });
   stand.hidden = false;
   box.querySelector(".fl-reset").addEventListener("click", function () { Array.prototype.forEach.call(cbs, function (c) { c.checked = false; }); upd(true); });
   box.querySelector(".fl-print").addEventListener("click", function () { window.print(); });

@@ -19,7 +19,7 @@ import re, sys, pathlib
 WORTE = r"gut|gute[nmrs]?|schlecht\w*|sicher|sichere[nmrs]?|unsicher\w*|riskant\w*|risiko(?!aufschl)\w*|lohn\w*|empfehl\w*|empfohlen|passt|passend\w*|" \
         r"vorteil\w*|nachteil\w*|harmlos|attraktiv\w*|günstig\w*|teuer\w*|achtung|vorsicht\w*|solide\w*|geschenk|beachte\w*|unbedingt|" \
         r"sollte\w*|besser\w*|nie|chance\w*|gefahr\w*|warn\w*|kaum|gering\w*|niedrig\w*|lieber|ideal\w*|geeignet\w*|interessant\w*"
-RE_WORT = re.compile(r"\b(" + WORTE + r")\b", re.I)
+RE_WORT = re.compile(r"\b(" + WORTE + r")\b(?!=)", re.I)   # nicht als Adress-Parameter („&solide=0“ im Link zur Suche, seit 17.10.2026)
 AUSNAHMEN = {"Hoch / Tief",                  # Spaltenkopf, kein Urteil (steht nicht in der Wortliste, nur zur Dokumentation)
              "untere Stufe guter Bonität"}  # Ratingskala: EZB-Bonitätsstufe 3 (BBB+ bis BBB−), beschreibend
 

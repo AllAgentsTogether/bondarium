@@ -862,6 +862,7 @@ footer.fuss { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); g
 @media print {
   .skip-link, .topbar, .krumen, .weg, .tueren, .lands, .weiter, .crossnav, .mb-seite, .sb-go, footer.fuss { display: none !important; }   /* Brotkrumen, Weg-Zeile, Sprungleiste seit 15.10.2026 (A02-10) */
   body, .wrap { background: #fff !important; }
+  body { padding: 0 !important; }   /* der untere Abstand von 48 px erzeugte ein leeres letztes Blatt (Website-Test P1-06) */
   .kap { box-shadow: none !important; background: #fff !important; border: 1px solid #ccc; break-inside: avoid; }
   .merk { break-inside: avoid; }
   a, main a { color: inherit; }   /* main a: sonst blieben Links grün (main a oben ist spezifischer) */

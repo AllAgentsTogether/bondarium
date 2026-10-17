@@ -64,6 +64,7 @@ function erinnerung_db(): ?PDO
     if (!$dateien) return null;
     $p = new PDO('sqlite:' . $dateien[0], null, null, [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_TIMEOUT => 5]);
     $p->exec('PRAGMA foreign_keys = ON');
+    $p->exec('PRAGMA secure_delete = ON');   // gelöschte Konten wirklich überschreiben (seit 17.10.2026, Website-Test P4-01, wie konto.php)
     if ((int)$p->query('PRAGMA user_version')->fetchColumn() < 5) return null;
     return $db = $p;
 }

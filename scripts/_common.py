@@ -619,10 +619,11 @@ def kurs_text(v) -> str:
 
 
 def pkt_text(v, d=2) -> str:
-    """„+0,25 Pkt.“, „−0,10 Pkt.“, „0,00 Pkt.“ – wie MC.felder.pkt: Math.round(v × 10^d) / 10^d, dann formatiert."""
+    """„+0,25 Pkt.“, „−0,10 Pkt.“, „0,00 Pkt.“ – wie MC.felder.pkt: gerundet wie MC.zahl, Vorzeichen aus der gerundeten Zahl
+    (seit 17.10.2026, Website-Test P2-03; vorher Math.round auf dem Binärwert, −0,125 → „−0,12“)."""
     if not _ist_zahl(v):
         return "–"
-    r = _js_round(v * 10 ** d) / 10 ** d or 0.0
+    r = runden_wie_browser(v, d)
     return ("+" if r > 0 else "") + zahl_de(r, d) + NBSP + "Pkt."
 
 
@@ -631,7 +632,7 @@ def aenderung_text(v, d=2) -> str:
     pkt_text nur noch für Renditen und Aufschläge)."""
     if not _ist_zahl(v):
         return "–"
-    r = _js_round(v * 10 ** d) / 10 ** d or 0.0
+    r = runden_wie_browser(v, d)
     return ("+" if r > 0 else "") + zahl_de(r, d) + NBSP + "%"
 
 
