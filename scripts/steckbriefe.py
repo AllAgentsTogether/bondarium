@@ -178,6 +178,8 @@ def seite(vorlage, isin, r, stand, stand_art="Stammdaten "):
     for b in bloecke[1:]:
         h = h.replace(b, "", 1)
     h = ersetze(h, r'<h1 id="titel">[^<]*</h1>', f'<h1 id="titel">{esc(kopf)} <span class="fa">· fällig {datum(faellig)}</span></h1>')
+    # sichtbare letzte Brotkrume wie im JSON-LD (seit 17.10.2026, Website-Test P7-04 – vorher stand dort „Anleihe“)
+    h = ersetze(h, r'<span aria-current="page">Anleihe</span>', f'<span aria-current="page">{esc(f"{art} {k_text} {jahr}")}</span>')
     h = ersetze(h, r'<p class="reg" id="reg"></p>',
                 f'<p class="reg" id="reg">Registername <b>{esc(name)}</b> · Emittent <b>{esc(emittent)}</b></p>')
     h = ersetze(h, r'<div class="idz" id="idz"><span>[^<]*</span></div>',

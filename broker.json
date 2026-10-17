@@ -53,7 +53,7 @@
         {"t": "Preis- und Leistungsverzeichnis", "url": "https://www.comdirect.de/cms/docs/cori7105.pdf", "stand": "gültig ab 15.07.2026"},
         {"t": "Anleihen", "url": "https://www.comdirect.de/wertpapierhandel/anleihen-informationen.html"},
         {"t": "LiveTrading", "url": "https://www.comdirect.de/wertpapierhandel/livetrading.html"},
-        {"t": "Depot (Neukunden-Aktion)", "url": "https://www.comdirect.de/depot/"}
+        {"t": "Depot (Neukunden-Aktion)", "url": "https://www.comdirect.de/depot/comdirect-depot.html"}
       ],
       "probe": {"1000": 9.9, "5000": 17.4, "10000": 29.9, "25000": 59.9, "100000": 59.9}
     },
